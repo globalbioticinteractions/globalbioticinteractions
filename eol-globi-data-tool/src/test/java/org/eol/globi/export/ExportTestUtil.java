@@ -12,7 +12,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import javax.xml.bind.DatatypeConverter;
@@ -66,7 +66,7 @@ public class ExportTestUtil {
     }
 
     public static TaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, GraphDatabaseService graphDb) {
-        return new TaxonIndexNeo4j(taxonEnricher, new CorrectionService() {
+        return new ResolvingTaxonIndex(taxonEnricher, new CorrectionService() {
 
             @Override
             public String correct(String taxonName) {

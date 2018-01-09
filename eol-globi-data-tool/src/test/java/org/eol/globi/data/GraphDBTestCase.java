@@ -13,7 +13,7 @@ import org.eol.globi.service.DatasetFinderGitHubArchiveMaster;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
@@ -72,7 +72,7 @@ public abstract class GraphDBTestCase {
 
     protected TaxonIndex getOrCreateTaxonIndex(PropertyEnricher enricher) {
         if (taxonIndex == null) {
-            taxonIndex = new TaxonIndexNeo4j(enricher,
+            taxonIndex = new ResolvingTaxonIndex(enricher,
                     new PassThroughCorrectionService(), getGraphDb());
         }
         return taxonIndex;

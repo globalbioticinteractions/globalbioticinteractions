@@ -9,7 +9,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -165,7 +165,7 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
             }
         };
-        taxonIndex = new TaxonIndexNeo4j(genus,
+        taxonIndex = new ResolvingTaxonIndex(genus,
                 new PassThroughCorrectionService(), getGraphDb());
         Taxon lestes = taxonIndex.getOrCreateTaxon(new TaxonImpl("Lestes", null));
         assertThat(lestes.getPath(), is("Animalia | Insecta | Lestes"));

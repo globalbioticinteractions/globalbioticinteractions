@@ -9,11 +9,10 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.taxon.TaxonNameCorrector;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricherFactory;
-import org.eol.globi.service.PropertyEnricherException;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -49,7 +48,7 @@ public class Indexer {
         final GraphDatabaseService freshGraphService = GraphService.startNeo4j(baseDir);
         PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
         try {
-            TaxonIndex taxonIndex = new TaxonIndexNeo4j(taxonEnricher
+            TaxonIndex taxonIndex = new ResolvingTaxonIndex(taxonEnricher
                     , new TaxonNameCorrector()
                     , freshGraphService);
             indexUsingExternalIds(executionEngine, taxonIndex);

@@ -9,7 +9,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnricherFactory;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,7 +46,7 @@ public class NameResolverTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
-        final NameResolver nameResolver = new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb()));
+        final NameResolver nameResolver = new NameResolver(getGraphDb(), new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, getGraphDb()));
         nameResolver.setBatchSize(1L);
         nameResolver.resolve();
 
@@ -73,7 +73,7 @@ public class NameResolverTest extends GraphDBTestCase {
         someOtherOrganism.ate(someOtherOrganism2);
 
         final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
-        final NameResolver nameResolver = new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb()));
+        final NameResolver nameResolver = new NameResolver(getGraphDb(), new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, getGraphDb()));
         nameResolver.setBatchSize(1L);
         nameResolver.resolve();
 

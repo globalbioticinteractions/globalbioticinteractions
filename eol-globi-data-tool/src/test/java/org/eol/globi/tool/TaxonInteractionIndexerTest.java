@@ -12,7 +12,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnricherFactory;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.NodeUtil;
 import org.junit.After;
@@ -56,7 +56,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
-        new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
+        new NameResolver(getGraphDb(), new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
         new TaxonInteractionIndexer(getGraphDb()).index();
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
@@ -92,7 +92,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
-        new NameResolver(getGraphDb(), new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
+        new NameResolver(getGraphDb(), new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
         //new TaxonInteractionIndexer(getGraphDb()).link();
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));

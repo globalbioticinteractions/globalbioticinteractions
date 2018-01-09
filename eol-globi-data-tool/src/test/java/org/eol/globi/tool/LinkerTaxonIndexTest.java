@@ -16,8 +16,8 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.TaxonFuzzySearchIndex;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
-import org.eol.globi.taxon.TaxonIndexNeo4jTest;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.ResolvingTaxonIndexTest;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -77,7 +77,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
-                taxon.setCommonNames(TaxonIndexNeo4jTest.EXPECTED_COMMON_NAMES);
+                taxon.setCommonNames(ResolvingTaxonIndexTest.EXPECTED_COMMON_NAMES);
                 taxon.setName("this is the actual name");
                 return TaxonUtil.taxonToMap(taxon);
             }
@@ -87,7 +87,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
             }
         };
-        TaxonIndexNeo4j taxonService = TaxonIndexNeo4jTest.createTaxonService(getGraphDb());
+        ResolvingTaxonIndex taxonService = ResolvingTaxonIndexTest.createTaxonService(getGraphDb());
         taxonService.setEnricher(enricher);
         taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
         resolveNames();

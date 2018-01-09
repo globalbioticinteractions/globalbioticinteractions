@@ -31,7 +31,7 @@ import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
 import org.eol.globi.taxon.TaxonCacheService;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonNameCorrector;
 import org.eol.globi.util.HttpUtil;
 import org.globalbioticinteractions.cache.CacheFactory;
@@ -150,7 +150,7 @@ public class Normalizer {
             LOG.info("resolving names with taxon cache ...");
             final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
             try {
-                TaxonIndexNeo4j index = new TaxonIndexNeo4j(enricher, taxonName -> taxonName, graphService);
+                ResolvingTaxonIndex index = new ResolvingTaxonIndex(enricher, taxonName -> taxonName, graphService);
                 index.setIndexResolvedTaxaOnly(true);
 
                 TaxonFilter taxonCacheFilter = new TaxonFilter() {
@@ -178,7 +178,7 @@ public class Normalizer {
             final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
             PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
             try {
-                new NameResolver(graphService, new TaxonIndexNeo4j(taxonEnricher, taxonNameCorrector, graphService)).resolve();
+                new NameResolver(graphService, new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, graphService)).resolve();
                 new TaxonInteractionIndexer(graphService).index();
             } finally {
                 taxonEnricher.shutdown();

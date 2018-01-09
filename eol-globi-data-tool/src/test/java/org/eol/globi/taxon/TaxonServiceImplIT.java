@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 
 public class TaxonServiceImplIT extends GraphDBTestCase {
 
-    private TaxonIndexNeo4j taxonService;
+    private ResolvingTaxonIndex taxonService;
     private static PropertyEnricher taxonEnricher = null;
 
     @BeforeClass
@@ -42,7 +42,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
 
     @Before
     public void init() {
-        this.taxonService = new TaxonIndexNeo4j(taxonEnricher, new CorrectionService() {
+        this.taxonService = new ResolvingTaxonIndex(taxonEnricher, new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return taxonName;
@@ -306,7 +306,7 @@ public class TaxonServiceImplIT extends GraphDBTestCase {
         assertThat(taxon.getPath(), containsString("Homo sapiens"));
     }
 
-    private void assertZeroHits(TaxonIndexNeo4j taxonService, String taxonName) {
+    private void assertZeroHits(ResolvingTaxonIndex taxonService, String taxonName) {
         IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonName(taxonName);
         assertThat(hits.size(), is(0));
     }

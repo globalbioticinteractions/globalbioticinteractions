@@ -30,10 +30,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class TaxonIndexNeo4jTest extends GraphDBTestCase {
+public class ResolvingTaxonIndexTest extends GraphDBTestCase {
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
 
-    private TaxonIndexNeo4j taxonService;
+    private ResolvingTaxonIndex taxonService;
 
     @Before
     public void init() {
@@ -77,7 +77,7 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createTaxonExternalIdIndex() throws NodeFactoryException {
-        taxonService = new TaxonIndexNeo4j(new PassThroughEnricher(),
+        taxonService = new ResolvingTaxonIndex(new PassThroughEnricher(),
                 new CorrectionService() {
                     @Override
                     public String correct(String taxonName) {
@@ -199,13 +199,13 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
         assertNotNull(unresolvedTaxon);
         assertFalse(TaxonUtil.isResolved(unresolvedTaxon));
 
-        final TaxonIndexNeo4j indexResolvedOnly = getIndex();
+        final ResolvingTaxonIndex indexResolvedOnly = getIndex();
         indexResolvedOnly.setIndexResolvedTaxaOnly(true);
         assertNull(indexResolvedOnly.getOrCreateTaxon(new TaxonImpl("no resolving either", null)));
     }
 
-    public TaxonIndexNeo4j getIndex() {
-        return new TaxonIndexNeo4j(new PropertyEnricher() {
+    public ResolvingTaxonIndex getIndex() {
+        return new ResolvingTaxonIndex(new PropertyEnricher() {
                     @Override
                     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
                         return new TreeMap<String, String>(properties);
@@ -269,8 +269,8 @@ public class TaxonIndexNeo4jTest extends GraphDBTestCase {
         assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
     }
 
-    public static TaxonIndexNeo4j createTaxonService(GraphDatabaseService graphDb) {
-        return new TaxonIndexNeo4j(new PropertyEnricher() {
+    public static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
+        return new ResolvingTaxonIndex(new PropertyEnricher() {
             @Override
             public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);

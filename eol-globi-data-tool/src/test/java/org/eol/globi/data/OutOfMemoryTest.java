@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.TaxonIndexNeo4j;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +34,7 @@ public class OutOfMemoryTest {
 
     private GraphDatabaseService graphDb;
     private String storeDir;
-    private TaxonIndexNeo4j factory;
+    private ResolvingTaxonIndex factory;
     public static final long MAX_TAXONS = 1000 * 1000;
 
     @Before
@@ -48,7 +48,7 @@ public class OutOfMemoryTest {
         graphDb = graphDatabaseBuilder.newGraphDatabase();
 
 
-        factory = new TaxonIndexNeo4j(new PassThroughEnricher(), new CorrectionService() {
+        factory = new ResolvingTaxonIndex(new PassThroughEnricher(), new CorrectionService() {
             @Override
             public String correct(String taxonName) {
                 return null;
@@ -93,7 +93,7 @@ public class OutOfMemoryTest {
         assertThat(count, Is.is(MAX_TAXONS + 1));
     }
 
-    private void insertTaxons(TaxonIndexNeo4j factory, long maxTaxons) {
+    private void insertTaxons(ResolvingTaxonIndex factory, long maxTaxons) {
         Transaction tx = graphDb.beginTx();
         for (long i = 0; i < maxTaxons; i++) {
             if (i % 5000 == 0) {

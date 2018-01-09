@@ -19,14 +19,14 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-public class TaxonIndexNeo4j implements TaxonIndex {
+public class ResolvingTaxonIndex implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
     private CorrectionService corrector;
     private PropertyEnricher enricher;
     private boolean indexResolvedOnly;
 
-    public TaxonIndexNeo4j(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
+    public ResolvingTaxonIndex(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
         this.enricher = enricher;
         this.corrector = correctionService;
         this.graphDbService = graphDbService;
@@ -83,7 +83,7 @@ public class TaxonIndexNeo4j implements TaxonIndex {
             indexedTaxon = findTaxon(taxon);
             if (indexedTaxon == null) {
                 if (TaxonUtil.isResolved(taxon)) {
-                    indexedTaxon = createAndIndexTaxon(taxon);
+                    indexedTaxon = createAndIndexTaxon(origTaxon, taxon);
                 } else {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (StringUtils.equals(truncatedName, taxon.getName())) {
@@ -99,10 +99,6 @@ public class TaxonIndexNeo4j implements TaxonIndex {
                     }
                 }
             }
-        }
-        if (indexedTaxon != null) {
-            indexOriginalNameForTaxon(origTaxon.getName(), taxon, indexedTaxon);
-            indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, indexedTaxon);
         }
         return indexedTaxon;
     }
@@ -162,15 +158,19 @@ public class TaxonIndexNeo4j implements TaxonIndex {
         Taxon noMatchTaxon = TaxonUtil.copy(origTaxon);
         noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName()) ? origTaxon.getName() : PropertyAndValueDictionary.NO_NAME);
         noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId()) ? origTaxon.getExternalId() : PropertyAndValueDictionary.NO_MATCH);
-        return createAndIndexTaxon(noMatchTaxon);
+        return createAndIndexTaxon(origTaxon, noMatchTaxon);
     }
 
-    private TaxonNode createAndIndexTaxon(Taxon taxon) throws NodeFactoryException {
-        TaxonNode taxonNode = null;
+    private TaxonNode createAndIndexTaxon(Taxon origTaxon, Taxon taxon) throws NodeFactoryException {
+        TaxonNode taxonNode;
         Transaction transaction = graphDbService.beginTx();
         try {
             taxonNode = new TaxonNode(graphDbService.createNode(), taxon.getName());
             addToIndeces((TaxonNode) TaxonUtil.copy(taxon, taxonNode), taxon.getName());
+
+            indexOriginalNameForTaxon(origTaxon.getName(), taxon, taxonNode);
+            indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, taxonNode);
+
             transaction.success();
         } finally {
             transaction.finish();
