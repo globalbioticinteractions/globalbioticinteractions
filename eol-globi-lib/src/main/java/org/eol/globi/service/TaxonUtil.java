@@ -7,6 +7,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
@@ -37,7 +38,7 @@ public class TaxonUtil {
         }
 
         properties.put(THUMBNAIL_URL, taxon.getThumbnailUrl());
-        TermImpl status = taxon.getStatus();
+        Term status = taxon.getStatus();
         if (status != null
                 && StringUtils.isNotBlank(status.getId())
                 && StringUtils.isNotBlank(status.getName())) {

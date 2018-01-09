@@ -83,7 +83,7 @@ public class TaxonNode extends NamedNode implements Taxon {
     }
 
     @Override
-    public void setStatus(TermImpl status) {
+    public void setStatus(Term status) {
         if (status != null
                 && StringUtils.isNotBlank(status.getId())
                 && StringUtils.isNotBlank(status.getName())) {
@@ -93,7 +93,7 @@ public class TaxonNode extends NamedNode implements Taxon {
     }
 
     @Override
-    public TermImpl getStatus() {
+    public Term getStatus() {
         TermImpl status = null;
         Node node = getUnderlyingNode();
         if (node.hasProperty(STATUS_ID) && node.hasProperty(STATUS_LABEL)) {

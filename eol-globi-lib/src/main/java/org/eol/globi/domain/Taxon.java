@@ -29,9 +29,9 @@ public interface Taxon extends Term {
 
     String getPathIds();
 
-    void setStatus(TermImpl status);
+    void setStatus(Term status);
 
-    TermImpl getStatus();
+    Term getStatus();
 
     void setExternalUrl(String externalUrl);
 
