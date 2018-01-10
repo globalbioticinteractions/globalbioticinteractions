@@ -31,57 +31,37 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) {
-                Taxon taxon = new TaxonImpl();
-                TaxonUtil.mapToTaxon(properties, taxon);
-                if ("Homo sapiens".equals(taxon.getName())) {
-                    taxon.setExternalId("homoSapiensId");
-                    taxon.setPath("one two three");
-                } else if ("Canis lupus".equals(taxon.getName())) {
-                    taxon.setExternalId("canisLupusId");
-                    taxon.setPath("four five six");
-                }
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
+        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
 
         String title = "my study\"";
         String citation = "citation my study";
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl(title, "my first source", null, citation));
 
         taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null));
-        Specimen predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", "TEST:1234"));
+        Specimen predatorSpecimen = nodeFactory.createSpecimen(study, human());
         taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", null));
-        Specimen preySpecimen6 = nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus", null));
+        Specimen preySpecimen6 = nodeFactory.createSpecimen(study, dog());
         predatorSpecimen.interactsWith(preySpecimen6, InteractType.ATE);
-        Specimen preySpecimen5 = nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus", null));
+        Specimen preySpecimen5 = nodeFactory.createSpecimen(study, dog());
         predatorSpecimen.interactsWith(preySpecimen5, InteractType.ATE);
         Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Caniz", null));
         predatorSpecimen.ate(preySpecimen);
 
         Specimen predatorSpecimen23 = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens2", null));
-        Specimen preySpecimen4 = nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus", null));
+        Specimen preySpecimen4 = nodeFactory.createSpecimen(study, dog());
         predatorSpecimen23.interactsWith(preySpecimen4, InteractType.ATE);
 
         Specimen predatorSpecimen22 = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens2", null));
-        Specimen preySpecimen3 = nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus", null));
+        Specimen preySpecimen3 = nodeFactory.createSpecimen(study, dog());
         predatorSpecimen22.interactsWith(preySpecimen3, InteractType.ATE);
 
         Study study2 = nodeFactory.getOrCreateStudy(new StudyImpl("my study2", "my source2", null, "citation study2"));
         Specimen predatorSpecimen21 = nodeFactory.createSpecimen(study2, new TaxonImpl("Homo sapiens2", null));
-        Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, new TaxonImpl("Canis lupus", null));
+        Specimen preySpecimen2 = nodeFactory.createSpecimen(study2, dog());
         predatorSpecimen21.interactsWith(preySpecimen2, InteractType.ATE);
 
         Specimen predatorSpecimen2 = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens3", PropertyAndValueDictionary.NO_MATCH));
-        Specimen preySpecimen1 = nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus", null));
+        Specimen preySpecimen1 = nodeFactory.createSpecimen(study, dog());
         predatorSpecimen2.interactsWith(preySpecimen1, InteractType.ATE);
         resolveNames();
 
@@ -94,24 +74,24 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         ));
     }
 
+    private Taxon dog() {
+        Taxon dog = new TaxonImpl("Canis lupus");
+        dog.setExternalId("canisLupusId");
+        dog.setPath("four five six");
+        return dog;
+    }
+
+    private Taxon human() {
+        TaxonImpl taxon = new TaxonImpl("Homo sapiens");
+        taxon.setExternalId("homoSapiensId");
+        taxon.setPath("one two three");
+        return taxon;
+    }
+
     @Test
     public void exportOnePredatorNoPathButWithSameAs() throws NodeFactoryException, IOException {
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) {
-                TaxonImpl taxon = new TaxonImpl();
-                TaxonUtil.mapToTaxon(properties, taxon);
-                String externalId = taxon.getExternalId() == null
-                        ? PropertyAndValueDictionary.NO_MATCH : taxon.getExternalId();
-                return TaxonUtil.taxonToMap(new TaxonImpl(taxon.getName(), externalId));
-            }
 
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
+        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
 
         String citation = "cite, study";
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("my, study", "my first, source", null, citation));

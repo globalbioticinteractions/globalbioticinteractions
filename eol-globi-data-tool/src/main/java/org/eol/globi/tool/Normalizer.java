@@ -28,11 +28,9 @@ import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.DatasetFinder;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EcoregionFinderProxy;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherFactory;
-import org.eol.globi.taxon.TaxonCacheService;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.taxon.ResolvingTaxonIndex;
-import org.eol.globi.taxon.TaxonNameCorrector;
+import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.HttpUtil;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
@@ -148,9 +146,9 @@ public class Normalizer {
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
             LOG.info("resolving names with taxon cache ...");
-            final TaxonCacheService enricher = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
+            final TaxonCacheService taxonCacheService = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
             try {
-                ResolvingTaxonIndex index = new ResolvingTaxonIndex(enricher, taxonName -> taxonName, graphService);
+                ResolvingTaxonIndex index = new ResolvingTaxonIndex(taxonCacheService, taxonName -> taxonName, graphService);
                 index.setIndexResolvedTaxaOnly(true);
 
                 TaxonFilter taxonCacheFilter = new TaxonFilter() {
@@ -166,8 +164,15 @@ public class Normalizer {
                 };
 
                 new NameResolver(graphService, index, taxonCacheFilter).resolve();
+
+                LOG.info("adding same and similar terms for resolved taxa...");
+                List<Linker> linkers = new ArrayList<>();
+                linkers.add(new LinkerTermMatcher(graphService, taxonCacheService));
+                linkers.forEach(LinkUtil::doTimedLink);
+                LOG.info("adding same and similar terms for resolved taxa done.");
+
             } finally {
-                enricher.shutdown();
+                taxonCacheService.shutdown();
             }
             LOG.info("resolving names with taxon cache done.");
         } else {
@@ -175,22 +180,14 @@ public class Normalizer {
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-            final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
-            PropertyEnricher taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
-            try {
-                new NameResolver(graphService, new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, graphService)).resolve();
-                new TaxonInteractionIndexer(graphService).index();
-            } finally {
-                taxonEnricher.shutdown();
-            }
+            new NameResolver(graphService, new NonResolvingTaxonIndex(graphService)).resolve();
+            new TaxonInteractionIndexer(graphService).index();
         } else {
             LOG.info("skipping taxa resolving ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
             List<Linker> linkers = new ArrayList<>();
-            linkers.add(new LinkerTermMatcher(graphService));
-            appendOpenTreeTaxonLinker(graphService, linkers);
             linkers.add(new LinkerTaxonIndex(graphService));
             linkers.forEach(LinkUtil::doTimedLink);
         } else {
@@ -237,7 +234,7 @@ public class Normalizer {
         factory.setDoiResolver(new DOIResolverImpl());
         try {
             CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
-            DatasetFinder finder =  new DatasetFinderLocal(cacheDir, cacheFactory);
+            DatasetFinder finder = new DatasetFinderLocal(cacheDir, cacheFactory);
             StudyImporter importer = new StudyImporterForGitHubData(new ParserFactoryLocal(), factory, finder);
             importer.setDataset(new DatasetLocal());
             importer.setLogger(new StudyImportLogger());

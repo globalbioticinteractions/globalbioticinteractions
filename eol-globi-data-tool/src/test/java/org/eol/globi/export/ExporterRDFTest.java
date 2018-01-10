@@ -40,20 +40,10 @@ public class ExporterRDFTest extends GraphDBTestCase {
         return new EnvoLookupService();
     }
 
-    @Override
-    protected TaxonIndex getOrCreateTaxonIndex() {
-        return getOrCreateTaxonIndex();
-    }
-
     @Test
     public void exportSPIRE() throws IOException, StudyImporterException {
         StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
-        importer.setFilter(new ImportFilter() {
-            @Override
-            public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 5;
-            }
-        });
+        importer.setFilter(recordNumber -> recordNumber < 5);
         importer.setDataset(new DatasetLocal());
         importStudy(importer);
 
