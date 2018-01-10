@@ -72,8 +72,7 @@ public class GraphExporterImpl implements GraphExporter {
         mkdir(baseDir, "taxa");
         exportNames(studies, baseDir, new ExportTaxonMap(), "taxa/taxonMap.tsv.gz");
         exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.tsv.gz");
-        exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.tsv");
-
+        //exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.tsv");
     }
 
     public void mkdir(String baseDir, String subdirName) throws StudyImporterException {

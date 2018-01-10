@@ -15,6 +15,7 @@
         <module>eol-globi-cache</module>
         <module>eol-globi-data-sources</module>
         <module>eol-globi-data-export</module>
+        <module>eol-globi-name-correct</module>
         <module>eol-globi-taxon-resolver</module>
         <module>eol-globi-geo</module>
         <module>eol-globi-neo4j</module>
