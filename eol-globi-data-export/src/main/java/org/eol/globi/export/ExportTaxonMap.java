@@ -21,11 +21,10 @@ public class ExportTaxonMap implements StudyExporter {
         String query = "START study = node:studies('*:*')\n" +
                 "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, specimen-[:CLASSIFIED_AS]->taxon " +
                 "WITH distinct(origTaxon.name) as origName, origTaxon.externalId? as origId, taxon " +
-                "MATCH taxon-[mapType?:SIMILAR_TO|SAME_AS*0..1]->linkedTaxon " +
+                "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
                 "WHERE has(linkedTaxon.path) " +
                 "RETURN origId as providedTaxonId" +
                 ", origName as providedTaxonName" +
-                ", collect(mapType) as mappingType" +
                 ", linkedTaxon.externalId? as resolvedTaxonId" +
                 ", linkedTaxon.name? as resolvedTaxonName";
 
