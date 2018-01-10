@@ -1,9 +1,21 @@
 package org.eol.globi.service;
 
-import org.eol.globi.taxon.*;
+import org.eol.globi.taxon.AtlasOfLivingAustraliaService;
+import org.eol.globi.taxon.EOLService;
+import org.eol.globi.taxon.EnvoService;
+import org.eol.globi.taxon.FunctionalGroupService;
+import org.eol.globi.taxon.GBIFService;
+import org.eol.globi.taxon.GulfBaseService;
+import org.eol.globi.taxon.INaturalistTaxonService;
+import org.eol.globi.taxon.ITISService;
+import org.eol.globi.taxon.NBNService;
+import org.eol.globi.taxon.NCBIService;
+import org.eol.globi.taxon.NODCTaxonService;
+import org.eol.globi.taxon.TaxonEnricherImpl;
+import org.eol.globi.taxon.TermMatcher;
+import org.eol.globi.taxon.WoRMSService;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PropertyEnricherFactory {
     public static PropertyEnricher createTaxonEnricher() {
