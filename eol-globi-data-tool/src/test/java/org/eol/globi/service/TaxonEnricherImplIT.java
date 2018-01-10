@@ -43,7 +43,7 @@ public class TaxonEnricherImplIT extends GraphDBTestCase {
 
     @Override
     protected TaxonIndex getOrCreateTaxonIndex() {
-        return super.getOrCreateTaxonIndex(taxonEnricher);
+        return getOrCreateTaxonIndex();
     }
 
     @Test

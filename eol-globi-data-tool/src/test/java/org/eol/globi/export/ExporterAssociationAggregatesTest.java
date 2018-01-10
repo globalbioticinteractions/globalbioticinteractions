@@ -14,6 +14,7 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,25 +30,15 @@ import static org.junit.Assert.assertThat;
 
 public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
+    private Taxon setPathAndId(TaxonImpl taxon) {
+        taxon.setExternalId(taxon.getName() + "id");
+        taxon.setPath(taxon.getName() + "path");
+        return taxon;
+    }
+
     @Before
     public void setEnricher() {
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
-
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                Taxon taxon = new TaxonImpl();
-                TaxonUtil.mapToTaxon(properties, taxon);
-                taxon.setExternalId(taxon.getName() + "id");
-                taxon.setPath(taxon.getName() + "path");
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
+        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
     }
 
     @Test
@@ -96,13 +87,14 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
-        Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", null));
+        Specimen specimen = nodeFactory.createSpecimen(myStudy, setPathAndId(new TaxonImpl("Homo sapiens", null)));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new TermImpl("GlOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new TermImpl("GlOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new TermImpl("GLOBI:BONE", "BONE"));
         nodeFactory.setUnixEpochProperty(specimen, new Date(ExportTestUtil.utcTestTime()));
-        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Canis lupus", null));
+        TaxonImpl taxon = new TaxonImpl("Canis lupus", null);
+        Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, setPathAndId(taxon));
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
         specimen.ate(otherSpecimen);

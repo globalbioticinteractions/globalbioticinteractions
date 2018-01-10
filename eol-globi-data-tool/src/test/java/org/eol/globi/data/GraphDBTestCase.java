@@ -10,10 +10,9 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinder;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetFinderGitHubArchiveMaster;
-import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
@@ -65,15 +64,7 @@ public abstract class GraphDBTestCase {
 
     protected TaxonIndex getOrCreateTaxonIndex() {
         if (taxonIndex == null) {
-            taxonIndex = getOrCreateTaxonIndex(new PassThroughEnricher());
-        }
-        return taxonIndex;
-    }
-
-    protected TaxonIndex getOrCreateTaxonIndex(PropertyEnricher enricher) {
-        if (taxonIndex == null) {
-            taxonIndex = new ResolvingTaxonIndex(enricher,
-                    new PassThroughCorrectionService(), getGraphDb());
+            taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
         }
         return taxonIndex;
     }

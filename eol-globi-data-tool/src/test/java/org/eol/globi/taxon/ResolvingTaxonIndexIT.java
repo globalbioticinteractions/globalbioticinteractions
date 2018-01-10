@@ -25,7 +25,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class TaxonServiceImplIT extends GraphDBTestCase {
+public class ResolvingTaxonIndexIT extends GraphDBTestCase {
 
     private ResolvingTaxonIndex taxonService;
     private static PropertyEnricher taxonEnricher = null;

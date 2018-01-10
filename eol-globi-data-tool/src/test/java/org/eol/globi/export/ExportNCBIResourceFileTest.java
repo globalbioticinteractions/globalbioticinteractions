@@ -131,18 +131,7 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
 
     @Before
     public void init() throws NodeFactoryException {
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) {
-                return properties;
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
+        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
         nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens", TaxonomyProvider.NCBI.getIdPrefix() + "9606");
         taxon.setPath("some path");

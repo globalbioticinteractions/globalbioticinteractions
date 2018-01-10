@@ -12,6 +12,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.junit.Test;
 
 import java.io.File;
@@ -28,30 +29,13 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
 
     @Test
     public void writeSiteMapWithNames() throws StudyImporterException, IOException {
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) {
-                Taxon taxon = new TaxonImpl();
-                TaxonUtil.mapToTaxon(properties, taxon);
-                if ("Homo sapiens".equals(taxon.getName())) {
-                    taxon.setExternalId("homoSapiensId");
-                    taxon.setPath("one two three");
-                } else if ("Canis lupus".equals(taxon.getName())) {
-                    taxon.setExternalId("canisLupusId");
-                    taxon.setPath("four five six");
-                }
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
+        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation 123"));
-        final Specimen human = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", null));
-        final Specimen dog = nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", null));
+        TaxonImpl homoSapiens = new TaxonImpl("Homo sapiens", "homoSapiensId");
+        homoSapiens.setPath("one two three");
+        final Specimen human = nodeFactory.createSpecimen(study, homoSapiens);
+        TaxonImpl dogTaxon = new TaxonImpl("Canis familiaris", null);
+        final Specimen dog = nodeFactory.createSpecimen(study, dogTaxon);
         human.ate(dog);
         resolveNames();
 

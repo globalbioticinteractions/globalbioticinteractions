@@ -2,20 +2,15 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.PassThroughCorrectionService;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -144,30 +139,18 @@ public class LinkerGlobalNamesTest extends GraphDBTestCase {
 
     }
 
+    private Taxon addProps(Taxon taxon) {
+        taxon.setPath("Animalia | Insecta | Lestes");
+        taxon.setPathNames("kingdom | class | genus");
+        taxon.setRank("genus");
+        taxon.setExternalId("test:123");
+        return taxon;
+    }
+
     @Test
     public void lestesExcludeSuspectedHomonyms() throws NodeFactoryException, PropertyEnricherException {
-        final PropertyEnricher genus = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                return new HashMap<String, String>(properties) {
-                    {
-                        put(PropertyAndValueDictionary.PATH, "Animalia | Insecta | Lestes");
-                        put(PropertyAndValueDictionary.PATH_NAMES, "kingdom | class | genus");
-                        put(PropertyAndValueDictionary.RANK, "genus");
-                        put(PropertyAndValueDictionary.EXTERNAL_ID, "test:123");
-
-                    }
-                };
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonIndex = new ResolvingTaxonIndex(genus,
-                new PassThroughCorrectionService(), getGraphDb());
-        Taxon lestes = taxonIndex.getOrCreateTaxon(new TaxonImpl("Lestes", null));
+        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
+        Taxon lestes = taxonIndex.getOrCreateTaxon(addProps(new TaxonImpl("Lestes", null)));
         assertThat(lestes.getPath(), is("Animalia | Insecta | Lestes"));
         new LinkerGlobalNames(getGraphDb()).link();
         Collection<String> ids = LinkerTestUtil.assertHasOther("Lestes", 7, taxonIndex, RelTypes.SAME_AS);

@@ -25,33 +25,17 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) {
-                Taxon taxon = new TaxonImpl();
-                TaxonUtil.mapToTaxon(properties, taxon);
-                if ("Homo sapiens".equals(taxon.getName())) {
-                    taxon.setExternalId("homoSapiensId");
-                    taxon.setPath("one\ttwo three");
-                } else if ("Canis lupus".equals(taxon.getName())) {
-                    taxon.setExternalId("canisLupusId");
-                    taxon.setPath("four five six");
-                }
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
+        taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens");
+        taxon.setExternalId("homoSapiensId");
+        taxon.setPath("one\ttwo three");
         taxon.setExternalUrl("http://some/thing");
         taxon.setThumbnailUrl("http://thing/some");
         Taxon human = taxonIndex.getOrCreateTaxon(taxon);
-        taxonIndex.getOrCreateTaxon(new TaxonImpl("Canis lupus", null));
+        TaxonImpl taxon1 = new TaxonImpl("Canis lupus", "canisLupusId");
+        taxon1.setPath("four five six");
+        taxonIndex.getOrCreateTaxon(taxon1);
         NodeUtil.connectTaxa(new TaxonImpl("Alternate Homo sapiens no path", "alt:123"), (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
         final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
         altTaxonWithPath.setPath("some path here");

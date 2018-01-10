@@ -9,14 +9,9 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.PropertyEnricherFactory;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
-import org.eol.globi.taxon.TaxonNameCorrector;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.NodeUtil;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -25,22 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
 
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
-
-    private PropertyEnricher taxonEnricher;
-
-    @Before
-    public void init() {
-        taxonEnricher = PropertyEnricherFactory.createTaxonEnricher();
-    }
-
-    @After
-    public void shutdown() {
-        taxonEnricher.shutdown();
-    }
 
     @Test
     public void buildTaxonInterIndex() throws NodeFactoryException, PropertyEnricherException {
@@ -55,8 +40,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("WORMS:2"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
-        new NameResolver(getGraphDb(), new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
+        new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb())).resolve();
         new TaxonInteractionIndexer(getGraphDb()).index();
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
@@ -73,7 +57,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
         }
         assertThat(humanFood.size(), is(4));
-        assertThat(humanFood, hasItems("Ariopsis felis", "Animalia"));
+        assertThat(humanFood, hasItems("Arius felis", "Canis lupus"));
         assertThat(counts, hasItems(10L, 1L));
         assertThat(labels, hasItems("eats"));
     }
@@ -91,9 +75,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        final TaxonNameCorrector taxonNameCorrector = new TaxonNameCorrector();
-        new NameResolver(getGraphDb(), new ResolvingTaxonIndex(taxonEnricher, taxonNameCorrector, getGraphDb())).resolve();
-        //new TaxonInteractionIndexer(getGraphDb()).link();
+        new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb())).resolve();
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));

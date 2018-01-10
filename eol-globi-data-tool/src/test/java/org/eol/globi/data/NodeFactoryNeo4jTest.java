@@ -10,8 +10,7 @@ import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.CorrectionService;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -357,14 +356,8 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     protected void initTaxonService() {
-        CorrectionService correctionService = new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return "mickey corrected";
-            }
-        };
-        this.taxonIndex = new ResolvingTaxonIndex(new PassThroughEnricher(),
-            correctionService, getGraphDb()
+        this.taxonIndex = new NonResolvingTaxonIndex(
+            getGraphDb()
         );
     }
 

@@ -12,12 +12,8 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EnvoLookupService;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -29,7 +25,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -47,21 +42,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
 
     @Override
     protected TaxonIndex getOrCreateTaxonIndex() {
-        return getOrCreateTaxonIndex(new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                Taxon taxon = TaxonUtil.mapToTaxon(properties);
-                taxon.setPath("one | two | " + taxon.getName());
-                taxon.setExternalId(TaxonomyProvider.ID_PREFIX_EOL + taxon.getName());
-                taxon.setExternalUrl("http://host/" + taxon.getName());
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        });
+        return getOrCreateTaxonIndex();
     }
 
     @Test

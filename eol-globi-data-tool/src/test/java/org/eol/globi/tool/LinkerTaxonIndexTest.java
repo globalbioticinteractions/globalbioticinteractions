@@ -12,19 +12,14 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.taxon.TaxonFuzzySearchIndex;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.taxon.ResolvingTaxonIndexTest;
+import org.eol.globi.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-
-import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -71,25 +66,8 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void findByStringWithWhitespaces() throws NodeFactoryException {
-        PropertyEnricher enricher = new PropertyEnricher() {
-            @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                Taxon taxon = TaxonUtil.mapToTaxon(properties);
-                taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
-                taxon.setExternalId("anExternalId");
-                taxon.setCommonNames(ResolvingTaxonIndexTest.EXPECTED_COMMON_NAMES);
-                taxon.setName("this is the actual name");
-                return TaxonUtil.taxonToMap(taxon);
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        };
-        ResolvingTaxonIndex taxonService = ResolvingTaxonIndexTest.createTaxonService(getGraphDb());
-        taxonService.setEnricher(enricher);
-        taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
+        NonResolvingTaxonIndex taxonService = new NonResolvingTaxonIndex(getGraphDb());
+        taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         new LinkerTaxonIndex(getGraphDb()).link();
 
@@ -117,6 +95,14 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         // queries are case sensitive . . . should all be lower cased.
         hits = index.query("name:HMO~ AND name:saPIENS~");
         assertThat(hits.size(), is(0));
+    }
+
+    private Taxon setTaxonProps(Taxon taxon) {
+        taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
+        taxon.setExternalId("anExternalId");
+        taxon.setCommonNames(ResolvingTaxonIndexTest.EXPECTED_COMMON_NAMES);
+        taxon.setName("this is the actual name");
+        return taxon;
     }
 
     protected void assertSingleHit(String query) {

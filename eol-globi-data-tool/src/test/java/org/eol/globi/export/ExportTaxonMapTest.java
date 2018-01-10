@@ -47,11 +47,17 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens");
+        taxon.setExternalId("homoSapiensId");
+        taxon.setPath("one two three");
         taxon.setExternalUrl("http://some/thing");
         taxon.setThumbnailUrl("http://thing/some");
         nodeFactory.createSpecimen(study, taxon);
         Taxon human = taxonIndex.getOrCreateTaxon(taxon);
-        nodeFactory.createSpecimen(study, new TaxonImpl("Canis lupus"));
+        TaxonImpl dog = new TaxonImpl("Canis lupus");
+        dog.setExternalId("canisLupusId");
+        dog.setPath("four\tfive six");
+
+        nodeFactory.createSpecimen(study, dog);
         final TaxonImpl altTaxonWithPath = new TaxonImpl("Alternate Homo sapiens", "alt:123");
         altTaxonWithPath.setPath("some path here");
         NodeUtil.connectTaxa(altTaxonWithPath, (TaxonNode)human, getGraphDb(), RelTypes.SAME_AS);
@@ -62,9 +68,9 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         new ExportTaxonMap().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("providedTaxonId\tprovidedTaxonName\tresolvedTaxonId\tresolvedTaxonName" +
-                "\n\tHomo sapiens\thomoSapiensId\tHomo sapiens" +
-                "\n\tHomo sapiens\talt:123\tAlternate Homo sapiens" +
-                "\n\tCanis lupus\tcanisLupusId\tCanis lupus"));
+                "\nhomoSapiensId\tHomo sapiens\thomoSapiensId\tHomo sapiens" +
+                "\nhomoSapiensId\tHomo sapiens\talt:123\tAlternate Homo sapiens" +
+                "\ncanisLupusId\tCanis lupus\tcanisLupusId\tCanis lupus"));
     }
 
 }
