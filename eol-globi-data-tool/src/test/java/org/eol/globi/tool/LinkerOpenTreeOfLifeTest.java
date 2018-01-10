@@ -11,7 +11,6 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Test;
 
 import java.util.Collection;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -34,7 +33,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
         try {
             index = new OpenTreeTaxonIndex(getClass().getResource("taxonomy-small.tsv"));
             taxonIndex.getOrCreateTaxon(new TaxonImpl(name, null));
-            new LinkerGlobalNames(getGraphDb()).link();
+            new LinkerTermMatcher(getGraphDb()).link();
             new LinkerOpenTreeOfLife(getGraphDb(), index).link();
             Collection<String> externalIds = LinkerTestUtil.assertHasOther(name, expectedCount, taxonIndex, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));

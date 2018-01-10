@@ -25,23 +25,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LinkerGlobalNames implements Linker {
+public class LinkerTermMatcher implements Linker {
 
     private static final int BATCH_SIZE = 100;
 
-    private static final Log LOG = LogFactory.getLog(LinkerGlobalNames.class);
+    private static final Log LOG = LogFactory.getLog(LinkerTermMatcher.class);
     private final GraphDatabaseService graphDb;
+    private final TermMatcher termMatcher;
 
-    public LinkerGlobalNames(GraphDatabaseService graphDb) {
+    public LinkerTermMatcher(GraphDatabaseService graphDb) {
+        this(graphDb, new GlobalNamesService(Arrays.asList(GlobalNamesSources.values())));
+    }
+
+    public LinkerTermMatcher(GraphDatabaseService graphDb, TermMatcher termMatcher) {
         this.graphDb = graphDb;
+        this.termMatcher = termMatcher;
     }
 
     @Override
     public void link() {
-        GlobalNamesSources[] sources = GlobalNamesSources.values();
-        List<GlobalNamesSources> desiredSources = Arrays.asList(sources);
-        GlobalNamesService globalNamesService = new GlobalNamesService(desiredSources);
-
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");
 
@@ -49,16 +51,16 @@ public class LinkerGlobalNames implements Linker {
         int counter = 1;
         for (Node hit : hits) {
             if (counter % BATCH_SIZE == 0) {
-                handleBatch(graphDb, globalNamesService, nodeMap, counter, desiredSources);
+                handleBatch(graphDb, termMatcher, nodeMap, counter);
             }
             TaxonNode node = new TaxonNode(hit);
             nodeMap.put(node.getNodeID(), node);
             counter++;
         }
-        handleBatch(graphDb, globalNamesService, nodeMap, counter, desiredSources);
+        handleBatch(graphDb, termMatcher, nodeMap, counter);
     }
 
-    private void handleBatch(final GraphDatabaseService graphDb, TermMatcher termMatcher, final Map<Long, TaxonNode> nodeMap, int counter, List<GlobalNamesSources> desiredSources) {
+    private void handleBatch(final GraphDatabaseService graphDb, TermMatcher termMatcher, final Map<Long, TaxonNode> nodeMap, int counter) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String msgPrefix = "batch #" + counter / BATCH_SIZE;

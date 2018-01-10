@@ -53,7 +53,7 @@ public class Indexer {
                     , freshGraphService);
             indexUsingExternalIds(executionEngine, taxonIndex);
             indexUsingNamesWithNoExternalIds(executionEngine, taxonIndex);
-            new LinkerGlobalNames(freshGraphService).link();
+            new LinkerTermMatcher(freshGraphService).link();
 
             freshGraphService.shutdown();
             previousGraphService.shutdown();

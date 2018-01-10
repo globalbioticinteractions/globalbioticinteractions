@@ -189,7 +189,7 @@ public class Normalizer {
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
             List<Linker> linkers = new ArrayList<>();
-            linkers.add(new LinkerGlobalNames(graphService));
+            linkers.add(new LinkerTermMatcher(graphService));
             appendOpenTreeTaxonLinker(graphService, linkers);
             linkers.add(new LinkerTaxonIndex(graphService));
             linkers.forEach(LinkUtil::doTimedLink);
