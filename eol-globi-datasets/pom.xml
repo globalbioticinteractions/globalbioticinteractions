@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <globi.tool.version>0.6-SNAPSHOT</globi.tool.version>
+        <globi.neo4j.index.version>0.6-SNAPSHOT</globi.neo4j.index.version>
         <globi.taxa.version>0.1</globi.taxa.version>
         <globi.tsv.version>1.0-SNAPSHOT</globi.tsv.version>
         <github.client.id>specified on commandline</github.client.id>
@@ -65,7 +65,7 @@
                         </argument>
                         <argument>-classpath</argument>
                         <argument>
-                            ${project.build.directory}/eol-globi-data-tool-${globi.tool.version}-jar-with-dependencies.jar
+                            ${project.build.directory}/eol-globi-neo4j-index-${globi.neo4j.index.version}-jar-with-dependencies.jar
                         </argument>
                         <argument>org.eol.globi.tool.Normalizer</argument>
                         <argument>${normalizer.arg.1}</argument>
@@ -137,8 +137,8 @@
                                     <artifactItems>
                                         <artifactItem>
                                             <groupId>${project.groupId}</groupId>
-                                            <artifactId>eol-globi-data-tool</artifactId>
-                                            <version>${globi.tool.version}</version>
+                                            <artifactId>eol-globi-neo4j-index</artifactId>
+                                            <version>${globi.neo4j.index.version}</version>
                                             <classifier>jar-with-dependencies</classifier>
                                             <outputDirectory>${project.build.directory}</outputDirectory>
                                         </artifactItem>
@@ -241,8 +241,8 @@
                                     <artifactItems>
                                         <artifactItem>
                                             <groupId>${project.groupId}</groupId>
-                                            <artifactId>eol-globi-data-tool</artifactId>
-                                            <version>${globi.tool.version}</version>
+                                            <artifactId>eol-globi-neo4j-index</artifactId>
+                                            <version>${globi.neo4j.index.version}</version>
                                             <classifier>jar-with-dependencies</classifier>
                                             <outputDirectory>${project.build.directory}</outputDirectory>
                                         </artifactItem>
@@ -354,8 +354,8 @@
                                     <artifactItems>
                                         <artifactItem>
                                             <groupId>${project.groupId}</groupId>
-                                            <artifactId>eol-globi-data-tool</artifactId>
-                                            <version>${globi.tool.version}</version>
+                                            <artifactId>eol-globi-neo4j-index</artifactId>
+                                            <version>${globi.neo4j.index.version}</version>
                                             <classifier>jar-with-dependencies</classifier>
                                             <outputDirectory>${project.build.directory}</outputDirectory>
                                         </artifactItem>

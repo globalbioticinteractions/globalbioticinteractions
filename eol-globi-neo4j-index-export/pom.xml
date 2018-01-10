@@ -9,7 +9,7 @@
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>eol-globi-data-export</artifactId>
+    <artifactId>eol-globi-neo4j-index-export</artifactId>
     <name>EOL's Global Biotic Interaction Data Exporters</name>
 
     <dependencies>
