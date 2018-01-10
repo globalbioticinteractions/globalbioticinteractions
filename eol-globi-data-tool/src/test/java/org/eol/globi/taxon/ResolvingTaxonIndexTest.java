@@ -94,30 +94,6 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
     }
 
     @Test
-    public void ensureCorrectedIndexing() throws NodeFactoryException {
-        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        taxonService.setCorrector(new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                String corrected = taxonName;
-                if (!taxonName.endsWith("corrected")) {
-                    corrected = taxonName + " corrected";
-                }
-                return corrected;
-            }
-        });
-        this.taxonService = taxonService;
-        TaxonNode taxon = this.taxonService.getOrCreateTaxon(new TaxonImpl("bla"));
-        assertEquals("bla corrected", taxon.getName());
-
-        TaxonNode bla = this.taxonService.findTaxonByName("bla");
-        assertThat(bla.getName(), is("bla corrected"));
-
-        TaxonNode taxonMatch = this.taxonService.findTaxonByName("bla corrected");
-        assertThat(taxonMatch.getName(), is("bla corrected"));
-    }
-
-    @Test
     public void indexResolvedOnly() throws NodeFactoryException {
         TaxonNode unresolvedTaxon = getIndex().getOrCreateTaxon(new TaxonImpl("not resolved"));
         assertNotNull(unresolvedTaxon);
@@ -139,7 +115,7 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
                     public void shutdown() {
 
                     }
-                }, taxonName -> taxonName, getGraphDb());
+                }, getGraphDb());
     }
 
     public static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
@@ -157,7 +133,7 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
             public void shutdown() {
 
             }
-        }, taxonName -> taxonName, graphDb
+        }, graphDb
         );
     }
 

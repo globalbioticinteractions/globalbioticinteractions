@@ -1,6 +1,5 @@
 package org.eol.globi.taxon;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Taxon;
@@ -8,7 +7,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherFactory;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,34 +38,7 @@ public class ResolvingTaxonIndexIT extends GraphDBTestCase {
 
     @Before
     public void init() {
-        this.taxonService = new ResolvingTaxonIndex(taxonEnricher, new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return taxonName;
-            }
-        }, getGraphDb());
-    }
-
-    @Test
-    public void createTaxonFish() throws NodeFactoryException {
-        taxonService.setCorrector(new CorrectionService() {
-            @Override
-            public String correct(String taxonName) {
-                return StringUtils.equals("Fish", taxonName) ? "Actinopterygii" : taxonName;
-            }
-        });
-
-        Taxon taxon2 = new TaxonImpl("Fish", null);
-        taxon2.setPath(null);
-        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon2);
-        assertThat(taxon.getName(), is("Actinopterygii"));
-        Taxon taxon1 = new TaxonImpl("Fish", null);
-        taxon1.setPath(null);
-        taxon = taxonService.getOrCreateTaxon(taxon1);
-        assertThat(taxon.getName(), is("Actinopterygii"));
-
-        assertThat(taxonService.findTaxonByName("Fish"), is(Matchers.notNullValue()));
-        assertThat(taxonService.findCloseMatchesForTaxonName("Fish"), is(Matchers.notNullValue()));
+        this.taxonService = new ResolvingTaxonIndex(taxonEnricher, getGraphDb());
     }
 
     @Test

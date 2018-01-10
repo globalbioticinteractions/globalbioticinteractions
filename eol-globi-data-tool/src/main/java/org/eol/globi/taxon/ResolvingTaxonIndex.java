@@ -12,14 +12,12 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
-    private CorrectionService corrector;
     private PropertyEnricher enricher;
     private boolean indexResolvedOnly;
 
-    public ResolvingTaxonIndex(PropertyEnricher enricher, CorrectionService correctionService, GraphDatabaseService graphDbService) {
+    public ResolvingTaxonIndex(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
         super(graphDbService);
         this.enricher = enricher;
-        this.corrector = correctionService;
     }
 
     @Override
@@ -33,7 +31,6 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
 
     private TaxonNode createTaxon(final Taxon origTaxon) throws NodeFactoryException {
         Taxon taxon = TaxonUtil.copy(origTaxon);
-        taxon.setName(corrector.correct(origTaxon.getName()));
         return resolveAndIndex(origTaxon, taxon);
     }
 
@@ -70,10 +67,6 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
 
     public void setEnricher(PropertyEnricher enricher) {
         this.enricher = enricher;
-    }
-
-    public void setCorrector(CorrectionService corrector) {
-        this.corrector = corrector;
     }
 
     public void setIndexResolvedTaxaOnly(boolean indexResolvedOnly) {
