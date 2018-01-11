@@ -27,38 +27,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.eol.globi.taxon.NameTool</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Implementation-Version>${project.version}@${mvngit.commit.sha}</Implementation-Version>
-                            <Git-Commit-Sha>${mvngit.commit.sha}</Git-Commit-Sha>
-                            <Git-Commit-Date>${mvngit.commit.committer.date}</Git-Commit-Date>
-                            <Project-Version>${project.version}</Project-Version>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-uber-jar</id>
-                        <!-- ensure that this doesn't run on travis -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
