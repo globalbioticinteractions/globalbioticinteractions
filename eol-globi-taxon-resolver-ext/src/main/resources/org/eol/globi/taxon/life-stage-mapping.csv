@@ -1,0 +1,62 @@
+original_id,original_name,corrected_id,corrected_name
+GOMEXSI:adult,adult,UBERON:0000113,post-juvenile adult stage
+GOMEXSI:adults,adults,UBERON:0000113,post-juvenile adult stage
+GOMEXSI:a,a,UBERON:0000113,post-juvenile adult stage
+GOMEXSI:juvenile,juvenile,UBERON:0000112,juvenile stage
+GOMEXSI:juvenile?,juvenile,UBERON:0000112,juvenile stage
+GOMEXSI:j,j,UBERON:0000112,juvenile stage
+GOMEXSI:nd,nd,GLOBI:UNKNOWN,UNKOWN
+GOMEXSI:na,na,GLOBI:UNKNOWN,UNKOWN
+GOMEXSI:zoea,zoea,UBERON:0000069,larval stage
+GOMEXSI:larvae,larvae,UBERON:0000069,larval stage
+GOMEXSI:larval,larval,UBERON:0000069,larval stage
+GOMEXSI:post larvae,post larvae,GLOBI:POSTLARVA,POSTLARVA
+GOMEXSI:post-larvae,post-larvae,GLOBI:POSTLARVA,GLOBI:POSTLARVA
+GOMEXSI:l/pl,l/pl,GLOBI:LARVA_OR_POSTLARVA,LARVA_OR_POSTLARVA
+GOMEXSI:larvae/post larvae,larvae/post larvae,GLOBI:LARVA_OR_POSTLARVA,LARVA_OR_POSTLARVA
+GOMEXSI:megalopa,megalopa,GLOBI:MEGALOPA,MEGALOPA
+GOMEXSI:cypris,cypris,GLOBI:CYPRIS,CYPRIS
+GOMEXSI:cyp,cyp,GLOBI:CYPRIS,CYPRIS
+GOMEXSI:egg,egg,UBERON:0007379,egg
+GOMEXSI:eggs,eggs,UBERON:0007379,egg
+GOMEXSI:nauplii,nauplii,UBERON:0014406,nauplius stage
+GOMEXSI:copepodite,copepodite,GLOBI:COPEPODITE,COPEPODITE
+GOMEXSI:copepodites,copepodites,GLOBI:COPEPODITE,COPEPODITE
+GOMEXSI:copepedites,copepedites,GLOBI:COPEPODITE,COPEPODITE
+GOMEXSI:glaucothoe,glaucothoe,GLOBI:GLAUCOTHOE,GLAUCOTHOE
+GOMEXSI:veligers,veligers,GLOBI:VELIGER,VELIGER
+GOMEXSI:newborn,newborn,GLOBI:NEWBORN,NEWBORN
+BIO_INFO:mycelium,mycelium,GLOBI:MYCELIUM,MYCELIUM
+BIO_INFO:larva,larva,UBERON:0000069,larval stage
+BIO_INFO:aecium,aecium,GLOBI:AECIUM,AECIUM
+BIO_INFO:pycnium,pycnium,GLOBI:PYCNIUM,PYCNIUM
+BIO_INFO:sporangium,sporangium,GLOBI:SPORANGIUM,SPORANGIUM
+BIO_INFO:uredium,uredium,GLOBI:UREDIUM,UREDIUM
+BIO_INFO:caterpillar,caterpillar,UBERON:0000069,larval stage
+BIO_INFO:adult,adult,UBERON:0000113,post-juvenile adult stage
+BIO_INFO:egg,egg,UBERON:0007379,egg
+BIO_INFO:nymph,nymph,UBERON:0014405,nymph stage
+BIO_INFO:telium,telium,GLOBI:TELIUM,TELIUM
+BIO_INFO:anamorph,anamorph,GLOBI:ANAMORPH,ANAMORPH
+BARNES:postlarva,postlarva,GLOBI:POSTLARVA,POSTLARVA
+BARNES:postlarva/juvenile,postlarva/juvenile,GLOBI:POSTLARVA_OR_JUVENILE,POSTLARVA_OR_JUVENILE
+BARNES:larva / juvenile,larva / juvenile,GLOBI:LARVA_OR_JUVENILE,LARVA_OR_JUVENILE
+BARNES:larva,larva,UBERON:0000069,larval stage
+BARNES:juvenile,juvenile,UBERON:0000112,juvenile stage
+BARNES:adult,adult,UBERON:0000113,post-juvenile adult stage
+BARNES:Adult,Adult,UBERON:0000113,post-juvenile adult stage
+BAREMORE:Juv,Juv,UBERON:0000112,juvenile stage
+BAREMORE:Mat,Mat,UBERON:0000113,post-juvenile adult stage
+BAREMORE:Mat?,Mat?,UBERON:0000113,post-juvenile adult stage
+BAREMORE:Trans,Trans,GLOBI:TRANS,TRANS
+BAREMORE:Trans/Juv,Trans/Juv,GLOBI:TRANS_OR_JUVENILE,TRANS_OR_JUVENILE
+BAREMORE:Yoy/Juv,Yoy/Juv,GLOBI:YOUNG_OF_THE_YEAR_OR_JUVENILE,YOUNG_OF_THE_YEAR_OR_JUVENILE
+BAREMORE:Yoy,Yoy,GLOBI:YOUNG_OF_THE_YEAR,YOUNG_OF_THE_YEAR
+BAREMORE:YOY,YOY,GLOBI:YOUNG_OF_THE_YEAR,YOUNG_OF_THE_YEAR
+BAREMORE:Neo,Neo,GLOBI:NEO,NEO
+,calyptopis,GLOBI:calyptopis,calyptopis
+,furcilia,GLOBI:calyptopis,calyptopis
+,medusae,GLOBI:medusae,medusae
+,nauplius,UBERON:0014406,nauplius stage
+,pupae,UBERON:0000070,pupal stage
+,seed,GLOBI:seed,seed

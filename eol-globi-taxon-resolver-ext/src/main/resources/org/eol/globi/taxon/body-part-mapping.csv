@@ -1,0 +1,41 @@
+original_id,original_name,corrected_id,corrected_name
+GOMEXSI:NA,NA,GLOBI:UNKNOWN,UNKNOWN
+GOMEXSI:parts,parts,GLOBI:UNKNOWN,UNKNOWN
+GOMEXSI:pieces,parts,GLOBI:UNKNOWN,UNKNOWN
+GOMEXSI:fragments,fragments,GLOBI:UNKNOWN,UNKNOWN
+GOMEXSI:scales,scales,UBERON:0002542,scale
+GOMEXSI:scale(s),scale(s),UBERON:0002542,scale
+GOMEXSI:bone,bone,UBERON:0002481,bone tissue
+GOMEXSI:tube,tube,GLOBI:TUBE,TUBE
+GOMEXSI:spine,spine,GLOBI:SPINE,SPINE
+GOMEXSI:pollen_grain,pollen grain,GLOBI:POLLEN_GRAIN,POLLEN_GRAIN
+GOMEXSI:opercula,opercula,GLOBI:OPERCULUM,OPERCULUM
+GOMEXSI:caudal_spines,caudal_spines,GLOBI:CAUDAL_SPINE,CAUDAL_SPINE
+GOMEXSI:shell,shell,UBERON:0006612,shell
+GOMEXSI:needles,needles,GLOBI:NEEDLE,NEEDLE
+GOMEXSI:seed_pod,seed pod,GLOBI:SEED_POD,SEED_POD
+GOMEXSI:kernels,kernels,GLOBI:KERNEL,KERNEL
+GOMEXSI:wood,wood,GLOBI:WOOD,WOOD
+GOMEXSI:feather,feather,UBERON:0000022,feather
+,Pharyngeal tooth,UBERON:2001647,pharyngeal tooth plate
+,air bladder,GLOBI:air_bladder,air bladder
+,beak,UBERON:0005094,beak
+,carapace,UBERON:0008275,carapace
+,claw,GLOBI:claw,claw
+,claws,GLOBI:claw,claw
+,ctenoid scale,UBERON:2002273,ctenoid scale
+,eyeball,UBERON:0010230,eyeball of camera-type eye
+,fin ray,UBERON:4400005,fin ray
+,house,GLOBI:house,house
+,legs,UBERON_0000978,leg
+,leg,UBERON_0000978,leg
+,operculum,GLOBI:operculum,operculum
+,otolith,UBERON:0002280,otolith
+,otoliths,UBERON:0002280,otolith
+,root,GLOBI:root,root
+,skull,UBERON:0003129,skull
+,telson,GLOBI:telson,telson
+,tissue,UBERON:0000479,tissue
+,torso,GLOBI:torso,torso
+,wings,UBERON:0000023,wing
+,wing,UBERON:0000023,wing
