@@ -1,24 +1,12 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang.StringUtils;
-import org.eol.globi.domain.Environment;
-import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationImpl;
-import org.eol.globi.domain.NodeBacked;
-import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
