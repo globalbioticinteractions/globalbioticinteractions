@@ -158,8 +158,7 @@ public class Normalizer {
                     @Override
                     public boolean shouldInclude(Taxon taxon) {
                         return taxon != null
-                                && knownBadNameFilter.shouldInclude(taxon)
-                                && (!StringUtils.startsWith(taxon.getExternalId(), TaxonomyProvider.INATURALIST_TAXON.getIdPrefix()));
+                                && knownBadNameFilter.shouldInclude(taxon);
                     }
                 };
 
