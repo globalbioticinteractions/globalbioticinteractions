@@ -77,7 +77,7 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_ITIS, "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=");
             put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "FB:SpecCode:", "http://fishbase.org/summary/");
             put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "SLB:SpecCode:", "http://sealifebase.org/Summary/SpeciesSummary.php?id=");
-            put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "http://inaturalist.org/taxa/");
+            put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
         }};
     }
 
