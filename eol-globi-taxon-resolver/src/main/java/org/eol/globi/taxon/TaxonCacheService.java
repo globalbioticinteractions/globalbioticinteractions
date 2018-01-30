@@ -213,8 +213,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         for (Term term : terms) {
             String nodeIdAndName = term.getName();
             String[] split = StringUtils.split(nodeIdAndName, '|');
-            String name = split.length > 1 ? split[1] : split[0];
-            Long id = (split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
+            String name = (split != null && split.length > 1) ? split[1] : nodeIdAndName;
+            Long id = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
             if (!resolveName(termMatchListener, term.getId(), id)) {
                 if (StringUtils.isNotBlank(nodeIdAndName)) {
                     if (!resolveName(termMatchListener, name, id)) {
