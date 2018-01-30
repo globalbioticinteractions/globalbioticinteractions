@@ -18,7 +18,6 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForGitHubData;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;

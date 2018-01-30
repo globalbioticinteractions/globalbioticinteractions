@@ -2,6 +2,7 @@ package org.eol.globi.taxon;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -201,7 +202,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     @Override
     public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
-        Stream<Term> namesAndIds = names.stream().flatMap(name -> Stream.of(new TermImpl(null, name)));
+        Stream<Term> namesAndIds = names.stream()
+                .flatMap(name -> Stream.of(new TermImpl(null, name)));
         findTerms(namesAndIds.collect(Collectors.toList()), termMatchListener);
     }
 
@@ -209,15 +211,21 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
         lazyInit();
         for (Term term : terms) {
-            if (!resolveName(termMatchListener, term.getId())) {
-                if (!resolveName(termMatchListener, term.getName())) {
-                    termMatchListener.foundTaxonForName(null, term.getName(), new TaxonImpl(term.getName(), term.getId()), NameType.NONE);
+            String nodeIdAndName = term.getName();
+            String[] split = StringUtils.split(nodeIdAndName, '|');
+            String name = split.length > 1 ? split[1] : split[0];
+            Long id = (split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
+            if (!resolveName(termMatchListener, term.getId(), id)) {
+                if (StringUtils.isNotBlank(nodeIdAndName)) {
+                    if (!resolveName(termMatchListener, name, id)) {
+                        termMatchListener.foundTaxonForName(id, name, new TaxonImpl(name, term.getId()), NameType.NONE);
+                    }
                 }
             }
         }
     }
 
-    private boolean resolveName(TermMatchListener termMatchListener, String name) throws PropertyEnricherException {
+    private boolean resolveName(TermMatchListener termMatchListener, String name, Long id) throws PropertyEnricherException {
         boolean hasResolved = false;
         if (StringUtils.isNotBlank(name)) {
             Taxon[] ids = lookupTerm(name);
@@ -229,7 +237,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                     Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
-                        termMatchListener.foundTaxonForName(null, name, resolvedTaxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForName(id, name, resolvedTaxon, NameType.SAME_AS);
                         hasResolved = true;
                     }
                 }

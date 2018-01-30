@@ -7,6 +7,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.taxon.TaxonCacheService;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -56,6 +57,18 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
 
         LinkerTestUtil.assertHasOther("Gilippus hostilis", 3, taxonIndex, RelTypes.SAME_AS);
         LinkerTestUtil.assertHasOther("Euander lacertosus", 3, taxonIndex, RelTypes.SAME_AS);
+
+    }
+
+    @Test
+    public void homoSapiensCachedTaxa() throws NodeFactoryException, PropertyEnricherException {
+
+        taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null));
+
+        TaxonCacheService taxonCacheService = new TaxonCacheService("classpath:/org/eol/globi/taxon/taxonCache.tsv", "classpath:/org/eol/globi/taxon/taxonMap.tsv");
+        new LinkerTermMatcher(getGraphDb(), taxonCacheService).link();
+
+        LinkerTestUtil.assertHasOther("Homo sapiens", 2, taxonIndex, RelTypes.SAME_AS);
 
     }
 

@@ -34,8 +34,8 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                assertNotNull(id);
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                assertNotNull(nodeId);
                 foundTaxa.add(taxon);
             }
         });
@@ -49,8 +49,8 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Donald duck", "2|Mickey mouse"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                assertNotNull(id);
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                assertNotNull(nodeId);
                 assertThat(nameType, is(NameType.NONE));
                 foundTaxa.add(taxon);
             }
@@ -65,8 +65,8 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("1|Prunus persica L."), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                assertNotNull(id);
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                assertNotNull(nodeId);
                 foundTaxa.add(taxon);
             }
         });
@@ -81,8 +81,8 @@ public class GlobalNamesServiceTest {
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("4594386|Epichloë"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                assertNotNull(id);
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                assertNotNull(nodeId);
                 foundTaxa.add(taxon);
             }
         });
@@ -178,8 +178,8 @@ public class GlobalNamesServiceTest {
         try {
             service.findTermsForNames(names, new TermMatchListener() {
                 @Override
-                public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                    assertNotNull(id);
+                public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                    assertNotNull(nodeId);
                     foundTaxa.add(taxon);
                 }
             });
@@ -211,8 +211,8 @@ public class GlobalNamesServiceTest {
         try {
             service.findTermsForNames(names, new TermMatchListener() {
                 @Override
-                public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
-                    assertNotNull(id);
+                public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                    assertNotNull(nodeId);
                     foundTaxa.add(taxon);
                 }
             });
@@ -397,7 +397,7 @@ public class GlobalNamesServiceTest {
         final List<Taxon> taxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("Homo sapiens"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
             }
         });

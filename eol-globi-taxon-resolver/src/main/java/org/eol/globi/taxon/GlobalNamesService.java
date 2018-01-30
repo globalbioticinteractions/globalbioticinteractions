@@ -68,7 +68,7 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
         final List<Taxon> synonyms = new ArrayList<Taxon>();
         findTermsForNames(Collections.singletonList(properties.get(PropertyAndValueDictionary.NAME)), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
                 if (NameType.SAME_AS.equals(nameType)) {
                     exactMatches.add(taxon);
                 } else if (NameType.SYNONYM_OF.equals(nameType)) {

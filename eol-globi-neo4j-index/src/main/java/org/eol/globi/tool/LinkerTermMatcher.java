@@ -65,18 +65,20 @@ public class LinkerTermMatcher implements Linker {
         stopWatch.start();
         String msgPrefix = "batch #" + counter / BATCH_SIZE;
         LOG.info(msgPrefix + " preparing...");
-        List<String> names = new ArrayList<String>();
+        List<String> nodeIdAndNames = new ArrayList<String>();
         for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
             String name = entry.getKey() + "|" + entry.getValue().getName();
-            names.add(name);
+            nodeIdAndNames.add(name);
         }
         try {
-            if (names.size() > 0) {
-                termMatcher.findTermsForNames(names, new TermMatchListener() {
+            if (nodeIdAndNames.size() > 0) {
+                termMatcher.findTermsForNames(nodeIdAndNames, new TermMatchListener() {
                     @Override
-                    public void foundTaxonForName(Long id, String name, Taxon taxon, NameType relType) {
-                        TaxonNode taxonNode = nodeMap.get(id);
-                        if (NameType.NONE != relType && !TaxonUtil.likelyHomonym(taxon, taxonNode)) {
+                    public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType relType) {
+                        TaxonNode taxonNode = nodeMap.get(nodeId);
+                        if (taxonNode != null
+                                && NameType.NONE != relType
+                                && !TaxonUtil.likelyHomonym(taxon, taxonNode)) {
                             NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.forType(relType));
                         }
                     }

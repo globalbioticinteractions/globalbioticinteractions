@@ -62,7 +62,7 @@ public class TaxonCacheServiceTest {
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.findTermsForNames(Arrays.asList("Green-winged teal"), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon enrichedTaxon, NameType nameType) {
+            public void foundTaxonForName(Long nodeId, String name, Taxon enrichedTaxon, NameType nameType) {
                 assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
                 assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
                 assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
@@ -250,7 +250,7 @@ public class TaxonCacheServiceTest {
         List<Taxon> taxa = new ArrayList<>();
         taxonCacheService.findTerms(Arrays.asList(new TermImpl(null, "Felis catus")), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
             }
         });
@@ -266,7 +266,7 @@ public class TaxonCacheServiceTest {
         List<Taxon> taxa = new ArrayList<>();
         taxonCacheService.findTerms(Arrays.asList(new TermImpl("EOL:327955", null)), new TermMatchListener() {
             @Override
-            public void foundTaxonForName(Long id, String name, Taxon taxon, NameType nameType) {
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
             }
         });
