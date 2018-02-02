@@ -105,7 +105,7 @@ public class TaxonSearchImplIT {
     @Test
     public void taxonLinks2() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Enhydra lutris nereis", null);
-        assertThat(links, hasItem("http://eol.org/pages/327955"));
+        assertThat(links, hasItem("http://www.marinespecies.org/aphia.php?p=taxdetails&id=242601"));
     }
 
     @Test
