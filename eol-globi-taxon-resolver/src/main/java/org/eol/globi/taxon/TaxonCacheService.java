@@ -214,18 +214,18 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             String nodeIdAndName = term.getName();
             String[] split = StringUtils.split(nodeIdAndName, '|');
             String name = (split != null && split.length > 1) ? split[1] : nodeIdAndName;
-            Long id = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
-            if (!resolveName(termMatchListener, term.getId(), id)) {
+            Long nodeId = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
+            if (!resolveName(termMatchListener, term.getId(), nodeId)) {
                 if (StringUtils.isNotBlank(nodeIdAndName)) {
-                    if (!resolveName(termMatchListener, name, id)) {
-                        termMatchListener.foundTaxonForName(id, name, new TaxonImpl(name, term.getId()), NameType.NONE);
+                    if (!resolveName(termMatchListener, name, nodeId)) {
+                        termMatchListener.foundTaxonForName(nodeId, name, new TaxonImpl(name, term.getId()), NameType.NONE);
                     }
                 }
             }
         }
     }
 
-    private boolean resolveName(TermMatchListener termMatchListener, String name, Long id) throws PropertyEnricherException {
+    private boolean resolveName(TermMatchListener termMatchListener, String name, Long nodeId) throws PropertyEnricherException {
         boolean hasResolved = false;
         if (StringUtils.isNotBlank(name)) {
             Taxon[] ids = lookupTerm(name);
@@ -237,7 +237,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                     Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
-                        termMatchListener.foundTaxonForName(id, name, resolvedTaxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForName(nodeId, name, resolvedTaxon, NameType.SAME_AS);
                         hasResolved = true;
                     }
                 }

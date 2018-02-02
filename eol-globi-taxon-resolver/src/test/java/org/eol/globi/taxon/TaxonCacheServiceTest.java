@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -272,6 +273,12 @@ public class TaxonCacheServiceTest {
         });
 
         assertThat(taxa.size(), is(2));
+
+        assertThat(taxa.get(0).getExternalId(), is("EOL:327955"));
+        assertThat(taxa.get(0).getExternalUrl(), is("http://eol.org/pages/327955"));
+        assertThat(taxa.get(1).getExternalId(), is("NCBI:9606"));
+        assertThat(taxa.get(1).getExternalUrl(), not(is("http://eol.org/pages/327955")));
+
         taxonCacheService.shutdown();
     }
 
