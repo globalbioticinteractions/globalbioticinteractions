@@ -20,6 +20,12 @@ public class EOLTaxonImageServiceIT {
     private ImageSearch imageService = new EOLTaxonImageService();
 
     @Test
+    public void imageLookupITISTaxon() throws URISyntaxException, IOException {
+
+        assertITISImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS + "165653"));
+    }
+
+    @Test
     public void imageLookupITIS() throws URISyntaxException, IOException {
         assertITISImage(imageService.lookupImageForExternalId(TaxonomyProvider.ID_PREFIX_ITIS + "165653"));
     }

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -140,11 +141,13 @@ public class TaxonSearchImpl implements TaxonSearch {
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
+                put(ResultField.TAXON_EXTERNAL_ID, "externalId");
                 put(ResultField.TAXON_EXTERNAL_URL, "externalUrl");
             }
         };
 
         ResultField[] returnFieldsCloseMatches = new ResultField[]{
+                ResultField.TAXON_EXTERNAL_ID,
                 ResultField.TAXON_EXTERNAL_URL
         };
 
@@ -153,7 +156,7 @@ public class TaxonSearchImpl implements TaxonSearch {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
 
-        query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalUrl) WITH DISTINCT(taxon.externalUrl) as externalUrl ");
+        query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl? as externalUrl ");
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
         final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap() {
             {
@@ -164,11 +167,18 @@ public class TaxonSearchImpl implements TaxonSearch {
         final String response = CypherUtil.executeRemote(pagedQuery);
         JsonNode node = new ObjectMapper().readTree(response);
         JsonNode dataNode = node.get("data");
-        Collection<String> links = new ArrayList<String>();
+        Collection<String> links = new HashSet<>();
         if (dataNode != null) {
             for (JsonNode jsonNode : dataNode) {
-                if (jsonNode.isArray() && jsonNode.size() > 0) {
-                    links.add(jsonNode.get(0).asText());
+                if (jsonNode.isArray() && jsonNode.size() > 1) {
+                    String externalId = jsonNode.get(0).asText();
+                    String externalUrl = jsonNode.get(1).asText();
+                    String resolvedUrl = ExternalIdUtil.urlForExternalId(externalId);
+                    if (StringUtils.isNotBlank(resolvedUrl)) {
+                        links.add(resolvedUrl);
+                    } else if (StringUtils.isNotBlank(externalUrl)) {
+                        links.add(externalUrl);
+                    }
                 }
             }
         }
