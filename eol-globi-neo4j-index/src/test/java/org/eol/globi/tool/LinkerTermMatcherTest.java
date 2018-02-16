@@ -114,7 +114,7 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
         final Taxon taxonCreated = taxonIndex.getOrCreateTaxon(new TaxonImpl("Medicago sativa L.", null));
         assertThat(taxonCreated.getName(), is("Medicago sativa L."));
         new LinkerTermMatcher(getGraphDb()).link();
-        Collection<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 12, taxonIndex, RelTypes.SAME_AS);
+        Collection<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 13, taxonIndex, RelTypes.SAME_AS);
 
         assertThat(ids, hasItem("ITIS:183623"));
         assertThat(ids, hasItem("NCBI:3879"));
