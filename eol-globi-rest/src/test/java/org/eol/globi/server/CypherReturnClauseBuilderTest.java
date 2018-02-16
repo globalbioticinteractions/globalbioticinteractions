@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.TreeMap;
@@ -107,6 +108,7 @@ public class CypherReturnClauseBuilderTest {
                 "targetTaxon.name as target_taxon_name"));
     }
 
+    @Ignore("see https://github.com/jhpoelen/eol-globi-data/issues/330")
     @Test
     public void multiTaxonAllWithNumberOfStudies() {
         StringBuilder query = new StringBuilder();
@@ -124,6 +126,7 @@ public class CypherReturnClauseBuilderTest {
                 "ORDER BY number_of_studies DESC"));
     }
 
+    @Ignore("see https://github.com/jhpoelen/eol-globi-data/issues/330")
     @Test
     public void multiTaxonAllWithNumberOfStudiesIncludeObservations() {
         StringBuilder query = new StringBuilder();
@@ -143,6 +146,7 @@ public class CypherReturnClauseBuilderTest {
                 "ORDER BY number_of_studies DESC"));
     }
 
+    @Ignore("see https://github.com/jhpoelen/eol-globi-data/issues/330")
     @Test
     public void multiTaxonAllWithNumberOfStudiesWithIdPrefix() {
         StringBuilder query = new StringBuilder();

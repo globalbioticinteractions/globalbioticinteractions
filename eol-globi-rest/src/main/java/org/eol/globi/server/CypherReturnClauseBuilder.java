@@ -109,8 +109,8 @@ public class CypherReturnClauseBuilder {
                 && (collectParamValues(parameterMap, ParamName.SOURCE_TAXON).isEmpty()
                 || collectParamValues(parameterMap, ParamName.TARGET_TAXON).isEmpty())
                 ) {
-            query.append(" ORDER BY ");
-            query.append(StringUtils.join(counters.stream().map(c -> c + " DESC").collect(Collectors.toList()), ", "));
+            //query.append(" ORDER BY ");
+            //query.append(StringUtils.join(counters.stream().map(c -> c + " DESC").collect(Collectors.toList()), ", "));
 
         }
     }
