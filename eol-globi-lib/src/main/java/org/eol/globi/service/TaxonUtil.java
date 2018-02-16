@@ -178,6 +178,11 @@ public class TaxonUtil {
             taxonImage.setThumbnailURL(taxon.get(THUMBNAIL_URL));
         }
 
+        if (StringUtils.isNotBlank(taxonImage.getThumbnailURL())) {
+            String thumbnailURL = taxonImage.getThumbnailURL();
+            taxonImage.setThumbnailURL(StringUtils.replace(thumbnailURL, "http://media.eol.org", "https://media.eol.org"));
+        }
+
         if (StringUtils.isBlank(taxonImage.getPageId())) {
             String externalId = taxon.get(EXTERNAL_ID);
             if (StringUtils.startsWith(externalId, TaxonomyProvider.ID_PREFIX_EOL)) {
