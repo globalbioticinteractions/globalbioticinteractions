@@ -318,8 +318,8 @@ public class CypherQueryBuilderTest {
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         assertThat(query.getQuery(), is("START targetTaxon = node:taxonPaths({target_taxon_name}) " +
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions " +
-                "ORDER BY number_of_interactions DESC"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"
+                ));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
         }};
@@ -344,8 +344,7 @@ public class CypherQueryBuilderTest {
                 "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study " +
                 "WHERE (has(targetTaxon.externalIds) AND targetTaxon.externalIds =~ '(.*(Arthropoda).*)') " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source?)) as sourceCount " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources " +
-                "ORDER BY number_of_sources DESC, number_of_studies DESC, number_of_interactions DESC"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
             put("accordingTo", "namespace:(some/namespace)");
@@ -372,8 +371,7 @@ public class CypherQueryBuilderTest {
                 "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study " +
                 "WHERE (has(targetTaxon.externalIds) AND targetTaxon.externalIds =~ '(.*(Arthropoda).*)') " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source?)) as sourceCount " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources " +
-                "ORDER BY number_of_sources DESC, number_of_studies DESC, number_of_interactions DESC"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
             put("accordingTo", ".*(\\\\QsomeSource\\\\E).*");
@@ -394,8 +392,7 @@ public class CypherQueryBuilderTest {
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         assertThat(query.getQuery(), is("START targetTaxon = node:taxons({target_taxon_name}) " +
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions " +
-                "ORDER BY number_of_interactions DESC"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "name:\\\"Arthropoda\\\"");
         }};
@@ -415,8 +412,7 @@ public class CypherQueryBuilderTest {
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         assertThat(query.getQuery(), is("START targetTaxon = node:taxons({target_taxon_name}) " +
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(INTERACTS_WITH) + "]->targetTaxon " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions " +
-                "ORDER BY number_of_interactions DESC"));
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "name:\\\"Arthropoda\\\"");
         }};
