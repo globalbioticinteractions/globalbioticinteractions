@@ -34,8 +34,10 @@ public class ImageService {
     @RequestMapping(value = "/imagesForName/{scientificName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
-        TaxonImage taxonImage = null;
-        if (TaxonUtil.isNonEmptyValue(scientificName)) {
+        TaxonImage taxonImage = new TaxonImage();
+        if (TaxonUtil.isEmptyValue(scientificName)) {
+            taxonImage.setScientificName(scientificName);
+        } else {
             Map<String, String> taxonWithImage = taxonSearch.findTaxonWithImage(scientificName);
             if (taxonWithImage == null || taxonWithImage.isEmpty()) {
                 Map<String, String> taxon = taxonSearch.findTaxon(scientificName, null);

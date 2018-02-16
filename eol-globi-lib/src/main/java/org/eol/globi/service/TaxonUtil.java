@@ -207,6 +207,10 @@ public class TaxonUtil {
                 && !StringUtils.equals(value, NO_NAME);
     }
 
+    public static boolean isEmptyValue(String value) {
+        return !isNonEmptyValue(value);
+    }
+
     public static Map<String, String> appendNameSourceInfo(Map<String, String> enrichedProperties, final Class serviceClass, final Date date) {
         enrichedProperties = new TreeMap<String, String>(enrichedProperties) {
             {
