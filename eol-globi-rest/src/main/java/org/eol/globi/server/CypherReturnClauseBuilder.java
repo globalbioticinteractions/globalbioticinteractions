@@ -335,11 +335,17 @@ public class CypherReturnClauseBuilder {
                 put(FOOTPRINT_WKT, ResultObject.LOCATION.getLabel() + "." + LocationConstant.FOOTPRINT_WKT + "?");
                 put(LOCALITY, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LOCALITY + "?");
                 put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
+                put(SOURCE_SPECIMEN_LIFE_STAGE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_ID + "?");
                 put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
+                put(TARGET_SPECIMEN_LIFE_STAGE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_ID + "?");
                 put(SOURCE_SPECIMEN_BODY_PART, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_LABEL + "?");
+                put(SOURCE_SPECIMEN_BODY_PART_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_ID + "?");
                 put(TARGET_SPECIMEN_BODY_PART, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_LABEL + "?");
+                put(TARGET_SPECIMEN_BODY_PART_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_ID + "?");
                 put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + "?");
+                put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + "?");
                 put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + "?");
+                put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + "?");
                 put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL + "?");
                 put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL + "?");
             }

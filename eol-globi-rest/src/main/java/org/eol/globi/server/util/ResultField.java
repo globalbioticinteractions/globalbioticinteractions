@@ -39,13 +39,19 @@ public enum ResultField {
     SOURCE_SPECIMEN_ID("tmp_and_unique_source_specimen_id"),
 
     TARGET_SPECIMEN_PHYSIOLOGICAL_STATE("target_specimen_physiological_state"),
+    TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID("target_specimen_physiological_state_id"),
     SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE( "source_specimen_physiological_state"),
+    SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID( "source_specimen_physiological_state_id"),
 
     TARGET_SPECIMEN_BODY_PART("target_specimen_body_part"),
+    TARGET_SPECIMEN_BODY_PART_ID("target_specimen_body_part_id"),
     SOURCE_SPECIMEN_BODY_PART("source_specimen_body_part"),
+    SOURCE_SPECIMEN_BODY_PART_ID("source_specimen_body_part_id"),
 
     SOURCE_SPECIMEN_LIFE_STAGE("source_specimen_life_stage"),
+    SOURCE_SPECIMEN_LIFE_STAGE_ID("source_specimen_life_stage_id"),
     TARGET_SPECIMEN_LIFE_STAGE("target_specimen_life_stage"),
+    TARGET_SPECIMEN_LIFE_STAGE_ID("target_specimen_life_stage_id"),
 
     SOURCE_SPECIMEN_BASIS_OF_RECORD("source_specimen_basis_of_record"),
     TARGET_SPECIMEN_BASIS_OF_RECORD("target_specimen_basis_of_record"),
