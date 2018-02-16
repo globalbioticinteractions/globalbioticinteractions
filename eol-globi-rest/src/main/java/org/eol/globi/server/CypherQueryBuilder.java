@@ -628,7 +628,7 @@ public class CypherQueryBuilder {
                 taxa.add((String) paramObject);
             }
         }
-        return taxa;
+        return taxa.stream().filter(StringUtils::isNotBlank).collect(Collectors.toList());
     }
 
     public static CypherQuery createPagedQuery(HttpServletRequest request, CypherQuery query) {

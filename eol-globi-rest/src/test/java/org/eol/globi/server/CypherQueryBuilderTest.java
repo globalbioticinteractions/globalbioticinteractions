@@ -249,6 +249,25 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionsAccordingToWithTargetTaxaOnlyEmptySource() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("accordingTo", new String[]{"http://inaturalist.org/bla"});
+                put("sourceTaxon", new String[]{""});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
+                "WHERE " + hasTargetTaxon("Arthropoda") +
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
     public void findInteractionsTaxaInteractionIndexTargetTaxaOnly() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
