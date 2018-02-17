@@ -17,6 +17,7 @@ import org.eol.globi.util.InteractUtil;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -470,7 +471,16 @@ public class CypherQueryBuilder {
         if (accordingToParams.size() > 0) {
             appendWithStudy(query, accordingToParams);
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
-            query.append(" study = node:studies('*:*')");
+            List<String> strings = collectRequestedFields(parameterMap);
+            Stream<String> withoutTaxonOrInteractionTypes = strings
+                    .stream()
+                    .filter(name -> StringUtils.contains(name, "_taxon_"))
+                    .filter(name -> StringUtils.contains(name, "interaction_type"));
+            if (strings.isEmpty() || withoutTaxonOrInteractionTypes.findFirst().isPresent()) {
+                query.append(" study = node:studies('*:*')");
+            } else {
+                query.append(" sourceTaxon = node:taxons('*:*')");
+            }
         } else if (sourceTaxa.size() == 0 && targetTaxa.size() == 0) {
             query.append(ALL_LOCATIONS_INDEX_SELECTOR);
         } else {

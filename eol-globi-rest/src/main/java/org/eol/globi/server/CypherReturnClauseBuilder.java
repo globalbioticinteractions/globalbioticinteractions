@@ -300,7 +300,7 @@ public class CypherReturnClauseBuilder {
     }
 
     static List<ResultField> actualReturnFields(List<String> requestedReturnFields, List<ResultField> defaultReturnFields, Collection<ResultField> availableReturnFields) {
-        List<ResultField> returnFields = new ArrayList<ResultField>();
+        List<ResultField> returnFields = new ArrayList<>();
         for (String requestedReturnField : requestedReturnFields) {
             for (ResultField resultField : values()) {
                 if (resultField.getLabel().equals(requestedReturnField)) {
