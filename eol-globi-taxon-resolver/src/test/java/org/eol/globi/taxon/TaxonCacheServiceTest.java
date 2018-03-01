@@ -16,9 +16,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -26,6 +28,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class TaxonCacheServiceTest {
 
@@ -310,5 +313,27 @@ public class TaxonCacheServiceTest {
         assertThat(enrichedTaxon.getName(), is(nullValue()));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:541190"));
         taxonCacheService.shutdown();
+    }
+
+    @Test
+    public void resolveWithMultipleSchemes() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheHomoSapiens.tsv",
+                "/org/eol/globi/taxon/taxonMapHomoSapiens.tsv");
+        cacheService.setCacheDir(mapdbDir);
+        Set<String> listIds = new HashSet<>();
+        Set<String> listNames = new HashSet<>();
+        cacheService.findTerms(Arrays.asList(new TermImpl("", "Homo sapiens")), new TermMatchListener() {
+
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                listIds.add(taxon.getExternalId());
+                listNames.add(taxon.getName());
+            }
+        });
+
+        assertThat(listIds, hasItem("INAT_TAXON:43584"));
+        assertThat(listNames, hasItem("Homo sapiens"));
+        assertThat(listNames.size(), is(1));
     }
 }

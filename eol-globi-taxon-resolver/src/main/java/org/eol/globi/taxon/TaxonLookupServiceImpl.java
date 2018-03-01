@@ -39,7 +39,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     private IndexWriter indexWriter;
     private IndexSearcher indexSearcher;
     private File indexPath;
-    private int maxHits = 10;
+    private int maxHits = Integer.MAX_VALUE;
 
     public TaxonLookupServiceImpl() {
         this(null);

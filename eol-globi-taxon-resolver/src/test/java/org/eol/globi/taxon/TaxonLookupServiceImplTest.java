@@ -26,6 +26,7 @@ public class TaxonLookupServiceImplTest {
     @Test
     public void moreThanMaxHits() throws IOException {
         TaxonLookupServiceImpl service = new TaxonLookupServiceImpl(new RAMDirectory());
+        service.setMaxHits(10);
         service.start();
 
         for (int i=0; i< service.getMaxHits() + 1; i++) {
