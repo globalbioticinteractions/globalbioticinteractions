@@ -1,5 +1,7 @@
 package org.eol.globi;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Attributes;
@@ -8,8 +10,8 @@ import java.util.jar.Manifest;
 public class Version {
 
     public static String getVersion() {
-        String version = getManifestAttributeValue("Implementation-Version");
-        return version == null ? "dev" : version;
+        String version = Version.class.getPackage().getImplementationVersion();
+        return StringUtils.isBlank(version) ? "dev" : version;
     }
 
     private static String getManifestAttributeValue(String attributeName) {
