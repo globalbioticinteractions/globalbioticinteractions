@@ -13,27 +13,24 @@ import java.io.IOException;
 public class ORCIDResolverImpl implements AuthorIdResolver {
     private static final Log LOG = LogFactory.getLog(ORCIDResolverImpl.class);
 
-    private String baseUrl = "http://pub.orcid.org/v1.2/";
+    private String baseUrl = "https://pub.orcid.org/v2.0/";
 
     @Override
     public String findFullName(final String authorURI) throws IOException {
         String fullName = null;
         ObjectMapper mapper = new ObjectMapper();
-        String orcId = authorURI.replace("http://orcid.org/", "");
-        HttpGet get = new HttpGet(baseUrl + orcId + "/orcid-bio");
+        String orcId = authorURI.replaceAll("http[s]*://orcid.org/", "");
+        HttpGet get = new HttpGet(baseUrl + orcId);
         get.setHeader("Accept", "application/orcid+json");
 
         BasicResponseHandler handler = new BasicResponseHandler();
         String response = HttpUtil.getHttpClient().execute(get, handler);
         JsonNode jsonNode = mapper.readTree(response);
-        JsonNode profile = jsonNode.get("orcid-profile");
-        if (profile != null) {
-            JsonNode bio = profile.get("orcid-bio");
-            if (bio != null) {
-                JsonNode details = bio.get("personal-details");
-                if (details != null) {
-                    fullName = getValue(details, "given-names") + " " + getValue(details, "family-name");
-                }
+        JsonNode person = jsonNode.get("person");
+        if (person != null) {
+            JsonNode name = person.get("name");
+            if (name != null) {
+                fullName = getValue(name, "given-names") + " " + getValue(name, "family-name");
             }
         }
         return fullName;
