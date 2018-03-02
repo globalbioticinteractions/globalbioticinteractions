@@ -23,27 +23,6 @@ public class TaxonLookupServiceImplTest {
         lookup(null);
     }
 
-    @Test
-    public void moreThanMaxHits() throws IOException {
-        TaxonLookupServiceImpl service = new TaxonLookupServiceImpl(new RAMDirectory());
-        service.setMaxHits(10);
-        service.start();
-
-        for (int i=0; i< service.getMaxHits() + 1; i++) {
-            service.addTerm("one", new TaxonImpl(null, "SOME" + i +" :1"));
-
-        }
-        service.finish();
-
-        Taxon[] terms = service.lookupTermsByName("one");
-        for (Taxon term : terms) {
-            assertNotNull(term);
-        }
-
-        assertThat(terms.length, Is.is(service.getMaxHits()));
-
-    }
-
     public void lookup(RAMDirectory indexDir) throws IOException {
         TaxonLookupServiceImpl service = new TaxonLookupServiceImpl(indexDir);
 

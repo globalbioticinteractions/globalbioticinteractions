@@ -45,6 +45,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     private String taxonCacheResource;
     private final String taxonMapResource;
+    private int maxTaxonLinks = Integer.MAX_VALUE;
 
     public TaxonCacheService(String taxonCacheResource, String taxonMapResource) {
         this.taxonCacheResource = taxonCacheResource;
@@ -232,7 +233,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             if (ids != null) {
                 List<String> idsDistinct = Arrays.stream(ids)
                         .filter(t -> StringUtils.isNotBlank(t.getExternalId()))
-                        .map(Taxon::getExternalId).distinct().collect(Collectors.toList());
+                        .map(Taxon::getExternalId)
+                        .distinct()
+                        .limit(getMaxTaxonLinks())
+                        .collect(Collectors.toList());
                 for(String resolvedId : idsDistinct) {
                     Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
@@ -244,6 +248,14 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             }
         }
         return hasResolved;
+    }
+
+    public int getMaxTaxonLinks() {
+        return maxTaxonLinks;
+    }
+
+    public void setMaxTaxonLinks(int maxTaxonLinks) {
+        this.maxTaxonLinks = maxTaxonLinks;
     }
 
     interface LineSkipper {

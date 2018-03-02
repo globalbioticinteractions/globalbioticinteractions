@@ -101,10 +101,10 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         if (StringUtils.isNotBlank(fieldValue) && indexSearcher != null) {
             PhraseQuery query = new PhraseQuery();
             query.add(new Term(fieldName1, fieldValue));
-            TopDocs docs = indexSearcher.search(query, maxHits);
+            TopDocs docs = indexSearcher.search(query, getMaxHits());
 
             if (docs.totalHits > 0) {
-                int maxResults = Math.min(docs.totalHits, maxHits);
+                int maxResults = Math.min(docs.totalHits, getMaxHits());
                 terms = new TaxonImpl[maxResults];
                 for (int i = 0; i < maxResults; i++) {
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
@@ -198,10 +198,6 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     public File getIndexPath() {
         return indexPath;
-    }
-
-    public void setMaxHits(int maxHits) {
-        this.maxHits = maxHits;
     }
 
     public int getMaxHits() {
