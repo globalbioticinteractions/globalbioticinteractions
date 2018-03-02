@@ -66,13 +66,24 @@ public class DOIResolverImpl implements DOIResolver {
                 if (result.get("match").asBoolean()) {
                     String citation = result.get("text").getTextValue();
                     String doi = result.get("doi").getTextValue();
-                    if (StringUtils.isNoneBlank(citation, doi)) {
+                    if (hasReasonableMatchScore(result) && StringUtils.isNoneBlank(citation, doi)) {
                         doiMap.put(citation, doi);
                     }
+
                 }
             }
         }
         return doiMap;
+    }
+
+    private boolean hasReasonableMatchScore(JsonNode result) {
+        double score = 0.0;
+        if (result.has("score")) {
+            if (result.get("score").isDouble()) {
+                score = result.get("score").getDoubleValue();
+            }
+        }
+        return score > 50.0;
     }
 
     public String findCitationForDOI(String doi) throws IOException {

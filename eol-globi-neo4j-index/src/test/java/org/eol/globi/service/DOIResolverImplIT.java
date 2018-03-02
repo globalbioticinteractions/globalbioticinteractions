@@ -10,6 +10,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
@@ -21,7 +22,6 @@ public class DOIResolverImplIT {
     public static final String HOCKING_DOI = "http://dx.doi.org/10.2307/3565022";
     public static final String MEDAN_DOI = "http://dx.doi.org/10.2307/1552480";
 
-    @Ignore
     @Test
     public void resolveDOIByReferenceNoMatch() throws IOException {
         String doi = new DOIResolverImpl().resolveDoiFor("James D. Simons Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf");
@@ -31,7 +31,19 @@ public class DOIResolverImplIT {
     @Test
     public void resolveDOIByReferenceMatch() throws IOException {
         String doi = new DOIResolverImpl().resolveDoiFor("J. N. Kremer and S. W. Nixon, A Coastal Marine Ecosystem:  Simulation and Analysis, Vol. 24 of Ecol. Studies (Springer-Verlag, Berlin, 1978), from p. 12.");
-        assertThat(doi, is("http://dx.doi.org/10.1002/aheh.19790070620"));
+        assertThat(doi, is("http://dx.doi.org/10.1007/978-3-642-66717-6"));
+    }
+
+    @Test
+    public void resolveDOIByNonExistentCitation() throws IOException {
+        String doi = new DOIResolverImpl().resolveDoiFor("A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. Accessed at <associations_all_revised.txt> on 05 Feb 2018 and add some more and other things");
+        assertThat(doi, is(nullValue()));
+    }
+
+    @Test
+    public void resolveDOIByNonExistentCitation2() throws IOException {
+        String doi = new DOIResolverImpl().resolveDoiFor("donald duck and mickey mouse run around");
+        assertThat(doi, is(nullValue()));
     }
 
     @Test
@@ -122,7 +134,7 @@ public class DOIResolverImplIT {
     @Test
     public void findCitationForDOI3() throws IOException {
         String citationForDOI = new DOIResolverImpl().findCitationForDOI("http://dx.doi.org/10.2307/177149");
-        assertThat(citationForDOI, is("Yodzis P. Diffuse Effects in Food Webs. Ecology [Internet]. 2000 January;81(1):261. Available from: http://dx.doi.org/10.2307/177149"));
+        assertThat(citationForDOI, is("Yodzis P. DIFFUSE EFFECTS IN FOOD WEBS. Ecology [Internet]. 2000 January;81(1):261–266. Available from: http://dx.doi.org/10.1890/0012-9658(2000)081[0261:DEIFW]2.0.CO;2"));
     }
 
     @Test
