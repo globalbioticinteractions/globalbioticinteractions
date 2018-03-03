@@ -16,7 +16,6 @@
 
     <properties>
         <globi.neo4j.index.version>0.6-SNAPSHOT</globi.neo4j.index.version>
-        <globi.taxa.version>0.3</globi.taxa.version>
         <globi.tsv.version>1.0-SNAPSHOT</globi.tsv.version>
         <github.client.id>specified on commandline</github.client.id>
         <github.client.secret>specified on commandline</github.client.secret>
@@ -285,7 +284,7 @@
                                         <artifactItem>
                                             <groupId>org.globalbioticinteractions</groupId>
                                             <artifactId>taxon</artifactId>
-                                            <version>${globi.taxa.version}</version>
+                                            <version>0.3</version>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
