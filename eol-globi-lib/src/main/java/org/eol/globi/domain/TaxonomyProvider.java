@@ -17,6 +17,7 @@ public enum TaxonomyProvider {
     OPEN_TREE_OF_LIFE("OTT:"),
     NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:"),
     INATURALIST_TAXON("INAT_TAXON:"),
+    WIKIDATA("WD:"),
     FISHBASE_CACHE("FBC:");
 
     private final String idPrefix;
@@ -39,7 +40,6 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_GAME = "GAME:";
     public static final String ID_PREFIX_HTTP = "http://";
     public static final String ID_PREFIX_DOI = "doi:";
-    public static final String ID_PREFIX_USKI = "UKSI:";
     public static final String ID_PREFIX_GBIF = GBIF.getIdPrefix();
     public static final String ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY = AUSTRALIAN_FAUNAL_DIRECTORY.getIdPrefix();
     public static final String ID_PREFIX_BIODIVERSITY_AUSTRALIA = BIODIVERSITY_AUSTRALIA.getIdPrefix();
