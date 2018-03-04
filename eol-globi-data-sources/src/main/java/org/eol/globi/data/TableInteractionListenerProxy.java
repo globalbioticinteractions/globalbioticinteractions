@@ -11,16 +11,16 @@ import java.util.Map;
 public class TableInteractionListenerProxy implements InteractionListener {
     private final InteractionListener interactionListener;
     private final Dataset dataset;
+    private final String dataSourceCitation;
 
     public TableInteractionListenerProxy(Dataset dataset, InteractionListener interactionListener) {
         this.dataset = dataset;
         this.interactionListener = interactionListener;
+        this.dataSourceCitation = CitationUtil.sourceCitationLastAccessed(dataset);
     }
 
     @Override
     public void newLink(final Map<String, String> properties) throws StudyImporterException {
-        final String dataSourceCitation = CitationUtil.sourceCitationLastAccessed(dataset);
-
         final HashMap<String, String> enrichedProperties = new HashMap<String, String>() {
             {
                 putAll(properties);
