@@ -204,4 +204,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         return maxHits;
     }
 
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
+    }
 }

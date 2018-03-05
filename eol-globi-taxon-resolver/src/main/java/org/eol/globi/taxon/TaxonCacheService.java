@@ -45,7 +45,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     private String taxonCacheResource;
     private final String taxonMapResource;
-    private int maxTaxonLinks = Integer.MAX_VALUE;
+
+    // maximum number of expected taxon links related to a given taxon id
+    private int maxTaxonLinks = 20;
 
     public TaxonCacheService(String taxonCacheResource, String taxonMapResource) {
         this.taxonCacheResource = taxonCacheResource;
@@ -126,6 +128,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             boolean preexisting = luceneDir.exists();
             createCacheDir(luceneDir, isTemporary());
             TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir));
+            taxonLookupService.setMaxHits(getMaxTaxonLinks());
             taxonLookupService.start();
             if (!isTemporary() && preexisting) {
                 LOG.info("pre-existing taxon lookup index found, no need to re-index...");
