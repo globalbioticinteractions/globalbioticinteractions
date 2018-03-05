@@ -405,4 +405,21 @@ public class GlobalNamesServiceTest {
         assertThat(taxa.size(), is(2));
 
     }
+
+    @Test
+    public void lookupSimilar() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));
+        final List<Taxon> taxa = new ArrayList<Taxon>();
+        service.findTermsForNames(Collections.singletonList("Zyziphus mauritiana"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                taxa.add(taxon);
+                assertThat(nameType, is(NameType.SIMILAR_TO));
+            }
+        });
+
+        assertThat(taxa.size() > 1, is(true));
+
+    }
+
 }
