@@ -58,7 +58,7 @@ public class CacheLocalReadonly implements Cache {
                     if (split.length > 3) {
                         URI sourceURI = URI.create(split[1]);
                         String sha256 = split[2];
-                        Date accessedAt = ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(split[3]).toDate();
+                        String accessedAt = StringUtils.trim(split[3]);
                         if (StringUtils.isNotBlank(sha256)) {
                             CachedURI metaURI = getMetaURI(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace);
                             meta = metaURI == null ? meta : metaURI;
@@ -73,7 +73,7 @@ public class CacheLocalReadonly implements Cache {
 
     }
 
-    public CachedURI getMetaURI(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, Date accessedAt, File cacheDir) {
+    public CachedURI getMetaURI(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir) {
         CachedURI meta = null;
         if (inCachedArchive(localArchiveSha256, sha256)) {
             meta = new CachedURI(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);

@@ -63,7 +63,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     protected Map<String, String> importLink(LabeledCSVParser parser, Map<Integer, LatLng> localeMap) throws IOException, StudyImporterException {
         TreeMap<String, String> link = new TreeMap<String, String>();
 
-        link.put(STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset()));
+        link.put(STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
 
         String predNum = StringUtils.trim(parser.getValueByLabel("PredatorSciNameTSN"));
         if (StringUtils.isNotBlank(predNum)) {

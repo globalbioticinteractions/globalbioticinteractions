@@ -43,7 +43,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
         link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("PredName"));
         addTSN(parser, link, "PreyTSN", StudyImporterForTSV.TARGET_TAXON_ID);
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("PreyName"));
-        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset()));
+        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
         link.put(StudyImporterForTSV.REFERENCE_CITATION, getSourceCitation());
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI());
         link.put(StudyImporterForTSV.REFERENCE_DOI, getSourceDOI());

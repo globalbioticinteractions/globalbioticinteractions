@@ -110,11 +110,12 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
             LabeledCSVParser assoc = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(assocTempFile));
             assoc.changeDelimiter('\t');
 
-            final Map<String, InteractType> interactTypeMap = new HashMap<String, InteractType>();
-            interactTypeMap.put("Visits flowers of", InteractType.VISITS_FLOWERS_OF);
-            interactTypeMap.put("Host of", InteractType.VISITS_FLOWERS_OF);
-            interactTypeMap.put("Parasite of", InteractType.PARASITE_OF);
-            interactTypeMap.put("Nests in", InteractType.INTERACTS_WITH);
+            final Map<String, InteractType> interactTypeMap = new HashMap<String, InteractType>() {{
+                put("Visits flowers of", InteractType.VISITS_FLOWERS_OF);
+                put("Host of", InteractType.VISITS_FLOWERS_OF);
+                put("Parasite of", InteractType.PARASITE_OF);
+                put("Nests in", InteractType.INTERACTS_WITH);
+            }};
             String[] assocLine;
             while ((assocLine = assoc.getLine()) != null) {
                 final Integer taxonId = Integer.parseInt(assocLine[0]);
@@ -126,7 +127,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                         final String reference = refMap.get(taxonId);
                         final String sourceTaxonName = taxonMap.get(taxonId);
                         if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(sourceTaxonName)) {
-                            final Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, CitationUtil.sourceCitationLastAccessed(getDataset()), null, reference));
+                            final Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, getSourceCitationLastAccessed(), null, reference));
                             final Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(StringUtils.trim(sourceTaxonName), null));
                             final Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(StringUtils.trim(targetTaxonName), null));
                             final InteractType relType = interactTypeMap.get(interactionString);

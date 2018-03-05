@@ -45,7 +45,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
                     listener.newLink(new HashMap<String, String>(properties) {{
-                        put(StudyImporterForTSV.STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset()));
+                        put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
                     }});
                 }
             };

@@ -17,7 +17,7 @@ public class CacheLog {
     public final static String ACCESS_LOG_FILENAME = "access.tsv";
 
     static void appendCacheLog(String namespace, URI resourceURI, File cacheDir, URI localResourceCacheURI) throws IOException {
-        Date accessedAt = new Date();
+        String accessedAt = ISODateTimeFormat.dateTime().withZoneUTC().print(new Date().getTime());
         String sha256 = new File(localResourceCacheURI).getName();
         CachedURI meta = new CachedURI(namespace, resourceURI, localResourceCacheURI, sha256, accessedAt);
         appendAccessLog(meta, getAccessFile(cacheDir));
@@ -38,7 +38,7 @@ public class CacheLog {
             logEntries = Arrays.asList(meta.getNamespace()
                     , meta.getSourceURI().toString()
                     , meta.getSha256() == null ? "" : meta.getSha256()
-                    , ISODateTimeFormat.dateTimeNoMillis().withZoneUTC().print(meta.getAccessedAt().getTime())
+                    , meta.getAccessedAt()
                     , meta.getType());
         }
         return logEntries;

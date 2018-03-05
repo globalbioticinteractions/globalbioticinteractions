@@ -8,11 +8,11 @@ public class CachedURI {
     private final URI sourceURI;
     private final URI cachedURI;
     private final String sha256;
-    private final Date accessedAt;
+    private final String accessedAt;
     private final String namespace;
     private String type;
 
-    public CachedURI(String namespace, URI sourceURI, URI cachedURI, String sha256, Date accessedAt) {
+    public CachedURI(String namespace, URI sourceURI, URI cachedURI, String sha256, String accessedAt) {
         this.namespace = namespace;
         this.sourceURI = sourceURI;
         this.cachedURI = cachedURI;
@@ -32,7 +32,7 @@ public class CachedURI {
         return sha256;
     }
 
-    public Date getAccessedAt() {
+    public String getAccessedAt() {
         return accessedAt;
     }
 

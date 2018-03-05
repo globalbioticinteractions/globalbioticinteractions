@@ -10,15 +10,11 @@ import org.eol.globi.service.DatasetMapped;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CachedURI;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Date;
 
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -69,7 +65,7 @@ public class DatasetWithCache extends DatasetMapped {
         return uri;
     }
 
-    private Date getAccessedAt() {
+    private String getAccessedAt() {
         CachedURI cachedUri = cache.asMeta(getDatasetCached().getArchiveURI());
         return cachedUri == null ? null : cachedUri.getAccessedAt();
     }
@@ -86,8 +82,8 @@ public class DatasetWithCache extends DatasetMapped {
     @Override
     public String getOrDefault(String key, String defaultValue) {
         if (equalsIgnoreCase(DatasetConstant.LAST_SEEN_AT, key)) {
-            Date accessedAt = getAccessedAt();
-            return accessedAt == null ? "" : ISODateTimeFormat.dateTime().withZoneUTC().print(accessedAt.getTime());
+            String accessedAt = getAccessedAt();
+            return accessedAt == null ? "" : accessedAt;
         } else if (equalsIgnoreCase("contentHash", key)) {
             return getHash();
         } else {
@@ -126,7 +122,7 @@ public class DatasetWithCache extends DatasetMapped {
         citationGenerated.append("Accessed");
         if (null != getAccessedAt()) {
             citationGenerated.append(" on ")
-                    .append(DateTimeFormat.forPattern("dd MMM YYYY").withZone(DateTimeZone.UTC).print(getAccessedAt().getTime()));
+                    .append(getAccessedAt());
         }
         citationGenerated.append(" via <")
                 .append(getArchiveURI()).append(">.");

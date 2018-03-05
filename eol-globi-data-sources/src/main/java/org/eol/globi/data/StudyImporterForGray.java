@@ -44,7 +44,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
         link.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, nonNAValueOrNull(parser.getValueByLabel("consumer.lifestage")));
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("resource"));
         link.put(StudyImporterForTSV.TARGET_LIFE_STAGE, nonNAValueOrNull(parser.getValueByLabel("resource.lifestage")));
-        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset()));
+        link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
         link.put(StudyImporterForTSV.REFERENCE_CITATION, parser.getValueByLabel("full.source"));
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI() + "/source.id/" + parser.getValueByLabel("source.id"));
         link.put(StudyImporterForTSV.BASIS_OF_RECORD_NAME, parser.getValueByLabel("link.evidence"));

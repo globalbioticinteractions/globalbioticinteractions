@@ -1,10 +1,12 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
     protected ParserFactory parserFactory;
@@ -30,6 +32,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
 
         }
     };
+    private String sourceCitationLastAccessed;
 
     public BaseStudyImporter(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(nodeFactory);
@@ -80,5 +83,12 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
 
     public Dataset getDataset() {
         return dataset;
+    }
+
+    String getSourceCitationLastAccessed() {
+        if (StringUtils.isBlank(sourceCitationLastAccessed)) {
+            sourceCitationLastAccessed = CitationUtil.sourceCitationLastAccessed(getDataset());
+        }
+        return sourceCitationLastAccessed;
     }
 }
