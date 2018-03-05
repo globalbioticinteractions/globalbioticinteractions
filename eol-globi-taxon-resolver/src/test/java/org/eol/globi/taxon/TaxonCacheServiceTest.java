@@ -320,6 +320,7 @@ public class TaxonCacheServiceTest {
         final TaxonCacheService cacheService = new TaxonCacheService(
                 "/org/eol/globi/taxon/taxonCacheHomoSapiens.tsv",
                 "/org/eol/globi/taxon/taxonMapHomoSapiens.tsv");
+        cacheService.setMaxTaxonLinks(125);
         cacheService.setCacheDir(mapdbDir);
         Set<String> listIds = new HashSet<>();
         Set<String> listNames = new HashSet<>();

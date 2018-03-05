@@ -47,7 +47,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private final String taxonMapResource;
 
     // maximum number of expected taxon links related to a given taxon id
-    private int maxTaxonLinks = 20;
+    private int maxTaxonLinks = 125;
 
     public TaxonCacheService(String taxonCacheResource, String taxonMapResource) {
         this.taxonCacheResource = taxonCacheResource;
