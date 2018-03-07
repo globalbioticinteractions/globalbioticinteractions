@@ -11,15 +11,20 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
@@ -34,8 +39,12 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final HashMap<String, String> link = new HashMap<String, String>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
+        link.put(SOURCE_BODY_PART_ID, "bla:123");
+        link.put(SOURCE_BODY_PART_NAME, "snout");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_ID, "mouse");
+        link.put(TARGET_BODY_PART_ID, "bla:345");
+        link.put(TARGET_BODY_PART_NAME, "tail");
         link.put(StudyImporterForMetaTable.EVENT_DATE, "20160404T21:31:40Z");
         link.put(StudyImporterForMetaTable.LATITUDE, "12.1");
         link.put(StudyImporterForMetaTable.LONGITUDE, "13.2");
@@ -68,6 +77,12 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 foundPair = true;
 
                 assertThat(specimenRel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+
+                List<SpecimenNode> specimens = Arrays.asList(predator, prey);
+                for (SpecimenNode specimen : specimens) {
+                    assertThat(specimen.getBodyPart().getId(), is(notNullValue()));
+                    assertThat(specimen.getBodyPart().getName(), is(notNullValue()));
+                }
             }
 
 

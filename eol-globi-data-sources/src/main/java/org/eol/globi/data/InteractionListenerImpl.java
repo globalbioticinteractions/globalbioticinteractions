@@ -30,9 +30,13 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
@@ -101,8 +105,8 @@ class InteractionListenerImpl implements InteractionListener {
     private void importValidLink(Map<String, String> link) throws StudyImporterException, IOException {
         Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
 
-        Specimen source = createSpecimen(link, study, SOURCE_TAXON_NAME, SOURCE_TAXON_ID);
-        Specimen target = createSpecimen(link, study, TARGET_TAXON_NAME, TARGET_TAXON_ID);
+        Specimen source = createSpecimen(link, study, SOURCE_TAXON_NAME, SOURCE_TAXON_ID, SOURCE_BODY_PART_NAME, SOURCE_BODY_PART_ID);
+        Specimen target = createSpecimen(link, study, TARGET_TAXON_NAME, TARGET_TAXON_ID, TARGET_BODY_PART_NAME, TARGET_BODY_PART_ID);
 
         String interactionTypeId = link.get(INTERACTION_TYPE_ID);
         InteractType type = InteractType.typeOf(interactionTypeId);
@@ -110,12 +114,13 @@ class InteractionListenerImpl implements InteractionListener {
         source.interactsWith(target, type, getOrCreateLocation(study, link));
     }
 
-    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabvel) throws StudyImporterException {
+    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabel, String bodyPartName, String bodyPartId) throws StudyImporterException {
         String sourceTaxonName = link.get(taxonNameLabel);
-        String sourceTaxonId = link.get(taxonIdLabvel);
+        String sourceTaxonId = link.get(taxonIdLabel);
         Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId));
         setBasisOfRecordIfAvailable(link, source);
         setDateTimeIfAvailable(link, source);
+        setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
         return source;
     }
 
@@ -155,6 +160,14 @@ class InteractionListenerImpl implements InteractionListener {
         final String basisOfRecordId = link.get(BASIS_OF_RECORD_ID);
         if (StringUtils.isNotBlank(basisOfRecordName) || StringUtils.isNotBlank(basisOfRecordId)) {
             specimen.setBasisOfRecord(new TermImpl(basisOfRecordId, basisOfRecordName));
+        }
+    }
+
+    private void setBodyPartIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+        final String bodyPartName = link.get(name);
+        final String bodyPartId = link.get(id);
+        if (StringUtils.isNotBlank(bodyPartName) || StringUtils.isNotBlank(bodyPartId)) {
+            specimen.setBodyPart(new TermImpl(bodyPartId, bodyPartName));
         }
     }
 

@@ -32,6 +32,10 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String TARGET_LIFE_STAGE = "targetLifeStage";
     public static final String HABITAT_NAME = "habitatName";
     public static final String HABITAT_ID = "habitatId";
+    public static final String SOURCE_BODY_PART_ID = "sourceBodyPartId";
+    public static final String SOURCE_BODY_PART_NAME = "sourceBodyPartName";
+    public static final String TARGET_BODY_PART_ID = "targetBodyPartId";
+    public static final String TARGET_BODY_PART_NAME = "targetBodyPartName";
 
     public String getBaseUrl() {
         return getDataset().getArchiveURI().toString();
@@ -71,6 +75,10 @@ public class StudyImporterForTSV extends BaseStudyImporter {
             putNotBlank(link, DECIMAL_LATITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LATITUDE)));
             putNotBlank(link, DECIMAL_LONGITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LONGITUDE)));
             putNotBlank(link, LOCALITY_ID, StringUtils.trim(parser.getValueByLabel(LOCALITY_ID)));
+            putNotBlank(link, SOURCE_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
+            putNotBlank(link, SOURCE_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
+            putNotBlank(link, TARGET_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
+            putNotBlank(link, TARGET_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 
