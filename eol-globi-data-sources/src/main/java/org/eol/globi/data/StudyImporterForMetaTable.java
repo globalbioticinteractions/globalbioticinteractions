@@ -234,6 +234,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             put("pollinator", InteractType.POLLINATES);
             put("seed disperser", InteractType.DISPERSAL_VECTOR_OF);
             put("seed predator", InteractType.ATE);
+            put("parasite of", InteractType.PARASITE_OF);
             put("n/a", null);
             put("neutral", null);
             put("unknown", null);

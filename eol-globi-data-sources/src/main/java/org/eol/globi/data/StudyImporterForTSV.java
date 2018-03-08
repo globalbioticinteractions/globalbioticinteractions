@@ -36,6 +36,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String SOURCE_BODY_PART_NAME = "sourceBodyPartName";
     public static final String TARGET_BODY_PART_ID = "targetBodyPartId";
     public static final String TARGET_BODY_PART_NAME = "targetBodyPartName";
+    public static final String ASSOCIATED_TAXA = "associatedTaxa";
 
     public String getBaseUrl() {
         return getDataset().getArchiveURI().toString();

@@ -1,6 +1,9 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.LogContext;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
@@ -30,6 +33,7 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class InteractionListenerImplTest extends GraphDBTestCase {
 
@@ -83,6 +87,63 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                     assertThat(specimen.getBodyPart().getId(), is(notNullValue()));
                     assertThat(specimen.getBodyPart().getName(), is(notNullValue()));
                 }
+            }
+
+
+        }
+        assertThat(foundPair, is(true));
+    }
+
+    @Test
+    public void importAssociatedTaxa() throws StudyImporterException {
+        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
+            @Override
+            public void warn(LogContext study, String message) {
+                fail("got message: " + message);
+            }
+
+            @Override
+            public void info(LogContext study, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext study, String message) {
+                fail("got message: " + message);
+            }
+        });
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(SOURCE_TAXON_ID, "duck");
+        link.put(SOURCE_BODY_PART_ID, "bla:123");
+        link.put(SOURCE_BODY_PART_NAME, "snout");
+        link.put("associatedTaxa", "parasite of: Mini mouse");
+        link.put(StudyImporterForMetaTable.EVENT_DATE, "20160404T21:31:40Z");
+        link.put(StudyImporterForMetaTable.LATITUDE, "12.1");
+        link.put(StudyImporterForMetaTable.LONGITUDE, "13.2");
+        link.put(REFERENCE_ID, "123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "doi:1234");
+        listener.newLink(link);
+
+        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        final Study study = allStudies.get(0);
+        assertThat(study.getCitation(), is(""));
+
+        boolean foundPair = false;
+        for (Relationship specimenRel : NodeUtil.getSpecimens(study)) {
+            final SpecimenNode predator = new SpecimenNode(specimenRel.getEndNode());
+            for (Relationship hosts : ((NodeBacked) predator).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(InteractType.PARASITE_OF), Direction.OUTGOING)) {
+                final SpecimenNode host = new SpecimenNode(hosts.getEndNode());
+                final TaxonNode hostTaxon = getOrigTaxon(host);
+                final TaxonNode predTaxon = getOrigTaxon(predator);
+                assertThat(hostTaxon.getName(), is("Mini mouse"));
+                assertThat(predTaxon.getName(), is("donald"));
+                assertThat(predTaxon.getExternalId(), is("duck"));
+
+                foundPair = true;
             }
 
 
