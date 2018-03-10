@@ -225,6 +225,25 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
         return StringUtils.join(parsedList, CharsetConstant.SEPARATOR);
     }
 
+    public static boolean pathTailRepetitions(Taxon taxon) {
+        boolean repetitions = true;
+        if (org.apache.commons.lang.StringUtils.isNotBlank(taxon.getPath())) {
+            String[] split = org.apache.commons.lang.StringUtils.split(taxon.getPath(), CharsetConstant.SEPARATOR_CHAR);
+            if (split.length < 3
+                    || noRepeatInTail(split)) {
+                repetitions = false;
+            }
+        }
+        return repetitions;
+    }
+
+    private static boolean noRepeatInTail(String[] split) {
+        String last = org.apache.commons.lang.StringUtils.trim(split[split.length - 1]);
+        String secondToLast = org.apache.commons.lang.StringUtils.trim(split[split.length - 2]);
+        return !org.apache.commons.lang.StringUtils.equals(last, secondToLast);
+    }
+
+
     protected void parseClassification(TermMatchListener termMatchListener, JsonNode data, JsonNode aResult, TaxonomyProvider provider) {
         Taxon taxon = new TaxonImpl();
         String classificationPath = aResult.get("classification_path").asText();
@@ -264,7 +283,11 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
             if (isExactMatch && aResult.has("current_name_string")) {
                 nameType = NameType.SYNONYM_OF;
             }
-            termMatchListener.foundTaxonForName(requestId(data), suppliedNameString, taxon, nameType);
+
+            // related to https://github.com/GlobalNamesArchitecture/gni/issues/48
+            if (!pathTailRepetitions(taxon)) {
+                termMatchListener.foundTaxonForName(requestId(data), suppliedNameString, taxon, nameType);
+            }
         }
 
         if (aResult.has("vernaculars")) {

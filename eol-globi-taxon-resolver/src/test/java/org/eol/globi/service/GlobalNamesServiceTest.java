@@ -21,6 +21,7 @@ import java.util.Map;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -419,6 +420,24 @@ public class GlobalNamesServiceTest {
         });
 
         assertThat(taxa.size() > 1, is(true));
+
+    }
+
+    @Test
+    public void lookupNCBIPrune() throws PropertyEnricherException {
+        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.NCBI));
+        final List<Taxon> taxa = new ArrayList<>();
+        service.findTermsForNames(Collections.singletonList("Klebsiella pneumoniae"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                taxa.add(taxon);
+                assertThat(nameType, is(NameType.SAME_AS));
+            }
+
+        });
+
+        assertThat(taxa.size(), is(1));
+        assertThat(taxa.get(0).getPath(), endsWith ("Klebsiella | Klebsiella pneumoniae"));
 
     }
 
