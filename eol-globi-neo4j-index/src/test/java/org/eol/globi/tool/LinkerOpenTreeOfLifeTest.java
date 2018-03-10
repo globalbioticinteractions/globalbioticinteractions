@@ -20,7 +20,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void homoSapiens() throws NodeFactoryException, PropertyEnricherException {
-        assertOTTLink("Homo sapiens", 7, "770315");
+        assertOTTLink("Homo sapiens", 5, "770315");
     }
 
     @Test

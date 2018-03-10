@@ -29,7 +29,7 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
 
         new LinkerTermMatcher(getGraphDb()).link();
 
-        LinkerTestUtil.assertHasOther("Homo sapiens", 7, taxonIndex, RelTypes.SAME_AS);
+        LinkerTestUtil.assertHasOther("Homo sapiens", 5, taxonIndex, RelTypes.SAME_AS);
         LinkerTestUtil.assertHasOther("Homo sapiens", 0, taxonIndex, RelTypes.SIMILAR_TO);
         LinkerTestUtil.assertHasOther("Canis lupus", 6, taxonIndex, RelTypes.SAME_AS);
         LinkerTestUtil.assertHasOther("Canis lupus", 0, taxonIndex, RelTypes.SIMILAR_TO);
@@ -43,7 +43,7 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
 
         new LinkerTermMatcher(getGraphDb()).link();
 
-        LinkerTestUtil.assertHasOther("Homo sapienz", 7, taxonIndex, RelTypes.SIMILAR_TO);
+        LinkerTestUtil.assertHasOther("Homo sapienz", 5, taxonIndex, RelTypes.SIMILAR_TO);
         LinkerTestUtil.assertHasOther("Homo sapienz", 0, taxonIndex, RelTypes.SAME_AS);
 
     }
@@ -114,10 +114,11 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
         final Taxon taxonCreated = taxonIndex.getOrCreateTaxon(new TaxonImpl("Medicago sativa L.", null));
         assertThat(taxonCreated.getName(), is("Medicago sativa L."));
         new LinkerTermMatcher(getGraphDb()).link();
-        Collection<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 13, taxonIndex, RelTypes.SAME_AS);
+        Collection<String> ids = LinkerTestUtil.assertHasOther(taxonCreated.getName(), 7, taxonIndex, RelTypes.SAME_AS);
 
         assertThat(ids, hasItem("ITIS:183623"));
         assertThat(ids, hasItem("NCBI:3879"));
+        assertThat(ids, not(hasItem("NCBI:56066")));
 
     }
 

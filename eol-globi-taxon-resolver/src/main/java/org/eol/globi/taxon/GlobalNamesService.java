@@ -226,21 +226,21 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     }
 
     public static boolean pathTailRepetitions(Taxon taxon) {
-        boolean repetitions = true;
+        boolean repetitions = false;
         if (org.apache.commons.lang.StringUtils.isNotBlank(taxon.getPath())) {
             String[] split = org.apache.commons.lang.StringUtils.split(taxon.getPath(), CharsetConstant.SEPARATOR_CHAR);
-            if (split.length < 3
-                    || noRepeatInTail(split)) {
-                repetitions = false;
+            if (split.length > 2
+                    && repeatInTail(split)) {
+                repetitions = true;
             }
         }
         return repetitions;
     }
 
-    private static boolean noRepeatInTail(String[] split) {
+    private static boolean repeatInTail(String[] split) {
         String last = org.apache.commons.lang.StringUtils.trim(split[split.length - 1]);
         String secondToLast = org.apache.commons.lang.StringUtils.trim(split[split.length - 2]);
-        return !org.apache.commons.lang.StringUtils.equals(last, secondToLast);
+        return org.apache.commons.lang.StringUtils.equals(last, secondToLast);
     }
 
 
