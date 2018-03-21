@@ -4,6 +4,7 @@ import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -73,7 +74,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
         String namespace = getDataset() == null ? "" : getDataset().getNamespace();
-        StudyImpl study1 = new StudyImpl( namespace + sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
+        StudyImpl study1 = new StudyImpl(namespace + sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
         study1.setOriginatingDataset(getDataset());
         Study study = nodeFactory.getOrCreateStudy(study1);
 
@@ -91,16 +92,16 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
         String predatorTaxonName = StringUtils.trim(columnValueOrNull(record, "Scientific_Name"));
         if (StringUtils.isNotBlank(StringUtils.trim(predatorTaxonName))
-            && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
+                && StringUtils.isNotBlank(StringUtils.trim(preyTaxonName))) {
             importInteraction(regions, locales, habitats, record, study, preyTaxonName, predatorTaxonName);
         }
     }
 
     public static String columnValueOrNull(Record record, String columnName) {
         String value = record.getMetaData().containsColumn(columnName)
-            ? StringUtils.trim(record.getString(columnName))
-            : null;
-        return StringUtils.equals("null", value) ? null : value;
+                ? StringUtils.trim(record.getString(columnName))
+                : null;
+        return StringUtils.equals("null", value) ? null : StringEscapeUtils.unescapeCsv(value);
     }
 
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
