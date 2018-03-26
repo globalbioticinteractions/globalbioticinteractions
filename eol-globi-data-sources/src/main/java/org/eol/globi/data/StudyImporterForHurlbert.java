@@ -142,7 +142,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             LocationImpl location = new LocationImpl(null, null, null, null);
             String longitude = columnValueOrNull(record, "Longitude_dd");
             String latitude = columnValueOrNull(record, "Latitude_dd");
-            if (NumberUtils.isNumber(latitude) && NumberUtils.isNumber(latitude)) {
+            if (NumberUtils.isNumber(latitude) && NumberUtils.isNumber(longitude)) {
                 try {
                     LatLng latLng = LocationUtil.parseLatLng(latitude, longitude);
                     String altitude = columnValueOrNull(record, "Altitude_mean_m");
@@ -163,7 +163,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                     .map(StringUtils::trim)
                     .map(habitat -> new TermImpl(idForHabitat(habitat), habitat))
                     .collect(Collectors.toList());
-            nodeFactory.addEnvironmentToLocation(location, habitatList);
+            nodeFactory.addEnvironmentToLocation(locationNode, habitatList);
 
             preySpecimen.caughtIn(locationNode);
             predatorSpecimen.caughtIn(locationNode);
@@ -193,7 +193,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     private String idForHabitat(String habitat) {
         String id = HABITAT_MAPPING.get(StringUtils.lowerCase(habitat));
-        return StringUtils.isBlank(id) ? "HURLBERT:" + habitat : habitat;
+        return StringUtils.isBlank(id) ? "HURLBERT:" + habitat : id;
     }
 
     private Date addCollectionDate(Record record, Study study) {
