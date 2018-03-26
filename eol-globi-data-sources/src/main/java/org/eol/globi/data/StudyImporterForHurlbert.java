@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -16,15 +18,23 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
+import org.eol.globi.geo.LatLng;
+import org.eol.globi.util.InvalidLocationException;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StudyImporterForHurlbert extends BaseStudyImporter {
 
@@ -66,10 +76,6 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                 importRecords(regions, locales, habitats, record, sourceCitation);
             }
         }
-
-        LOG.info("unmapped habitats [" + StringUtils.join(habitats.iterator(), ";") + "]");
-        LOG.info("unmapped locales [" + StringUtils.join(locales.iterator(), ";") + "]");
-        LOG.info("unmapped regions [" + StringUtils.join(regions.iterator(), ";") + "]");
     }
 
     private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
@@ -101,7 +107,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         String value = record.getMetaData().containsColumn(columnName)
                 ? StringUtils.trim(record.getString(columnName))
                 : null;
-        return StringUtils.equals("null", value) ? null : StringEscapeUtils.unescapeCsv(value);
+        return StringUtils.equals("null", value) || StringUtils.equalsIgnoreCase("NA", value) ? null : StringEscapeUtils.unescapeCsv(value);
     }
 
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
@@ -129,20 +135,65 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                 Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
                 preySpecimen.setBodyPart(term);
             }
-
-            predatorSpecimen.ate(preySpecimen);
             Date date = addCollectionDate(record, study);
             nodeFactory.setUnixEpochProperty(predatorSpecimen, date);
             nodeFactory.setUnixEpochProperty(preySpecimen, date);
+
+            LocationImpl location = new LocationImpl(null, null, null, null);
+            String longitude = columnValueOrNull(record, "Longitude_dd");
+            String latitude = columnValueOrNull(record, "Latitude_dd");
+            if (NumberUtils.isNumber(latitude) && NumberUtils.isNumber(latitude)) {
+                try {
+                    LatLng latLng = LocationUtil.parseLatLng(latitude, longitude);
+                    String altitude = columnValueOrNull(record, "Altitude_mean_m");
+                    Double altitudeD = NumberUtils.isNumber(altitude) ? Double.parseDouble(altitude) : null;
+                    location = new LocationImpl(latLng.getLat(), latLng.getLng(), altitudeD, null);
+                } catch (InvalidLocationException e) {
+                    getLogger().warn(study, "found invalid (lat,lng) pair: (" + latitude + "," + longitude +")");
+                }
+            }
+
+            String locationRegion = columnValueOrNull(record, "Location_Region");
+            String locationSpecific = columnValueOrNull(record, "Location_Specific");
+            location.setLocality(StringUtils.join(Arrays.asList(locationRegion, locationSpecific), ":"));
+
+            Location locationNode = nodeFactory.getOrCreateLocation(location);
+            String habitat_type = columnValueOrNull(record, "Habitat_type");
+            List<Term> habitatList = Arrays.stream(StringUtils.split(StringUtils.defaultIfBlank(habitat_type, ""), ";"))
+                    .map(StringUtils::trim)
+                    .map(habitat -> new TermImpl(idForHabitat(habitat), habitat))
+                    .collect(Collectors.toList());
+            nodeFactory.addEnvironmentToLocation(location, habitatList);
+
+            preySpecimen.caughtIn(locationNode);
+            predatorSpecimen.caughtIn(locationNode);
+
+            predatorSpecimen.ate(preySpecimen);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create interaction between [" + predatorName + "] and [" + preyTaxonName + "]", e);
         }
 
+    }
 
-        //Location_Region,Location_Specific
-        regions.add(columnValueOrNull(record, "Location_Region"));
-        locales.add(columnValueOrNull(record, "Location_Specific"));
-        habitats.add(columnValueOrNull(record, "Habitat_type"));
+    private final static Map<String, String> HABITAT_MAPPING = new HashMap<String, String>() {{
+        put("agriculture", "ENVO:00000077");
+        put("coniferous forest", "ENVO:01000240");
+        put("deciduous forest", "ENVO:01000816");
+        put("desert", "ENVO:00000097");
+        put("forest", "ENVO:00000111");
+        put("grassland", "ENVO:00000106");
+        put("mangrove forest", "ENVO:01000403");
+        put("mudflat", "ENVO:00000192");
+        put("shrubland", "ENVO:00000300");
+        put("tundra", "ENVO:00000112");
+        put("urban", "ENVO:00000856");
+        put("wetland", "ENVO:00000043");
+        put("woodland", "ENVO:00000109");
+    }};
+
+    private String idForHabitat(String habitat) {
+        String id = HABITAT_MAPPING.get(StringUtils.lowerCase(habitat));
+        return StringUtils.isBlank(id) ? "HURLBERT:" + habitat : habitat;
     }
 
     private Date addCollectionDate(Record record, Study study) {
