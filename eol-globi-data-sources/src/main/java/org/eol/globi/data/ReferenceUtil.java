@@ -4,15 +4,10 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.service.Dataset;
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class ReferenceUtil {
     private static final Log LOG = LogFactory.getLog(ReferenceUtil.class);

@@ -130,7 +130,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                     } else if (StringUtils.isBlank(eventDate)) {
                         getLogger().warn(study, "found suspicious event date [" + eventDate + "]" + getLineMsg(occurrence));
                     } else {
-                        DateTimeFormatter fmtDateTime1 = DateTimeFormat.forPattern("yyyy-MM-dd");
+                        DateTimeFormatter fmtDateTime1 = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
                         String dateString = eventDate.split("/")[0];
                         try {
                             date = fmtDateTime1.parseDateTime(dateString).toDate();

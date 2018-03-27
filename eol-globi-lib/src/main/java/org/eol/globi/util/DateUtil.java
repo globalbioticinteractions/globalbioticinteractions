@@ -9,11 +9,11 @@ import java.util.Date;
 
 public final class DateUtil {
     public static String printDate(Date date) {
-        return date == null ? "" : ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.UTC).print(date.getTime());
+        return date == null ? "" : ISODateTimeFormat.dateTimeNoMillis().withZoneUTC().print(date.getTime());
     }
 
     public static String printYear(Date date) {
-        return date == null ? "" : ISODateTimeFormat.year().withZone(DateTimeZone.UTC).print(date.getTime());
+        return date == null ? "" : ISODateTimeFormat.year().withZoneUTC().print(date.getTime());
     }
 
     public static DateTime parseYearUTC(String dateString) {

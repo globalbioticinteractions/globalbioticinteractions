@@ -186,7 +186,7 @@ class InteractionListenerImpl implements InteractionListener {
         final String eventDate = link.get(StudyImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
-                final DateTime dateTime = ISODateTimeFormat.dateTimeParser().parseDateTime(eventDate);
+                final DateTime dateTime = ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(eventDate);
                 nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
             } catch (IllegalArgumentException ex) {
                 throw new StudyImporterException("invalid date string [" + eventDate + "]", ex);

@@ -114,7 +114,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
     protected DateTime attemptParse(String date, String pattern) {
         DateTime dateTime = null;
         try {
-            dateTime = DateTimeFormat.forPattern(pattern).parseDateTime(date);
+            dateTime = DateTimeFormat.forPattern(pattern).withZoneUTC().parseDateTime(date);
         } catch (IllegalArgumentException ex) {
             //
         }

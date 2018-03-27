@@ -308,7 +308,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 final DateTimeFormatter dateTimeFormatter = StringUtils.isNotBlank(column.getDataTypeFormat())
                         ? DateTimeFormat.forPattern(column.getDataTypeFormat())
                         : DateTimeFormat.fullDateTime();
-                convertedValue = dateTimeFormatter
+                convertedValue = dateTimeFormatter.withZoneUTC()
                         .parseDateTime(value)
                         .toString(ISODateTimeFormat.dateTime().withZoneUTC());
             } else {

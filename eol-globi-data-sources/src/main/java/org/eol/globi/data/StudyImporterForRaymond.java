@@ -24,7 +24,6 @@ import org.eol.globi.geo.GeoUtil;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.eol.globi.util.HttpUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -173,7 +172,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     }
 
     private Date parseCollectionDate(LabeledCSVParser dietParser) throws StudyImporterException {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy").withZoneUTC();
         Date date = null;
         try {
             String observationDateStart = dietParser.getValueByLabel(OBSERVATION_DATE_START);

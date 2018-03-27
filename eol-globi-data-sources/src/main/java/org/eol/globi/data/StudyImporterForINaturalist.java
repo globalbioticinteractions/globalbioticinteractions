@@ -327,7 +327,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     private DateTime parseUTCDateTime(String timeObservedAtUtc) {
-        return ISODateTimeFormat.dateTimeParser().parseDateTime(timeObservedAtUtc).withZone(DateTimeZone.UTC);
+        return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(timeObservedAtUtc);
     }
 
     public void setTypeIgnoredURI(String typeIgnoredURI) {
