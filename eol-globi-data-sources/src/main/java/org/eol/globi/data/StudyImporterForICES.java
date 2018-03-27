@@ -8,10 +8,9 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.util.DateUtil;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StudyImporterForICES extends BaseStudyImporter {
@@ -87,8 +86,8 @@ public class StudyImporterForICES extends BaseStudyImporter {
         String dateTime = parser.getValueByLabel("Date/Time");
         Date date;
         try {
-            date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateTime);
-        } catch (ParseException e) {
+            date = DateUtil.parsePatternUTC(dateTime, "dd/MM/yyyy HH:mm:ss").toDate();
+        } catch (IllegalArgumentException e) {
             throw new StudyImporterException("missing or invalid date value [" + dateTime + "]", e);
         }
 

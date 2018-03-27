@@ -23,7 +23,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     @Test
     public void importSome() throws StudyImporterException, IOException {
-        StudyImporter importer = doImport("some/namespace");
+        doImport("some/namespace");
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(2));

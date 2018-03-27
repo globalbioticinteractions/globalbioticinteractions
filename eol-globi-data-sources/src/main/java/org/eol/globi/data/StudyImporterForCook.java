@@ -8,10 +8,9 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.util.DateUtil;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StudyImporterForCook extends BaseStudyImporter {
@@ -51,8 +50,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
                     host.setLengthInMm(Double.parseDouble(parser.getValueByLabel("Fish Length")) * 10.0);
 
                     String dateString = parser.getValueByLabel("Date");
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-                    Date collectionDate = dateFormat.parse(dateString);
+                    Date collectionDate = DateUtil.parsePatternUTC(dateString, "MM/dd/yyyy").toDate();
                     nodeFactory.setUnixEpochProperty(host, collectionDate);
                     host.caughtIn(sampleLocation);
 
@@ -63,7 +61,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
                 }
             } catch (IOException e) {
                 throw new StudyImporterException("failed to parse [" + DATASET_RESOURCE_NAME + "]", e);
-            } catch (ParseException e) {
+            } catch (IllegalArgumentException e) {
                 throw new StudyImporterException("failed to parse date", e);
             }
 

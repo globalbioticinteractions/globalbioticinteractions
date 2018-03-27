@@ -5,6 +5,7 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -13,12 +14,10 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -67,12 +66,12 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         int specimenCollected = 0;
         int preyEaten = 0;
         for (Relationship rel : collectedRels) {
-            assertThat((Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(new SimpleDateFormat("yyyy").parse("1981").getTime()));
+            assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(DateUtil.parsePatternUTC("1981", "yyyy").toDate().getTime()));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
             Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
-            for (Relationship relationship : relationships) {
-                assertThat((Double) specimen.getProperty(SpecimenConstant.LENGTH_IN_MM), is(125.0));
+            for (Relationship ignored : relationships) {
+                assertThat(specimen.getProperty(SpecimenConstant.LENGTH_IN_MM), is(125.0));
                 preyEaten++;
             }
 

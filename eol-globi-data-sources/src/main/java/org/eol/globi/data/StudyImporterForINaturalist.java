@@ -15,6 +15,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
@@ -23,7 +24,6 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -255,8 +255,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             citation.append(". ");
         }
         if (observationDate != null) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy");
-            citation.append(format.format(observationDate));
+            citation.append(DateUtil.printYear(observationDate));
             citation.append(". ");
         }
         citation.append(sourceTaxonName);

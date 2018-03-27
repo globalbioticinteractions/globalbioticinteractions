@@ -24,8 +24,6 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StudyImporterForJSONLD extends BaseStudyImporter {
@@ -82,12 +80,12 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 String collTime = solution.get("collTime").asLiteral().getString();
                 Date date = parseDate(collTime);
                 nodeFactory.setUnixEpochProperty(source, date);
-                                    nodeFactory.setUnixEpochProperty(target, date);
+                nodeFactory.setUnixEpochProperty(target, date);
                 Location loc = nodeFactory.getOrCreateLocation(
                         new LocationImpl(solution.get("collLat").asLiteral().getDouble(), solution.get("collLng").asLiteral().getDouble(), null, null));
                 target.caughtIn(loc);
                 source.caughtIn(loc);
-                source.interactsWith(target,interactType1);
+                source.interactsWith(target, interactType1);
             }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import jsonld data in [" + getResourceURI() + "]", e);
@@ -97,10 +95,9 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
     }
 
     private Date parseDate(String collTime) throws StudyImporterException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-DD");
         try {
-            return dateFormat.parse(collTime);
-        } catch (ParseException e) {
+            return org.eol.globi.util.DateUtil.parsePatternUTC(collTime, "yy-MM-DD").toDate();
+        } catch (IllegalArgumentException e) {
             throw new StudyImporterException("not setting collection date, because [" + collTime + "] could not be read as date.", e);
         }
     }

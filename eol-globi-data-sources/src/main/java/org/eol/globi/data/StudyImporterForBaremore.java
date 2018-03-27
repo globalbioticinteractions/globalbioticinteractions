@@ -9,13 +9,10 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,12 +51,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                         predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Squatina dumeril", null));
                         predatorSpecimen.caughtIn(collectionLocation);
                         addLifeStage(parser, predatorSpecimen);
-
-                        try {
-                            addCollectionDate(collectionDateString, predatorSpecimen);
-                        } catch (ParseException ex) {
-                            throw new StudyImporterException("failed to parse collection date at line [" + parser.getLastLineNumber() + "] in [" + DATA_SOURCE + "]", ex);
-                        }
+                        addCollectionDate(collectionDateString, predatorSpecimen);
                     }
                     specimenMap.put(sharkId, predatorSpecimen);
 
@@ -99,9 +91,13 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
         }
     }
 
-    private Date addCollectionDate(String s, Specimen specimen) throws ParseException, NodeFactoryException {
-        Date collectionDate = new SimpleDateFormat("MM/dd/yyyy").parse(s);
-        nodeFactory.setUnixEpochProperty(specimen, collectionDate);
-        return collectionDate;
+    private Date addCollectionDate(String dateTime, Specimen specimen) throws NodeFactoryException {
+        try {
+            Date collectionDate = org.eol.globi.util.DateUtil.parsePatternUTC(dateTime, "MM/dd/yyyy").toDate();
+            nodeFactory.setUnixEpochProperty(specimen, collectionDate);
+            return collectionDate;
+        } catch (IllegalArgumentException ex) {
+            throw new NodeFactoryException("failed to parse [" + dateTime + "]");
+        }
     }
 }

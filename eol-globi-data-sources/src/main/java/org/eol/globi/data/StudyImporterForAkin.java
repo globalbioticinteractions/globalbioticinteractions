@@ -12,11 +12,10 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -166,11 +165,10 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         int dateIndex = findIndexForColumnWithNameThrowOnMissing("Date", header);
         String dateString = line[dateIndex];
         if (!StringUtils.isBlank(dateString)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yy");
             try {
-                Date date = dateFormat.parse(dateString);
+                Date date = DateUtil.parsePatternUTC(dateString, "MM.dd.yy").toDate();
                 nodeFactory.setUnixEpochProperty(specimen, date);
-            } catch (ParseException e) {
+            } catch (IllegalArgumentException e) {
                 getLogger().warn(study, "not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to set collection time", e);

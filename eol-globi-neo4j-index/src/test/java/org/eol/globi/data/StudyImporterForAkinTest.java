@@ -10,6 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -17,7 +18,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,13 +81,12 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         Relationship rel = specimens.iterator().next();
         assertThat(rel, is(not(nullValue())));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date expectedDate = formatter.parse("1998-03-07");
-        assertThat((Long)rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
+        Date expectedDate = DateUtil.parsePatternUTC("1998-03-07", "yyyy-MM-dd").toDate();
+        assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
 
         Node specimenNode = rel.getEndNode();
-        assertThat((Double) specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(226.0));
-        assertThat((Double) specimenNode.getProperty(SpecimenConstant.STOMACH_VOLUME_ML), is(3.0));
+        assertThat(specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(226.0));
+        assertThat(specimenNode.getProperty(SpecimenConstant.STOMACH_VOLUME_ML), is(3.0));
 
         Specimen specimen = new SpecimenNode(specimenNode);
         assertThat(specimen.getSampleLocation().getAltitude(), is(-0.7));

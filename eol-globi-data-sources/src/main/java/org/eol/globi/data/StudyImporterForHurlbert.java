@@ -20,13 +20,13 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -204,14 +204,13 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
         Date date = null;
         if (StringUtils.isNotBlank(dateString)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
             try {
-                date = dateFormat.parse(dateString);
-            } catch (ParseException e) {
-                SimpleDateFormat dateFormatYearOnly = new SimpleDateFormat("yyyy");
+                DateTime dateTime = DateUtil.parseYearMonthUTC(dateString);
+                date = dateTime.toDate();
+            } catch (IllegalArgumentException e) {
                 try {
-                    date = dateFormatYearOnly.parse(dateString);
-                } catch (ParseException e1) {
+                    date = DateUtil.parseYearUTC(dateString).toDate();
+                } catch (IllegalArgumentException e1) {
                     getLogger().warn(study, "not setting collection date, because [" + dateString + "] could not be read as date.");
                 }
             }
