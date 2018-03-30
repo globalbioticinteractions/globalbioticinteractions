@@ -95,18 +95,26 @@ public class SchemaController {
     @RequestMapping(value = "/prefixes", method = RequestMethod.GET)
     @ResponseBody
     public String getPrefixes(HttpServletRequest request) {
-        return "csv".equals(getRequestType(request)) ? csvPrefixes() : jsonPrefixes();
+        String prefixes;
+        if ("csv".equalsIgnoreCase(getRequestType(request))) {
+            prefixes = tabularPrefixes(",");
+        } else if ("tsv".equalsIgnoreCase(getRequestType(request))) {
+            prefixes = tabularPrefixes("\t");
+        } else {
+            prefixes = jsonPrefixes();
+        }
+        return prefixes;
     }
 
-    private String csvPrefixes() {
+    private String tabularPrefixes(String delimiter) {
         StringBuilder builder = new StringBuilder();
-        builder.append("id_prefix,url_prefix,url_suffix\n");
+        builder.append("id_prefix").append(delimiter).append("url_prefix").append(delimiter).append("url_suffix\n");
         Map<String, String> urlPrefixMap = getURLPrefixMap();
         Map<String, String> urlSuffixMap = getURLSuffixMap();
         for (String idPrefix : urlPrefixMap.keySet()) {
             builder.append(idPrefix);
-            builder.append(",").append(urlPrefixMap.getOrDefault(idPrefix, ""));
-            builder.append(",").append(urlSuffixMap.getOrDefault(idPrefix, ""));
+            builder.append(delimiter).append(urlPrefixMap.getOrDefault(idPrefix, ""));
+            builder.append(delimiter).append(urlSuffixMap.getOrDefault(idPrefix, ""));
             builder.append("\n");
         }
         return builder.toString();

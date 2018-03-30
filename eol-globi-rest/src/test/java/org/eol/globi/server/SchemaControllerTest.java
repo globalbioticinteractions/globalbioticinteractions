@@ -90,6 +90,16 @@ public class SchemaControllerTest {
     }
 
     @Test
+    public void prefixesTSV() throws IOException {
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        when(request.getParameter("type")).thenReturn("tsv");
+
+        String prefixes = new SchemaController().getPrefixes(request);
+        assertThat(prefixes, containsString("id_prefix\turl_prefix\turl_suffix"));
+        assertThat(prefixes, containsString("EOL:\thttp://eol.org/pages/\t"));
+    }
+
+    @Test
     public void prefixesJSON() throws IOException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameter("type")).thenReturn("json");
