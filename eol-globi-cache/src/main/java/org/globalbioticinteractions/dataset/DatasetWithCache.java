@@ -35,7 +35,11 @@ public class DatasetWithCache extends DatasetMapped {
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
-        return cache.asInputStream(getResourceURI2(resourceName));
+        InputStream inputStream = cache.asInputStream(getResourceURI2(resourceName));
+        if (null == inputStream) {
+            throw new IOException("resource [" + resourceName + "] not found");
+        }
+        return inputStream;
     }
 
     @Override
