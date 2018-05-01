@@ -230,7 +230,6 @@ class InteractionListenerImpl implements InteractionListener {
             }
         }
         String localityId = link.get(LOCALITY_ID);
-        String localityName = link.get(LOCALITY_NAME);
 
         if (centroid == null) {
             if (StringUtils.isNotBlank(localityId)) {
@@ -245,6 +244,7 @@ class InteractionListenerImpl implements InteractionListener {
             if (StringUtils.isNotBlank(localityId)) {
                 location.setLocalityId(localityId);
             }
+            String localityName = link.get(LOCALITY_NAME);
             if (StringUtils.isNotBlank(localityName)) {
                 location.setLocality(localityName);
             }

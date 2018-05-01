@@ -108,9 +108,9 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
-    public void interactsWith(Specimen target, InteractType type, Location centroid) {
-        caughtIn(centroid);
-        target.caughtIn(centroid);
+    public void interactsWith(Specimen target, InteractType type, Location location) {
+        caughtIn(location);
+        target.caughtIn(location);
         interactsWith(target, type);
     }
 

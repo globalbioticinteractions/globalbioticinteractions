@@ -24,7 +24,7 @@ public interface Specimen extends WithId {
 
     void setStomachVolumeInMilliLiter(Double volumeInMilliLiter);
 
-    void interactsWith(Specimen target, InteractType type, Location centroid);
+    void interactsWith(Specimen target, InteractType type, Location location);
 
     void interactsWith(Specimen recipientSpecimen, InteractType relType);
 
