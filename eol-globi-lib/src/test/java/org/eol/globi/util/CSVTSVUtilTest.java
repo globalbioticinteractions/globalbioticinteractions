@@ -24,6 +24,14 @@ public class CSVTSVUtilTest {
         assertThat(writer.toString(), is("\"hello \"\"world\"\"\""));
     }
 
+    @Test
+    public void writeQuotes2() {
+        StringWriter writer = new StringWriter();
+        CSVPrint csvPrint = CSVTSVUtil.createCSVPrint(writer);
+        csvPrint.print("\"Ala'ihi");
+        assertThat(writer.toString(), is("\"\"\"Ala'ihi\""));
+    }
+
     @Ignore("reading with unix style csv for now")
     @Test
     public void readQuotes() throws IOException {

@@ -31,6 +31,7 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
         taxon.setExternalId("homoSapiensId");
         taxon.setPath("one\ttwo three");
         taxon.setExternalUrl("http://some/thing");
+        taxon.setCommonNames("man @en | \"mens @nl");
         taxon.setThumbnailUrl("http://thing/some");
         Taxon human = taxonIndex.getOrCreateTaxon(taxon);
         TaxonImpl taxon1 = new TaxonImpl("Canis lupus", "canisLupusId");
@@ -45,9 +46,11 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         new ExportTaxonCache().exportStudy(study, writer, true);
         assertThat(writer.toString(), is("id\tname\trank\tcommonNames\tpath\tpathIds\tpathNames\texternalUrl\tthumbnailUrl" +
-                "\nhomoSapiensId\tHomo sapiens\t\t\tone two three\t\t\thttp://some/thing\thttp://thing/some" +
+                "\nhomoSapiensId\tHomo sapiens\t\tman @en | \"mens @nl\tone two three\t\t\thttp://some/thing\thttp://thing/some" +
                 "\nalt:123\tAlternate Homo sapiens\t\t\tsome path here\t\t\thttp://some/thing\thttp://thing/some" +
                 "\ncanisLupusId\tCanis lupus\t\t\tfour five six\t\t\t\t"));
     }
+
+
 
 }

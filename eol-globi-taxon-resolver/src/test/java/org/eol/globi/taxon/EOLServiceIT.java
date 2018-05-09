@@ -720,4 +720,23 @@ public class EOLServiceIT {
 
     }
 
+    @Test
+    public void lookupIdsWithDelimiters() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<>();
+        properties.put(EXTERNAL_ID, "EOL:392765");
+        properties = eolService.enrich(properties);
+        String commonNames = properties.get(COMMON_NAMES);
+        assertThat(commonNames, is("roble amarillo @en | \"makulis\" @es | เหลืองอินเดีย @th | "));
+    }
+
+    @Test
+    public void lookupIdsWithDelimiters2() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<>();
+        properties.put(EXTERNAL_ID, "EOL:224784");
+        properties = eolService.enrich(properties);
+        String commonNames = properties.get(COMMON_NAMES);
+        String expectedCommonNames = "Kolvin-soldaat @af | Deek @ar | 鐵甲 @cnm | Eichhörnchenfisch @de | Sammara squirrelfish @en | Candil samara @es | Corocoro @fj | Marignan tacheté @fr | \"Ala'ihi @hw | Ukeguchi-ittoudai @ja | 무늬얼게돔 @ko | Jerra @mh | Kolithaduva @ml | Kinolu @ms | Esquilo samara @pt | Malau-tui @sm | Baga-baga @tl | Araoe @ty | Cá Son dá dài @vi | 条纹长颏鳂 @zh | 莎姆新東洋金鱗魚 @zh-Hant | ";
+        assertThat(commonNames, is(expectedCommonNames));
+    }
+
 }
