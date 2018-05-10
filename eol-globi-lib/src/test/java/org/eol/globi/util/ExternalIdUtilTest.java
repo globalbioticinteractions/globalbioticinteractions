@@ -28,6 +28,7 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("INAT_TAXON:406089"), is("https://inaturalist.org/taxa/406089"));
         assertThat(ExternalIdUtil.urlForExternalId("WD:Q140"), is("https://www.wikidata.org/wiki/Q140"));
         assertThat(ExternalIdUtil.urlForExternalId("GEONAMES:123"), is("http://www.geonames.org/123"));
+        assertThat(ExternalIdUtil.urlForExternalId("ALATaxon:NZOR-4-77345"), is("https://bie.ala.org.au/species/NZOR-4-77345"));
     }
 
     @Test

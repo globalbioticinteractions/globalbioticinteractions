@@ -10,6 +10,7 @@ public enum TaxonomyProvider {
     WIKIPEDIA("W:"),
     ENVO("ENVO:"),
     GBIF("GBIF:"),
+    ATLAS_OF_LIVING_AUSTRALIA("ALATaxon:"),
     AUSTRALIAN_FAUNAL_DIRECTORY("AFD:"),
     BIODIVERSITY_AUSTRALIA("urn:lsid:biodiversity.org.au:apni.taxon:"),
     INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA("IRMNG:"),
