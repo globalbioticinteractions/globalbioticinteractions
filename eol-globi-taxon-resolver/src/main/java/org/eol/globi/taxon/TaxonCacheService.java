@@ -277,14 +277,14 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             @Override
             public boolean hasNext() {
                 try {
-                    return hasAnotherValidLine();
+                    return proceedToNextValidLine();
                 } catch (IOException e) {
                     LOG.error("failed to get next line", e);
                     return false;
                 }
             }
 
-            private boolean hasAnotherValidLine() throws IOException {
+            private boolean proceedToNextValidLine() throws IOException {
                 while((currentLine = reader.readLine()) != null) {
                     if (config.getValidator().test(currentLine)) {
                         return true;
