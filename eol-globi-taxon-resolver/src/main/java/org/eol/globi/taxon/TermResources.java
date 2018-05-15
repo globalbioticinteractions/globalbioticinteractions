@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ public class TermResources {
             @Override
             public Function<String, Triple<Taxon, NameType, Taxon>> getParser() {
                 return line -> {
-                    String[] strings = line.split("\t");
+                    String[] strings = CSVTSVUtil.splitTSV(line);
                     Taxon provided = TaxonMapParser.parseProvidedTaxon(strings);
                     Taxon resolved = TaxonMapParser.parseResolvedTaxon(strings);
                     return new ImmutableTriple<>(provided, NameType.SAME_AS, resolved);

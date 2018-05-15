@@ -12,6 +12,7 @@ import org.eol.globi.service.DatasetFactory;
 import org.eol.globi.service.DatasetFinder;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.util.CSVTSVUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLog;
@@ -61,7 +62,7 @@ public class DatasetFinderLocal implements DatasetFinder {
             try {
                 String[] rows = IOUtils.toString(accessFile.toURI()).split("\n");
                 for (String row : rows) {
-                    namespaces.add(row.split("\t")[0]);
+                    namespaces.add(CSVTSVUtil.splitTSV(row)[0]);
                 }
             } catch (IOException e) {
                 throw new DatasetFinderException("failed to read ", e);
@@ -107,7 +108,7 @@ public class DatasetFinderLocal implements DatasetFinder {
         if (accessFile.exists()) {
             String[] rows = IOUtils.toString(accessFile.toURI()).split("\n");
             for (String row : rows) {
-                String[] split = row.split("\t");
+                String[] split = CSVTSVUtil.splitTSV(row);
                 if (split.length > 4
                         && StringUtils.equalsIgnoreCase(StringUtils.trim(split[0]), namespace)
                         && StringUtils.equals(StringUtils.trim(split[4]), CacheUtil.MIME_TYPE_GLOBI)) {

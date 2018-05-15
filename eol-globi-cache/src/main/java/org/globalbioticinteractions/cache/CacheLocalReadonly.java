@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -54,7 +55,7 @@ public class CacheLocalReadonly implements Cache {
             if (accessFile.exists()) {
                 String[] rows = IOUtils.toString(accessFile.toURI()).split("\n");
                 for (String row : rows) {
-                    String[] split = row.split("\t");
+                    String[] split = CSVTSVUtil.splitTSV(row);
                     if (split.length > 3) {
                         URI sourceURI = URI.create(split[1]);
                         String sha256 = split[2];

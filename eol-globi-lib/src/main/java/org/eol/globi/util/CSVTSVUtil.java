@@ -123,4 +123,8 @@ public class CSVTSVUtil {
         return stream.map(value -> StringUtils.isBlank(value) ? "" : value.replaceAll("[\t\r\n]+", " "))
                 .map(StringUtils::trim);
     }
+
+    public static String[] splitTSV(String aline) {
+        return StringUtils.splitByWholeSeparatorPreserveAllTokens(aline, ("\t"));
+    }
 }
