@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;

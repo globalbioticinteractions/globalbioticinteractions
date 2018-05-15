@@ -16,11 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.startsWith;
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.startsWith;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 public class DatasetWithCache extends DatasetMapped {
     private final static Log LOG = LogFactory.getLog(DatasetWithCache.class);

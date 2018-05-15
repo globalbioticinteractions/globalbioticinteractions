@@ -3,7 +3,6 @@ package org.eol.globi.taxon;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,12 +31,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,49 +57,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     public TaxonCacheService(final String termResource, final String taxonMapResource) {
-
-        this(new TermResource<Taxon>() {
-
-            @Override
-            public String getResource() {
-                return termResource;
-            }
-
-            @Override
-            public Function<String, Taxon> getParser() {
-                return TaxonCacheParser::parseLine;
-            }
-
-            @Override
-            public Predicate<String> getValidator() {
-                return ((Predicate<String>) Objects::nonNull)
-                        .and(line1 -> {
-                            final Taxon taxon = getParser().apply(line1);
-                            return !StringUtils.isBlank(taxon.getPath());
-                        });
-            }
-        }, new TermResource<Triple<Taxon, NameType, Taxon>>() {
-
-            @Override
-            public String getResource() {
-                return taxonMapResource;
-            }
-
-            @Override
-            public Function<String, Triple<Taxon, NameType, Taxon>> getParser() {
-                return line -> {
-                    String[] strings = line.split("\t");
-                    Taxon provided = TaxonMapParser.parseProvidedTaxon(strings);
-                    Taxon resolved = TaxonMapParser.parseResolvedTaxon(strings);
-                    return new ImmutableTriple<>(provided, NameType.SAME_AS, resolved);
-                };
-            }
-
-            @Override
-            public Predicate<String> getValidator() {
-                return Objects::nonNull;
-            }
-        });
+        this(TermResources.defaultTaxonCacheResource(termResource), TermResources.defaultTaxonMapResource(taxonMapResource));
     }
 
     @Override

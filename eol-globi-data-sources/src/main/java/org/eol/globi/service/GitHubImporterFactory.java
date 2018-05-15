@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;

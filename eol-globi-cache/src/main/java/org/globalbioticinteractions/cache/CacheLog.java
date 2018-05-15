@@ -1,7 +1,7 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;

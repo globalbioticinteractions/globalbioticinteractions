@@ -659,7 +659,7 @@ public class CypherQueryBuilder {
         long offset = defaultValue;
         if (request != null) {
             String offsetValue = request.getParameter(paramName);
-            if (org.apache.commons.lang.StringUtils.isNotBlank(offsetValue)) {
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(offsetValue)) {
                 try {
                     offset = Long.parseLong(offsetValue);
                 } catch (NumberFormatException ex) {

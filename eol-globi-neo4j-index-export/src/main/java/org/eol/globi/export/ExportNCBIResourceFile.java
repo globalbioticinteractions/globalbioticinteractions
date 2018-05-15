@@ -1,7 +1,7 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.neo4j.cypher.javacompat.ExecutionEngine;

@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;

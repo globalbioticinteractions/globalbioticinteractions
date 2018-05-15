@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.PropertyAndValueDictionary;

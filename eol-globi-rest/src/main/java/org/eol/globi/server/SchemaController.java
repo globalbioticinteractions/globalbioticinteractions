@@ -1,6 +1,6 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultFormatterCSV;
