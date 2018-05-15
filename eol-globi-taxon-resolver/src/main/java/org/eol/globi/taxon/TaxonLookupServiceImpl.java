@@ -54,34 +54,35 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         addTerm(taxonTerm.getName(), taxonTerm);
     }
 
-    public void addTerm(String name, Taxon taxonTerm) {
+    @Override
+    public void addTerm(String key, Taxon value) {
         if (hasStarted()) {
             Document doc = new Document();
-            doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            if (taxonTerm.getName() != null) {
-                doc.add(new Field(FIELD_RECOMMENDED_NAME, taxonTerm.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            doc.add(new Field(FIELD_NAME, key, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            if (value.getName() != null) {
+                doc.add(new Field(FIELD_RECOMMENDED_NAME, value.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
-            doc.add(new Field(FIELD_ID, taxonTerm.getExternalId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            String rankPath = taxonTerm.getPath();
+            doc.add(new Field(FIELD_ID, value.getExternalId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            String rankPath = value.getPath();
             if (rankPath != null) {
                 doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
-            String rankPathIds = taxonTerm.getPathIds();
+            String rankPathIds = value.getPathIds();
             if (rankPathIds != null) {
                 doc.add(new Field(FIELD_RANK_PATH_IDS, rankPathIds, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
-            String rankPathNames = taxonTerm.getPathNames();
+            String rankPathNames = value.getPathNames();
             if (rankPathNames != null) {
                 doc.add(new Field(FIELD_RANK_PATH_NAMES, rankPathNames, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
-            String commonNames = taxonTerm.getCommonNames();
+            String commonNames = value.getCommonNames();
             if (commonNames != null) {
                 doc.add(new Field(FIELD_COMMON_NAMES, commonNames, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
             try {
                 indexWriter.addDocument(doc);
             } catch (IOException e) {
-                throw new RuntimeException("failed to add document for term with name [" + taxonTerm.getName() + "]");
+                throw new RuntimeException("failed to add document for term with name [" + value.getName() + "]");
             }
         }
     }

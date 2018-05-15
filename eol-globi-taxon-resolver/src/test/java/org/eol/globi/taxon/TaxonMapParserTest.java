@@ -21,9 +21,10 @@ public class TaxonMapParserTest {
     public static void parse(BufferedReader reader, TaxonMapListener listener) throws IOException {
             LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(reader);
             listener.start();
-            while (labeledCSVParser.getLine() != null) {
-                Taxon providedTaxon = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
-                Taxon resolvedTaxon = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
+        String[] line;
+        while ((line = labeledCSVParser.getLine()) != null) {
+                Taxon providedTaxon = TaxonMapParser.parseProvidedTaxon(line);
+                Taxon resolvedTaxon = TaxonMapParser.parseResolvedTaxon(line);
                 listener.addMapping(providedTaxon, resolvedTaxon);
             }
             listener.finish();

@@ -634,6 +634,17 @@ public class EOLServiceIT {
     }
 
     @Test
+    public void lookupPathNCBIExternalId2() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(NAME, "Homo sapiens");
+        properties.put(EXTERNAL_ID, "NCBI:54642");
+        properties = eolService.enrich(properties);
+        assertThat(properties.get(PATH_NAMES), is("Homo sapiens"));
+        assertThat(properties.get(EXTERNAL_ID), is("EOL:327955"));
+        hasHomoSapiensPath(properties);
+    }
+
+    @Test
     public void lookupPathITISExternalId() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, "sea otter");

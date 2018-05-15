@@ -1,6 +1,5 @@
 package org.eol.globi.taxon;
 
-import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -17,7 +16,6 @@ import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -33,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -106,13 +105,13 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return externalId;
     }
 
-    public void lazyInit() throws PropertyEnricherException {
+    private void lazyInit() throws PropertyEnricherException {
         if (resolvedIdToTaxonMap == null || taxonLookupService == null) {
             init();
         }
     }
 
-    public void init() throws PropertyEnricherException {
+    private void init() throws PropertyEnricherException {
         LOG.info("taxon cache initializing at [" + getCacheDir().getAbsolutePath() + "...");
 
         initTaxonCache();
@@ -127,9 +126,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             File luceneDir = new File(getCacheDir().getAbsolutePath(), "lucene");
             boolean preexisting = luceneDir.exists();
             createCacheDir(luceneDir, isTemporary());
-            TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir));
-            taxonLookupService.setMaxHits(getMaxTaxonLinks());
-            taxonLookupService.start();
+            TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir)) {{
+                setMaxHits(getMaxTaxonLinks());
+                start();
+            }};
             if (!isTemporary() && preexisting) {
                 LOG.info("pre-existing taxon lookup index found, no need to re-index...");
             } else {
@@ -140,10 +140,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 StopWatch watch = new StopWatch();
                 watch.start();
                 BufferedReader reader = createBufferedReader(taxonMapResource);
-                final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
-                while (labeledCSVParser.getLine() != null) {
-                    Taxon provided = TaxonMapParser.parseProvidedTaxon(labeledCSVParser);
-                    Taxon resolved = TaxonMapParser.parseResolvedTaxon(labeledCSVParser);
+                String[] line;
+                while ((line = getLine(reader)) != null) {
+                    Taxon provided = TaxonMapParser.parseProvidedTaxon(line);
+                    Taxon resolved = TaxonMapParser.parseResolvedTaxon(line);
                     addIfNeeded(taxonLookupService, provided.getExternalId(), resolved.getExternalId());
                     addIfNeeded(taxonLookupService, provided.getName(), resolved.getExternalId());
                     addIfNeeded(taxonLookupService, resolved.getName(), resolved.getExternalId());
@@ -160,6 +160,11 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         } catch (IOException e) {
             throw new PropertyEnricherException("problem initiating taxon cache index", e);
         }
+    }
+
+    private static String[] getLine(BufferedReader reader) throws IOException {
+        String s = reader.readLine();
+        return s == null ? null : s.split("\t");
     }
 
     private void initTaxonCache() throws PropertyEnricherException {
@@ -181,8 +186,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                         .pumpIgnoreDuplicates()
                         .pumpSource(taxonCacheIterator(taxonCacheResource, new LineSkipper() {
                             @Override
-                            public boolean shouldSkipLine(LabeledCSVParser parser) {
-                                final Taxon taxon = TaxonCacheParser.parseLine(parser);
+                            public boolean shouldSkipLine(String[] line) {
+                                final Taxon taxon = TaxonCacheParser.parseLine(line);
                                 return StringUtils.isBlank(taxon.getPath());
                             }
                         }))
@@ -198,7 +203,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
     }
 
-    public void addIfNeeded(TaxonLookupServiceImpl lookupService, String providedKey, String resolvedId) {
+    private void addIfNeeded(TaxonImportListener lookupService, String providedKey, String resolvedId) {
         if (TaxonUtil.isNonEmptyValue(providedKey) && TaxonUtil.isNonEmptyValue(resolvedId)) {
             lookupService.addTerm(providedKey, new TaxonImpl(null, resolvedId));
         }
@@ -240,7 +245,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                         .distinct()
                         .limit(getMaxTaxonLinks())
                         .collect(Collectors.toList());
-                for(String resolvedId : idsDistinct) {
+                for (String resolvedId : idsDistinct) {
                     Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
@@ -262,7 +267,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     interface LineSkipper {
-        boolean shouldSkipLine(LabeledCSVParser parser);
+        boolean shouldSkipLine(String[] line);
     }
 
     static private String valueOrNoMatch(String value) {
@@ -273,16 +278,23 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(resource);
-            private final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledTSVParser(reader);
             private AtomicBoolean lineReady = new AtomicBoolean(false);
+            private AtomicLong lineNumber = new AtomicLong(0);
+            private String[] currentLine = null;
 
             @Override
             public boolean hasNext() {
                 try {
                     boolean hasNext;
                     do {
-                        hasNext = lineReady.get() || consumeLine(labeledCSVParser);
-                    } while (hasNext && skipper.shouldSkipLine(labeledCSVParser));
+                        if (lineReady.get()) {
+                            hasNext = true;
+                        } else {
+                            currentLine = getLine(reader);
+                            hasNext = consumeLine(currentLine);
+                            lineNumber.incrementAndGet();
+                        }
+                    } while (hasNext && (lineNumber.get() == 0 || skipper.shouldSkipLine(currentLine)));
 
                     return hasNext;
                 } catch (IOException e) {
@@ -291,9 +303,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 }
             }
 
-            private boolean consumeLine(LabeledCSVParser labeledCSVParser) throws IOException {
-                boolean hasNext = labeledCSVParser.getLine() != null;
-                if (skipper.shouldSkipLine(labeledCSVParser)) {
+            private boolean consumeLine(String[] line) throws IOException {
+                boolean hasNext = line != null;
+                if (skipper.shouldSkipLine(line)) {
                     lineReady.set(false);
                 } else {
                     lineReady.set(hasNext);
@@ -303,7 +315,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
             @Override
             public Fun.Tuple2<String, Map<String, String>> next() {
-                final Taxon taxon = TaxonCacheParser.parseLine(labeledCSVParser);
+                final Taxon taxon = TaxonCacheParser.parseLine(currentLine);
                 lineReady.set(false);
                 return new Fun.Tuple2<>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
             }

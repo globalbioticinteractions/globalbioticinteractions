@@ -7,17 +7,17 @@ import org.eol.globi.util.CSVTSVUtil;
 
 public class TaxonMapParser {
 
-    public static Taxon parseResolvedTaxon(LabeledCSVParser labeledCSVParser) {
+    public static Taxon parseResolvedTaxon(String line[]) {
         Taxon resolvedTaxon = new TaxonImpl();
-        resolvedTaxon.setExternalId(CSVTSVUtil.valueOrNull(labeledCSVParser, "resolvedTaxonId"));
-        resolvedTaxon.setName(CSVTSVUtil.valueOrNull(labeledCSVParser, "resolvedTaxonName"));
+        resolvedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 2));;
+        resolvedTaxon.setName(CSVTSVUtil.valueOrNull(line, 3));
         return resolvedTaxon;
     }
 
-    public static Taxon parseProvidedTaxon(LabeledCSVParser labeledCSVParser) {
+    public static Taxon parseProvidedTaxon(String line[]) {
         Taxon providedTaxon = new TaxonImpl();
-        providedTaxon.setExternalId(CSVTSVUtil.valueOrNull(labeledCSVParser, "providedTaxonId"));
-        providedTaxon.setName(CSVTSVUtil.valueOrNull(labeledCSVParser, "providedTaxonName"));
+        providedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 0));
+        providedTaxon.setName(CSVTSVUtil.valueOrNull(line, 1));
         return providedTaxon;
     }
 

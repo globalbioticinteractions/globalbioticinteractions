@@ -91,6 +91,15 @@ public class CSVTSVUtil {
         return StringUtils.isBlank(value) ? defaultValue : value;
     }
 
+    public static String valueOrNull(String[] line, int index){
+        return valueOrDefault(line, index, null);
+    }
+
+    public static String valueOrDefault(String[] line, int index, String defaultValue) {
+        String value = line != null && line.length > index ? line[index] : null;
+        return StringUtils.isBlank(value) ? defaultValue : StringUtils.trim(value);
+    }
+
     public static CSVParser createTSVParser(Reader reader) {
         final CSVParser parser = new CSVParser(reader);
         parser.changeDelimiter('\t');
