@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -170,10 +169,6 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
     }
 
-    private static String getLine(BufferedReader reader) throws IOException {
-        return reader.readLine();
-    }
-
     private void initTaxonCache() throws PropertyEnricherException {
         DB db = initDb("taxonCache");
 
@@ -277,38 +272,25 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(config.getResource());
             private AtomicBoolean lineReady = new AtomicBoolean(false);
-            private AtomicLong lineNumber = new AtomicLong(1);
             private String currentLine = null;
 
             @Override
             public boolean hasNext() {
                 try {
-                    boolean hasNext;
-                    do {
-                        if (lineReady.get()) {
-                            hasNext = true;
-                        } else {
-                            currentLine = getLine(reader);
-                            hasNext = consumeLine(currentLine);
-                            lineNumber.incrementAndGet();
-                        }
-                    } while (hasNext && !config.getValidator().test(currentLine));
-
-                    return hasNext;
+                    return hasAnotherValidLine();
                 } catch (IOException e) {
                     LOG.error("failed to get next line", e);
                     return false;
                 }
             }
 
-            private boolean consumeLine(String line) throws IOException {
-                boolean hasNext = line != null;
-                if (config.getValidator().test(line)) {
-                    lineReady.set(hasNext);
-                } else {
-                    lineReady.set(false);
+            private boolean hasAnotherValidLine() throws IOException {
+                while((currentLine = reader.readLine()) != null) {
+                    if (config.getValidator().test(currentLine)) {
+                        return true;
+                    }
                 }
-                return hasNext;
+                return false;
             }
 
             @Override

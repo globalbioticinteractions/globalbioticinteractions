@@ -364,6 +364,7 @@ public class TaxonCacheServiceTest {
                 return s -> false;
             }
         };
+
         TermResource<Triple<Taxon, NameType, Taxon>> termMap = new TermResource<Triple<Taxon, NameType, Taxon>>() {
 
             @Override
