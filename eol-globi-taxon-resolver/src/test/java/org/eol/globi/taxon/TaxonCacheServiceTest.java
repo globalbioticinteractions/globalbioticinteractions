@@ -1,6 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,16 +24,21 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class TaxonCacheServiceTest {
 
+    public static final String TAXON_MAP_TEST_RESOURCE = "/org/eol/globi/taxon/taxonMap.tsv";
+    public static final String TAXON_CACHE_TEST_RESOURCE = "/org/eol/globi/taxon/taxonCache.tsv";
     private File mapdbDir;
 
     @Before
@@ -93,7 +100,7 @@ public class TaxonCacheServiceTest {
     }
 
     private TaxonCacheService getTaxonCacheService() {
-        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCache.tsv", "/org/eol/globi/taxon/taxonMap.tsv");
+        final TaxonCacheService cacheService = new TaxonCacheService(TAXON_CACHE_TEST_RESOURCE, TAXON_MAP_TEST_RESOURCE);
         cacheService.setCacheDir(mapdbDir);
         return cacheService;
     }
@@ -336,5 +343,50 @@ public class TaxonCacheServiceTest {
         assertThat(listIds, hasItem("INAT_TAXON:43584"));
         assertThat(listNames, hasItem("Homo sapiens"));
         assertThat(listNames.size(), is(1));
+    }
+
+    @Test
+    public void invalidateAll() throws PropertyEnricherException {
+        TermResource<Taxon> termCache = new TermResource<Taxon>() {
+
+            @Override
+            public String getResource() {
+                return TAXON_CACHE_TEST_RESOURCE;
+            }
+
+            @Override
+            public Function<String, Taxon> getParser() {
+                return null;
+            }
+
+            @Override
+            public Predicate<String> getValidator() {
+                return s -> false;
+            }
+        };
+        TermResource<Triple<Taxon, NameType, Taxon>> termMap = new TermResource<Triple<Taxon, NameType, Taxon>>() {
+
+            @Override
+            public String getResource() {
+                return TAXON_MAP_TEST_RESOURCE;
+            }
+
+            @Override
+            public Function<String, Triple<Taxon, NameType, Taxon>> getParser() {
+                return str -> {
+                    throw new RuntimeException("kaboom!");
+                };
+            }
+
+            @Override
+            public Predicate<String> getValidator() {
+                return s -> false;
+            }
+        };
+        final TaxonCacheService cacheService = new TaxonCacheService(termCache, termMap);
+        cacheService.setCacheDir(mapdbDir);
+
+        cacheService.findTerms(Collections.singletonList(new TermImpl("EOL:1276240", null)),
+                (nodeId, name, taxon, nameType) -> fail("should never match: " + TaxonUtil.taxonToMap(taxon)));
     }
 }
