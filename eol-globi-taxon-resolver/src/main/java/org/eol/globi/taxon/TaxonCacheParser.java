@@ -1,6 +1,7 @@
 package org.eol.globi.taxon;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.CSVTSVUtil;
@@ -23,17 +24,21 @@ public class TaxonCacheParser {
         return taxon;
     }
 
-    public static Taxon parseLine(String[] line) {
-        Taxon taxon = new TaxonImpl();
-        taxon.setExternalId(CSVTSVUtil.valueOrNull(line, 0));
-        taxon.setName(CSVTSVUtil.valueOrNull(line, 1));
-        taxon.setRank(CSVTSVUtil.valueOrNull(line, 2));
-        taxon.setCommonNames(CSVTSVUtil.valueOrNull(line, 3));
-        taxon.setPath(CSVTSVUtil.valueOrNull(line, 4));
-        taxon.setPathIds(CSVTSVUtil.valueOrNull(line, 5));
-        taxon.setPathNames(CSVTSVUtil.valueOrNull(line, 6));
-        taxon.setExternalUrl(CSVTSVUtil.valueOrNull(line, 7));
-        taxon.setThumbnailUrl(CSVTSVUtil.valueOrDefault(line, 8,  MISSING_THUMBNAIL));
+    public static Taxon parseLine(String aline) {
+        Taxon taxon = null;
+        if (StringUtils.isNotBlank(aline)) {
+            taxon = new TaxonImpl();
+            String[] line = aline.split("\t");
+            taxon.setExternalId(CSVTSVUtil.valueOrNull(line, 0));
+            taxon.setName(CSVTSVUtil.valueOrNull(line, 1));
+            taxon.setRank(CSVTSVUtil.valueOrNull(line, 2));
+            taxon.setCommonNames(CSVTSVUtil.valueOrNull(line, 3));
+            taxon.setPath(CSVTSVUtil.valueOrNull(line, 4));
+            taxon.setPathIds(CSVTSVUtil.valueOrNull(line, 5));
+            taxon.setPathNames(CSVTSVUtil.valueOrNull(line, 6));
+            taxon.setExternalUrl(CSVTSVUtil.valueOrNull(line, 7));
+            taxon.setThumbnailUrl(CSVTSVUtil.valueOrDefault(line, 8, MISSING_THUMBNAIL));
+        }
         return taxon;
     }
 

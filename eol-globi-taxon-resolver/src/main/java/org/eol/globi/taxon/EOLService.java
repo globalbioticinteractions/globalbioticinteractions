@@ -1,6 +1,6 @@
 package org.eol.globi.taxon;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -269,7 +269,7 @@ public class EOLService implements PropertyEnricher {
                 String languageCode = vernacularName.get("language").asText();
                 String commonName = vernacularName.get("vernacularName").asText();
                 if (StringUtils.isNotBlank(languageCode) && StringUtils.isNotBlank(commonName)) {
-                    commonNames.append(StringEscapeUtils.unescapeHtml(commonName));
+                    commonNames.append(StringEscapeUtils.unescapeHtml4(commonName));
                     commonNames.append(" ");
                     commonNames.append(CharsetConstant.LANG_SEPARATOR_CHAR);
                     commonNames.append(languageCode);

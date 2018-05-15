@@ -151,7 +151,7 @@ public class ExternalIdUtil {
     }
 
     public static boolean hasProperty(Map<String, String> link, String propertyName) {
-        return link.containsKey(propertyName) && org.apache.commons.lang.StringUtils.isNotBlank(link.get(propertyName));
+        return link.containsKey(propertyName) && org.apache.commons.lang3.StringUtils.isNotBlank(link.get(propertyName));
     }
 
     public static String stripPrefix(TaxonomyProvider provider, String externalId) {

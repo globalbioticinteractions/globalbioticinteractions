@@ -3,6 +3,8 @@ package org.eol.globi.taxon;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -30,8 +32,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,15 +48,62 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     private TaxonLookupService taxonLookupService = null;
 
-    private String taxonCacheResource;
-    private final String taxonMapResource;
 
     // maximum number of expected taxon links related to a given taxon id
     private int maxTaxonLinks = 125;
 
-    public TaxonCacheService(String taxonCacheResource, String taxonMapResource) {
-        this.taxonCacheResource = taxonCacheResource;
-        this.taxonMapResource = taxonMapResource;
+    private final TermResource<Taxon> taxonCache;
+    private final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap;
+
+    public TaxonCacheService(final TermResource<Taxon> taxonCache, final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap) {
+        this.taxonCache = taxonCache;
+        this.taxonMap = taxonMap;
+    }
+
+    public TaxonCacheService(final String termResource, final String taxonMapResource) {
+
+        this(new TermResource<Taxon>() {
+
+            @Override
+            public String getResource() {
+                return termResource;
+            }
+
+            @Override
+            public Function<String, Taxon> getParser() {
+                return TaxonCacheParser::parseLine;
+            }
+
+            @Override
+            public Predicate<String> getValidator() {
+                return ((Predicate<String>) Objects::nonNull)
+                        .and(line1 -> {
+                            final Taxon taxon = getParser().apply(line1);
+                            return !StringUtils.isBlank(taxon.getPath());
+                        });
+            }
+        }, new TermResource<Triple<Taxon, NameType, Taxon>>() {
+
+            @Override
+            public String getResource() {
+                return taxonMapResource;
+            }
+
+            @Override
+            public Function<String, Triple<Taxon, NameType, Taxon>> getParser() {
+                return line -> {
+                    String[] strings = line.split("\t");
+                    Taxon provided = TaxonMapParser.parseProvidedTaxon(strings);
+                    Taxon resolved = TaxonMapParser.parseResolvedTaxon(strings);
+                    return new ImmutableTriple<>(provided, NameType.SAME_AS, resolved);
+                };
+            }
+
+            @Override
+            public Predicate<String> getValidator() {
+                return Objects::nonNull;
+            }
+        });
     }
 
     @Override
@@ -134,24 +187,25 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 LOG.info("pre-existing taxon lookup index found, no need to re-index...");
             } else {
                 LOG.info("no pre-existing taxon lookup index found, re-indexing...");
-                int count = 0;
-                LOG.info("taxon map loading [" + taxonMapResource + "] ...");
+                final AtomicInteger count = new AtomicInteger(0);
+                LOG.info("taxon map loading [" + taxonMap.getResource() + "] ...");
 
                 StopWatch watch = new StopWatch();
                 watch.start();
-                BufferedReader reader = createBufferedReader(taxonMapResource);
-                String[] line;
-                while ((line = getLine(reader)) != null) {
-                    Taxon provided = TaxonMapParser.parseProvidedTaxon(line);
-                    Taxon resolved = TaxonMapParser.parseResolvedTaxon(line);
-                    addIfNeeded(taxonLookupService, provided.getExternalId(), resolved.getExternalId());
-                    addIfNeeded(taxonLookupService, provided.getName(), resolved.getExternalId());
-                    addIfNeeded(taxonLookupService, resolved.getName(), resolved.getExternalId());
-                    count++;
-                }
+                BufferedReader reader = createBufferedReader(taxonMap.getResource());
+
+                reader.lines()
+                        .filter(taxonMap.getValidator())
+                        .map(taxonMap.getParser())
+                        .forEach(triple -> {
+                            addIfNeeded(taxonLookupService, triple.getLeft().getExternalId(), triple.getRight().getExternalId());
+                            addIfNeeded(taxonLookupService, triple.getLeft().getName(), triple.getRight().getExternalId());
+                            addIfNeeded(taxonLookupService, triple.getRight().getName(), triple.getRight().getExternalId());
+                            count.incrementAndGet();
+                        });
                 watch.stop();
-                logCacheLoadStats(watch.getTime(), count);
-                LOG.info("taxon map loading [" + taxonMapResource + "] done.");
+                logCacheLoadStats(watch.getTime(), count.get());
+                LOG.info("taxon map loading [" + taxonMap.getResource() + "] done.");
             }
             taxonLookupService.finish();
             this.taxonLookupService = taxonLookupService;
@@ -162,9 +216,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
     }
 
-    private static String[] getLine(BufferedReader reader) throws IOException {
-        String s = reader.readLine();
-        return s == null ? null : s.split("\t");
+    private static String getLine(BufferedReader reader) throws IOException {
+        return reader.readLine();
     }
 
     private void initTaxonCache() throws PropertyEnricherException {
@@ -176,28 +229,23 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             resolvedIdToTaxonMap = db.getTreeMap(taxonCacheName);
         } else {
             LOG.info("no pre-existing cache found, rebuilding...");
-            LOG.info("taxon cache loading [" + taxonCacheResource + "]...");
+            LOG.info("taxon cache loading [" + taxonCache.getResource() + "]...");
             StopWatch watch = new StopWatch();
             watch.start();
+
             try {
                 resolvedIdToTaxonMap = db
                         .createTreeMap(taxonCacheName)
                         .pumpPresort(100000)
                         .pumpIgnoreDuplicates()
-                        .pumpSource(taxonCacheIterator(taxonCacheResource, new LineSkipper() {
-                            @Override
-                            public boolean shouldSkipLine(String[] line) {
-                                final Taxon taxon = TaxonCacheParser.parseLine(line);
-                                return StringUtils.isBlank(taxon.getPath());
-                            }
-                        }))
+                        .pumpSource(taxonCacheIterator(taxonCache))
                         .keySerializer(BTreeKeySerializer.STRING)
                         .make();
             } catch (IOException e) {
                 throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
             }
             watch.stop();
-            LOG.info("taxon cache loading [" + taxonCacheResource + "] done.");
+            LOG.info("taxon cache loading [" + taxonCache.getResource() + "] done.");
             logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
             watch.reset();
         }
@@ -266,21 +314,17 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         this.maxTaxonLinks = maxTaxonLinks;
     }
 
-    interface LineSkipper {
-        boolean shouldSkipLine(String[] line);
-    }
-
     static private String valueOrNoMatch(String value) {
         return TaxonUtil.isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
     }
 
-    static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final String resource, final LineSkipper skipper) throws IOException {
+    static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final TermResource<Taxon> config) throws IOException {
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
-            private BufferedReader reader = createBufferedReader(resource);
+            private BufferedReader reader = createBufferedReader(config.getResource());
             private AtomicBoolean lineReady = new AtomicBoolean(false);
-            private AtomicLong lineNumber = new AtomicLong(0);
-            private String[] currentLine = null;
+            private AtomicLong lineNumber = new AtomicLong(1);
+            private String currentLine = null;
 
             @Override
             public boolean hasNext() {
@@ -294,7 +338,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                             hasNext = consumeLine(currentLine);
                             lineNumber.incrementAndGet();
                         }
-                    } while (hasNext && (lineNumber.get() == 0 || skipper.shouldSkipLine(currentLine)));
+                    } while (hasNext && !config.getValidator().test(currentLine));
 
                     return hasNext;
                 } catch (IOException e) {
@@ -303,19 +347,19 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 }
             }
 
-            private boolean consumeLine(String[] line) throws IOException {
+            private boolean consumeLine(String line) throws IOException {
                 boolean hasNext = line != null;
-                if (skipper.shouldSkipLine(line)) {
-                    lineReady.set(false);
-                } else {
+                if (config.getValidator().test(line)) {
                     lineReady.set(hasNext);
+                } else {
+                    lineReady.set(false);
                 }
                 return hasNext;
             }
 
             @Override
             public Fun.Tuple2<String, Map<String, String>> next() {
-                final Taxon taxon = TaxonCacheParser.parseLine(currentLine);
+                final Taxon taxon = config.getParser().apply(currentLine);
                 lineReady.set(false);
                 return new Fun.Tuple2<>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
             }
