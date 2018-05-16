@@ -84,6 +84,23 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void matchTermByNameFirstLine() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheNoHeader.tsv", TAXON_MAP_TEST_RESOURCE);
+        cacheService.setCacheDir(mapdbDir);
+
+        AtomicBoolean matched = new AtomicBoolean(false);
+        cacheService.findTermsForNames(Collections.singletonList("EOL:1276240"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon enrichedTaxon, NameType nameType) {
+                assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+                assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
+                matched.set(true);
+            }
+        });
+        assertTrue(matched.get());
+    }
+
+    @Test
     public void enrichByNameMissingThumbnail() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {
