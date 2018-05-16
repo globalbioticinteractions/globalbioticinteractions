@@ -9,6 +9,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.taxon.GlobalNamesService;
 import org.eol.globi.taxon.GlobalNamesSources;
 import org.eol.globi.taxon.TermMatchListener;
+import org.eol.globi.util.CSVTSVUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -192,7 +193,7 @@ public class GlobalNamesServiceTest {
 
     public List<String> namesListWithMaximumOf(int i1) {
         String response = "76546|Bromus kalmii|4592968|Bromus commutatus|4593225|Triticum turgidum|4592981|Bromus hordeaceus|4593493|Bolbitius reticulatus var. pluteoides|2857788|Koeleria macrantha|4593502|Bolbitius titubans var. titubans|4592991|Bromus japonicus|4592986|Bromus interruptus|4594022|Boletus luridus var. luridus|4593765|Boletus fechtneri|4572257|Bromus|4593507|Boletopsis perplexa|4593004|Bromus madritensis|4593512|Boletus aereus|4593782|Boletus ferrugineus|4593009|Ceratochloa marginata|4593415|Boidinia permixta|4593157|Poa alpina|4013434|Bromus briziformis|4593166|Poa bulbosa|4592911|Apera spica-venti|4593420|Boidinia peroxydata|4592906|Anthoxanthum odoratum|4593943|Boletus luridiformis var. luridiformis|4593429|Bolacothrips jordani|4593938|Boletus luridiformis var. discolor|4593171|Poa compressa|4593683|Boletus cisalpinus|4593438|Bolbitius lacteus|4592925|Avena sterilis subsp. ludoviciana|4593181|Poa nemoralis|4592920|Avena fatua|4593176|Poa glauca|4013149|Bromus pectinatus|4592934|Avena strigosa|4593186|Poa palustris|4593443|Bolbitius reticulatus|4592943|Briza media|4593199|Puccinellia distans|4593719|Boletus edulis|4593716|Dryas octopetala|4593712|Boletus depilatus|491120|Bromus|4593212|Sesleria caerulea|4593976|Boletus luridus|4593095|Hordeum distichon sensu lato|4592834|Bloxamia leucophthalma|4593090|Hordelymus europaeus|4593858|Boletus impolitus|4013239|Bromus gracillimus|4593100|Hordeum jubatum|4593613|Boletus calopus|4013234|Bromus condensatus|4593110|Hordeum secalinum|4592855|Bloxamia truncata|4594128|Boletus pseudoregius|4593105|Hordeum murinum|4592862|Melastoma affine|4592859|Culicoides|4593883|Boletus legaliae|4594137|Boletus pseudosulphureus|4593378|Boidinia furfuracea|4592865|Artiodactyla|4592878|Agrostis stolonifera|4593909|Boletus luridiformis|4593139|Lolium temulentum|4592881|Blumeria graminis|4592893|Alopecurus myosuroides|4593658|Boletus chrysenteron|4594170|Boletus pulverulentus|4592888|Alopecurus geniculatus|4593144|Milium effusum|4593541|Boletus appendiculatus|4593026|Danthonia decumbens|4594051|Boletus luridus var. rubriceps|4592783|Trichia affinis|4593035|Digitaria sanguinalis|4013544|Bromus riparius|4593040|Elymus caninus|4593054|Festuca gigantea|4593823|Boletus fragrans|4592793|Trichia botrytis|4593049|Festuca arundinacea|4592807|Trichia varia|4594085|Boletus pinophilus|4593059|Festuca heterophylla|4594094|Boletus porosporus|4592812|Diderma effusum|4593068|Festuca pratensis|4593324|Blumeriella jaapii|4593578|Boletus armeniacus|4593832|Boletus immutatus|4592822|Symphyta|4593335|Prunus domestica|4592819|Blondelia nigripes|4593596|Boletus badius non sensu Persoon (1801)|4592829|Bloxamia bohemica|4593085|Holcus mollis|3923392|Boeremia telephii";
-        String[] idsNames = response.split("\\|");
+        String[] idsNames = CSVTSVUtil.splitPipes(response);
         List<String> names = new ArrayList<String>();
         for (int i = 0; i < idsNames.length && i < i1 * 2; i += 2) {
             names.add(idsNames[i] + "|" + idsNames[i + 1]);
@@ -202,7 +203,7 @@ public class GlobalNamesServiceTest {
 
 
     public void assertAtLeastFortyFound(String response, final List<Taxon> foundTaxa, List<GlobalNamesSources> sources) {
-        String[] idsNames = response.split("\\|");
+        String[] idsNames = CSVTSVUtil.splitPipes(response);
         GlobalNamesService service = new GlobalNamesService(sources);
 
         List<String> names = new ArrayList<String>();

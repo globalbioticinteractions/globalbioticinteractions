@@ -21,6 +21,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
@@ -255,12 +256,12 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
         }
         String pathRanks = aResult.get("classification_path_ranks").asText();
         taxon.setPathNames(parseList(pathRanks));
-        String[] ranks = pathRanks.split("\\|");
+        String[] ranks = CSVTSVUtil.splitPipes(pathRanks);
         if (ranks.length > 0) {
             String rank = ranks[ranks.length - 1];
             taxon.setRank(rank);
         }
-        String[] taxonNames = classificationPath.split("\\|");
+        String[] taxonNames = CSVTSVUtil.splitPipes(classificationPath);
         if (ranks.length > 0 && taxonNames.length > 0) {
             String taxonName = taxonNames[taxonNames.length - 1];
             taxon.setName(taxonName);

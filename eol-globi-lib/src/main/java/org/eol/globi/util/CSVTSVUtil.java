@@ -9,6 +9,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
 
 import java.io.File;
@@ -125,6 +126,9 @@ public class CSVTSVUtil {
     }
 
     public static String[] splitTSV(String aline) {
-        return StringUtils.splitByWholeSeparatorPreserveAllTokens(aline, ("\t"));
+        return StringUtils.splitByWholeSeparatorPreserveAllTokens(aline, "\t");
+    }
+    public static String[] splitPipes(String aline) {
+        return StringUtils.splitByWholeSeparatorPreserveAllTokens(aline, CharsetConstant.SEPARATOR_CHAR);
     }
 }

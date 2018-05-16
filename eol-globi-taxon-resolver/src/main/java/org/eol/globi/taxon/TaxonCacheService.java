@@ -17,6 +17,7 @@ import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -218,7 +219,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         lazyInit();
         for (Term term : terms) {
             String nodeIdAndName = term.getName();
-            String[] split = StringUtils.split(nodeIdAndName, '|');
+            String[] split = CSVTSVUtil.splitPipes(nodeIdAndName);
             String name = (split != null && split.length > 1) ? split[1] : nodeIdAndName;
             Long nodeId = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
             if (!resolveName(termMatchListener, term.getId(), nodeId)) {
@@ -271,7 +272,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
             private BufferedReader reader = createBufferedReader(config.getResource());
-            private AtomicBoolean lineReady = new AtomicBoolean(false);
+            private AtomicBoolean lineAvailable = new AtomicBoolean(false);
             private String currentLine = null;
 
             @Override
@@ -285,18 +286,18 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             }
 
             private boolean proceedToNextValidLine() throws IOException {
-                while((currentLine = reader.readLine()) != null) {
+                while(!lineAvailable.get() && (currentLine = reader.readLine()) != null) {
                     if (config.getValidator().test(currentLine)) {
-                        return true;
+                        lineAvailable.set(true);
                     }
                 }
-                return false;
+                return lineAvailable.get();
             }
 
             @Override
             public Fun.Tuple2<String, Map<String, String>> next() {
                 final Taxon taxon = config.getParser().apply(currentLine);
-                lineReady.set(false);
+                lineAvailable.set(false);
                 return new Fun.Tuple2<>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
             }
 

@@ -11,6 +11,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InvalidLocationException;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -83,7 +84,7 @@ class InteractionListenerImpl implements InteractionListener {
     private List<Map<String, String>> expand(Map<String, String> properties, String associatedTaxa) {
         List<Map<String, String>> expandedList;
         expandedList = new ArrayList<>();
-        String[] associatedPairs = associatedTaxa.split("\\|");
+        String[] associatedPairs = CSVTSVUtil.splitPipes(associatedTaxa);
         for (String associatedPair : associatedPairs) {
             String[] typeAndTarget = associatedPair.split(":");
             if (typeAndTarget.length > 1) {

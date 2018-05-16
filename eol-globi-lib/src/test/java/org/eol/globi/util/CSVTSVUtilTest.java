@@ -58,4 +58,24 @@ public class CSVTSVUtilTest {
         assertThat(parser.getValueByLabel("prey"), is("Ampelisca sp. (abdita complex)"));
     }
 
+    @Test
+    public void pipes() {
+        String withEmpty = "|a|b|c|".trim();
+        assertThat(CSVTSVUtil.splitPipes(withEmpty).length, is(5));
+        assertThat(withEmpty.split("\\|").length, is(4));
+        String withEmptyNoTrim = "|a|b|c|";
+        assertThat(CSVTSVUtil.splitPipes(withEmptyNoTrim).length, is(5));
+        assertThat(withEmptyNoTrim.split("\\|").length, is(4));
+    }
+
+    @Test
+    public void tabs() {
+        String withEmpty = "\ta\tb\tc\t".trim();
+        assertThat(withEmpty.split("\t").length, is(3));
+        assertThat(CSVTSVUtil.splitTSV(withEmpty).length, is(3));
+        String withEmptyNoTrim = "\ta\tb\tc\t";
+        assertThat(withEmptyNoTrim.split("\t").length, is(4));
+        assertThat(CSVTSVUtil.splitTSV(withEmptyNoTrim).length, is(5));
+    }
+
 }
