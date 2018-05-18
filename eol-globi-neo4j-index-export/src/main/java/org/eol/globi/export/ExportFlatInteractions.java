@@ -24,7 +24,7 @@ public class ExportFlatInteractions implements GraphExporter {
             "MATCH dataset<-[:IN_DATASET]-study-[c:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
             "sourceSpecimen-[?:COLLECTED_AT]->loc, " +
             "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon " +
-            "WHERE has(sourceTaxon.path) AND has(targetTaxon.path) AND not(has(r.inverted)) " +
+            "WHERE not(has(r.inverted)) " +
             "RETURN sourceTaxon.externalId? as sourceTaxonId" +
             ", sourceTaxon.nameIds? as sourceTaxonIds" +
             ", sourceTaxon.name? as sourceTaxonName" +
