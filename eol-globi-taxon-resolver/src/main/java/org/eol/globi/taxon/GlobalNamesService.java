@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 public class GlobalNamesService implements PropertyEnricher, TermMatcher {
     private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
+    public static final List<Integer> MATCH_TYPES_EXACT = Arrays.asList(1, 2, 6);
 
     private final List<GlobalNamesSources> sources;
     private boolean includeCommonNames = false;
@@ -278,7 +279,7 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
             String suppliedNameString = getSuppliedNameString(data);
 
             boolean isExactMatch = aResult.has("match_type")
-                    && aResult.get("match_type").getIntValue() < 3;
+                    && MATCH_TYPES_EXACT.contains(aResult.get("match_type").getIntValue());
 
             NameType nameType = isExactMatch ? NameType.SAME_AS : NameType.SIMILAR_TO;
             if (isExactMatch && aResult.has("current_name_string")) {
