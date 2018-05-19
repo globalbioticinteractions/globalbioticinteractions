@@ -5,6 +5,7 @@ public enum TaxonomyProvider {
     NBN("NBN:"),
     WORMS("WORMS:"),
     NCBI("NCBI:"),
+    NCBITaxon("NCBITaxon:"),
     EOL("EOL:"),
     GEONAMES("GEONAMES:"),
     WIKIPEDIA("W:"),
@@ -19,7 +20,8 @@ public enum TaxonomyProvider {
     NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:"),
     INATURALIST_TAXON("INAT_TAXON:"),
     WIKIDATA("WD:"),
-    FISHBASE_CACHE("FBC:");
+    FISHBASE_CACHE("FBC:"),
+    GULFBASE("BioGoMx:");
 
     private final String idPrefix;
 
@@ -37,7 +39,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_ITIS = ITIS.getIdPrefix();
     public static final String ID_PREFIX_ENVO = ENVO.getIdPrefix();
     public static final String ID_PREFIX_WIKIPEDIA = WIKIPEDIA.getIdPrefix();
-    public static final String ID_PREFIX_GULFBASE = "BioGoMx:";
+    public static final String ID_PREFIX_GULFBASE = GULFBASE.getIdPrefix();
     public static final String ID_PREFIX_GAME = "GAME:";
     public static final String ID_PREFIX_HTTP = "http://";
     public static final String ID_PREFIX_DOI = "doi:";

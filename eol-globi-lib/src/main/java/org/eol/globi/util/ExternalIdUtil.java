@@ -70,6 +70,7 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_BIODIVERSITY_AUSTRALIA, "http://id.biodiversity.org.au/apni.taxon/");
             put(TaxonomyProvider.ID_PREFIX_INDEX_FUNGORUM, "http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=");
             put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
+            put(TaxonomyProvider.NCBITaxon.getIdPrefix(), "http://purl.obolibrary.org/obo/NCBITaxon_");
             put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
             put(TaxonomyProvider.ID_PREFIX_DOI, "http://dx.doi.org/");
             put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=");
