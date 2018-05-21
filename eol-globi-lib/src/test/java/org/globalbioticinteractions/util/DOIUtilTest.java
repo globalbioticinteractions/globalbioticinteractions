@@ -2,6 +2,7 @@ package org.globalbioticinteractions.util;
 
 import org.junit.Test;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -17,6 +18,7 @@ public class DOIUtilTest {
         assertThat(DOIUtil.URIfor("doi:10.1234").toString(), is("https://doi.org/10.1234"));
         assertThat(DOIUtil.URIfor("DOI:10.1234").toString(), is("https://doi.org/10.1234"));
         assertThat(DOIUtil.URIfor("10.1676/10-092.1").toString(), is("https://doi.org/10.1676/10-092.1"));
+        assertThat(DOIUtil.URIfor("10.1206/0003-0090(2000)264<0083:>2.0.co;2").toString(), is("https://doi.org/10.1206/0003-0090(2000)264%3C0083:%3E2.0.co;2"));
         assertThat(DOIUtil.URIfor("http://dx.doi.org/10.1676/10-092.1").toString(), is("https://doi.org/10.1676/10-092.1"));
         assertThat(DOIUtil.URIfor("boahhhs"), is(nullValue()));
     }
@@ -40,9 +42,10 @@ public class DOIUtilTest {
         assertThat(DOIUtil.urlForDOI("10.1000/123#456"), is("https://doi.org/10.1000/123%23456"));
     }
 
-   @Test
+    @Test
     public void fromURL() {
         assertThat(DOIUtil.stripDOIPrefix("https://doi.org/10.1000/123%23456"), is("10.1000/123#456"));
+        assertThat(DOIUtil.stripDOIPrefix("https://doi.org/10.1206/0003-0090(2000)264%3C0083:%3E2.0.co;2"), is("10.1206/0003-0090(2000)264<0083:>2.0.co;2"));
     }
 
 }

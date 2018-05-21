@@ -102,12 +102,7 @@ public class ReportGenerator {
     }
 
     public void generateReportForStudies() {
-        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
-            @Override
-            public void onStudy(StudyNode study) {
-                generateReportForStudy(study);
-            }
-        });
+        NodeUtil.findStudies(getGraphDb(), study -> generateReportForStudy(study));
 
     }
 

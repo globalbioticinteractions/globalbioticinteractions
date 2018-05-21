@@ -16,15 +16,15 @@ public class ExportCitationsTest extends GraphDBTestCase {
     @Test
     public void exportCitations() throws IOException, NodeFactoryException {
         StringWriter writer = new StringWriter();
-        getNodeFactory().getOrCreateStudy(new StudyImpl("some title", "some source", "doi:some/doi", "some citation"));
-        getNodeFactory().getOrCreateStudy(new StudyImpl("some other title", "some other source", "doi:some/otherdoi", "some other citation"));
+        getNodeFactory().getOrCreateStudy(new StudyImpl("some title", "some source", "doi:10.some/doi", "some citation"));
+        getNodeFactory().getOrCreateStudy(new StudyImpl("some other title", "some other source", "doi:10.some/otherdoi", "some other citation"));
         new ExportCitations().export(getGraphDb(), writer, "START study = node:studies('*:*') " +
                 "RETURN study.externalId? as uri" +
                 ", study.citation? as citation");
 
         assertThat(writer.toString(), Is.is("uri\tcitation" +
-                "\nhttps://doi.org/some/doi\tsome citation" +
-                "\nhttps://doi.org/some/otherdoi\tsome other citation"
+                "\nhttps://doi.org/10.some/doi\tsome citation" +
+                "\nhttps://doi.org/10.some/otherdoi\tsome other citation"
         ));
     }
 

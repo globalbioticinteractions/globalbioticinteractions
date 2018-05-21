@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DOIResolverCache extends CacheService implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverCache.class);
@@ -75,29 +76,28 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                 .pumpPresort(300000)
                 .pumpIgnoreDuplicates()
                 .pumpSource(new Iterator<Fun.Tuple2<String, String>>() {
-                    private String[] line;
+                    private String[] line = null;
+                    final AtomicBoolean nextLineParsed = new AtomicBoolean(false);
 
                     String getCitation(String[] line) {
-                        return line[1];
+                        return line != null && line.length > 1 ? line[1] : null;
                     }
 
                     String getDOI(String[] line) {
-                        return DOIUtil.urlForDOI(line[0]);
+                        return line != null && line.length > 0 ? DOIUtil.urlForDOI(line[0]) : null;
                     }
 
                     @Override
                     public boolean hasNext() {
                         try {
-                            do {
+                            while (!nextLineParsed.get()) {
                                 line = parser.getLine();
+                                if (line == null) {
+                                    break;
+                                }
+                                nextLineParsed.set(StringUtils.isNoneBlank(getCitation(line), getDOI(line)));
                             }
-                            while (line != null
-                                    && line.length > 1
-                                    && !StringUtils.isNoneBlank(getCitation(line), getDOI(line)));
-
-                            return line != null
-                                    && line.length > 1
-                                    && StringUtils.isNoneBlank(getCitation(line), getDOI(line));
+                            return line != null && nextLineParsed.get();
                         } catch (IOException e) {
                             LOG.error("problem reading", e);
                             return false;
@@ -108,6 +108,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                     public Fun.Tuple2<String, String> next() {
                         String citationString = StringUtils.defaultString(getCitation(line), "");
                         String doi = StringUtils.defaultString(getDOI(line), "");
+                        nextLineParsed.set(false);
                         return new Fun.Tuple2<>(citationString, doi);
                     }
                 })

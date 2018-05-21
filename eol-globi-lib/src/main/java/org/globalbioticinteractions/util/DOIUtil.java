@@ -41,8 +41,14 @@ public class DOIUtil {
                     if (StringUtils.startsWithIgnoreCase(agg, d)) {
                         String doiStripped = StringUtils.removeStartIgnoreCase(agg, d);
                         if (DOI_URLS.contains(d)) {
-                            URI uri = URI.create("some://host/path?" + doiStripped);
-                            agg = uri.getQuery();
+                            try {
+                                URI uri = URI.create("some://host/path?" + doiStripped);
+                                agg = uri.getQuery();
+                            } catch (IllegalArgumentException e) {
+                                // some invalid characters in stripped doi - probably due to invalid url escaping
+                                // from historic doi url generator.
+                                agg = doiStripped;
+                            }
                         } else {
                             agg = doiStripped;
                         }
