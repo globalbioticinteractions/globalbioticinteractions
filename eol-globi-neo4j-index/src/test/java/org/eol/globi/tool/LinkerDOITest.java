@@ -157,7 +157,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
         new LinkerDOI(getGraphDb()).linkStudy(doiResolver, study);
         assertThat(study.getDOI(), is("doi:1234"));
-        assertThat(study.getExternalId(), is("http://dx.doi.org/1234"));
+        assertThat(study.getExternalId(), is("https://doi.org/1234"));
         assertThat(study.getCitation(), is("my contr. some description"));
 
         study = getNodeFactory().getOrCreateStudy(new StudyImpl("my other title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));

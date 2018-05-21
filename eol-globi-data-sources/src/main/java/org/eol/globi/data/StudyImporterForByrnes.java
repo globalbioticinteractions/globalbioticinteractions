@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class StudyImporterForByrnes extends BaseStudyImporter {
-    public static final String SOURCE = "Southern California Bight Kelp Forest Food Web data provided by Jarrett Byrnes. Also available at http://dx.doi.org/10.1111/j.1365-2486.2011.02409.x";
+    public static final String SOURCE = "Southern California Bight Kelp Forest Food Web data provided by Jarrett Byrnes. Also available at https://doi.org/10.1111/j.1365-2486.2011.02409.x";
     public static final String RESOURCE_PATH = "byrnes/supplementary_table_1.csv";
     public static final String REFERENCE_PATH = "byrnes/references.csv";
 
@@ -52,7 +52,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
             String refList = StringUtils.trim(parser.getValueByLabel("Reference"));
             String[] refs;
             if (StringUtils.isBlank(refList)) {
-                refs = new String[]{"Byrnes, J.E. et al., 2011. Climate-driven increases in storm frequency simplify kelp forest food webs. Global Change Biology, 17(8), pp.2513–2524. Available at: http://dx.doi.org/10.1111/j.1365-2486.2011.02409.x."};
+                refs = new String[]{"Byrnes, J.E. et al., 2011. Climate-driven increases in storm frequency simplify kelp forest food webs. Global Change Biology, 17(8), pp.2513–2524. Available at: https://doi.org/10.1111/j.1365-2486.2011.02409.x."};
             } else {
                 refs = StringUtils.split(refList, ",");
             }

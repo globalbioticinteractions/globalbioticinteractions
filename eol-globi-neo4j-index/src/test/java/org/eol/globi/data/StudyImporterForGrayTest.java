@@ -41,8 +41,8 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
     private StudyImporterForGray createImporter() throws IOException {
         StudyImporterForGray gray = new StudyImporterForGray(new ParserFactoryLocal(), nodeFactory);
 
-        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. http://dx.doi.org/10.5281/zenodo.13751\",\n" +
-                "  \"doi\": \"http://dx.doi.org/10.5281/zenodo.13751\",\n" +
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. https://doi.org/10.5281/zenodo.13751\",\n" +
+                "  \"doi\": \"https://doi.org/10.5281/zenodo.13751\",\n" +
                 "  \"format\": \"gray\",\n" +
                 "  \"resources\": {\n" +
                 "    \"links\": \"https://zenodo.org/record/13751/files/trophic.links.2014-11-10.csv\"  \n" +
@@ -74,7 +74,7 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
         assertThat(firstLink.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("FPOM"));
         assertThat(firstLink.get(StudyImporterForTSV.TARGET_LIFE_STAGE), is(nullValue()));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_CITATION), is("Ledger, M.E., Brown, L.E., Edwards, F., Milner, A.M. & Woodward, G. (2012) Drought alters the structure and functioning of complex food webs. Nature Climate Change."));
-        assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_ID), is("http://dx.doi.org/10.5281/zenodo.13751/source.id/50"));
+        assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_ID), is("https://doi.org/10.5281/zenodo.13751/source.id/50"));
         assertStaticInfo(firstLink);
 
         Map<String, String> secondLink = maps.get(1);
@@ -85,7 +85,7 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
     }
 
     protected void assertStaticInfo(Map<String, String> firstLink) {
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. http://dx.doi.org/10.5281/zenodo.13751."));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. https://doi.org/10.5281/zenodo.13751."));
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at <http://example.com>"));
         assertThat(firstLink.get(REFERENCE_CITATION), containsString("Ledger"));
         assertThat(firstLink.get(INTERACTION_TYPE_ID), is("RO:0002470"));

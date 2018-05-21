@@ -100,7 +100,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             String year = result.get("metadata_modified").asText().substring(0, 4);
             for (JsonNode resource : result.get("resources")) {
                 Map<String, Object> table = new HashMap<String, Object>();
-                table.put("dcterms:bibliographicCitation", author + " (" + year + "). " + title + ". http://dx.doi.org/" + doi);
+                table.put("dcterms:bibliographicCitation", author + " (" + year + "). " + title + ". https://doi.org/" + doi);
                 table.put("url", resource.get("url").asText());
                 if (config.has("headerRowCount")) {
                     table.put("headerRowCount", config.get("headerRowCount"));

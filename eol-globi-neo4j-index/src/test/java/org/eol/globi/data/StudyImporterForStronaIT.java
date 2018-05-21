@@ -34,7 +34,7 @@ public class StudyImporterForStronaIT extends GraphDBTestCase {
 
         Study study = allStudies.get(0);
         assertThat(study.getSource(), containsString(" Accessed at"));
-        assertThat(study.getCitation(), containsString("http://dx.doi.org/10.1890/12-1419.1"));
+        assertThat(study.getCitation(), containsString("https://doi.org/10.1890/12-1419.1"));
         assertThat(study.getCitation(), containsString("Strona"));
     }
 

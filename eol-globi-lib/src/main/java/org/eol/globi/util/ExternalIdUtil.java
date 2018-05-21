@@ -72,7 +72,7 @@ public class ExternalIdUtil {
             put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
             put(TaxonomyProvider.NCBITaxon.getIdPrefix(), "http://purl.obolibrary.org/obo/NCBITaxon_");
             put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
-            put(TaxonomyProvider.ID_PREFIX_DOI, "http://dx.doi.org/");
+            put(TaxonomyProvider.ID_PREFIX_DOI, "https://doi.org/");
             put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=");
             put(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix(), "https://tree.opentreeoflife.org/opentree/ottol@");
             put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);

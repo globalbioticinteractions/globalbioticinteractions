@@ -42,7 +42,7 @@ public class StudyImporterForMetaTableIT {
         assertThat(tables.size(), is(1));
         JsonNode firstTable = tables.get(0);
         String bibliographicCitation = firstTable.get("dcterms:bibliographicCitation").asText();
-        assertThat(bibliographicCitation, containsString("NHM Interactions Bank. http://dx.doi.org/10.5519/0060767"));
+        assertThat(bibliographicCitation, containsString("NHM Interactions Bank. https://doi.org/10.5519/0060767"));
 
         String resourceUrl = firstTable.get("url").asText();
         // see https://github.com/jhpoelen/eol-globi-data/issues/266

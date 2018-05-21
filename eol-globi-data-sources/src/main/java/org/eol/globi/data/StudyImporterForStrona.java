@@ -12,7 +12,7 @@ import org.globalbioticinteractions.dataset.CitationUtil;
 import java.io.IOException;
 
 public class StudyImporterForStrona extends BaseStudyImporter {
-    public static final String SOURCE = "Giovanni Strona, Maria Lourdes D. Palomares, Nicolas Bailly, Paolo Galli, and Kevin D. Lafferty. 2013. Host range, host ecology, and distribution of more than 11800 fish parasite species. Ecology 94:544. http://dx.doi.org/10.1890/12-1419.1";
+    public static final String SOURCE = "Giovanni Strona, Maria Lourdes D. Palomares, Nicolas Bailly, Paolo Galli, and Kevin D. Lafferty. 2013. Host range, host ecology, and distribution of more than 11800 fish parasite species. Ecology 94:544. https://doi.org/10.1890/12-1419.1";
     public static final String RESOURCE_PATH = "http://www.esapubs.org/archive/ecol/E094/045/FPEDB.csv";
 
     public StudyImporterForStrona(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -29,7 +29,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
         }
         try {
             Study study = nodeFactory.getOrCreateStudy(
-                    new StudyImpl("strona2013", SOURCE + " . " + CitationUtil.createLastAccessedString(RESOURCE_PATH), "http://dx.doi.org/10.1890/12-1419.1", SOURCE));
+                    new StudyImpl("strona2013", SOURCE + " . " + CitationUtil.createLastAccessedString(RESOURCE_PATH), "https://doi.org/10.1890/12-1419.1", SOURCE));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {

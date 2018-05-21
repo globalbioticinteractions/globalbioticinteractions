@@ -36,7 +36,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
         }
         try {
             Study study = nodeFactory.getOrCreateStudy(
-                    new StudyImpl("cruaud", SOURCE, "http://dx.doi.org/10.1093/sysbio/sys068", null));
+                    new StudyImpl("cruaud", SOURCE, "https://doi.org/10.1093/sysbio/sys068", null));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {

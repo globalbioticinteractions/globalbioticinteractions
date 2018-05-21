@@ -16,7 +16,7 @@ public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest
     @Test
     public void writeSiteMapWithCitations() throws StudyImporterException, IOException {
         final Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", "doi:some/doi", "citation123&bla"));
-        assertThat(study.getExternalId(), is("http://dx.doi.org/some/doi"));
+        assertThat(study.getExternalId(), is("https://doi.org/some/doi"));
 
         final File baseDirCitations = createBaseDir("target/sitemap/citations");
 
@@ -24,7 +24,7 @@ public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest
 
         siteMapForCitationsExporter.export(getGraphDb(), baseDirCitations.getAbsolutePath());
 
-        final String substring = "http://www.globalbioticinteractions.org/?accordingTo=" + "http://dx.doi.org/some/doi";
+        final String substring = "http://www.globalbioticinteractions.org/?accordingTo=" + "https://doi.org/some/doi";
         assertSiteMap(baseDirCitations, substring, "https://depot.globalbioticinteractions.org/snapshot/target/data/sitemap/citations/sitemap.xml.gz");
     }
 

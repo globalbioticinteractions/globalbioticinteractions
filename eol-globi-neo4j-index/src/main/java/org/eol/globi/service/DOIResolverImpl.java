@@ -13,6 +13,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
+import org.globalbioticinteractions.util.DOIUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,7 +25,6 @@ import java.util.Map;
 
 public class DOIResolverImpl implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverImpl.class);
-    public static final String DOI_REGEX = "(?i)^(doi:)(.*)";
     private final String baseURL;
 
     public DOIResolverImpl() {
@@ -67,7 +67,7 @@ public class DOIResolverImpl implements DOIResolver {
                     String citation = result.get("text").getTextValue();
                     String doi = result.get("doi").getTextValue();
                     if (hasReasonableMatchScore(result) && StringUtils.isNoneBlank(citation, doi)) {
-                        doiMap.put(citation, doi);
+                        doiMap.put(citation, DOIUtil.URIfor(doi).toString());
                     }
 
                 }
@@ -89,11 +89,11 @@ public class DOIResolverImpl implements DOIResolver {
     public String findCitationForDOI(String doi) throws IOException {
         String citation = null;
         try {
-            URI uri = URIfor(doi);
+            URI uri = DOIUtil.URIfor(doi);
             if (uri != null) {
                 citation = resolveCitation(uri);
             }
-        } catch (IllegalArgumentException | ClientProtocolException | URISyntaxException ex) {
+        } catch (IllegalArgumentException | ClientProtocolException ex) {
             LOG.warn("potentially malformed doi found [" + doi + "]", ex);
         }
         return citation;
@@ -116,28 +116,4 @@ public class DOIResolverImpl implements DOIResolver {
         return citation;
     }
 
-    public static URI URIfor(String doi) throws URISyntaxException {
-        URI uri = null;
-        if (StringUtils.isNotBlank(doi)) {
-            if (doi.matches(DOI_REGEX)) {
-                uri = new URI("http", "dx.doi.org", doi.replaceFirst(DOI_REGEX, "/$2"), null);
-            } else if (StringUtils.startsWith(doi, "http://")) {
-                String[] parts = StringUtils.replace(doi, "http://", "").split("/");
-                String host = parts[0];
-                String path = null;
-                if (parts.length > 1) {
-                    StringBuilder builder = new StringBuilder();
-                    for (int i = 1; i < parts.length; i++) {
-                        builder.append("/");
-                        builder.append(parts[i]);
-                    }
-                    path = builder.toString();
-                }
-                uri = new URI("http", host, path, null);
-            } else {
-                uri = new URI("http", "dx.doi.org", "/" + StringUtils.trim(doi), null);
-            }
-        }
-        return uri;
-    }
 }

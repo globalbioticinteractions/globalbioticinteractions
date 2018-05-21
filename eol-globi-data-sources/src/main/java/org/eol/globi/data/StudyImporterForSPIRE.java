@@ -149,7 +149,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     protected static boolean isValid(Map<String, String> properties) {
         // see https://github.com/jhpoelen/eol-globi-data/issues/118
         boolean invalidInteraction = "Enhydra_lutris".equals(properties.get(PREDATOR_NAME)) && "Castor_canadensis".equals(properties.get(PREY_NAME));
-        // phytoplankton are unlikely predators as suggested in http://dx.doi.org/10.6084/m9.figshare.1414253
+        // phytoplankton are unlikely predators as suggested in https://doi.org/10.6084/m9.figshare.1414253
         invalidInteraction = invalidInteraction || "phytoplankton".equals(properties.get(PREDATOR_NAME));
         return properties.containsKey(StudyConstant.TITLE) && !invalidInteraction;
     }

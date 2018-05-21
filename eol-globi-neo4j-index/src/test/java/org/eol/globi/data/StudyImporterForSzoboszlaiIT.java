@@ -25,8 +25,8 @@ public class StudyImporterForSzoboszlaiIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException, IOException {
-        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
-                "  \"doi\": \"http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. https://doi.org/10.5061/dryad.nv5d2\",\n" +
+                "  \"doi\": \"https://doi.org/10.5061/dryad.nv5d2\",\n" +
                 "  \"format\": \"szoboszlai\",\n" +
                 "  \"resources\": {\n" +
                 "    \"links\": \"http://datadryad.org/bitstream/handle/10255/dryad.94536/CCPDDlinkdata_v1.csv\",\n" +

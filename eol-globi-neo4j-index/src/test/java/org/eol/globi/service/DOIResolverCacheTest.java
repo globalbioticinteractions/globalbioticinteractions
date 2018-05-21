@@ -73,7 +73,7 @@ public class DOIResolverCacheTest {
 
         String ref1 = "Kalka, Margareta, and Elisabeth K. V. Kalko. Gleaning Bats as Underestimated Predators of Herbivorous Insects: Diet of Micronycteris Microtis (Phyllostomidae) in Panama. Journal of Tropical Ecology 1 (2006): 1-10.";
         Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList(ref1));
-        assertThat(doiForReference.get(ref1), is("http://dx.doi.org/10.1017/S0266467405002920"));
+        assertThat(doiForReference.get(ref1), is("https://doi.org/10.1017/S0266467405002920"));
     }
 
     @Test

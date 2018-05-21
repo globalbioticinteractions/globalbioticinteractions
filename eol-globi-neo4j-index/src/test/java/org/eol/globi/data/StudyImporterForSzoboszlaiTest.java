@@ -42,7 +42,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         assertThat(firstLink.get(SOURCE_TAXON_NAME), is("Thunnus thynnus"));
         assertThat(firstLink.get(TARGET_TAXON_ID), is("ITIS:161828"));
         assertThat(firstLink.get(TARGET_TAXON_NAME), is("Engraulis mordax"));
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. https://doi.org/10.5061/dryad.nv5d2"));
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Accessed at"));
         assertThat(firstLink.get(REFERENCE_CITATION), is("Blunt, CE. 1958. California bluefin tuna-wary wanderer of the Pacific. Outdoor California. v.19. pp.14"));
         assertThat(firstLink.get(REFERENCE_DOI), is(nullValue()));
@@ -70,8 +70,8 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
     }
 
     private Dataset getTestDataset() throws IOException {
-        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
-                "  \"doi\": \"http://dx.doi.org/10.5061/dryad.nv5d2\",\n" +
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Szoboszlai AI, Thayer JA, Wood SA, Sydeman WJ, Koehn LE (2015) Data from: Forage species in predator diets: synthesis of data from the California Current. Dryad Digital Repository. https://doi.org/10.5061/dryad.nv5d2\",\n" +
+                "  \"doi\": \"https://doi.org/10.5061/dryad.nv5d2\",\n" +
                 "  \"format\": \"szoboszlai\",\n" +
                 "  \"resources\": {\n" +
                 "    \"links\": \"szoboszlai/CCPDDlinkdata_v2.csv\",\n" +

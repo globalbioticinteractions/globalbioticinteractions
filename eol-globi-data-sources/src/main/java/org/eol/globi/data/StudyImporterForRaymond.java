@@ -275,7 +275,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private Study getOrCreateStudy(String citation) throws NodeFactoryException {
         String title = StringUtils.abbreviate(citation, 16) + MD5.getHashString(citation);
-        return nodeFactory.getOrCreateStudy(new StudyImpl(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from http://dx.doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + CitationUtil.createLastAccessedString(RESOURCE_URL), null, citation));
+        return nodeFactory.getOrCreateStudy(new StudyImpl(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from https://doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + CitationUtil.createLastAccessedString(RESOURCE_URL), null, citation));
     }
 
 

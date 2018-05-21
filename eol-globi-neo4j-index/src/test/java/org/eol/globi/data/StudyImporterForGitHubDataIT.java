@@ -68,7 +68,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         assertThat(DOIs, hasItem("doi:10.1007/s13127-011-0039-1"));
         assertThat(DOIs, hasItem("doi:10.3354/meps09511"));
         assertThat(DOIs, hasItem("doi:10.2307/3544990"));
-        assertThat(externalIds, hasItem("http://dx.doi.org/10.2307/3544990"));
+        assertThat(externalIds, hasItem("https://doi.org/10.2307/3544990"));
         assertThat(sources, hasItem(containsString("Accessed at")));
         assertThat(sources, hasItem(containsString("Miller")));
         assertThat(sources, hasItem(containsString("http://gomexsi.tamucc.edu")));

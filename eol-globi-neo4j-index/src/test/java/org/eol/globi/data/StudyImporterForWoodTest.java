@@ -22,8 +22,8 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
 
     static StudyImporterForWood createImporter(NodeFactory nodeFactory) throws IOException {
 
-        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
-                "  \"doi\": \"http://dx.doi.org/10.5061/dryad.g1qr6\",\n" +
+        JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. https://doi.org/10.5061/dryad.g1qr6\",\n" +
+                "  \"doi\": \"https://doi.org/10.5061/dryad.g1qr6\",\n" +
                 "  \"format\": \"wood\",\n" +
                 "  \"resources\": {\n" +
                 "    \"links\": \"http://datadryad.org/bitstream/handle/10255/dryad.93018/WoodEtal_Append1_v2.csv\"  \n" +
@@ -67,11 +67,11 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
     }
 
     protected void assertStaticInfo(Map<String, String> firstLink) {
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. https://doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at"));
-        assertThat(firstLink.get(REFERENCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.g1qr6"));
-        assertThat(firstLink.get(REFERENCE_DOI), is("http://dx.doi.org/10.5061/dryad.g1qr6"));
-        assertThat(firstLink.get(REFERENCE_URL), is("http://dx.doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(REFERENCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. https://doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(REFERENCE_DOI), is("https://doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(REFERENCE_URL), is("https://doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(LOCALITY_NAME), is("Sanak Island, Alaska, USA"));
         assertThat(firstLink.get(LOCALITY_ID), is("GEONAMES:5873327"));
         assertThat(firstLink.get(DECIMAL_LONGITUDE), is("-162.70889"));

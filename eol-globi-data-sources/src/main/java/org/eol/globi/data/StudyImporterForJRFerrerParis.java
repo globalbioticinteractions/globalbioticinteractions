@@ -22,8 +22,8 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        String citation = "Ferrer-Paris, José R.; Sánchez-Mercado, Ada Y.; Lozano, Cecilia; Zambrano, Liset; Soto, José; Baettig, Jessica; Leal, María (2014): A compilation of larval host-plant records for six families of butterflies (Lepidoptera: Papilionoidea) from available electronic resources. figshare. http://dx.doi.org/10.6084/m9.figshare.1168861 . " + CitationUtil.createLastAccessedString(RESOURCE);
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("Ferrer-Paris 2014", citation, "http://dx.doi.org/10.6084/m9.figshare.1168861", citation));
+        String citation = "Ferrer-Paris, José R.; Sánchez-Mercado, Ada Y.; Lozano, Cecilia; Zambrano, Liset; Soto, José; Baettig, Jessica; Leal, María (2014): A compilation of larval host-plant records for six families of butterflies (Lepidoptera: Papilionoidea) from available electronic resources. figshare. https://doi.org/10.6084/m9.figshare.1168861 . " + CitationUtil.createLastAccessedString(RESOURCE);
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("Ferrer-Paris 2014", citation, "https://doi.org/10.6084/m9.figshare.1168861", citation));
         try {
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
