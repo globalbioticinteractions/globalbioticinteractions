@@ -1,18 +1,56 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.globalbioticinteractions.util.DOIUtil;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ExternalIdUtil {
+
+    private static final HashMap<String, String> PREFIX_MAP = new HashMap<String, String>() {{
+        put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
+        put(TaxonomyProvider.ID_PREFIX_WORMS, "http://www.marinespecies.org/aphia.php?p=taxdetails&id=");
+        put(TaxonomyProvider.ID_PREFIX_ENVO, "http://purl.obolibrary.org/obo/ENVO_");
+        put(TaxonomyProvider.ID_PREFIX_WIKIPEDIA, "http://wikipedia.org/wiki/");
+        put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
+        put(TaxonomyProvider.ID_PREFIX_GAME, "https://public.myfwc.com/FWRI/GAME/Survey.aspx?id=");
+        put(TaxonomyProvider.ID_CMECS, "http://cmecscatalog.org/classification/aquaticSetting/");
+        put(TaxonomyProvider.ID_BIO_INFO_REFERENCE, "http://bioinfo.org.uk/html/b");
+        put(TaxonomyProvider.ID_PREFIX_GBIF, "http://www.gbif.org/species/");
+        put(TaxonomyProvider.ID_PREFIX_INATURALIST, "https://www.inaturalist.org/observations/");
+        put(TaxonomyProvider.ATLAS_OF_LIVING_AUSTRALIA.getIdPrefix(), "https://bie.ala.org.au/species/");
+        put(TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, "http://www.environment.gov.au/biodiversity/abrs/online-resources/fauna/afd/taxa/");
+        put(TaxonomyProvider.ID_PREFIX_BIODIVERSITY_AUSTRALIA, "http://id.biodiversity.org.au/apni.taxon/");
+        put(TaxonomyProvider.ID_PREFIX_INDEX_FUNGORUM, "http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=");
+        put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
+        put(TaxonomyProvider.NCBITaxon.getIdPrefix(), "http://purl.obolibrary.org/obo/NCBITaxon_");
+        put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
+        put("doi:", "https://doi.org/");
+        put("DOI:", "https://doi.org/");
+        put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=");
+        put(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix(), "https://tree.opentreeoflife.org/opentree/ottol@");
+        put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
+        put(TaxonomyProvider.ID_PREFIX_HTTPS, TaxonomyProvider.ID_PREFIX_HTTPS);
+        put(TaxonomyProvider.ID_PREFIX_ITIS, "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=");
+        put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "FB:SpecCode:", "http://fishbase.org/summary/");
+        put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "SLB:SpecCode:", "http://sealifebase.org/Summary/SpeciesSummary.php?id=");
+        put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
+        put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
+        put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
+    }};
+
     public static String urlForExternalId(String externalId) {
+        URI uri = null;
         String url = null;
         if (externalId != null) {
             for (Map.Entry<String, String> idPrefixToUrlPrefix : getURLPrefixMap().entrySet()) {
@@ -20,6 +58,8 @@ public class ExternalIdUtil {
                 if (StringUtils.startsWith(externalId, idPrefix)) {
                     if (isIRMNG(idPrefix)) {
                         url = urlForIRMNG(externalId, idPrefix);
+                    } else if (DOIUtil.isDoiPrefix(idPrefix)) {
+                        url = DOIUtil.urlForDOI(externalId);
                     } else {
                         url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
                     }
@@ -29,11 +69,20 @@ public class ExternalIdUtil {
                     }
                 }
                 if (url != null) {
+                    try {
+                        URIBuilder uriBuilder = new URIBuilder(url);
+                        uri = uriBuilder.build();
+//                        URL ur= new URL(url);
+//                        uri = new URI(ur.getProtocol(), ur.getUserInfo(), ur.getHost(), ur.getPort(), ur.getPath(), ur.getQuery(), ur.getRef());
+                    } catch (URISyntaxException e) {
+                        //
+                    }
+
                     break;
                 }
             }
         }
-        return url;
+        return uri == null ? null : uri.toString();
     }
 
     public static boolean isIRMNG(String idPrefix) {
@@ -54,36 +103,7 @@ public class ExternalIdUtil {
     }
 
     public static Map<String, String> getURLPrefixMap() {
-        return new HashMap<String, String>() {{
-            put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
-            put(TaxonomyProvider.ID_PREFIX_WORMS, "http://www.marinespecies.org/aphia.php?p=taxdetails&id=");
-            put(TaxonomyProvider.ID_PREFIX_ENVO, "http://purl.obolibrary.org/obo/ENVO_");
-            put(TaxonomyProvider.ID_PREFIX_WIKIPEDIA, "http://wikipedia.org/wiki/");
-            put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
-            put(TaxonomyProvider.ID_PREFIX_GAME, "https://public.myfwc.com/FWRI/GAME/Survey.aspx?id=");
-            put(TaxonomyProvider.ID_CMECS, "http://cmecscatalog.org/classification/aquaticSetting/");
-            put(TaxonomyProvider.ID_BIO_INFO_REFERENCE, "http://bioinfo.org.uk/html/b");
-            put(TaxonomyProvider.ID_PREFIX_GBIF, "http://www.gbif.org/species/");
-            put(TaxonomyProvider.ID_PREFIX_INATURALIST, "https://www.inaturalist.org/observations/");
-            put(TaxonomyProvider.ATLAS_OF_LIVING_AUSTRALIA.getIdPrefix(), "https://bie.ala.org.au/species/");
-            put(TaxonomyProvider.ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY, "http://www.environment.gov.au/biodiversity/abrs/online-resources/fauna/afd/taxa/");
-            put(TaxonomyProvider.ID_PREFIX_BIODIVERSITY_AUSTRALIA, "http://id.biodiversity.org.au/apni.taxon/");
-            put(TaxonomyProvider.ID_PREFIX_INDEX_FUNGORUM, "http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=");
-            put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
-            put(TaxonomyProvider.NCBITaxon.getIdPrefix(), "http://purl.obolibrary.org/obo/NCBITaxon_");
-            put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
-            put(TaxonomyProvider.ID_PREFIX_DOI, "https://doi.org/");
-            put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=");
-            put(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix(), "https://tree.opentreeoflife.org/opentree/ottol@");
-            put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
-            put(TaxonomyProvider.ID_PREFIX_HTTPS, TaxonomyProvider.ID_PREFIX_HTTPS);
-            put(TaxonomyProvider.ID_PREFIX_ITIS, "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=");
-            put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "FB:SpecCode:", "http://fishbase.org/summary/");
-            put(TaxonomyProvider.FISHBASE_CACHE.getIdPrefix() + "SLB:SpecCode:", "http://sealifebase.org/Summary/SpeciesSummary.php?id=");
-            put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
-            put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
-            put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
-        }};
+        return PREFIX_MAP;
     }
 
     public static Map<String, String> getURLSuffixMap() {

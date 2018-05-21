@@ -312,7 +312,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void createStudy() throws NodeFactoryException {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("myTitle", "mySource", "doi:myDoi", null));
-        assertThat(study.getDOI(), is("doi:myDoi"));
+        assertThat(study.getDOI(), is("https://doi.org/myDoi"));
         assertThat(study.getExternalId(), is("https://doi.org/myDoi"));
     }
 

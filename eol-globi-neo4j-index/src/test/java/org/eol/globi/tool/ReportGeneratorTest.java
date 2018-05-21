@@ -37,16 +37,16 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.TITLE, "a title");
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
-        assertThat((String) reportNode.getProperty(StudyConstant.TITLE), is("a title"));
-        assertThat((String) reportNode.getProperty(StudyConstant.SOURCE_ID), is("a/third/source"));
-        assertThat((String) reportNode.getProperty(StudyConstant.CITATION), is("citation"));
-        assertThat((String) reportNode.getProperty(StudyConstant.DOI), is("doi:12345"));
-        assertThat((String) reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("https://doi.org/12345"));
-        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
-        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-        assertThat((Integer) reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+        assertThat(reportNode.getProperty(StudyConstant.TITLE), is("a title"));
+        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("a/third/source"));
+        assertThat(reportNode.getProperty(StudyConstant.CITATION), is("citation"));
+        assertThat(reportNode.getProperty(StudyConstant.DOI), is("https://doi.org/12345"));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("https://doi.org/12345"));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         reports.close();
 
         reports = getGraphDb().index().forNodes("reports").get(StudyConstant.TITLE, "a second title");

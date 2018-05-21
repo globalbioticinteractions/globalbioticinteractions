@@ -43,11 +43,7 @@ public final class ExportUtil {
     public static void writeProperties(Writer writer, Map<String, String> properties, String[] fields) throws IOException {
         String values[] = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
-            if (properties.containsKey(fields[i])) {
-                values[i] = properties.get(fields[i]);
-            } else {
-                values[i] = "";
-            }
+            values[i] = properties.getOrDefault(fields[i], "");
         }
         writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values), '\t'));
     }

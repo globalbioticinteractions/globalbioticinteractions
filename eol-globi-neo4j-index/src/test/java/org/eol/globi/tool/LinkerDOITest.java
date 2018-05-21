@@ -115,7 +115,7 @@ public class LinkerDOITest extends GraphDBTestCase {
 
         new LinkerDOI(getGraphDb()).linkStudy(new TestDOIResolver(), study);
         assertThat(study.getSource(), is("some source"));
-        assertThat(study.getDOI(), is("doi:some citation"));
+        assertThat(study.getDOI(), is("https://doi.org/10.some%20citation"));
         assertThat(study.getCitation(), is("some citation"));
         assertThat(study.getTitle(), is("title"));
     }
@@ -151,16 +151,19 @@ public class LinkerDOITest extends GraphDBTestCase {
 
             @Override
             public String resolveDoiFor(String reference) throws IOException {
-                return "doi:1234";
+                return "doi:10.1234";
             }
         };
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
         new LinkerDOI(getGraphDb()).linkStudy(doiResolver, study);
-        assertThat(study.getDOI(), is("doi:1234"));
-        assertThat(study.getExternalId(), is("https://doi.org/1234"));
+        assertThat(study.getDOI(), is("https://doi.org/10.1234"));
+        assertThat(study.getExternalId(), is("https://doi.org/10.1234"));
         assertThat(study.getCitation(), is("my contr. some description"));
 
-        study = getNodeFactory().getOrCreateStudy(new StudyImpl("my other title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
+        StudyImpl study1 = new StudyImpl("my other title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null));
+        assertThat(study1.getExternalId(), nullValue());
+        study = getNodeFactory().getOrCreateStudy(study1);
+        assertThat(study.getExternalId(), nullValue());
         new LinkerDOI(getGraphDb()).linkStudy(new DOIResolverThatExplodes(), study);
         assertThat(study.getDOI(), nullValue());
         assertThat(study.getExternalId(), nullValue());
@@ -207,7 +210,7 @@ public class LinkerDOITest extends GraphDBTestCase {
 
         @Override
         public String resolveDoiFor(String reference) throws IOException {
-            return StringUtils.isBlank(reference) ? null : "doi:" + reference;
+            return StringUtils.isBlank(reference) ? null : "doi:10." + reference;
         }
 
     }
