@@ -57,7 +57,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedRow() {
-        return "\nglobi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\tdoi:1234\t";
+        return "\nglobi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\thttps://doi.org/1234\t";
     }
 
     @Test

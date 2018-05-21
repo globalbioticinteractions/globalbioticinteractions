@@ -31,8 +31,8 @@ public class DOIResolverCacheTest {
 
         doiResolverCache.init(reader);
         Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("some citation", "some other citation"));
-        assertThat(doiForReference.get("some other citation"), is("doi:some/other/doi"));
-        assertThat(doiForReference.get("some citation"), is("doi:some/doi"));
+        assertThat(doiForReference.get("some other citation"), is("https://doi.org/some/other/doi"));
+        assertThat(doiForReference.get("some citation"), is("https://doi.org/some/doi"));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class DOIResolverCacheTest {
 
         doiResolverCache.init(reader);
         Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("citationA"));
-        assertThat(doiForReference.get("citationA"), is("doi:some/A"));
+        assertThat(doiForReference.get("citationA"), is("https://doi.org/some/A"));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class DOIResolverCacheTest {
 
         doiResolverCache.init(reader);
         Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("citationA"));
-        assertThat(doiForReference.get("citationA"), is("doi:some/A"));
+        assertThat(doiForReference.get("citationA"), is("https://doi.org/some/A"));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class DOIResolverCacheTest {
 
         doiResolverCache.init(reader);
         Map<String, String> doiForReference = doiResolverCache.resolveDoiFor(Collections.singletonList("citationA"));
-        assertThat(doiForReference.get("citationA"), is(not("doi:some/A")));
+        assertThat(doiForReference.get("citationA"), is(not("https://doi.org/some/A")));
     }
 
 }
