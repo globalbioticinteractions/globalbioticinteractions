@@ -47,7 +47,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, "doi:some/doi", "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
-        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/some/doi\tdoi:some/doi\t"));
+        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/some/doi\thttps://doi.org/some/doi\t"));
     }
 
 

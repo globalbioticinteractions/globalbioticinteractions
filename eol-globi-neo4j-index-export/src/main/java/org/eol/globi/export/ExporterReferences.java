@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.util.DOIUtil;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -47,16 +48,16 @@ public class ExporterReferences extends ExporterBase {
 
     @Override
     protected void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
         properties.put(IDENTIFIER, referenceIdForStudy(study));
         properties.put(FULL_REFERENCE, referenceForStudy(study));
-        properties.put(DOI, study.getDOI());
+        properties.put(DOI, DOIUtil.urlForDOI(study.getDOI()));
         properties.put(URI, ExternalIdUtil.urlForExternalId(study.getExternalId()));
         writeProperties(writer, properties);
     }
 
     public static String referenceIdForStudy(Study study) {
-        return "globi:ref:" + referenceId((StudyNode)study);
+        return "globi:ref:" + referenceId((StudyNode) study);
     }
 
     private String referenceForStudy(Study study) {

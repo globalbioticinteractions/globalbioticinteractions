@@ -6,6 +6,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.CSVTSVUtil;
+import org.globalbioticinteractions.util.DOIUtil;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 
@@ -81,7 +82,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                     }
 
                     String getDOI(String[] line) {
-                        return line[0];
+                        return DOIUtil.urlForDOI(line[0]);
                     }
 
                     @Override
@@ -94,15 +95,9 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                                     && line.length > 1
                                     && !StringUtils.isNoneBlank(getCitation(line), getDOI(line)));
 
-
-
-                            boolean hasNext = line != null
+                            return line != null
                                     && line.length > 1
                                     && StringUtils.isNoneBlank(getCitation(line), getDOI(line));
-                            if (!hasNext) {
-                                System.out.println("[no more]");
-                            }
-                            return hasNext;
                         } catch (IOException e) {
                             LOG.error("problem reading", e);
                             return false;
@@ -111,12 +106,11 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
 
                     @Override
                     public Fun.Tuple2<String, String> next() {
-                        String citationString = StringUtils.defaultString(line[1], "");
-                        String doi = StringUtils.defaultString(line[0], "");
+                        String citationString = StringUtils.defaultString(getCitation(line), "");
+                        String doi = StringUtils.defaultString(getDOI(line), "");
                         return new Fun.Tuple2<>(citationString, doi);
                     }
                 })
-                //.keySerializer(BTreeKeySerializer.STRING)
                 .make();
         watch.stop();
         LOG.info("doi cache built in [" + watch.getTime() / 1000 + "] s.");

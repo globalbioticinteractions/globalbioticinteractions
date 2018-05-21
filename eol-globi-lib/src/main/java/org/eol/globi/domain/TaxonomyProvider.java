@@ -42,6 +42,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_GULFBASE = GULFBASE.getIdPrefix();
     public static final String ID_PREFIX_GAME = "GAME:";
     public static final String ID_PREFIX_HTTP = "http://";
+    public static final String ID_PREFIX_HTTPS = "https://";
     public static final String ID_PREFIX_DOI = "doi:";
     public static final String ID_PREFIX_GBIF = GBIF.getIdPrefix();
     public static final String ID_PREFIX_AUSTRALIAN_FAUNAL_DIRECTORY = AUSTRALIAN_FAUNAL_DIRECTORY.getIdPrefix();

@@ -22,6 +22,11 @@ public class DOIUtil {
         return uri;
     }
 
+    public static String urlForDOI(String doi) {
+        URI uri = DOIUtil.URIfor(doi);
+        return uri == null ? "" : uri.toString();
+    }
+
     public static String stripDOIPrefix(String doi) {
         return StringUtils.isNotBlank(doi)
                     ? Stream.of("doi:", "https://doi.org/", "http://dx.doi.org/")
