@@ -1,14 +1,13 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.util;
 
-import org.globalbioticinteractions.util.DOIUtil;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
-public class DOIResolverImplTest {
+public class DOIUtilTest {
 
     @Test
     public void doiFormat() throws URISyntaxException {
