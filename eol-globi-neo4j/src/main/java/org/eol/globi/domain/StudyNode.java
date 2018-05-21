@@ -5,6 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.util.DOIUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -52,16 +53,17 @@ public class StudyNode extends NodeBacked implements Study {
     }
 
     public void setDOI(String doi) {
-        setProperty(StudyConstant.DOI, doi);
+        String doiUrl = DOIUtil.urlForDOI(doi);
+        setProperty(StudyConstant.DOI, doiUrl);
         if (StringUtils.isBlank(getExternalId())) {
-            setExternalId(ExternalIdUtil.urlForExternalId(doi));
+            setExternalId(doiUrl);
         }
     }
 
     @Override
     public String getDOI() {
         String value = getProperty(StudyConstant.DOI);
-        return StringUtils.isBlank(value) ? null : value;
+        return StringUtils.isBlank(value) ? null : DOIUtil.urlForDOI(value);
     }
 
     public void setCitation(String citation) {
