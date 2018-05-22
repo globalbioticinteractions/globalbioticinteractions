@@ -268,7 +268,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
             props.put(StudyImporterForTSV.DECIMAL_LATITUDE, countryProperties.get(StudyImporterForTSV.DECIMAL_LATITUDE));
             props.put(StudyImporterForTSV.DECIMAL_LONGITUDE, countryProperties.get(StudyImporterForTSV.DECIMAL_LONGITUDE));
 
-            props.put(StudyImporterForTSV.LOCALITY_NAME, countryProperties.get(StudyImporterForTSV.LOCALITY_NAME) + "|" + locality);
+            props.put(StudyImporterForTSV.LOCALITY_NAME, countryProperties.get(StudyImporterForTSV.LOCALITY_NAME) + "|" + StringUtils.defaultIfBlank(locality,""));
             props.put(StudyImporterForTSV.LOCALITY_ID, defaultNamespace + "_COUNTRY:" + countryCode + "|");
         }
     }
