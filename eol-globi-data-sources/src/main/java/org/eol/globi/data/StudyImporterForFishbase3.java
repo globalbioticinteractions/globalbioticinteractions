@@ -26,6 +26,10 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
     }
 
+    static String scrubFoodName(String s) {
+        return StringUtils.isBlank(s) ? s : s.replaceAll("([Uu]nident[a-z]+|[Uu]nspecified|<i>|</i>)", "").trim();
+    }
+
     @Override
     public void importStudy() throws StudyImporterException {
         try {
@@ -173,7 +177,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
 
 
         String preyName = columnValueOrNull(record, foodItemName);
-        props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preyName);
+        setTargetTaxonName(props, preyName);
 
         lookupReference(references, namespace, record, props, "FoodsRefNo");
         lookupLocality(countries, namespace, record, props);
@@ -236,7 +240,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
                 targetTaxonId = idForSpecies(defaultNamespace, preySpeciesCode);
                 Map<String, String> preySpecies = speciesMap.get(targetTaxonId);
                 if (preySpecies != null) {
-                    props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preySpecies.get("name"));
+                    setTargetTaxonName(props, preySpecies.get("name"));
                 }
             }
 
@@ -287,7 +291,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
     protected static void importDietFoodII(InteractionListener listener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
         RecordListener listener1 = record -> {
             Map<String, String> props = importPredator(speciesMap, references, countries, namespace, record);
-            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, columnValueOrNull(record, "FoodII"));
+            setTargetTaxonName(props, columnValueOrNull(record, "FoodII"));
             listener.newLink(props);
         };
 
@@ -305,14 +309,15 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
 
         Map<String, String> preySpecies = speciesMap.get(preySpeciesCode);
-        if (preySpecies != null) {
-            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preySpecies.get("name"));
-        } else {
-            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, columnValueOrNull(record, "ItemName"));
-        }
+        String targetTaxonName = preySpecies == null ? columnValueOrNull(record, "ItemName") : preySpecies.get("name");
+        setTargetTaxonName(props, targetTaxonName);
 
         String preyLifestage = columnValueOrNull(record, "Stage");
         props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
+    }
+
+    private static void setTargetTaxonName(Map<String, String> props, String targetTaxonName) {
+        props.put(StudyImporterForTSV.TARGET_TAXON_NAME, scrubFoodName(targetTaxonName));
     }
 
     private static Map<String, String> importPredator(Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace, Record record) {
