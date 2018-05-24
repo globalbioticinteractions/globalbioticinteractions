@@ -80,7 +80,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             Taxon[] ids = lookupTerm(value);
             if (ids != null && ids.length > 0) {
                 String resolvedId = ids[0].getExternalId();
-                enriched = resolvedIdToTaxonMap.get(resolvedId);
+                enriched = resolvedIdToTaxonMap.get(StringUtils.lowerCase(resolvedId));
             }
         }
         return enriched;
@@ -89,7 +89,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private Taxon[] lookupTerm(String value) throws PropertyEnricherException {
         Taxon[] ids;
         try {
-            ids = taxonLookupService.lookupTermsByName(value);
+            ids = taxonLookupService.lookupTermsByName(StringUtils.lowerCase(value));
         } catch (IOException e) {
             throw new PropertyEnricherException("failed to lookup [" + value + "]", e);
         }
@@ -203,7 +203,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     private void addIfNeeded(TaxonImportListener lookupService, String providedKey, String resolvedId) {
         if (TaxonUtil.isNonEmptyValue(providedKey) && TaxonUtil.isNonEmptyValue(resolvedId)) {
-            lookupService.addTerm(providedKey, new TaxonImpl(null, resolvedId));
+            lookupService.addTerm(StringUtils.lowerCase(providedKey), new TaxonImpl(null, resolvedId));
         }
     }
 
@@ -223,10 +223,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             String name = (split != null && split.length > 1) ? split[1] : nodeIdAndName;
             Long nodeId = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
             if (!resolveName(termMatchListener, term.getId(), nodeId)) {
-                if (StringUtils.isNotBlank(nodeIdAndName)) {
-                    if (!resolveName(termMatchListener, name, nodeId)) {
-                        termMatchListener.foundTaxonForName(nodeId, name, new TaxonImpl(name, term.getId()), NameType.NONE);
-                    }
+                if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, name, nodeId)) {
+                    termMatchListener.foundTaxonForName(nodeId, name, new TaxonImpl(name, term.getId()), NameType.NONE);
                 }
             }
         }
@@ -240,6 +238,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 List<String> idsDistinct = Arrays.stream(ids)
                         .filter(t -> StringUtils.isNotBlank(t.getExternalId()))
                         .map(Taxon::getExternalId)
+                        .map(StringUtils::lowerCase)
                         .distinct()
                         .limit(getMaxTaxonLinks())
                         .collect(Collectors.toList());
@@ -265,7 +264,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     static private String valueOrNoMatch(String value) {
-        return TaxonUtil.isNonEmptyValue(value) ? value : PropertyAndValueDictionary.NO_MATCH;
+        return TaxonUtil.isNonEmptyValue(value) ? StringUtils.lowerCase(value) : PropertyAndValueDictionary.NO_MATCH;
     }
 
     static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final TermResource<Taxon> config) throws IOException {
@@ -286,7 +285,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             }
 
             private boolean proceedToNextValidLine() throws IOException {
-                while(!lineAvailable.get() && (currentLine = reader.readLine()) != null) {
+                while (!lineAvailable.get() && (currentLine = reader.readLine()) != null) {
                     if (config.getValidator().test(currentLine)) {
                         lineAvailable.set(true);
                     }

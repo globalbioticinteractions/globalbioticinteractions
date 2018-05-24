@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -37,8 +38,8 @@ import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class TaxonCacheServiceTest {
 
-    public static final String TAXON_MAP_TEST_RESOURCE = "/org/eol/globi/taxon/taxonMap.tsv";
-    public static final String TAXON_CACHE_TEST_RESOURCE = "/org/eol/globi/taxon/taxonCache.tsv";
+    private static final String TAXON_MAP_TEST_RESOURCE = "/org/eol/globi/taxon/taxonMap.tsv";
+    private static final String TAXON_CACHE_TEST_RESOURCE = "/org/eol/globi/taxon/taxonCache.tsv";
     private File mapdbDir;
 
     @Before
@@ -71,7 +72,24 @@ public class TaxonCacheServiceTest {
         final TaxonCacheService cacheService = getTaxonCacheService();
 
         AtomicBoolean matched = new AtomicBoolean(false);
-        cacheService.findTermsForNames(Arrays.asList("Green-winged teal"), new TermMatchListener() {
+        cacheService.findTermsForNames(Collections.singletonList("Green-winged teal"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon enrichedTaxon, NameType nameType) {
+                assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+                assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
+                assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
+                matched.set(true);
+            }
+        });
+        assertTrue(matched.get());
+    }
+
+    @Test
+    public void matchTermByNameLowerCase() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = getTaxonCacheService();
+
+        AtomicBoolean matched = new AtomicBoolean(false);
+        cacheService.findTermsForNames(Collections.singletonList("green-winged teal"), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long nodeId, String name, Taxon enrichedTaxon, NameType nameType) {
                 assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
@@ -101,10 +119,58 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void noMatchExplicit() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheNoHeader.tsv", TAXON_MAP_TEST_RESOURCE);
+        cacheService.setCacheDir(mapdbDir);
+
+        AtomicBoolean matched = new AtomicBoolean(false);
+        cacheService.findTermsForNames(Collections.singletonList("foo:bar"), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon enrichedTaxon, NameType nameType) {
+                assertThat(nameType, is(NameType.NONE));
+                matched.set(true);
+            }
+        });
+        assertTrue(matched.get());
+    }
+
+    @Test
+    public void noMatchByTermExplicit() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheNoHeader.tsv", TAXON_MAP_TEST_RESOURCE);
+        cacheService.setCacheDir(mapdbDir);
+
+        AtomicBoolean matched = new AtomicBoolean(false);
+        cacheService.findTerms(Collections.singletonList(new TermImpl("foo:bar", null)), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon enrichedTaxon, NameType nameType) {
+                assertThat(nameType, is(NameType.NONE));
+                matched.set(true);
+            }
+        });
+        assertTrue(matched.get());
+    }
+
+    @Test
     public void enrichByNameMissingThumbnail() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {
                 put(PropertyAndValueDictionary.NAME, "Acteocina inculcata");
+            }
+        };
+        final TaxonCacheService cacheService = getTaxonCacheService();
+        Map<String, String> enrich = cacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Acteocina inculta"));
+        assertThat(enrichedTaxon.getExternalId(), is("EOL:455065"));
+        assertThat(enrichedTaxon.getCommonNames(), is("rude barrel-bubble @en |"));
+        assertThat(enrichedTaxon.getThumbnailUrl(), is(""));
+    }
+
+    @Test
+    public void enrichByNameInconsistentCasing() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "acteocina inculcata");
             }
         };
         final TaxonCacheService cacheService = getTaxonCacheService();
@@ -154,6 +220,21 @@ public class TaxonCacheServiceTest {
         Map<String, String> properties = new HashMap<String, String>() {
             {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:1276240");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
+        assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
+    public void enrichByIdLowerCase() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "eol:1276240");
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
@@ -405,6 +486,6 @@ public class TaxonCacheServiceTest {
         cacheService.setCacheDir(mapdbDir);
 
         cacheService.findTerms(Collections.singletonList(new TermImpl("EOL:1276240", null)),
-                (nodeId, name, taxon, nameType) -> fail("should never match: " + TaxonUtil.taxonToMap(taxon)));
+                (nodeId, name, taxon, nameType) -> assertThat(nameType, is(NameType.NONE)));
     }
 }
