@@ -11,6 +11,7 @@
     <modules>
         <module>eol-globi-parent</module>
         <module>eol-globi-jcoord</module>
+        <module>doi</module>
         <module>eol-globi-lib</module>
         <module>eol-globi-cache</module>
         <module>eol-globi-data-sources</module>
