@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -37,9 +38,23 @@ public class DOIUtilTest {
     }
 
     @Test
-    public void toURL() {
+    public void toURL() throws URISyntaxException {
         assertThat(DOIUtil.urlForDOI("10.1000/123456"), is("https://doi.org/10.1000/123456"));
         assertThat(DOIUtil.urlForDOI("10.1000/123#456"), is("https://doi.org/10.1000/123%23456"));
+    }
+
+    @Test
+    public void easyDOIEncodingMistakeToMakeWithURIClass() throws URISyntaxException {
+        // e.g., from https://www.doi.org/syntax.html:
+        // "Hex encoding consists of substituting for the given character its hex value preceded by percent. Thus, # becomes %23 and
+        // http://dx.doi.org/10.1000/456#789
+        // is encoded as
+        // http://dx.doi.org/10.1000/456%23789
+        // a DOI util is needed to avoid"
+
+        assertThat(new URI("https://resolv.org/" + "10.1000/123#456"), is(not(URI.create("https://resolv.org/10.1000/123%23456"))));
+        // but
+        assertThat(new URI("https", "resolv.org", "/10.1000/123#456", null), is(URI.create("https://resolv.org/10.1000/123%23456")));
     }
 
     @Test
