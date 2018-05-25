@@ -12,7 +12,7 @@ public class DatasetZenodoTest {
     @Test
     public void doi() {
         DatasetZenodo datasetZenodo = new DatasetZenodo("some/namespace", URI.create("https://zenodo.org/record/1234/blabla"));
-        assertThat(datasetZenodo.getDOI(), is("https://doi.org/10.5281/zenodo.1234"));
+        assertThat(datasetZenodo.getDOI().toString(), is("10.5281/zenodo.1234"));
     }
 
 }
