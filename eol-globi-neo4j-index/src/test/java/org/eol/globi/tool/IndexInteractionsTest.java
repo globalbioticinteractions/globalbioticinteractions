@@ -15,6 +15,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -39,7 +39,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
     public void indexInteractions() throws NodeFactoryException {
         TaxonIndex taxonIndex = getOrCreateTaxonIndex();
         // see https://github.com/jhpoelen/eol-globi-data/wiki/Nanopubs
-        StudyImpl study = new StudyImpl("some study", "some source", "http://doi.org/123.23/222", "some study citation");
+        StudyImpl study = new StudyImpl("some study", "some source", new DOI("123.23", "222"), "some study citation");
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetImpl("some/namespace", URI.create("https://some.uri")));
         Study interaction = factory.getOrCreateStudy(study);
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");

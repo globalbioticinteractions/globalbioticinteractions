@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +13,7 @@ public class StudyImpl implements Study {
     private String externalId;
     private String title;
     private String source;
-    private String doi;
+    private DOI doi;
     private String citation;
     private String sourceId;
     private Dataset originatingDataset;
@@ -21,7 +22,7 @@ public class StudyImpl implements Study {
         this(title, null, null, null);
     }
 
-    public StudyImpl(String title, String source, String doi, String citation) {
+    public StudyImpl(String title, String source, DOI doi, String citation) {
         this.title = title;
         this.source = source;
         this.doi = doi;
@@ -54,7 +55,7 @@ public class StudyImpl implements Study {
     }
 
     @Override
-    public String getDOI() {
+    public DOI getDOI() {
         return this.doi;
     }
 

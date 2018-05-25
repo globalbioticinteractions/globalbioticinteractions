@@ -12,6 +12,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.doi.DOI;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -66,7 +67,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
                         collectionId = "";
                     }
 
-                    Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bell-" + collectionId, sourceCitation, "https://doi.org/10.1654/4756.1", ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null)));
+                    Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bell-" + collectionId, sourceCitation, DOI.create("10.1654/4756.1"), ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null)));
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");

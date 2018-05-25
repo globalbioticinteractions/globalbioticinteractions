@@ -317,8 +317,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode.setSource(study.getSource());
             studyNode.setCitation(study.getCitation());
             studyNode.setDOI(study.getDOI());
-            if (StringUtils.isBlank(study.getExternalId()) && StringUtils.isNotBlank(study.getDOI())) {
-                studyNode.setExternalId(ExternalIdUtil.urlForExternalId(study.getDOI()));
+            if (StringUtils.isBlank(study.getExternalId()) && null != study.getDOI()) {
+                studyNode.setExternalId(study.getDOI().getPrintableDOI());
             } else {
                 studyNode.setExternalId(study.getExternalId());
             }
@@ -359,7 +359,9 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
         }
         datasetNode.setProperty(StudyConstant.FORMAT, dataset.getFormat());
-        datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI());
+        if (dataset.getDOI() != null) {
+            datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI());
+        }
         String orDefault = dataset.getOrDefault(DatasetConstant.CITATION, dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, "no citation"));
         datasetNode.setProperty(DatasetConstant.CITATION, orDefault);
         datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));

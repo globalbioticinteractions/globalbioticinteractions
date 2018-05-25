@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -13,6 +15,8 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InvalidLocationException;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -48,6 +52,7 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 class InteractionListenerImpl implements InteractionListener {
+    private static final Log LOG = LogFactory.getLog(InteractionListenerImpl.class);
     private final NodeFactory nodeFactory;
     private final GeoNamesService geoNamesService;
 
@@ -170,9 +175,16 @@ class InteractionListenerImpl implements InteractionListener {
 
     private StudyImpl studyFromLink(Map<String, String> link) {
         String referenceCitation = link.get(REFERENCE_CITATION);
+        DOI doi = null;
+        String doiString = link.get(REFERENCE_DOI);
+        try {
+            doi = StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
+        } catch (MalformedDOIException e) {
+            LOG.warn("found malformed doi [" + doiString + "]");
+        }
         StudyImpl study1 = new StudyImpl(link.get(REFERENCE_ID),
                 link.get(STUDY_SOURCE_CITATION),
-                link.get(REFERENCE_DOI),
+                doi,
                 referenceCitation);
 
         final String referenceUrl = link.get(REFERENCE_URL);

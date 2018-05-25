@@ -4,6 +4,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
+import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -21,7 +22,7 @@ public class NodeFactoryWithDatasetContextTest {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
 
-        StudyImpl study = new StudyImpl("some title", "some source", "some doi", "some citation");
+        StudyImpl study = new StudyImpl("some title", "some source", new DOI("123", "abc"), "some citation");
         study.setExternalId("some:id");
         factoryWithDS.createStudy(study);
 

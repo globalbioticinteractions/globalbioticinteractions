@@ -7,6 +7,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
     @Override
     public void importStudy() throws StudyImporterException {
         String description = "García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: https://doi.org/10.1371/journal.pone.0052967";
-        String doi = "https://doi.org/10.1371/journal.pone.0052967";
+        DOI doi = new DOI("1371", "journal.pone.0052967");
         Study study1 = new StudyImpl("García-Robledo et al 2013", description, doi, description);
         Study study = nodeFactory.getOrCreateStudy(study1);
         Map<String, String> abrLookup = buildPlantLookup();

@@ -51,30 +51,26 @@ public class StudyNode extends NodeBacked implements Study {
         setProperty(StudyConstant.SOURCE, source);
     }
 
-    public void setDOI(String doi) {
-        try {
-            DOI doi1 = DOI.create(doi);
-            setProperty(StudyConstant.DOI, doi);
+    public void setDOI(DOI doi) {
+        if (doi != null) {
+            setProperty(StudyConstant.DOI, doi.getDOI());
             if (StringUtils.isBlank(getExternalId())) {
-                setExternalId(doi1.getPrintableDOI());
+                setExternalId(doi.getPrintableDOI());
             }
-        } catch (MalformedDOIException e) {
-            LOG.warn("found malformed doi [" + doi + "]", e);
         }
     }
 
     @Override
-    public String getDOI() {
-        DOI doi = null;
+    public DOI getDOI() {
         String value = getProperty(StudyConstant.DOI);
         if (StringUtils.isNotBlank(value)) {
             try {
-                doi = DOI.create(value);
+               return DOI.create(value);
             } catch (MalformedDOIException e) {
                 LOG.warn("found malformed doi [" + value + "]");
             }
         }
-        return doi == null ? null : doi.getDOI();
+        return null;
     }
 
     public void setCitation(String citation) {

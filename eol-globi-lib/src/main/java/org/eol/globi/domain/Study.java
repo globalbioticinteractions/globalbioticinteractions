@@ -1,11 +1,12 @@
 package org.eol.globi.domain;
 
 import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.doi.DOI;
 
 public interface Study extends Named, LogContext {
     String getTitle();
 
-    String getDOI();
+    DOI getDOI();
 
     String getCitation();
 

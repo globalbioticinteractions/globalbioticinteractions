@@ -1,7 +1,12 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +14,7 @@ import java.net.URI;
 
 public class DatasetProxy implements Dataset {
 
+    private static final Log LOG = LogFactory.getLog(DatasetProxy.class);
     private JsonNode config;
     private final Dataset datasetProxied;
 
@@ -59,8 +65,14 @@ public class DatasetProxy implements Dataset {
     }
 
     @Override
-    public String getDOI() {
-        return DatasetUtil.getValueOrDefault(config, "doi", datasetProxied.getFormat());
+    public DOI getDOI() {
+        String doi = DatasetUtil.getValueOrDefault(config, "doi", datasetProxied.getFormat());
+        try {
+            return StringUtils.isBlank(doi) ? null : DOI.create(doi);
+        } catch (MalformedDOIException e) {
+            LOG.warn("found malformed doi [" + doi + "]", e);
+            return null;
+        }
     }
 
     @Override

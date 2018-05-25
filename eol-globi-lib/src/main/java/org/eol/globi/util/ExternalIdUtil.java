@@ -1,6 +1,8 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -49,6 +51,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
         put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
     }};
+    private static final Log LOG = LogFactory.getLog(ExternalIdUtil.class);
 
     public static String urlForExternalId(String externalId) {
         URI uri = null;
@@ -64,7 +67,7 @@ public class ExternalIdUtil {
                             DOI doi = DOI.create(externalId);
                             url = doi.toURI().toString();
                         } catch (MalformedDOIException e) {
-                            //
+                            LOG.warn("found malformed doi [" + externalId + "]", e);
                         }
                     } else {
                         url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");

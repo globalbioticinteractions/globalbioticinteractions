@@ -1,8 +1,12 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
 
 import java.net.URI;
@@ -11,6 +15,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class CitationUtil {
     static final String ZENODO_URL_PREFIX = "https://zenodo.org/record/";
+    private static final Log LOG = LogFactory.getLog(CitationUtil.class);
 
     public static String createLastAccessedString(String reference) {
         return "Accessed at <" + StringUtils.trim(reference) + "> on " + new DateTime().toString("dd MMM YYYY") + ".";
@@ -39,7 +44,7 @@ public class CitationUtil {
 
         if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {
             String citationTrimmed = StringUtils.trim(defaultString(citation));
-            String doiTrimmed = defaultString(dataset.getDOI());
+            String doiTrimmed = defaultString(dataset.getDOI().toURI().toString());
             if (StringUtils.isBlank(doiTrimmed)) {
                 citation = citationTrimmed;
             } else {
@@ -53,16 +58,23 @@ public class CitationUtil {
         return dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, dataset.getOrDefault("citation", defaultCitation));
     }
 
-    public static String getDOI(Dataset dataset) {
+    public static DOI getDOI(Dataset dataset) {
         String doi = dataset.getOrDefault("doi", "");
+        DOI doiObj = null;
         URI archiveURI = dataset.getArchiveURI();
         if (StringUtils.isBlank(doi)) {
             String recordZenodo = StringUtils.replace(archiveURI.toString(), ZENODO_URL_PREFIX, "");
             String[] split = recordZenodo.split("/");
             if (split.length > 0) {
-                doi = "https://doi.org/10.5281/zenodo." + split[0];
+                doiObj = new DOI("5281", "zenodo." + split[0]);
             }
         }
-        return doi;
+        try {
+            doiObj = doiObj == null ? DOI.create(doi) : doiObj;
+        } catch (MalformedDOIException e) {
+            LOG.warn("found malformed doi [" + doi + "]", e);
+
+        }
+        return doiObj;
     }
 }

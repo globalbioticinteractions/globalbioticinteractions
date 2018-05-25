@@ -128,8 +128,8 @@ public class ReportGenerator {
             if (StringUtils.isNotBlank(study.getCitation())) {
                 node.setProperty(StudyConstant.CITATION, study.getCitation());
             }
-            if (StringUtils.isNotBlank(study.getDOI())) {
-                node.setProperty(StudyConstant.DOI, study.getDOI());
+            if (null != study.getDOI()) {
+                node.setProperty(StudyConstant.DOI, study.getDOI().toString());
             }
             if (StringUtils.isNotBlank(study.getExternalId())) {
                 node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, study.getExternalId());

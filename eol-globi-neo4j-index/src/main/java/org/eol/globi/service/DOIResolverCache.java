@@ -6,7 +6,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.CSVTSVUtil;
-import org.globalbioticinteractions.doi.DOIUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 
@@ -84,7 +85,12 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                     }
 
                     String getDOI(String[] line) {
-                        return line != null && line.length > 0 ? DOIUtil.urlForDOI(line[0]) : null;
+                        try {
+                            return DOI.create(line[0]).getDOI();
+                        } catch (MalformedDOIException e) {
+                            LOG.warn("skipping malformed doi [" +  line[0] + "]");
+                            return null;
+                        }
                     }
 
                     @Override

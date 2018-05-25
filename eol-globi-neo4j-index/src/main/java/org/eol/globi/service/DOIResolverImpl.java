@@ -13,7 +13,8 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
-import org.globalbioticinteractions.doi.DOIUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -64,9 +65,14 @@ public class DOIResolverImpl implements DOIResolver {
             for (JsonNode result : results) {
                 if (result.get("match").asBoolean()) {
                     String citation = result.get("text").getTextValue();
-                    String doi = result.get("doi").getTextValue();
-                    if (hasReasonableMatchScore(result) && StringUtils.isNoneBlank(citation, doi)) {
-                        doiMap.put(citation, DOIUtil.URIfor(doi).toString());
+                    String doiCandidate = result.get("doi").getTextValue();
+                    if (hasReasonableMatchScore(result) && StringUtils.isNoneBlank(citation, doiCandidate)) {
+                        try {
+                            DOI doi = DOI.create(doiCandidate);
+                            doiMap.put(citation, doi.toString());
+                        } catch (MalformedDOIException e) {
+                            LOG.warn("found malformed doi [" + doiCandidate + "]", e);
+                        }
                     }
 
                 }
@@ -88,11 +94,9 @@ public class DOIResolverImpl implements DOIResolver {
     public String findCitationForDOI(String doi) throws IOException {
         String citation = null;
         try {
-            URI uri = DOIUtil.URIfor(doi);
-            if (uri != null) {
-                citation = resolveCitation(uri);
-            }
-        } catch (IllegalArgumentException | ClientProtocolException ex) {
+            DOI uri = DOI.create(doi);
+            citation = resolveCitation(uri.toURI());
+        } catch (MalformedDOIException | IllegalArgumentException | ClientProtocolException ex) {
             LOG.warn("potentially malformed doi found [" + doi + "]", ex);
         }
         return citation;

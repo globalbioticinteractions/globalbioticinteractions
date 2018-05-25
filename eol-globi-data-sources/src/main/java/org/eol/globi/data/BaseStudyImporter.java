@@ -7,6 +7,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.globalbioticinteractions.doi.DOI;
 
 public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
     protected ParserFactory parserFactory;
@@ -69,7 +70,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         return getDataset() == null ? null : getDataset().getCitation();
     }
 
-    public String getSourceDOI() {
+    public DOI getSourceDOI() {
         return dataset == null ? null : dataset.getDOI();
     }
 

@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.net.URI;
 
@@ -10,7 +11,7 @@ public class DatasetZenodo extends DatasetImpl {
     }
 
     @Override
-    public String getDOI() {
+    public DOI getDOI() {
         return CitationUtil.getDOI(this);
     }
 

@@ -14,6 +14,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -226,7 +227,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     private Study importStudy(String studyResource) throws StudyImporterException {
         Study study;
         try {
-            String doi = "https://doi.org/10.1007/bf02784282";
+            DOI doi = new DOI("1007", "bf02784282");
             StudyImpl study1 = new StudyImpl("Akin et al 2006", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, doi, ExternalIdUtil.toCitation("Senol Akin", "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
                     "; August 2006, Volume 29, Issue 4, pp 552-567", "2006"));
             study = nodeFactory.getOrCreateStudy(

@@ -9,6 +9,7 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetImpl;
+import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
@@ -26,7 +27,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         study1.setSourceId("a/third/source");
         createStudy(study1);
 
-        StudyImpl studyWithDoi = new StudyImpl("a title", "a third source", "doi:10.12345", "citation");
+        StudyImpl studyWithDoi = new StudyImpl("a title", "a third source", new DOI("12345", "444"), "citation");
         studyWithDoi.setSourceId("a/third/source");
         createStudy(studyWithDoi);
         resolveNames();

@@ -4,7 +4,24 @@ import junit.framework.Assert;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.domain.*;
+import org.eol.globi.domain.DatasetNode;
+import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.EnvironmentNode;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Interaction;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
@@ -13,6 +30,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -32,6 +50,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class NodeFactoryNeo4jTest extends GraphDBTestCase {
+
+    public static final DOI SOME_DOI = new DOI("some", "doi");
 
     @Test
     public void toCitation() {
@@ -219,7 +239,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void addDatasetToStudy() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
@@ -241,7 +261,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
         assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
 
-        StudyImpl otherStudy = new StudyImpl("my other title", "some source", "some doi", "some citation");
+        StudyImpl otherStudy = new StudyImpl("my other title", "some source", SOME_DOI, "some citation");
         otherStudy.setOriginatingDataset(dataset);
         StudyNode studySameDataset = getNodeFactory().getOrCreateStudy(otherStudy);
         Node datasetNodeOther = NodeUtil.getDataSetForStudy(studySameDataset);
@@ -251,7 +271,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void sameStudyDifferentDataset() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
         study1.setOriginatingDataset(datasetWithNamespace("some/namespace"));
 
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
@@ -268,7 +288,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void sameStudyNoDataset() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
 
         StudyNode studyNoDataset1 = getNodeFactory().getOrCreateStudy(study1);
         StudyNode studyNoDataset2 = getNodeFactory().getOrCreateStudy(study1);
@@ -287,7 +307,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void addDatasetToStudyNulls() throws NodeFactoryException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
         DatasetImpl dataset = new DatasetImpl(null, null);
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
@@ -297,7 +317,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void addDatasetToStudyNulls2() throws NodeFactoryException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", "some doi", "some citation");
+        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
         DatasetImpl dataset = new DatasetImpl("some/namespace", null);
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
@@ -311,7 +331,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createStudy() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("myTitle", "mySource", "doi:10.myDoi", null));
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("myTitle", "mySource", new DOI("myDoi", "123"), null));
         assertThat(study.getDOI(), is("https://doi.org/10.myDoi"));
         assertThat(study.getExternalId(), is("https://doi.org/10.myDoi"));
     }

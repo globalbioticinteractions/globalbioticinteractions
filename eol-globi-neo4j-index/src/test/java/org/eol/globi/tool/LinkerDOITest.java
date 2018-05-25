@@ -14,6 +14,7 @@ import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -41,19 +42,19 @@ public class LinkerDOITest extends GraphDBTestCase {
 
     @Test
     public void shouldResolveStudy() {
-        StudyImpl study = new StudyImpl("some title", "some source", "doi:some/doi", "some citation");
+        StudyImpl study = new StudyImpl("some title", "some source", new DOI("some", "doi"), "some citation");
         assertFalse(LinkerDOI.shouldResolve(study));
     }
 
     @Test
     public void shouldResolveStudyEmptyCitation() {
-        StudyImpl study = new StudyImpl("some title", "some source", "", "");
+        StudyImpl study = new StudyImpl("some title", "some source", null, "");
         assertFalse(LinkerDOI.shouldResolve(study));
     }
 
     @Test
     public void shouldResolveStudyHttps() {
-        StudyImpl study = new StudyImpl("some title", "some source", "", "http://example.com");
+        StudyImpl study = new StudyImpl("some title", "some source", null, "http://example.com");
         assertFalse(LinkerDOI.shouldResolve(study));
     }
 

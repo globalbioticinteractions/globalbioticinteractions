@@ -12,6 +12,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.LatLng;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
 
@@ -36,7 +37,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
         }
         try {
             Study study = nodeFactory.getOrCreateStudy(
-                    new StudyImpl("cruaud", SOURCE, "https://doi.org/10.1093/sysbio/sys068", null));
+                    new StudyImpl("cruaud", SOURCE, new DOI("1093", "sysbio/sys068"), null));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {

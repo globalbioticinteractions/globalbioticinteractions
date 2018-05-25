@@ -9,6 +9,7 @@ import org.eol.globi.service.DatasetFinderZenodo;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
+import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -54,7 +55,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         List<String> refs = new ArrayList<String>();
-        List<String> DOIs = new ArrayList<String>();
+        List<DOI> DOIs = new ArrayList<>();
         List<String> externalIds = new ArrayList<String>();
         List<String> sources = new ArrayList<String>();
         for (Study study : allStudies) {
@@ -65,9 +66,9 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         }
 
         assertThat(refs, hasItem("Gittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1"));
-        assertThat(DOIs, hasItem("doi:10.1007/s13127-011-0039-1"));
-        assertThat(DOIs, hasItem("doi:10.3354/meps09511"));
-        assertThat(DOIs, hasItem("doi:10.2307/3544990"));
+        assertThat(DOIs, hasItem(new DOI("1007", "s13127-011-0039-1")));
+        assertThat(DOIs, hasItem(new DOI("3354", "meps09511")));
+        assertThat(DOIs, hasItem(new DOI("2307", "3544990")));
         assertThat(externalIds, hasItem("https://doi.org/10.2307/3544990"));
         assertThat(sources, hasItem(containsString("Accessed at")));
         assertThat(sources, hasItem(containsString("Miller")));
@@ -105,7 +106,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
         Map<String, String> citationDOIs = new TreeMap<String, String>();
         for (Study study : allStudies) {
-            citationDOIs.put(study.getCitation(), study.getDOI());
+            citationDOIs.put(study.getCitation(), study.getDOI().toString());
         }
 
         String citation = "Raboy, Becky E., and James M. Dietz. Diet, Foraging, and Use of Space in Wild Golden-headed Lion Tamarins. American Journal of Primatology, 63(1):, 2004, 1-15. Accessed April 20, 2015. http://hdl.handle.net/10088/4251.";
@@ -174,7 +175,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Magnifera indica"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Hermagoras sigillatus"), is(notNullValue()));
         List<String> citations = new ArrayList<String>();
-        List<String> dois = new ArrayList<String>();
+        List<DOI> dois = new ArrayList<>();
         for (Study study : allStudies) {
             assertThat(study.getSource(), is(Matchers.notNullValue()));
             assertThat(study.getCitation(), is(Matchers.notNullValue()));
@@ -183,7 +184,7 @@ public class StudyImporterForGitHubDataIT extends GraphDBTestCase {
         }
 
         assertThat(citations, hasItem("F.  Seow-Choen, A Taxonomic Guide to the Stick Insects of Borneo. Kota Kinabalu: Natural History Publications (Borneo), 2016."));
-        assertThat(dois, hasItem("10.2307/3503496"));
+        assertThat(dois, hasItem(new DOI("2307", "3503496")));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.codehaus.jackson.JsonNode;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,7 @@ public interface Dataset {
 
     String getOrDefault(String key, String defaultValue);
 
-    String getDOI();
+    DOI getDOI();
 
     URI getConfigURI();
 

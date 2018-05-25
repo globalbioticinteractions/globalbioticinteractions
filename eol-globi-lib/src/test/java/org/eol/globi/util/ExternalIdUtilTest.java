@@ -12,8 +12,8 @@ public class ExternalIdUtilTest {
     public void mapping() {
         assertThat(ExternalIdUtil.urlForExternalId("http://blabla"), is("http://blabla"));
         assertThat(ExternalIdUtil.urlForExternalId("https://blabla"), is("https://blabla"));
-        assertThat(ExternalIdUtil.urlForExternalId("doi:10.someDOI#12"), is("https://doi.org/10.someDOI%2312"));
-        assertThat(ExternalIdUtil.urlForExternalId("DOI:10.someDOI#12"), is("https://doi.org/10.someDOI%2312"));
+        assertThat(ExternalIdUtil.urlForExternalId("doi:10.some/DOI#12"), is("https://doi.org/10.some/DOI%2312"));
+        assertThat(ExternalIdUtil.urlForExternalId("DOI:10.some/DOI#12"), is("https://doi.org/10.some/DOI%2312"));
         assertThat(ExternalIdUtil.urlForExternalId("https://doi.org/10.someDOI%2312"), is("https://doi.org/10.someDOI%2312"));
         assertThat(ExternalIdUtil.urlForExternalId("ENVO:00001995"), is("http://purl.obolibrary.org/obo/ENVO_00001995"));
         assertThat(ExternalIdUtil.urlForExternalId("bioinfo:ref:147884"), is("http://bioinfo.org.uk/html/b147884.htm"));

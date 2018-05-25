@@ -12,7 +12,8 @@ import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetUtil;
-import org.globalbioticinteractions.doi.DOIUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
@@ -131,18 +132,23 @@ public class LinkerDOI implements Linker {
 
     private void setDOIForStudy(StudyNode study, String doiResolved) {
         if (StringUtils.isNotBlank(doiResolved)) {
-            String doiUrl = DOIUtil.urlForDOI(doiResolved);
-            study.setPropertyWithTx(StudyConstant.DOI, doiUrl);
-            if (StringUtils.isBlank(study.getExternalId())) {
-                study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doiUrl);
+            try {
+                DOI doi = DOI.create(doiResolved);
+                study.setPropertyWithTx(StudyConstant.DOI, doi.getDOI());
+                if (StringUtils.isBlank(study.getExternalId())) {
+                    study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doi.getPrintableDOI());
+                }
+            } catch (MalformedDOIException e) {
+                LOG.warn("found malformed doi [" + doiResolved + "]", e);
             }
+
         }
     }
 
     public static boolean shouldResolve(Study study) {
         Dataset dataset = study.getOriginatingDataset();
         return DatasetUtil.shouldResolveReferences(dataset)
-                && StringUtils.isBlank(study.getDOI())
+                && null == study.getDOI()
                 && StringUtils.isNotBlank(study.getCitation())
                 && citationLikeString(study.getCitation());
     }

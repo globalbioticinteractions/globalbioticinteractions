@@ -8,6 +8,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
         }
         try {
             Study study = nodeFactory.getOrCreateStudy(
-                    new StudyImpl("strona2013", SOURCE + " . " + CitationUtil.createLastAccessedString(RESOURCE_PATH), "https://doi.org/10.1890/12-1419.1", SOURCE));
+                    new StudyImpl("strona2013", SOURCE + " . " + CitationUtil.createLastAccessedString(RESOURCE_PATH), new DOI("1890", "12-1419.1"), SOURCE));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {

@@ -10,6 +10,7 @@ import org.eol.globi.service.DatasetMapped;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CachedURI;
+import org.globalbioticinteractions.doi.DOI;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +18,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.commons.lang3.StringUtils.trim;
 
@@ -103,9 +102,9 @@ public class DatasetWithCache extends DatasetMapped {
         return getDatasetCached().getConfig();
     }
 
-    public String getDOI() {
-        String doi = getDatasetCached().getDOI();
-        if (isBlank(doi) && startsWith(getArchiveURI().toString(), CitationUtil.ZENODO_URL_PREFIX)) {
+    public DOI getDOI() {
+        DOI doi = getDatasetCached().getDOI();
+        if (doi == null && startsWith(getArchiveURI().toString(), CitationUtil.ZENODO_URL_PREFIX)) {
             doi = CitationUtil.getDOI(this);
         }
         return doi;
@@ -114,11 +113,11 @@ public class DatasetWithCache extends DatasetMapped {
     public String getCitation() {
         StringBuilder citationGenerated = new StringBuilder();
         citationGenerated.append(trim(CitationUtil.citationOrDefaultFor(this, "")));
-        String doi = getDOI();
-        if (isNotBlank(doi)) {
+        DOI doi = getDOI();
+        if (doi != null) {
             citationGenerated.append(CitationUtil.separatorFor(citationGenerated.toString()));
             citationGenerated.append("<");
-            citationGenerated.append(doi);
+            citationGenerated.append(doi.toURI());
             citationGenerated.append(">");
         }
         citationGenerated.append(CitationUtil.separatorFor(citationGenerated.toString()));

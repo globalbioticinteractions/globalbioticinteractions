@@ -5,6 +5,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {
-        StudyImpl myStudy1 = new StudyImpl("myStudy", "a source", "doi:10.1234", ExternalIdUtil.toCitation("John Doe", "description study 1", "1927"));
+        StudyImpl myStudy1 = new StudyImpl("myStudy", "a source", new DOI("1234", "44"), ExternalIdUtil.toCitation("John Doe", "description study 1", "1927"));
         myStudy1.setExternalId("GAME:444");
         Study myStudy = nodeFactory.getOrCreateStudy(myStudy1);
         StringWriter row = new StringWriter();
@@ -44,10 +45,10 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
     @Test
     public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, "doi:10.some/doi", "bla \"one\""));
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, new DOI("some", "doi"), "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, row, false);
-        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\thttps://doi.org/10.some/doi\t"));
+        assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t"));
     }
 
 
@@ -57,7 +58,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedRow() {
-        return "\nglobi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\thttps://doi.org/10.1234\t";
+        return "\nglobi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\t10.1234/44\t";
     }
 
     @Test

@@ -1,11 +1,15 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.neo4j.graphdb.Node;
 
 import java.io.IOException;
@@ -13,6 +17,8 @@ import java.io.InputStream;
 import java.net.URI;
 
 public class DatasetNode extends NodeBacked implements Dataset {
+
+    private static final Log LOG = LogFactory.getLog(DatasetNode.class);
 
     public DatasetNode(Node node) {
         super(node);
@@ -73,8 +79,14 @@ public class DatasetNode extends NodeBacked implements Dataset {
     }
 
     @Override
-    public String getDOI() {
-        return getOrDefault(StudyConstant.DOI, null);
+    public DOI getDOI() {
+        String doi = getOrDefault(StudyConstant.DOI, null);
+        try {
+            return DOI.create(doi);
+        } catch (MalformedDOIException e) {
+            LOG.warn("found malformed doi [" + doi + "]", e);
+            return null;
+        }
     }
 
     @Override

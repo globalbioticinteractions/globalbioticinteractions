@@ -102,7 +102,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
             }
         }
         String referenceCitation = StringUtils.join(citeValues, ". ");
-        link.put(REFERENCE_ID, getSourceDOI() + '/' + MD5.getHashString(referenceCitation));
+        link.put(REFERENCE_ID, (getSourceDOI() == null ? "" : getSourceDOI().getDOI()) + '/' + MD5.getHashString(referenceCitation));
         link.put(REFERENCE_CITATION, referenceCitation);
         link.put(INTERACTION_TYPE_NAME, "preysOn");
         link.put(INTERACTION_TYPE_ID, "RO:0002439");
