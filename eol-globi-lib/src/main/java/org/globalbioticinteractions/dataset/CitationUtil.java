@@ -44,11 +44,10 @@ public class CitationUtil {
 
         if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {
             String citationTrimmed = StringUtils.trim(defaultString(citation));
-            String doiTrimmed = defaultString(dataset.getDOI().toURI().toString());
-            if (StringUtils.isBlank(doiTrimmed)) {
+            if (dataset.getDOI() == null) {
                 citation = citationTrimmed;
             } else {
-                citation = citationTrimmed + separatorFor(citationTrimmed) + doiTrimmed;
+                citation = citationTrimmed + separatorFor(citationTrimmed) + dataset.getDOI().getPrintableDOI();
             }
         }
         return StringUtils.trim(citation);

@@ -31,7 +31,7 @@ public class NodeFactoryWithDatasetContextTest {
         assertEquals("globi:some/namespace", argument.getValue().getSourceId());
         assertEquals("some title", argument.getValue().getTitle());
         assertEquals("some citation", argument.getValue().getCitation());
-        assertEquals("some doi", argument.getValue().getDOI());
+        assertEquals("10.123/abc", argument.getValue().getDOI().toString());
         assertEquals("some:id", argument.getValue().getExternalId());
     }
 
