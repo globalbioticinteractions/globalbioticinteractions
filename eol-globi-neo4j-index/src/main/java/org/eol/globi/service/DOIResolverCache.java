@@ -6,7 +6,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.CSVTSVUtil;
-import org.globalbioticinteractions.util.DOIUtil;
+import org.globalbioticinteractions.doi.DOIUtil;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 

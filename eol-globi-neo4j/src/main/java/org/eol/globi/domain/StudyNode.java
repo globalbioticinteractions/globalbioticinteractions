@@ -1,26 +1,25 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
-import org.globalbioticinteractions.util.DOIUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
 public class StudyNode extends NodeBacked implements Study {
+
+    private final static Log LOG = LogFactory.getLog(StudyNode.class);
 
     public StudyNode(Node node, String title) {
         this(node);
@@ -53,17 +52,29 @@ public class StudyNode extends NodeBacked implements Study {
     }
 
     public void setDOI(String doi) {
-        String doiUrl = DOIUtil.urlForDOI(doi);
-        setProperty(StudyConstant.DOI, doiUrl);
-        if (StringUtils.isBlank(getExternalId())) {
-            setExternalId(doiUrl);
+        try {
+            DOI doi1 = DOI.create(doi);
+            setProperty(StudyConstant.DOI, doi);
+            if (StringUtils.isBlank(getExternalId())) {
+                setExternalId(doi1.getPrintableDOI());
+            }
+        } catch (MalformedDOIException e) {
+            LOG.warn("found malformed doi [" + doi + "]", e);
         }
     }
 
     @Override
     public String getDOI() {
+        DOI doi = null;
         String value = getProperty(StudyConstant.DOI);
-        return StringUtils.isBlank(value) ? null : DOIUtil.urlForDOI(value);
+        if (StringUtils.isNotBlank(value)) {
+            try {
+                doi = DOI.create(value);
+            } catch (MalformedDOIException e) {
+                LOG.warn("found malformed doi [" + value + "]");
+            }
+        }
+        return doi == null ? null : doi.getDOI();
     }
 
     public void setCitation(String citation) {
@@ -91,7 +102,7 @@ public class StudyNode extends NodeBacked implements Study {
     @Override
     public List<LogMessage> getLogMessages() {
         Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_LOG_MESSAGE), Direction.OUTGOING);
-        List<LogMessage> msgs = new ArrayList<LogMessage>();
+        List<LogMessage> msgs = new ArrayList<>();
         for (Relationship rel : rels) {
             msgs.add(new LogMessageImpl(rel.getEndNode()));
         }

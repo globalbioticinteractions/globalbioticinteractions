@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.ExternalIdUtil;
-import org.globalbioticinteractions.util.DOIUtil;
+import org.globalbioticinteractions.doi.DOIUtil;
 
 import java.io.IOException;
 import java.io.Writer;

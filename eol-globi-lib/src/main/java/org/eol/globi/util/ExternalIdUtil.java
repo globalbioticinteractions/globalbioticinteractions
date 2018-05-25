@@ -5,7 +5,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.globalbioticinteractions.util.DOIUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -58,8 +59,13 @@ public class ExternalIdUtil {
                 if (StringUtils.startsWith(externalId, idPrefix)) {
                     if (isIRMNG(idPrefix)) {
                         url = urlForIRMNG(externalId, idPrefix);
-                    } else if (DOIUtil.isDoiPrefix(idPrefix)) {
-                        url = DOIUtil.urlForDOI(externalId);
+                    } else if (DOI.isDoiPrefix(idPrefix)) {
+                        try {
+                            DOI doi = DOI.create(externalId);
+                            url = doi.toURI().toString();
+                        } catch (MalformedDOIException e) {
+                            //
+                        }
                     } else {
                         url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
                     }

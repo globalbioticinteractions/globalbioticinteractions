@@ -13,11 +13,10 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
-import org.globalbioticinteractions.util.DOIUtil;
+import org.globalbioticinteractions.doi.DOIUtil;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
