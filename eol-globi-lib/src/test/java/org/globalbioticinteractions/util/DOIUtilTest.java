@@ -52,7 +52,10 @@ public class DOIUtilTest {
         // http://dx.doi.org/10.1000/456%23789
         // a DOI util is needed to avoid"
 
-        assertThat(new URI("https://resolv.org/" + "10.1000/123#456"), is(not(URI.create("https://resolv.org/10.1000/123%23456"))));
+        URI actual = new URI("https://resolv.org/10.1000/123#456");
+        assertThat(actual.getPath(), is("/10.1000/123"));
+        assertThat(actual.getFragment(), is("456"));
+        assertThat(actual, is(not(URI.create("https://resolv.org/10.1000/123%23456"))));
         // but
         assertThat(new URI("https", "resolv.org", "/10.1000/123#456", null), is(URI.create("https://resolv.org/10.1000/123%23456")));
     }
