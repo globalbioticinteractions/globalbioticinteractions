@@ -18,11 +18,25 @@
         <httpcomponents.version>4.3.6</httpcomponents.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>globi-release-http</id>
+            <name>Release Repository</name>
+            <url>https://depot.globalbioticinteractions.org/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
-            <groupId>org.globalbioticinteractoins</groupId>
-            <artifactId>doi</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.globalbioticinteractions</groupId>
+            <artifactId>doi4j</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
