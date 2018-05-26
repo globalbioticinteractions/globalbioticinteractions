@@ -53,7 +53,7 @@ public class StudyNode extends NodeBacked implements Study {
 
     public void setDOI(DOI doi) {
         if (doi != null) {
-            setProperty(StudyConstant.DOI, doi.getDOI());
+            setProperty(StudyConstant.DOI, doi.toString());
             if (StringUtils.isBlank(getExternalId())) {
                 setExternalId(doi.getPrintableDOI());
             }

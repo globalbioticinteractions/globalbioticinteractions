@@ -62,7 +62,7 @@ public class ExternalIdUtil {
                 if (StringUtils.startsWith(externalId, idPrefix)) {
                     if (isIRMNG(idPrefix)) {
                         url = urlForIRMNG(externalId, idPrefix);
-                    } else if (DOI.isDoiPrefix(idPrefix)) {
+                    } else if (DOI.isCommonlyUsedDoiPrefix(idPrefix)) {
                         try {
                             DOI doi = DOI.create(externalId);
                             url = doi.toURI().toString();

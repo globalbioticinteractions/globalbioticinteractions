@@ -13,7 +13,6 @@ import org.eol.globi.geo.LatLng;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
-import org.globalbioticinteractions.dataset.CitationUtil;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -102,7 +101,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
             }
         }
         String referenceCitation = StringUtils.join(citeValues, ". ");
-        link.put(REFERENCE_ID, (getSourceDOI() == null ? "" : getSourceDOI().getDOI()) + '/' + MD5.getHashString(referenceCitation));
+        link.put(REFERENCE_ID, (getSourceDOI() == null ? "" : getSourceDOI().toString()) + '/' + MD5.getHashString(referenceCitation));
         link.put(REFERENCE_CITATION, referenceCitation);
         link.put(INTERACTION_TYPE_NAME, "preysOn");
         link.put(INTERACTION_TYPE_ID, "RO:0002439");

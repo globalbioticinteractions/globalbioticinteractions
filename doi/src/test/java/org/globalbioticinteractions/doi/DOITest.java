@@ -16,6 +16,17 @@ import static org.junit.Assert.assertTrue;
 public class DOITest {
 
     @Test
+    public void constructor() {
+        DOI doi = new DOI("123", "456");
+        assertThat(doi.getDirectoryIndicator(), is("10"));
+        assertThat(doi.getRegistrantCode(), is("123"));
+        assertThat(doi.getSuffix(), is("456"));
+        assertThat(doi.toString(), is("10.123/456"));
+        assertThat(doi.getPrintableDOI(), is("doi:10.123/456"));
+        assertThat(doi.toURI().toString(), is("https://doi.org/10.123/456"));
+    }
+
+    @Test
     public void fromURL() throws URISyntaxException, MalformedDOIException {
         DOI.create(new URI("https://doi.org/10.123/456"));
         DOI.create("doi:10.123/456");
@@ -65,7 +76,7 @@ public class DOITest {
 
     @Test
     public void toURL() throws URISyntaxException, MalformedDOIException, MalformedURLException {
-        assertThat(DOI.create("10.1000/123456").getDOI(), is("10.1000/123456"));
+        assertThat(DOI.create("10.1000/123456").toString(), is("10.1000/123456"));
         assertThat(DOI.create("10.1000/123#456").toURI().toString(), is("https://doi.org/10.1000/123%23456"));
         assertThat(DOI.create("10.1206/0003-0090(2000)264<0083:>2.0.co;2").toURI().toURL().toString(), is("https://doi.org/10.1206/0003-0090(2000)264%3C0083:%3E2.0.co;2"));
     }
@@ -103,8 +114,8 @@ public class DOITest {
 
     @Test
     public void fromURL2() throws MalformedDOIException {
-        assertThat(DOI.create("https://doi.org/10.1000/123%23456").getDOI(), is("10.1000/123#456"));
-        assertThat(DOI.create("https://doi.org/10.1206/0003-0090(2000)264%3C0083:%3E2.0.co;2").getDOI(), is("10.1206/0003-0090(2000)264<0083:>2.0.co;2"));
+        assertThat(DOI.create("https://doi.org/10.1000/123%23456").toString(), is("10.1000/123#456"));
+        assertThat(DOI.create("https://doi.org/10.1206/0003-0090(2000)264%3C0083:%3E2.0.co;2").toString(), is("10.1206/0003-0090(2000)264<0083:>2.0.co;2"));
     }
 
     @Test(expected = MalformedDOIException.class)
@@ -117,7 +128,7 @@ public class DOITest {
     public void escaping() throws MalformedDOIException {
         String originalDOI = "10.1898/1051-1733(2004)085<0062:dcabso>2.0.co;2";
         DOI doi = DOI.create(originalDOI);
-        assertThat(doi.getDOI(), is(originalDOI));
+        assertThat(doi.toString(), is(originalDOI));
         URI uri = doi.toURI(URI.create("http://dx.doi.org/"));
         assertThat(uri.toString(), is(not("http://dx.doi.org/10.1898/1051-1733(2004)085<0062:dcabso>2.0.co;2")));
         assertThat(uri.toString(), is("http://dx.doi.org/10.1898/1051-1733(2004)085%3C0062:dcabso%3E2.0.co;2"));
@@ -129,7 +140,7 @@ public class DOITest {
     }
 
     @Test
-    public void sameAs() throws MalformedDOIException {
+    public void equals() throws MalformedDOIException {
         DOI doi1 = DOI.create("https://doi.org/10.1/ABC");
         DOI doi2 = DOI.create("https://doi.org/10.1/AbC");
         DOI doi3 = DOI.create("https://doi.org/10.1/AbCD");

@@ -13,7 +13,6 @@ import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
-import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
@@ -132,7 +131,7 @@ public class LinkerDOI implements Linker {
 
     private void setDOIForStudy(StudyNode study, DOI doiResolved) {
         if (null != doiResolved) {
-            study.setPropertyWithTx(StudyConstant.DOI, doiResolved.getDOI());
+            study.setPropertyWithTx(StudyConstant.DOI, doiResolved.toString());
             if (StringUtils.isBlank(study.getExternalId())) {
                 study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doiResolved.getPrintableDOI());
             }

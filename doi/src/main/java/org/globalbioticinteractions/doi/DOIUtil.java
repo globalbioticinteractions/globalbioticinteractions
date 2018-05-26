@@ -18,7 +18,7 @@ class DOIUtil {
     static URI URIForDoi(DOI doi, URI resolverURI) {
         URI uri = null;
         try {
-            uri = new URI(resolverURI.getScheme(), resolverURI.getHost(), "/" + doi.getDOI(), null);
+            uri = new URI(resolverURI.getScheme(), resolverURI.getHost(), "/" + doi.toString(), null);
         } catch (URISyntaxException e) {
             // ignore
         }
