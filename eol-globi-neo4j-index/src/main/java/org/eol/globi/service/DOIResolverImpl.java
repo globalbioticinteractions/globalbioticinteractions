@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -17,7 +16,6 @@ import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,12 +34,12 @@ public class DOIResolverImpl implements DOIResolver {
     }
 
     @Override
-    public Map<String, String> resolveDoiFor(Collection<String> references) throws IOException {
+    public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
         return requestLinks(references);
     }
 
     @Override
-    public String resolveDoiFor(final String reference) throws IOException {
+    public DOI resolveDoiFor(final String reference) throws IOException {
         ArrayList<String> references = new ArrayList<String>() {{
             add(reference);
         }};
@@ -49,7 +47,7 @@ public class DOIResolverImpl implements DOIResolver {
         return requestLinks(references).getOrDefault(reference, null);
     }
 
-    public Map<String, String> requestLinks(Collection<String> references) throws IOException {
+    public Map<String, DOI> requestLinks(Collection<String> references) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         HttpPost post = new HttpPost(baseURL);
         post.setHeader("Content-Type", "application/json");
@@ -60,7 +58,7 @@ public class DOIResolverImpl implements DOIResolver {
         String response = HttpUtil.getHttpClient().execute(post, handler);
         JsonNode jsonNode = mapper.readTree(response);
         JsonNode results = jsonNode.get("results");
-        Map<String, String> doiMap = new HashMap<>();
+        Map<String, DOI> doiMap = new HashMap<>();
         if (jsonNode.get("query_ok").asBoolean()) {
             for (JsonNode result : results) {
                 if (result.get("match").asBoolean()) {
@@ -69,7 +67,7 @@ public class DOIResolverImpl implements DOIResolver {
                     if (hasReasonableMatchScore(result) && StringUtils.isNoneBlank(citation, doiCandidate)) {
                         try {
                             DOI doi = DOI.create(doiCandidate);
-                            doiMap.put(citation, doi.toString());
+                            doiMap.put(citation, doi);
                         } catch (MalformedDOIException e) {
                             LOG.warn("found malformed doi [" + doiCandidate + "]", e);
                         }
@@ -91,30 +89,21 @@ public class DOIResolverImpl implements DOIResolver {
         return score > 50.0;
     }
 
-    public String findCitationForDOI(String doi) throws IOException {
+    public String findCitationForDOI(DOI doi) throws IOException {
         String citation = null;
-        try {
-            DOI uri = DOI.create(doi);
-            citation = resolveCitation(uri.toURI());
-        } catch (MalformedDOIException | IllegalArgumentException | ClientProtocolException ex) {
-            LOG.warn("potentially malformed doi found [" + doi + "]", ex);
-        }
-        return citation;
-    }
-
-    public String resolveCitation(URI uri) throws IOException {
-        String citation = null;
-        HttpGet request = new HttpGet(uri);
-        request.setHeader("Accept", "text/x-bibliography; style=council-of-science-editors; charset=UTF-8");
-        request.setHeader("Accept-Charset", "UTF-8");
-        HttpResponse response = HttpUtil.getHttpClient().execute(request);
-        if (response.getStatusLine().getStatusCode() == 200) {
-            citation = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        } else {
-            LOG.warn("failed to retrieve citation using [" + uri.toString() + "]: code [" + response.getStatusLine().getStatusCode() + "]:[" + response.getStatusLine().getReasonPhrase() + "]; content [" + IOUtils.toString(response.getEntity().getContent(), "UTF-8") + "]");
-        }
-        if (StringUtils.isNotBlank(citation)) {
-            citation = citation.replaceFirst("^1\\. ", "").replace("\n", "");
+        if (doi != null) {
+            HttpGet request = new HttpGet(doi.toURI());
+            request.setHeader("Accept", "text/x-bibliography; style=council-of-science-editors; charset=UTF-8");
+            request.setHeader("Accept-Charset", "UTF-8");
+            HttpResponse response = HttpUtil.getHttpClient().execute(request);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                citation = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+            } else {
+                LOG.warn("failed to retrieve citation using [" + doi.toString() + "]: code [" + response.getStatusLine().getStatusCode() + "]:[" + response.getStatusLine().getReasonPhrase() + "]; content [" + IOUtils.toString(response.getEntity().getContent(), "UTF-8") + "]");
+            }
+            if (StringUtils.isNotBlank(citation)) {
+                citation = citation.replaceFirst("^1\\. ", "").replace("\n", "");
+            }
         }
         return citation;
     }

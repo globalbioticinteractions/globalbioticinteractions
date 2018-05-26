@@ -24,7 +24,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverCache.class);
 
     private final String doiCacheResource;
-    private Map<String, String> doiCitationMap = null;
+    private Map<String, DOI> doiCitationMap = null;
 
     public DOIResolverCache() {
         this("/tsv/citations.tsv.gz");
@@ -35,18 +35,18 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
     }
 
     @Override
-    public Map<String, String> resolveDoiFor(Collection<String> references) throws IOException {
-        Map<String, String> results = new HashMap<>();
+    public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
+        Map<String, DOI> results = new HashMap<>();
         for (String reference : references) {
-            String doi = getDoiCitationMap().get(reference);
-            if (StringUtils.isNotBlank(doi)) {
+            DOI doi = getDoiCitationMap().get(reference);
+            if (doi != null) {
                 results.put(reference, doi);
             }
         }
         return results;
     }
 
-    public Map<String, String> getDoiCitationMap() {
+    public Map<String, DOI> getDoiCitationMap() {
         if (doiCitationMap == null) {
             try {
                 LOG.info("loading doi cache at [" + doiCacheResource + "]");
@@ -61,7 +61,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
     }
 
     @Override
-    public String resolveDoiFor(final String reference) throws IOException {
+    public DOI resolveDoiFor(final String reference) throws IOException {
         return getDoiCitationMap().get(reference);
     }
 
@@ -76,7 +76,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                 .createTreeMap("doiCache")
                 .pumpPresort(300000)
                 .pumpIgnoreDuplicates()
-                .pumpSource(new Iterator<Fun.Tuple2<String, String>>() {
+                .pumpSource(new Iterator<Fun.Tuple2<String, DOI>>() {
                     private String[] line = null;
                     final AtomicBoolean nextLineParsed = new AtomicBoolean(false);
 
@@ -84,11 +84,12 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                         return line != null && line.length > 1 ? line[1] : null;
                     }
 
-                    String getDOI(String[] line) {
+                    DOI getDOI(String[] line) {
+                        String doiString = line[0];
                         try {
-                            return DOI.create(line[0]).getDOI();
+                            return StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
                         } catch (MalformedDOIException e) {
-                            LOG.warn("skipping malformed doi [" +  line[0] + "]");
+                            LOG.warn("skipping malformed doi [" + doiString + "]", e);
                             return null;
                         }
                     }
@@ -101,7 +102,8 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                                 if (line == null) {
                                     break;
                                 }
-                                nextLineParsed.set(StringUtils.isNoneBlank(getCitation(line), getDOI(line)));
+                                nextLineParsed.set(getDOI(line) != null
+                                        && StringUtils.isNotBlank(getCitation(line)));
                             }
                             return line != null && nextLineParsed.get();
                         } catch (IOException e) {
@@ -111,9 +113,9 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                     }
 
                     @Override
-                    public Fun.Tuple2<String, String> next() {
+                    public Fun.Tuple2<String, DOI> next() {
                         String citationString = StringUtils.defaultString(getCitation(line), "");
-                        String doi = StringUtils.defaultString(getDOI(line), "");
+                        DOI doi = getDOI(line);
                         nextLineParsed.set(false);
                         return new Fun.Tuple2<>(citationString, doi);
                     }

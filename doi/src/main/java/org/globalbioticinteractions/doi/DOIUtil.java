@@ -12,28 +12,20 @@ class DOIUtil {
     static final List<String> DOI_URLS = Arrays.asList(SECURE_DEFAULT_RESOLVER, UNSECURE_DEFAULT_RESOLVER);
     static final List<String> PRINTABLE_DOI_PREFIX = Collections.singletonList("doi:");
 
-    public static URI URIfor(String doi) {
-        return URIfor(doi, URI.create(SECURE_DEFAULT_RESOLVER));
+    static URI URIForDoi(DOI doi) {
+        return URIForDoi(doi, URI.create(SECURE_DEFAULT_RESOLVER));
     }
-
-    static URI URIfor(String doi, URI resolverURI) {
+    static URI URIForDoi(DOI doi, URI resolverURI) {
         URI uri = null;
-        String doiStripped = stripDOIPrefix(doi);
-
         try {
-            uri = new URI(resolverURI.getScheme(), resolverURI.getHost(), "/" + doiStripped, null);
+            uri = new URI(resolverURI.getScheme(), resolverURI.getHost(), "/" + doi.getDOI(), null);
         } catch (URISyntaxException e) {
             // ignore
         }
         return uri;
     }
 
-    public static String urlForDOI(String doi) {
-        URI uri = DOIUtil.URIfor(doi);
-        return uri == null ? null : uri.toString();
-    }
-
-    private static String stripDOIPrefix(String doi) {
+    static String stripDOIPrefix(String doi) throws MalformedDOIException {
         for (String prefix : PRINTABLE_DOI_PREFIX) {
             if (doi.toLowerCase().startsWith(prefix)) {
                 return doi.length() > prefix.length() ? doi.substring(prefix.length()) : doi;
@@ -49,6 +41,7 @@ class DOIUtil {
                 } catch (IllegalArgumentException e) {
                     // some invalid characters in stripped doi - probably due to invalid url escaping
                     // from historic doi url generator.
+                    throw new MalformedDOIException("found unescaped doi in uri [" + doi + "]", e);
                 }
             }
         }

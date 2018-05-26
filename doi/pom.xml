@@ -4,10 +4,22 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>doi</artifactId>
     <groupId>org.globalbioticinteractoins</groupId>
+    <artifactId>doi</artifactId>
     <version>0.6-SNAPSHOT</version>
     <name>Digital Object Identifier (DOI) handling library</name>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/globalbioticinteractions/doi</url>
+    </scm>
 
     <dependencies>
         <dependency>

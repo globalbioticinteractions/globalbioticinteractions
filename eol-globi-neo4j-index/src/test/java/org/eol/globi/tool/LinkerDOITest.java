@@ -142,8 +142,8 @@ public class LinkerDOITest extends GraphDBTestCase {
     public void addDOIToStudy() throws NodeFactoryException {
         DOIResolver doiResolver = new DOIResolver() {
             @Override
-            public Map<String, String> resolveDoiFor(Collection<String> references) throws IOException {
-                Map<String, String> doiMap = new HashMap<>();
+            public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
+                Map<String, DOI> doiMap = new HashMap<>();
                 for (String reference : references) {
                     doiMap.put(reference, resolveDoiFor(reference));
                 }
@@ -151,8 +151,8 @@ public class LinkerDOITest extends GraphDBTestCase {
             }
 
             @Override
-            public String resolveDoiFor(String reference) throws IOException {
-                return "doi:10.1234";
+            public DOI resolveDoiFor(String reference) throws IOException {
+                return new DOI("1234", "567");
             }
         };
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
@@ -173,27 +173,27 @@ public class LinkerDOITest extends GraphDBTestCase {
 
     private static class DOIResolverThatExplodes implements DOIResolver {
         @Override
-        public Map<String, String> resolveDoiFor(Collection<String> references) throws IOException {
+        public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
             throw new IOException("kaboom!");
         }
 
         @Override
-        public String resolveDoiFor(String reference) throws IOException {
+        public DOI resolveDoiFor(String reference) throws IOException {
             throw new IOException("kaboom!");
         }
     }
 
     private static class DOIResolverThatFails implements DOIResolver {
         @Override
-        public Map<String, String> resolveDoiFor(Collection<String> references) throws IOException {
+        public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
             fail("should not call this");
             return new HashMap<>();
         }
 
         @Override
-        public String resolveDoiFor(String reference) throws IOException {
+        public DOI resolveDoiFor(String reference) throws IOException {
             fail("should not call this");
-            return "bla";
+            return new DOI("some", "doi");
         }
 
     }
@@ -201,8 +201,8 @@ public class LinkerDOITest extends GraphDBTestCase {
 
     public static class TestDOIResolver implements DOIResolver {
         @Override
-        public Map<String, String> resolveDoiFor(Collection<String> references) throws IOException {
-            Map<String, String> doiMap = new HashMap<>();
+        public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
+            Map<String, DOI> doiMap = new HashMap<>();
             for (String reference : references) {
                 doiMap.put(reference, resolveDoiFor(reference));
             }
@@ -210,8 +210,8 @@ public class LinkerDOITest extends GraphDBTestCase {
         }
 
         @Override
-        public String resolveDoiFor(String reference) throws IOException {
-            return StringUtils.isBlank(reference) ? null : "doi:10." + reference;
+        public DOI resolveDoiFor(String reference) throws IOException {
+            return StringUtils.isBlank(reference) ? null : new DOI("some", reference);
         }
 
     }

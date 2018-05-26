@@ -107,6 +107,22 @@ public class DOITest {
         assertThat(DOI.create("https://doi.org/10.1206/0003-0090(2000)264%3C0083:%3E2.0.co;2").getDOI(), is("10.1206/0003-0090(2000)264<0083:>2.0.co;2"));
     }
 
+    @Test(expected = MalformedDOIException.class)
+    public void fromURL4() throws MalformedDOIException {
+        String doiString = "http://dx.doi.org/10.1898/1051-1733(2004)085<0062:dcabso>2.0.co;2";
+        DOI.create(doiString);
+    }
+
+    @Test
+    public void escaping() throws MalformedDOIException {
+        String originalDOI = "10.1898/1051-1733(2004)085<0062:dcabso>2.0.co;2";
+        DOI doi = DOI.create(originalDOI);
+        assertThat(doi.getDOI(), is(originalDOI));
+        URI uri = doi.toURI(URI.create("http://dx.doi.org/"));
+        assertThat(uri.toString(), is(not("http://dx.doi.org/10.1898/1051-1733(2004)085<0062:dcabso>2.0.co;2")));
+        assertThat(uri.toString(), is("http://dx.doi.org/10.1898/1051-1733(2004)085%3C0062:dcabso%3E2.0.co;2"));
+    }
+
     @Test
     public void sameAs() throws MalformedDOIException {
         DOI doi1 = DOI.create("https://doi.org/10.1/ABC");
@@ -116,9 +132,5 @@ public class DOITest {
         assertThat(doi1, is(doi2));
         assertThat(doi2, is(not(doi3)));
         assertThat(doi1, is(not(doi3)));
-
-        assertTrue(doi1.sameAs(doi2));
-        assertFalse(doi2.sameAs(doi3));
-        assertFalse(doi1.sameAs(doi3));
     }
 }

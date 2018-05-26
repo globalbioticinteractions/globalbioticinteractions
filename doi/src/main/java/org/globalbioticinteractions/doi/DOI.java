@@ -1,8 +1,9 @@
 package org.globalbioticinteractions.doi;
 
+import java.io.Serializable;
 import java.net.URI;
 
-public final class DOI {
+public final class DOI implements Serializable {
 
     private final static String DIRECTORY_INDICATOR_PREFIX = "10.";
     private final String registrantCode;
@@ -26,27 +27,28 @@ public final class DOI {
     }
 
     public URI toURI() {
-        return DOIUtil.URIfor(getDOI());
+        return DOIUtil.URIForDoi(this);
     }
 
     public URI toURI(URI resolver) {
-        return DOIUtil.URIfor(getDOI(), resolver);
+        return DOIUtil.URIForDoi(this, resolver);
     }
 
     public static DOI create(String doiString) throws MalformedDOIException {
-        return create(DOIUtil.URIfor(doiString));
+        String s = DOIUtil.stripDOIPrefix(doiString);
+        return getDOI(s);
     }
 
-
     public static DOI create(URI doiURI) throws MalformedDOIException {
-        String doiCandidate;
         String path = doiURI == null ? "" : doiURI.getPath();
         int i = path.indexOf('/');
         if (i != 0) {
             throw new MalformedDOIException("path [" + path + "] does not start with [/]");
         }
-        doiCandidate = path.substring(1);
+        return getDOI(path.substring(1));
+    }
 
+    private static DOI getDOI(String doiCandidate) throws MalformedDOIException {
         if (!doiCandidate.startsWith(DIRECTORY_INDICATOR_PREFIX)) {
             throw new MalformedDOIException("expected directory indicator [10.] in [" + doiCandidate + "]");
         }
@@ -70,10 +72,11 @@ public final class DOI {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj != null && obj instanceof DOI) && sameAs((DOI) obj);
+        return (obj != null && obj instanceof DOI)
+                && sameAs((DOI) obj);
     }
 
-    public boolean sameAs(DOI other) {
+    private boolean sameAs(DOI other) {
         return other != null && getDOI().equalsIgnoreCase(other.getDOI());
     }
 

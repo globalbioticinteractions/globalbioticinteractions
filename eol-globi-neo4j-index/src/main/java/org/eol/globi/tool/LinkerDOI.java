@@ -99,12 +99,12 @@ public class LinkerDOI implements Linker {
     }
 
     public void resolve(DOIResolver doiResolver, Map<String, StudyNode> batch, Collection<String> citations) throws IOException {
-        Map<String, String> doiMap = doiResolver.resolveDoiFor(citations);
+        Map<String, DOI> doiMap = doiResolver.resolveDoiFor(citations);
         for (String s : doiMap.keySet()) {
             StudyNode studyNode = batch.get(s);
             if (studyNode != null) {
-                String doiResolved = doiMap.get(s);
-                if (StringUtils.isNotBlank(doiResolved)) {
+                DOI doiResolved = doiMap.get(s);
+                if (doiResolved != null) {
                     setDOIForStudy(studyNode, doiResolved);
                 }
             }
@@ -122,7 +122,7 @@ public class LinkerDOI implements Linker {
     public void linkStudy(DOIResolver doiResolver, StudyNode study) {
         if (shouldResolve(study)) {
             try {
-                String doiResolved = doiResolver.resolveDoiFor(study.getCitation());
+                DOI doiResolved = doiResolver.resolveDoiFor(study.getCitation());
                 setDOIForStudy(study, doiResolved);
             } catch (IOException e) {
                 LOG.warn("failed to lookup doi for citation [" + study.getCitation() + "] with id [" + study.getTitle() + "]", e);
@@ -130,18 +130,12 @@ public class LinkerDOI implements Linker {
         }
     }
 
-    private void setDOIForStudy(StudyNode study, String doiResolved) {
-        if (StringUtils.isNotBlank(doiResolved)) {
-            try {
-                DOI doi = DOI.create(doiResolved);
-                study.setPropertyWithTx(StudyConstant.DOI, doi.getDOI());
-                if (StringUtils.isBlank(study.getExternalId())) {
-                    study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doi.getPrintableDOI());
-                }
-            } catch (MalformedDOIException e) {
-                LOG.warn("found malformed doi [" + doiResolved + "]", e);
+    private void setDOIForStudy(StudyNode study, DOI doiResolved) {
+        if (null != doiResolved) {
+            study.setPropertyWithTx(StudyConstant.DOI, doiResolved.getDOI());
+            if (StringUtils.isBlank(study.getExternalId())) {
+                study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doiResolved.getPrintableDOI());
             }
-
         }
     }
 
