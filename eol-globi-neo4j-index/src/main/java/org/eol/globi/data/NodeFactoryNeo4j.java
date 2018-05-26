@@ -360,7 +360,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         }
         datasetNode.setProperty(StudyConstant.FORMAT, dataset.getFormat());
         if (dataset.getDOI() != null) {
-            datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI());
+            datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI().toString());
         }
         String orDefault = dataset.getOrDefault(DatasetConstant.CITATION, dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, "no citation"));
         datasetNode.setProperty(DatasetConstant.CITATION, orDefault);

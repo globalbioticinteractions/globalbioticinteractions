@@ -124,6 +124,11 @@ public class DOITest {
     }
 
     @Test
+    public void whitespace() throws MalformedDOIException {
+        DOI.create("10.some/some citation");
+    }
+
+    @Test
     public void sameAs() throws MalformedDOIException {
         DOI doi1 = DOI.create("https://doi.org/10.1/ABC");
         DOI doi2 = DOI.create("https://doi.org/10.1/AbC");

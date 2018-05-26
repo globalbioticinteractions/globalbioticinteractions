@@ -20,7 +20,7 @@ public class DOIResolverImplIT {
 
     public static final String HOCKING = "Hocking, B. 1968. Insect-flower associations in the high Arctic with special reference to nectar. Oikos 19:359-388.";
     public static final String MEDAN = "Medan, D., N. H. Montaldo, M. Devoto, A. Mantese, V. Vasellati, and N. H. Bartoloni. 2002. Plant-pollinator relationships at two altitudes in the Andes of Mendoza, Argentina. Arctic Antarctic and Alpine Research 34:233-241.";
-    public static final String HOCKING_DOI = "10.2307/3565022";
+    public static final DOI HOCKING_DOI = new DOI("2307", "3565022");
     public static final String MEDAN_DOI = "10.2307/1552480";
 
     @Test

@@ -70,7 +70,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. https://doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at"));
         assertThat(firstLink.get(REFERENCE_CITATION), containsString("Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. https://doi.org/10.5061/dryad.g1qr6"));
-        assertThat(firstLink.get(REFERENCE_DOI), is("https://doi.org/10.5061/dryad.g1qr6"));
+        assertThat(firstLink.get(REFERENCE_DOI), is("10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(REFERENCE_URL), is("https://doi.org/10.5061/dryad.g1qr6"));
         assertThat(firstLink.get(LOCALITY_NAME), is("Sanak Island, Alaska, USA"));
         assertThat(firstLink.get(LOCALITY_ID), is("GEONAMES:5873327"));
