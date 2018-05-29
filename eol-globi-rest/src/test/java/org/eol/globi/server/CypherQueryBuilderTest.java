@@ -245,7 +245,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -283,7 +283,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -496,7 +496,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Qhttp://inaturalist.org/bla\\\\E|\\\\Qhttp://inaturalist.org/bla2\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Qhttp://inaturalist.org/bla\\\\E|\\\\Qhttp://inaturalist.org/bla2\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -1258,13 +1258,13 @@ public class CypherQueryBuilderTest {
     @Test
     public void regexAccordingToGoMexSI() {
         String regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("http://gomexsi.tamucc.edu"));
-        assertThat(regex, is("(\\\\Qhttp://gomexsi.tamucc.edu\\\\E|\\\\Qhttp://gomexsi.tamucc.edu.\\\\E)"));
+        assertThat(regex, is("(?i)(\\\\Qhttp://gomexsi.tamucc.edu\\\\E|\\\\Qhttp://gomexsi.tamucc.edu.\\\\E)"));
 
         regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("http://gomexsi.tamucc.edu", "https://example.com"));
-        assertThat(regex, is("(\\\\Qhttp://gomexsi.tamucc.edu\\\\E|\\\\Qhttps://example.com\\\\E|\\\\Qhttp://gomexsi.tamucc.edu.\\\\E)"));
+        assertThat(regex, is("(?i)(\\\\Qhttp://gomexsi.tamucc.edu\\\\E|\\\\Qhttps://example.com\\\\E|\\\\Qhttp://gomexsi.tamucc.edu.\\\\E)"));
 
         regex = CypherQueryBuilder.regexForAccordingTo(Arrays.asList("https://example.com"));
-        assertThat(regex, is("(\\\\Qhttps://example.com\\\\E)"));
+        assertThat(regex, is("(?i)(\\\\Qhttps://example.com\\\\E)"));
     }
 
 }
