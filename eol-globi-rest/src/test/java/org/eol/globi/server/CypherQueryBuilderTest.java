@@ -263,7 +263,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Q10.1234/4325\\\\E|\\\\Q10.332/222\\\\E|\\\\Q10.444/222\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Q10.1234/4325\\\\E|\\\\Q10.332/222\\\\E|\\\\Q10.444/222\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
 
     }
 
