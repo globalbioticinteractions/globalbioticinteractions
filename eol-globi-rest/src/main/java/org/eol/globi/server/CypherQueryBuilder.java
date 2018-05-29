@@ -225,19 +225,12 @@ public class CypherQueryBuilder {
     }
 
     protected static String regexStrict(List<String> terms) {
-        return regexStrict(terms, true, true);
-    }
-
-    protected static String regexStrict(List<String> terms, boolean isPartOfLuceneQuery, boolean isCaseSensitve) {
         List<String> quotedTerms = new ArrayList<String>();
         for (String term : terms) {
             String quote = Pattern.quote(term);
-            quotedTerms.add(isPartOfLuceneQuery
-                    ? quote.replace("\\Q", "\\\\Q").replace("\\E", "\\\\E").replace("\"", "\\\"")
-                    : quote);
+            quotedTerms.add(quote.replace("\\Q", "\\\\Q").replace("\\E", "\\\\E").replace("\"", "\\\""));
         }
-        String regexClause = orNestedTerms(quotedTerms);
-        return isCaseSensitve ? regexClause : "(?i)" + regexClause;
+        return orNestedTerms(quotedTerms);
     }
 
     private static String orNestedTerms(List<String> quotedTerms) {
@@ -284,7 +277,8 @@ public class CypherQueryBuilder {
                 .map(s -> "http://gomexsi.tamucc.edu.")
                 .collect(Collectors.toList()));
 
-        return (hasAtLeastOneURL(expandedList) || hasDOIs(expandedList)) ? regexStrict(expandedList, true, false) : regexWildcard(expandedList);
+        String regex = (hasAtLeastOneURL(expandedList) || hasDOIs(expandedList)) ? regexStrict(expandedList) : regexWildcard(expandedList);
+        return "(?i)" + regex;
     }
 
     static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean exactNameMatchesOnly) {

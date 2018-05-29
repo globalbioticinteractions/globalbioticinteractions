@@ -209,7 +209,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") + "AND " + hasSourceTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -227,7 +227,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -393,7 +393,7 @@ public class CypherQueryBuilderTest {
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("accordingTo", ".*(\\\\QsomeSource\\\\E).*");
+            put("accordingTo", "(?i).*(\\\\QsomeSource\\\\E).*");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -514,7 +514,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasSourceTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -533,7 +533,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda']) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -552,7 +552,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (has(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda']) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, source_taxon_name=name:\\\"Arthropoda\\\"}")));
     }
 
     @Test
@@ -656,7 +656,7 @@ public class CypherQueryBuilderTest {
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E).*}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*}")));
     }
 
     @Test
@@ -672,7 +672,7 @@ public class CypherQueryBuilderTest {
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=.*(\\\\Qinaturalist\\\\E|\\\\Qgomexsi.edu\\\\E).*}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E|\\\\Qgomexsi.edu\\\\E).*}")));
     }
 
     @Test
@@ -1252,7 +1252,7 @@ public class CypherQueryBuilderTest {
         final CypherQuery locationsQuery = locations(params);
 
         assertThat(locationsQuery.getQuery(), is(EXPECTED_ACCORDING_TO_START_CLAUSE + "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH DISTINCT(location) as loc RETURN loc.latitude? as latitude, loc.longitude? as longitude, loc.footprintWKT? as footprintWKT"));
-        assertThat(locationsQuery.getParams().toString(), is("{accordingTo=.*(\\\\Qsome source\\\\E).*}"));
+        assertThat(locationsQuery.getParams().toString(), is("{accordingTo=(?i).*(\\\\Qsome source\\\\E).*}"));
     }
 
     @Test
