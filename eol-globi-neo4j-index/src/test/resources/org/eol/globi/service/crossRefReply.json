@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message-version": "1.0.0",
+  "message": {
+    "facets": {},
+    "total-results": 10189196,
+    "items": [
+      {
+        "DOI": "10.1002\/(sici)1098-2345(1997)42:1<1::aid-ajp1>3.0.co;2-0",
+        "score": 55.0
+      }
+    ],
+    "items-per-page": 1,
+    "query": {
+      "start-index": 0,
+      "search-terms": null
+    }
+  }
+}

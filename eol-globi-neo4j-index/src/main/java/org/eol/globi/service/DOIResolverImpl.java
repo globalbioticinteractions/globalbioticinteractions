@@ -5,10 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
@@ -16,6 +15,7 @@ import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class DOIResolverImpl implements DOIResolver {
     private final String baseURL;
 
     public DOIResolverImpl() {
-        this("https://search.crossref.org/links");
+        this("https://api.crossref.org");
     }
 
     public DOIResolverImpl(String baseURL) {
@@ -47,36 +47,49 @@ public class DOIResolverImpl implements DOIResolver {
         return requestLinks(references).getOrDefault(reference, null);
     }
 
-    public Map<String, DOI> requestLinks(Collection<String> references) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        HttpPost post = new HttpPost(baseURL);
-        post.setHeader("Content-Type", "application/json");
-        StringEntity entity = new StringEntity(mapper.writeValueAsString(references), "UTF-8");
-        post.setEntity(entity);
-
-        BasicResponseHandler handler = new BasicResponseHandler();
-        String response = HttpUtil.getHttpClient().execute(post, handler);
-        JsonNode jsonNode = mapper.readTree(response);
-        JsonNode results = jsonNode.get("results");
+    private Map<String, DOI> requestLinks(Collection<String> references) throws IOException {
         Map<String, DOI> doiMap = new HashMap<>();
-        if (jsonNode.get("query_ok").asBoolean()) {
-            for (JsonNode result : results) {
-                if (result.get("match").asBoolean()) {
-                    String citation = result.get("text").getTextValue();
-                    String doiCandidate = result.get("doi").getTextValue();
-                    if (hasReasonableMatchScore(result) && StringUtils.isNoneBlank(citation, doiCandidate)) {
-                        try {
-                            DOI doi = DOI.create(doiCandidate);
-                            doiMap.put(citation, doi);
-                        } catch (MalformedDOIException e) {
-                            LOG.warn("found malformed doi [" + doiCandidate + "]", e);
-                        }
-                    }
-
-                }
+        for (String reference : references) {
+            try {
+                URIBuilder builder = new URIBuilder(baseURL + "/works");
+                builder.addParameter("sort", "score");
+                builder.addParameter("order", "desc");
+                builder.addParameter("rows", "1");
+                builder.addParameter("select", "DOI,score");
+                builder.addParameter("query.bibliographic", reference);
+                HttpGet get = new HttpGet(builder.build());
+                get.setHeader("Content-Type", "application/json");
+                doiMap.put(reference, getMostRelevantDOIMatch(get));
+            } catch (URISyntaxException e) {
+                LOG.warn("unexpected malformed URI on resolving crossref dois", e);
+            } catch (MalformedDOIException e) {
+                LOG.warn("received malformed doi from cross ref", e);
             }
         }
         return doiMap;
+    }
+
+    private DOI getMostRelevantDOIMatch(HttpGet get) throws IOException, MalformedDOIException {
+        ResponseHandler<String> handler = HttpUtil.createUTF8BasicResponseHandler();
+        String response = HttpUtil.getHttpClient().execute(get, handler);
+        return extractDOI(response);
+    }
+
+    DOI extractDOI(String response) throws IOException, MalformedDOIException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response);
+        DOI doi = null;
+        if (jsonNode.has("message")) {
+            JsonNode msg = jsonNode.get("message");
+                if (msg.has("items")) {
+                    for (JsonNode items : msg.get("items")) {
+                        if (hasReasonableMatchScore(items)) {
+                            doi = DOI.create(items.get("DOI").asText());
+                        }
+                    }
+                }
+        }
+        return doi;
     }
 
     private boolean hasReasonableMatchScore(JsonNode result) {

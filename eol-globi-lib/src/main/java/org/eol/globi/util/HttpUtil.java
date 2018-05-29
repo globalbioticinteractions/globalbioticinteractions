@@ -1,10 +1,16 @@
 package org.eol.globi.util;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -17,6 +23,7 @@ import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.eol.globi.Version;
 
 import java.io.IOException;
@@ -141,5 +148,21 @@ public class HttpUtil {
         } finally {
             request.releaseConnection();
         }
+    }
+
+    public static ResponseHandler<String> createUTF8BasicResponseHandler() {
+        return new ResponseHandler<String>() {
+            @Override
+            public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+                StatusLine statusLine = response.getStatusLine();
+                HttpEntity entity = response.getEntity();
+                if(statusLine.getStatusCode() >= 300) {
+                    EntityUtils.consume(entity);
+                    throw new HttpResponseException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+                } else {
+                    return entity == null?null:EntityUtils.toString(entity, Charsets.UTF_8);
+                }
+            }
+        };
     }
 }
