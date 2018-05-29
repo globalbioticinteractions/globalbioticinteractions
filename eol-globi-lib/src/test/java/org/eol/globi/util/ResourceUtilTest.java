@@ -20,6 +20,13 @@ public class ResourceUtilTest {
     }
 
     @Test
+    public void localResourceNull() throws URISyntaxException {
+        URL resource = getClass().getResource(getClass().getSimpleName() + ".class");
+        assertThat(new File(resource.toURI()).exists(), is(true));
+        assertFalse(ResourceUtil.resourceExists(null));
+    }
+
+    @Test
     public void relativeURI() throws URISyntaxException {
         URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), "/path");
         assertThat(uri.toString(), is("some:/example/path"));

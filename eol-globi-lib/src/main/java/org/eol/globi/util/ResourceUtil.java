@@ -78,17 +78,19 @@ public class ResourceUtil {
 
     public static boolean resourceExists(URI descriptor) {
         boolean exists = false;
-        try {
-            if (isHttpURI(descriptor)) {
-                HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
-                exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-            } else {
-                InputStream input = asInputStream(descriptor.toString());
-                IOUtils.closeQuietly(input);
-                exists = input != null;
+        if (null != descriptor) {
+            try {
+                if (isHttpURI(descriptor)) {
+                    HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
+                    exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+                } else {
+                    InputStream input = asInputStream(descriptor.toString());
+                    IOUtils.closeQuietly(input);
+                    exists = input != null;
+                }
+            } catch (IOException e) {
+                //
             }
-        } catch (IOException e) {
-            //
         }
         return exists;
     }

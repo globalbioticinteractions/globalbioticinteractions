@@ -29,6 +29,9 @@ public class DatasetFactory {
             }
         }
         try {
+            if (configURI == null) {
+                throw new DatasetFinderException("failed to import [" + dataset.getNamespace() + "]: cannot locate resource at [" + StringUtils.join(configResources, " , ") + "]");
+            }
             return configureDataset(dataset, configURI);
         } catch (IOException e) {
             throw new DatasetFinderException("failed to import [" + dataset.getNamespace() + "]", e);
