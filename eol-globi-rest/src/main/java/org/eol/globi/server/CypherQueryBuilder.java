@@ -13,11 +13,12 @@ import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -254,7 +255,10 @@ public class CypherQueryBuilder {
 
         List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingTo != null && accordingTo.size() > 0) {
-            if (isAccordingToNamespaceQuery(accordingTo)) {
+            List<DOI> dois = extractDOIs(accordingTo);
+            if (dois.size() > 0) {
+                paramMap.put("accordingTo", regexForAccordingTo(dois.stream().map(DOI::toString).collect(Collectors.toList())));
+            } else if (isAccordingToNamespaceQuery(accordingTo)) {
                 List<String> namespaces = getNamespaces(accordingTo);
                 paramMap.put("accordingTo", "namespace:" + orNestedTerms(namespaces));
             } else {
@@ -279,7 +283,7 @@ public class CypherQueryBuilder {
                 .map(s -> "http://gomexsi.tamucc.edu.")
                 .collect(Collectors.toList()));
 
-        return hasAtLeastOneURL(expandedList) ? regexStrict(expandedList) : regexWildcard(expandedList);
+        return (hasAtLeastOneURL(expandedList) || hasDOIs(expandedList)) ? regexStrict(expandedList) : regexWildcard(expandedList);
     }
 
     static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean exactNameMatchesOnly) {
@@ -503,7 +507,9 @@ public class CypherQueryBuilder {
                     .append(" WITH study");
         } else {
             String whereClause;
-            if (hasAtLeastOneURL(accordingToParams)) {
+            if (hasDOIs(accordingToParams)) {
+                whereClause = "(has(study.doi) AND lower(study.doi) =~ lower({accordingTo}))";
+            } else if (hasAtLeastOneURL(accordingToParams)) {
                 whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo})";
             } else {
                 whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo})";
@@ -512,6 +518,23 @@ public class CypherQueryBuilder {
                     .append(whereClause)
                     .append(" WITH study");
         }
+    }
+
+    private static boolean hasDOIs(List<String> accordingToParams) {
+        return extractDOIs(accordingToParams).size() > 0;
+    }
+
+    private static List<DOI> extractDOIs(List<String> accordingToParams) {
+        List<DOI> dois = new ArrayList<>();
+        for (String accordingToParam : accordingToParams) {
+            try {
+                DOI doi = DOI.create(accordingToParam);
+                dois.add(doi);
+            } catch (MalformedDOIException e) {
+                //
+            }
+        }
+        return dois;
     }
 
     private static boolean isAccordingToNamespaceQuery(List<String> accordingToParams) {

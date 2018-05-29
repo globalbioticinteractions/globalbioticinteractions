@@ -249,6 +249,25 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionsDOIAccordingToWithTargetTaxaOnly2() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("accordingTo", new String[]{"10.1234/4325", "doi:10.332/222", "https://doi.org/10.444/222"});
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.doi) AND lower(study.doi) =~ lower({accordingTo})) WITH study " +
+                EXPECTED_MATCH_CLAUSE_DISTINCT +
+                "WHERE " + hasTargetTaxon("Arthropoda") +
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(\\\\Q10.1234/4325\\\\E|\\\\Q10.332/222\\\\E|\\\\Q10.444/222\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
+
+    }
+
+    @Test
     public void findInteractionsAccordingToWithTargetTaxaOnlyEmptySource() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
