@@ -508,7 +508,7 @@ public class CypherQueryBuilder {
         } else {
             String whereClause;
             if (hasDOIs(accordingToParams)) {
-                whereClause = "(has(study.doi) AND lower(study.doi) =~ lower({accordingTo}))";
+                whereClause = "(has(study.doi) AND study.doi =~ {accordingTo})";
             } else if (hasAtLeastOneURL(accordingToParams)) {
                 whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo})";
             } else {

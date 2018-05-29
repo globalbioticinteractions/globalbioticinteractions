@@ -259,7 +259,7 @@ public class CypherQueryBuilderTest {
         };
 
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.doi) AND lower(study.doi) =~ lower({accordingTo})) WITH study " +
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.doi) AND study.doi =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
