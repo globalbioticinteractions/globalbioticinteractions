@@ -133,7 +133,7 @@ public class LinkerDOI implements Linker {
         if (null != doiResolved) {
             study.setPropertyWithTx(StudyConstant.DOI, doiResolved.toString());
             if (StringUtils.isBlank(study.getExternalId())) {
-                study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doiResolved.getPrintableDOI());
+                study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doiResolved.toURI().toString());
             }
         }
     }

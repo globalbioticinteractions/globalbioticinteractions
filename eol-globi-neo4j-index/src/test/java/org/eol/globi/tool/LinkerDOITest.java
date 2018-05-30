@@ -67,12 +67,7 @@ public class LinkerDOITest extends GraphDBTestCase {
     public void doLinkMany() throws NodeFactoryException, PropertyEnricherException {
         assertLinkMany(LinkerDOI.BATCH_SIZE + 2);
     }
-
-    @Test
-    public void doLinkMany2() throws NodeFactoryException, PropertyEnricherException {
-        assertLinkMany(LinkerDOI.BATCH_SIZE*4 + 2);
-    }
-
+    
     public void assertLinkMany(int numberOfStudies) throws NodeFactoryException {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, DOIResolverImplIT.HOCKING));
         getNodeFactory().getOrCreateStudy(new StudyImpl("title1", "some source", null, DOIResolverImplIT.MEDAN));
@@ -117,7 +112,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         new LinkerDOI(getGraphDb()).linkStudy(new TestDOIResolver(), study);
         assertThat(study.getSource(), is("some source"));
         assertThat(study.getDOI().toString(), is("10.some/some citation"));
-        assertThat(study.getExternalId(), is("doi:10.some/some citation"));
+        assertThat(study.getExternalId(), is("https://doi.org/10.some/some%20citation"));
         assertThat(study.getCitation(), is("some citation"));
         assertThat(study.getTitle(), is("title"));
     }
@@ -159,7 +154,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
         new LinkerDOI(getGraphDb()).linkStudy(doiResolver, study);
         assertThat(study.getDOI().toString(), is("10.1234/567"));
-        assertThat(study.getExternalId(), is("doi:10.1234/567"));
+        assertThat(study.getExternalId(), is("https://doi.org/10.1234/567"));
         assertThat(study.getCitation(), is("my contr. some description"));
 
         StudyImpl study1 = new StudyImpl("my other title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null));
