@@ -24,8 +24,8 @@ public class ExportCitationsTest extends GraphDBTestCase {
                 ", study.citation? as citation");
 
         assertThat(writer.toString(), Is.is("uri\tcitation" +
-                "\ndoi:10.some/doi\tsome citation" +
-                "\ndoi:10.some/otherdoi\tsome other citation"
+                "\nhttps://doi.org/10.some/doi\tsome citation" +
+                "\nhttps://doi.org/10.some/otherdoi\tsome other citation"
         ));
     }
 

@@ -67,7 +67,7 @@ public class LinkerDOITest extends GraphDBTestCase {
     public void doLinkMany() throws NodeFactoryException, PropertyEnricherException {
         assertLinkMany(LinkerDOI.BATCH_SIZE + 2);
     }
-    
+
     public void assertLinkMany(int numberOfStudies) throws NodeFactoryException {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, DOIResolverImplIT.HOCKING));
         getNodeFactory().getOrCreateStudy(new StudyImpl("title1", "some source", null, DOIResolverImplIT.MEDAN));
