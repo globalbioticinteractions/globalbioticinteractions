@@ -47,7 +47,7 @@ public class CitationUtil {
             if (dataset.getDOI() == null) {
                 citation = citationTrimmed;
             } else {
-                citation = citationTrimmed + separatorFor(citationTrimmed) + dataset.getDOI().getPrintableDOI();
+                citation = citationTrimmed + separatorFor(citationTrimmed) + dataset.getDOI().toPrintableDOI();
             }
         }
         return StringUtils.trim(citation);
