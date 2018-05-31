@@ -119,12 +119,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     private void init() throws PropertyEnricherException {
-        LOG.info("taxon cache initializing at [" + getCacheDir().getAbsolutePath() + "]...");
-
         initTaxonCache();
         initTaxonIdMap();
-
-        LOG.info("taxon cache at [" + getCacheDir().getAbsolutePath() + "] initialized.");
     }
 
     private void initTaxonIdMap() throws PropertyEnricherException {
@@ -156,6 +152,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 watch.stop();
                 logCacheLoadStats(watch.getTime(), count.get());
                 LOG.info("local taxon map of [" + taxonMap.getResource() + "] built.");
+                watch.reset();
             }
             taxonLookupService.finish();
             this.taxonLookupService = taxonLookupService;
@@ -188,8 +185,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
             }
             watch.stop();
-            LOG.info("local taxon cache of [" + taxonCache.getResource() + "] built.");
             logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
+            LOG.info("local taxon cache of [" + taxonCache.getResource() + "] built.");
             watch.reset();
         }
     }
