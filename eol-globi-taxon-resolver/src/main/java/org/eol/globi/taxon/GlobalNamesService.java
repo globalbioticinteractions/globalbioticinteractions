@@ -150,7 +150,7 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
             query = "with_vernaculars=true&" + query;
         }
 
-        return new URI("http", "resolver.globalnames.org"
+        return new URI("https", "resolver.globalnames.org"
                 , "/name_resolvers.json"
                 , query
                 , null);
