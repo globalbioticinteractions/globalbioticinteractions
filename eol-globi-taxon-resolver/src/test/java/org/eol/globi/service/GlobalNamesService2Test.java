@@ -6,8 +6,8 @@ import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.taxon.GlobalNamesService;
-import org.eol.globi.taxon.GlobalNamesSources;
+import org.eol.globi.taxon.GlobalNamesService2;
+import org.eol.globi.taxon.GlobalNamesSources2;
 import org.eol.globi.taxon.TermMatchListener;
 import org.eol.globi.util.CSVTSVUtil;
 import org.junit.Test;
@@ -28,11 +28,11 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class GlobalNamesServiceTest {
+public class GlobalNamesService2Test {
 
     @Test
     public void createTaxaListFromNameList() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.ITIS);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.ITIS);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Homo sapiens", "2|Ariopsis felis"), new TermMatchListener() {
             @Override
@@ -47,7 +47,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void createTaxaListFromNoNameList() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.ITIS);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.ITIS);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Arrays.asList("1|Donald duck", "2|Mickey mouse"), new TermMatchListener() {
             @Override
@@ -63,7 +63,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void createTaxaListFromNameListNCBI() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.NCBI);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.NCBI);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("1|Prunus persica L."), new TermMatchListener() {
             @Override
@@ -79,7 +79,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void createTaxaListFromNameWithSpecialCharacter() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.IF);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.IF);
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("4594386|Epichloë"), new TermMatchListener() {
             @Override
@@ -96,7 +96,7 @@ public class GlobalNamesServiceTest {
     public void createTaxaListFromLongNameList() throws PropertyEnricherException {
         String response = "4594759|Botryobasidium pruinatum|4594240|Bombus (Bombus) magnus|4595520|Botrytis byssoidea|4595788|Botrytis galanthina|4595533|Botrytis cinerea|4594249|Bombus (Bombus) cryptarum|4594257|Bombus (Psithyrus) campestris|4594269|Bombus (Melanobombus) lapidarius|4594279|Bombus (Pyrobombus) pratorum|4594789|Botryobasidium subcoronatum|4594786|Phlebia tremellosa|4594272|Bombus (Psithyrus) rupestris|4594528|Botryobasidium candicans|1019686|Lilium speciosum|4594282|Bombus (Psithyrus) sylvestris|4594792|Schizopora paradoxa|4594803|Botryobasidium vagum|4594289|Bombus (Pyrobombus) jonellus|4595070|Botryosphaeria quercuum|4594815|Choisya ternata|4594300|Bombus (Psithyrus) vestalis|4594812|Botryodiplodia fraxini|4594553|Botryobasidium conspersum|4594438|Atriplex|4595207|Gladiolus murielae|4594955|Brachypodium|4594441|Bothynoderes affinis|4595222|Botryotinia fuckeliana|4595478|Botrytis aclada|4594704|Botryobasidium intertextum|4594975|Botryosphaeria melanops|4594460|Beta|4594970|Botryosphaeria hyperborea|4594471|Heterocerus flexuosus|4594468|Botryandromyces heteroceri|4594465|Heterocerus fenestratus|4594721|Botryobasidium laeve|4594476|Augyles maritimus|4594988|Botryosphaeria obtusa|4594218|Bombus (Psithyrus)|4594230|Bombus (Bombus) lucorum|4594483|Botryobasidium aureum|4595507|Botrytis anthophila|4594746|Botryobasidium obtusisporum|4595003|Rhamnus|4594233|Bombus (Psithyrus) bohemicus|4594375|Persicaria alpina|4595652|Botrytis elliptica|4595649|Lilium candidum|4594382|Bostrychonema alpestre|4595151|Caltha palustris|3904181|Botrytis croci|4594389|Botanophila cuspidata|4594386|Epichloë|4595154|Botryotinia calthae|4595409|Botryotinia polyblastis|4595921|Asparagus officinalis|4594395|Botanophila dissecta|4595163|Botryotinia convoluta|4594904|Botryosphaeria festucae|4594404|Botanophila laterella|4595168|Botryotinia draytonii|4594670|Botryobasidium danicum|4594413|Botanophila latifrons|4595435|Botryotinia porri|4595432|Allium vineale|4594423|Botanophila phrenione|4594679|Botryobasidium ellipsosporum|4594418|Botanophila lobata|4595453|Botryotinia squamosa|4595450|Allium triquetrum|4594823|Botryohypochnus isabellinus|4595079|Botryosphaeria rhodorae|4594818|Botryodiplodia theobromae|4595843|Galanthus nivalis|4594318|Andrena (Zonandrena) flavipes|4594315|Bombylius discolor|4594312|Andrena (Melandrena) cineraria|4433042|Botryophialophora marina|4006631|Botrytis hyacinthi|4595357|Botryotinia globosa|4595354|Allium ursinum|4595096|Botryosphaeria ribis|4594342|Bopyrina ocellata|4594339|Hippolyte varians|4595363|Botryotinia narcissicola|4595360|Narcissus pseudonarcissus|4595105|Botryosphaeria stevensii|4594350|Spirontocaris|4595118|Botryosporium pulchrum|4594861|Botryosphaeria abietina|4594347|Bopyroides hippolytes|4594358|Bopyrus squillarum|4595126|Mentha arvensis|4594355|Palaemon serratus|4594867|Botryosphaeria dothidea|4594864|Rosa canina agg.|4595121|Cirsium palustre|4594363|Bostrichonema polygoni|4595640|Crocus";
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources.ITIS));
+        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources2.ITIS));
         assertThat(foundTaxa.size() > 40, is(true));
     }
 
@@ -127,7 +127,7 @@ public class GlobalNamesServiceTest {
                 "s|4474795|Xylocoris (Proxylocoris) galactinus|4475563|Zopfia rhizophila|4475572|Zopfiella erostrata|4474806|Xylocoris (X" +
                 "ylocoris) cursitans|4474545|Xylaria oxyacanthae|4474803|Bitoma crenata|4474809|Rhizophagus|4474298|Xerula pudens";
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources.ITIS));
+        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources2.ITIS));
         assertThat(foundTaxa.size() > 40, is(true));
     }
 
@@ -157,7 +157,7 @@ public class GlobalNamesServiceTest {
                 " rumicis|4472230|Ceratiomyxa fruticulosa|4472225|Arcyria nutans|4470441|Crustacea|4471209|Populus balsamifera|4470448|Ut" +
                 "ricularia minor|4470194|Ustilago serpens|4471738|Venturia chlorospora|4470459|Diaptomus";
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources.ITIS));
+        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources2.ITIS));
         assertThat(foundTaxa.size() > 20, is(true));
     }
 
@@ -165,7 +165,7 @@ public class GlobalNamesServiceTest {
     public void createTaxaListFromLongNameList5() throws PropertyEnricherException {
         String response = "8231805|Aeshna grandis|8231804|Syrphetodes obtusus|8231807|Argia immunda|8231806|Gomphus kurilis|8231801|Accipiter cooperii|8231800|Cladonia macilenta|8231803|Eucalyptus|8231802|Branta canadensis|8231797|Mactridae|8231796|Stereum|8231799|Bryopsida|8231798|Hemigrapsus oregonensis|8231793|Hedera helix|8231792|Trigonospila brevifacies|8231795|Strix varia|8231794|Vinca minor|8231789|Formica obscuripes|8231788|Aphis fabae|8231791|Rubus armeniacus|8231790|Heracleum maximum|8231785|Malus ×domestica|8231784|Sitta canadensis|8231787|Walshomyia|8231786|Juniperus|8231781|Corylus avellana|8231780|Tremella foliacea|8231783|Eucalyptus globulus|8231782|Canis familiaris|8231777|Elymus repens|8231776|Auricularia auricula-judae|8231779|Stereum hirsutum|8231778|Claviceps purpurea|8231773|Equisetum hyemale|8231772|Stamnaria americana|8231775|Oxalis articulata|8231774|Viscum album album|8231769|Puccinia oxalidis|8231768|Oxalis debilis corymbosa|8231771|Gymnosporangium sabinae|8231770|Pyrus communis|8231765|Philaeus chrysops|8231764|Calliphora|8231767|Polistes dominula|8231766|Muscidae|8231761|Acridotheres tristis|8231760|Hemidactylus persicus|8231763|Pandion haliaetus|8231762|Atherinopsis californiensis|8231757|Metacarcinus|8231756|Loxorhynchus grandis|8231759|Aphidoidea|8231758|Nassarius fossatus|8231753|Metacarcinus magister|8231752|Cancer productus|8231755|Enhydra lutris kenyoni|8231754|Octopus|8231749|Cancridae|8231748|Crassadoma gigantea|8231751|Romaleon antennarium|8231750|Carcinus maenas|8231745|Mytilus californianus|8231744|Tresus nuttallii|8231747|Enhydra lutris|8231746|Saxidomus|8231741|Mytilus|8231740|Coluber flagellum testaceus|8231743|Bivalvia|8231742|Enhydra lutris nereis|8231737|Sciurus carolinensis|8231736|Manduca|8231739|Agapostemon splendens|8231738|Larus occidentalis|8231732|Fraxinus|8231833|Lantana|8231832|Gomphrena globosa|8231834|Bidens aristosa|8231829|Cercyonis pegala|8231828|Eriogonum|8231831|Papilio rumiko|8231830|Euphilotes enoptes bayensis|8231825|Felicia|8231824|Ichthyostomum pygmaeum|8231827|Junonia hierta|8231826|Gazania|8231821|Weinmannia racemosa|8231820|Coleosporium tussilaginis|8231823|Knightia excelsa|8231822|Tmesipteris tannensis|8231817|Verbena brasiliensis|8231816|Mantodea|8231819|Senecio minimus|8231818|Tmetolophota steropastis|8231813|Celithemis ornata|8231812|Argia tibialis|8231815|Araneus bicentenarius|8231814|Argiope|8231809|Microstylum morosum|8231808|Orthetrum sabina|8231811|Calopteryx maculata|8231810|Micrathyria hagenii";
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources.ITIS));
+        assertAtLeastFortyFound(response, foundTaxa, Collections.singletonList(GlobalNamesSources2.ITIS));
         assertThat(foundTaxa.size() > 20, is(true));
     }
 
@@ -175,7 +175,7 @@ public class GlobalNamesServiceTest {
         List<String> names = namesListWithMaximumOf(100);
 
         final List<Taxon> foundTaxa = new ArrayList<Taxon>();
-        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.values()));
+        GlobalNamesService2 service = new GlobalNamesService2(Arrays.asList(GlobalNamesSources2.values()));
 
         try {
             service.findTermsForNames(names, new TermMatchListener() {
@@ -202,9 +202,9 @@ public class GlobalNamesServiceTest {
     }
 
 
-    public void assertAtLeastFortyFound(String response, final List<Taxon> foundTaxa, List<GlobalNamesSources> sources) {
+    public void assertAtLeastFortyFound(String response, final List<Taxon> foundTaxa, List<GlobalNamesSources2> sources) {
         String[] idsNames = CSVTSVUtil.splitPipes(response);
-        GlobalNamesService service = new GlobalNamesService(sources);
+        GlobalNamesService2 service = new GlobalNamesService2(sources);
 
         List<String> names = new ArrayList<String>();
         for (int i = 0; i < idsNames.length; i += 2) {
@@ -226,14 +226,14 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupITIS() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService2 service = new GlobalNamesService2();
         Map<String, String> props = assertHomoSapiens(service);
         assertThat(props.get(PropertyAndValueDictionary.EXTERNAL_ID), is("ITIS:180092"));
     }
 
     @Test
     public void lookupITISSynonymFails() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService2 service = new GlobalNamesService2();
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Corizidae");
         Map<String, String> enrich = service.enrich(props);
@@ -242,7 +242,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupOTT() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.OTT);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.OTT);
         HashMap<String, String> props = new HashMap<>();
         props.put(PropertyAndValueDictionary.NAME, "Arius felis");
         Map<String, String> enrich = service.enrich(props);
@@ -252,7 +252,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupITISSynonymSuccess() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService2 service = new GlobalNamesService2();
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Arius felis");
         Map<String, String> enrich = service.enrich(props);
@@ -262,7 +262,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupNCBI() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.NCBI);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.NCBI);
         HashMap<String, String> props1 = new HashMap<String, String>();
         props1.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
         Map<String, String> enrich = service.enrich(props1);
@@ -277,7 +277,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupNCBIBacteria() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.NCBI);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.NCBI);
         HashMap<String, String> props1 = new HashMap<String, String>();
         props1.put(PropertyAndValueDictionary.NAME, "Bacteria");
         Map<String, String> enrich = service.enrich(props1);
@@ -302,7 +302,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupWoRMS() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.WORMS);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.WORMS);
         HashMap<String, String> props1 = new HashMap<String, String>();
         props1.put(PropertyAndValueDictionary.NAME, "Ariopsis felis");
         Map<String, String> enrich = service.enrich(props1);
@@ -318,7 +318,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupWoRMSCod() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.WORMS);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.WORMS);
         HashMap<String, String> props1 = new HashMap<String, String>();
         props1.put(PropertyAndValueDictionary.NAME, "Gadus morhua");
         Map<String, String> enrich = service.enrich(props1);
@@ -326,7 +326,7 @@ public class GlobalNamesServiceTest {
         assertThat(enrich.get(PropertyAndValueDictionary.COMMON_NAMES), is(nullValue()));
     }
 
-    private Map<String, String> assertHomoSapiens(GlobalNamesService service) throws PropertyEnricherException {
+    private Map<String, String> assertHomoSapiens(GlobalNamesService2 service) throws PropertyEnricherException {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Homo sapiens");
         Map<String, String> enrich = service.enrich(props);
@@ -343,7 +343,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupITISNonExisting() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService2 service = new GlobalNamesService2();
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Donald Duck");
         Map<String, String> enrich = service.enrich(props);
@@ -352,7 +352,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupITISFish() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService();
+        GlobalNamesService2 service = new GlobalNamesService2();
         service.setIncludeCommonNames(true);
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Ariopsis felis");
@@ -368,7 +368,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupGBIF() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.GBIF);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.GBIF);
         service.setIncludeCommonNames(true);
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Anura");
@@ -386,7 +386,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupWORMS() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(GlobalNamesSources.WORMS);
+        GlobalNamesService2 service = new GlobalNamesService2(GlobalNamesSources2.WORMS);
         HashMap<String, String> props = new HashMap<String, String>();
         props.put(PropertyAndValueDictionary.NAME, "Anura");
         Map<String, String> enrich = service.enrich(props);
@@ -395,7 +395,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupMultipleSources() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));
+        GlobalNamesService2 service = new GlobalNamesService2(Arrays.asList(GlobalNamesSources2.GBIF, GlobalNamesSources2.ITIS));
         final List<Taxon> taxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("Homo sapiens"), new TermMatchListener() {
             @Override
@@ -410,7 +410,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupSimilar() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.GBIF, GlobalNamesSources.ITIS));
+        GlobalNamesService2 service = new GlobalNamesService2(Arrays.asList(GlobalNamesSources2.GBIF, GlobalNamesSources2.ITIS));
         final List<Taxon> taxa = new ArrayList<Taxon>();
         service.findTermsForNames(Collections.singletonList("Zyziphus mauritiana"), new TermMatchListener() {
             @Override
@@ -426,7 +426,7 @@ public class GlobalNamesServiceTest {
 
     @Test
     public void lookupNCBIPrune() throws PropertyEnricherException {
-        GlobalNamesService service = new GlobalNamesService(Arrays.asList(GlobalNamesSources.NCBI));
+        GlobalNamesService2 service = new GlobalNamesService2(Arrays.asList(GlobalNamesSources2.NCBI));
         final List<Taxon> taxa = new ArrayList<>();
         service.findTermsForNames(Collections.singletonList("Klebsiella pneumoniae"), new TermMatchListener() {
             @Override

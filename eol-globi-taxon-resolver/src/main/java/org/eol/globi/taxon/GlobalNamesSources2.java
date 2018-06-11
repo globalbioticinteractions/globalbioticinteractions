@@ -2,7 +2,7 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.domain.TaxonomyProvider;
 
-public enum GlobalNamesSources {
+public enum GlobalNamesSources2 {
     GBIF(11, TaxonomyProvider.GBIF),
     NCBI(4, TaxonomyProvider.NCBI),
     IRMNG(8, TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA),
@@ -17,7 +17,7 @@ public enum GlobalNamesSources {
 
     private final TaxonomyProvider provider;
 
-    GlobalNamesSources(int id, TaxonomyProvider provider) {
+    GlobalNamesSources2(int id, TaxonomyProvider provider) {
         this.id = id;
         this.provider = provider;
     }

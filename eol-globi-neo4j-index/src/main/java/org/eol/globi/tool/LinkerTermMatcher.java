@@ -9,8 +9,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.taxon.GlobalNamesService;
-import org.eol.globi.taxon.GlobalNamesSources;
 import org.eol.globi.taxon.TermMatchListener;
 import org.eol.globi.taxon.TermMatcher;
 import org.eol.globi.util.NodeUtil;
@@ -20,7 +18,6 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +29,6 @@ public class LinkerTermMatcher implements Linker {
     private static final Log LOG = LogFactory.getLog(LinkerTermMatcher.class);
     private final GraphDatabaseService graphDb;
     private final TermMatcher termMatcher;
-
-    public LinkerTermMatcher(GraphDatabaseService graphDb) {
-        this(graphDb, new GlobalNamesService(Arrays.asList(GlobalNamesSources.values())));
-    }
 
     public LinkerTermMatcher(GraphDatabaseService graphDb, TermMatcher termMatcher) {
         this.graphDb = graphDb;

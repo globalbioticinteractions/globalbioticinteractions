@@ -35,22 +35,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GlobalNamesService implements PropertyEnricher, TermMatcher {
-    private static final Log LOG = LogFactory.getLog(GlobalNamesService.class);
+public class GlobalNamesService2 implements PropertyEnricher, TermMatcher {
+    private static final Log LOG = LogFactory.getLog(GlobalNamesService2.class);
     public static final List<Integer> MATCH_TYPES_EXACT = Arrays.asList(1, 2, 6);
 
-    private final List<GlobalNamesSources> sources;
+    private final List<GlobalNamesSources2> sources;
     private boolean includeCommonNames = false;
 
-    public GlobalNamesService() {
-        this(GlobalNamesSources.ITIS);
+    public GlobalNamesService2() {
+        this(GlobalNamesSources2.ITIS);
     }
 
-    public GlobalNamesService(GlobalNamesSources source) {
+    public GlobalNamesService2(GlobalNamesSources2 source) {
         this(Collections.singletonList(source));
     }
 
-    public GlobalNamesService(List<GlobalNamesSources> sources) {
+    public GlobalNamesService2(List<GlobalNamesSources2> sources) {
         super();
         this.sources = sources;
     }
@@ -139,10 +139,10 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
         return httpClient.execute(post, new BasicResponseHandler());
     }
 
-    private URI buildPostRequestURI(List<GlobalNamesSources> sources) throws URISyntaxException {
+    private URI buildPostRequestURI(List<GlobalNamesSources2> sources) throws URISyntaxException {
         List<String> sourceIds = new ArrayList<String>();
-        for (GlobalNamesSources globalNamesSources : sources) {
-            sourceIds.add(Integer.toString(globalNamesSources.getId()));
+        for (GlobalNamesSources2 globalNamesSources2 : sources) {
+            sourceIds.add(Integer.toString(globalNamesSources2.getId()));
         }
 
         String query = "data_source_ids=" + StringUtils.join(sourceIds, "|");
@@ -323,8 +323,8 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
         if (aResult.has("data_source_id")) {
             int sourceId = aResult.get("data_source_id").getIntValue();
 
-            GlobalNamesSources[] values = GlobalNamesSources.values();
-            for (GlobalNamesSources value : values) {
+            GlobalNamesSources2[] values = GlobalNamesSources2.values();
+            for (GlobalNamesSources2 value : values) {
                 if (value.getId() == sourceId) {
                     provider = value.getProvider();
                     break;
@@ -334,7 +334,7 @@ public class GlobalNamesService implements PropertyEnricher, TermMatcher {
         return provider;
     }
 
-    public List<GlobalNamesSources> getSources() {
+    public List<GlobalNamesSources2> getSources() {
         return sources;
     }
 

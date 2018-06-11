@@ -71,8 +71,8 @@ public class LinkerOpenTreeOfLife implements Linker {
                 hasPrexistingLink = true;
             } else {
                 externalId = StringUtils.replace(externalId, TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "irmng:");
-                externalId = StringUtils.replace(externalId, TaxonomyProvider.INDEX_FUNGORUM.getIdPrefix(), "if:");
                 externalId = StringUtils.replace(externalId, TaxonomyProvider.GBIF.getIdPrefix(), "gbif:");
+                externalId = StringUtils.replace(externalId, TaxonomyProvider.INDEX_FUNGORUM.getIdPrefix(), "if:");
                 externalId = StringUtils.replace(externalId, TaxonomyProvider.NCBI.getIdPrefix(), "ncbi:");
                 Long ottId = index.findOpenTreeTaxonIdFor(externalId);
                 if (ottId != null) {
