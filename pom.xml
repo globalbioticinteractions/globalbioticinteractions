@@ -14,6 +14,7 @@
         <module>eol-globi-lib</module>
         <module>eol-globi-cache</module>
         <module>eol-globi-data-sources</module>
+        <module>eol-globi-doi-resolver</module>
         <module>eol-globi-taxon-resolver</module>
         <module>eol-globi-geo</module>
         <module>eol-globi-neo4j</module>
