@@ -34,6 +34,11 @@ public class DOIResolverImplIT {
         DOI doi = new DOIResolverImpl().resolveDoiFor("Petanidou, T. (1991). Pollination ecology in a phryganic ecosystem. Unp. PhD. Thesis, Aristotelian University, Thessaloniki.");
         assertThat(doi, is(nullValue()));
     }
+    @Test
+    public void resolveDOIByReferenceMatch8() throws IOException {
+        DOI doi = new DOIResolverImpl().resolveDoiFor("Tutin, C.E.G., Ham, R.M., White, L.J.T., Harrison, M.J.S. 1997. The primate community of the Lopé Reserve, Gabon: diets, responses to fruit scarcity, and effects on biomass. American Journal of Primatology, 42: 1-24.");
+        assertThat(doi.toString(), is("10.1002/(sici)1098-2345(1997)42:1<1::aid-ajp1>3.0.co;2-0"));
+    }
 
     @Test
     public void resolveDOIByReferenceNoMatchToBookReview() throws IOException {
