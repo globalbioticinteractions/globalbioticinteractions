@@ -30,14 +30,26 @@ public class DOIResolverImplIT {
     }
 
     @Test
-    public void resolveDOIByReferenceMatch() throws IOException {
+    public void resolveDOIByReferenceNoMatch2() throws IOException {
+        DOI doi = new DOIResolverImpl().resolveDoiFor("Petanidou, T. (1991). Pollination ecology in a phryganic ecosystem. Unp. PhD. Thesis, Aristotelian University, Thessaloniki.");
+        assertThat(doi, is(nullValue()));
+    }
+
+    @Test
+    public void resolveDOIByReferenceNoMatchToBookReview() throws IOException {
         DOI doi = new DOIResolverImpl().resolveDoiFor("J. N. Kremer and S. W. Nixon, A Coastal Marine Ecosystem:  Simulation and Analysis, Vol. 24 of Ecol. Studies (Springer-Verlag, Berlin, 1978), from p. 12.");
-        assertThat(doi.toString(), is("10.1002/bimj.4710230217"));
+        assertThat(doi, is(nullValue()));
     }
 
     @Test
     public void resolveDOIByNonExistentCitation() throws IOException {
         DOI doi = new DOIResolverImpl().resolveDoiFor("A. Thessen. 2014. Species associations extracted from EOL text data objects via text mining. Accessed at <associations_all_revised.txt> on 05 Feb 2018 and add some more and other things");
+        assertThat(doi, is(nullValue()));
+    }
+
+    @Test
+    public void resolveDOIByNonExistentCitation3() throws IOException {
+        DOI doi = new DOIResolverImpl().resolveDoiFor("Bundgaard, M. (2003). Tidslig og rumlig variation i et plante-bestøvernetværk. Msc thesis. University of Aarhus. Aarhus, Denmark.");
         assertThat(doi, is(nullValue()));
     }
 

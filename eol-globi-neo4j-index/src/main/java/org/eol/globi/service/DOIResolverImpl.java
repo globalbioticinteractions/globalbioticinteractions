@@ -99,7 +99,7 @@ public class DOIResolverImpl implements DOIResolver {
                 score = result.get("score").getDoubleValue();
             }
         }
-        return score > 50.0;
+        return score > 100;
     }
 
     public String findCitationForDOI(DOI doi) throws IOException {
