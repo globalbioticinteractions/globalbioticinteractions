@@ -9,7 +9,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.DOIResolverImplIT;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.PropertyEnricherException;
@@ -68,17 +67,31 @@ public class LinkerDOITest extends GraphDBTestCase {
         assertLinkMany(LinkerDOI.BATCH_SIZE + 2);
     }
 
-    public void assertLinkMany(int numberOfStudies) throws NodeFactoryException {
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, DOIResolverImplIT.HOCKING));
-        getNodeFactory().getOrCreateStudy(new StudyImpl("title1", "some source", null, DOIResolverImplIT.MEDAN));
+    private void assertLinkMany(int numberOfStudies) throws NodeFactoryException {
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, "HOCKING"));
+        getNodeFactory().getOrCreateStudy(new StudyImpl("title1", "some source", null, "MEDAN"));
         assertThat(study.getDOI(), is(nullValue()));
         for (int i = 0; i< numberOfStudies; i++) {
             getNodeFactory().getOrCreateStudy(new StudyImpl("id" + i, "some source", null, "foo bar this is not a citation" + i));
 
         }
-        new LinkerDOI(getGraphDb()).link();
+        new LinkerDOI(getGraphDb(), new DOIResolver() {
+            @Override
+            public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
+                Map<String, DOI> resolved = new HashMap<>();
+                for (String reference : references) {
+                    resolved.put(reference, resolveDoiFor(reference));
+                }
+                return resolved;
+            }
+
+            @Override
+            public DOI resolveDoiFor(String reference) throws IOException {
+                return new DOI("123", "456");
+            }
+        }).link();
         StudyNode studyResolved = getNodeFactory().getOrCreateStudy(study);
-        assertThat(studyResolved.getDOI(), is(DOIResolverImplIT.HOCKING_DOI));
+        assertThat(studyResolved.getDOI(), is(new DOI("123", "456")));
     }
 
     @Test
