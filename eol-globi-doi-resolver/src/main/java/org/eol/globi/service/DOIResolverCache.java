@@ -65,7 +65,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         return getDoiCitationMap().get(reference);
     }
 
-    void init(final Reader reader) throws PropertyEnricherException, IOException {
+    public void init(final Reader reader) throws PropertyEnricherException, IOException {
         DB db = initDb("doiCache");
         StopWatch watch = new StopWatch();
         watch.start();

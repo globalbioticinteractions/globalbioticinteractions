@@ -25,6 +25,8 @@ public class DOIResolverImpl implements DOIResolver {
     private static final Log LOG = LogFactory.getLog(DOIResolverImpl.class);
     private final String baseURL;
 
+    private double minMatchScore = 100.0;
+
     public DOIResolverImpl() {
         this("https://api.crossref.org");
     }
@@ -99,7 +101,7 @@ public class DOIResolverImpl implements DOIResolver {
                 score = result.get("score").getDoubleValue();
             }
         }
-        return score > 100;
+        return score > minMatchScore;
     }
 
     public String findCitationForDOI(DOI doi) throws IOException {
@@ -120,5 +122,11 @@ public class DOIResolverImpl implements DOIResolver {
         }
         return citation;
     }
+
+    public void setMinMatchScore(double minMatchScore) {
+        this.minMatchScore = minMatchScore;
+    }
+
+
 
 }
