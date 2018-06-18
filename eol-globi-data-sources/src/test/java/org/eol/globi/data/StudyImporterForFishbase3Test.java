@@ -20,13 +20,6 @@ public class StudyImporterForFishbase3Test {
     private Map<String, Map<String, String>> speciesMap;
     private Map<String, Map<String, String>> references;
 
-    @Test
-    public void foodNameScrubber() {
-        String s = "<i>Beroe (unidentified)</i>";
-        s = StudyImporterForFishbase3.scrubFoodName(s);
-        assertThat(s, is("Beroe ()"));
-    }
-
     @Before
     public void importDependencies() throws StudyImporterException {
         references = new HashMap<>();
