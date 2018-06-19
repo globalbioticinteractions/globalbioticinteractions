@@ -146,6 +146,8 @@ public class StudyImporterForMetaTableIT {
         assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NCBITaxon:5499"));
         assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Passalora fulva"));
         assertThat(firstLine.get(StudyImporterForTSV.REFERENCE_URL), is("https://www.ncbi.nlm.nih.gov/pubmed/1799694"));
+
+        assertThat(links.get(3).get(StudyImporterForTSV.REFERENCE_DOI), is("10.1073/pnas.232568599"));
     }
 
 
