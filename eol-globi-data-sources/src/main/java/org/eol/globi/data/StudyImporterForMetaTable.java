@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParse;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -9,6 +10,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.util.CSVTSVUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -19,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class StudyImporterForMetaTable extends BaseStudyImporter {
 
@@ -266,7 +269,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             Map<String, String> mappedLine = new HashMap<String, String>();
             if (line.length < columnNames.size()) {
                 throw new StudyImporterException("read [" + line.length + "] columns, but found [" + columnNames.size() + "] column definitions.");
-            } else if (line.length > columnNames.size()){
+            } else if (line.length > columnNames.size()) {
                 if (importLogger != null) {
                     importLogger.warn(null, "found [" + line.length + "] columns, but only [" + columnNames.size() + "] columns are defined: ignoring remaining undefined columns.");
                 }
@@ -299,23 +302,47 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public static String parseValue(String value, Column column) {
         String convertedValue = null;
         if (StringUtils.isNotBlank(value)) {
-            if ("https://marinemetadata.org/references/nodctaxacodes".equals(column.getDataTypeId())) {
-                final String[] parts = value.trim().split("[^0-9]");
-                convertedValue = TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER.getIdPrefix() + parts[0].replace("00", "");
-            } else if ("http://eol.org/schema/taxonID".equals(column.getDataTypeId())) {
-                convertedValue = TaxonomyProvider.ID_PREFIX_EOL + value.trim();
-            } else if ("date".equals(column.getDataTypeBase())) {
-                final DateTimeFormatter dateTimeFormatter = StringUtils.isNotBlank(column.getDataTypeFormat())
-                        ? DateTimeFormat.forPattern(column.getDataTypeFormat())
-                        : DateTimeFormat.fullDateTime();
-                convertedValue = dateTimeFormatter.withZoneUTC()
-                        .parseDateTime(value)
-                        .toString(ISODateTimeFormat.dateTime().withZoneUTC());
-            } else {
-                convertedValue = value;
+            if ("long".equalsIgnoreCase(column.getDataTypeBase())) {
+                if (!NumberUtils.isDigits(value)) {
+                    return null;
+                }
+            }
+
+            convertedValue = populateValueUrlOrNull(value, column, convertedValue);
+
+            if (null == convertedValue) {
+                if ("https://marinemetadata.org/references/nodctaxacodes".equals(column.getDataTypeId())) {
+                    final String[] parts = value.trim().split("[^0-9]");
+                    convertedValue = TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER.getIdPrefix() + parts[0].replace("00", "");
+                } else if ("http://purl.bioontology.org/ontology/NCBITAXON".equals(column.getDataTypeId())) {
+                    final String id = value.trim();
+                    if (NumberUtils.isDigits(id)) {
+                        convertedValue = TaxonomyProvider.NCBI.getIdPrefix() + id;
+                    }
+                } else if ("http://eol.org/schema/taxonID".equals(column.getDataTypeId())) {
+                    convertedValue = TaxonomyProvider.ID_PREFIX_EOL + value.trim();
+                } else if ("date".equals(column.getDataTypeBase())) {
+                    final DateTimeFormatter dateTimeFormatter = StringUtils.isNotBlank(column.getDataTypeFormat())
+                            ? DateTimeFormat.forPattern(column.getDataTypeFormat())
+                            : DateTimeFormat.fullDateTime();
+                    convertedValue = dateTimeFormatter.withZoneUTC()
+                            .parseDateTime(value)
+                            .toString(ISODateTimeFormat.dateTime().withZoneUTC());
+                } else {
+                    convertedValue = value;
+                }
             }
         }
         return StringUtils.trim(convertedValue);
+    }
+
+    private static String populateValueUrlOrNull(String value, Column column, String convertedValue) {
+        if (StringUtils.isNotBlank(column.getValueUrl())) {
+            String replaced = column.getValueUrl().replaceFirst("\\{" + column.getName() + "}", "");
+            String prefix = ExternalIdUtil.prefixForUrl(replaced);
+            convertedValue = (StringUtils.isBlank(prefix) ? replaced : prefix) + value;
+        }
+        return convertedValue;
     }
 
     public void setDataset(Dataset dataset) {
@@ -366,6 +393,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             final JsonNode columnName = column.get("name");
             if (columnName != null) {
                 String dataTypeId = null;
+
                 final JsonNode dataType = column.get("datatype");
                 if (dataType.isValueNode()) {
                     dataTypeId = dataType.asText();
@@ -377,6 +405,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 final Column col = new Column(columnName.asText(), dataTypeId == null ? "string" : dataTypeId);
                 col.setDataTypeFormat(dataType.has("format") ? dataType.get("format").asText() : null);
                 col.setDataTypeBase(dataType.has("base") ? dataType.get("base").asText() : null);
+                col.setValueUrl(dataType.has("valueUrl") ? dataType.get("valueUrl").asText() : null);
                 col.setDefaultValue(column.has("default") ? column.get("default").asText() : null);
                 columnNames.add(col);
             }
@@ -390,6 +419,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         private String dataTypeFormat;
         private String dataTypeBase;
         private String defaultValue;
+        private String valueUrl;
 
         Column(String name, String dataTypeId) {
             this.name = name;
@@ -427,6 +457,14 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
         public String getDefaultValue() {
             return defaultValue;
+        }
+
+        public void setValueUrl(String valueUrl) {
+            this.valueUrl = valueUrl;
+        }
+
+        public String getValueUrl() {
+            return valueUrl;
         }
     }
 

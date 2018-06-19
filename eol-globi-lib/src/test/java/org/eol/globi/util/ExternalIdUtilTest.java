@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -33,6 +34,11 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("GEONAMES:123"), is("http://www.geonames.org/123"));
         assertThat(ExternalIdUtil.urlForExternalId("ALATaxon:NZOR-4-77345"), is("https://bie.ala.org.au/species/NZOR-4-77345"));
         assertThat(ExternalIdUtil.urlForExternalId("BioGoMx:Spp-23-0494"), is("http://gulfbase.org/biogomx/biospecies.php?species=Spp-23-0494"));
+    }
+
+    @Test
+    public void urlToPrefix() {
+        assertThat(ExternalIdUtil.prefixForUrl("http://www.geonames.org/"), is(TaxonomyProvider.GEONAMES.getIdPrefix()));
     }
 
     @Test

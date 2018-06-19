@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class ExternalIdUtil {
 
-    private static final HashMap<String, String> PREFIX_MAP = new HashMap<String, String>() {{
+    private static final Map<String, String> PREFIX_MAP = new HashMap<String, String>() {{
         put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
         put(TaxonomyProvider.ID_PREFIX_WORMS, "http://www.marinespecies.org/aphia.php?p=taxdetails&id=");
         put(TaxonomyProvider.ID_PREFIX_ENVO, "http://purl.obolibrary.org/obo/ENVO_");
@@ -51,6 +51,14 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
         put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
     }};
+
+    private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{
+        for (Entry<String, String> prefixUrl : PREFIX_MAP.entrySet()) {
+            put(prefixUrl.getValue(), prefixUrl.getKey());
+        }
+
+    }};
+
     private static final Log LOG = LogFactory.getLog(ExternalIdUtil.class);
 
     public static String urlForExternalId(String externalId) {
@@ -138,10 +146,10 @@ public class ExternalIdUtil {
         return provider;
     }
 
-    public static String getUrlFromExternalId(String result) {
+    public static String getUrlFromExternalId(String jsonString) {
         String externalId = null;
         try {
-            JsonNode jsonNode = new ObjectMapper().readTree(result);
+            JsonNode jsonNode = new ObjectMapper().readTree(jsonString);
             JsonNode data = jsonNode.get("data");
             if (data != null) {
                 for (JsonNode row : data) {
@@ -187,5 +195,9 @@ public class ExternalIdUtil {
 
     public static String stripPrefix(TaxonomyProvider provider, String externalId) {
         return StringUtils.replace(externalId, provider.getIdPrefix(), "");
+    }
+
+    public static String prefixForUrl(String url) {
+        return URL_TO_PREFIX_MAP.get(url);
     }
 }

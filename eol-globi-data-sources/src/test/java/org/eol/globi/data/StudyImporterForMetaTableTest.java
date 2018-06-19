@@ -4,7 +4,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.DatasetImpl;
-import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,7 +17,6 @@ import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.StringContains.containsString;
 
 public class StudyImporterForMetaTableTest {
 
@@ -128,6 +126,24 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
+    public void parseValueLongEOLTaxonId() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", null);
+        column.setDataTypeBase("long");
+        column.setValueUrl("http://eol.org/pages/{foo}");
+        final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
+        assertThat(parsedValue, is("EOL:123"));
+    }
+
+    @Test
+    public void parseValueLongEOLTaxonIdMalformed() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", null);
+        column.setDataTypeBase("long");
+        column.setValueUrl("http://eol.org/pages/{foo}");
+        final String parsedValue = StudyImporterForMetaTable.parseValue("notANumber", column);
+        assertThat(parsedValue, is(nullValue()));
+    }
+
+    @Test
     public void parseValueEOLTaxonIdNull() {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "http://eol.org/schema/taxonID");
         final String parsedValue = StudyImporterForMetaTable.parseValue(null, column);
@@ -139,6 +155,22 @@ public class StudyImporterForMetaTableTest {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "https://marinemetadata.org/references/nodctaxacodes");
         final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
         assertThat(parsedValue, is("NODC:123"));
+    }
+
+    @Test
+    public void parseValueNCBI() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "string");
+        column.setValueUrl("http://purl.obolibrary.org/obo/NCBITaxon_{foo}");
+        final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
+        assertThat(parsedValue, is("NCBITaxon:123"));
+    }
+
+    @Test
+    public void parseValueEOL() {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "string");
+        column.setValueUrl("http://eol.org/pages/{foo}");
+        final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
+        assertThat(parsedValue, is("EOL:123"));
     }
 
     @Test
