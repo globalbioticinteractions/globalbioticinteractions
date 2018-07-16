@@ -35,4 +35,14 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonById("NCBI:8782"), not(is(nullValue())));
     }
 
+    @Test(expected = StudyImporterException.class)
+    public void importStaticInvalid() throws StudyImporterException, URISyntaxException {
+        StudyImporter importer = new StudyImporterForJSONLD(null, nodeFactory);
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld.invalid"));
+        importer.setDataset(dataset);
+
+        importStudy(importer);
+    }
+
 }
