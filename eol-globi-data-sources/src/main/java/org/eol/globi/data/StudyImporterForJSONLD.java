@@ -43,6 +43,9 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         try {
             model = buildModel();
         } catch (Throwable e) {
+            // note that Jena APIs use RuntimeException instead of checked Exceptions
+            // making an not-so-preferred catch(Throwable) needed to avoid crashing the entire pipeline
+            // because of a non-critical Jena exception.
             throw new StudyImporterException("failed to import [" + getResourceURI() + "]", e);
         }
 
