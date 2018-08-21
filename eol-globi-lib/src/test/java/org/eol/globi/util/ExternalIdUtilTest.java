@@ -42,6 +42,12 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void gbifTaxon() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("https://www.gbif.org/species/5110848"), is(TaxonomyProvider.GBIF));
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.GBIF, "https://www.gbif.org/species/5110848"), is("5110848"));
+    }
+
+    @Test
     public void fishBaseMapping() {
         assertThat(ExternalIdUtil.urlForExternalId("FBC:SLB:SpecCode:69195"), is("http://sealifebase.org/Summary/SpeciesSummary.php?id=69195"));
         assertThat(ExternalIdUtil.urlForExternalId("FBC:FB:SpecCode:947"), is("http://fishbase.org/summary/947"));

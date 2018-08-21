@@ -1,5 +1,10 @@
 package org.eol.globi.domain;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public enum TaxonomyProvider {
     ITIS("ITIS:"),
     NBN("NBN:"),
@@ -10,7 +15,7 @@ public enum TaxonomyProvider {
     GEONAMES("GEONAMES:"),
     WIKIPEDIA("W:"),
     ENVO("ENVO:"),
-    GBIF("GBIF:"),
+    GBIF("GBIF:", "https://www.gbif.org/species/"),
     ATLAS_OF_LIVING_AUSTRALIA("ALATaxon:"),
     AUSTRALIAN_FAUNAL_DIRECTORY("AFD:"),
     BIODIVERSITY_AUSTRALIA("urn:lsid:biodiversity.org.au:apni.taxon:"),
@@ -23,14 +28,21 @@ public enum TaxonomyProvider {
     FISHBASE_CACHE("FBC:"),
     GULFBASE("BioGoMx:");
 
-    private final String idPrefix;
+    private final List<String> idPrefixes;
 
-    TaxonomyProvider(String idPrefix) {
-        this.idPrefix = idPrefix;
+    TaxonomyProvider(String... idPrefixes) {
+        if (idPrefixes.length == 0) {
+            throw new IllegalArgumentException("term provider must have at least one prefix");
+        }
+        this.idPrefixes = Arrays.asList(idPrefixes);
     }
 
     public String getIdPrefix() {
-        return idPrefix;
+        return idPrefixes.get(0);
+    }
+
+    public List<String> getIdPrefixes() {
+        return idPrefixes;
     }
 
     public static final String ID_PREFIX_EOL = EOL.getIdPrefix();

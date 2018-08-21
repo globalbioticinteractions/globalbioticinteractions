@@ -137,9 +137,11 @@ public class ExternalIdUtil {
         TaxonomyProvider provider = null;
         if (StringUtils.isNotBlank(externalId)) {
             for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
-                if (StringUtils.startsWith(externalId, prefix.getIdPrefix())) {
-                    provider = prefix;
-                    break;
+                for (String idPrefix : prefix.getIdPrefixes()) {
+                    if (StringUtils.startsWith(externalId, idPrefix)) {
+                        provider = prefix;
+                        break;
+                    }
                 }
             }
         }
@@ -194,7 +196,11 @@ public class ExternalIdUtil {
     }
 
     public static String stripPrefix(TaxonomyProvider provider, String externalId) {
-        return StringUtils.replace(externalId, provider.getIdPrefix(), "");
+        String stripped = externalId;
+        for (String idPrefix : provider.getIdPrefixes()) {
+            stripped = StringUtils.replace(stripped, idPrefix, "");
+        }
+        return stripped;
     }
 
     public static String prefixForUrl(String url) {
