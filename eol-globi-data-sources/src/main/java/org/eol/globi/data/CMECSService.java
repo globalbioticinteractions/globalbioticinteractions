@@ -4,6 +4,7 @@ import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -38,7 +39,7 @@ public class CMECSService implements TermLookupService {
                 throw new TermLookupServiceException("failed to instantiate terms", e);
             }
         }
-        Term term = termMap.get(name);
+        Term term = termMap.get(StringUtils.lowerCase(StringUtils.trim(name)));
         return term == null ? Collections.emptyList() : Collections.singletonList(term);
     }
 
@@ -67,7 +68,7 @@ public class CMECSService implements TermLookupService {
                 Integer id = (Integer) row.get("AquaticSetting_Id");
                 String name = (String) row.get("AquaticSettingName");
                 String termId = TaxonomyProvider.ID_CMECS + id;
-                aquaticSettingsTerms.put(name, new TermImpl(termId, name));
+                aquaticSettingsTerms.put(StringUtils.lowerCase(StringUtils.strip(name)), new TermImpl(termId, name));
             }
             cmecs.delete();
             LOG.info(CMECSService.class.getSimpleName() + " instantiated.");

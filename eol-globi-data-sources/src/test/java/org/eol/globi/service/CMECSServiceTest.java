@@ -31,4 +31,14 @@ public class CMECSServiceTest {
         assertThat(ExternalIdUtil.urlForExternalId("http://cmecscatalog.org/classification/aquaticSetting/15"), is("http://cmecscatalog.org/classification/aquaticSetting/15"));
     }
 
+   @Test
+
+    public void lookupStripsCaseInsensitive() throws IOException, TermLookupServiceException {
+        TermLookupService service = new CMECSService();
+        List<Term> estuarine = service.lookupTermByName("lacustrine Littoral ");
+        assertThat(estuarine.size(), is(1));
+        assertThat(estuarine.get(0).getName(), is("Lacustrine Littoral"));
+        assertThat(estuarine.get(0).getId(), is("http://cmecscatalog.org/classification/aquaticSetting/12"));
+    }
+
 }
