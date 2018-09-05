@@ -297,7 +297,9 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         try {
             return StringUtils.isBlank(value) || KNOWN_INVALID_INTEGER_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Integer.parseInt(value);
         } catch (NumberFormatException ex) {
-            throw new StudyImporterException(errMsg(props, key, value), ex);
+            String msg = errMsg(props, key, value);
+            getLogger().warn(null, msg);
+            return null;
         }
     }
 
@@ -306,8 +308,9 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         try {
             return StringUtils.isBlank(value) || KNOWN_INVALID_DOUBLE_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Double.parseDouble(value);
         } catch (NumberFormatException ex) {
-            final String msg = errMsg(props, key, value);
-            throw new StudyImporterException(msg, ex);
+            String msg = errMsg(props, key, value);
+            getLogger().warn(null, msg);
+            return null;
         }
     }
 

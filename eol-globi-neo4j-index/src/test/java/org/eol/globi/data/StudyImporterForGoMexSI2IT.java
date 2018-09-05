@@ -53,6 +53,12 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
     }
 
     @Test
+    public void createTest() throws StudyImporterException, IOException, URISyntaxException {
+        importWithCommit(GitHubUtil.getBaseUrlLastCommit("jhpoelen/JLewis_GoMexSi"));
+        assertThatSomeDataIsImported(nodeFactory, taxonIndex);
+    }
+
+    @Test
     public void createAndPopulateStudyWithStatic() throws StudyImporterException, IOException, URISyntaxException {
         importWithCommit(new File(getClass().getResource("gomexsi/Prey.csv").toURI()).getParentFile().toURI().toString());
         assertThatSomeDataIsImported(nodeFactory, taxonIndex);
