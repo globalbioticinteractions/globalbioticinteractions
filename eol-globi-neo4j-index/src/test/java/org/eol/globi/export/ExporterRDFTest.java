@@ -1,7 +1,10 @@
 package org.eol.globi.export;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.jena.riot.Lang;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSPIRE;
@@ -73,6 +76,10 @@ public class ExporterRDFTest extends GraphDBTestCase {
             assertTrue(file.exists());
 
             String content = IOUtils.toString(new FileInputStream(file));
+
+            Model model = ModelFactory.createDefaultModel();
+            model.read(IOUtils.toInputStream(content), "https://example.org", "N-TRIPLE");
+
             assertThat(content, not(containsString("no:match")));
             assertThat(content, containsString("http://purl.obolibrary.org/obo/ENVO_"));
         } finally {

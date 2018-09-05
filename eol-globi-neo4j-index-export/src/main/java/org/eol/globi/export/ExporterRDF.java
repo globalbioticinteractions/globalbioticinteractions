@@ -96,16 +96,18 @@ public class ExporterRDF implements StudyExporter {
     }
 
     public List<List<String>> taxonOfSpecimen(Node specimen) {
-        List<List<String>> statements = new ArrayList<List<String>>();
+        List<List<String>> statements = new ArrayList<>();
         Relationship singleRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
         if (singleRelationship != null) {
             Node taxonNode = singleRelationship.getEndNode();
             List<String> sameAsTaxa = addSameAsTaxaFor(taxonNode);
             final String s = taxonIRI(taxonNode);
-            final String taxon = iriNode(s);
-            statements.add(Arrays.asList(blankNode(specimen), iriNode(MEMBER_OF), taxon));
-            for (String sameAsTaxon : sameAsTaxa) {
-                statements.add(Arrays.asList(taxon, iriNode(SAME_AS), iriNode(sameAsTaxon)));
+            if (StringUtils.isNotBlank(s)) {
+                final String taxon = iriNode(s);
+                statements.add(Arrays.asList(blankNode(specimen), iriNode(MEMBER_OF), taxon));
+                for (String sameAsTaxon : sameAsTaxa) {
+                    statements.add(Arrays.asList(taxon, iriNode(SAME_AS), iriNode(sameAsTaxon)));
+                }
             }
         }
         return statements;
