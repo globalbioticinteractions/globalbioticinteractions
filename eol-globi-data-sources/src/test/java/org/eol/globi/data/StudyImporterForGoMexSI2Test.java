@@ -33,6 +33,8 @@ public class StudyImporterForGoMexSI2Test {
 
         assertThat(parsedProperties.get("name"), is("Chloroscombrus chrysurus"));
         assertThat(parsedProperties.get("GOMEXSI:PRED_DATABASE_NAME"), is("Chloroscombrus chrysurus"));
+        assertThat(parsedProperties.get("GOMEXSI:DATA_AGGR_CODE"), is("complete"));
+        assertThat(parsedProperties.get("GOMEXSI:DATA_ID"), is("ACT_16R"));
     }
 
     @Test
