@@ -37,6 +37,8 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String TARGET_BODY_PART_ID = "targetBodyPartId";
     public static final String TARGET_BODY_PART_NAME = "targetBodyPartName";
     public static final String ASSOCIATED_TAXA = "associatedTaxa";
+    private static final String RESOURCE_LINE_NUMBER = "resourceLineNumber";
+    private static final String RESOURCE_URI = "resourceURI";
 
     public String getBaseUrl() {
         return getDataset().getArchiveURI().toString();
@@ -58,10 +60,11 @@ public class StudyImporterForTSV extends BaseStudyImporter {
 
     private void importRepository(String namespace, String sourceCitation) throws IOException, StudyImporterException {
         InteractionListenerImpl interactionListenerImpl = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
-        LabeledCSVParser parser = parserFactory.createParser(getDataset().getResourceURI("/interactions.tsv").toString(), "UTF-8");
+        String resourceURIString = getDataset().getResourceURI("/interactions.tsv").toString();
+        LabeledCSVParser parser = parserFactory.createParser(resourceURIString, "UTF-8");
         parser.changeDelimiter('\t');
         while (parser.getLine() != null) {
-            final Map<String, String> link = new TreeMap<String, String>();
+            final Map<String, String> link = new TreeMap<>();
             final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");
             putNotBlank(link, REFERENCE_DOI, referenceDoi);
             putNotBlank(link, REFERENCE_CITATION, CSVTSVUtil.valueOrNull(parser, REFERENCE_CITATION));
@@ -81,6 +84,9 @@ public class StudyImporterForTSV extends BaseStudyImporter {
             putNotBlank(link, SOURCE_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
             putNotBlank(link, TARGET_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
             putNotBlank(link, TARGET_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
+
+            putNotBlank(link, RESOURCE_LINE_NUMBER, Integer.toString(parser.getLastLineNumber()));
+            putNotBlank(link, RESOURCE_URI, resourceURIString);
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 
