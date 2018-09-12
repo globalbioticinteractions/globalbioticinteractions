@@ -5,6 +5,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.SpecimenConstant;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -146,6 +147,14 @@ public class StudyImporterForGoMexSI2Test {
         assertThat(location.getAltitude(), is(-13.641d));
         assertThat(location.getLocality(), is("Louisiana inner continental shelf"));
         assertThat(location.getFootprintWKT(), is(WKT_FOOTPRINT));
+
+        final DateTime eventDate = StudyImporterForGoMexSI2.parseEventDate("someMickeyMouseresource.csv", parser);
+
+        assertThat(eventDate.getYear(), is(1970));
+        assertThat(eventDate.getMonthOfYear(), is(7));
+        assertThat(eventDate.getDayOfMonth(), is(1));
     }
+
+
 
 }

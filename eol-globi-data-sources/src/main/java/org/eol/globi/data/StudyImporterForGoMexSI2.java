@@ -18,6 +18,8 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -173,6 +175,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                     String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");
 
                     Location location = parseLocation(locationResource, parser);
+                    DateTime eventDate = parseEventDate(locationResource, parser);
 
                     Location locationNode = nodeFactory.getOrCreateLocation(location);
 
@@ -183,7 +186,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                     if (predatorProperties == null) {
                         getLogger().warn(study, "failed to lookup predator [" + refId + ":" + specimenId + "] for location at [" + locationResource + ":" + (parser.getLastLineNumber() + 1) + "]");
                     } else {
-                        addObservation(predatorUIToPreyLists, parser, study, locationNode, predatorId, predatorProperties);
+                        addObservation(predatorUIToPreyLists, parser, study, locationNode, predatorId, predatorProperties, eventDate);
                     }
                 }
             }
@@ -199,6 +202,26 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
         enrichLocation(metaStudy, locationResource, cmecsService, parser, location, habitatSystem, habitatSubsystem, habitatTidalZone);
     }
+
+    protected static DateTime parseEventDate(String locationResource, LabeledCSVParser parser) throws StudyImporterException {
+        DateTime startTime = parseEventDate(locationResource, parser, "START_");
+        DateTime endTime = parseEventDate(locationResource, parser, "END_");
+        return startTime == null ? endTime : startTime;
+    }
+
+    private static DateTime parseEventDate(String locationResource, LabeledCSVParser parser, String prefix) throws StudyImporterException {
+        Integer startYear = getMandatoryIntegerValue(locationResource, parser, prefix +"YEAR");
+        Integer startMonth = getMandatoryIntegerValue(locationResource, parser, prefix + "MON");
+        Integer startDay = getMandatoryIntegerValue(locationResource, parser, prefix + "DAY");
+
+        DateTimeZone corpusChristiTimeZone = DateTimeZone.forOffsetHours(-7);
+        DateTime eventDateTime = null;
+        if (startYear != null) {
+            eventDateTime = new DateTime(startYear, startMonth == null ? 1 : startMonth, startDay == null ? 1 : startDay, 0, 0, corpusChristiTimeZone);
+        }
+        return eventDateTime;
+    }
+
 
     protected static Location parseLocation(String locationResource, LabeledCSVParser parser) throws StudyImporterException {
         Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
@@ -244,7 +267,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         return location;
     }
 
-    private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties) throws StudyImporterException {
+    private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties, DateTime eventDate) throws StudyImporterException {
         try {
             Specimen predatorSpecimen = createSpecimen(study, predatorProperties);
             setBasisOfRecordAsLiterature(predatorSpecimen);
@@ -264,6 +287,10 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                             setBasisOfRecordAsLiterature(prey);
                             prey.caughtIn(location);
                             predatorSpecimen.ate(prey);
+                            if (eventDate != null) {
+                                nodeFactory.setUnixEpochProperty(prey, eventDate.toDate());
+                                nodeFactory.setUnixEpochProperty(predatorSpecimen, eventDate.toDate());
+                            }
                         } catch (NodeFactoryException e) {
                             getLogger().warn(study, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" + e.getMessage() + "]");
                         }
@@ -378,6 +405,15 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         String value = getMandatoryValue(locationResource, parser, label);
         try {
             return "NA".equals(value) || value == null || value.trim().length() == 0 ? null : Double.parseDouble(value);
+        } catch (NumberFormatException ex) {
+            throw new StudyImporterException("failed to parse [" + label + "] value [" + value + "] at line [" + parser.getLastLineNumber() + "]", ex);
+        }
+    }
+
+    private static Integer getMandatoryIntegerValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
+        String value = getMandatoryValue(locationResource, parser, label);
+        try {
+            return "NA".equals(value) || value == null || value.trim().length() == 0 ? null : Integer.parseInt(value);
         } catch (NumberFormatException ex) {
             throw new StudyImporterException("failed to parse [" + label + "] value [" + value + "] at line [" + parser.getLastLineNumber() + "]", ex);
         }
