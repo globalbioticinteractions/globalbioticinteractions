@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -183,6 +184,12 @@ public class StudyImporterForMetaTableIT {
         importAll(interactionListener, new StudyImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource);
 
         assertThat(links.size()> 0, is(true));
+        final Map<String, String> firstLine = links.get(0);
+        assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), startsWith("http://purl.obolibrary.org/obo/RO_"));
+        assertNotNull(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME));
+        assertThat(firstLine.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
+        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(not(nullValue())));
+        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is(not(nullValue())));
 
     }
 
