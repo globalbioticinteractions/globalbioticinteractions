@@ -392,25 +392,34 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         for (JsonNode column : columns) {
             final JsonNode columnName = column.get("name");
             if (columnName != null) {
-                String dataTypeId = null;
-
-                final JsonNode dataType = column.get("datatype");
-                if (dataType.isValueNode()) {
-                    dataTypeId = dataType.asText();
+                if (column.has("datatype")) {
+                    addTypedColumn(columnNames, column, columnName);
                 } else {
-                    if (dataType.has("id")) {
-                        dataTypeId = dataType.get("id").asText();
-                    }
+                    columnNames.add(new Column(columnName.asText(), "string"));
                 }
-                final Column col = new Column(columnName.asText(), dataTypeId == null ? "string" : dataTypeId);
-                col.setDataTypeFormat(dataType.has("format") ? dataType.get("format").asText() : null);
-                col.setDataTypeBase(dataType.has("base") ? dataType.get("base").asText() : null);
-                col.setValueUrl(dataType.has("valueUrl") ? dataType.get("valueUrl").asText() : null);
-                col.setDefaultValue(column.has("default") ? column.get("default").asText() : null);
-                columnNames.add(col);
             }
         }
         return columnNames;
+    }
+
+    private static void addTypedColumn(List<Column> columnNames, JsonNode column, JsonNode columnName) {
+        String dataTypeId = null;
+
+        final JsonNode dataType = column.get("datatype");
+        if (dataType.isValueNode()) {
+            dataTypeId = dataType.asText();
+        } else {
+            if (dataType.has("id")) {
+                dataTypeId = dataType.get("id").asText();
+            }
+        }
+        final Column col = new Column(columnName.asText(), dataTypeId == null ? "string" : dataTypeId);
+
+        col.setDataTypeFormat(dataType.has("format") ? dataType.get("format").asText() : null);
+        col.setDataTypeBase(dataType.has("base") ? dataType.get("base").asText() : null);
+        col.setValueUrl(dataType.has("valueUrl") ? dataType.get("valueUrl").asText() : null);
+        col.setDefaultValue(column.has("default") ? column.get("default").asText() : null);
+        columnNames.add(col);
     }
 
     static class Column {

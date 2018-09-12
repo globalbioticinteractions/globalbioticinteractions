@@ -37,6 +37,11 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
+    public void parseColumnNamesFromExternalSchemaNoDatatype() throws IOException, StudyImporterException {
+        assertExpectedColumnCount("test-meta-globi-external-schema-no-types.json");
+    }
+
+    @Test
     public void parseColumnNamesFromDefaultExternalSchema() throws IOException, StudyImporterException {
         assertExpectedColumnCount("test-meta-globi-default-external-schema.json");
     }

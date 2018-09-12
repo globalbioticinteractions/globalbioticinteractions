@@ -174,6 +174,19 @@ public class StudyImporterForMetaTableIT {
     }
 
     @Test
+    public void importGandhi() throws IOException, StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
+        final InteractionListener interactionListener = properties -> links.add(properties);
+
+        final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/gandhi2009/master";
+        final String resource = baseUrl + "/globi.json";
+        importAll(interactionListener, new StudyImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource);
+
+        assertThat(links.size()> 0, is(true));
+
+    }
+
+    @Test
     public void importNHMStatic() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         final InteractionListener interactionListener = properties -> links.add(properties);
