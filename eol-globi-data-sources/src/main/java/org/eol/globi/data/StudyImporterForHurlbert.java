@@ -34,6 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class StudyImporterForHurlbert extends BaseStudyImporter {
@@ -41,6 +43,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     public static final String RESOURCE = "AvianDietDatabase.txt";
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForHurlbert.class);
+    private AtomicLong currentLine = null;
 
     public StudyImporterForHurlbert(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -68,10 +71,11 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         parser.beginParsing(resource, CharsetConstant.UTF8);
         Record record;
         while ((record = parser.parseNextRecord()) != null) {
+            setCurrentLine(parser.getContext().currentLine());
             String columnNameSource = "Source";
             String sourceCitation = columnValueOrNull(record, columnNameSource);
             if (StringUtils.isBlank(sourceCitation)) {
-                LOG.warn("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "] on line [" + (parser.getContext().currentLine() + 1) + "]");
+                LOG.warn(createMsg("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "]"));
             } else {
                 importRecords(regions, locales, habitats, record, sourceCitation);
             }
@@ -149,7 +153,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                     Double altitudeD = NumberUtils.isNumber(altitude) ? Double.parseDouble(altitude) : null;
                     location = new LocationImpl(latLng.getLat(), latLng.getLng(), altitudeD, null);
                 } catch (InvalidLocationException e) {
-                    getLogger().warn(study, "found invalid (lat,lng) pair: (" + latitude + "," + longitude +")");
+                    getLogger().warn(study, createMsg("found invalid (lat,lng) pair: (" + latitude + "," + longitude +")"));
                 }
             }
 
@@ -211,7 +215,8 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                 try {
                     date = DateUtil.parseYearUTC(dateString).toDate();
                 } catch (IllegalArgumentException e1) {
-                    getLogger().warn(study, "not setting collection date, because [" + dateString + "] could not be read as date.");
+                    String message = "not setting collection date, because [" + dateString + "] could not be read as date.";
+                    getLogger().warn(study, createMsg(message));
                 }
             }
         }
@@ -233,6 +238,21 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     private boolean notBlankOrNA(String str) {
         return StringUtils.isNotBlank(str) && !StringUtils.equalsIgnoreCase(StringUtils.trim(str), "NA");
+    }
+
+    protected void setCurrentLine(long currentLine) {
+        if (this.currentLine == null) {
+            this.currentLine = new AtomicLong();
+        }
+        this.currentLine.set(currentLine);
+    }
+
+    protected long getCurrentLine() {
+        return this.currentLine.get();
+    }
+
+    protected String createMsg(String message) {
+        return "line [" + getCurrentLine() + "]: " + message;
     }
 
 }
