@@ -9,9 +9,13 @@ import org.eol.globi.service.GeoNamesServiceImpl;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.doi.DOI;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
     protected ParserFactory parserFactory;
     protected ImportFilter importFilter = recordNumber -> true;
+    private AtomicLong currentLine = null;
+    private String currentResource = null;
 
     private Dataset dataset;
 
@@ -92,4 +96,38 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         }
         return sourceCitationLastAccessed;
     }
+
+    protected void setCurrentResource(String currentResource) {
+        this.currentResource = currentResource;
+    }
+
+    protected String getCurrentResource() {
+        return this.currentResource;
+    }
+
+    protected void setCurrentLine(long currentLine) {
+        if (this.currentLine == null) {
+            this.currentLine = new AtomicLong();
+        }
+        this.currentLine.set(currentLine);
+    }
+
+    protected long getCurrentLine() {
+        return this.currentLine.get();
+    }
+
+    protected String createMsg(String message) {
+        StringBuilder builder = new StringBuilder();
+        if (currentLine != null) {
+            builder.append("line [");
+            if (StringUtils.isNotBlank(getCurrentResource())) {
+                builder.append(getCurrentResource());
+            }
+            builder.append(":");
+            builder.append(getCurrentLine());
+            builder.append("]");
+        }
+        return builder.append(message).toString();
+    }
+
 }

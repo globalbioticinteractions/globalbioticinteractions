@@ -43,7 +43,6 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     public static final String RESOURCE = "AvianDietDatabase.txt";
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForHurlbert.class);
-    private AtomicLong currentLine = null;
 
     public StudyImporterForHurlbert(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -55,6 +54,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         InputStream resource;
         try {
             resource = getDataset().getResource(RESOURCE);
+            setCurrentResource(RESOURCE);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access [" + RESOURCE + "]", e);
         }
@@ -153,7 +153,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                     Double altitudeD = NumberUtils.isNumber(altitude) ? Double.parseDouble(altitude) : null;
                     location = new LocationImpl(latLng.getLat(), latLng.getLng(), altitudeD, null);
                 } catch (InvalidLocationException e) {
-                    getLogger().warn(study, createMsg("found invalid (lat,lng) pair: (" + latitude + "," + longitude +")"));
+                    getLogger().warn(study, createMsg("found invalid (lat,lng) pair: (" + latitude + "," + longitude + ")"));
                 }
             }
 
@@ -238,21 +238,6 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     private boolean notBlankOrNA(String str) {
         return StringUtils.isNotBlank(str) && !StringUtils.equalsIgnoreCase(StringUtils.trim(str), "NA");
-    }
-
-    protected void setCurrentLine(long currentLine) {
-        if (this.currentLine == null) {
-            this.currentLine = new AtomicLong();
-        }
-        this.currentLine.set(currentLine);
-    }
-
-    protected long getCurrentLine() {
-        return this.currentLine.get();
-    }
-
-    protected String createMsg(String message) {
-        return "line [" + getCurrentLine() + "]: " + message;
     }
 
 }

@@ -31,6 +31,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
             Specimen predator = null;
             String lastStomachId = null;
             while ((parser.getLine()) != null) {
+                setCurrentLine(parser.getLastLineNumber());
                 if (importFilter.shouldImportRecord((long) parser.getLastLineNumber())) {
                     Date date = parseDate(parser);
                     Location location = parseLocation(parser);
@@ -71,7 +72,9 @@ public class StudyImporterForICES extends BaseStudyImporter {
     private LabeledCSVParser createParser() throws StudyImporterException {
         LabeledCSVParser parser;
         try {
-            parser = parserFactory.createParser("ices/StomachDataSet.csv.gz", CharsetConstant.UTF8);
+            String resource = "ices/StomachDataSet.csv.gz";
+            setCurrentResource(resource);
+            parser = parserFactory.createParser(resource, CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access datasource", e);
         }
