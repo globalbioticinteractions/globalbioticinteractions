@@ -4,6 +4,7 @@ import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,6 +13,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.HttpUtil;
@@ -19,6 +21,8 @@ import org.eol.globi.util.HttpUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +34,21 @@ public class CMECSService implements TermLookupService {
 
     private Map<String, Term> termMap = null;
 
+    private final ResourceService service;
+
+    public CMECSService() {
+        this(new ResourceServiceDefault());
+    }
+
+    public CMECSService(ResourceService resourceServiceDefault) {
+        this.service = resourceServiceDefault;
+    }
+
     @Override
     public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
         if (termMap == null) {
             try {
-                termMap = buildTermMap();
+                termMap = buildTermMap(getService());
             } catch (IOException e) {
                 throw new TermLookupServiceException("failed to instantiate terms", e);
             }
@@ -43,38 +57,62 @@ public class CMECSService implements TermLookupService {
         return term == null ? Collections.emptyList() : Collections.singletonList(term);
     }
 
-    private static Map<String, Term> buildTermMap() throws IOException {
+    private static Map<String, Term> buildTermMap(ResourceService service) throws IOException {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
         String uri = "https://cmecscatalog.org/cmecs/documents/cmecs4.accdb";
         LOG.info("CMECS data [" + uri + "] downloading ...");
-        HttpGet get = new HttpGet(uri);
-        try {
-            HttpResponse execute = HttpUtil.getHttpClient().execute(get);
-            File cmecs = File.createTempFile("cmecs", "accdb");
-            cmecs.deleteOnExit();
-            IOUtils.copy(execute.getEntity().getContent(), new FileOutputStream(cmecs));
-            LOG.info("CMECS data [" + uri + "] downloaded.");
 
-            Database db = new DatabaseBuilder()
-                .setFile(new File(cmecs.toURI()))
+        URI resourceURI = service.getResourceURI(uri);
+
+        if (resourceURI == null) {
+            throw new IOException("failed to access [" + uri + "]");
+        }
+        Database db = new DatabaseBuilder()
+                .setFile(new File(resourceURI))
                 .setReadOnly(true)
                 .open();
 
-            Map<String, Term> aquaticSettingsTerms = new HashMap<>();
+        Map<String, Term> aquaticSettingsTerms = new HashMap<>();
 
-            Table table = db.getTable("Aquatic Setting");
-            Map<String, Object> row;
-            while ((row = table.getNextRow()) != null) {
-                Integer id = (Integer) row.get("AquaticSetting_Id");
-                String name = (String) row.get("AquaticSettingName");
-                String termId = TaxonomyProvider.ID_CMECS + id;
-                aquaticSettingsTerms.put(StringUtils.lowerCase(StringUtils.strip(name)), new TermImpl(termId, name));
+        Table table = db.getTable("Aquatic Setting");
+        Map<String, Object> row;
+        while ((row = table.getNextRow()) != null) {
+            Integer id = (Integer) row.get("AquaticSetting_Id");
+            String name = (String) row.get("AquaticSettingName");
+            String termId = TaxonomyProvider.ID_CMECS + id;
+            aquaticSettingsTerms.put(StringUtils.lowerCase(StringUtils.strip(name)), new TermImpl(termId, name));
+        }
+        LOG.info(CMECSService.class.getSimpleName() + " instantiated.");
+        return aquaticSettingsTerms;
+    }
+
+    public ResourceService getService() {
+        return service;
+    }
+
+    private static class ResourceServiceDefault implements ResourceService {
+
+        @Override
+        public InputStream getResource(String resourceName) throws IOException {
+            throw new NotImplementedException();
+        }
+
+        @Override
+        public URI getResourceURI(String resourceName) {
+            URI resourceURI = null;
+            HttpGet get = new HttpGet(resourceName);
+            try {
+                HttpResponse execute = HttpUtil.getHttpClient().execute(get);
+                File cmecs = File.createTempFile("cmecs", "accdb");
+                cmecs.deleteOnExit();
+                IOUtils.copy(execute.getEntity().getContent(), new FileOutputStream(cmecs));
+                LOG.info("CMECS data [" + resourceName + "] downloaded.");
+                resourceURI = cmecs.toURI();
+            } catch (IOException e) {
+                LOG.warn("failed to access [" + resourceName + "]", e);
             }
-            cmecs.delete();
-            LOG.info(CMECSService.class.getSimpleName() + " instantiated.");
-            return aquaticSettingsTerms;
-        } finally {
-            get.releaseConnection();
+
+            return resourceURI;
         }
     }
 }

@@ -10,8 +10,10 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,34 @@ public class DatasetWithCacheTest {
     public void citationWithoutLastAccessed() {
         DatasetWithCache dataset = datasetLastAccessedAt(null);
         assertThat(dataset.getCitation(), Is.is("Accessed via <some:bla>."));
+    }
+
+    @Test
+    public void getURIRelative() throws IOException, URISyntaxException {
+        Cache cache = Mockito.mock(Cache.class);
+        URI cachedLocalURI = getClass().getResource("archive.zip").toURI();
+        when(cache.asURI(any(URI.class))).thenReturn(cachedLocalURI);
+        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
+        URI someURI = datasetWithCache.getResourceURI("foo");
+
+        assertThat(someURI, is(URI.create("jar:" + cachedLocalURI.toString() + "!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo")));
+    }
+
+    @Test
+    public void getURIAbsolute() throws IOException, URISyntaxException {
+        String resourceName = "https://example.org/foo";
+        URI resourceURI = URI.create(resourceName);
+        Cache cache = Mockito.mock(Cache.class);
+        URI cachedLocalURI = URI.create("someCached.txt");
+        when(cache.asURI(resourceURI)).thenReturn(cachedLocalURI);
+        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
+        URI someURI = datasetWithCache.getResourceURI(resourceName);
+
+        assertThat(someURI, is(URI.create("someCached.txt")));
     }
 
     private DatasetWithCache datasetLastAccessedAt(String lastAccessed) {

@@ -98,7 +98,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
             public void onSpecimen(String predatorUID, Map<String, String> properties) {
                 List<Map<String, String>> preyList = predatorIdToPreyNames.get(predatorUID);
                 if (preyList == null) {
-                    preyList = new ArrayList<Map<String, String>>();
+                    preyList = new ArrayList<>();
                     predatorIdToPreyNames.put(predatorUID, preyList);
                 }
                 preyList.add(properties);
@@ -164,29 +164,33 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy) throws StudyImporterException {
         String locationResource = getLocationsResourcePath();
         try {
-            TermLookupService cmecsService = new CMECSService();
+            TermLookupService cmecsService = new CMECSService(getDataset());
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(locationResource, parser, "DATA_ID");
                 if (!refIdToStudyMap.containsKey(refId)) {
                     getLogger().warn(metaStudy, "failed to find study for ref id [" + refId + "] on related to observation location in [" + locationResource + ":" + parser.getLastLineNumber() + "]");
                 } else {
-                    Study study = refIdToStudyMap.get(refId);
-                    String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");
+                    try {
+                        Study study = refIdToStudyMap.get(refId);
+                        String specimenId = getMandatoryValue(locationResource, parser, "PRED_ID");
 
-                    Location location = parseLocation(locationResource, parser);
-                    DateTime eventDate = parseEventDate(locationResource, parser);
+                        Location location = parseLocation(locationResource, parser);
+                        DateTime eventDate = parseEventDate(locationResource, parser);
 
-                    Location locationNode = nodeFactory.getOrCreateLocation(location);
+                        Location locationNode = nodeFactory.getOrCreateLocation(location);
 
-                    enrichLocation(metaStudy, locationResource, cmecsService, parser, locationNode);
+                        enrichLocation(metaStudy, locationResource, cmecsService, parser, locationNode);
 
-                    String predatorId = refId + specimenId;
-                    Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
-                    if (predatorProperties == null) {
-                        getLogger().warn(study, "failed to lookup predator [" + refId + ":" + specimenId + "] for location at [" + locationResource + ":" + (parser.getLastLineNumber() + 1) + "]");
-                    } else {
-                        addObservation(predatorUIToPreyLists, parser, study, locationNode, predatorId, predatorProperties, eventDate);
+                        String predatorId = refId + specimenId;
+                        Map<String, String> predatorProperties = predatorIdToPredatorSpecimen.get(predatorId);
+                        if (predatorProperties == null) {
+                            getLogger().warn(study, "failed to lookup predator [" + refId + ":" + specimenId + "] for location at [" + locationResource + ":" + (parser.getLastLineNumber() + 1) + "]");
+                        } else {
+                            addObservation(predatorUIToPreyLists, parser, study, locationNode, predatorId, predatorProperties, eventDate);
+                        }
+                    } catch (StudyImporterException e) {
+                        getLogger().warn(metaStudy, e.getMessage());
                     }
                 }
             }
@@ -210,6 +214,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     private static DateTime parseEventDate(String locationResource, LabeledCSVParser parser, String prefix) throws StudyImporterException {
+
         Integer startYear = getMandatoryIntegerValue(locationResource, parser, prefix +"YEAR");
         Integer startMonth = getMandatoryIntegerValue(locationResource, parser, prefix + "MON");
         Integer startDay = getMandatoryIntegerValue(locationResource, parser, prefix + "DAY");

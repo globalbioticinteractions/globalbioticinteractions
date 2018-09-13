@@ -59,7 +59,7 @@ public class DatasetWithCache extends DatasetMapped {
 
         URI uri;
         if (resourceURI.isAbsolute()) {
-            uri = resourceURI;
+            uri = cache.asURI(resourceURI);
         } else {
             URI localArchiveURI = cache.asURI(getArchiveURI());
             URI archiveJarURI = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
