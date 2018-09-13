@@ -119,13 +119,13 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     protected String createMsg(String message) {
         StringBuilder builder = new StringBuilder();
         if (currentLine != null) {
-            builder.append("line [");
+            builder.append("[");
             if (StringUtils.isNotBlank(getCurrentResource())) {
                 builder.append(getCurrentResource());
             }
             builder.append(":");
             builder.append(getCurrentLine());
-            builder.append("]");
+            builder.append("] ");
         }
         return builder.append(message).toString();
     }
