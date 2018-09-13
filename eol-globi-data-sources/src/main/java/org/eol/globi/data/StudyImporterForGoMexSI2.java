@@ -20,6 +20,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.IllegalFieldValueException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +28,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI2.class);
@@ -143,7 +148,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private static String updateContributorList(String lastName, String firstName, String contributor) {
         String name = firstName + " " + lastName;
-        return StringUtils.isBlank(contributor) ? name : (contributor + ", " + name);
+        return isBlank(contributor) ? name : (contributor + ", " + name);
     }
 
     private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String contributors) throws StudyImporterException {
@@ -155,7 +160,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
         study = nodeFactory.getOrCreateStudy(
                 new StudyImpl(refTag, getSourceCitation(), null, ExternalIdUtil.toCitation(contributors, description, publicationYear)));
-        if (StringUtils.isNotBlank(externalId)) {
+        if (isNotBlank(externalId)) {
             study.setExternalId(ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
         }
         referenceIdToStudy.put(refId, study);
@@ -216,13 +221,58 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private static DateTime parseEventDate(String locationResource, LabeledCSVParser parser, String prefix) throws StudyImporterException {
 
         Integer startYear = getMandatoryIntegerValue(locationResource, parser, prefix +"YEAR");
-        Integer startMonth = getMandatoryIntegerValue(locationResource, parser, prefix + "MON");
+        String startMonth = getMandatoryValue(locationResource, parser, prefix + "MON");
         Integer startDay = getMandatoryIntegerValue(locationResource, parser, prefix + "DAY");
+
+        Map<String, Integer> monthMap = new TreeMap<String, Integer>() {{
+            put("1", 1);
+            put("january", 1);
+            put("jan", 1);
+            put("2", 2);
+            put("february", 2);
+            put("feb", 2);
+            put("3", 3);
+            put("march", 3);
+            put("mar", 3);
+            put("4", 4);
+            put("april", 4);
+            put("apr", 4);
+            put("5", 5);
+            put("may", 5);
+            put("6", 6);
+            put("june", 6);
+            put("jun", 6);
+            put("7", 7);
+            put("july", 7);
+            put("jul", 7);
+            put("8", 8);
+            put("august", 8);
+            put("aug", 8);
+            put("9", 9);
+            put("september", 9);
+            put("sept", 9);
+            put("sep", 9);
+            put("10", 10);
+            put("october", 10);
+            put("oct", 10);
+            put("11", 11);
+            put("november", 11);
+            put("nov", 11);
+            put("12", 12);
+            put("december", 12);
+            put("dec", 12);
+        }};
+        Integer startMonthIndex = monthMap.getOrDefault(trim(lowerCase(startMonth)), 1);
+
 
         DateTimeZone corpusChristiTimeZone = DateTimeZone.forOffsetHours(-7);
         DateTime eventDateTime = null;
         if (startYear != null) {
-            eventDateTime = new DateTime(startYear, startMonth == null ? 1 : startMonth, startDay == null ? 1 : startDay, 0, 0, corpusChristiTimeZone);
+            try {
+                eventDateTime = new DateTime(startYear, startMonthIndex, startDay == null ? 1 : startDay, 0, 0, corpusChristiTimeZone);
+            } catch (IllegalFieldValueException ex) {
+                throw new StudyImporterException("failed to parse date", ex);
+            }
         }
         return eventDateTime;
     }
@@ -236,10 +286,10 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         String footprintWKT = polyCoordsToWKT(polyCoords);
         final LocationImpl location = new LocationImpl(latitude, longitude
                 , depth == null ? null : -depth
-                , StringUtils.isBlank(footprintWKT) ? null : StringUtils.trim(footprintWKT));
+                , isBlank(footprintWKT) ? null : trim(footprintWKT));
 
         final String locality = parser.getValueByLabel("LOCALE_NAME");
-        if (StringUtils.isNotBlank(locality)) {
+        if (isNotBlank(locality)) {
             location.setLocality(locality);
         }
         return location;
@@ -247,7 +297,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     protected static String polyCoordsToWKT(String polyCoords) {
         String footprintWKT = null;
-        if (StringUtils.isNotBlank(polyCoords)) {
+        if (isNotBlank(polyCoords)) {
             footprintWKT = "POLYGON" + polyCoords.replace(" ", "").replace(",", " ").replace(") (", ",");
         }
         return footprintWKT;
@@ -327,7 +377,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private Integer integerValueOrNull(Map<String, String> props, String key) throws StudyImporterException {
         String value = props.get(key);
         try {
-            return StringUtils.isBlank(value) || KNOWN_INVALID_INTEGER_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Integer.parseInt(value);
+            return isBlank(value) || KNOWN_INVALID_INTEGER_STRINGS.contains(lowerCase(value)) ? null : Integer.parseInt(value);
         } catch (NumberFormatException ex) {
             String msg = errMsg(props, key, value);
             getLogger().warn(null, msg);
@@ -338,7 +388,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private Double doubleValueOrNull(Map<String, String> props, String key) throws StudyImporterException {
         String value = props.get(key);
         try {
-            return StringUtils.isBlank(value) || KNOWN_INVALID_DOUBLE_STRINGS.contains(StringUtils.lowerCase(value)) ? null : Double.parseDouble(value);
+            return isBlank(value) || KNOWN_INVALID_DOUBLE_STRINGS.contains(lowerCase(value)) ? null : Double.parseDouble(value);
         } catch (NumberFormatException ex) {
             String msg = errMsg(props, key, value);
             getLogger().warn(null, msg);
@@ -450,7 +500,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
             addOptionalProperty(parser, "FREQ_OCC", SpecimenConstant.FREQUENCY_OF_OCCURRENCE, properties);
             addOptionalProperty(parser, "PCT_FREQ_OCC", SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
             String taxonName = getMandatoryValue(datafile, parser, columnNamePrefix + "DATABASE_NAME");
-            if (StringUtils.isBlank(taxonName)) {
+            if (isBlank(taxonName)) {
                 taxonName = getMandatoryValue(datafile, parser, columnNamePrefix + "SOURCE_NAME");
             }
             properties.put(PropertyAndValueDictionary.NAME, taxonName);
