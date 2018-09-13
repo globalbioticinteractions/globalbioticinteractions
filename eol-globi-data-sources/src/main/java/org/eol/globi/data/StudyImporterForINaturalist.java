@@ -283,13 +283,13 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxon);
         setBasisOfRecord(targetSpecimen);
 
-        sourceSpecimen.interactsWith(targetSpecimen, interactType);
         setCollectionDate(sourceSpecimen, targetSpecimen, observationDate);
         setCollectionDate(sourceSpecimen, sourceSpecimen, observationDate);
 
         Location location = parseLocation(observation);
         sourceSpecimen.caughtIn(location);
         targetSpecimen.caughtIn(location);
+        sourceSpecimen.interactsWith(targetSpecimen, interactType);
 
         return sourceSpecimen;
     }

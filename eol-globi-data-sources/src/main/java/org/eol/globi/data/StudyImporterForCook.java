@@ -83,8 +83,8 @@ public class StudyImporterForCook extends BaseStudyImporter {
                     double parasiteLengthCm = Double.parseDouble(valueByLabel);
                     parasite.setLengthInMm(parasiteLengthCm * 10.0);
                 }
-                parasite.interactsWith(host, InteractType.PARASITE_OF);
                 nodeFactory.setUnixEpochProperty(parasite, collectionDate);
+                parasite.interactsWith(host, InteractType.PARASITE_OF);
             }
         } catch (NumberFormatException ex) {
             // ignore

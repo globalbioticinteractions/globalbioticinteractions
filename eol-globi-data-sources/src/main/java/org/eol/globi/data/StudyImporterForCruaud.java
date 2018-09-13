@@ -47,7 +47,6 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                         if (areNamesAvailable(parasiteName, hostName)) {
                             Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl(parasiteName, null));
                             Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
-                            parasite.interactsWith(host, InteractType.PARASITE_OF);
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
                             if (getGeoNamesService().hasTermForLocale(samplingLocation)) {
                                 LatLng pointForLocality = getGeoNamesService().findLatLng(samplingLocation);
@@ -61,6 +60,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                             } else {
                                 LOG.warn("no location associated with locality [" + samplingLocation + "]");
                             }
+                            parasite.interactsWith(host, InteractType.PARASITE_OF);
                         }
                     } catch (NodeFactoryException | NumberFormatException e) {
                         throw new StudyImporterException("failed to import line [" + (dataParser.lastLineNumber() + 1) + "]", e);

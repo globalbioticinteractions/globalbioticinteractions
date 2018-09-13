@@ -83,11 +83,10 @@ public class StudyImporterForBell extends BaseStudyImporter {
                     Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
                     host.caughtIn(location);
                     host.setExternalId(externalId);
-                    parasite.interactsWith(host, InteractType.PARASITE_OF);
                     Date date = parseDate(parser);
                     nodeFactory.setUnixEpochProperty(parasite, date);
                     nodeFactory.setUnixEpochProperty(host, date);
-
+                    parasite.interactsWith(host, InteractType.PARASITE_OF);
                 }
             } catch (Throwable e) {
                 throw new StudyImporterException(getErrorMessage(resource, parser), e);

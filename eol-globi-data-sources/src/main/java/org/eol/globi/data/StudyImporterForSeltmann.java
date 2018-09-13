@@ -182,7 +182,6 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
         Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceName, null));
         Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(targetName, null));
-        source.interactsWith(target, interactType);
 
         String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");
         source.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(sourceBasisOfRecord, sourceBasisOfRecord));
@@ -206,6 +205,8 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             Location loc = nodeFactory.getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
             source.caughtIn(loc);
         }
+
+        source.interactsWith(target, interactType);
     }
 
     private InteractType parseInteractType(LabeledCSVParser occurrence, Map<String, String> assoc) throws StudyImporterException {

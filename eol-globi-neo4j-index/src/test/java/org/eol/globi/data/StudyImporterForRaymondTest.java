@@ -1,18 +1,31 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenConstant;
+import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Iterator;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class StudyImporterForRaymondTest extends GraphDBTestCase {
 
@@ -52,7 +65,14 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
     protected void assertThatAllStudiesHaveAtLeastOneInteraction() {
         List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
         for (Study study : studies) {
-            assertThat(NodeUtil.getSpecimens(study).iterator().hasNext(), is(true));
+            Iterator<Relationship> iterator = NodeUtil.getSpecimens(study).iterator();
+            assertThat(iterator.hasNext(), is(true));
+            while(iterator.hasNext()) {
+                Relationship next = iterator.next();
+                Specimen specimen = new SpecimenNode(next.getEndNode());
+                assertThat(specimen.getSampleLocation().getLongitude(), is (-61.66666667d));
+                assertThat(next.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(not(nullValue())));
+            }
         }
     }
 
