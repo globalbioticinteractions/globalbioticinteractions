@@ -153,11 +153,11 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
             Specimen prey = getSpecimen(dietParser, "PREY_NAME", "PREY_LIFE_STAGE", study);
             prey.caughtIn(sampleLocation);
-            predator.ate(prey);
 
             Date date = parseCollectionDate(dietParser);
             nodeFactory.setUnixEpochProperty(prey, date);
             nodeFactory.setUnixEpochProperty(predator, date);
+            predator.ate(prey);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import data", e);
         }

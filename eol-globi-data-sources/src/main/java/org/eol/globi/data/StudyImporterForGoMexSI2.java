@@ -286,11 +286,11 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                             Specimen prey = createSpecimen(study, preyProperties);
                             setBasisOfRecordAsLiterature(prey);
                             prey.caughtIn(location);
-                            predatorSpecimen.ate(prey);
                             if (eventDate != null) {
                                 nodeFactory.setUnixEpochProperty(prey, eventDate.toDate());
                                 nodeFactory.setUnixEpochProperty(predatorSpecimen, eventDate.toDate());
                             }
+                            predatorSpecimen.ate(prey);
                         } catch (NodeFactoryException e) {
                             getLogger().warn(study, "failed to add prey [" + preyProperties + "] for predator with id + [" + predatorId + "]: [" + predatorProperties + "]: [" + e.getMessage() + "]");
                         }

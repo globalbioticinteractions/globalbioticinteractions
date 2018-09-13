@@ -69,8 +69,8 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                     } else {
                         Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preySpeciesDescription, null));
                         preySpecimen.caughtIn(collectionLocation);
-                        predatorSpecimen.ate(preySpecimen);
                         nodeFactory.setUnixEpochProperty(preySpecimen, nodeFactory.getUnixEpochProperty(predatorSpecimen));
+                        predatorSpecimen.ate(preySpecimen);
                     }
                 }
             }

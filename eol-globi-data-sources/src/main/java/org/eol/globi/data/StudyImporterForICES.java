@@ -42,10 +42,15 @@ public class StudyImporterForICES extends BaseStudyImporter {
                         predator.caughtIn(location);
                     }
 
-                    Specimen prey = addPrey(parser, predator, study);
+                    String preyName = parser.getValueByLabel("Prey Species Name");
+                    Specimen prey = null;
+                    if (StringUtils.isNotBlank(preyName)) {
+                        prey = nodeFactory.createSpecimen(study, new TaxonImpl(preyName, null));
+                    }
                     if (prey != null) {
                         nodeFactory.setUnixEpochProperty(prey, date);
                         prey.caughtIn(location);
+                        predator.ate(prey);
                     }
                     lastStomachId = currentStomachId;
                 }
@@ -54,15 +59,6 @@ public class StudyImporterForICES extends BaseStudyImporter {
             throw new StudyImporterException("problem parsing datasource", e);
         }
 
-    }
-
-    private Specimen addPrey(LabeledCSVParser parser, Specimen predatorSpecimen, Study study) throws NodeFactoryException {
-        String preyName = parser.getValueByLabel("Prey Species Name");
-        Specimen specimen = null;
-        if (StringUtils.isNotBlank(preyName)) {
-            specimen = atePrey(predatorSpecimen, preyName, study);
-        }
-        return specimen;
     }
 
     private Specimen addPredator(LabeledCSVParser parser, Study study) throws StudyImporterException {
@@ -103,12 +99,6 @@ public class StudyImporterForICES extends BaseStudyImporter {
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }
-    }
-
-    private Specimen atePrey(Specimen predatorSpecimen, String preyName, Study study) throws NodeFactoryException {
-        Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preyName, null));
-        predatorSpecimen.ate(preySpecimen);
-        return preySpecimen;
     }
 
     private Double parseDoubleField(LabeledCSVParser parser, String name) {

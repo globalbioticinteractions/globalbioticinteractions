@@ -117,14 +117,15 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             }
             Specimen predatorSpecimen = addPredator(study, parser, line);
             List<Specimen> specimen = addPreyForPredator(header, line, study);
-            for (Specimen prey : specimen) {
-                predatorSpecimen.ate(prey);
-            }
 
             String collectionCode = parser.getValueByLabel(COLLECTION_NO);
             if (collectionCode != null) {
                 specimen.add(predatorSpecimen);
                 setLocationAndDate(locationMap, collectionTimeMap, specimen, collectionCode);
+            }
+
+            for (Specimen prey : specimen) {
+                predatorSpecimen.ate(prey);
             }
         }
     }
