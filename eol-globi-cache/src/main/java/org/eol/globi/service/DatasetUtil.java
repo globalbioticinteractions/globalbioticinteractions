@@ -5,12 +5,14 @@ import org.codehaus.jackson.JsonNode;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 public final class DatasetUtil {
 
     public static String getNamedResourceURI(Dataset dataset, String resourceName) {
         String resourceValue = getNamedResource(dataset, resourceName);
-        return resourceValue == null ? null : dataset.getResourceURI(resourceValue).toString();
+        URI resourceURI = dataset.getResourceURI(resourceValue);
+        return resourceValue == null || resourceURI == null ? null : resourceURI.toString();
     }
 
     public static InputStream getNamedResourceStream(Dataset dataset, String resourceName) throws IOException {
