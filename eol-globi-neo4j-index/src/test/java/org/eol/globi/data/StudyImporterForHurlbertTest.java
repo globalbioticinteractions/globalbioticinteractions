@@ -72,4 +72,22 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         return importer;
     }
 
+    @Test
+    public void parseDateStringChopDecimal() {
+        String dateString = StudyImporterForHurlbert.getDateString("2018", "1.75");
+        assertThat(dateString, is("2018-1"));
+    }
+
+    @Test
+    public void parseDateStringPropagateUnexpected() {
+        String dateString = StudyImporterForHurlbert.getDateString("2018", "1.FOO");
+        assertThat(dateString, is("2018-1.FOO"));
+    }
+
+    @Test
+    public void parseDateString() {
+        String dateString = StudyImporterForHurlbert.getDateString("2018", "1");
+        assertThat(dateString, is("2018-1"));
+    }
+
 }

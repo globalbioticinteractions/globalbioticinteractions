@@ -34,8 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class StudyImporterForHurlbert extends BaseStudyImporter {
@@ -201,9 +199,9 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     }
 
     private Date addCollectionDate(Record record, Study study) {
-        String dateString = getDateString(record, "Observation_Year_Begin", "Observation_Month_Begin");
+        String dateString = getDateString(record.getString("Observation_Year_Begin"), record.getString("Observation_Month_Begin"));
         if (StringUtils.isBlank(dateString)) {
-            dateString = getDateString(record, "Observation_Year_End", "Observation_Month_End");
+            dateString = getDateString(record.getString("Observation_Year_End"), record.getString("Observation_Month_End"));
         }
 
         Date date = null;
@@ -223,20 +221,39 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         return date;
     }
 
-    private String getDateString(Record parser, String yearLabel, String monthLabel) {
+    static String getDateString(String yearString, String monthString) {
         String dateString = "";
-        String year = parser.getString(yearLabel);
+        String year = yearString;
         if (notBlankOrNA(year)) {
             dateString = StringUtils.trim(year);
-            String month = parser.getString(monthLabel);
+            String month = monthString;
             if (notBlankOrNA(month)) {
-                dateString += "-" + StringUtils.trim(month);
+                String monthTrimmedAndChopped = trimAndChopMonth(month);
+                dateString += "-" + monthTrimmedAndChopped;
             }
         }
         return dateString;
     }
 
-    private boolean notBlankOrNA(String str) {
+    private static String trimAndChopMonth(String month) {
+        // from https://github.com/hurlbertlab/dietdatabase/issues/104#issuecomment-421398922
+        //
+        // [...] I have left for the moment the decimal month entries. These were used for studies that examined
+        // diets for different times within the same month. E.g., diet items for June 1-10 versus June 11-20
+        // versus June 21-30. Within each of those periods, % diet info for a given bird species sums to 100%, b
+        // ut with our current database structure, the only way to identify unique diet analyses
+        // (set of records that sum to 100%) is to find the unique combination of Source,
+        // Observation_Year_Begin, Observation_Month_Begin, Observation_Season, Bird_Sample_Size,
+        // Habitat_type, Location_Region, Item_Sample_Size, Taxon, and Diet_Type.
+
+       //  For some of these problem studies, all of the values are identical, and specifying an
+        // Observation_Month of 6.3 versus 6.7 is the only way that these sets of records are distinguished
+        // by some of our summary functions. [...]
+
+        return StringUtils.replacePattern(StringUtils.trim(month), "\\.[0-9]+$", "");
+    }
+
+    private static boolean notBlankOrNA(String str) {
         return StringUtils.isNotBlank(str) && !StringUtils.equalsIgnoreCase(StringUtils.trim(str), "NA");
     }
 

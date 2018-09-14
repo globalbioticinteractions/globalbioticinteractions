@@ -111,11 +111,14 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         if (unsupportedInteractionTypes.size() > 0) {
             StringBuilder unsupportedInteractions = new StringBuilder();
             for (Map.Entry<Long, String> entry : unsupportedInteractionTypes.entrySet()) {
-                unsupportedInteractions.append("\n")
-                        .append("https://www.inaturalist.org/observations/")
+                StringBuilder unsupportedInteraction = new StringBuilder();
+                unsupportedInteraction.append("https://www.inaturalist.org/observations/")
                         .append(entry.getKey())
                         .append(",")
                         .append(entry.getValue());
+                getLogger().warn(null, unsupportedInteraction.toString());
+                unsupportedInteractions.append("\n").append(unsupportedInteraction);
+
             }
             String msg = "found unsupported iNaturalist taxon fields: " + unsupportedInteractions.toString();
             throw new StudyImporterException(msg);
@@ -176,9 +179,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         for (int i = 0; i < array.size(); i++) {
             try {
                 parseSingleInteractions(array.get(i), typesIgnored, typeMap);
-            } catch (NodeFactoryException e) {
-                throw new StudyImporterException("failed to parse inaturalist interactions", e);
-            } catch (IOException e) {
+            } catch (NodeFactoryException | IOException e) {
                 throw new StudyImporterException("failed to parse inaturalist interactions", e);
             }
         }
