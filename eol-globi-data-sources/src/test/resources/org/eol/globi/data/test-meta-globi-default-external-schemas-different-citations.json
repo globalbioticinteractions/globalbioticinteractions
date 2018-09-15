@@ -11,7 +11,15 @@
   "tableSchema": "test-meta-globi-schema.json",
   "tables": [
     {
-      "dcterms:bibliographicCitation": "Seltzer, Carrie; Wysocki, William; Palacios, Melissa; Eickhoff, Anna; Pilla, Hannah; Aungst, Jordan; Mercer, Aaron; Quicho, Jamie; Voss, Neil; Xu, Man; J. Ndangalasi, Henry; C. Lovett, Jon; J. Cordeiro, Norbert (2015): Plant-animal interactions from Africa. figshare. https://dx.doi.org/10.6084/m9.figshare.1526128",
+      "dcterms:bibliographicCitation": "a citation",
+      "url": "https://ndownloader.figshare.com/files/2231424",
+      "headerRowCount": 1,
+      "null": [
+        "NULL",
+        ""
+      ]
+    }, {
+      "dcterms:bibliographicCitation": "other citation",
       "url": "https://ndownloader.figshare.com/files/2231424",
       "headerRowCount": 1,
       "null": [

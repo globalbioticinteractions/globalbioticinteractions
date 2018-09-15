@@ -3,6 +3,7 @@ package org.globalbioticinteractions.dataset;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.Dataset;
 import org.globalbioticinteractions.doi.DOI;
@@ -10,6 +11,10 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
@@ -54,7 +59,30 @@ public class CitationUtil {
     }
 
     public static String citationOrDefaultFor(Dataset dataset, String defaultCitation) {
-        return dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, dataset.getOrDefault("citation", defaultCitation));
+        Set<String> secondaryCitations = new TreeSet<String>();
+        JsonNode config = dataset.getConfig();
+        if (config != null && config.has("tables")) {
+            JsonNode tables = config.get("tables");
+            for (JsonNode table : tables) {
+                if (table.has(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION)) {
+                    String secondaryCitation = table
+                            .get(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION)
+                            .getTextValue();
+                    if (StringUtils.isNotBlank(secondaryCitation)) {
+                        secondaryCitations.add(secondaryCitation);
+                    }
+                }
+            }
+        }
+        String secondaryCitationsJoin = StringUtils.join(secondaryCitations, "; ");
+        String fallbackCitation = StringUtils.isBlank(secondaryCitationsJoin) ? defaultCitation : secondaryCitationsJoin;
+
+        String primaryCitation = dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION,
+                dataset.getOrDefault("citation", fallbackCitation));
+
+        return StringUtils.isBlank(primaryCitation)
+                ? secondaryCitationsJoin
+                : primaryCitation;
     }
 
     public static DOI getDOI(Dataset dataset) {
