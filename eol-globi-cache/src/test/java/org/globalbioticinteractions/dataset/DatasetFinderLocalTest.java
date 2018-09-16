@@ -40,7 +40,7 @@ public class DatasetFinderLocalTest {
         assertThat(actual, is(notNullValue()));
         assertThat(actual.getConfigURI().toString(), endsWith("/test-cache/globalbioticinteractions/template-dataset/6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2!/template-dataset-8abd2ba18457288f33527193299504015fae6def/globi.json"));
         assertThat(actual.getArchiveURI().toString(), is("https://github.com/globalbioticinteractions/template-dataset/archive/8abd2ba18457288f33527193299504015fae6def.zip"));
-        assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature. Accessed on 2017-09-14T16:45:38Z via <https://github.com/globalbioticinteractions/template-dataset/archive/8abd2ba18457288f33527193299504015fae6def.zip>."));
+        assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
     }
 
     @Test(expected = DatasetFinderException.class)
