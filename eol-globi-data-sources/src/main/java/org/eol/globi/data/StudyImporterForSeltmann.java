@@ -89,29 +89,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find expected [occurrences.tsv] resource");
             }
 
-            BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8);
-            LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
-            parser.changeDelimiter('\t');
-            while (parser.getLine() != null) {
-                Map<String, String> prop = new HashMap<String, String>();
-                addKeyValue(parser, prop, "dwc:coreid");
-                addKeyValue(parser, prop, "dwc:basisOfRecord");
-                addKeyValue(parser, prop, FIELD_IDIGBIO_RECORD_ID);
-                addKeyValue(parser, prop, FIELD_ASSOCIATED_GENUS);
-                addKeyValue(parser, prop, FIELD_ASSOCIATED_SPECIFIC_EPITHET);
-                addKeyValue(parser, prop, FIELD_ASSOCIATED_SCIENTIFIC_NAME);
-                addKeyValue(parser, prop, "dwc:basisOfRecord");
-                addKeyValue(parser, prop, "aec:associatedRelationshipTerm");
-                addKeyValue(parser, prop, "aec:associatedRelationshipURI");
-                addKeyValue(parser, prop, "aec:associatedLocationOnHost");
-                addKeyValue(parser, prop, "aec:associatedEmergenceVerbatimDate");
-                String coreId = parser.getValueByLabel("dwc:coreid");
-                if (StringUtils.isBlank(coreId)) {
-                    LOG.warn("no coreid for line [" + parser.getLastLineNumber() + 1 + "]");
-                } else {
-                    assocMap.put(coreId, prop);
-                }
-            }
+            populateAssocMap(assocMap, assocTempFile);
 
             LabeledCSVParser occurrence = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(occTempFile));
             occurrence.changeDelimiter('\t');
@@ -164,6 +142,32 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         }
 
         db.close();
+    }
+
+    private void populateAssocMap(HTreeMap<String, Map<String, String>> assocMap, File assocTempFile) throws IOException {
+        BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8);
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
+        parser.changeDelimiter('\t');
+        while (parser.getLine() != null) {
+            Map<String, String> prop = new HashMap<String, String>();
+            addKeyValue(parser, prop, "dwc:coreid");
+            addKeyValue(parser, prop, "dwc:basisOfRecord");
+            addKeyValue(parser, prop, FIELD_IDIGBIO_RECORD_ID);
+            addKeyValue(parser, prop, FIELD_ASSOCIATED_GENUS);
+            addKeyValue(parser, prop, FIELD_ASSOCIATED_SPECIFIC_EPITHET);
+            addKeyValue(parser, prop, FIELD_ASSOCIATED_SCIENTIFIC_NAME);
+            addKeyValue(parser, prop, "dwc:basisOfRecord");
+            addKeyValue(parser, prop, "aec:associatedRelationshipTerm");
+            addKeyValue(parser, prop, "aec:associatedRelationshipURI");
+            addKeyValue(parser, prop, "aec:associatedLocationOnHost");
+            addKeyValue(parser, prop, "aec:associatedEmergenceVerbatimDate");
+            String coreId = parser.getValueByLabel("dwc:coreid");
+            if (StringUtils.isBlank(coreId)) {
+                LOG.warn("no coreid for line [" + parser.getLastLineNumber() + 1 + "]");
+            } else {
+                assocMap.put(coreId, prop);
+            }
+        }
     }
 
     public static String getTargetNameFromAssocMap(Map<String, String> assoc) {

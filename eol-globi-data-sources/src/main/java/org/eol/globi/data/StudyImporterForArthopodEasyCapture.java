@@ -36,16 +36,23 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
 
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
-        final List<StudyImporter> studyImporters = getStudyImportersForRSSFeed(getDataset(), parserFactory, nodeFactory);
-        for (StudyImporter importer : studyImporters) {
-            if (importer != null) {
-                if (getLogger() != null) {
-                    importer.setLogger(getLogger());
-                }
-                importer.importStudy();
-            }
+        final List<Dataset> studyImporters = getDatasetsForFeed(getDataset(), parserFactory, nodeFactory);
+        for (Dataset dataset : studyImporters) {
+            importDataset(dataset);
         }
         LOG.info(msgPrefix + " done.");
+    }
+
+    private void importDataset(Dataset dataset) throws StudyImporterException {
+        Dataset registeredDataset = nodeFactory.getOrCreateDataset(dataset);
+        NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, registeredDataset);
+        final StudyImporterForSeltmann studyImporter = new StudyImporterForSeltmann(parserFactory, nodeFactoryForDataset);
+        studyImporter.setDataset(registeredDataset);
+
+        if (getLogger() != null) {
+            studyImporter.setLogger(getLogger());
+        }
+        studyImporter.importStudy();
     }
 
     public String getRssFeedUrlString() {
@@ -57,7 +64,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         return DatasetUtil.getNamedResourceURI(dataset, "rss");
     }
 
-    public static List<StudyImporter> getStudyImportersForRSSFeed(Dataset datasetOrig, ParserFactory parserFactory, NodeFactory
+    public static List<Dataset> getDatasetsForFeed(Dataset datasetOrig, ParserFactory parserFactory, NodeFactory
             nodeFactory) throws StudyImporterException {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed;
@@ -68,30 +75,35 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
             throw new StudyImporterException("failed to read rss feed [" + rss + "]", e);
         }
 
-        List<StudyImporter> importers = new ArrayList<StudyImporter>();
+        List<Dataset> datasets = new ArrayList<>();
         final List entries = feed.getEntries();
         for (Object entry : entries) {
             if (entry instanceof SyndEntry) {
-                SyndEntry syndEntry = (SyndEntry) entry;
-                Dataset dataset = embeddedDatasetFor(datasetOrig, StringUtils.trim(syndEntry.getDescription().getValue()), URI.create(StringUtils.trim(syndEntry.getLink())));
-
-                final StudyImporterForSeltmann studyImporter = new StudyImporterForSeltmann(parserFactory, nodeFactory);
-                studyImporter.setDataset(dataset);
-
-                importers.add(studyImporter);
+                datasets.add(datasetFor(datasetOrig, (SyndEntry) entry));
             }
         }
-        return importers;
+        return datasets;
     }
 
-    static Dataset embeddedDatasetFor(Dataset datasetOrig, String embeddedCitation, URI embeddedArchiveURI) {
+    private static Dataset datasetFor(Dataset datasetOrig, SyndEntry entry) {
+        String citation = StringUtils.trim(entry.getDescription().getValue());
+        String archiveURI = StringUtils.trim(entry.getLink());
+        return embeddedDatasetFor(datasetOrig, citation, URI.create(archiveURI));
+    }
+
+    static Dataset embeddedDatasetFor(Dataset datasetOrig, String embeddedCitation, final URI embeddedArchiveURI) {
         ObjectNode config = new ObjectMapper().createObjectNode();
         config.put("citation", embeddedCitation);
         ObjectNode referencesNode = new ObjectMapper().createObjectNode();
         referencesNode.put("archive", embeddedArchiveURI.toString());
         config.put("resources", referencesNode);
 
-        DatasetProxy dataset = new DatasetProxy(datasetOrig);
+        DatasetProxy dataset = new DatasetProxy(datasetOrig) {
+            @Override
+            public URI getArchiveURI() {
+                return embeddedArchiveURI;
+            }
+        };
         dataset.setConfig(config);
         return dataset;
     }

@@ -104,15 +104,20 @@ public class DatasetWithCache extends DatasetMapped {
 
     public DOI getDOI() {
         DOI doi = getDatasetCached().getDOI();
-        if (doi == null && startsWith(getArchiveURI().toString(), CitationUtil.ZENODO_URL_PREFIX)) {
+        if (doi == null && getArchiveURI() != null && startsWith(getArchiveURI().toString(), CitationUtil.ZENODO_URL_PREFIX)) {
             doi = CitationUtil.getDOI(this);
         }
         return doi;
     }
 
     public String getCitation() {
+        String citation = CitationUtil.citationOrDefaultFor(this, "");
+        return StringUtils.isBlank(citation) ? generateCitation(citation) : citation;
+    }
+
+    private String generateCitation(String citation) {
         StringBuilder citationGenerated = new StringBuilder();
-        citationGenerated.append(trim(CitationUtil.citationOrDefaultFor(this, "")));
+        citationGenerated.append(trim(citation));
         DOI doi = getDOI();
         if (doi != null) {
             citationGenerated.append(CitationUtil.separatorFor(citationGenerated.toString()));
@@ -127,8 +132,11 @@ public class DatasetWithCache extends DatasetMapped {
             citationGenerated.append(" on ")
                     .append(getAccessedAt());
         }
-        citationGenerated.append(" via <")
-                .append(getArchiveURI()).append(">.");
+
+        if (null != getArchiveURI()) {
+            citationGenerated.append(" via <")
+                    .append(getArchiveURI()).append(">.");
+        }
         return StringUtils.trim(citationGenerated.toString());
     }
 

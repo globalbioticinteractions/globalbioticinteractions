@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CachedURI;
@@ -8,17 +10,33 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class DatasetWithCacheTest {
+
+    @Test
+    public void citationWithCitationWithLastAccessed() throws IOException {
+        Cache cache = Mockito.mock(Cache.class);
+        CachedURI cacheURI = Mockito.mock(CachedURI.class);
+        when(cacheURI.getAccessedAt()).thenReturn("1970-01-01");
+        when(cache.asMeta(any(URI.class))).thenReturn(cacheURI);
+        Dataset datasetUncached = Mockito.mock(Dataset.class);
+        when(datasetUncached.getNamespace()).thenReturn("some/namespace");
+        when(datasetUncached.getOrDefault("citation", "")).thenReturn("some citation");
+        when(datasetUncached.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION,
+                "some citation"))
+                .thenReturn("some citation");
+
+        DatasetWithCache dataset = new DatasetWithCache(datasetUncached, cache);
+        assertThat(dataset.getCitation(), Is.is("some citation"));
+    }
 
     @Test
     public void citationWithLastAccessed() {
@@ -65,7 +83,7 @@ public class DatasetWithCacheTest {
         CachedURI cacheURI = Mockito.mock(CachedURI.class);
         when(cacheURI.getAccessedAt()).thenReturn(lastAccessed);
         when(cache.asMeta(any(URI.class))).thenReturn(cacheURI);
-        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
+        Dataset datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
         return new DatasetWithCache(datasetUncached, cache);
     }
 

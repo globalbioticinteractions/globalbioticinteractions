@@ -59,7 +59,7 @@ public class CitationUtil {
     }
 
     public static String citationOrDefaultFor(Dataset dataset, String defaultCitation) {
-        Set<String> secondaryCitations = new TreeSet<String>();
+        Set<String> secondaryCitations = new TreeSet<>();
         JsonNode config = dataset.getConfig();
         if (config != null && config.has("tables")) {
             JsonNode tables = config.get("tables");
@@ -75,9 +75,12 @@ public class CitationUtil {
             }
         }
         String secondaryCitationsJoin = StringUtils.join(secondaryCitations, "; ");
-        String fallbackCitation = StringUtils.isBlank(secondaryCitationsJoin) ? defaultCitation : secondaryCitationsJoin;
+        String fallbackCitation = StringUtils.isBlank(secondaryCitationsJoin)
+                ? defaultCitation
+                : secondaryCitationsJoin;
 
-        String primaryCitation = dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION,
+        String primaryCitation = dataset
+                .getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION,
                 dataset.getOrDefault("citation", fallbackCitation));
 
         return StringUtils.isBlank(primaryCitation)

@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
@@ -36,12 +38,16 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
 
     @Test
     public void importTriTrophic() throws StudyImporterException, IOException {
-        importArchive("AEC-TTD-TCN_DwC-A20151028.zip");
+        importArchive("AEC-TTD-TCN_DwC-A20160308.zip");
     }
 
-    protected void importArchive(String archiveName) throws StudyImporterException {
+    private void importArchive(String archiveName) throws StudyImporterException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
-        importer.setDataset(new DatasetImpl(null, URI.create(ARCHIVE_URI_PREFIX + archiveName)));
+        URI archiveURI = URI.create(ARCHIVE_URI_PREFIX + archiveName);
+        DatasetImpl dataset = new DatasetImpl("some/namespace", archiveURI);
+        createAndSetConfig(archiveURI, dataset);
+        importer.setDataset(dataset);
+
         importStudy(importer);
 
         List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -59,5 +65,14 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
 
         assertThat(taxonIndex.findTaxonByName("Megandrena mentzeliae"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Mentzelia tricuspis"), is(notNullValue()));
+    }
+
+    private void createAndSetConfig(URI archiveURI, DatasetImpl dataset) {
+        ObjectMapper objMapper = new ObjectMapper();
+        ObjectNode objectNode = objMapper.createObjectNode();
+        ObjectNode objectNode1 = objMapper.createObjectNode();
+        objectNode1.put("archive", archiveURI.toString());
+        objectNode.put("resources", objectNode1);
+        dataset.setConfig(objectNode);
     }
 }

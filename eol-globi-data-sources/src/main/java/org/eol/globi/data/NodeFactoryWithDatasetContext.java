@@ -13,6 +13,7 @@ import java.util.List;
 public class NodeFactoryWithDatasetContext implements NodeFactory {
 
     private final NodeFactory factory;
+
     private final Dataset dataset;
 
     public NodeFactoryWithDatasetContext(NodeFactory factory, Dataset dataset) {
@@ -139,6 +140,10 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     @Override
     public Interaction createInteraction(Study study) throws NodeFactoryException {
         return factory.createInteraction(study);
+    }
+
+    public Dataset getDataset() {
+        return dataset;
     }
 
 }
