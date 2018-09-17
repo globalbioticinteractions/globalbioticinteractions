@@ -114,7 +114,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
         if (dateTime == null) {
             dateTime = attemptParse(date, "yyyy-MM-dd");
         }
-        if (dateTime.getYear() > 2015) {
+        if (dateTime != null && dateTime.getYear() > 2015) {
             dateTime = new DateTime(dateTime.getYear() - 100, dateTime.getMonthOfYear(), dateTime.getDayOfMonth(), 0, 0);
         }
         return dateTime;

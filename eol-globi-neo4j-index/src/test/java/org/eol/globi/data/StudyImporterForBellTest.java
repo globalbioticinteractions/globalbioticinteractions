@@ -9,6 +9,7 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -40,5 +41,17 @@ public class StudyImporterForBellTest extends GraphDBTestCase {
     public void parseDateTime() {
         DateTime dateTime = StudyImporterForBell.parseDateTime("6/28/34");
         assertThat(dateTime.getYear(), is(1934));
+    }
+
+    @Test
+    public void parseDateTimeNull() {
+        DateTime dateTime = StudyImporterForBell.parseDateTime("mickey mouse");
+        assertThat(dateTime, is(nullValue()));
+    }
+
+    @Test
+    public void parseDateTime2() {
+        DateTime dateTime = StudyImporterForBell.parseDateTime("6/23/98");
+        assertThat(dateTime.getYear(), is(1998));
     }
 }
