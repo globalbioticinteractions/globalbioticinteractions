@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.util.NodeUtil;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -33,5 +34,11 @@ public class StudyImporterForBellTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Tamias speciosus"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Hoplopleura arboricola"), is(notNullValue()));
         assertThat(nodeFactory.findStudy("bell-"), is(notNullValue()));
+    }
+
+    @Test
+    public void parseDateTime() {
+        DateTime dateTime = StudyImporterForBell.parseDateTime("6/28/34");
+        assertThat(dateTime.getYear(), is(1934));
     }
 }

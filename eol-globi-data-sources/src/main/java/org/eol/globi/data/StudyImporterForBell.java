@@ -96,13 +96,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
 
     protected java.util.Date parseDate(LabeledCSVParser parser) throws StudyImporterException {
         String date = StringUtils.trim(parser.getValueByLabel("VERBATIM_DATE"));
-        DateTime dateTime = attemptParse(date, "MM/dd/yy");
-        if (dateTime == null) {
-            dateTime = attemptParse(date, "MM-dd-yy");
-        }
-        if (dateTime == null) {
-            dateTime = attemptParse(date, "yyyy-MM-dd");
-        }
+        DateTime dateTime = parseDateTime(date);
 
         if (!StringUtils.equals("before 1 Jan 2005", date) && dateTime == null) {
             throw new StudyImporterException("failed to parse [" + date + "] line [" + parser.lastLineNumber() + "]");
@@ -111,7 +105,22 @@ public class StudyImporterForBell extends BaseStudyImporter {
         return dateTime == null ? null : dateTime.toDate();
     }
 
-    protected DateTime attemptParse(String date, String pattern) {
+    static DateTime parseDateTime(String date) {
+        DateTime dateTime = attemptParse(date, "MM/dd/yy");
+        if (dateTime == null) {
+            dateTime = attemptParse(date, "MM-dd-yy");
+
+        }
+        if (dateTime == null) {
+            dateTime = attemptParse(date, "yyyy-MM-dd");
+        }
+        if (dateTime.getYear() > 2015) {
+            dateTime = new DateTime(dateTime.getYear() - 100, dateTime.getMonthOfYear(), dateTime.getDayOfMonth(), 0, 0);
+        }
+        return dateTime;
+    }
+
+    private static DateTime attemptParse(String date, String pattern) {
         DateTime dateTime = null;
         try {
             dateTime = DateTimeFormat.forPattern(pattern).withZoneUTC().parseDateTime(date);
@@ -121,7 +130,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
         return dateTime;
     }
 
-    protected String getErrorMessage(String resource, LabeledCSVParser parser) {
+    private String getErrorMessage(String resource, LabeledCSVParser parser) {
         String msg = "failed to import [" + resource + "]";
         if (parser != null) {
             msg += " on line [" + parser.lastLineNumber() + "]";
