@@ -119,6 +119,39 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void matchCalyptraWithExtraWhitespace() throws PropertyEnricherException {
+        String name = "Calyptra  thalictri";
+        assertMatchFor(name);
+    }
+
+    @Test
+    public void matchCalyptraWithNoExtraWhitespace() throws PropertyEnricherException {
+        String name = "Calyptra thalictri";
+        assertMatchFor(name);
+    }
+
+    private void assertMatchFor(String name) throws PropertyEnricherException {
+        // see https://github.com/seltmann/vampire-moth-globi/issues/3
+        String termCache = "/org/eol/globi/taxon/taxonCacheCalyptra.tsv";
+        String termMap = "/org/eol/globi/taxon/taxonMapCalyptra.tsv";
+        final TaxonCacheService cacheService = new TaxonCacheService(termCache, termMap);
+        cacheService.setCacheDir(mapdbDir);
+
+        AtomicBoolean matched = new AtomicBoolean(false);
+        cacheService.findTermsForNames(Collections.singletonList(name), new TermMatchListener() {
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon enrichedTaxon, NameType nameType) {
+                if (!matched.get()) {
+                    assertThat(enrichedTaxon.getExternalId(), is("EOL:545931"));
+                    assertThat(enrichedTaxon.getName(), is("Calyptra thalictri"));
+                    matched.set(true);
+                }
+            }
+        });
+        assertTrue(matched.get());
+    }
+
+    @Test
     public void noMatchExplicit() throws PropertyEnricherException {
         final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheNoHeader.tsv", TAXON_MAP_TEST_RESOURCE);
         cacheService.setCacheDir(mapdbDir);
