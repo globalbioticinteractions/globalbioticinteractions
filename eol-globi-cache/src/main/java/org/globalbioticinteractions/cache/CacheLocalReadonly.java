@@ -95,7 +95,7 @@ public class CacheLocalReadonly implements Cache {
         URI candidateURI = resourceURI;
         candidateURI = getDatasetArchiveURI(candidateURI);
 
-        if (StringUtils.startsWith(candidateURI.toString(), cacheDir.toString())) {
+        if (candidateURI != null && StringUtils.startsWith(candidateURI.toString(), cacheDir.toString())) {
             hashCandidate = StringUtils.replace(candidateURI.toString(), cacheDir.toString(), "");
         }
         return hashCandidate;
