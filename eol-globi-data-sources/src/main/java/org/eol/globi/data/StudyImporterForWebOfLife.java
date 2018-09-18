@@ -121,6 +121,9 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
                 put("Seed Dispersal", InteractType.HAS_DISPERAL_VECTOR);
                 put("Host-Parasite", InteractType.HAS_PARASITE);
                 put("Plant-Herbivore", InteractType.EATEN_BY);
+                put("Plant-Ant", InteractType.INTERACTS_WITH);
+                put("Anemone-Fish", InteractType.HOST_OF);
+                put("Food Webs", InteractType.EATEN_BY);
             }
         };
         final InteractType interactType1 = interactionTypeMap.get(interactionTypeString);
