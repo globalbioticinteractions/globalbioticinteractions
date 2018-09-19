@@ -24,6 +24,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
     private static Map<String, TermImpl> LOCALE_TO_GEONAMES = new HashMap<String, TermImpl>() {{
         put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new TermImpl(GEONAMES.getIdPrefix() + "6612109", "Otago"));
         put("Country: Scotland", new TermImpl(GEONAMES.getIdPrefix() + "2638360", "Scotland"));
+        put("Country: USA;   State: Kentucky", new TermImpl(GEONAMES.getIdPrefix() + "6254925", "State of Kentucky"));
         put("Country: USA;   State: Georgia", new TermImpl(GEONAMES.getIdPrefix() + "4197000", "State of Georgia"));
         put("Country: USA;   State: Iowa", new TermImpl(GEONAMES.getIdPrefix() + "4862182", "State of Iowa"));
         put("Country: Southern Ocean", new TermImpl(GEONAMES.getIdPrefix() + "4036776", "Southern Ocean"));
