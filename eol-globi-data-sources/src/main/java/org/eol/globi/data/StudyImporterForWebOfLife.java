@@ -106,9 +106,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
                 importNetwork(parseInteractionType(parser),
                         parseLocation(parser), study, networkTempFileMap.get(networkId));
             }
-        } catch (IOException e) {
-            throw new StudyImporterException(e);
-        } catch (NodeFactoryException e) {
+        } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException(e);
         }
     }
@@ -128,7 +126,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         };
         final InteractType interactType1 = interactionTypeMap.get(interactionTypeString);
         if (interactType1 == null) {
-            LOG.warn("found unsupported interaction type [" + interactionTypeString + "]");
+            getLogger().warn(null, "found unsupported interaction type [" + interactionTypeString + "]");
         }
         return interactType1 == null ? InteractType.INTERACTS_WITH : interactType1;
     }
@@ -143,7 +141,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
                 final double lng = Double.parseDouble(longitude);
                 networkLocation = nodeFactory.getOrCreateLocation(new LocationImpl(lat, lng, null, null));
             } catch (NumberFormatException ex) {
-                throw new StudyImporterException("found invalid lat,lng pair: [" + latitude + "], [" + longitude + "] on line [" + parser.lastLineNumber() + "] in [references.csv]");
+                getLogger().warn(null, "found invalid lat,lng pair: [" + latitude + "], [" + longitude + "] on line [" + parser.lastLineNumber() + "] in [references.csv]");
             }
         }
         return networkLocation;
