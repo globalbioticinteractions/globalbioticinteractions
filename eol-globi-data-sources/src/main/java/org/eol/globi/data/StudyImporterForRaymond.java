@@ -74,11 +74,11 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         boolean isDone = false;
         for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try {
-                LOG.info("[" + resourceUrl + "] downloading (attempt " + attemptCount + ")...");
+                LOG.info("[" + resourceUrl + "] retrieving (attempt " + attemptCount + ")...");
                 InputStream inputStream = getDataset().getResource(resourceUrl);
                 importData(inputStream);
                 isDone = true;
-                LOG.info("[" + resourceUrl + "] downloaded and imported.");
+                LOG.info("[" + resourceUrl + "] retrieved and imported.");
             } catch (IOException e) {
                 String msg = "failed to download [" + resourceUrl + "]";
                 if (attemptCount > MAX_ATTEMPT) {
