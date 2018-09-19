@@ -16,8 +16,7 @@ public class ExportCitations implements GraphExporter {
 
 
     public static final String CYPHER_QUERY = "START study = node:studies('*:*') " +
-            "RETURN study.externalId? as uri" +
-            ", study.citation? as citation";
+            "RETURN study.doi? as doi, study.citation? as citation";
 
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
