@@ -44,10 +44,10 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
     }
 
     private void importDataset(Dataset dataset) throws StudyImporterException {
-        Dataset registeredDataset = nodeFactory.getOrCreateDataset(dataset);
-        NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, registeredDataset);
+        nodeFactory.getOrCreateDataset(dataset);
+        NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
         final StudyImporterForSeltmann studyImporter = new StudyImporterForSeltmann(parserFactory, nodeFactoryForDataset);
-        studyImporter.setDataset(registeredDataset);
+        studyImporter.setDataset(dataset);
 
         if (getLogger() != null) {
             studyImporter.setLogger(getLogger());
