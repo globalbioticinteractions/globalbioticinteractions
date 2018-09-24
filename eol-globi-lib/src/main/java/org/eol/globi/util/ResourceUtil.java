@@ -49,11 +49,17 @@ public class ResourceUtil {
             } else if (StringUtils.startsWith(resource, "ftp:/")) {
                 URI uri = URI.create(resource);
                 FTPClient ftpClient = new FTPClient();
-                ftpClient.connect(uri.getHost());
-                ftpClient.login("anonymous", "info@globalbioticinteractions.org");
-                is = ftpClient.isConnected()
-                        ? ftpClient.retrieveFileStream(uri.getPath())
-                        : null;
+                try {
+                    ftpClient.connect(uri.getHost());
+                    ftpClient.login("anonymous", "info@globalbioticinteractions.org");
+                    is = ftpClient.isConnected()
+                            ? cacheAndOpenStream(ftpClient.retrieveFileStream(uri.getPath()))
+                            : null;
+                } finally {
+                    if (ftpClient.isConnected()) {
+                        ftpClient.disconnect();
+                    }
+                }
             } else {
                 String classpathResource = resource;
                 if (StringUtils.startsWith(resource, "classpath:")) {
