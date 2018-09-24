@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -45,6 +46,14 @@ public class ResourceUtil {
                 is = new FileInputStream(new File(URI.create(resource)));
             } else if (StringUtils.startsWith(resource, "jar:file:/")) {
                 is = URI.create(resource).toURL().openStream();
+            } else if (StringUtils.startsWith(resource, "ftp:/")) {
+                URI uri = URI.create(resource);
+                FTPClient ftpClient = new FTPClient();
+                ftpClient.connect(uri.getHost());
+                ftpClient.login("anonymous", "info@globalbioticinteractions.org");
+                is = ftpClient.isConnected()
+                        ? ftpClient.retrieveFileStream(uri.getPath())
+                        : null;
             } else {
                 String classpathResource = resource;
                 if (StringUtils.startsWith(resource, "classpath:")) {
