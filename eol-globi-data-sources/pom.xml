@@ -60,10 +60,24 @@
             <groupId>com.univocity</groupId>
             <artifactId>univocity-parsers</artifactId>
             <version>2.3.0</version>
-        </dependency><dependency>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.gbif</groupId>
+            <artifactId>dwca-io</artifactId>
+            <version>2.2</version>
+        </dependency>
+
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>gbif-repository</id>
+            <url>http://repository.gbif.org/content/groups/gbif</url>
+        </repository>
+    </repositories>
 </project>
