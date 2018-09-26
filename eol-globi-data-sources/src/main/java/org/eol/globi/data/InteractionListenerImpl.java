@@ -15,6 +15,7 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InvalidLocationException;
+import org.gbif.dwc.terms.DwcTerm;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
@@ -53,6 +54,8 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 class InteractionListenerImpl implements InteractionListener {
     private static final Log LOG = LogFactory.getLog(InteractionListenerImpl.class);
+    public static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
+    public static final String[] LOCALITY_NAME_TERMS = {LOCALITY_NAME, DwcTerm.locality.normQName, DwcTerm.verbatimLocality.normQName};
     private final NodeFactory nodeFactory;
     private final GeoNamesService geoNamesService;
 
@@ -242,7 +245,7 @@ class InteractionListenerImpl implements InteractionListener {
                 getLogger().warn(study, "found invalid location: [" + e.getMessage() + "]");
             }
         }
-        String localityId = link.get(LOCALITY_ID);
+        String localityId = getFirstValueForTerms(link, LOCALITY_ID_TERMS);
 
         if (centroid == null) {
             if (StringUtils.isNotBlank(localityId)) {
@@ -254,10 +257,13 @@ class InteractionListenerImpl implements InteractionListener {
         if (centroid != null) {
             location = new LocationImpl(centroid.getLat(),
                     centroid.getLng(), null, null);
+        } else if (StringUtils.isNotBlank(localityId) || StringUtils.isNotBlank(LOCALITY_NAME)) {
+            location = new LocationImpl(null,
+                    null, null, null);
             if (StringUtils.isNotBlank(localityId)) {
                 location.setLocalityId(localityId);
             }
-            String localityName = link.get(LOCALITY_NAME);
+            String localityName = getFirstValueForTerms(link, LOCALITY_NAME_TERMS);
             if (StringUtils.isNotBlank(localityName)) {
                 location.setLocality(localityName);
             }

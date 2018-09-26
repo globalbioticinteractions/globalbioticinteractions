@@ -171,7 +171,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     public void start() {
         try {
             if (indexDir == null) {
-                indexPath = new File(System.getProperty("java.io.tmpdir") + "/taxon" + System.currentTimeMillis());
+                indexPath = new File(FileUtils.getTempDirectoryPath() + "/taxon" + System.currentTimeMillis());
                 LOG.info("index directory at [" + indexPath + "] created.");
                 //FileUtils.forceDeleteOnExit(indexPath);
                 indexDir = new SimpleFSDirectory(indexPath);

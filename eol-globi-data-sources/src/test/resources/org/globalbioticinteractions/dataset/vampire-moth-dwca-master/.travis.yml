@@ -1,0 +1,8 @@
+install: 
+  - wget "https://raw.githubusercontent.com/globalbioticinteractions/globinizer/master/check-dataset.sh" -O check-dataset.sh
+  - chmod +x check-dataset.sh
+  - wget "https://raw.githubusercontent.com/globalbioticinteractions/globinizer/master/resolve-names.sh" -O resolve-names.sh
+  - chmod +x resolve-names.sh
+  - wget "https://raw.githubusercontent.com/globalbioticinteractions/globinizer/master/create-taxon-cache-map.sh" -O create-taxon-cache-map.sh
+
+script: ./resolve-names.sh ${TRAVIS_REPO_SLUG}
