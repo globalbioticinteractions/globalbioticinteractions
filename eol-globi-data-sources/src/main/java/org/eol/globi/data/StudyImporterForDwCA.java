@@ -4,6 +4,7 @@ import com.hp.hpl.jena.vocabulary.DCTerms;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.*;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.InteractType;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
@@ -59,8 +60,10 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
 
                     List<Map<String, String>> interactions = interactionCandidates
                             .stream()
-                            .filter(x -> x.containsKey(INTERACTION_TYPE_NAME) || x.containsKey(TARGET_TAXON_NAME))
+                            .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME))
                             .collect(Collectors.toList());
+
+                    logUnsupportedInteractionTypes(interactionCandidates);
 
 
                     Map<String, String> interaction = new HashMap<>(rec.terms().size());
@@ -84,6 +87,18 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
         } catch (IOException e) {
             throw new StudyImporterException("failed to read archive [" + getDataset().getArchiveURI() + "]", e);
         }
+    }
+
+    private void logUnsupportedInteractionTypes(List<Map<String, String>> interactionCandidates) {
+        interactionCandidates
+                .stream()
+                .filter(x -> !x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(INTERACTION_TYPE_NAME))
+                .map(x -> x.get(INTERACTION_TYPE_NAME))
+                .forEach(x -> {
+                    if (getLogger() != null) {
+                        getLogger().warn(null, "found unsupported interaction type [" + x + "]");
+                    }
+                });
     }
 
     private void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, Term term) {
@@ -110,7 +125,12 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
             String[] verbTaxon = StringUtils.splitByWholeSeparator(part, ":", 2);
             if (verbTaxon.length == 2) {
                 HashMap<String, String> e = new HashMap<>();
-                e.put(INTERACTION_TYPE_NAME, StringUtils.lowerCase(StringUtils.trim(verbTaxon[0])));
+                String interactionTypeName = StringUtils.lowerCase(StringUtils.trim(verbTaxon[0]));
+                e.put(INTERACTION_TYPE_NAME, interactionTypeName);
+                InteractType interactType = InteractType.typeOf(interactionTypeName);
+                if (interactType != null) {
+                    e.put(INTERACTION_TYPE_ID, interactType.getIRI());
+                }
                 e.put(TARGET_TAXON_NAME, StringUtils.trim(verbTaxon[1]));
                 properties.add(e);
             }

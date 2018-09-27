@@ -142,7 +142,7 @@ class InteractionListenerImpl implements InteractionListener {
 
         return hasSourceTaxon
                 .and(hasTargetTaxon)
-                .and(hasInteractionType.or(createInteractionNamePredicate(getLogger())))
+                .and(hasInteractionType)
                 .and(hasReferenceId)
                 .test(link);
     }
@@ -155,22 +155,6 @@ class InteractionListenerImpl implements InteractionListener {
                 logger.warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
             }
             return hasValidId;
-        };
-    }
-
-    static Predicate<Map<String, String>> createInteractionNamePredicate(ImportLogger logger) {
-        return (Map<String, String> l) -> {
-            String interactionTypeName = l.get(INTERACTION_TYPE_NAME);
-            boolean hasValidName = false;
-            try {
-                 hasValidName = InteractType.typeOf(interactionTypeName) != null;
-
-            } catch (IllegalArgumentException ex) {
-                if (logger != null) {
-                    logger.warn(null, "found unsupported interactionType with name [" + interactionTypeName + "]");
-                }
-            }
-            return hasValidName;
         };
     }
 
