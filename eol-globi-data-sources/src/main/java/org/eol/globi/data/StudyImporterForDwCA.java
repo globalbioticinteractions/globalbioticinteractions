@@ -33,33 +33,6 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
     }
 
-    static List<Map<String, String>> parseAssociatedTaxa(String s) {
-        List<Map<String, String>> properties = new ArrayList<>();
-        String[] parts = StringUtils.splitByWholeSeparator(s, "|");
-        for (String part : parts) {
-            String[] verbTaxon = StringUtils.splitByWholeSeparator(part, ":", 2);
-            if (verbTaxon.length == 2) {
-                HashMap<String, String> e = new HashMap<>();
-                e.put(INTERACTION_TYPE_NAME, StringUtils.lowerCase(StringUtils.trim(verbTaxon[0])));
-                e.put(TARGET_TAXON_NAME, StringUtils.trim(verbTaxon[1]));
-                properties.add(e);
-            }
-        }
-        return properties;
-    }
-
-    static Map<String, String> parseDynamicProperties(String s) {
-        Map<String, String> properties = new HashMap<>();
-        String[] parts = StringUtils.splitByWholeSeparator(s, ";");
-        for (String part : parts) {
-            String[] propertyValue = StringUtils.splitByWholeSeparator(part, ":", 2);
-            if (propertyValue.length == 2) {
-                properties.put(StringUtils.trim(propertyValue[0]), StringUtils.trim(propertyValue[1]));
-            }
-        }
-        return properties;
-    }
-
     @Override
     public void importStudy() throws StudyImporterException {
         try {
@@ -68,7 +41,7 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
             }
 
             Path tmpDwA = Files.createTempDirectory("dwca");
-            Archive archive = DwCAUtil.archiveFor(getDataset().getArchiveURI(), tmpDwA.toString());
+            Archive archive = DwCAUtil.archiveFor(getDataset().getResourceURI(getDataset().getArchiveURI().toString()), tmpDwA.toString());
             InteractionListener interactionListener = getListener();
             for (Record rec : archive.getCore()) {
                 String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
@@ -129,4 +102,33 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
     void setListener(InteractionListener listener) {
         this.listener = listener;
     }
+
+    static List<Map<String, String>> parseAssociatedTaxa(String s) {
+        List<Map<String, String>> properties = new ArrayList<>();
+        String[] parts = StringUtils.splitByWholeSeparator(s, "|");
+        for (String part : parts) {
+            String[] verbTaxon = StringUtils.splitByWholeSeparator(part, ":", 2);
+            if (verbTaxon.length == 2) {
+                HashMap<String, String> e = new HashMap<>();
+                e.put(INTERACTION_TYPE_NAME, StringUtils.lowerCase(StringUtils.trim(verbTaxon[0])));
+                e.put(TARGET_TAXON_NAME, StringUtils.trim(verbTaxon[1]));
+                properties.add(e);
+            }
+        }
+        return properties;
+    }
+
+    static Map<String, String> parseDynamicProperties(String s) {
+        Map<String, String> properties = new HashMap<>();
+        String[] parts = StringUtils.splitByWholeSeparator(s, ";");
+        for (String part : parts) {
+            String[] propertyValue = StringUtils.splitByWholeSeparator(part, ":", 2);
+            if (propertyValue.length == 2) {
+                properties.put(StringUtils.trim(propertyValue[0]), StringUtils.trim(propertyValue[1]));
+            }
+        }
+        return properties;
+    }
+
+
 }
