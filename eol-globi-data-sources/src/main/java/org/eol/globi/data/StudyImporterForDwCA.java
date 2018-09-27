@@ -1,8 +1,5 @@
 package org.eol.globi.data;
 
-import com.hp.hpl.jena.vocabulary.DCTerms;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.io.*;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.gbif.dwc.Archive;
@@ -12,17 +9,14 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.eol.globi.data.StudyImporterForTSV.*;
 
@@ -63,7 +57,7 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
                             .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME))
                             .collect(Collectors.toList());
 
-                    logUnsupportedInteractionTypes(interactionCandidates);
+                    logUnsupportedInteractionTypes(interactionCandidates, getLogger());
 
 
                     Map<String, String> interaction = new HashMap<>(rec.terms().size());
@@ -89,14 +83,14 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
         }
     }
 
-    private void logUnsupportedInteractionTypes(List<Map<String, String>> interactionCandidates) {
+     static void logUnsupportedInteractionTypes(List<Map<String, String>> interactionCandidates, final ImportLogger logger) {
         interactionCandidates
                 .stream()
-                .filter(x -> !x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(INTERACTION_TYPE_NAME))
+                .filter(x -> !x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME))
                 .map(x -> x.get(INTERACTION_TYPE_NAME))
                 .forEach(x -> {
-                    if (getLogger() != null) {
-                        getLogger().warn(null, "found unsupported interaction type [" + x + "]");
+                    if (logger != null) {
+                        logger.warn(null, "found unsupported interaction type [" + x + "]");
                     }
                 });
     }

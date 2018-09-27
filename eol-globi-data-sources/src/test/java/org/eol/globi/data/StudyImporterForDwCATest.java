@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetImpl;
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class StudyImporterForDwCATest {
 
@@ -77,6 +79,67 @@ public class StudyImporterForDwCATest {
         assertThat(properties.size(), is(1));
         assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+    }
+
+    @Test
+    public void associatedTaxaUnsupported() {
+        String associatedTaxa = "eatz: Homo sapiens";
+        List<Map<String, String>> properties = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eatz"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void logUnsupported() {
+        String associatedTaxa = "eatz: Homo sapiens";
+        List<Map<String, String>> properties = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
+
+        final AtomicBoolean loggedSomething = new AtomicBoolean(false);
+        StudyImporterForDwCA.logUnsupportedInteractionTypes(properties, new ImportLogger() {
+            @Override
+            public void warn(LogContext study, String message) {
+                assertThat(message, is("found unsupported interaction type [eatz]"));
+                loggedSomething.set(true);
+            }
+
+            @Override
+            public void info(LogContext study, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext study, String message) {
+
+            }
+        });
+        assertThat(loggedSomething.get(), is(true));
+    }
+
+    @Test
+    public void notLogSupported() {
+        String associatedTaxa = "eats: Homo sapiens";
+        List<Map<String, String>> properties = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
+
+        StudyImporterForDwCA.logUnsupportedInteractionTypes(properties, new ImportLogger() {
+            @Override
+            public void warn(LogContext study, String message) {
+                fail("boom!");
+            }
+
+            @Override
+            public void info(LogContext study, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext study, String message) {
+
+            }
+        });
     }
 
     @Test
