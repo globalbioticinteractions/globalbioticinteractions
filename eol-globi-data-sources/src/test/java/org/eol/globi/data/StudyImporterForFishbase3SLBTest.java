@@ -53,9 +53,9 @@ public class StudyImporterForFishbase3SLBTest {
         assertThat(firstItem.get("localityId"), Is.is(nullValue()));
         assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:SLB:SPECCODE:23"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Trichoplax adhaerens"));
-        assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("sourceLifeStageName"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("dead animals"));
-        assertThat(firstItem.get("targetLifeStage"), Is.is("n.a./others"));
+        assertThat(firstItem.get("targetLifeStageName"), Is.is("n.a./others"));
         assertThat(firstItem.get("studyTitle"), Is.is("SLB_REF:53"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("eats"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002470"));
@@ -79,10 +79,10 @@ public class StudyImporterForFishbase3SLBTest {
         assertThat(firstItem.get("localityId"), Is.is("SLB_COUNTRY:036|"));
         assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:96"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Euthynnus affinis"));
-        assertThat(firstItem.get("sourceLifeStage"), Is.is("recruits/juv."));
+        assertThat(firstItem.get("sourceLifeStageName"), Is.is("recruits/juv."));
         assertThat(firstItem.get("targetTaxonId"), Is.is("FBC:SLB:SPECCODE:83456"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("Odontodactylus cultrifer"));
-        assertThat(firstItem.get("targetLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("targetLifeStageName"), Is.is("juv./adults"));
         assertThat(firstItem.get("studyTitle"), Is.is("SLB_REF:97658"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("preysOn"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002439"));
@@ -106,10 +106,10 @@ public class StudyImporterForFishbase3SLBTest {
         assertThat(firstItem.get("localityId"), Is.is("SLB_COUNTRY:036|"));
         assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:SLB:SPECCODE:9329"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Portunus pelagicus"));
-        assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("sourceLifeStageName"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonId"), Is.is(nullValue()));
         assertThat(firstItem.get("targetTaxonName"), Is.is("Gammarid amphipods"));
-        assertThat(firstItem.get("targetLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("targetLifeStageName"), Is.is("juv./adults"));
         assertThat(firstItem.get("studyTitle"), Is.is("SLB_REF:8747"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("eats"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002470"));
