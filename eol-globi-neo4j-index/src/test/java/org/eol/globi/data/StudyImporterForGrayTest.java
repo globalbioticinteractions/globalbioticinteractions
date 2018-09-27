@@ -70,9 +70,9 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
         assertThat(maps.size(), is(4));
         Map<String, String> firstLink = maps.get(0);
         assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Ancylus fluviatilis"));
-        assertThat(firstLink.get(StudyImporterForTSV.SOURCE_LIFE_STAGE), is(nullValue()));
+        assertThat(firstLink.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME), is(nullValue()));
         assertThat(firstLink.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("FPOM"));
-        assertThat(firstLink.get(StudyImporterForTSV.TARGET_LIFE_STAGE), is(nullValue()));
+        assertThat(firstLink.get(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME), is(nullValue()));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_CITATION), is("Ledger, M.E., Brown, L.E., Edwards, F., Milner, A.M. & Woodward, G. (2012) Drought alters the structure and functioning of complex food webs. Nature Climate Change."));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_ID), is("10.5281/zenodo.13751/source.id/50"));
         assertStaticInfo(firstLink);

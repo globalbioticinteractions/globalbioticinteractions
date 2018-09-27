@@ -157,7 +157,7 @@ public class GitHubImporterFactory {
                     isMetaTable = isMetaTable || isMetaTable(node);
                 }
             } else {
-                isMetaTable = isMetaTable || isMetaTable(contextNode);
+                isMetaTable = isMetaTable(contextNode);
             }
         }
         return isMetaTable;

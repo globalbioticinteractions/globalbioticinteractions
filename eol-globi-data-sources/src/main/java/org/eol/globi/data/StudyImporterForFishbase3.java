@@ -168,7 +168,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
             }
         }
         String predatorStage = columnValueOrNull(record, "PredatorStage");
-        props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, predatorStage);
+        props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, predatorStage);
 
 
         String preyName = columnValueOrNull(record, foodItemName);
@@ -197,7 +197,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
 
         String preyLifestage = columnValueOrNull(record, "PreyStage");
-        props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
+        props.put(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME, preyLifestage);
     }
 
     private static void lookupReference(Map<String, Map<String, String>> references, String defaultNamespace, Record record, Map<String, String> props, String refColumnName) {
@@ -226,7 +226,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
                 }
             }
             String predatorStage = columnValueOrNull(record, "Predatstage");
-            props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, predatorStage);
+            props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, predatorStage);
 
 
             String preySpeciesCode = columnValueOrNull(record, "SpecCode");
@@ -243,7 +243,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
 
 
             String preyLifestage = columnValueOrNull(record, "PreyStage");
-            props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
+            props.put(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME, preyLifestage);
 
             lookupReference(references, defaultNamespace, record, props, "PredatsRefNo");
 
@@ -308,7 +308,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
         props.put(StudyImporterForTSV.TARGET_TAXON_NAME, targetTaxonName);
 
         String preyLifestage = columnValueOrNull(record, "Stage");
-        props.put(StudyImporterForTSV.TARGET_LIFE_STAGE, preyLifestage);
+        props.put(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME, preyLifestage);
     }
 
     private static Map<String, String> importPredator(Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace, Record record) {
@@ -323,7 +323,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
             }
         }
         String predatorStage = columnValueOrNull(record, "SampleStage");
-        props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, predatorStage);
+        props.put(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, predatorStage);
 
         lookupReference(references, namespace, record, props, "DietRefNo");
         lookupLocality(countries, namespace, record, props);

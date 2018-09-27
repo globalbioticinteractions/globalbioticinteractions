@@ -9,6 +9,7 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -25,11 +26,15 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
@@ -43,10 +48,14 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     public void importBlankCitation() throws StudyImporterException {
         final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, null);
         final HashMap<String, String> link = new HashMap<String, String>();
+        link.put(SOURCE_OCCURRENCE_ID, "123");
+        link.put(TARGET_OCCURRENCE_ID, "456");
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
         link.put(SOURCE_BODY_PART_ID, "bla:123");
         link.put(SOURCE_BODY_PART_NAME, "snout");
+        link.put(SOURCE_LIFE_STAGE_ID, "some:stage");
+        link.put(SOURCE_LIFE_STAGE_NAME, "stage");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_ID, "mouse");
         link.put(TARGET_BODY_PART_ID, "bla:345");
@@ -80,6 +89,12 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
                 assertLocation(predator.getSampleLocation());
                 assertLocation(prey.getSampleLocation());
+
+                assertThat(predator.getExternalId(), is("123"));
+                assertThat(prey.getExternalId(), is("456"));
+
+                assertThat(predator.getLifeStage().getId(), is("some:stage"));
+                assertThat(predator.getLifeStage().getName(), is("stage"));
                 foundPair = true;
 
                 assertThat(specimenRel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));

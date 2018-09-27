@@ -44,11 +44,17 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
@@ -161,8 +167,11 @@ class InteractionListenerImpl implements InteractionListener {
     private void importValidLink(Map<String, String> link) throws StudyImporterException, IOException {
         Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
 
-        Specimen source = createSpecimen(link, study, SOURCE_TAXON_NAME, SOURCE_TAXON_ID, SOURCE_BODY_PART_NAME, SOURCE_BODY_PART_ID);
-        Specimen target = createSpecimen(link, study, TARGET_TAXON_NAME, TARGET_TAXON_ID, TARGET_BODY_PART_NAME, TARGET_BODY_PART_ID);
+        Specimen source = createSpecimen(link, study, SOURCE_TAXON_NAME, SOURCE_TAXON_ID, SOURCE_BODY_PART_NAME, SOURCE_BODY_PART_ID, SOURCE_LIFE_STAGE_NAME, SOURCE_LIFE_STAGE_ID);
+        setExternalIdNotBlank(link, SOURCE_OCCURRENCE_ID, source);
+        Specimen target = createSpecimen(link, study, TARGET_TAXON_NAME, TARGET_TAXON_ID, TARGET_BODY_PART_NAME, TARGET_BODY_PART_ID, TARGET_LIFE_STAGE_NAME, TARGET_LIFE_STAGE_ID);
+        setExternalIdNotBlank(link, TARGET_OCCURRENCE_ID, target);
+
 
         String interactionTypeId = link.get(INTERACTION_TYPE_ID);
         InteractType type = InteractType.typeOf(interactionTypeId);
@@ -170,14 +179,30 @@ class InteractionListenerImpl implements InteractionListener {
         source.interactsWith(target, type, getOrCreateLocation(study, link));
     }
 
-    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabel, String bodyPartName, String bodyPartId) throws StudyImporterException {
+    private void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
+        String s = link.get(sourceOccurrenceId);
+        if (StringUtils.isNotBlank(s)) {
+            source1.setExternalId(s);
+        }
+    }
+
+    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabel, String bodyPartName, String bodyPartId, String lifeStageName, String lifeStageId) throws StudyImporterException {
         String sourceTaxonName = link.get(taxonNameLabel);
         String sourceTaxonId = link.get(taxonIdLabel);
         Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId));
         setBasisOfRecordIfAvailable(link, source);
         setDateTimeIfAvailable(link, source);
         setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
+        setLifeStageIfAvailable(link, source, lifeStageName, lifeStageId);
         return source;
+    }
+
+    private void setLifeStageIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
+        final String lifeStageName = link.get(name);
+        final String lifeStageId = link.get(id);
+        if (StringUtils.isNotBlank(lifeStageName) || StringUtils.isNotBlank(lifeStageId)) {
+            source.setLifeStage(new TermImpl(lifeStageId, lifeStageName));
+        }
     }
 
     private StudyImpl studyFromLink(Map<String, String> link) {

@@ -41,9 +41,9 @@ public class StudyImporterForGray extends BaseStudyImporter {
     private Map<String, String> importLink(LabeledCSVParser parser) {
         Map<String, String> link = new TreeMap<>();
         link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("consumer"));
-        link.put(StudyImporterForTSV.SOURCE_LIFE_STAGE, nonNAValueOrNull(parser.getValueByLabel("consumer.lifestage")));
+        link.put(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, nonNAValueOrNull(parser.getValueByLabel("consumer.lifestage")));
         link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("resource"));
-        link.put(StudyImporterForTSV.TARGET_LIFE_STAGE, nonNAValueOrNull(parser.getValueByLabel("resource.lifestage")));
+        link.put(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME, nonNAValueOrNull(parser.getValueByLabel("resource.lifestage")));
         link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
         link.put(StudyImporterForTSV.REFERENCE_CITATION, parser.getValueByLabel("full.source"));
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI() + "/source.id/" + parser.getValueByLabel("source.id"));

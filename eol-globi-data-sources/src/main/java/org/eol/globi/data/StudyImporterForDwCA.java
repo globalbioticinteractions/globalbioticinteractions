@@ -67,8 +67,9 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
 
                     for (Map<String, String> interactionProperties : interactions) {
                         interactionProperties.putAll(interaction);
+                        mapIfAvailable(rec, interactionProperties, SOURCE_OCCURRENCE_ID, DwcTerm.occurrenceID);
                         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
-                        mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE, DwcTerm.lifeStage);
+                        mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE_NAME, DwcTerm.lifeStage);
                         mapIfAvailable(rec, interactionProperties, REFERENCE_CITATION, DcTerm.references);
                         mapIfAvailable(rec, interactionProperties, REFERENCE_ID, DcTerm.references);
 
