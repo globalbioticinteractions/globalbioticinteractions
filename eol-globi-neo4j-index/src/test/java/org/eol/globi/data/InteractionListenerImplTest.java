@@ -183,26 +183,6 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void interactionNamePredicateInvalid() {
-        Predicate<Map<String, String>> predicate =
-                InteractionListenerImpl.createInteractionNamePredicate(null);
-
-        assertThat(predicate.test(new HashMap<String, String>() {{
-            put(StudyImporterForTSV.INTERACTION_TYPE_NAME, "bla");
-        }}), is(false));
-    }
-
-    @Test
-    public void interactionNamePredicateValid() {
-        Predicate<Map<String, String>> predicate =
-                InteractionListenerImpl.createInteractionNamePredicate(null);
-
-        assertThat(predicate.test(new HashMap<String, String>() {{
-            put(StudyImporterForTSV.INTERACTION_TYPE_NAME, "eats");
-        }}), is(true));
-    }
-
-    @Test
     public void interactionTypePredicateValid() {
         Predicate<Map<String, String>> interactionTypePredicate =
                 InteractionListenerImpl.createInteractionTypePredicate(null);
