@@ -54,9 +54,9 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("localityId"), Is.is("FB_COUNTRY:736|"));
         assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:2"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Oreochromis niloticus"));
-        assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("sourceLifeStageName"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("< 1 mm organic debris"));
-        assertThat(firstItem.get("targetLifeStage"), Is.is("n.a./others"));
+        assertThat(firstItem.get("targetLifeStageName"), Is.is("n.a./others"));
         assertThat(firstItem.get("studyTitle"), Is.is("FB_REF:6160"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("eats"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002470"));
@@ -79,7 +79,7 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("localityId"), Is.is("FB_COUNTRY:736|"));
         assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:2"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Oreochromis niloticus"));
-        assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("sourceLifeStageName"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("detritus"));
         assertThat(firstItem.get("studyTitle"), Is.is("FB_REF:6160"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("eats"));
@@ -104,10 +104,10 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("localityId"), Is.is(nullValue()));
         assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:457"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Cichla ocellaris"));
-        assertThat(firstItem.get("sourceLifeStage"), Is.is("juv./adults"));
+        assertThat(firstItem.get("sourceLifeStageName"), Is.is("juv./adults"));
         assertThat(firstItem.get("targetTaxonId"), Is.is("FBC:FB:SPECCODE:2"));
         assertThat(firstItem.get("targetTaxonName"), Is.is("Oreochromis niloticus"));
-        assertThat(firstItem.get("targetLifeStage"), Is.is("recruits/juv."));
+        assertThat(firstItem.get("targetLifeStageName"), Is.is("recruits/juv."));
         assertThat(firstItem.get("studyTitle"), Is.is("FB_REF:84"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("preysOn"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002439"));
@@ -137,10 +137,10 @@ public class StudyImporterForFishbase3Test {
         assertThat(firstItem.get("localityId"), Is.is("FB_COUNTRY:826|"));
         assertThat(firstItem.get("sourceTaxonId"), Is.is("FBC:FB:SPECCODE:69"));
         assertThat(firstItem.get("sourceTaxonName"), Is.is("Gadus morhua"));
-        assertThat(firstItem.get("sourceLifeStage"), Is.is("recruits/juv."));
+        assertThat(firstItem.get("sourceLifeStageName"), Is.is("recruits/juv."));
         assertThat(firstItem.get("targetTaxonId"), Is.is(nullValue()));
         assertThat(firstItem.get("targetTaxonName"), Is.is("gastropods"));
-        assertThat(firstItem.get("targetLifeStage"), Is.is("n.a./others"));
+        assertThat(firstItem.get("targetLifeStageName"), Is.is("n.a./others"));
         assertThat(firstItem.get("studyTitle"), Is.is("FB_REF:9604"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), Is.is("eats"));
         assertThat(firstItem.get(StudyImporterForTSV.INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002470"));
