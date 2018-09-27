@@ -54,8 +54,8 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 class InteractionListenerImpl implements InteractionListener {
     private static final Log LOG = LogFactory.getLog(InteractionListenerImpl.class);
-    public static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
-    public static final String[] LOCALITY_NAME_TERMS = {LOCALITY_NAME, DwcTerm.locality.normQName, DwcTerm.verbatimLocality.normQName};
+    private static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
+    private static final String[] LOCALITY_NAME_TERMS = {LOCALITY_NAME, DwcTerm.locality.normQName, DwcTerm.verbatimLocality.normQName};
     private final NodeFactory nodeFactory;
     private final GeoNamesService geoNamesService;
 
@@ -136,22 +136,42 @@ class InteractionListenerImpl implements InteractionListener {
             return isValid;
         };
 
-        Predicate<Map<String, String>> hasInteractionType = (Map<String, String> l) -> {
-            String interactionTypeId = l.get(INTERACTION_TYPE_ID);
-            boolean isValid = InteractType.typeOf(interactionTypeId) != null;
-            if (!isValid) {
-                getLogger().warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
-            }
-            return isValid;
-        };
+        Predicate<Map<String, String>> hasInteractionType = createInteractionTypePredicate(getLogger());
 
         Predicate<Map<String, String>> hasReferenceId = (Map<String, String> l) -> StringUtils.isNotBlank(l.get(REFERENCE_ID));
 
         return hasSourceTaxon
                 .and(hasTargetTaxon)
-                .and(hasInteractionType)
+                .and(hasInteractionType.or(createInteractionNamePredicate(getLogger())))
                 .and(hasReferenceId)
                 .test(link);
+    }
+
+    static Predicate<Map<String, String>> createInteractionTypePredicate(ImportLogger logger) {
+        return (Map<String, String> l) -> {
+            String interactionTypeId = l.get(INTERACTION_TYPE_ID);
+            boolean hasValidId = InteractType.typeOf(interactionTypeId) != null;
+            if (StringUtils.isNotBlank(interactionTypeId) && !hasValidId && logger != null) {
+                logger.warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
+            }
+            return hasValidId;
+        };
+    }
+
+    static Predicate<Map<String, String>> createInteractionNamePredicate(ImportLogger logger) {
+        return (Map<String, String> l) -> {
+            String interactionTypeName = l.get(INTERACTION_TYPE_NAME);
+            boolean hasValidName = false;
+            try {
+                 hasValidName = InteractType.typeOf(interactionTypeName) != null;
+
+            } catch (IllegalArgumentException ex) {
+                if (logger != null) {
+                    logger.warn(null, "found unsupported interactionType with name [" + interactionTypeName + "]");
+                }
+            }
+            return hasValidName;
+        };
     }
 
     private void importValidLink(Map<String, String> link) throws StudyImporterException, IOException {
@@ -205,7 +225,7 @@ class InteractionListenerImpl implements InteractionListener {
                 final DateTime dateTime = ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(eventDate);
                 nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
             } catch (IllegalArgumentException ex) {
-                throw new StudyImporterException("invalid date string [" + eventDate + "]", ex);
+                getLogger().warn(null, "invalid date string [" + eventDate + "]");
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
             }

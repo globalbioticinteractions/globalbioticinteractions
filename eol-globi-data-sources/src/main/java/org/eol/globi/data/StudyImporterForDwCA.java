@@ -1,10 +1,12 @@
 package org.eol.globi.data;
 
+import com.hp.hpl.jena.vocabulary.DCTerms;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.*;
 import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.record.Record;
+import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.globalbioticinteractions.dataset.DwCAUtil;
@@ -97,6 +99,8 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
                         interactionProperties.putAll(interaction);
                         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
                         mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE, DwcTerm.lifeStage);
+                        mapIfAvailable(rec, interactionProperties, REFERENCE_CITATION, DcTerm.references);
+                        mapIfAvailable(rec, interactionProperties, REFERENCE_ID, DcTerm.references);
 
                         interactionListener.newLink(interactionProperties);
                     }
@@ -109,8 +113,8 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
         }
     }
 
-    private void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, DwcTerm lifeStage) {
-        String value = rec.value(lifeStage);
+    private void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, Term term) {
+        String value = rec.value(term);
         if ((StringUtils.isNotBlank(value))) {
             interactionProperties.put(key, value);
         }

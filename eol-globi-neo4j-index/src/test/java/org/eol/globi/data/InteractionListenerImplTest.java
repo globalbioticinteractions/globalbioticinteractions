@@ -17,6 +17,8 @@ import org.neo4j.graphdb.Relationship;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
@@ -160,6 +162,54 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         return new TaxonNode(predator.getUnderlyingNode()
                 .getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS))
                 .iterator().next().getEndNode());
+    }
+
+    @Test
+    public void interactionTypePredicateMissing() {
+        Predicate<Map<String, String>> interactionTypePredicate =
+                InteractionListenerImpl.createInteractionTypePredicate(null);
+
+        assertThat(interactionTypePredicate.test(new HashMap<String, String>()), is(false));
+    }
+
+    @Test
+    public void interactionTypePredicateInvalid() {
+        Predicate<Map<String, String>> interactionTypePredicate =
+                InteractionListenerImpl.createInteractionTypePredicate(null);
+
+        assertThat(interactionTypePredicate.test(new HashMap<String, String>() {{
+            put(StudyImporterForTSV.INTERACTION_TYPE_ID, "bla");
+        }}), is(false));
+    }
+
+    @Test
+    public void interactionNamePredicateInvalid() {
+        Predicate<Map<String, String>> predicate =
+                InteractionListenerImpl.createInteractionNamePredicate(null);
+
+        assertThat(predicate.test(new HashMap<String, String>() {{
+            put(StudyImporterForTSV.INTERACTION_TYPE_NAME, "bla");
+        }}), is(false));
+    }
+
+    @Test
+    public void interactionNamePredicateValid() {
+        Predicate<Map<String, String>> predicate =
+                InteractionListenerImpl.createInteractionNamePredicate(null);
+
+        assertThat(predicate.test(new HashMap<String, String>() {{
+            put(StudyImporterForTSV.INTERACTION_TYPE_NAME, "eats");
+        }}), is(true));
+    }
+
+    @Test
+    public void interactionTypePredicateValid() {
+        Predicate<Map<String, String>> interactionTypePredicate =
+                InteractionListenerImpl.createInteractionTypePredicate(null);
+
+        assertThat(interactionTypePredicate.test(new HashMap<String, String>() {{
+            put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+        }}), is(true));
     }
 
 }
