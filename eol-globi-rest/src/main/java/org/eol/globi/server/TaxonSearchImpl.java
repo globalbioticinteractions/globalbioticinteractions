@@ -130,7 +130,7 @@ public class TaxonSearchImpl implements TaxonSearch {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null), 15);
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null), 30);
     }
 
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -163,7 +163,7 @@ public class TaxonSearchImpl implements TaxonSearch {
                 put("pathQuery", pathQuery);
             }
         });
-        final CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(request, query1, 15);
+        final CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(request, query1, 30);
         final String response = CypherUtil.executeRemote(pagedQuery);
         JsonNode node = new ObjectMapper().readTree(response);
         JsonNode dataNode = node.get("data");
