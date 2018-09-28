@@ -28,6 +28,7 @@ import org.eol.globi.Version;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 public class HttpUtil {
     private static final Log LOG = LogFactory.getLog(HttpUtil.class);
@@ -153,14 +154,14 @@ public class HttpUtil {
     public static ResponseHandler<String> createUTF8BasicResponseHandler() {
         return new ResponseHandler<String>() {
             @Override
-            public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+            public String handleResponse(HttpResponse response) throws IOException {
                 StatusLine statusLine = response.getStatusLine();
                 HttpEntity entity = response.getEntity();
                 if(statusLine.getStatusCode() >= 300) {
                     EntityUtils.consume(entity);
                     throw new HttpResponseException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
                 } else {
-                    return entity == null?null:EntityUtils.toString(entity, Charsets.UTF_8);
+                    return entity == null?null:EntityUtils.toString(entity, StandardCharsets.UTF_8);
                 }
             }
         };
