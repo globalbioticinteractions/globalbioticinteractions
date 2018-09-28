@@ -58,7 +58,7 @@ public class DatasetFinderZenodoTest {
     public void extractGitHubReposArchives() throws DatasetFinderException {
         URI uri = new DatasetFinderZenodo().datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
         assertThat(uri, is(notNullValue()));
-        assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
+        assertThat(uri.toString(), is("https://zenodo.org/record/1436853/files/globalbioticinteractions/template-dataset-0.0.3.zip"));
     }
 
     @Test
