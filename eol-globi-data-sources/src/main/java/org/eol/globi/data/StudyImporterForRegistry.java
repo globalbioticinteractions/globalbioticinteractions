@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFactory;
-import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.GitHubImporterFactory;
 
@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class StudyImporterForGitHubData extends BaseStudyImporter {
-    private static final Log LOG = LogFactory.getLog(StudyImporterForGitHubData.class);
+public class StudyImporterForRegistry extends BaseStudyImporter {
+    private static final Log LOG = LogFactory.getLog(StudyImporterForRegistry.class);
 
-    private final DatasetFinder finder;
+    private final DatasetRegistry finder;
 
-    public StudyImporterForGitHubData(ParserFactory parserFactory, NodeFactory nodeFactory, DatasetFinder finder) {
+    public StudyImporterForRegistry(ParserFactory parserFactory, NodeFactory nodeFactory, DatasetRegistry finder) {
         super(parserFactory, nodeFactory);
         this.finder = finder;
     }
@@ -61,7 +61,7 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         }
     }
 
-    private DatasetFinder getDatasetFinder() {
+    private DatasetRegistry getDatasetFinder() {
         return finder;
     }
 
@@ -70,6 +70,9 @@ public class StudyImporterForGitHubData extends BaseStudyImporter {
         if (importer != null) {
             if (getLogger() != null) {
                 importer.setLogger(getLogger());
+            }
+            if (getGeoNamesService() != null) {
+                importer.setGeoNamesService(getGeoNamesService());
             }
             importer.importStudy();
         }

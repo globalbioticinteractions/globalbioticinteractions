@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class DatasetFinderGitHubRemote extends DatasetFinderGitHub {
+public class DatasetRegistryGitHubRemote extends DatasetRegistryGitHub {
 
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {

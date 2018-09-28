@@ -17,16 +17,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
-public class DatasetFinderLocalTest {
+public class DatasetRegistryLocalTest {
 
-    private DatasetFinderLocal datasetFinderLocal;
+    private DatasetRegistryLocal datasetFinderLocal;
 
     @Before
     public void init() throws URISyntaxException {
         URL accessFile = getClass().getResource("/test-cache/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(accessFile);
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile();
-        datasetFinderLocal = new DatasetFinderLocal(cacheDir.getAbsolutePath(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath()));
+        datasetFinderLocal = new DatasetRegistryLocal(cacheDir.getAbsolutePath(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath()));
     }
 
     @Test

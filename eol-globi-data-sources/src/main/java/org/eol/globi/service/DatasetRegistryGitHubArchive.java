@@ -3,7 +3,7 @@ package org.eol.globi.service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class DatasetFinderGitHubArchive extends DatasetFinderGitHub {
+public class DatasetRegistryGitHubArchive extends DatasetRegistryGitHub {
 
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {

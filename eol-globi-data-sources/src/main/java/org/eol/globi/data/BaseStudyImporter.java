@@ -62,6 +62,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         return this.importLogger;
     }
 
+    @Override
     public void setGeoNamesService(GeoNamesService geoNamesService) {
         this.geoNamesService = geoNamesService;
     }

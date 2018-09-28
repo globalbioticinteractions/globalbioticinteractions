@@ -11,16 +11,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-public class DatasetFinderProxy implements DatasetFinder {
+public class DatasetRegistryProxy implements DatasetRegistry {
 
-    private final static Log LOG = LogFactory.getLog(DatasetFinderProxy.class);
+    private final static Log LOG = LogFactory.getLog(DatasetRegistryProxy.class);
 
-    private final ArrayList<DatasetFinder> finders;
-    private Map<String, DatasetFinder> finderForNamespace = null;
+    private final ArrayList<DatasetRegistry> finders;
+    private Map<String, DatasetRegistry> finderForNamespace = null;
     private Collection<String> namespacesAll;
 
-    public DatasetFinderProxy(List<DatasetFinder> finders) {
-        this.finders = new ArrayList<DatasetFinder>() {{
+    public DatasetRegistryProxy(List<DatasetRegistry> finders) {
+        this.finders = new ArrayList<DatasetRegistry>() {{
             addAll(finders);
         }};
     }
@@ -35,7 +35,7 @@ public class DatasetFinderProxy implements DatasetFinder {
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         lazyInit();
-        DatasetFinder finder = finderForNamespace.get(namespace);
+        DatasetRegistry finder = finderForNamespace.get(namespace);
         if (finder == null) {
             throw new DatasetFinderException("unknown namespace [" + namespace + "]");
         }
@@ -46,7 +46,7 @@ public class DatasetFinderProxy implements DatasetFinder {
         if (namespacesAll == null || finderForNamespace == null) {
             namespacesAll = new HashSet<>();
             finderForNamespace = new HashMap<>();
-            for (DatasetFinder finder : finders) {
+            for (DatasetRegistry finder : finders) {
                 Collection<String> namespaces = finder.findNamespaces();
                 Collection<String> newNamespaces = CollectionUtils.subtract(namespaces, namespacesAll);
                 for (String newNamespace : newNamespaces) {

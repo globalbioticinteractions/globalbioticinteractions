@@ -11,9 +11,7 @@ import org.globalbioticinteractions.dataset.EMLUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,7 +21,7 @@ interface DatasetConfigurer {
 
 public class DatasetFactory {
 
-    public static Dataset datasetFor(String repo, DatasetFinder finder) throws DatasetFinderException {
+    public static Dataset datasetFor(String repo, DatasetRegistry finder) throws DatasetFinderException {
         return configDataset(finder.datasetFor(repo));
     }
 
@@ -77,7 +75,7 @@ public class DatasetFactory {
 
     private static String getContent(URI uri, InputStream input) throws IOException {
         try {
-            return IOUtils.toString(input);
+            return IOUtils.toString(input, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             throw new IOException("failed to find [" + uri + "]", ex);
         }

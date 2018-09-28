@@ -13,13 +13,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
-public class DatasetFinderProxyTest {
+public class DatasetRegistryProxyTest {
 
     @Test
     public void twoFinders() throws DatasetFinderException {
-        DatasetFinder finder = new DatasetFinderProxy(Arrays.asList(
-                new DatasetFinderMock(Arrays.asList("one")),
-                new DatasetFinderMock(Arrays.asList("one", "two"))
+        DatasetRegistry finder = new DatasetRegistryProxy(Arrays.asList(
+                new DatasetRegistryMock(Arrays.asList("one")),
+                new DatasetRegistryMock(Arrays.asList("one", "two"))
         )
         );
 
@@ -33,8 +33,8 @@ public class DatasetFinderProxyTest {
 
     @Test(expected = DatasetFinderException.class)
     public void oneFinderNoMatch() throws DatasetFinderException {
-        DatasetFinder finder = new DatasetFinderProxy(Collections.singletonList(
-                new DatasetFinderMock(Collections.singletonList("one"))
+        DatasetRegistry finder = new DatasetRegistryProxy(Collections.singletonList(
+                new DatasetRegistryMock(Collections.singletonList("one"))
         )
         );
 
@@ -46,11 +46,11 @@ public class DatasetFinderProxyTest {
 
 
 
-    private static class DatasetFinderMock implements DatasetFinder {
+    private static class DatasetRegistryMock implements DatasetRegistry {
 
         private final List<String> namespaces;
 
-        DatasetFinderMock(List<String> namespaces) {
+        DatasetRegistryMock(List<String> namespaces) {
             this.namespaces = namespaces;
         }
 

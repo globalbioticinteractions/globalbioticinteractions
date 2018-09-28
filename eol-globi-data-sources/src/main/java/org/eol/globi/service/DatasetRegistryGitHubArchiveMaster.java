@@ -3,14 +3,14 @@ package org.eol.globi.service;
 import java.util.Collection;
 import java.util.Collections;
 
-public class DatasetFinderGitHubArchiveMaster implements DatasetFinder {
+public class DatasetRegistryGitHubArchiveMaster implements DatasetRegistry {
     private final Collection<String> namespaces;
 
-    public DatasetFinderGitHubArchiveMaster() {
+    public DatasetRegistryGitHubArchiveMaster() {
         this(Collections.emptyList());
     }
 
-    public DatasetFinderGitHubArchiveMaster(Collection<String> namespaces) {
+    public DatasetRegistryGitHubArchiveMaster(Collection<String> namespaces) {
         this.namespaces = Collections.unmodifiableCollection(namespaces);
     }
 

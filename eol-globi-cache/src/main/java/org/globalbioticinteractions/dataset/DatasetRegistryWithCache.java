@@ -1,27 +1,27 @@
 package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheUtil;
 
 import java.util.Collection;
 
-public class DatasetFinderWithCache implements DatasetFinder {
-    private final DatasetFinder finder;
+public class DatasetRegistryWithCache implements DatasetRegistry {
+    private final DatasetRegistry finder;
 
     private final CacheFactory cacheFactory;
 
-    public DatasetFinderWithCache(DatasetFinder finder) {
+    public DatasetRegistryWithCache(DatasetRegistry finder) {
         this(finder, "target/datasets");
     }
 
-    public DatasetFinderWithCache(DatasetFinder finder, String cachePath) {
+    public DatasetRegistryWithCache(DatasetRegistry finder, String cachePath) {
         this(finder, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath));
     }
 
-    public DatasetFinderWithCache(DatasetFinder finder, CacheFactory factory) {
+    public DatasetRegistryWithCache(DatasetRegistry finder, CacheFactory factory) {
         this.finder = finder;
         this.cacheFactory = factory;
     }
@@ -35,7 +35,7 @@ public class DatasetFinderWithCache implements DatasetFinder {
         return new DatasetWithCache(dataset, getCacheFactory().cacheFor(dataset));
     }
 
-    DatasetFinder getFinder() {
+    DatasetRegistry getFinder() {
         return this.finder;
     }
 

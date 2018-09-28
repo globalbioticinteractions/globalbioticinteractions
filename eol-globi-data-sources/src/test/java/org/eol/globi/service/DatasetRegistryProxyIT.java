@@ -8,11 +8,11 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-public class DatasetFinderProxyIT {
+public class DatasetRegistryProxyIT {
 
     @Test
     public void zenodoGitHubTest() throws DatasetFinderException {
-        DatasetFinderProxy proxy = new DatasetFinderProxy(Arrays.asList(new DatasetFinderZenodo(), new DatasetFinderGitHubArchive()));
+        DatasetRegistryProxy proxy = new DatasetRegistryProxy(Arrays.asList(new DatasetRegistryZenodo(), new DatasetRegistryGitHubArchive()));
 
         Dataset dataset = proxy.datasetFor("globalbioticinteractions/template-dataset");
         assertThat(dataset.getArchiveURI().toString(), containsString("zenodo.org"));
@@ -23,7 +23,7 @@ public class DatasetFinderProxyIT {
 
     @Test
     public void gitHubOnlyTest() throws DatasetFinderException {
-        DatasetFinderProxy proxy = new DatasetFinderProxy(Arrays.asList(new DatasetFinderGitHubArchive()));
+        DatasetRegistryProxy proxy = new DatasetRegistryProxy(Arrays.asList(new DatasetRegistryGitHubArchive()));
 
         Dataset dataset = proxy.datasetFor("globalbioticinteractions/template-dataset");
         assertThat(dataset.getArchiveURI().toString(), not(containsString("zenodo.org")));

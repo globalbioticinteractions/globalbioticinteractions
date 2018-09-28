@@ -15,7 +15,7 @@ import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterForGitHubData;
+import org.eol.globi.data.StudyImporterForRegistry;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.export.GraphExporterImpl;
@@ -24,7 +24,7 @@ import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
-import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
@@ -33,7 +33,7 @@ import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.HttpUtil;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
-import org.globalbioticinteractions.dataset.DatasetFinderLocal;
+import org.globalbioticinteractions.dataset.DatasetRegistryLocal;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.net.MalformedURLException;
@@ -233,13 +233,13 @@ public class Normalizer {
         factory.setDoiResolver(new DOIResolverImpl());
         try {
             CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
-            DatasetFinder finder = new DatasetFinderLocal(cacheDir, cacheFactory);
-            StudyImporter importer = new StudyImporterForGitHubData(new ParserFactoryLocal(), factory, finder);
+            DatasetRegistry finder = new DatasetRegistryLocal(cacheDir, cacheFactory);
+            StudyImporter importer = new StudyImporterForRegistry(new ParserFactoryLocal(), factory, finder);
             importer.setDataset(new DatasetLocal());
             importer.setLogger(new StudyImportLogger());
             importer.importStudy();
         } catch (StudyImporterException e) {
-            LOG.error("problem encountered while importing [" + StudyImporterForGitHubData.class.getName() + "]", e);
+            LOG.error("problem encountered while importing [" + StudyImporterForRegistry.class.getName() + "]", e);
         }
         EcoregionFinder regionFinder = getEcoregionFinder();
         if (regionFinder != null) {

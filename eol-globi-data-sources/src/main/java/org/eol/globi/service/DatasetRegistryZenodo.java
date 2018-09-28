@@ -9,7 +9,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -21,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class DatasetFinderZenodo implements DatasetFinder {
+public class DatasetRegistryZenodo implements DatasetRegistry {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
     private static final String PREFIX_ZENODO = "oai:zenodo.org:";
 

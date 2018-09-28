@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -23,7 +22,7 @@ public class DatasetFactoryTest {
     }
 
     private Dataset datasetFor(String meta) throws DatasetFinderException {
-        final DatasetFinder finder = new DatasetFinder() {
+        final DatasetRegistry finder = new DatasetRegistry() {
             @Override
             public Collection<String> findNamespaces() throws DatasetFinderException {
                 return Collections.singletonList("some/repo");

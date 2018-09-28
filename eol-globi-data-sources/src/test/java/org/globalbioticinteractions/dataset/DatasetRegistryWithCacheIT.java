@@ -3,10 +3,10 @@ package org.globalbioticinteractions.dataset;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFactory;
-import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
-import org.eol.globi.service.DatasetFinderGitHubArchive;
-import org.eol.globi.service.DatasetFinderZenodo;
+import org.eol.globi.service.DatasetRegistryGitHubArchive;
+import org.eol.globi.service.DatasetRegistryZenodo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class DatasetFinderWithCacheIT {
+public class DatasetRegistryWithCacheIT {
 
     private String cachePath = "target/cache/datasets";
 
@@ -30,19 +30,19 @@ public class DatasetFinderWithCacheIT {
     @Test
     public void zenodoTest() throws DatasetFinderException, IOException {
         assertTemplateDataset("zenodo.org",
-                new DatasetFinderZenodo(),
+                new DatasetRegistryZenodo(),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature. <https://doi.org/10.5281/zenodo.207958>. Accessed on");
     }
 
     @Test
     public void githubTest() throws DatasetFinderException, IOException {
         assertTemplateDataset("github.com",
-                new DatasetFinderGitHubArchive(),
+                new DatasetRegistryGitHubArchive(),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature. Accessed on");
     }
 
-    private void assertTemplateDataset(String expectedURIFragment, DatasetFinder datasetFinder, String expectedCitation) throws DatasetFinderException, IOException {
-        DatasetFinder finder = new DatasetFinderWithCache(datasetFinder, cachePath);
+    private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetFinderException, IOException {
+        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, cachePath);
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", finder);
 
@@ -54,7 +54,7 @@ public class DatasetFinderWithCacheIT {
 
     @Test
     public void gitHubTest() throws DatasetFinderException {
-        DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderGitHubArchive(), cachePath);
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), cachePath);
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", finder);
 
@@ -66,7 +66,7 @@ public class DatasetFinderWithCacheIT {
 
     @Test
     public void hafnerTest() throws DatasetFinderException, IOException {
-        DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderGitHubArchive(), cachePath);
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), cachePath);
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/hafner", finder);
 

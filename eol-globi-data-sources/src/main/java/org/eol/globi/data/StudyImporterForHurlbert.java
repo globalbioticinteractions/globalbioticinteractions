@@ -144,11 +144,11 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             LocationImpl location = new LocationImpl(null, null, null, null);
             String longitude = columnValueOrNull(record, "Longitude_dd");
             String latitude = columnValueOrNull(record, "Latitude_dd");
-            if (NumberUtils.isNumber(latitude) && NumberUtils.isNumber(longitude)) {
+            if (NumberUtils.isCreatable(latitude) && NumberUtils.isCreatable(longitude)) {
                 try {
                     LatLng latLng = LocationUtil.parseLatLng(latitude, longitude);
                     String altitude = columnValueOrNull(record, "Altitude_mean_m");
-                    Double altitudeD = NumberUtils.isNumber(altitude) ? Double.parseDouble(altitude) : null;
+                    Double altitudeD = NumberUtils.isCreatable(altitude) ? Double.parseDouble(altitude) : null;
                     location = new LocationImpl(latLng.getLat(), latLng.getLng(), altitudeD, null);
                 } catch (InvalidLocationException e) {
                     getLogger().warn(study, createMsg("found invalid (lat,lng) pair: (" + latitude + "," + longitude + ")"));

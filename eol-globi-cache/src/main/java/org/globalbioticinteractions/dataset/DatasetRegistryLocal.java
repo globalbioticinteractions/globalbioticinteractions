@@ -9,11 +9,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFactory;
-import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.CSVTSVUtil;
-import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLog;
 import org.globalbioticinteractions.cache.CacheUtil;
@@ -21,17 +20,17 @@ import org.globalbioticinteractions.cache.CacheUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
 
-public class DatasetFinderLocal implements DatasetFinder {
-    private final static Log LOG = LogFactory.getLog(DatasetFinderLocal.class);
+public class DatasetRegistryLocal implements DatasetRegistry {
+    private final static Log LOG = LogFactory.getLog(DatasetRegistryLocal.class);
     private final String cacheDir;
     private final CacheFactory cacheFactory;
 
-    public DatasetFinderLocal(String cacheDir, CacheFactory cacheFactory) {
+    public DatasetRegistryLocal(String cacheDir, CacheFactory cacheFactory) {
         this.cacheDir = cacheDir;
         this.cacheFactory = cacheFactory;
     }
@@ -60,7 +59,7 @@ public class DatasetFinderLocal implements DatasetFinder {
         Collection<String> namespaces = new TreeSet<>();
         for (File accessFile : accessFiles) {
             try {
-                String[] rows = IOUtils.toString(accessFile.toURI()).split("\n");
+                String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
                 for (String row : rows) {
                     namespaces.add(CSVTSVUtil.splitTSV(row)[0]);
                 }
@@ -78,7 +77,7 @@ public class DatasetFinderLocal implements DatasetFinder {
 
         try {
             final URI sourceURI = findLastCachedDatasetURI(namespace);
-            dataset = sourceURI == null ? null : DatasetFactory.datasetFor(namespace, new DatasetFinder() {
+            dataset = sourceURI == null ? null : DatasetFactory.datasetFor(namespace, new DatasetRegistry() {
                 @Override
                 public Collection<String> findNamespaces() throws DatasetFinderException {
                     return Collections.singletonList(namespace);
@@ -106,7 +105,7 @@ public class DatasetFinderLocal implements DatasetFinder {
         URI sourceURI = null;
         File accessFile = CacheLog.getAccessFile(namespace, cacheDir);
         if (accessFile.exists()) {
-            String[] rows = IOUtils.toString(accessFile.toURI()).split("\n");
+            String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
             for (String row : rows) {
                 String[] split = CSVTSVUtil.splitTSV(row);
                 if (split.length > 4

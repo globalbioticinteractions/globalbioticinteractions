@@ -7,15 +7,15 @@ import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFinder;
+import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
-import org.eol.globi.service.DatasetFinderGitHubArchiveMaster;
+import org.eol.globi.service.DatasetRegistryGitHubArchiveMaster;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeUtil;
-import org.globalbioticinteractions.dataset.DatasetFinderWithCache;
+import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -47,7 +47,7 @@ public abstract class GraphDBTestCase {
     }
 
     public static Dataset datasetFor(String namespace) throws DatasetFinderException {
-        DatasetFinder finder = new DatasetFinderWithCache(new DatasetFinderGitHubArchiveMaster());
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchiveMaster());
         return finder.datasetFor(namespace);
     }
 

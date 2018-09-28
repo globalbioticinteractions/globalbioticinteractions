@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 import static org.mockito.Mockito.when;
 
-public class DatasetFinderWithCacheTest {
+public class DatasetRegistryWithCacheTest {
 
     private static final String cachePath = "target/cache-test";
 
