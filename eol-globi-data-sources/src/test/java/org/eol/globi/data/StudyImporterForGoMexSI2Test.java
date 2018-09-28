@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -139,7 +140,7 @@ public class StudyImporterForGoMexSI2Test {
                 "ACT_16R,Cchr.1,ACT_16r.1,GOM,US,LA,NNW,Louisiana inner continental shelf,Continental shelf,NA,Demersal,29.346953,-92.980614,\"((-92.6729107838999,29.3941413332999),(-92.5604838626999,29.2066775354),(-92.7326173694,29.1150784684999),(-92.9638307704999,29.1171045174),(-93.3169089704999,29.3616452463),(-93.4007435505999,29.5222620776999),(-93.3169089704999,29.6243402981),(-93.1045280342,29.6340566488),(-92.6729107838999,29.3941413332999))\",,,,Inferred from station locations,high,Louisiana continental shelf,Gulf/Ocean waters,9.094,18.188,13.641,9.094,18.188,13.641,CDST,1970,7,NA,0:00,summer,1973,2,NA,0:00,winter,TNA,WTNA,43,Marine,Nearshore,Subtidal,NA,NA,NA,NA,Jim Simons,NA,Jim Simons,15/06/2016,Theresa Mitchell\n" +
                 "ACT_16R,Cchr.1,ACT_16r.2,GOM,US,LA,NNW,Louisiana mid continental shelf,Continental shelf,NA,Demersal,29.032598,-92.287009,\"((-92.1815365767999,29.1068886358999),(-92.200079333,29.0069336331),(-92.3030548952999,28.9075567952),(-92.4770626883999,28.8892759983999),(-92.5999700862,28.9468493538999),(-92.6034249349,29.0088070450999),(-92.5255192441999,29.0774757406),(-92.3918542331,29.148292841),(-92.2231376575,29.1384141105999),(-92.1815365767999,29.1068886358999))\",,,,Inferred from station locations,high,Louisiana continental shelf,Gulf/Ocean waters,18.188,54.564,36.376,18.188,54.564,36.376,CDST,1970,7,NA,0:00,summer,1973,2,NA,0:00,winter,TNA,WTNA,43,Marine,Offshore,Subtidal,NA,NA,NA,NA,Jim Simons,NA,Jim Simons,15/06/2016,Theresa Mitchell\n";
 
-        final LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(locationLines)));
+        final LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(locationLines, StandardCharsets.UTF_8)));
         parser.getLine();
         final Location location = StudyImporterForGoMexSI2.parseLocation("someMickeyMouseresource.csv", parser);
         assertThat(location.getLatitude(), is(29.346953d));

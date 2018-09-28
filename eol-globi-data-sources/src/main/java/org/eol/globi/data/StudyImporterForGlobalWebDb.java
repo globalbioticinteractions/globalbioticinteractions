@@ -10,6 +10,7 @@ import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class StudyImporterForGlobalWebDb extends BaseStudyImporter {
             List<String> matrixRows = Arrays.asList(rows).subList(1, rows.length);
             String matrix = org.apache.commons.lang.StringUtils.join(matrixRows, "\n");
 
-            LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(IOUtils.toInputStream(matrix));
+            LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(IOUtils.toInputStream(matrix, StandardCharsets.UTF_8));
             String[] headerColumns = parser.getLabels();
             if (headerColumns.length > 1) {
                 String[] split1 = headerColumns[0].split("-");
@@ -91,7 +92,7 @@ public class StudyImporterForGlobalWebDb extends BaseStudyImporter {
             ZipEntry entry;
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 if (entry.getName().matches("WEB.*\\.csv$")) {
-                    matrix.onMatrix(IOUtils.toString(zipInputStream));
+                    matrix.onMatrix(IOUtils.toString(zipInputStream, StandardCharsets.UTF_8));
                 } else {
                     IOUtils.copy(zipInputStream, new NullOutputStream());
                 }

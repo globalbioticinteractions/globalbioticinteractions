@@ -1,11 +1,14 @@
 package org.eol.globi.data;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.InteractType;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,7 +25,7 @@ public class StudyImporterForSaproxylicTest {
                 "{EAB80A48-DE82-454E-8A90-000157CE4E29}\t{D255447F-A514-4901-9C68-1B027AF67CEE}\t{575D9556-BE91-4E85-8BCC-85A159F5FCD3}\t{EC69560A-C33B-4D45-97D2-8D6AE8365B3C}\t{93D3102F-5CC8-48CF-88E7-FEE74F8E54AD}\t0\t0\t\t\tx\t\t{F90595F4-6872-4B42-B1B2-6F5D392A44F0}\t0\t";
 
         final TreeSet<Triple<String, String, String>> triples = new TreeSet<>();
-        StudyImporterForSaproxylic.parseAssociations(triples::add, IOUtils.toInputStream(someAssociationRows));
+        StudyImporterForSaproxylic.parseAssociations(triples::add, IOUtils.toInputStream(someAssociationRows, StandardCharsets.UTF_8));
 
         assertThat(triples.size(), is(10));
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{505B49F3-1798-451C-99B0-00011BE9614D}", "mentioned_by", "{DF56D217-13B1-42B1-81A6-64553F91F7B6}")));
@@ -41,7 +44,7 @@ public class StudyImporterForSaproxylicTest {
 
         final Set<Triple<String, String, String>> triples = new TreeSet<>();
 
-        StudyImporterForSaproxylic.parseOccurrences(triples::add, IOUtils.toInputStream(someOccurrenceRows));
+        StudyImporterForSaproxylic.parseOccurrences(triples::add, IOUtils.toInputStream(someOccurrenceRows, StandardCharsets.UTF_8));
 
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{ACF1CDC2-BABD-4B63-AA57-0002A1C918E2}", "classifiedAs", "{BE612DC1-8E9E-4D77-936A-543E865DF829}")));
     }
@@ -53,7 +56,7 @@ public class StudyImporterForSaproxylicTest {
                 "{2F6610B4-7BC7-486F-B877-00484DC6AD2F}\tcinnabarinus\t{F4EB5A5C-34D0-4849-AC4F-FB2081067DF2}\t{1A72333E-92BB-40CC-A1DB-48302794436B}\t{BD93BDBC-8F91-44E2-BE59-9772B3EDB4B4}\t{3F1C39CD-FBBA-42B0-BC7C-028234A2AF4F}\t{F3BD253F-A0C7-440C-A5E0-51ECAA478978}\t{D8C4799E-A6B8-43B6-A0AC-7A01408D77FD}\t{91B32813-913B-4E34-9B2A-1A46F36EE91D}\t{F2E073EF-F4EB-4019-A29A-4B8A776E58EF}\t{1A72333E-92BB-40CC-A1DB-48302794436B}\t{2F6610B4-7BC7-486F-B877-00484DC6AD2F}\tPycnoporus cinnabarinus\t\t0\t2\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t\tPycnoporus cinnabarinus\t\t\t\t0\t\t15\n";
 
         final Set<Triple<String, String, String>> triples = new TreeSet<>();
-        StudyImporterForSaproxylic.parseTaxa(triples::add, IOUtils.toInputStream(someTaxaRows));
+        StudyImporterForSaproxylic.parseTaxa(triples::add, IOUtils.toInputStream(someTaxaRows, StandardCharsets.UTF_8));
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{DCCD2CFE-D002-40AB-B93B-000DD0B62999}", "hasName", "Drosophilidae")));
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{DCCD2CFE-D002-40AB-B93B-000DD0B62999}", "hasRank", "{4665ED8F-3734-406C-8987-E01B25E7D917}")));
     }
@@ -68,7 +71,7 @@ public class StudyImporterForSaproxylicTest {
 
         final Set<Triple<String, String, String>> triples = new TreeSet<>();
 
-        StudyImporterForSaproxylic.parseLocalities(triples::add, IOUtils.toInputStream(someLocalities));
+        StudyImporterForSaproxylic.parseLocalities(triples::add, IOUtils.toInputStream(someLocalities, StandardCharsets.UTF_8));
 
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{02759CAD-38BF-4353-8B37-00919DE7F65F}", "hasName", "Poland")));
     }
@@ -82,7 +85,7 @@ public class StudyImporterForSaproxylicTest {
                 "{E340D95F-8B42-48DC-A914-010C78D16106}\tGraham E. Rotheray\t\t\t1990\t75\tLarval and puparial records of some hoverflies associated with dead wood (Diptera, Syrphidae)\t0\t\t\t\tDipterists Digest\t\t\t\t\t\t\t\t7\t\t2-7\t\t\t\t0\t\n";
 
         final Set<Triple<String, String, String>> triples = new TreeSet<>();
-         StudyImporterForSaproxylic.parseReferences(triples::add, IOUtils.toInputStream(someLocalities));
+         StudyImporterForSaproxylic.parseReferences(triples::add, IOUtils.toInputStream(someLocalities, StandardCharsets.UTF_8));
 
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{9D773EF5-E522-4527-A404-00297A952B91}", "hasName", "J. Vanhara. 1982. The moravian species of flat footed flies (Diptera, Opetiidae and Platypezidae). vol 23. p 137-142. Folia prirodoved. fak. UJEP Brne.")));
     }
@@ -102,7 +105,7 @@ public class StudyImporterForSaproxylicTest {
 
         final Set<Triple<String, String, String>> triples = new TreeSet<>();
 
-        StudyImporterForSaproxylic.parseTaxonRanks(triples::add, IOUtils.toInputStream(someRanks));
+        StudyImporterForSaproxylic.parseTaxonRanks(triples::add, IOUtils.toInputStream(someRanks, StandardCharsets.UTF_8));
 
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{BF719A88-8ED0-4804-B92A-EE02C0B36351}", "hasName", "Suborder")));
     }
@@ -114,7 +117,7 @@ public class StudyImporterForSaproxylicTest {
         String aMapping = "sourceInteractionId\tsourceInteractionLabel\ttargetInteractionId\ttargetInteractionLabel\n" +
                 "{F67E5D97-887B-41D3-9758-257F33767101}\tparasitized by\thttp://purl.obolibrary.org/obo/RO_0002445\thasParasite\n" +
                 "{69F47164-2DEF-49CB-90FE-271CEA4A288F}\toccurs as omnivore\thttp://purl.obolibrary.org/obo/RO_0002470\teats\n";
-        StudyImporterForSaproxylic.parseInteractionTypeMap(triples::add, IOUtils.toInputStream(aMapping));
+        StudyImporterForSaproxylic.parseInteractionTypeMap(triples::add, IOUtils.toInputStream(aMapping, StandardCharsets.UTF_8));
 
         assertThat(triples, hasItem(StudyImporterForSaproxylic.asTriple("{F67E5D97-887B-41D3-9758-257F33767101}", "equivalentTo", InteractType.HAS_PARASITE.getIRI())));
     }

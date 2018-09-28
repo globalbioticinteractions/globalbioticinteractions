@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -111,7 +112,7 @@ public class DatasetFinderZenodo implements DatasetFinder {
     static InputStream getFeed() throws DatasetFinderException {
         try {
             String feedString = HttpUtil.getContent("https://zenodo.org/oai2d?verb=ListRecords&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3");
-            return IOUtils.toInputStream(feedString);
+            return IOUtils.toInputStream(feedString, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new DatasetFinderException("failed to find published github repos in zenodo", e);
         }
