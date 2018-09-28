@@ -212,6 +212,11 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertDataset(DatasetConstant.CITATION);
     }
 
+    @Test
+    public void getOrCreateDatasetDWCABib() throws NodeFactoryException, IOException {
+        assertDataset(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION);
+    }
+
     private void assertDataset(String citationKey) {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
@@ -226,15 +231,11 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(origDataset.getArchiveURI().toString(), is("some:uri"));
         assertThat(origDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
         assertThat(origDataset.getOrDefault(DatasetConstant.CITATION, "no citation"), is("some citation"));
+        assertThat(origDataset.getCitation(), is("some citation"));
         assertThat(origDataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, "1"), is(not("1")));
 
         Dataset datasetAnother = getNodeFactory().getOrCreateDataset(dataset);
         assertThat(((DatasetNode)datasetAnother).getNodeID(), is(((DatasetNode) origDataset).getNodeID()));
-    }
-
-    @Test
-    public void getOrCreateDatasetDWCABib() throws NodeFactoryException, IOException {
-        assertDataset(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION);
     }
 
     @Test

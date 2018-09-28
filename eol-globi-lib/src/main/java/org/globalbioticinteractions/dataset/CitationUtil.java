@@ -44,7 +44,11 @@ public class CitationUtil {
     }
 
     public static String citationFor(Dataset dataset) {
-        String defaultCitation = "<" + dataset.getArchiveURI().toString() + ">";
+        String fallbackCitation = dataset.getArchiveURI() == null
+                ? dataset.getNamespace()
+                : dataset.getArchiveURI().toString();
+
+        String defaultCitation = "<" + fallbackCitation + ">";
         String citation = citationOrDefaultFor(dataset, defaultCitation);
 
         if (!StringUtils.contains(citation, "doi.org") && !StringUtils.contains(citation, "doi:")) {

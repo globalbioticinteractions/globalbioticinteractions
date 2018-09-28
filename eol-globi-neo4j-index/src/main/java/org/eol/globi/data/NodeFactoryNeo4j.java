@@ -362,8 +362,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         if (dataset.getDOI() != null) {
             datasetNode.setProperty(StudyConstant.DOI, dataset.getDOI().toString());
         }
-        String orDefault = dataset.getOrDefault(DatasetConstant.CITATION, dataset.getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION, "no citation"));
-        datasetNode.setProperty(DatasetConstant.CITATION, orDefault);
+        datasetNode.setProperty(DatasetConstant.CITATION, StringUtils.defaultIfBlank(dataset.getCitation(), "no citation"));
         datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
         datasetNode.setProperty(DatasetConstant.LAST_SEEN_AT, dataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, Long.toString(System.currentTimeMillis())));
         datasets.add(datasetNode, DatasetConstant.NAMESPACE, dataset.getNamespace());
