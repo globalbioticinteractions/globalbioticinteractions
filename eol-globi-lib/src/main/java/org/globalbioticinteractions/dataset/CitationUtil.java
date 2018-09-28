@@ -87,9 +87,9 @@ public class CitationUtil {
                 .getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION,
                 dataset.getOrDefault("citation", fallbackCitation));
 
-        return StringUtils.isBlank(primaryCitation)
+        return StringUtils.trim(StringUtils.isBlank(primaryCitation)
                 ? secondaryCitationsJoin
-                : primaryCitation;
+                : primaryCitation);
     }
 
     public static DOI getDOI(Dataset dataset) {
