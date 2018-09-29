@@ -36,7 +36,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
 
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
-        final List<Dataset> studyImporters = getDatasetsForFeed(getDataset(), parserFactory, nodeFactory);
+        final List<Dataset> studyImporters = getDatasetsForFeed(getDataset());
         for (Dataset dataset : studyImporters) {
             importDataset(dataset);
         }
@@ -64,8 +64,7 @@ public class StudyImporterForArthopodEasyCapture extends BaseStudyImporter {
         return DatasetUtil.getNamedResourceURI(dataset, "rss");
     }
 
-    public static List<Dataset> getDatasetsForFeed(Dataset datasetOrig, ParserFactory parserFactory, NodeFactory
-            nodeFactory) throws StudyImporterException {
+    public static List<Dataset> getDatasetsForFeed(Dataset datasetOrig) throws StudyImporterException {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed;
         String rss = getRss(datasetOrig);

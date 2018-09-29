@@ -24,7 +24,7 @@ public class StudyImporterForArthopodEasyCaptureTest {
 
         final Dataset dataset = getDatasetGroup();
 
-        List<Dataset> datasets = StudyImporterForArthopodEasyCapture.getDatasetsForFeed(dataset, parserFactory, nodeFactory);
+        List<Dataset> datasets = StudyImporterForArthopodEasyCapture.getDatasetsForFeed(dataset);
 
         assertThat(datasets.size(), is(3));
 

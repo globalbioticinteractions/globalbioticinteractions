@@ -10,6 +10,10 @@ import org.gbif.dwc.terms.Term;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -71,8 +75,7 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
                         mapIfAvailable(rec, interactionProperties, SOURCE_OCCURRENCE_ID, DwcTerm.occurrenceID);
                         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
                         mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE_NAME, DwcTerm.lifeStage);
-                        mapIfAvailable(rec, interactionProperties, REFERENCE_ID, DcTerm.references);
-                        mapIfAvailable(rec, interactionProperties, REFERENCE_ID, DcTerm.references);
+                        mapReferenceInfo(rec, interactionProperties);
                         interactionProperties.put(STUDY_SOURCE_CITATION, getDataset().getCitation());
                         interactionListener.newLink(interactionProperties);
                     }
@@ -85,7 +88,22 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
         }
     }
 
-     static void logUnsupportedInteractionTypes(List<Map<String, String>> interactionCandidates, final ImportLogger logger) {
+    private void mapReferenceInfo(Record rec, Map<String, String> interactionProperties) {
+        String value = StringUtils.trim(rec.value(DcTerm.references));
+        if (StringUtils.isNotBlank(value)) {
+            interactionProperties.put(REFERENCE_CITATION, value);
+            interactionProperties.put(REFERENCE_ID, value);
+            try {
+                URI referenceURI = new URI(value);
+                URL url = referenceURI.toURL();
+                interactionProperties.put(REFERENCE_URL, url.toString());
+            } catch (MalformedURLException | URISyntaxException e) {
+                // opportunistic extraction of url from references to take advantage of practice used in Symbiota)
+            }
+        }
+    }
+
+    static void logUnsupportedInteractionTypes(List<Map<String, String>> interactionCandidates, final ImportLogger logger) {
         interactionCandidates
                 .stream()
                 .filter(x -> !x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME))

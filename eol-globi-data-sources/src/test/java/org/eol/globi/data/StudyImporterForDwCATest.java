@@ -51,6 +51,9 @@ public class StudyImporterForDwCATest {
                 assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), is(not(nullValue())));
                 someRecords.set(true);
             }
         });
