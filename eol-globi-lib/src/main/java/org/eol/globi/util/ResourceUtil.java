@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -51,7 +52,11 @@ public class ResourceUtil {
                 FTPClient ftpClient = new FTPClient();
                 try {
                     ftpClient.connect(uri.getHost());
+                    ftpClient.enterLocalPassiveMode();
                     ftpClient.login("anonymous", "info@globalbioticinteractions.org");
+                    ftpClient.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
+                    ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
+
                     is = ftpClient.isConnected()
                             ? cacheAndOpenStream(ftpClient.retrieveFileStream(uri.getPath()))
                             : null;
