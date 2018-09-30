@@ -26,6 +26,19 @@ public class DatasetProxyTest {
     }
 
     @Test
+    public void getDOI() throws IOException {
+        assertThat(getTestDataset().getCitation(), Is.is("<http://example.com>"));
+
+        JsonNode configProxy = new ObjectMapper().readTree("{ \"" + "doi" + "\": \"10.12/235\" }");
+        assertThat(getTestDataset(null, configProxy).getDOI().toString(), Is.is("10.12/235"));
+
+        JsonNode config = new ObjectMapper().readTree("{ \"" + "doi" + "\": \"10.23/456\" }");
+        assertThat(getTestDataset(config, configProxy).getDOI().toString(), Is.is("10.12/235"));
+
+        assertThat(getTestDataset(config, null).getDOI().toString(), Is.is("10.23/456"));
+    }
+
+    @Test
     public void getBibliographicCitation() throws IOException {
         assertCitationProxies(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION);
     }

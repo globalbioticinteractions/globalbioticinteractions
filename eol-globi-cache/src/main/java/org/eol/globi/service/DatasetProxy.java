@@ -66,7 +66,8 @@ public class DatasetProxy implements Dataset {
 
     @Override
     public DOI getDOI() {
-        String doi = DatasetUtil.getValueOrDefault(config, "doi", datasetProxied.getFormat());
+        String proxiedDoi = datasetProxied.getDOI() == null ? null : datasetProxied.getDOI().toString();
+        String doi = DatasetUtil.getValueOrDefault(config, "doi", proxiedDoi);
         try {
             return StringUtils.isBlank(doi) ? null : DOI.create(doi);
         } catch (MalformedDOIException e) {
