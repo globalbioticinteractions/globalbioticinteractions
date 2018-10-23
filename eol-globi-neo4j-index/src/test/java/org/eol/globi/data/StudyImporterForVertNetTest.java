@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +48,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         List<String> stomachStrings = new ArrayList<String>();
         File file = File.createTempFile("vertnet", ".csv");
         file.deleteOnExit();
-        JsonNode jsonNode = parseResponse(stomachStrings, IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/example_response.json.gz"))),
+        JsonNode jsonNode = parseResponse(stomachStrings, IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/example_response.json.gz")), StandardCharsets.UTF_8),
                 new FileOutputStream(file));
         assertThat(jsonNode, is(notNullValue()));
         assertThat(stomachStrings, hasItems("gravel", "insect parts", "sand"));
@@ -96,7 +97,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
     @Test
     public void parseAssociatedOccurrences2() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode1 = mapper.readTree(IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/response_associated_occurrences.json.gz"))));
+        JsonNode jsonNode1 = mapper.readTree(IOUtils.toString(new GZIPInputStream(getClass().getResourceAsStream("vertnet/response_associated_occurrences.json.gz")), StandardCharsets.UTF_8));
         JsonNode recs = jsonNode1.get("recs");
 
         StringWriter linkOs = new StringWriter();
@@ -189,7 +190,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
             HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpGet(uri));
 
             if (200 == resp.getStatusLine().getStatusCode()) {
-                String jsonString = IOUtils.toString(resp.getEntity().getContent());
+                String jsonString = IOUtils.toString(resp.getEntity().getContent(), StandardCharsets.UTF_8);
                 JsonNode jsonNode = parseResponse(stomachStrings, jsonString, fos);
                 if (jsonNode.has("cursor")) {
                     oldCursor = cursor;
@@ -239,7 +240,7 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
                     remarks = rec.get("occurrenceremarks").getTextValue();
                 }
                 String line = "\"" + (rec.has("individualid") ? rec.get("individualid").getTextValue() : "") + "\",\"" + stomachContents + "\", \"" + remarks + "\"\n";
-                IOUtils.write(line, outputStream);
+                IOUtils.write(line, outputStream, StandardCharsets.UTF_8);
             }
         }
 

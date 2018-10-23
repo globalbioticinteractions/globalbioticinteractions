@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
         StudyImporterForGray gray = createImporter();
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
-        gray.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
+        gray.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), new InteractionListener() {
 
             @Override
             public void newLink(final Map<String, String> properties) {

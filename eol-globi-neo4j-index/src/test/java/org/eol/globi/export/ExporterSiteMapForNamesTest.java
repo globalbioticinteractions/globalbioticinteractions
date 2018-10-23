@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -49,12 +50,12 @@ public class ExporterSiteMapForNamesTest extends GraphDBTestCase {
     public void assertSiteMap(File baseDirCitations, String substring, String siteMapLocation) throws IOException {
         final File file = new File(baseDirCitations, "sitemap.xml.gz");
         assertThat(file.exists(), is(true));
-        final String siteMapString = IOUtils.toString(new GZIPInputStream(new FileInputStream(file)));
+        final String siteMapString = IOUtils.toString(new GZIPInputStream(new FileInputStream(file)), StandardCharsets.UTF_8);
         assertThat(siteMapString,
                 containsString(StringEscapeUtils.escapeXml(substring)));
         final File sitemapIndex = new File(baseDirCitations, "sitemap_index.xml");
         assertThat(sitemapIndex.exists(), is(true));
-        final String sitemapIndexString = IOUtils.toString(new FileInputStream(sitemapIndex));
+        final String sitemapIndexString = IOUtils.toString(new FileInputStream(sitemapIndex), StandardCharsets.UTF_8);
         assertThat(sitemapIndexString, containsString(siteMapLocation));
     }
 

@@ -15,6 +15,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -49,7 +50,7 @@ public class StudyImporterFelderTest {
         felder.deleteOnExit();
         OutputStream os = new FileOutputStream(felder);
 
-        IOUtils.write(HEADER + "\n", os);
+        IOUtils.write(HEADER + "\n", os, StandardCharsets.UTF_8);
         IOUtils.copy(convertToTSV(getClass().getResourceAsStream("felder/BIRDS.BDT")), os);
 
         LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(new FileInputStream(felder));

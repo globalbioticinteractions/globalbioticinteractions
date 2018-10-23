@@ -9,6 +9,7 @@ import org.eol.globi.service.DatasetLocal;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
         HashMap<Integer, LatLng> localeMap = new HashMap<Integer, LatLng>();
         localeMap.put(2361, new LatLng(34.00824202376044, -120.72716166720323));
-        studyImporterForSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines()), new InteractionListener() {
+        studyImporterForSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) {
                 maps.add(properties);

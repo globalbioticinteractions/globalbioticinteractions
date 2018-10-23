@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
         StudyImporterForWood wood = createImporter(nodeFactory);
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
-        wood.importLinks(IOUtils.toInputStream(firstFewLines()), properties -> maps.add(properties), null);
+        wood.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), properties -> maps.add(properties), null);
         resolveNames();
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);

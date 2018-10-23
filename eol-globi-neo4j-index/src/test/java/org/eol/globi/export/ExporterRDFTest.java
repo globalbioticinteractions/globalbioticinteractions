@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -75,10 +76,10 @@ public class ExporterRDFTest extends GraphDBTestCase {
 
             assertTrue(file.exists());
 
-            String content = IOUtils.toString(new FileInputStream(file));
+            String content = IOUtils.toString(new FileInputStream(file), StandardCharsets.UTF_8);
 
             Model model = ModelFactory.createDefaultModel();
-            model.read(IOUtils.toInputStream(content), "https://example.org", "N-TRIPLE");
+            model.read(IOUtils.toInputStream(content, StandardCharsets.UTF_8), "https://example.org", "N-TRIPLE");
 
             assertThat(content, not(containsString("no:match")));
             assertThat(content, containsString("http://purl.obolibrary.org/obo/ENVO_"));
