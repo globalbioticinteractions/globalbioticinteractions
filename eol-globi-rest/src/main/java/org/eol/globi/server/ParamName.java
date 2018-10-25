@@ -8,6 +8,8 @@ public enum ParamName {
 
     INCLUDE_OBSERVATIONS("includeObservations"),
 
+    REFUTES("refutes"),
+
     FIELD("field"),
     FIELDS("fields"),
 

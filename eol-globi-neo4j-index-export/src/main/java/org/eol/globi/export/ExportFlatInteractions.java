@@ -21,7 +21,7 @@ public class ExportFlatInteractions implements GraphExporter {
 
 
     public static final String CYPHER_QUERY = "START dataset = node:datasets('namespace:*') " +
-            "MATCH dataset<-[:IN_DATASET]-study-[c:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
+            "MATCH dataset<-[:IN_DATASET]-study-[c:COLLECTED|REFUTES|SUPPORTS]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
             "sourceSpecimen-[?:COLLECTED_AT]->loc, " +
             "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon " +
             "WHERE not(has(r.inverted)) " +

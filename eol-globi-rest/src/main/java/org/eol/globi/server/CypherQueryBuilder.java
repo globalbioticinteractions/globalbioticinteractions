@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
@@ -337,19 +338,6 @@ public class CypherQueryBuilder {
         return new CypherQuery(query, taxonName1);
     }
 
-    public static CypherQuery references(final String source) {
-        String whereClause = StringUtils.isBlank(source) ? "" : " AND study.source = {source}";
-        Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
-            put("source", source);
-        }};
-        String cypherQuery = "START study=node:studies('*:*')" +
-                " MATCH study-[:COLLECTED]->sourceSpecimen-[interact:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon " +
-                " WHERE not(has(interact." + PropertyAndValueDictionary.INVERTED + "))" + whereClause +
-                " RETURN study.institution?, study.period?, study.description?, study.contributor?, count(interact), count(distinct(sourceTaxon.name)), count(distinct(targetTaxon.name)), study.title, study.citation?, study.doi?, study.source, study.externalId?";
-
-        return new CypherQuery(cypherQuery, params);
-    }
-
     public static CypherQuery locations() {
         return locations(null);
     }
@@ -359,7 +347,7 @@ public class CypherQueryBuilder {
         final List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingTo.size() > 0) {
             appendStartClause2(parameterMap, Collections.<String>emptyList(), Collections.<String>emptyList(), query);
-            query.append(" MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location");
+            query.append(" MATCH study-[:" + createStudyRel(parameterMap) + "]->specimen-[:COLLECTED_AT]->location");
             query.append(" WITH DISTINCT(location) as loc");
         } else {
             query.append("START " + ALL_LOCATIONS_INDEX_SELECTOR);
@@ -568,15 +556,19 @@ public class CypherQueryBuilder {
     }
 
     protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query, QueryType queryType) {
-        String interactionMatch = getInteractionMatch(createInteractionTypeSelector(interactionTypes));
+        String interactionMatch = getInteractionMatch(createInteractionTypeSelector(interactionTypes), createStudyRel(parameterMap));
         query.append(" ")
                 .append(interactionMatch);
         addLocationClausesIfNecessary(query, parameterMap, queryType);
         return query;
     }
 
-    private static String getInteractionMatch(String interactionTypeSelector) {
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study";
+    private static String createStudyRel(Map parameterMap) {
+        return QueryType.refutes(parameterMap) ? RelTypes.REFUTES.name() : RelTypes.COLLECTED.name();
+    }
+
+    private static String getInteractionMatch(String interactionTypeSelector, String studyRel) {
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:" + studyRel + "]-study";
     }
 
     public static CypherQuery sourcesQuery() {
@@ -698,7 +690,7 @@ public class CypherQueryBuilder {
             query.append("START study = node:studies('*:*') ");
         }
 
-        query.append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study")
+        query.append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:" + createStudyRel(parameterMap) + "]-study")
                 .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             query.append(", sourceSpecimen-[:COLLECTED_AT]->loc");

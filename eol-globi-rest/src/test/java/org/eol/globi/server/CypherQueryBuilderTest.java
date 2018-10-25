@@ -24,6 +24,7 @@ public class CypherQueryBuilderTest {
     public static final String EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS = expectedInteractionClause(INTERACTS_WITH);
     public static final String EXPECTED_MATCH_CLAUSE_ALL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true);
     public static final String EXPECTED_MATCH_CLAUSE_DISTINCT = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false);
+    public static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, true);
     public static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
     public static final String EXPECTED_ACCORDING_TO_START_CLAUSE = "START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study ";
     public static final String EXTERNAL_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");
@@ -50,8 +51,13 @@ public class CypherQueryBuilderTest {
     }
 
     private static String expectedMatchClause(String expectedInteractionClause, boolean hasSpatialConstraints, boolean requestedSpatialInfo) {
+        return expectedMatchClause(expectedInteractionClause, hasSpatialConstraints, requestedSpatialInfo, false);
+    }
+
+    private static String expectedMatchClause(String expectedInteractionClause, boolean hasSpatialConstraints, boolean requestedSpatialInfo, boolean refutes) {
+        String studyRel = refutes ? "REFUTES" : "COLLECTED";
         String spatialClause = requestedSpatialInfo ? (", sourceSpecimen-[" + (hasSpatialConstraints ? "" : "?") + ":COLLECTED_AT]->loc ") : " ";
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study" + spatialClause;
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:" + studyRel + "]-study" + spatialClause;
     }
 
     public static final String EXPECTED_RETURN_CLAUSE = "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
@@ -512,6 +518,25 @@ public class CypherQueryBuilderTest {
         CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
+                "WHERE " + hasSourceTaxon("Arthropoda") +
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\"}")));
+    }
+
+    @Test
+    public void findRefutingAccordingTo() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("accordingTo", new String[]{"inaturalist"});
+                put("refutes", new String[]{"t"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        CypherQuery query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getQuery(), is("START study = node:studies('*:*') WHERE (has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo}) WITH study " +
+                EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING +
                 "WHERE " + hasSourceTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, source_taxon_name=path:\\\"Arthropoda\\\"}")));

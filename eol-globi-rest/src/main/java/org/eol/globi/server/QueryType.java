@@ -30,9 +30,19 @@ public enum QueryType {
 
 
     private static boolean shouldIncludeObservations(Map parameterMap) {
-        List<String> includeObservations = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.INCLUDE_OBSERVATIONS);
+        ParamName includeObservations1 = ParamName.INCLUDE_OBSERVATIONS;
+        return nonEmptyOrTrue(parameterMap, includeObservations1);
+    }
+
+    private static boolean nonEmptyOrTrue(Map parameterMap, ParamName includeObservations1) {
+        List<String> includeObservations = CypherQueryBuilder.collectParamValues(parameterMap, includeObservations1);
         return includeObservations.size() > 0
                 && ("t".equalsIgnoreCase(includeObservations.get(0)) || "true".equalsIgnoreCase(includeObservations.get(0)));
+    }
+
+    public static boolean refutes(Map parameterMap) {
+        return nonEmptyOrTrue(parameterMap, ParamName.REFUTES);
+
     }
 
     private static boolean isTaxonQueryOnly(Map parameterMap) {

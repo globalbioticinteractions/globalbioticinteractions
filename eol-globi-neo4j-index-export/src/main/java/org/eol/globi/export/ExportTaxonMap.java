@@ -19,7 +19,7 @@ public class ExportTaxonMap implements StudyExporter {
 
     protected void doExport(Study study, Writer writer) throws IOException {
         String query = "START study = node:studies('*:*')\n" +
-                "MATCH study-[:COLLECTED]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, specimen-[:CLASSIFIED_AS]->taxon " +
+                "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, specimen-[:CLASSIFIED_AS]->taxon " +
                 "WITH distinct(origTaxon.name) as origName, origTaxon.externalId? as origId, taxon " +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
                 "WHERE has(linkedTaxon.path) " +
