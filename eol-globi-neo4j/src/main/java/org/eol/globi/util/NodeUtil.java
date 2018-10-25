@@ -89,12 +89,20 @@ public class NodeUtil {
     }
 
     public static Iterable<Relationship> getSpecimens(Study study) {
+        return getSpecimens(study, RelTypes.COLLECTED);
+    }
+
+    public static Iterable<Relationship> getSpecimens(Study study, RelTypes relType) {
         Node underlyingNode = ((NodeBacked) study).getUnderlyingNode();
-        return getSpecimens(underlyingNode);
+        return getSpecimens(underlyingNode, relType);
     }
 
     public static Iterable<Relationship> getSpecimens(Node studyNode) {
-        return studyNode.getRelationships(Direction.OUTGOING, asNeo4j(RelTypes.COLLECTED));
+        return getSpecimens(studyNode, RelTypes.COLLECTED);
+    }
+
+    public static Iterable<Relationship> getSpecimens(Node studyNode, RelTypes relType) {
+        return studyNode.getRelationships(Direction.OUTGOING, asNeo4j(relType));
     }
 
     public static Iterable<Relationship> getClassifications(Specimen specimen) {

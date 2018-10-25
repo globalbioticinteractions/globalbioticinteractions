@@ -40,7 +40,9 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class InteractionListenerImplTest extends GraphDBTestCase {
@@ -205,10 +207,10 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
 
         boolean foundSpecimen = false;
-        for (Relationship specimenRel : NodeUtil.getSpecimens(study)) {
+        for (Relationship specimenRel : NodeUtil.getSpecimens(study, RelTypes.REFUTES)) {
             final SpecimenNode someSpecimen = new SpecimenNode(specimenRel.getEndNode());
-            assertThat(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.REFUTES)), is(true));
-            assertThat(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)), is(true));
+            assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.REFUTES)));
+            assertFalse(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
             foundSpecimen = true;
         }
         assertThat(foundSpecimen, is(true));

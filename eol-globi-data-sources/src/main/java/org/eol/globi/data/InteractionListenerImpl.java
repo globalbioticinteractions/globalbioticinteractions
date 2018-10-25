@@ -193,9 +193,11 @@ class InteractionListenerImpl implements InteractionListener {
         String sourceTaxonName = link.get(taxonNameLabel);
         String sourceTaxonId = link.get(taxonIdLabel);
         String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
-        RelTypes argumentType = refutes(argumentTypeId) ? RelTypes.REFUTES : RelTypes.SUPPORTS;
+        RelTypes[] argumentType = refutes(argumentTypeId)
+                ? new RelTypes[]{RelTypes.REFUTES}
+                : new RelTypes[]{RelTypes.COLLECTED, RelTypes.SUPPORTS};
 
-        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId), RelTypes.COLLECTED, argumentType);
+        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId), argumentType);
         setBasisOfRecordIfAvailable(link, source);
         setDateTimeIfAvailable(link, source);
         setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
