@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
@@ -166,6 +167,51 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
         }
         assertThat(foundPair, is(true));
+    }
+
+    @Test
+    public void importRefutingClaim() throws StudyImporterException {
+        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
+            @Override
+            public void warn(LogContext study, String message) {
+                fail("got message: " + message);
+            }
+
+            @Override
+            public void info(LogContext study, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext study, String message) {
+                fail("got message: " + message);
+            }
+        });
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(SOURCE_TAXON_ID, "duck");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(TARGET_TAXON_ID, "mouse");
+        link.put(ARGUMENT_TYPE_ID, "http://example.org/refutes");
+        link.put(REFERENCE_ID, "123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "doi:1234");
+        listener.newLink(link);
+
+        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        final Study study = allStudies.get(0);
+
+
+        boolean foundSpecimen = false;
+        for (Relationship specimenRel : NodeUtil.getSpecimens(study)) {
+            final SpecimenNode someSpecimen = new SpecimenNode(specimenRel.getEndNode());
+            assertThat(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.REFUTES)), is(true));
+            assertThat(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)), is(true));
+            foundSpecimen = true;
+        }
+        assertThat(foundSpecimen, is(true));
     }
 
     public void assertLocation(LocationNode sampleLocation) {

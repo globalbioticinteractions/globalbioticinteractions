@@ -6,6 +6,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.ASSOCIATED_TAXA;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_ID;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
@@ -189,12 +192,19 @@ class InteractionListenerImpl implements InteractionListener {
     private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabel, String bodyPartName, String bodyPartId, String lifeStageName, String lifeStageId) throws StudyImporterException {
         String sourceTaxonName = link.get(taxonNameLabel);
         String sourceTaxonId = link.get(taxonIdLabel);
-        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId));
+        String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
+        RelTypes argumentType = refutes(argumentTypeId) ? RelTypes.REFUTES : RelTypes.SUPPORTS;
+
+        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId), RelTypes.COLLECTED, argumentType);
         setBasisOfRecordIfAvailable(link, source);
         setDateTimeIfAvailable(link, source);
         setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
         setLifeStageIfAvailable(link, source, lifeStageName, lifeStageId);
         return source;
+    }
+
+    private boolean refutes(String argumentTypeId) {
+        return StringUtils.equalsIgnoreCase(argumentTypeId, PropertyAndValueDictionary.REFUTES);
     }
 
     private void setLifeStageIfAvailable(Map<String, String> link, Specimen source, String name, String id) {

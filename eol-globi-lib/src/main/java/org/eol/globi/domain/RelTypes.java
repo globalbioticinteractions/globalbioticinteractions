@@ -16,7 +16,8 @@ public enum RelTypes implements RelType {
     HAS_PARTICIPANT,
     DERIVED_FROM,
     ACCESSED_AT,
-    SUPPORTS;
+    SUPPORTS,
+    REFUTES;
 
     private final NameType type;
 

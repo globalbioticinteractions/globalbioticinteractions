@@ -64,6 +64,13 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
         specimen.interactsWith(specimen1, InteractType.ATE);
+        assertInteraction(specimen, specimen1, RelTypes.COLLECTED);
+    }
+
+    private void assertInteraction(SpecimenNode specimen, SpecimenNode specimen1, RelTypes studyRelationType) {
+        assertStudyType(studyRelationType, specimen);
+        assertStudyType(studyRelationType, specimen1);
+
         final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
         assertThat(relIter.hasNext(), is(true));
         final Relationship rel = relIter.next();
@@ -76,6 +83,19 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         Relationship relInverted = iterator.next();
         assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
         assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
+    }
+
+    private void assertStudyType(RelTypes studyRelationType, SpecimenNode specimen2) {
+        assertThat(specimen2.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(studyRelationType)), is(true));
+    }
+
+    @Test
+    public void createRefutingInteraction() throws NodeFactoryException {
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null, null));
+        SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null), RelTypes.REFUTES);
+        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null), RelTypes.REFUTES);
+        specimen.interactsWith(specimen1, InteractType.ATE);
+        assertInteraction(specimen, specimen1, RelTypes.REFUTES);
     }
 
 
@@ -132,14 +152,14 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(location.getFootprintWKT(), is(nullValue()));
         final String expectedFootprintWKT = "POLYGON((10 20, 11 20, 11 21, 10 21, 10 20))";
         final LocationImpl otherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
-            expectedFootprintWKT);
+                expectedFootprintWKT);
 
         final LocationNode locationWithFootprintWKT = getNodeFactory().getOrCreateLocation(otherLocation);
         assertThat(locationWithFootprintWKT.getFootprintWKT(), is(expectedFootprintWKT));
         assertThat(getNodeFactory().findLocation(otherLocation).getFootprintWKT(), is(expectedFootprintWKT));
 
         final LocationImpl yetAnotherLocation = new LocationImpl(location.getAltitude(), location.getLongitude(), location.getLatitude(),
-            expectedFootprintWKT);
+                expectedFootprintWKT);
         yetAnotherLocation.setLocality("this is my place");
         getNodeFactory().getOrCreateLocation(yetAnotherLocation);
 
@@ -235,7 +255,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertThat(origDataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, "1"), is(not("1")));
 
         Dataset datasetAnother = getNodeFactory().getOrCreateDataset(dataset);
-        assertThat(((DatasetNode)datasetAnother).getNodeID(), is(((DatasetNode) origDataset).getNodeID()));
+        assertThat(((DatasetNode) datasetAnother).getNodeID(), is(((DatasetNode) origDataset).getNodeID()));
     }
 
     @Test
@@ -378,7 +398,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     protected void initTaxonService() {
         this.taxonIndex = new NonResolvingTaxonIndex(
-            getGraphDb()
+                getGraphDb()
         );
     }
 

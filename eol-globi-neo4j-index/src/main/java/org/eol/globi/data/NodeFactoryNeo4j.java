@@ -243,12 +243,23 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
+        return createSpecimen(study, taxon, RelTypes.COLLECTED);
+    }
+
+    @Override
+    public SpecimenNode createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
         if (null == study) {
             throw new NodeFactoryException("specimen needs study, but none is specified");
         }
 
+        if (null == types || types.length == 0) {
+            throw new NodeFactoryException("specimen needs at least one study relationship type, but none is specified");
+        }
+
         SpecimenNode specimen = createSpecimen();
-        ((StudyNode) study).createRelationshipTo(specimen, RelTypes.COLLECTED);
+        for (RelTypes type : types) {
+            ((StudyNode) study).createRelationshipTo(specimen, type);
+        }
 
         specimen.setOriginalTaxonDescription(taxon);
         if (StringUtils.isNotBlank(taxon.getName())) {

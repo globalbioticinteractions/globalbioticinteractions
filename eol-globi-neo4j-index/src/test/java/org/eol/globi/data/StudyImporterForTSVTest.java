@@ -1,17 +1,20 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.StudyNodeListener;
 import org.junit.Test;
+import org.neo4j.graphdb.Direction;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
@@ -20,6 +23,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class StudyImporterForTSVTest extends GraphDBTestCase {
@@ -99,6 +103,54 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         }
         assertThat(titles, hasItem("someRepohttp://www.ncbi.nlm.nih.gov/nuccore/100172732"));
         assertThat(ids, hasItem("http://www.ncbi.nlm.nih.gov/nuccore/100172732"));
+    }
+
+    @Test
+    public void seltmannRefutes() throws StudyImporterException {
+        String firstFewLines = "InteractionID\tBasisOfRecord\tsourceTaxonId\tsourceTaxonName\tinteractionTypeId\targumentTypeId\tinteractionTypeName\ttargetBodyPartName\ttargetBodyPartId\texperimentalConditionName\texperimentalConditionId\tsexName\tsexID\ttargetTaxonId\ttargetTaxonName\ttargetCommonName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceCitation\n" +
+                "75\tLiteratureRecord\thttps://www.gbif.org/species/110462368\tCalyptra ophideroides\thttp://purl.obolibrary.org/obo/RO_0002470\thttp://example.org/refutes\teats\tblood\thttp://purl.obolibrary.org/obo/NCIT_C12434\tunder experimental conditions\thttp://purl.obolibrary.org/obo/ENVO_01001405\t\t\thttps://www.gbif.org/species/2436436\tHomo sapiens\thuman\t\t\t\t\t\t\tBänziger, H. 1989. Skin-piercing blood-sucking moths V: Attacks on man by 5 Calyptra spp.(Lepidoptera: Noctuidae) in S. and S.E. Asia. Mittellungen der Schweizerischen Entomologischen Gesellschaft, 62: 215-233.\n";
+
+        assertArgumentType(firstFewLines, RelTypes.REFUTES);
+    }
+
+    @Test
+    public void seltmannSupports() throws StudyImporterException {
+        String firstFewLines = "InteractionID\tBasisOfRecord\tsourceTaxonId\tsourceTaxonName\tinteractionTypeId\targumentTypeId\tinteractionTypeName\ttargetBodyPartName\ttargetBodyPartId\texperimentalConditionName\texperimentalConditionId\tsexName\tsexID\ttargetTaxonId\ttargetTaxonName\ttargetCommonName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceCitation\n" +
+                "75\tLiteratureRecord\thttps://www.gbif.org/species/110462368\tCalyptra ophideroides\thttp://purl.obolibrary.org/obo/RO_0002470\thttp://example.org/supports\teats\tblood\thttp://purl.obolibrary.org/obo/NCIT_C12434\tunder experimental conditions\thttp://purl.obolibrary.org/obo/ENVO_01001405\t\t\thttps://www.gbif.org/species/2436436\tHomo sapiens\thuman\t\t\t\t\t\t\tBänziger, H. 1989. Skin-piercing blood-sucking moths V: Attacks on man by 5 Calyptra spp.(Lepidoptera: Noctuidae) in S. and S.E. Asia. Mittellungen der Schweizerischen Entomologischen Gesellschaft, 62: 215-233.\n";
+
+        assertArgumentType(firstFewLines, RelTypes.SUPPORTS);
+    }
+
+    private void assertArgumentType(String firstFewLines, final RelTypes argumentType) throws StudyImporterException {
+        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
+        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com")));
+        importStudy(importer);
+        final AtomicBoolean foundStudy = new AtomicBoolean(false);
+        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
+
+            @Override
+            public void onStudy(StudyNode study) {
+                assertTrue(study.getUnderlyingNode().hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(argumentType)));
+                foundStudy.set(true);
+            }
+        });
+        assertThat(foundStudy.get(), is(true));
+    }
+
+    @Test
+    public void seltmannNegated() throws StudyImporterException {
+        String firstFewLines = "InteractionID\tBasisOfRecord\tsourceTaxonId\tsourceTaxonName\tinteractionTypeId\tisNegated\tinteractionTypeName\ttargetBodyPartName\ttargetBodyPartId\texperimentalConditionName\texperimentalConditionId\tsexName\tsexID\ttargetTaxonId\ttargetTaxonName\ttargetCommonName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceCitation\n" +
+                "75\tLiteratureRecord\thttps://www.gbif.org/species/110462368\tCalyptra ophideroides\thttp://purl.obolibrary.org/obo/RO_0002470\tTRUE\teats\tblood\thttp://purl.obolibrary.org/obo/NCIT_C12434\tunder experimental conditions\thttp://purl.obolibrary.org/obo/ENVO_01001405\t\t\thttps://www.gbif.org/species/2436436\tHomo sapiens\thuman\t\t\t\t\t\t\tBänziger, H. 1989. Skin-piercing blood-sucking moths V: Attacks on man by 5 Calyptra spp.(Lepidoptera: Noctuidae) in S. and S.E. Asia. Mittellungen der Schweizerischen Entomologischen Gesellschaft, 62: 215-233.\n";
+
+        assertArgumentType(firstFewLines, RelTypes.REFUTES);
+    }
+
+    @Test
+    public void seltmannNotNegated() throws StudyImporterException {
+        String firstFewLines = "InteractionID\tBasisOfRecord\tsourceTaxonId\tsourceTaxonName\tinteractionTypeId\tisNegated\tinteractionTypeName\ttargetBodyPartName\ttargetBodyPartId\texperimentalConditionName\texperimentalConditionId\tsexName\tsexID\ttargetTaxonId\ttargetTaxonName\ttargetCommonName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceCitation\n" +
+                "75\tLiteratureRecord\thttps://www.gbif.org/species/110462368\tCalyptra ophideroides\thttp://purl.obolibrary.org/obo/RO_0002470\tFALSE\teats\tblood\thttp://purl.obolibrary.org/obo/NCIT_C12434\tunder experimental conditions\thttp://purl.obolibrary.org/obo/ENVO_01001405\t\t\thttps://www.gbif.org/species/2436436\tHomo sapiens\thuman\t\t\t\t\t\t\tBänziger, H. 1989. Skin-piercing blood-sucking moths V: Attacks on man by 5 Calyptra spp.(Lepidoptera: Noctuidae) in S. and S.E. Asia. Mittellungen der Schweizerischen Entomologischen Gesellschaft, 62: 215-233.\n";
+
+        assertArgumentType(firstFewLines, RelTypes.SUPPORTS);
     }
 
     @Test

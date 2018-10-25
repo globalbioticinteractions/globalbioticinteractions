@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
@@ -41,6 +42,8 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     public static final String TARGET_LIFE_STAGE_ID = "targetLifeStageId";
     public static final String TARGET_LIFE_STAGE_NAME = "targetLifeStageName";
     public static final String ASSOCIATED_TAXA = "associatedTaxa";
+    public static final String ARGUMENT_TYPE_ID = "argumentTypeId";
+
     private static final String RESOURCE_LINE_NUMBER = "resourceLineNumber";
     private static final String RESOURCE_URI = "resourceURI";
 
@@ -89,6 +92,15 @@ public class StudyImporterForTSV extends BaseStudyImporter {
             putNotBlank(link, TARGET_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
             putNotBlank(link, TARGET_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
 
+            String argumentTypeId = StringUtils.trim(parser.getValueByLabel(ARGUMENT_TYPE_ID));
+            if (StringUtils.isBlank(argumentTypeId)) {
+                String negated = StringUtils.trim(parser.getValueByLabel("isNegated"));
+                argumentTypeId = StringUtils.equalsIgnoreCase(negated, "true")
+                        ? PropertyAndValueDictionary.REFUTES
+                        : PropertyAndValueDictionary.SUPPORTS;
+            }
+            putNotBlank(link, ARGUMENT_TYPE_ID, argumentTypeId);
+
             putNotBlank(link, RESOURCE_LINE_NUMBER, Integer.toString(parser.getLastLineNumber()));
             putNotBlank(link, RESOURCE_URI, resourceURIString);
 
@@ -118,23 +130,23 @@ public class StudyImporterForTSV extends BaseStudyImporter {
     }
 
     protected static String generateReferenceId(Map<String, String> props) {
-            String[] candidateIdsInIncreasingPreference = {STUDY_SOURCE_CITATION,
-                    REFERENCE_CITATION,
-                    REFERENCE_URL,
-                    REFERENCE_DOI,
-                    REFERENCE_ID};
-            return ExternalIdUtil.selectValue(props, candidateIdsInIncreasingPreference);
-        }
+        String[] candidateIdsInIncreasingPreference = {STUDY_SOURCE_CITATION,
+                REFERENCE_CITATION,
+                REFERENCE_URL,
+                REFERENCE_DOI,
+                REFERENCE_ID};
+        return ExternalIdUtil.selectValue(props, candidateIdsInIncreasingPreference);
+    }
 
-        protected static String generateReferenceCitation(Map<String, String> props) {
-            String[] candidateIdsInIncreasingPreference = {
-                    STUDY_SOURCE_CITATION,
-                    REFERENCE_ID,
-                    REFERENCE_URL,
-                    REFERENCE_DOI,
-                    REFERENCE_CITATION
-            };
-            return ExternalIdUtil.selectValue(props, candidateIdsInIncreasingPreference);
-        }
+    protected static String generateReferenceCitation(Map<String, String> props) {
+        String[] candidateIdsInIncreasingPreference = {
+                STUDY_SOURCE_CITATION,
+                REFERENCE_ID,
+                REFERENCE_URL,
+                REFERENCE_DOI,
+                REFERENCE_CITATION
+        };
+        return ExternalIdUtil.selectValue(props, candidateIdsInIncreasingPreference);
+    }
 
 }

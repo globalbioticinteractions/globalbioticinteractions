@@ -43,6 +43,11 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     }
 
     @Override
+    public Specimen createSpecimen(Study study, Taxon taxon, RelTypes... relTypes) throws NodeFactoryException {
+        return factory.createSpecimen(study, taxon, relTypes);
+    }
+
+    @Override
     public Study createStudy(Study study) {
         return factory.createStudy(studyForDataset(study));
     }

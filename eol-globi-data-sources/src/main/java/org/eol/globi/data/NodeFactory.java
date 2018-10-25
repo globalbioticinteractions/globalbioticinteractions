@@ -18,6 +18,8 @@ public interface NodeFactory {
 
     Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException;
 
+    Specimen createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException;
+
     Study createStudy(Study study);
 
     Study getOrCreateStudy(Study study) throws NodeFactoryException;
