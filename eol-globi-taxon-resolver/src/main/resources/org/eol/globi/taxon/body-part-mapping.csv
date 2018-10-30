@@ -39,3 +39,4 @@ GOMEXSI:feather,feather,UBERON:0000022,feather
 ,torso,GLOBI:torso,torso
 ,wings,UBERON:0000023,wing
 ,wing,UBERON:0000023,wing
+,seed,http://purl.obolibrary.org/obo/PO_0009010,seed

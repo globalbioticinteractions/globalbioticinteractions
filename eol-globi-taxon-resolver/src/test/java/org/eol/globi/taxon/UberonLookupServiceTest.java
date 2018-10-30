@@ -38,6 +38,22 @@ public class UberonLookupServiceTest {
     }
 
     @Test
+    public void lifeStageMapping2() throws TermLookupServiceException {
+        List<Term> scales = uberonLookupService.lookupTermByName("NAUPLII");
+        Assert.assertThat(scales.size(), Is.is(1));
+        Assert.assertThat(scales.get(0).getId(), Is.is("UBERON:0014406"));
+        Assert.assertThat(scales.get(0).getName(), Is.is("nauplius stage"));
+    }
+
+    @Test
+    public void lifeStageMappingCapitalized() throws TermLookupServiceException {
+        List<Term> scales = uberonLookupService.lookupTermByName("Nauplii");
+        Assert.assertThat(scales.size(), Is.is(1));
+        Assert.assertThat(scales.get(0).getId(), Is.is("UBERON:0014406"));
+        Assert.assertThat(scales.get(0).getName(), Is.is("nauplius stage"));
+    }
+
+    @Test
     public void donaldDuck() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("donald duck");
         Assert.assertThat(scales.size(), Is.is(1));

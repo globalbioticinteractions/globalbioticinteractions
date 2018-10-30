@@ -59,4 +59,4 @@ BAREMORE:Neo,Neo,GLOBI:NEO,NEO
 ,medusae,GLOBI:medusae,medusae
 ,nauplius,UBERON:0014406,nauplius stage
 ,pupae,UBERON:0000070,pupal stage
-,seed,GLOBI:seed,seed
+,seed,http://purl.obolibrary.org/obo/PO_0009010,seed

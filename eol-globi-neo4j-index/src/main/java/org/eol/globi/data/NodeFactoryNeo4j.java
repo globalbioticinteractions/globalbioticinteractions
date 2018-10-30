@@ -269,7 +269,8 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     private void extractTerms(String taxonName, Specimen specimen) throws NodeFactoryException {
-        String[] nameParts = StringUtils.split(taxonName);
+        String s = StringUtils.replacePattern(taxonName, "[^A-Za-z]", " ");
+        String[] nameParts = StringUtils.split(s);
         for (String part : nameParts) {
             extractLifeStage(specimen, part);
             extractBodyPart(specimen, part);

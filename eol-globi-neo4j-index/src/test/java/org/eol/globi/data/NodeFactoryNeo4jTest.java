@@ -374,6 +374,14 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     @Test
+    public void specimenWithLifeStageInName2() throws NodeFactoryException {
+        initTaxonService();
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("CALANUS SPP (NAUPLII)", null));
+        assertThat(specimen.getLifeStage().getName(), is("nauplius stage"));
+        assertThat(specimen.getLifeStage().getId(), is("UBERON:0014406"));
+    }
+
+    @Test
     public void specimenWithBasisOfRecord() throws NodeFactoryException {
         initTaxonService();
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("mickey mouse", null));
