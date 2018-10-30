@@ -54,7 +54,7 @@
                     <skip>${skipTests}</skip>
                     <executable>java</executable>
                     <arguments>
-                        <argument>-Xmx4G</argument>
+                        <argument>-Xmx6G</argument>
                         <argument>-Dgithub.client.id=${github.client.id}</argument>
                         <argument>-Dgithub.client.secret=${github.client.secret}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
