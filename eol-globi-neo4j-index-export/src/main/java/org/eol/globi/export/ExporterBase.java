@@ -40,21 +40,15 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     private void writeHeader(ExportUtil.Appender appender) throws IOException {
         String[] fields = getFields();
+        String[] headers = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i];
             int index = field.lastIndexOf("/");
             String fieldSuffix = index > 0 ? field.substring(index + 1) : field;
-            writeHeaderField(appender, fields, i, fieldSuffix);
+            headers[i] = fieldSuffix;
         }
+        appender.append(Stream.of(headers));
     }
-
-    private void writeHeaderField(ExportUtil.Appender appender, String[] fields, int i, String field) throws IOException {
-        appender.append(field);
-        if (i < (fields.length - 1)) {
-            appender.append("\t");
-        }
-    }
-
 
     @Override
     protected String getMetaTableSuffix() {
