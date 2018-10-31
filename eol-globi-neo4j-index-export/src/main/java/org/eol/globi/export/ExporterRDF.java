@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ExporterRDF implements StudyExporter {
 
@@ -76,10 +77,9 @@ public class ExporterRDF implements StudyExporter {
         return "_:rel" + ixnR.getId();
     }
 
-    public void writeStatement(ExportUtil.Appender writer, List<String> triple) throws IOException {
-        final String statement = StringUtils.join(triple, " ") + "  .";
-        writer.append("\n");
-        writer.append(statement);
+    public void writeStatement(ExportUtil.Appender appender, List<String> triple) throws IOException {
+        appender.append("\n");
+        appender.append(triple.stream());
     }
 
     protected List<String> addSameAsTaxaFor(Node taxon) {

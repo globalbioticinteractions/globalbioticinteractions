@@ -68,7 +68,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
             Writer writer = new FileWriter(file);
             ExporterRDF turtleExporter = new ExporterRDF();
             for (Study study : studies) {
-                turtleExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
+                turtleExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()), true);
             }
             writer.flush();
             writer.close();

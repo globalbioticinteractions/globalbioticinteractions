@@ -51,7 +51,7 @@ public final class ExportUtil {
         writeResults(appender, graphService, query, params, true);
     }
 
-    interface ValueJoiner {
+    public interface ValueJoiner {
         String join(Stream<String> values);
     }
 
@@ -109,6 +109,15 @@ public final class ExportUtil {
             return values
                     .map(escaper::translate)
                     .collect(Collectors.joining(","));
+        }
+    }
+
+    public static class NQuadValueJoiner implements ValueJoiner {
+        @Override
+        public String join(Stream<String> values) {
+            return Stream
+                    .concat(values, Stream.of("."))
+                    .collect(Collectors.joining(" "));
         }
     }
 

@@ -33,7 +33,7 @@ public class SPARQLTest extends GraphDBTestCase {
         ExporterRDF exporter = new ExporterRDF();
         StringWriter writer = new StringWriter();
         Study study = ExportTestUtil.createTestData(nodeFactory);
-        exporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
+        exporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()), true);
 
         Model model = ModelFactory.createDefaultModel();
         model.read(new ByteArrayInputStream(writer.toString().getBytes("UTF-8")), null, "N-TRIPLE");
