@@ -27,13 +27,13 @@ import java.util.zip.GZIPOutputStream;
 
 public final class ExportUtil {
 
-    public static void export(GraphDatabaseService graphService, String baseDir, String filename, String cypherQuery) throws StudyImporterException {
+    public static void export(GraphDatabaseService graphService, String baseDir, String filename, String cypherQuery, ValueJoiner joiner) throws StudyImporterException {
         try {
             mkdirIfNeeded(baseDir);
             final FileOutputStream out = new FileOutputStream(baseDir + filename);
             GZIPOutputStream os = new GZIPOutputStream(out);
             final Writer writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            AppenderWriter appender = AppenderWriter.of(writer);
+            Appender appender = AppenderWriter.of(writer, joiner);
 
             export(appender, graphService, cypherQuery);
 

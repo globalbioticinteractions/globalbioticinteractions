@@ -10,6 +10,14 @@ import java.io.IOException;
 
 public class ExportFlatInteractions implements GraphExporter {
 
+    private final ExportUtil.ValueJoiner joiner;
+    private final String filename;
+
+    public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename) {
+        this.joiner = joiner;
+        this.filename = filename;
+    }
+
 
     public static final String CYPHER_QUERY = "START dataset = node:datasets('namespace:*') " +
             "MATCH dataset<-[:IN_DATASET]-study-[c:COLLECTED]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
@@ -70,8 +78,7 @@ public class ExportFlatInteractions implements GraphExporter {
 
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        String tsvFilename = "/interactions.tsv.gz";
-        ExportUtil.export(graphService, baseDir, tsvFilename, CYPHER_QUERY);
+        ExportUtil.export(graphService, baseDir, filename, CYPHER_QUERY, joiner);
     }
 
     void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {

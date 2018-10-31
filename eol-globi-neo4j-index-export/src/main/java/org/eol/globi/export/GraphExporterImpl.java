@@ -44,9 +44,13 @@ public class GraphExporterImpl implements GraphExporter {
 
         List<Study> studies = NodeUtil.findAllStudies(graphService);
         exportNames(baseDir, studies);
+
         // export to taxa for now, to avoid additional assemblies
-        new ExportFlatInteractions().export(graphService, "tsv");
-        new ExportCitations().export(graphService, "tsv");
+        new ExportFlatInteractions(new ExportUtil.TsvValueJoiner(), "interactions.tsv.gz").export(graphService, "tsv");
+        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "interactions.csv.gz").export(graphService, "csv");
+
+        new ExportCitations(new ExportUtil.TsvValueJoiner(), "citations.tsv.gz").export(graphService, "tsv");
+        new ExportCitations(new ExportUtil.CsvValueJoiner(), "citations.csv.gz").export(graphService, "csv");
 
         exportNCBILinkOut(graphService, baseDir, studies);
 
