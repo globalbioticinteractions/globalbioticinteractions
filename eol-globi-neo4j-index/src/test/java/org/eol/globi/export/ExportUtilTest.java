@@ -22,7 +22,7 @@ public class ExportUtilTest {
             put("threeKey", "three\r\n\t");
         }});
         StringWriter writer = new StringWriter();
-        ExportUtil.appendRow(ExportUtil.AppenderWriter.of(writer), rows, Arrays.asList("oneKey", "twoKey", "threeKey"));
+        ExportUtil.appendRow(ExportUtil.AppenderWriter.of(writer), new ExportUtil.TsvValueJoiner(), rows, Arrays.asList("oneKey", "twoKey", "threeKey"));
         assertThat(writer.getBuffer().toString(), is("\no n e\ttwo\tthree"));
     }
 
@@ -35,7 +35,7 @@ public class ExportUtilTest {
         }});
         StringWriter writer = new StringWriter();
         ExportUtil.ValueJoiner csvJoiner = new ExportUtil.CsvValueJoiner();
-        ExportUtil.appendRow(ExportUtil.AppenderWriter.of(writer), rows, Arrays.asList("oneKey", "twoKey", "threeKey"), csvJoiner);
+        ExportUtil.appendRow(ExportUtil.AppenderWriter.of(writer), csvJoiner, rows, Arrays.asList("oneKey", "twoKey", "threeKey"));
         assertThat(writer.getBuffer().toString(), is("\n\"o\"\"n\ne\",two,\"three\r\n\t\""));
     }
 

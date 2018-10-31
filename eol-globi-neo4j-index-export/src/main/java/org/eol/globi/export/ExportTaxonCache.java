@@ -4,7 +4,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 
 public class ExportTaxonCache implements StudyExporter {
@@ -33,6 +32,11 @@ public class ExportTaxonCache implements StudyExporter {
         HashMap<String, Object> params = new HashMap<String, Object>() {{
         }};
 
-        ExportUtil.writeResults(appender, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), query, params, true);
+        ExportUtil.writeResults(appender,
+                new ExportUtil.TsvValueJoiner(), ((StudyNode)study).getUnderlyingNode().getGraphDatabase(),
+                query,
+                params,
+                true
+        );
     }
 }

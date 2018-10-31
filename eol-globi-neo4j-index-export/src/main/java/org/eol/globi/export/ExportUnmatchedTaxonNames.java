@@ -4,7 +4,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 
 public class ExportUnmatchedTaxonNames implements StudyExporter {
@@ -32,7 +31,12 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
             put("study_title", study.getTitle());
         }};
 
-        ExportUtil.writeResults(appender, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), query, params, includeHeader);
+        ExportUtil.writeResults(appender,
+                new ExportUtil.TsvValueJoiner(), ((StudyNode)study).getUnderlyingNode().getGraphDatabase(),
+                query,
+                params,
+                includeHeader
+        );
     }
 
 }

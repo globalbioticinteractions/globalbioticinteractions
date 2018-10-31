@@ -1,21 +1,12 @@
 package org.eol.globi.export;
 
-import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.domain.LocationConstant;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.zip.GZIPOutputStream;
 
 public class ExportFlatInteractions implements GraphExporter {
 
@@ -80,11 +71,11 @@ public class ExportFlatInteractions implements GraphExporter {
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         String tsvFilename = "/interactions.tsv.gz";
-        ExportCitations.export(graphService, baseDir, tsvFilename, CYPHER_QUERY);
+        ExportUtil.export(graphService, baseDir, tsvFilename, CYPHER_QUERY);
     }
 
     void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {
-        ExportCitations.export(graphService, appender, CYPHER_QUERY);
+        ExportUtil.export(appender, new ExportUtil.TsvValueJoiner(), graphService, CYPHER_QUERY);
     }
 
 

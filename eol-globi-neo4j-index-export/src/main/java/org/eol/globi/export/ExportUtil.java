@@ -1,15 +1,20 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.translate.CsvTranslators;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.CSVTSVUtil;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +22,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
 public final class ExportUtil {
+
+    public static void export(GraphDatabaseService graphService, String baseDir, String filename, String cypherQuery) throws StudyImporterException {
+        try {
+            mkdirIfNeeded(baseDir);
+            final FileOutputStream out = new FileOutputStream(baseDir + filename);
+            GZIPOutputStream os = new GZIPOutputStream(out);
+            final Writer writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            export(AppenderWriter.of(writer), new TsvValueJoiner(), graphService, cypherQuery);
+            writer.flush();
+            os.finish();
+            IOUtils.closeQuietly(writer);
+            IOUtils.closeQuietly(os);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to export to [" + filename + "]", e);
+        }
+    }
+
+    public static void export(Appender appender, TsvValueJoiner joiner, GraphDatabaseService graphService, String query) throws IOException {
+        HashMap<String, Object> params = new HashMap<String, Object>() {{
+        }};
+        writeResults(appender, joiner, graphService, query, params, true);
+    }
 
     interface ValueJoiner {
         String join(Stream<String> values);
@@ -68,41 +96,29 @@ public final class ExportUtil {
 
     private static final ValueJoiner VALUE_JOINER_DEFAULT = new TsvValueJoiner();
 
-    public static void writeResults(Appender writer, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader) throws IOException {
-        writeResults(writer, dbService, query, params, includeHeader, VALUE_JOINER_DEFAULT);
-    }
-
-    public static void writeResults(Appender writer, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader, ValueJoiner joiner) throws IOException {
+    public static void writeResults(Appender appender, ValueJoiner joiner, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader) throws IOException {
         ExecutionResult rows = new ExecutionEngine(dbService).execute(query, params);
         List<String> columns = rows.columns();
         if (includeHeader) {
             final String[] values = columns.toArray(new String[columns.size()]);
-            writer.append(joiner.join(Stream.of(values)));
+            appender.append(joiner.join(Stream.of(values)));
         }
-        appendRow(writer, rows, columns, joiner);
+        appendRow(appender, joiner, rows, columns);
     }
 
-    public static void appendRow(Appender writer, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
-        appendRow(writer, rows, columns, VALUE_JOINER_DEFAULT);
-    }
-
-    public static void appendRow(Appender writer, Iterable<Map<String, Object>> rows, List<String> columns, ValueJoiner joiner) throws IOException {
+    public static void appendRow(Appender appender, ValueJoiner joiner, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
         for (Map<String, Object> row : rows) {
-            writer.append("\n");
+            appender.append("\n");
             List<String> values = new ArrayList<String>();
             for (String column : columns) {
                 Object value = row.get(column);
                 values.add(value == null ? "" : value.toString());
             }
-            writer.append(joiner.join(values.stream()));
+            appender.append(joiner.join(values.stream()));
         }
     }
 
-    public static void writeProperties(Appender appender, Map<String, String> properties, String[] fields) throws IOException {
-        writeProperties(appender, properties, fields, VALUE_JOINER_DEFAULT);
-    }
-
-    public static void writeProperties(Appender appender, Map<String, String> properties, String[] fields, ValueJoiner joiner) throws IOException {
+    public static void writeProperties(Appender appender, ValueJoiner joiner, Map<String, String> properties, String[] fields) throws IOException {
         String values[] = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             values[i] = properties.getOrDefault(fields[i], "");

@@ -46,13 +46,13 @@ public class ExporterReferences extends ExporterBase {
     }
 
     @Override
-    protected void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    protected void doExportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<>();
         properties.put(IDENTIFIER, referenceIdForStudy(study));
         properties.put(FULL_REFERENCE, referenceForStudy(study));
         properties.put(DOI, study.getDOI() == null ? "" : study.getDOI().toString());
         properties.put(URI, ExternalIdUtil.urlForExternalId(study.getExternalId()));
-        writeProperties(writer, properties);
+        writeProperties(appender, properties);
     }
 
     public static String referenceIdForStudy(Study study) {

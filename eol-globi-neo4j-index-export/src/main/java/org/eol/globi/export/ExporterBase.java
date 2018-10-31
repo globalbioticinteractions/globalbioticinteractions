@@ -30,27 +30,27 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     protected abstract void doExportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException;
 
-    final public void exportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    final public void exportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
         if (includeHeader) {
-            writeHeader(writer);
+            writeHeader(appender);
         }
-        doExportStudy(study, writer, includeHeader);
+        doExportStudy(study, appender, includeHeader);
     }
 
-    private void writeHeader(ExportUtil.Appender writer) throws IOException {
+    private void writeHeader(ExportUtil.Appender appender) throws IOException {
         String[] fields = getFields();
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i];
             int index = field.lastIndexOf("/");
             String fieldSuffix = index > 0 ? field.substring(index + 1) : field;
-            writeHeaderField(writer, fields, i, fieldSuffix);
+            writeHeaderField(appender, fields, i, fieldSuffix);
         }
     }
 
-    private void writeHeaderField(ExportUtil.Appender writer, String[] fields, int i, String field) throws IOException {
-        writer.append(field);
+    private void writeHeaderField(ExportUtil.Appender appender, String[] fields, int i, String field) throws IOException {
+        appender.append(field);
         if (i < (fields.length - 1)) {
-            writer.append("\t");
+            appender.append("\t");
         }
     }
 
@@ -82,7 +82,7 @@ public abstract class ExporterBase extends DarwinCoreExporter {
     protected void writeProperties(ExportUtil.Appender writer, Map<String, String> properties) throws IOException {
         writer.append("\n");
         String[] fields = getFields();
-        ExportUtil.writeProperties(writer, properties, fields);
+        ExportUtil.writeProperties(writer, new ExportUtil.TsvValueJoiner(), properties, fields);
     }
 
 
