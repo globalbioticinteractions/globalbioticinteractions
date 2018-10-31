@@ -32,7 +32,10 @@ public final class ExportUtil {
             final FileOutputStream out = new FileOutputStream(baseDir + filename);
             GZIPOutputStream os = new GZIPOutputStream(out);
             final Writer writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            export(AppenderWriter.of(writer), new TsvValueJoiner(), graphService, cypherQuery);
+            AppenderWriter appender = AppenderWriter.of(writer);
+
+            export(appender, graphService, cypherQuery);
+
             writer.flush();
             os.finish();
             IOUtils.closeQuietly(writer);
@@ -42,10 +45,10 @@ public final class ExportUtil {
         }
     }
 
-    public static void export(Appender appender, TsvValueJoiner joiner, GraphDatabaseService graphService, String query) throws IOException {
+    public static void export(Appender appender, GraphDatabaseService graphService, String query) throws IOException {
         HashMap<String, Object> params = new HashMap<String, Object>() {{
         }};
-        writeResults(appender, joiner, graphService, query, params, true);
+        writeResults(appender, graphService, query, params, true);
     }
 
     interface ValueJoiner {
@@ -54,14 +57,21 @@ public final class ExportUtil {
 
     interface Appender {
         void append(String value) throws IOException;
+        void append(Stream<String> values) throws IOException;
     }
 
     public static final class AppenderWriter implements Appender {
 
         private final Writer writer;
+        private final ValueJoiner joiner;
 
         AppenderWriter(Writer writer) {
+            this(writer, new TsvValueJoiner());
+        }
+
+        AppenderWriter(Writer writer, ValueJoiner joiner) {
             this.writer = writer;
+            this.joiner = joiner;
         }
 
         @Override
@@ -69,8 +79,16 @@ public final class ExportUtil {
             writer.write(value);
         }
 
+        @Override
+        public void append(Stream<String> values) throws IOException {
+            writer.write(joiner.join(values));
+        }
+
         public static AppenderWriter of(Writer writer) {
             return new AppenderWriter(writer);
+        }
+        public static AppenderWriter of(Writer writer, ValueJoiner joiner) {
+            return new AppenderWriter(writer, joiner);
         }
     }
 
@@ -94,19 +112,17 @@ public final class ExportUtil {
         }
     }
 
-    private static final ValueJoiner VALUE_JOINER_DEFAULT = new TsvValueJoiner();
-
-    public static void writeResults(Appender appender, ValueJoiner joiner, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader) throws IOException {
+    public static void writeResults(Appender appender, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader) throws IOException {
         ExecutionResult rows = new ExecutionEngine(dbService).execute(query, params);
         List<String> columns = rows.columns();
         if (includeHeader) {
             final String[] values = columns.toArray(new String[columns.size()]);
-            appender.append(joiner.join(Stream.of(values)));
+            appender.append(Stream.of(values));
         }
-        appendRow(appender, joiner, rows, columns);
+        appendRow(appender, rows, columns);
     }
 
-    public static void appendRow(Appender appender, ValueJoiner joiner, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
+    public static void appendRow(Appender appender, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
         for (Map<String, Object> row : rows) {
             appender.append("\n");
             List<String> values = new ArrayList<String>();
@@ -114,7 +130,7 @@ public final class ExportUtil {
                 Object value = row.get(column);
                 values.add(value == null ? "" : value.toString());
             }
-            appender.append(joiner.join(values.stream()));
+            appender.append(values.stream());
         }
     }
 
@@ -123,7 +139,7 @@ public final class ExportUtil {
         for (int i = 0; i < fields.length; i++) {
             values[i] = properties.getOrDefault(fields[i], "");
         }
-        appender.append(joiner.join(Stream.of(values)));
+        appender.append(Stream.of(values));
     }
 
     public static void mkdirIfNeeded(String baseDir) throws IOException {

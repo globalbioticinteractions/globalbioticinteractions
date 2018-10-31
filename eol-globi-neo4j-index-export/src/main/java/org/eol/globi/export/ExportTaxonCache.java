@@ -33,7 +33,7 @@ public class ExportTaxonCache implements StudyExporter {
         }};
 
         ExportUtil.writeResults(appender,
-                new ExportUtil.TsvValueJoiner(), ((StudyNode)study).getUnderlyingNode().getGraphDatabase(),
+                ((StudyNode)study).getUnderlyingNode().getGraphDatabase(),
                 query,
                 params,
                 true

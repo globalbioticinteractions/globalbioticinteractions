@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
 

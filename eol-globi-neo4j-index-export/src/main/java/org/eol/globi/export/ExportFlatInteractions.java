@@ -75,7 +75,7 @@ public class ExportFlatInteractions implements GraphExporter {
     }
 
     void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {
-        ExportUtil.export(appender, new ExportUtil.TsvValueJoiner(), graphService, CYPHER_QUERY);
+        ExportUtil.export(appender, graphService, CYPHER_QUERY);
     }
 
 

@@ -29,7 +29,7 @@ public class ExportTaxonMap implements StudyExporter {
         HashMap<String, Object> params = new HashMap<String, Object>();
 
         ExportUtil.writeResults(writer,
-                new ExportUtil.TsvValueJoiner(), ((NodeBacked)study).getUnderlyingNode().getGraphDatabase(),
+                ((NodeBacked)study).getUnderlyingNode().getGraphDatabase(),
                 query,
                 params,
                 true
