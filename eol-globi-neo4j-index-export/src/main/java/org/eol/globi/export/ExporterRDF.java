@@ -15,7 +15,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,21 +31,21 @@ public class ExporterRDF implements StudyExporter {
     public static final String INTERACTION = "http://purl.obolibrary.org/obo/GO_0044419";
 
     @Override
-    public void exportStudy(Study study, Writer writer, boolean includeHeader)
+    public void exportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader)
             throws IOException {
 
         for (Relationship r : NodeUtil.getSpecimens(study)) {
             Node agentNode = r.getEndNode();
             for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j())) {
-                writeStatement(writer, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
-                writeParticipantStatements(writer, ixnR, ixnR.getEndNode());
-                writeParticipantStatements(writer, ixnR, agentNode);
-                writeStatement(writer, Arrays.asList(blankNode(agentNode), iriNode(InteractType.valueOf(ixnR.getType().name()).getIRI()), blankNode(ixnR.getEndNode())));
+                writeStatement(appender, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
+                writeParticipantStatements(appender, ixnR, ixnR.getEndNode());
+                writeParticipantStatements(appender, ixnR, agentNode);
+                writeStatement(appender, Arrays.asList(blankNode(agentNode), iriNode(InteractType.valueOf(ixnR.getType().name()).getIRI()), blankNode(ixnR.getEndNode())));
             }
         }
     }
 
-    public void writeParticipantStatements(Writer writer, Relationship ixnR, Node participant1) throws IOException {
+    public void writeParticipantStatements(ExportUtil.Appender writer, Relationship ixnR, Node participant1) throws IOException {
         writeStatement(writer, Arrays.asList(blankNode(ixnR), iriNode(HAS_PARTICIPANT), blankNode(participant1)));
         writeStatement(writer, Arrays.asList(blankNode(participant1), iriNode(HAS_TYPE), iriNode(ORGANISM)));
         writeStatements(writer, taxonOfSpecimen(participant1));
@@ -63,7 +62,7 @@ public class ExporterRDF implements StudyExporter {
 
     }
 
-    public void writeStatements(Writer writer, List<List<String>> lists) throws IOException {
+    public void writeStatements(ExportUtil.Appender writer, List<List<String>> lists) throws IOException {
         for (List<String> list : lists) {
             writeStatement(writer, list);
         }
@@ -77,10 +76,10 @@ public class ExporterRDF implements StudyExporter {
         return "_:rel" + ixnR.getId();
     }
 
-    public void writeStatement(Writer writer, List<String> triple) throws IOException {
+    public void writeStatement(ExportUtil.Appender writer, List<String> triple) throws IOException {
         final String statement = StringUtils.join(triple, " ") + "  .";
-        writer.write("\n");
-        writer.write(statement);
+        writer.append("\n");
+        writer.append(statement);
     }
 
     protected List<String> addSameAsTaxaFor(Node taxon) {

@@ -46,7 +46,7 @@ public class ExporterReferences extends ExporterBase {
     }
 
     @Override
-    protected void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
+    protected void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<>();
         properties.put(IDENTIFIER, referenceIdForStudy(study));
         properties.put(FULL_REFERENCE, referenceForStudy(study));

@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class ExportUnmatchedTaxonNames implements StudyExporter {
 
     @Override
-    public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
+    public void exportStudy(final Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
 
         String query = "START study = node:studies(title={study_title}) " +
                 "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:CLASSIFIED_AS]->taxon " +
@@ -32,7 +32,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
             put("study_title", study.getTitle());
         }};
 
-        ExportUtil.writeResults(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), query, params, includeHeader);
+        ExportUtil.writeResults(appender, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), query, params, includeHeader);
     }
 
 }

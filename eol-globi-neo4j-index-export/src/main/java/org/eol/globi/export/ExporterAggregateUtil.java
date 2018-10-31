@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExporterAggregateUtil {
-    public static void exportDistinctInteractionsByStudy(Writer writer, GraphDatabaseService graphDatabase, RowWriter rowWriter) throws IOException {
+    public static void exportDistinctInteractionsByStudy(ExportUtil.Appender writer, GraphDatabaseService graphDatabase, RowWriter rowWriter) throws IOException {
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()
@@ -90,6 +90,6 @@ public class ExporterAggregateUtil {
     }
 
     public interface RowWriter {
-        void writeRow(Writer writer, StudyNode studyId, String sourceTaxonId, String relationshipType, List<String> targetTaxonIds) throws IOException;
+        void writeRow(ExportUtil.Appender writer, StudyNode studyId, String sourceTaxonId, String relationshipType, List<String> targetTaxonIds) throws IOException;
     }
 }

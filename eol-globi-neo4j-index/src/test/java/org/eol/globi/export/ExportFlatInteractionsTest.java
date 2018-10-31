@@ -43,7 +43,7 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
         resolveNames();
 
         final StringWriter writer = new StringWriter();
-        new ExportFlatInteractions().export(getGraphDb(), writer);
+        new ExportFlatInteractions().export(getGraphDb(), ExportUtil.AppenderWriter.of(writer));
         final String actualExport = writer.toString();
         final String[] actualExportLines = actualExport.split("\\n");
         assertThat(actualExportLines.length, is(22));

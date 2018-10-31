@@ -16,7 +16,6 @@ import java.io.StringWriter;
 import java.text.ParseException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ExporterOccurrencesTest extends GraphDBTestCase {
@@ -32,7 +31,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        exportOccurrences().exportStudy(myStudy1, row, true);
+        exportOccurrences().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
         assertThat(row.getBuffer().toString().trim(), equalTo(expected.trim()));
     }
@@ -57,7 +56,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        exportOccurrences().exportStudy(myStudy1, row, false);
+        exportOccurrences().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
@@ -78,7 +77,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        exportOccurrences().exportStudy(myStudy1, row, true);
+        exportOccurrences().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
 
@@ -93,7 +92,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        exportOccurrences().exportStudy(myStudy, row, true);
+        exportOccurrences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), true);
 
         String expected = "";
         expected += getExpectedHeader();

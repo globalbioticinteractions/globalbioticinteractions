@@ -93,7 +93,7 @@ public class GraphExporterImpl implements GraphExporter {
             OutputStreamWriter writer = openStream(filePath);
             for (Study study : studies) {
                 boolean includeHeader = studies.indexOf(study) == 0;
-                exporter.exportStudy(study, writer, includeHeader);
+                exporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), includeHeader);
             }
             closeStream(filePath, writer);
         } catch (IOException e) {
@@ -133,7 +133,7 @@ public class GraphExporterImpl implements GraphExporter {
             int total = studies.size();
             int count = 1;
             for (Study study : studies) {
-                studyExporter.exportStudy(study, writer, true);
+                studyExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
                 if (count % 50 == 0) {
                     LOG.info("added triples for [" + count + "] of [" + total + "] studies...");
                 }
@@ -178,7 +178,7 @@ public class GraphExporterImpl implements GraphExporter {
         OutputStreamWriter writer = openStream(exportPath + filename);
         for (Study importedStudy : importedStudies) {
             boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
-            studyExporter.exportStudy(importedStudy, writer, includeHeader);
+            studyExporter.exportStudy(importedStudy, ExportUtil.AppenderWriter.of(writer), includeHeader);
         }
         closeStream(exportPath + filename, writer);
         LOG.info("darwin core meta file writing... ");

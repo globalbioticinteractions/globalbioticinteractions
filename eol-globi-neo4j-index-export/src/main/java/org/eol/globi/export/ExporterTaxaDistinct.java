@@ -8,21 +8,20 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ExporterTaxaDistinct extends ExporterTaxa {
 
     @Override
-    public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             // only write the taxa once, because they are unique across studies...
             exportAllDistinctTaxa(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase());
         }
     }
 
-    private void exportAllDistinctTaxa(Writer writer, GraphDatabaseService graphDatabase) throws IOException {
+    private void exportAllDistinctTaxa(ExportUtil.Appender writer, GraphDatabaseService graphDatabase) throws IOException {
         ExecutionEngine engine = new ExecutionEngine(graphDatabase);
         ExecutionResult results = engine.execute("START taxon = node:taxons('*:*') " +
                 "MATCH taxon<-[:CLASSIFIED_AS]-specimen " +

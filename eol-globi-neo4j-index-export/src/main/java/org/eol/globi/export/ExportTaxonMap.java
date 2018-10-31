@@ -11,13 +11,13 @@ import java.util.HashMap;
 public class ExportTaxonMap implements StudyExporter {
 
     @Override
-    public void exportStudy(final Study study, Writer writer, boolean includeHeader) throws IOException {
+    public void exportStudy(final Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             doExport(study, writer);
         }
     }
 
-    protected void doExport(Study study, Writer writer) throws IOException {
+    protected void doExport(Study study, ExportUtil.Appender writer) throws IOException {
         String query = "START study = node:studies('*:*')\n" +
                 "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, specimen-[:CLASSIFIED_AS]->taxon " +
                 "WITH distinct(origTaxon.name) as origName, origTaxon.externalId? as origId, taxon " +

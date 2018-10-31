@@ -11,9 +11,6 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Before;
@@ -23,7 +20,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -55,7 +51,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         Study myStudy1 = nodeFactory.findStudy("myStudy1");
         StringWriter row = new StringWriter();
-        exporter.exportStudy(myStudy1, row, true);
+        exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
         String expected = "associationID\toccurrenceID\tassociationType\ttargetOccurrenceID\tmeasurementDeterminedDate\tmeasurementDeterminedBy\tmeasurementMethod\tmeasurementRemarks\tsource\tbibliographicCitation\tcontributor\treferenceID" +
                 "\nglobi:assoc:1-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:1-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:1-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:1" +
@@ -78,7 +74,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         StringWriter row = new StringWriter();
         for (String studyTitle : studyTitles) {
             Study myStudy1 = nodeFactory.findStudy(studyTitle);
-            exporter.exportStudy(myStudy1, row, false);
+            exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         }
 
 

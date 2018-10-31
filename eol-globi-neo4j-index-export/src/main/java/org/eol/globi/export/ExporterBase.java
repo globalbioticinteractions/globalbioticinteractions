@@ -7,7 +7,6 @@ import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -29,16 +28,16 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     protected abstract String getRowType();
 
-    protected abstract void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException;
+    protected abstract void doExportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException;
 
-    final public void exportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
+    final public void exportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             writeHeader(writer);
         }
         doExportStudy(study, writer, includeHeader);
     }
 
-    private void writeHeader(Writer writer) throws IOException {
+    private void writeHeader(ExportUtil.Appender writer) throws IOException {
         String[] fields = getFields();
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i];
@@ -48,10 +47,10 @@ public abstract class ExporterBase extends DarwinCoreExporter {
         }
     }
 
-    private void writeHeaderField(Writer writer, String[] fields, int i, String field) throws IOException {
-        writer.write(field);
+    private void writeHeaderField(ExportUtil.Appender writer, String[] fields, int i, String field) throws IOException {
+        writer.append(field);
         if (i < (fields.length - 1)) {
-            writer.write("\t");
+            writer.append("\t");
         }
     }
 
@@ -80,8 +79,8 @@ public abstract class ExporterBase extends DarwinCoreExporter {
                 "      <location>";
     }
 
-    protected void writeProperties(Writer writer, Map<String, String> properties) throws IOException {
-        writer.write("\n");
+    protected void writeProperties(ExportUtil.Appender writer, Map<String, String> properties) throws IOException {
+        writer.append("\n");
         String[] fields = getFields();
         ExportUtil.writeProperties(writer, properties, fields);
     }

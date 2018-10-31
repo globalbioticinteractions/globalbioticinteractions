@@ -22,8 +22,21 @@ public class ExportUtilTest {
             put("threeKey", "three\r\n\t");
         }});
         StringWriter writer = new StringWriter();
-        ExportUtil.appendRow(writer, rows, Arrays.asList("oneKey", "twoKey", "threeKey"));
+        ExportUtil.appendRow(ExportUtil.AppenderWriter.of(writer), rows, Arrays.asList("oneKey", "twoKey", "threeKey"));
         assertThat(writer.getBuffer().toString(), is("\no n e\ttwo\tthree"));
+    }
+
+    @Test
+    public void appendRowCSV() throws IOException {
+        Iterable<Map<String, Object>> rows = Collections.singletonList(new HashMap<String, Object>() {{
+            put("oneKey", "o\"n\ne");
+            put("twoKey", "two");
+            put("threeKey", "three\r\n\t");
+        }});
+        StringWriter writer = new StringWriter();
+        ExportUtil.ValueJoiner csvJoiner = new ExportUtil.CsvValueJoiner();
+        ExportUtil.appendRow(ExportUtil.AppenderWriter.of(writer), rows, Arrays.asList("oneKey", "twoKey", "threeKey"), csvJoiner);
+        assertThat(writer.getBuffer().toString(), is("\n\"o\"\"n\ne\",two,\"three\r\n\t\""));
     }
 
 }

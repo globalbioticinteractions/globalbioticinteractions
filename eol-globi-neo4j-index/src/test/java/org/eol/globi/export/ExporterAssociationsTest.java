@@ -36,7 +36,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterAssociations().exportStudy(myStudy1, row, false);
+        new ExporterAssociations().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }

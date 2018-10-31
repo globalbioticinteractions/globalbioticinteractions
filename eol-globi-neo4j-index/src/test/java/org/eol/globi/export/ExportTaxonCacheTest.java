@@ -44,7 +44,7 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
         NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode)human, getGraphDb(), RelTypes.SIMILAR_TO);
 
         StringWriter writer = new StringWriter();
-        new ExportTaxonCache().exportStudy(study, writer, true);
+        new ExportTaxonCache().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
         assertThat(writer.toString(), is("id\tname\trank\tcommonNames\tpath\tpathIds\tpathNames\texternalUrl\tthumbnailUrl" +
                 "\nhomoSapiensId\tHomo sapiens\t\tman @en | \"mens @nl\tone two three\t\t\thttp://some/thing\thttp://thing/some" +
                 "\nalt:123\tAlternate Homo sapiens\t\t\tsome path here\t\t\thttp://some/thing\thttp://thing/some" +

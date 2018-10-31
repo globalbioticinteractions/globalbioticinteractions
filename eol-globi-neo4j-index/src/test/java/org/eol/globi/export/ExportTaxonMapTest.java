@@ -66,7 +66,7 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
         resolveNames();
 
         StringWriter writer = new StringWriter();
-        new ExportTaxonMap().exportStudy(study, writer, true);
+        new ExportTaxonMap().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
         assertThat(writer.toString(), is("providedTaxonId\tprovidedTaxonName\tresolvedTaxonId\tresolvedTaxonName" +
                 "\nhomoSapiensId\tHomo sapiens\thomoSapiensId\tHomo sapiens" +
                 "\nhomoSapiensId\tHomo sapiens\talt:123\tAlternate Homo sapiens" +

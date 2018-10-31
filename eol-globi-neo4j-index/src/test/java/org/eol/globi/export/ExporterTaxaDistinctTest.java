@@ -40,7 +40,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
     protected String exportStudy(Study myStudy1) throws IOException {
         StringWriter row = new StringWriter();
-        new ExporterTaxaDistinct().exportStudy(myStudy1, row, true);
+        new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
         return row.getBuffer().toString();
     }
 
@@ -54,7 +54,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
     }
 
     private void assertThatNoTaxaAreExportedOnMissingHeader(Study myStudy1, StringWriter row) throws IOException {
-        new ExporterTaxaDistinct().exportStudy(myStudy1, row, false);
+        new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), is(""));
     }
 

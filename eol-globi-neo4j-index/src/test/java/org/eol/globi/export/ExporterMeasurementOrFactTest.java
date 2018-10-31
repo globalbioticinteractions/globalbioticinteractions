@@ -35,7 +35,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterMeasurementOrFact().exportStudy(myStudy1, row, false);
+        new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
@@ -48,7 +48,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(myStudy1, row, false);
+        new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo(""));
     }
 
@@ -56,7 +56,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         createTestData(null, targetTaxonName, sourceTaxonName);
         Study myStudy1 = nodeFactory.findStudy("myStudy");
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(myStudy1, row, false);
+        new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 

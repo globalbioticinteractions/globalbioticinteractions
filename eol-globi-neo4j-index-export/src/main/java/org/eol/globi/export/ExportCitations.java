@@ -25,7 +25,7 @@ public class ExportCitations implements GraphExporter {
     }
 
     void export(GraphDatabaseService graphService, Writer writer) throws IOException {
-        ExportCitations.export(graphService, writer, CYPHER_QUERY);
+        ExportCitations.export(graphService, ExportUtil.AppenderWriter.of(writer), CYPHER_QUERY);
     }
 
     public static void export(GraphDatabaseService graphService, String baseDir, String tsvFilename, String cypherQuery) throws StudyImporterException {
@@ -34,7 +34,7 @@ public class ExportCitations implements GraphExporter {
             final FileOutputStream out = new FileOutputStream(baseDir + tsvFilename);
             GZIPOutputStream os = new GZIPOutputStream(out);
             final Writer writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            export(graphService, writer, cypherQuery);
+            export(graphService, ExportUtil.AppenderWriter.of(writer), cypherQuery);
             writer.flush();
             os.finish();
             IOUtils.closeQuietly(writer);
@@ -44,7 +44,7 @@ public class ExportCitations implements GraphExporter {
         }
     }
 
-    public static void export(GraphDatabaseService graphService, Writer writer, String query) throws IOException {
+    public static void export(GraphDatabaseService graphService, ExportUtil.Appender writer, String query) throws IOException {
         HashMap<String, Object> params = new HashMap<String, Object>() {{
         }};
         ExportUtil.writeResults(writer, graphService, query, params, true);

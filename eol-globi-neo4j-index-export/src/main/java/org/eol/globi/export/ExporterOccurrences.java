@@ -13,7 +13,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,7 +20,7 @@ import java.util.Map;
 public class ExporterOccurrences extends ExporterOccurrencesBase {
 
     @Override
-    public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
@@ -31,7 +30,7 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         }
     }
 
-    private void handleSpecimen(Study study, Writer writer, Relationship collectedRel, Node specimenNode) throws IOException {
+    private void handleSpecimen(Study study, ExportUtil.Appender writer, Relationship collectedRel, Node specimenNode) throws IOException {
         Iterable<Relationship> collectedAt = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.COLLECTED_AT));
         Node locationNode = null;
         for (Relationship relationship1 : collectedAt) {

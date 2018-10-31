@@ -46,7 +46,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         resolveNames();
 
         StringWriter row = new StringWriter();
-        new ExporterOccurrenceAggregates().exportDistinct(myStudy, row);
+        new ExporterOccurrenceAggregates().exportDistinct(myStudy, ExportUtil.AppenderWriter.of(row));
         assertThat(row.toString(), equalTo(""));
     }
 
@@ -59,7 +59,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
         StringWriter row = new StringWriter();
 
-        new ExporterOccurrenceAggregates().exportDistinct(myStudy1, row);
+        new ExporterOccurrenceAggregates().exportDistinct(myStudy1, ExportUtil.AppenderWriter.of(row));
 
         String expectedData = getExpectedData();
 

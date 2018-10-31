@@ -4,7 +4,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.jena.riot.Lang;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSPIRE;
@@ -69,7 +68,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
             Writer writer = new FileWriter(file);
             ExporterRDF turtleExporter = new ExporterRDF();
             for (Study study : studies) {
-                turtleExporter.exportStudy(study, writer, true);
+                turtleExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
             }
             writer.flush();
             writer.close();

@@ -24,13 +24,13 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.getOrCreateStudy(myStudy1);
         StringWriter row = new StringWriter();
 
-        new ExporterReferences().exportStudy(myStudy, row, true);
+        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), true);
 
         assertThat(row.getBuffer().toString(), equalTo(getExpectedData()));
 
         row = new StringWriter();
 
-        new ExporterReferences().exportStudy(myStudy, row, false);
+        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
 
         assertThat(row.getBuffer().toString(), equalTo(getExpectedRow()));
     }
@@ -39,7 +39,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     public void exportReferenceNoDescription() throws IOException, NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         StringWriter row = new StringWriter();
-        new ExporterReferences().exportStudy(myStudy, row, false);
+        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"));
     }
 
@@ -47,7 +47,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
     public void exportReferenceEscapeCharacters() throws IOException, NodeFactoryException, ParseException {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, new DOI("some", "doi"), "bla \"one\""));
         StringWriter row = new StringWriter();
-        new ExporterReferences().exportStudy(myStudy, row, false);
+        new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo("\nglobi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t"));
     }
 

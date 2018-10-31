@@ -12,8 +12,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.ExportTestUtil;
+import org.eol.globi.export.ExportUtil;
 import org.eol.globi.export.ExporterRDF;
 import org.junit.Test;
 
@@ -33,7 +33,7 @@ public class SPARQLTest extends GraphDBTestCase {
         ExporterRDF exporter = new ExporterRDF();
         StringWriter writer = new StringWriter();
         Study study = ExportTestUtil.createTestData(nodeFactory);
-        exporter.exportStudy(study, writer, true);
+        exporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
 
         Model model = ModelFactory.createDefaultModel();
         model.read(new ByteArrayInputStream(writer.toString().getBytes("UTF-8")), null, "N-TRIPLE");

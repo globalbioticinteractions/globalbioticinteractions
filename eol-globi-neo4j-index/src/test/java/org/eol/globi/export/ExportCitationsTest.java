@@ -19,7 +19,7 @@ public class ExportCitationsTest extends GraphDBTestCase {
         StringWriter writer = new StringWriter();
         getNodeFactory().getOrCreateStudy(new StudyImpl("some title", "some source", new DOI("some", "doi"), "some citation"));
         getNodeFactory().getOrCreateStudy(new StudyImpl("some other title", "some other source", new DOI("some", "otherdoi"), "some other citation"));
-        ExportCitations.export(getGraphDb(), writer, ExportCitations.CYPHER_QUERY);
+        ExportCitations.export(getGraphDb(), ExportUtil.AppenderWriter.of(writer), ExportCitations.CYPHER_QUERY);
 
         assertThat(writer.toString(), Is.is("doi\tcitation" +
                 "\n10.some/doi\tsome citation" +

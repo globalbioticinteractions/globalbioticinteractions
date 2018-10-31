@@ -42,7 +42,7 @@ public class ExporterMeasurementOrFact extends ExporterBase {
     }
 
     @Override
-    public void doExportStudy(Study study, Writer writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
 
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
@@ -54,11 +54,11 @@ public class ExporterMeasurementOrFact extends ExporterBase {
         }
     }
 
-    private void writeMeasurements(Writer writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
+    private void writeMeasurements(ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
         writeProperties(writer, properties, specimenNode, collectedRel, study);
     }
 
-    private void writeProperties(Writer writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
+    private void writeProperties(ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
         if (specimenNode.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
             Object property = specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM);
             properties.put(EOLDictionary.MEASUREMENT_VALUE, property.toString());

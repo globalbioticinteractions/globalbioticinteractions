@@ -12,8 +12,6 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -21,7 +19,6 @@ import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -66,7 +63,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         resolveNames();
 
         StringWriter writer = new StringWriter();
-        new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
+        new ExportUnmatchedTaxonNames().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
         assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
                         "\nCaniz\t\t\t\t\t\tcitation my study\tmy first source" +
                         "\nHomo sapiens2\t\t\t\t\t\tcitation my study\tmy first source" +
@@ -120,7 +117,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         predatorSpecimen.ate(preySpecimen);
         resolveNames();
         StringWriter writer = new StringWriter();
-        new ExportUnmatchedTaxonNames().exportStudy(study, writer, true);
+        new ExportUnmatchedTaxonNames().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
         assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
                         "\nHomo sapienz\t\t\tHomo sapiens\tone | two | Homo sapiens\tTESTING:123\tcite, study\tmy first, source" +
                         "\nCaniz\t\t\t\t\t\tcite, study\tmy first, source" +

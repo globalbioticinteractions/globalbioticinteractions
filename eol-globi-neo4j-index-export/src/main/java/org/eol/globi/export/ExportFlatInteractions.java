@@ -83,8 +83,8 @@ public class ExportFlatInteractions implements GraphExporter {
         ExportCitations.export(graphService, baseDir, tsvFilename, CYPHER_QUERY);
     }
 
-    void export(GraphDatabaseService graphService, Writer writer) throws IOException {
-        ExportCitations.export(graphService, writer, CYPHER_QUERY);
+    void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {
+        ExportCitations.export(graphService, appender, CYPHER_QUERY);
     }
 
 
