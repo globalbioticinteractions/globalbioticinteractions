@@ -14,21 +14,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public final class ExportUtil {
 
+    interface ValueJoiner {
+        String join(Stream<String> values);
+    }
+
+    static final class TSVValueJoiner implements ValueJoiner {
+
+        @Override
+        public String join(Stream<String> values) {
+            return StringUtils.join(CSVTSVUtil.escapeValues(values), '\t');
+        }
+    }
+
+    private static final TSVValueJoiner VALUE_JOINER_DEFAULT = new TSVValueJoiner();
+
     public static void writeResults(Writer writer, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader) throws IOException {
+        writeResults(writer, dbService, query, params, includeHeader, VALUE_JOINER_DEFAULT);
+    }
+
+    public static void writeResults(Writer writer, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader, ValueJoiner joiner) throws IOException {
         ExecutionResult rows = new ExecutionEngine(dbService).execute(query, params);
         List<String> columns = rows.columns();
         if (includeHeader) {
             final String[] values = columns.toArray(new String[columns.size()]);
-            writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values), '\t'));
+            writer.write(joiner.join(Stream.of(values)));
         }
-
-        appendRow(writer, rows, columns);
+        appendRow(writer, rows, columns, joiner);
     }
 
     public static void appendRow(Writer writer, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
+        appendRow(writer, rows, columns, VALUE_JOINER_DEFAULT);
+    }
+
+    public static void appendRow(Writer writer, Iterable<Map<String, Object>> rows, List<String> columns, ValueJoiner joiner) throws IOException {
         for (Map<String, Object> row : rows) {
             writer.write("\n");
             List<String> values = new ArrayList<String>();
@@ -36,16 +58,20 @@ public final class ExportUtil {
                 Object value = row.get(column);
                 values.add(value == null ? "" : value.toString());
             }
-            writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values.stream()), '\t'));
+            writer.write(joiner.join(values.stream()));
         }
     }
 
     public static void writeProperties(Writer writer, Map<String, String> properties, String[] fields) throws IOException {
+        writeProperties(writer, properties, fields, VALUE_JOINER_DEFAULT);
+    }
+
+    public static void writeProperties(Writer writer, Map<String, String> properties, String[] fields, ValueJoiner joiner) throws IOException {
         String values[] = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             values[i] = properties.getOrDefault(fields[i], "");
         }
-        writer.write(StringUtils.join(CSVTSVUtil.escapeValues(values), '\t'));
+        writer.write(joiner.join(Stream.of(values)));
     }
 
     public static void mkdirIfNeeded(String baseDir) throws IOException {

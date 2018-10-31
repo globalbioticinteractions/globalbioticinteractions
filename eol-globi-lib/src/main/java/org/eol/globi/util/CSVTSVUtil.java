@@ -48,10 +48,6 @@ public class CSVTSVUtil {
         return new LabeledCSVParser(new CSVParser(reader));
     }
 
-    public static LabeledCSVParser createLabeledTSVParser(Reader reader) throws IOException {
-        return new LabeledCSVParser(new CSVParser(reader, '\t'));
-    }
-
     public static LabeledCSVParser createLabeledTSVParser(InputStream is) throws IOException {
         return new LabeledCSVParser(new CSVParser(is, '\t'));
     }
