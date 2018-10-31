@@ -18,7 +18,7 @@ public class ExporterBaseTest {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put("one", "bunch, of, comma, as");
         properties.put("two", "no commas");
-        ExportUtil.writeProperties(ExportUtil.AppenderWriter.of(writer), new ExportUtil.TsvValueJoiner(), properties, new String[]{"one", "two"});
+        ExportUtil.writeProperties(ExportUtil.AppenderWriter.of(writer, new ExportUtil.TsvValueJoiner()), properties, new String[]{"one", "two"});
         assertThat(writer.toString(), Is.is("bunch, of, comma, as\tno commas"));
     }
 

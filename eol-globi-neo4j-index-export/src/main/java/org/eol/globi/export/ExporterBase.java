@@ -74,10 +74,9 @@ public abstract class ExporterBase extends DarwinCoreExporter {
                 "      <location>";
     }
 
-    protected void writeProperties(ExportUtil.Appender writer, Map<String, String> properties) throws IOException {
-        writer.append("\n");
+    protected void writeProperties(ExportUtil.Appender appender, Map<String, String> properties) throws IOException {
         String[] fields = getFields();
-        ExportUtil.writeProperties(writer, new ExportUtil.TsvValueJoiner(), properties, fields);
+        ExportUtil.writeProperties(appender, properties, fields);
     }
 
 

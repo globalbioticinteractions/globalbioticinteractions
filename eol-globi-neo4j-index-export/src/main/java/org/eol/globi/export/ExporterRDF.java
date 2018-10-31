@@ -78,7 +78,6 @@ public class ExporterRDF implements StudyExporter {
     }
 
     public void writeStatement(ExportUtil.Appender appender, List<String> triple) throws IOException {
-        appender.append("\n");
         appender.append(triple.stream());
     }
 

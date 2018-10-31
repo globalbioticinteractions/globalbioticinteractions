@@ -25,6 +25,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         createTestData(null);
         resolveNames();
         String expected = getExpectedHeader();
+        expected += "\n";
         expected += getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -37,7 +38,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "\nglobi:occur:2\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE" +
+        return "globi:occur:2\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE" +
                 "\nglobi:occur:6\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t" +
                 "\nglobi:occur:8\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t";
     }
@@ -71,6 +72,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         resolveNames();
         String expected = "";
         expected += getExpectedHeader();
+        expected += "\n";
         expected += getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");

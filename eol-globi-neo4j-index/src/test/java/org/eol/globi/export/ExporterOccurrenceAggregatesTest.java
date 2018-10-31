@@ -24,8 +24,7 @@ import static org.junit.Assert.assertThat;
 public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String getExpectedData() {
-        return "\n" +
-                "globi:occur:source:1-EOL:123-ATE\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+        return "globi:occur:source:1-EOL:123-ATE\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
                 "globi:occur:target:1-EOL:123-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
                 "globi:occur:target:1-EOL:123-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
                 "globi:occur:source:1-EOL:333-ATE\tEOL:333\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
@@ -63,11 +62,10 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
         String expectedData = getExpectedData();
 
-        int linesPerHeader = 1;
         int numberOfExpectedDistinctSourceTargetInteractions = 12;
         String actualData = row.getBuffer().toString();
         assertThat(actualData, equalTo(expectedData));
-        assertThat(actualData.split("\n").length, Is.is(linesPerHeader + numberOfExpectedDistinctSourceTargetInteractions));
+        assertThat(actualData.split("\n").length, Is.is(numberOfExpectedDistinctSourceTargetInteractions));
 
     }
 

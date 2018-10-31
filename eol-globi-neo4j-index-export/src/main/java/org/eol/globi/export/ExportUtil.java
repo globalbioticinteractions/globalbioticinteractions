@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -56,13 +57,12 @@ public final class ExportUtil {
     }
 
     interface Appender {
-        void append(String value) throws IOException;
         void append(Stream<String> values) throws IOException;
     }
 
     public static final class AppenderWriter implements Appender {
-
         private final Writer writer;
+        private final AtomicBoolean isFirstLine = new AtomicBoolean(true);
         private final ValueJoiner joiner;
 
         AppenderWriter(Writer writer) {
@@ -75,13 +75,12 @@ public final class ExportUtil {
         }
 
         @Override
-        public void append(String value) throws IOException {
-            writer.write(value);
-        }
-
-        @Override
         public void append(Stream<String> values) throws IOException {
+            if (!isFirstLine.get()) {
+                writer.write("\n");
+            }
             writer.write(joiner.join(values));
+            isFirstLine.set(false);
         }
 
         public static AppenderWriter of(Writer writer) {
@@ -133,7 +132,6 @@ public final class ExportUtil {
 
     public static void appendRow(Appender appender, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
         for (Map<String, Object> row : rows) {
-            appender.append("\n");
             List<String> values = new ArrayList<String>();
             for (String column : columns) {
                 Object value = row.get(column);
@@ -143,7 +141,7 @@ public final class ExportUtil {
         }
     }
 
-    public static void writeProperties(Appender appender, ValueJoiner joiner, Map<String, String> properties, String[] fields) throws IOException {
+    public static void writeProperties(Appender appender, Map<String, String> properties, String[] fields) throws IOException {
         String values[] = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             values[i] = properties.getOrDefault(fields[i], "");
