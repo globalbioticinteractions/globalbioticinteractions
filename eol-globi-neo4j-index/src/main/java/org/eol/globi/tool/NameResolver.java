@@ -54,9 +54,9 @@ public class NameResolver {
         IndexHits<Node> studies = studyIndex.query("title", "*");
         for (Node studyNode : studies) {
             final Study study1 = new StudyNode(studyNode);
-            final Iterable<Relationship> specimens = NodeUtil.getSpecimens(study1);
-            for (Relationship collected : specimens) {
-                SpecimenNode specimen = new SpecimenNode(collected.getEndNode());
+            final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
+            for (Relationship specimenNode : specimenNodes) {
+                SpecimenNode specimen = new SpecimenNode(specimenNode.getEndNode());
                 final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
                 if (classifiedAs == null) {
                     final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING);

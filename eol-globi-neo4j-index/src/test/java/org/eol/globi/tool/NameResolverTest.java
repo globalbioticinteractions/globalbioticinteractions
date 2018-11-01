@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
@@ -21,10 +22,24 @@ public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void doNameResolving() throws NodeFactoryException, PropertyEnricherException {
-        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"));
-        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Animalia", "WORMS:2"));
+        assertResolveNames(RelTypes.COLLECTED);
+    }
+
+    @Test
+    public void doNameResolvingForRefuting() throws NodeFactoryException, PropertyEnricherException {
+        assertResolveNames(RelTypes.REFUTES);
+    }
+
+    @Test
+    public void doNameResolvingForSupporting() throws NodeFactoryException, PropertyEnricherException {
+        assertResolveNames(RelTypes.SUPPORTS);
+    }
+
+    private void assertResolveNames(RelTypes relTypes) throws NodeFactoryException {
+        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"), relTypes);
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Animalia", "WORMS:2"), relTypes);
         human.ate(animal);
-        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", "WORMS:158711"));
+        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", "WORMS:158711"), relTypes);
         human.ate(fish);
 
         assertNull(taxonIndex.findTaxonById("NCBI:9606"));

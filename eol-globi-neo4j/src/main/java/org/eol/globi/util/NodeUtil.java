@@ -80,7 +80,7 @@ public class NodeUtil {
         return asNeo4j(InteractType.values());
     }
 
-    public static RelationshipType[] asNeo4j(InteractType[] values) {
+    public static RelationshipType[] asNeo4j(RelType[] values) {
         RelationshipType[] types = new RelationshipType[values.length];
         for (int i = 0; i < values.length; i++) {
             types[i] = asNeo4j(values[i]);
@@ -90,6 +90,11 @@ public class NodeUtil {
 
     public static Iterable<Relationship> getSpecimens(Study study) {
         return getSpecimens(study, RelTypes.COLLECTED);
+    }
+
+    public static Iterable<Relationship> getSpecimensSupportedAndRefutedBy(Study study) {
+        Node underlyingNode = ((NodeBacked) study).getUnderlyingNode();
+        return underlyingNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(new RelType[] {RelTypes.COLLECTED, RelTypes.SUPPORTS, RelTypes.REFUTES}));
     }
 
     public static Iterable<Relationship> getSpecimens(Study study, RelTypes relType) {
