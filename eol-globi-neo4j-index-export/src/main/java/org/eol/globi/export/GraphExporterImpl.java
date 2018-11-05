@@ -47,10 +47,11 @@ public class GraphExporterImpl implements GraphExporter {
 
         // export to taxa for now, to avoid additional assemblies
         new ExportFlatInteractions(new ExportUtil.TsvValueJoiner(), "interactions.tsv.gz").export(graphService, "tsv");
-        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "interactions.csv.gz").export(graphService, "csv");
-
         new ExportCitations(new ExportUtil.TsvValueJoiner(), "citations.tsv.gz").export(graphService, "tsv");
+
+        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "interactions.csv.gz").export(graphService, "csv");
         new ExportCitations(new ExportUtil.CsvValueJoiner(), "citations.csv.gz").export(graphService, "csv");
+
 
         exportNCBILinkOut(graphService, baseDir, studies);
 
