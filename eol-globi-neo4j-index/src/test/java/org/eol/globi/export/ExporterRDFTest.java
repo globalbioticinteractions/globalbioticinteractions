@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -76,6 +77,8 @@ public class ExporterRDFTest extends GraphDBTestCase {
             assertTrue(file.exists());
 
             String content = IOUtils.toString(new FileInputStream(file), StandardCharsets.UTF_8);
+
+            assertThat(content, endsWith("\n"));
 
             Model model = ModelFactory.createDefaultModel();
             model.read(IOUtils.toInputStream(content, StandardCharsets.UTF_8), "https://example.org", "N-TRIPLE");

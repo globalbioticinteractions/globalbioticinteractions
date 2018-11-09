@@ -76,11 +76,8 @@ public final class ExportUtil {
 
         @Override
         public void append(Stream<String> values) throws IOException {
-            if (!isFirstLine.get()) {
-                writer.write("\n");
-            }
             writer.write(joiner.join(values));
-            isFirstLine.set(false);
+            writer.write("\n");
         }
 
         public static AppenderWriter of(Writer writer) {
@@ -114,9 +111,9 @@ public final class ExportUtil {
     public static class NQuadValueJoiner implements ValueJoiner {
         @Override
         public String join(Stream<String> values) {
-            return Stream
-                    .concat(values, Stream.of("."))
+            String joined = values
                     .collect(Collectors.joining(" "));
+            return StringUtils.isBlank(joined) ? "" : joined + " .";
         }
     }
 
