@@ -25,7 +25,6 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         createTestData(null);
         resolveNames();
         String expected = getExpectedHeader();
-        expected += "\n";
         expected += getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
