@@ -134,7 +134,8 @@ public class GraphExporterImpl implements GraphExporter {
     private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
             ExporterRDF studyExporter = new ExporterRDF();
-            OutputStreamWriter writer = openStream(baseDir + "globi.nq.gz");
+            String exportPath = baseDir + "globi.nq.gz";
+            OutputStreamWriter writer = openStream(exportPath);
             int total = studies.size();
             int count = 1;
             for (Study study : studies) {
@@ -147,7 +148,7 @@ public class GraphExporterImpl implements GraphExporter {
             LOG.info("adding triples for [" + total + "] of [" + total + "] studies.");
 
             LOG.info("writing nquads archive...");
-            closeStream(baseDir + "globi.nq.gz", writer);
+            closeStream(exportPath, writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export as owl", e);
         }

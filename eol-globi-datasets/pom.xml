@@ -90,7 +90,7 @@
                     <url>s3://globi/snapshot</url>
                     <skip>${skipTests}</skip>
                     <includes>
-                        **/sitemap/**,**/taxa/taxon*,**/tsv/interactions.tsv.gz,**/tsv/citations.tsv.gz,**/csv/interactions.csv.gz,**/csv/citations.csv.gz,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
+                        **/*.nq.gz,**/sitemap/**,**/taxa/taxon*,**/tsv/interactions.tsv.gz,**/tsv/citations.tsv.gz,**/csv/interactions.csv.gz,**/csv/citations.csv.gz,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
                     </includes>
                 </configuration>
                 <executions>
