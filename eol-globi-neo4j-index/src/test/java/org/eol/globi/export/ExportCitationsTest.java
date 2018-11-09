@@ -23,7 +23,7 @@ public class ExportCitationsTest extends GraphDBTestCase {
 
         assertThat(writer.toString(), Is.is("doi\tcitation" +
                 "\n10.some/doi\tsome citation" +
-                "\n10.some/otherdoi\tsome other citation"
+                "\n10.some/otherdoi\tsome other citation\n"
         ));
     }
 

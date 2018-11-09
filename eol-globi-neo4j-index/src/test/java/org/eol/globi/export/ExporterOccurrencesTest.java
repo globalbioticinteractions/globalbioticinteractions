@@ -38,13 +38,13 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "globi:occur:2\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE" +
-                "\nglobi:occur:6\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t" +
-                "\nglobi:occur:8\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t";
+        return "globi:occur:2\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE\n" +
+                "globi:occur:6\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n" +
+                "globi:occur:8\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n";
     }
 
     private String getExpectedHeader() {
-        return "occurrenceID\ttaxonID\tinstitutionCode\tcollectionCode\tcatalogNumber\tsex\tlifeStage\treproductiveCondition\tbehavior\testablishmentMeans\toccurrenceRemarks\tindividualCount\tpreparations\tfieldNotes\tbasisOfRecord\tsamplingProtocol\tsamplingEffort\tidentifiedBy\tdateIdentified\teventDate\tmodified\tlocality\tdecimalLatitude\tdecimalLongitude\tverbatimLatitude\tverbatimLongitude\tverbatimElevation\tphysiologicalState\tbodyPart";
+        return "occurrenceID\ttaxonID\tinstitutionCode\tcollectionCode\tcatalogNumber\tsex\tlifeStage\treproductiveCondition\tbehavior\testablishmentMeans\toccurrenceRemarks\tindividualCount\tpreparations\tfieldNotes\tbasisOfRecord\tsamplingProtocol\tsamplingEffort\tidentifiedBy\tdateIdentified\teventDate\tmodified\tlocality\tdecimalLatitude\tdecimalLongitude\tverbatimLatitude\tverbatimLongitude\tverbatimElevation\tphysiologicalState\tbodyPart\n";
     }
 
     @Test
@@ -70,9 +70,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     public void exportToCSV() throws NodeFactoryException, IOException, ParseException {
         createTestData(123.0);
         resolveNames();
-        String expected = "";
-        expected += getExpectedHeader();
-        expected += "\n";
+        String expected = getExpectedHeader();
         expected += getExpectedData();
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");
@@ -98,7 +96,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "\nglobi:occur:2\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\taBasisOfRecord\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+        expected += "globi:occur:2\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\taBasisOfRecord\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n";
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }

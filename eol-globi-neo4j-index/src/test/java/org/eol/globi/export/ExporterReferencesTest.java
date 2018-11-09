@@ -40,7 +40,7 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
-        assertThat(row.getBuffer().toString(), equalTo("globi:ref:1\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"));
+        assertThat(row.getBuffer().toString(), equalTo("globi:ref:1\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n"));
     }
 
     @Test
@@ -48,17 +48,17 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, new DOI("some", "doi"), "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
-        assertThat(row.getBuffer().toString(), equalTo("globi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t"));
+        assertThat(row.getBuffer().toString(), equalTo("globi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t\n"));
     }
 
 
     private String getExpectedData() {
-        return "identifier\tpublicationType\tfull_reference\tprimaryTitle\ttitle\tpages\tpageStart\tpageEnd\tvolume\tedition\tpublisher\tauthorList\teditorList\tcreated\tlanguage\turi\tdoi\tschema#localityName"
-                + "\n" + getExpectedRow();
+        return "identifier\tpublicationType\tfull_reference\tprimaryTitle\ttitle\tpages\tpageStart\tpageEnd\tvolume\tedition\tpublisher\tauthorList\teditorList\tcreated\tlanguage\turi\tdoi\tschema#localityName\n"
+                + getExpectedRow();
     }
 
     private String getExpectedRow() {
-        return "globi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\t10.1234/44\t";
+        return "globi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\t10.1234/44\t\n";
     }
 
     @Test

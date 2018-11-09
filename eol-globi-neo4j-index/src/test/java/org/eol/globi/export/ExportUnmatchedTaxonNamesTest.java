@@ -67,7 +67,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
                         "\nCaniz\t\t\t\t\t\tcitation my study\tmy first source" +
                         "\nHomo sapiens2\t\t\t\t\t\tcitation my study\tmy first source" +
-                        "\nHomo sapiens3\tno:match\t\t\t\t\tcitation my study\tmy first source"
+                        "\nHomo sapiens3\tno:match\t\t\t\t\tcitation my study\tmy first source\n"
         ));
     }
 
@@ -121,7 +121,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
                         "\nHomo sapienz\t\t\tHomo sapiens\tone | two | Homo sapiens\tTESTING:123\tcite, study\tmy first, source" +
                         "\nCaniz\t\t\t\t\t\tcite, study\tmy first, source" +
-                        "\nCanis\t\t\t\t\t\tcite, study\tmy first, source"
+                        "\nCanis\t\t\t\t\t\tcite, study\tmy first, source\n"
         ));
     }
 

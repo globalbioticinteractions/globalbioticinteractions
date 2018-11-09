@@ -70,7 +70,7 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
         assertThat(writer.toString(), is("providedTaxonId\tprovidedTaxonName\tresolvedTaxonId\tresolvedTaxonName" +
                 "\nhomoSapiensId\tHomo sapiens\thomoSapiensId\tHomo sapiens" +
                 "\nhomoSapiensId\tHomo sapiens\talt:123\tAlternate Homo sapiens" +
-                "\ncanisLupusId\tCanis lupus\tcanisLupusId\tCanis lupus"));
+                "\ncanisLupusId\tCanis lupus\tcanisLupusId\tCanis lupus\n"));
     }
 
 }

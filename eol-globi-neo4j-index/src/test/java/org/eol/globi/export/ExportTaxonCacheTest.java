@@ -48,7 +48,7 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
         assertThat(writer.toString(), is("id\tname\trank\tcommonNames\tpath\tpathIds\tpathNames\texternalUrl\tthumbnailUrl" +
                 "\nhomoSapiensId\tHomo sapiens\t\tman @en | \"mens @nl\tone two three\t\t\thttp://some/thing\thttp://thing/some" +
                 "\nalt:123\tAlternate Homo sapiens\t\t\tsome path here\t\t\thttp://some/thing\thttp://thing/some" +
-                "\ncanisLupusId\tCanis lupus\t\t\tfour five six\t\t\t\t"));
+                "\ncanisLupusId\tCanis lupus\t\t\tfour five six\t\t\t\t\n"));
     }
 
 

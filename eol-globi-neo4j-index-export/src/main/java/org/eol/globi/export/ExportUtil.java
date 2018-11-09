@@ -62,7 +62,6 @@ public final class ExportUtil {
 
     public static final class AppenderWriter implements Appender {
         private final Writer writer;
-        private final AtomicBoolean isFirstLine = new AtomicBoolean(true);
         private final ValueJoiner joiner;
 
         AppenderWriter(Writer writer) {

@@ -19,7 +19,7 @@ public class ExporterBaseTest {
         properties.put("one", "bunch, of, comma, as");
         properties.put("two", "no commas");
         ExportUtil.writeProperties(ExportUtil.AppenderWriter.of(writer, new ExportUtil.TsvValueJoiner()), properties, new String[]{"one", "two"});
-        assertThat(writer.toString(), Is.is("bunch, of, comma, as\tno commas"));
+        assertThat(writer.toString(), Is.is("bunch, of, comma, as\tno commas\n"));
     }
 
 }
