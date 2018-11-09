@@ -158,7 +158,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
         assertNotNull(location);
         List<Environment> environments = location.getEnvironments();
         assertThat(environments.size(), not(is(0)));
-        assertThat(environments.get(0).getExternalId(), is("http://cmecscatalog.org/classification/aquaticSetting/13"));
+        assertThat(environments.get(0).getExternalId(), is("https://cmecscatalog.org/cmecs/classification/aquaticSetting/13"));
         assertThat(environments.get(0).getName(), is("Marine Nearshore Subtidal"));
 
         assertNotNull(nodeFactory.findStudy("GoMexSI"));

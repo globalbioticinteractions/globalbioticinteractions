@@ -61,7 +61,7 @@ public enum TaxonomyProvider {
     public static final String ID_PREFIX_NCBI = NCBI.getIdPrefix();
     public static final String ID_PREFIX_NBN = NBN.getIdPrefix();
 
-    public static final String ID_CMECS = "http://cmecscatalog.org/classification/aquaticSetting/";
+    public static final String ID_CMECS = "https://cmecscatalog.org/cmecs/classification/aquaticSetting/";
     public static final String ID_BIO_INFO_REFERENCE = "bioinfo:ref:";
     public static final String BIO_INFO = "bioinfo:";
 
