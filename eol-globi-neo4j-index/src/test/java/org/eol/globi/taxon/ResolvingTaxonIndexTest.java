@@ -43,7 +43,9 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
 
 
     private void assertEnrichedPropertiesSet(TaxonNode aTaxon) {
-        assertThat(aTaxon.getPath(), is("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR));
+        assertThat(aTaxon.getPathNames(), is("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR));
+        assertThat(aTaxon.getPath(), is("a kingdom name" + CharsetConstant.SEPARATOR + "a phylum name" + CharsetConstant.SEPARATOR + "a etc name" + CharsetConstant.SEPARATOR));
+        assertThat(aTaxon.getPathIds(), is("a kingdom id" + CharsetConstant.SEPARATOR + "a phylum id" + CharsetConstant.SEPARATOR + "a etc id" + CharsetConstant.SEPARATOR));
         assertThat(aTaxon.getCommonNames(), is(EXPECTED_COMMON_NAMES));
         assertThat(aTaxon.getName(), is("some name"));
         assertThat(aTaxon.getExternalId(), is("anExternalId"));
@@ -123,7 +125,9 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
             @Override
             public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
-                taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
+                taxon.setPathNames("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
+                taxon.setPath("a kingdom name" + CharsetConstant.SEPARATOR + "a phylum name" + CharsetConstant.SEPARATOR + "a etc name" + CharsetConstant.SEPARATOR);
+                taxon.setPathIds("a kingdom id" + CharsetConstant.SEPARATOR + "a phylum id" + CharsetConstant.SEPARATOR + "a etc id" + CharsetConstant.SEPARATOR);
                 taxon.setExternalId("anExternalId");
                 taxon.setCommonNames(EXPECTED_COMMON_NAMES);
                 return TaxonUtil.taxonToMap(taxon);
