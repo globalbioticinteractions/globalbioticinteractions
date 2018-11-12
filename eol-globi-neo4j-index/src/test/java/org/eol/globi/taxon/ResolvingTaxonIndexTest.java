@@ -110,7 +110,7 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
         return new ResolvingTaxonIndex(new PropertyEnricher() {
                     @Override
                     public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
-                        return new TreeMap<String, String>(properties);
+                        return new TreeMap<>(properties);
                     }
 
                     @Override

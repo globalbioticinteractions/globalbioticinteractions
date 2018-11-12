@@ -15,9 +15,13 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import java.util.Map;
+
 public class NonResolvingTaxonIndex implements TaxonIndex {
-    protected final GraphDatabaseService graphDbService;
+    private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
+    
+    private static final String[] RANKS = new String[]{"kingdom", "phylum", "class", "order", "family", "genus", "species"};
 
     public NonResolvingTaxonIndex(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
@@ -121,8 +125,17 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         TaxonNode taxonNode;
         Transaction transaction = graphDbService.beginTx();
         try {
-            taxonNode = new TaxonNode(graphDbService.createNode(), taxon.getName());
-            addToIndeces((TaxonNode) TaxonUtil.copy(taxon, taxonNode), taxon.getName());
+            Node node = graphDbService.createNode();
+            taxonNode = new TaxonNode(node, taxon.getName());
+
+            TaxonNode copiedTaxon = (TaxonNode) TaxonUtil.copy(taxon, taxonNode);
+            if (isNonEmptyTaxonNameOrId(taxonNode.getName())) {
+                for (String rank : RANKS) {
+                    populateRankIds(taxon, node, rank);
+                    populateRankNames(taxon, node, rank);
+                }
+            }
+            addToIndeces(copiedTaxon, taxon.getName());
 
             indexOriginalNameForTaxon(origTaxon.getName(), taxon, taxonNode);
             indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, taxonNode);
@@ -132,6 +145,22 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
             transaction.finish();
         }
         return taxonNode;
+    }
+
+    private void populateRankNames(Taxon taxon, Node node, String rank) {
+        Map<String, String> pathNameMap = TaxonUtil.toPathNameMap(taxon);
+        String name = pathNameMap.get(rank);
+        if (StringUtils.isNotBlank(name)) {
+            node.setProperty(rank + "Name", name);
+        }
+    }
+
+    private void populateRankIds(Taxon taxon, Node node, String rank) {
+        Map<String, String> pathIdMap = TaxonUtil.toPathIdMap(taxon);
+        String id = pathIdMap.get(rank);
+        if (StringUtils.isNotBlank(id)) {
+            node.setProperty(rank + "Id", id);
+        }
     }
 
 

@@ -55,6 +55,34 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     }
 
     @Test
+    public final void createTaxonWithExplicitRanks() throws NodeFactoryException {
+        Taxon taxon1 = new TaxonImpl("foo", "foo:123");
+        taxon1.setPath("a kingdom name | a phylum name | a class name | an order name | a family name | a genus name | a species name");
+        taxon1.setPathIds("a kingdom id | a phylum id | a class id | an order id | a family id | a genus id | a species id");
+        taxon1.setPathNames("kingdom | phylum | class | order | family | genus | species");
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+
+        assertThat(propertyOf(taxon, "kingdomName"), is("a kingdom name"));
+        assertThat(propertyOf(taxon, "kingdomId"), is("a kingdom id"));
+        assertThat(propertyOf(taxon, "phylumName"), is("a phylum name"));
+        assertThat(propertyOf(taxon, "phylumId"), is("a phylum id"));
+        assertThat(propertyOf(taxon, "className"), is("a class name"));
+        assertThat(propertyOf(taxon, "classId"), is("a class id"));
+        assertThat(propertyOf(taxon, "orderName"), is("an order name"));
+        assertThat(propertyOf(taxon, "orderId"), is("an order id"));
+        assertThat(propertyOf(taxon, "familyName"), is("a family name"));
+        assertThat(propertyOf(taxon, "familyId"), is("a family id"));
+        assertThat(propertyOf(taxon, "genusName"), is("a genus name"));
+        assertThat(propertyOf(taxon, "genusId"), is("a genus id"));
+        assertThat(propertyOf(taxon, "speciesName"), is("a species name"));
+        assertThat(propertyOf(taxon, "speciesId"), is("a species id"));
+    }
+
+    private Object propertyOf(TaxonNode taxon, String proopertyName) {
+        return taxon.getUnderlyingNode().getProperty(proopertyName);
+    }
+
+    @Test
     public final void doNotIndexMagicValuesTaxon() throws NodeFactoryException {
         assertNotIndexed(PropertyAndValueDictionary.NO_NAME);
         assertNotIndexed(PropertyAndValueDictionary.NO_MATCH);

@@ -109,8 +109,8 @@ public class TaxonUtil {
 
     public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {
         if (isResolved(taxonA) && isResolved(taxonB)) {
-            Map<String, String> pathMapA = toPathMap(taxonA);
-            Map<String, String> pathMapB = toPathMap(taxonB);
+            Map<String, String> pathMapA = toPathNameMap(taxonA);
+            Map<String, String> pathMapB = toPathNameMap(taxonB);
             return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
                     || taxonPathLengthMismatch(pathMapA, pathMapB);
         } else {
@@ -140,13 +140,21 @@ public class TaxonUtil {
         return Math.min(pathMapA.size(), pathMapB.size()) == 1 && Math.max(pathMapA.size(), pathMapB.size()) > 4;
     }
 
-    private static Map<String, String> toPathMap(Taxon taxonA) {
+    public static Map<String, String> toPathNameMap(Taxon taxonA) {
+        return toPathNameMap(taxonA, taxonA.getPath());
+    }
+
+    public static Map<String, String> toPathIdMap(Taxon taxonA) {
+        return toPathNameMap(taxonA, taxonA.getPathIds());
+    }
+
+    private static Map<String, String> toPathNameMap(Taxon taxonA, String pathElements) {
+        String[] pathParts = StringUtils.splitPreserveAllTokens(pathElements, CharsetConstant.SEPARATOR_CHAR);
         String[] pathNames = StringUtils.splitPreserveAllTokens(taxonA.getPathNames(), CharsetConstant.SEPARATOR_CHAR);
-        String[] path = StringUtils.splitPreserveAllTokens(taxonA.getPath(), CharsetConstant.SEPARATOR_CHAR);
-        Map<String, String> pathMap = new HashMap<String, String>();
-        if (pathNames != null && path != null && pathNames.length == path.length) {
-            for (int i = 0; i < pathNames.length; i++) {
-                pathMap.put(StringUtils.trim(StringUtils.lowerCase(pathNames[i])), StringUtils.trim(path[i]));
+        Map<String, String> pathMap = new HashMap<>();
+        if (pathParts != null && pathNames != null && pathParts.length == pathNames.length) {
+            for (int i = 0; i < pathParts.length; i++) {
+                pathMap.put(StringUtils.trim(StringUtils.lowerCase(pathNames[i])), StringUtils.trim(pathParts[i]));
             }
         }
         return pathMap;
