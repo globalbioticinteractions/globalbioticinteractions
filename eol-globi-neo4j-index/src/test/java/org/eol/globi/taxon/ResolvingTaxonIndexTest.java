@@ -106,6 +106,21 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
         assertNull(indexResolvedOnly.getOrCreateTaxon(new TaxonImpl("no resolving either", null)));
     }
 
+    @Test
+    public void createTaxonWithExplicitRanks() throws NodeFactoryException {
+        ((ResolvingTaxonIndex)this.taxonService).setEnricher(new PropertyEnricher() {
+            @Override
+            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                return properties;
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        });
+        super.createTaxonWithExplicitRanks();
+    }
     public ResolvingTaxonIndex getIndex() {
         return new ResolvingTaxonIndex(new PropertyEnricher() {
                     @Override
@@ -120,7 +135,7 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
                 }, getGraphDb());
     }
 
-    public static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
+    private static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
         return new ResolvingTaxonIndex(new PropertyEnricher() {
             @Override
             public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {

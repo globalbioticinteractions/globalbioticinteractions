@@ -55,7 +55,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     }
 
     @Test
-    public final void createTaxonWithExplicitRanks() throws NodeFactoryException {
+    public void createTaxonWithExplicitRanks() throws NodeFactoryException {
         Taxon taxon1 = new TaxonImpl("foo", "foo:123");
         taxon1.setPath("a kingdom name | a phylum name | boo name | a class name | an order name | a family name | a genus name | a species name");
         taxon1.setPathIds("a kingdom id | a phylum id | boo id | a class id | an order id | a family id | a genus id | a species id");
@@ -66,10 +66,12 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(propertyOf(taxon, "kingdomId"), is("a kingdom id"));
         assertThat(propertyOf(taxon, "phylumName"), is("a phylum name"));
         assertThat(propertyOf(taxon, "phylumId"), is("a phylum id"));
-        assertThat(propertyOf(taxon, "className"), is("a class name"));
-        assertThat(propertyOf(taxon, "classId"), is("a class id"));
+
         assertThat(propertyOf(taxon, "orderName"), is("an order name"));
         assertThat(propertyOf(taxon, "orderId"), is("an order id"));
+
+        assertThat(propertyOf(taxon, "className"), is("a class name"));
+        assertThat(propertyOf(taxon, "classId"), is("a class id"));
         assertThat(propertyOf(taxon, "familyName"), is("a family name"));
         assertThat(propertyOf(taxon, "familyId"), is("a family id"));
         assertThat(propertyOf(taxon, "genusName"), is("a genus name"));
