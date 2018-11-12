@@ -57,9 +57,9 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     @Test
     public final void createTaxonWithExplicitRanks() throws NodeFactoryException {
         Taxon taxon1 = new TaxonImpl("foo", "foo:123");
-        taxon1.setPath("a kingdom name | a phylum name | a class name | an order name | a family name | a genus name | a species name");
-        taxon1.setPathIds("a kingdom id | a phylum id | a class id | an order id | a family id | a genus id | a species id");
-        taxon1.setPathNames("kingdom | phylum | class | order | family | genus | species");
+        taxon1.setPath("a kingdom name | a phylum name | boo name | a class name | an order name | a family name | a genus name | a species name");
+        taxon1.setPathIds("a kingdom id | a phylum id | boo id | a class id | an order id | a family id | a genus id | a species id");
+        taxon1.setPathNames("kingdom | phylum | boo | class | order | family | genus | species");
         TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
 
         assertThat(propertyOf(taxon, "kingdomName"), is("a kingdom name"));

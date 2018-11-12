@@ -20,7 +20,7 @@ import java.util.Map;
 public class NonResolvingTaxonIndex implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private final Index<Node> taxons;
-    
+
     private static final String[] RANKS = new String[]{"kingdom", "phylum", "class", "order", "family", "genus", "species"};
 
     public NonResolvingTaxonIndex(GraphDatabaseService graphDbService) {
