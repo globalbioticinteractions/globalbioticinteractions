@@ -31,6 +31,20 @@ public class ExportFlatInteractions implements GraphExporter {
             ", sourceTaxon.path? as sourceTaxonPathNames" +
             ", sourceTaxon.pathIds? as sourceTaxonPathIds" +
             ", sourceTaxon.pathNames? as sourceTaxonPathRankNames" +
+            ", sourceTaxon.speciesName? as sourceTaxonSpeciesName" +
+            ", sourceTaxon.speciesId? as sourceTaxonSpeciesId" +
+            ", sourceTaxon.genusName? as sourceTaxonGenusName" +
+            ", sourceTaxon.genusId? as sourceTaxonGenusId" +
+            ", sourceTaxon.familyName? as sourceTaxonFamilyName" +
+            ", sourceTaxon.familyId? as sourceTaxonFamilyId" +
+            ", sourceTaxon.orderName? as sourceTaxonOrderName" +
+            ", sourceTaxon.orderId? as sourceTaxonOrderId" +
+            ", sourceTaxon.className? as sourceTaxonClassName" +
+            ", sourceTaxon.classId? as sourceTaxonClassId" +
+            ", sourceTaxon.phylumName? as sourceTaxonPhylumName" +
+            ", sourceTaxon.phylumId? as sourceTaxonPhylumId" +
+            ", sourceTaxon.kingdomName? as sourceTaxonKingdomName" +
+            ", sourceTaxon.kingdomId? as sourceTaxonKingdomId" +
             ", sourceSpecimen.externalId? as sourceId" +
             ", sourceSpecimen.occurrenceID? as sourceOccurrenceId" +
             ", sourceSpecimen.catalogNumber? as sourceCatalogNumber" +
@@ -51,6 +65,20 @@ public class ExportFlatInteractions implements GraphExporter {
             ", targetTaxon.path? as targetTaxonPathNames" +
             ", targetTaxon.pathIds? as targetTaxonPathIds" +
             ", targetTaxon.pathNames? as targetTaxonPathRankNames" +
+            ", targetTaxon.speciesName? as targetTaxonSpeciesName" +
+            ", targetTaxon.speciesId? as targetTaxonSpeciesId" +
+            ", targetTaxon.genusName? as targetTaxonGenusName" +
+            ", targetTaxon.genusId? as targetTaxonGenusId" +
+            ", targetTaxon.familyName? as targetTaxonFamilyName" +
+            ", targetTaxon.familyId? as targetTaxonFamilyId" +
+            ", targetTaxon.orderName? as targetTaxonOrderName" +
+            ", targetTaxon.orderId? as targetTaxonOrderId" +
+            ", targetTaxon.className? as targetTaxonClassName" +
+            ", targetTaxon.classId? as targetTaxonClassId" +
+            ", targetTaxon.phylumName? as targetTaxonPhylumName" +
+            ", targetTaxon.phylumId? as targetTaxonPhylumId" +
+            ", targetTaxon.kingdomName? as targetTaxonKingdomName" +
+            ", targetTaxon.kingdomId? as targetTaxonKingdomId" +
             ", targetSpecimen.externalId? as targetId" +
             ", targetSpecimen.occurrenceID? as targetOccurrenceId" +
             ", targetSpecimen.catalogNumber? as targetCatalogNumber" +
