@@ -134,7 +134,7 @@ public class GraphExporterImpl implements GraphExporter {
     private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
         try {
             ExporterRDF studyExporter = new ExporterRDF();
-            String exportPath = baseDir + "globi.nq.gz";
+            String exportPath = baseDir + "interactions.nq.gz";
             OutputStreamWriter writer = openStream(exportPath);
             int total = studies.size();
             int count = 1;
