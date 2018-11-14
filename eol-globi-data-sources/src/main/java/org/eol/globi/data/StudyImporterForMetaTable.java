@@ -19,9 +19,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.IllegalFormatException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 
 public class StudyImporterForMetaTable extends BaseStudyImporter {
 
@@ -157,18 +161,6 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         return nullValueArray;
     }
 
-    static public void removeNulls(Map<String, String> properties, List<String> nullValueArray) {
-        List<String> nullKeys = new ArrayList<String>();
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            if (nullValueArray.contains(StringUtils.trim(entry.getValue()))) {
-                nullKeys.add(entry.getKey());
-            }
-        }
-        for (String nullKey : nullKeys) {
-            properties.remove(nullKey);
-        }
-    }
-
     public static String generateReferenceCitation(Map<String, String> properties) {
         StringBuilder citation = new StringBuilder();
         append(citation, properties.get(AUTHOR), ", ");
@@ -247,12 +239,6 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 : null;
     }
 
-    static private InteractType defaultInteractionType(JsonNode config) {
-        final JsonNode interactionTypeId = config.get(StudyImporterForTSV.INTERACTION_TYPE_ID);
-        return interactionTypeId == null ? null : InteractType.typeOf(interactionTypeId.asText());
-    }
-
-
     public JsonNode getConfig() {
         return getDataset().getConfig();
     }
@@ -263,28 +249,55 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
     public static void importAll(InteractionListener interactionListener,
                                  List<Column> columnNames,
-                                 CSVParse csvParse, JsonNode config, ImportLogger importLogger) throws IOException, StudyImporterException {
+                                 CSVParse csvParse, JsonNode config, ImportLogger importLogger) throws StudyImporterException {
         String[] line;
-        while ((line = csvParse.getLine()) != null) {
-            Map<String, String> mappedLine = new HashMap<String, String>();
-            if (line.length < columnNames.size()) {
-                throw new StudyImporterException("read [" + line.length + "] columns, but found [" + columnNames.size() + "] column definitions.");
-            } else if (line.length > columnNames.size()) {
-                if (importLogger != null) {
-                    importLogger.warn(null, "found [" + line.length + "] columns, but only [" + columnNames.size() + "] columns are defined: ignoring remaining undefined columns.");
+        Map<String, String> defaults = new HashMap<>();
+        final Map<String, String> sameAs = new HashMap<String, String>() {{
+            put("doi", REFERENCE_DOI);
+            put("url", REFERENCE_URL);
+        }};
+        Iterator<Map.Entry<String, JsonNode>> fields = config.getFields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            if (field.getValue().isValueNode()) {
+                defaults.put(field.getKey(), field.getValue().asText());
+                String sameKey = sameAs.get(field.getKey());
+                if (sameKey != null) {
+                    defaults.put(sameKey, field.getValue().asText());
                 }
             }
+        }
 
-            final JsonNode nullValues = config.get("null");
-            final List<String> nullValueArray = parseNullValues(nullValues);
+        try {
+            while ((line = csvParse.getLine()) != null) {
+                Map<String, String> mappedLine = new HashMap<>(defaults);
+                if (line.length < columnNames.size()) {
+                    throw new StudyImporterException("read [" + line.length + "] columns, but found [" + columnNames.size() + "] column definitions.");
+                } else if (line.length > columnNames.size()) {
+                    if (importLogger != null) {
+                        importLogger.warn(null, "found [" + line.length + "] columns, but only [" + columnNames.size() + "] columns are defined: ignoring remaining undefined columns.");
+                    }
+                }
 
-            for (int i = 0; i < columnNames.size(); i++) {
-                final String value = nullValueArray.contains(line[i]) ? null : line[i];
-                final Column column = columnNames.get(i);
-                mappedLine.put(column.getName(), parseValue(valueOrDefault(value, column), column));
+                final JsonNode nullValues = config.get("null");
+                final List<String> nullValueArray = parseNullValues(nullValues);
+
+                for (int i = 0; i < columnNames.size(); i++) {
+                    final String value = nullValueArray.contains(line[i]) ? null : line[i];
+                    final Column column = columnNames.get(i);
+                    try {
+                        mappedLine.put(column.getName(), parseValue(valueOrDefault(value, column), column));
+                    } catch (IllegalArgumentException ex) {
+                        if (importLogger != null) {
+                            importLogger.warn(null, "failed to parse value [" + value + "] in column [" + column.getName() + "]");
+                        }
+                    }
+                }
+
+                interactionListener.newLink(mappedLine);
             }
-            setInteractionType(mappedLine, defaultInteractionType(config));
-            interactionListener.newLink(mappedLine);
+        } catch (IOException e) {
+            throw new StudyImporterException(e);
         }
     }
 
@@ -299,7 +312,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
         }
     }
 
-    public static String parseValue(String value, Column column) {
+    public static String parseValue(String value, Column column) throws IllegalFormatException {
         String convertedValue = null;
         if (StringUtils.isNotBlank(value)) {
             if ("long".equalsIgnoreCase(column.getDataTypeBase())) {

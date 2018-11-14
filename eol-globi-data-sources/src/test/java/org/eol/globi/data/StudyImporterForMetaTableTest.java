@@ -117,21 +117,21 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
-    public void parseValue() {
+    public void parseValue() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "bar");
         final String parsedValue = StudyImporterForMetaTable.parseValue(null, column);
         assertThat(parsedValue, is(nullValue()));
     }
 
     @Test
-    public void parseValueEOLTaxonId() {
+    public void parseValueEOLTaxonId() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "http://eol.org/schema/taxonID");
         final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
         assertThat(parsedValue, is("EOL:123"));
     }
 
     @Test
-    public void parseValueLongEOLTaxonId() {
+    public void parseValueLongEOLTaxonId() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", null);
         column.setDataTypeBase("long");
         column.setValueUrl("http://eol.org/pages/{foo}");
@@ -140,7 +140,7 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
-    public void parseValueLongEOLTaxonIdMalformed() {
+    public void parseValueLongEOLTaxonIdMalformed() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", null);
         column.setDataTypeBase("long");
         column.setValueUrl("http://eol.org/pages/{foo}");
@@ -149,21 +149,21 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
-    public void parseValueEOLTaxonIdNull() {
+    public void parseValueEOLTaxonIdNull() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "http://eol.org/schema/taxonID");
         final String parsedValue = StudyImporterForMetaTable.parseValue(null, column);
         assertThat(parsedValue, is(nullValue()));
     }
 
     @Test
-    public void parseValueNODC() {
+    public void parseValueNODC() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "https://marinemetadata.org/references/nodctaxacodes");
         final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
         assertThat(parsedValue, is("NODC:123"));
     }
 
     @Test
-    public void parseValueNCBI() {
+    public void parseValueNCBI() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "string");
         column.setValueUrl("http://purl.obolibrary.org/obo/NCBITaxon_{foo}");
         final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
@@ -171,7 +171,24 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
-    public void parseValueEOL() {
+    public void parseValueEventTime() throws StudyImporterException {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("dd-MMM-YY");
+        final String parsedValue = StudyImporterForMetaTable.parseValue("01-May-18", column);
+        assertThat(parsedValue, is("2018-05-01T00:00:00.000Z"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void parseValueInvalidEventTime() throws StudyImporterException {
+        final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("dd-MMM-YY");
+        StudyImporterForMetaTable.parseValue("10-11 May-18", column);
+    }
+
+    @Test
+    public void parseValueEOL() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "string");
         column.setValueUrl("http://eol.org/pages/{foo}");
         final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
@@ -179,7 +196,7 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
-    public void parseValueNODCNull() {
+    public void parseValueNODCNull() throws StudyImporterException {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "https://marinemetadata.org/references/nodctaxacodes");
         final String parsedValue = StudyImporterForMetaTable.parseValue(null, column);
         assertThat(parsedValue, is(nullValue()));

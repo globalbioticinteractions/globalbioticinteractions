@@ -134,7 +134,7 @@ public class StudyImporterForMetaTableIT {
             return new LabeledCSVParser(new CSVParser(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
         };
 
-        final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/phi-base-data/master";
+        final String baseUrl = "https://raw.githubusercontent.com/phi-base/data/master";
         final String resource = baseUrl + "/globi.json";
         importAll(interactionListener, tableFactory, baseUrl, resource);
 
@@ -189,6 +189,7 @@ public class StudyImporterForMetaTableIT {
         assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), startsWith("http://purl.obolibrary.org/obo/RO_"));
         assertNotNull(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME));
         assertThat(firstLine.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
+        assertThat(firstLine.get(StudyImporterForTSV.REFERENCE_DOI), is(not(nullValue())));
         assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(not(nullValue())));
         assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is(not(nullValue())));
 
