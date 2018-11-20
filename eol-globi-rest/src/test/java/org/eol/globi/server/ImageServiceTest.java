@@ -115,6 +115,50 @@ public class ImageServiceTest {
         assertThat(image.getCommonName(), is("one"));
         assertThat(image.getTaxonPath(), is("path1 | path2"));
     }
+    @Test
+    public void foundImageInTaxonInfoAndInImageSearch() throws IOException {
+        imageService.setTaxonSearch(new TaxonSearch() {
+
+            @Override
+            public Map<String, String> findTaxon(String scientificName) throws IOException {
+                return new HashMap<String, String>() {
+                    {
+                        put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:123456");
+                        put(PropertyAndValueDictionary.NAME, "some latin name");
+                        put(PropertyAndValueDictionary.PATH, "path1 | path2");
+                        put(PropertyAndValueDictionary.COMMON_NAMES, "one @en | zwei @de");
+                        put(PropertyAndValueDictionary.THUMBNAIL_URL, "https://example.com");
+                    }
+                };
+            }
+
+            @Override
+            public Map<String, String> findTaxonWithImage(String scientificName) throws IOException {
+                return null;
+            }
+
+            @Override
+            public Collection<String> findTaxonIds(String scientificName) throws IOException {
+                return Collections.singletonList("https://www.wikidata.org/wiki/Q140");
+            }
+        });
+
+        imageService.setImageSearch(new ImageSearch() {
+
+            @Override
+            public TaxonImage lookupImageForExternalId(String externalId) {
+                TaxonImage taxonImage = new TaxonImage();
+                taxonImage.setInfoURL("some info url");
+                taxonImage.setThumbnailURL("bla");
+                return taxonImage;
+            }
+
+        });
+
+        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
+        assertThat(image.getInfoURL(), is("some info url"));
+        assertThat(image.getThumbnailURL(), is("bla"));
+    }
 
     @Test
     public void taxonFoundButNoExternalId() throws IOException {

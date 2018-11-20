@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.ImageSearch;
@@ -39,7 +40,11 @@ public class ImageService {
             if (taxon != null) {
                 Collection<String> links = taxonSearch.findTaxonIds(scientificName);
                 if (links != null) {
-                    Optional<String> aFirst = links.stream().filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix())).findFirst();
+                    Optional<String> aFirst = links.stream()
+                            .map(x -> StringUtils.replace(x
+                                    , "https://www.wikidata.org/wiki/"
+                                    , TaxonomyProvider.WIKIDATA.getIdPrefix()))
+                            .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix())).findFirst();
                     if (aFirst.isPresent()) {
                         taxonImage = imageSearch.lookupImageForExternalId(aFirst.get());
                     }
