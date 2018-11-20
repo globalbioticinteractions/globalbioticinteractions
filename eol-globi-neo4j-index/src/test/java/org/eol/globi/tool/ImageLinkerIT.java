@@ -27,5 +27,18 @@ public class ImageLinkerIT extends GraphDBTestCase {
         assertThat(enrichedTaxon.getThumbnailUrl(), containsString("http://media.eol.org/content/"));
         assertThat(enrichedTaxon.getExternalUrl(), is("http://eol.org/pages/327955"));
     }
-    
+
+    @Test
+    public void linkBees() throws NodeFactoryException {
+        Taxon taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Apis", "EOL:104135"));
+
+        assertNotNull(taxon);
+
+        new ImageLinker(getGraphDb(), System.out).link();
+
+        Taxon enrichedTaxon = taxonIndex.findTaxonById("EOL:104135");
+        assertThat(enrichedTaxon.getThumbnailUrl(), containsString("http://media.eol.org/content/"));
+        assertThat(enrichedTaxon.getExternalUrl(), is("http://eol.org/pages/327955"));
+    }
+
 }

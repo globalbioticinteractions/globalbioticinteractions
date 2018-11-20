@@ -103,6 +103,12 @@ public class TaxonSearchImplIT {
     }
 
     @Test
+    public void taxonLinks3() throws IOException {
+        Collection<String> links = new TaxonSearchImpl().findTaxonIds("Homo sapiens");
+        assertThat(links, hasItem("http://eol.org/pages/327955"));
+    }
+
+    @Test
     public void taxonLinks2() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Enhydra lutris nereis", null);
         assertThat(links, hasItem("http://www.marinespecies.org/aphia.php?p=taxdetails&id=242601"));
@@ -186,7 +192,7 @@ public class TaxonSearchImplIT {
 
     @Test
     public void findTaxonAriopsisFelis() throws IOException {
-        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis", null);
+        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis");
         assertThat(props.get("name"), is("Ariopsis felis"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
@@ -194,12 +200,12 @@ public class TaxonSearchImplIT {
 
     @Test
     public void findTaxonAriopsisFelisById() throws IOException {
-        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis", null);
+        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis");
         assertThat(props.get("name"), is("Ariopsis felis"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"),is(notNullValue()));
 
-        Map<String, String> linkProps = new TaxonSearchImpl().findTaxon(props.get("externalId"), null);
+        Map<String, String> linkProps = new TaxonSearchImpl().findTaxon(props.get("externalId"));
         assertThat(linkProps.get("name"), is("Ariopsis felis"));
     }
 
@@ -215,7 +221,7 @@ public class TaxonSearchImplIT {
 
     @Test
     public void findTaxonByExternalId() throws IOException {
-        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis", null);
+        Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis");
         assertThat(props.get("name"), is("Ariopsis felis"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
@@ -223,7 +229,7 @@ public class TaxonSearchImplIT {
 
     @Test
     public void populateInfoURL() throws IOException {
-        Map<String, String> props = new TaxonSearchImpl().findTaxon("Exacum divaricatum", null);
+        Map<String, String> props = new TaxonSearchImpl().findTaxon("Exacum divaricatum");
         assertThat(props.get("name"), is("Exacum divaricatum"));
         assertThat(props.get("path"), StringContains.containsString("Plantae"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));

@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +41,7 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Map<String, String> findTaxon(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
+    public Map<String, String> findTaxon(@PathVariable("taxonName") final String taxonName) throws IOException {
         return toMap(findTaxonProxy(taxonName));
     }
 
@@ -96,6 +94,11 @@ public class TaxonSearchImpl implements TaxonSearch {
         return toMap(CypherUtil.executeRemote(cypherQuery));
     }
 
+    @Override
+    public Collection<String> findTaxonIds(String scientificName) throws IOException {
+        return taxonLinks(scientificName, null);
+    }
+
     @RequestMapping(value = "/findCloseMatches", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public CypherQuery findCloseMatches(@RequestParam("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
@@ -136,53 +139,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Collection<String> taxonLinks(@PathVariable("taxonPath") final String taxonPath, HttpServletRequest request) throws IOException {
-        final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), true);
-        StringBuilder query = new StringBuilder("START someTaxon = node:taxons({pathQuery}) ");
-
-        Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
-            {
-                put(ResultField.TAXON_EXTERNAL_ID, "externalId");
-                put(ResultField.TAXON_EXTERNAL_URL, "externalUrl");
-            }
-        };
-
-        ResultField[] returnFieldsCloseMatches = new ResultField[]{
-                ResultField.TAXON_EXTERNAL_ID,
-                ResultField.TAXON_EXTERNAL_URL
-        };
-
-        List<String> requestedFields = new ArrayList<String>();
-        if (request != null) {
-            requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
-        }
-
-        query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl? as externalUrl ");
-        CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap() {
-            {
-                put("pathQuery", pathQuery);
-            }
-        });
-        final CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(request, query1, 30);
-        final String response = CypherUtil.executeRemote(pagedQuery);
-        JsonNode node = new ObjectMapper().readTree(response);
-        JsonNode dataNode = node.get("data");
-        Collection<String> links = new HashSet<>();
-        if (dataNode != null) {
-            for (JsonNode jsonNode : dataNode) {
-                if (jsonNode.isArray() && jsonNode.size() > 1) {
-                    String externalId = jsonNode.get(0).asText();
-                    String externalUrl = jsonNode.get(1).asText();
-                    String resolvedUrl = ExternalIdUtil.urlForExternalId(externalId);
-                    if (StringUtils.isNotBlank(resolvedUrl)) {
-                        links.add(resolvedUrl);
-                    } else if (StringUtils.isNotBlank(externalUrl)) {
-                        links.add(externalUrl);
-                    }
-                }
-            }
-        }
-        return links;
+        return TaxonSearchUtil.linksForTaxonName(taxonPath, request);
     }
 
     private String buildLuceneQuery(String taxonName, String name) {
@@ -221,6 +178,8 @@ public class TaxonSearchImpl implements TaxonSearch {
                 ", taxon.path? as `" + PropertyAndValueDictionary.PATH + "`" +
                 ", taxon.externalId? as `" + PropertyAndValueDictionary.EXTERNAL_ID + "`" +
                 ", taxon.externalUrl? as `" + PropertyAndValueDictionary.EXTERNAL_URL + "`" +
-                ", taxon.thumbnailUrl? as `" + PropertyAndValueDictionary.THUMBNAIL_URL + "` LIMIT 1";
+                ", taxon.thumbnailUrl? as `" + PropertyAndValueDictionary.THUMBNAIL_URL +
+                ", taxon.externalIds? as `" + PropertyAndValueDictionary.EXTERNAL_IDS +
+                "` LIMIT 1";
     }
 }

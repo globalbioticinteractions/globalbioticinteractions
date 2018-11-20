@@ -123,9 +123,13 @@ public class HttpUtil {
         return getContent(URI.create(uri));
     }
 
-    protected static String executeAndRelease(HttpGet get) throws IOException {
+    public static String executeAndRelease(HttpGet get) throws IOException {
+        return executeAndRelease(get, HttpUtil.getHttpClient());
+    }
+
+    public static String executeAndRelease(HttpGet get, HttpClient client) throws IOException {
         try {
-            return HttpUtil.getHttpClient().execute(get, new BasicResponseHandler());
+            return client.execute(get, new BasicResponseHandler());
         } catch (IOException ex) {
             throw new IOException("failed to get [" + get.getURI() + "]", ex);
         } finally {

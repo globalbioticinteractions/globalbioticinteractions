@@ -6,8 +6,10 @@ import org.eol.globi.service.ImageSearch;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,7 @@ public class ImageServiceTest {
         imageService.setTaxonSearch(new TaxonSearch() {
 
             @Override
-            public Map<String, String> findTaxon(String scientificName, HttpServletRequest request) throws IOException {
+            public Map<String, String> findTaxon(String scientificName) throws IOException {
                 return new HashMap<String, String>() {
                     {
                         put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:123456");
@@ -38,6 +40,11 @@ public class ImageServiceTest {
             @Override
             public Map<String, String> findTaxonWithImage(String scientificName) throws IOException {
                 return null;
+            }
+
+            @Override
+            public Collection<String> findTaxonIds(String scientificName) throws IOException {
+                return Arrays.asList("WD:123");
             }
         });
 
@@ -69,7 +76,7 @@ public class ImageServiceTest {
         imageService.setTaxonSearch(new TaxonSearch() {
 
             @Override
-            public Map<String, String> findTaxon(String scientificName, HttpServletRequest request) throws IOException {
+            public Map<String, String> findTaxon(String scientificName) throws IOException {
                 return new HashMap<String, String>() {
                     {
                         put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:123456");
@@ -83,6 +90,11 @@ public class ImageServiceTest {
             @Override
             public Map<String, String> findTaxonWithImage(String scientificName) throws IOException {
                 return null;
+            }
+
+            @Override
+            public Collection<String> findTaxonIds(String scientificName) throws IOException {
+                return Collections.singletonList("EOL:123");
             }
         });
 
@@ -98,7 +110,7 @@ public class ImageServiceTest {
         });
 
         TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
-        assertThat(image.getInfoURL(), is("some info url"));
+        assertThat(image.getInfoURL(), is("http://eol.org/pages/123"));
         assertThat(image.getScientificName(), is("some latin name"));
         assertThat(image.getCommonName(), is("one"));
         assertThat(image.getTaxonPath(), is("path1 | path2"));
@@ -109,7 +121,7 @@ public class ImageServiceTest {
         imageService.setTaxonSearch(new TaxonSearch() {
 
             @Override
-            public Map<String, String> findTaxon(String scientificName, HttpServletRequest request) throws IOException {
+            public Map<String, String> findTaxon(String scientificName) throws IOException {
                 return new HashMap<String, String>() {
                     {
                         put(PropertyAndValueDictionary.EXTERNAL_ID, "no:match");
@@ -121,6 +133,11 @@ public class ImageServiceTest {
             @Override
             public Map<String, String> findTaxonWithImage(String scientificName) throws IOException {
                 return null;
+            }
+
+            @Override
+            public Collection<String> findTaxonIds(String scientificName) throws IOException {
+                return Collections.singletonList("WD:123");
             }
         });
 
@@ -134,7 +151,7 @@ public class ImageServiceTest {
         });
 
         TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
-        assertThat(image.getInfoURL(), is(nullValue()));
+        assertThat(image.getInfoURL(), is(notNullValue()));
         assertThat(image.getScientificName(), is("some latin name"));
         assertThat(image.getCommonName(), is(nullValue()));
     }

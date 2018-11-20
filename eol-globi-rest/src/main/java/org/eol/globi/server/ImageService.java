@@ -1,10 +1,10 @@
 package org.eol.globi.server;
 
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
-import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,18 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class ImageService {
-    private ImageSearch imageSearch = new ImageSearch() {
-        @Override
-        public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
-            return null;
-        }
-
-    }; //new EOLTaxonImageService();
+    private ImageSearch imageSearch = new WikiDataImageSearch();
 
     @Autowired
     private TaxonSearch taxonSearch;
@@ -34,24 +30,26 @@ public class ImageService {
     @RequestMapping(value = "/imagesForName/{scientificName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
-        TaxonImage taxonImage = new TaxonImage();
+        TaxonImage taxonImage = null;
         if (TaxonUtil.isEmptyValue(scientificName)) {
+            taxonImage = new TaxonImage();
             taxonImage.setScientificName(scientificName);
         } else {
-            Map<String, String> taxonWithImage = taxonSearch.findTaxonWithImage(scientificName);
-            if (taxonWithImage == null || taxonWithImage.isEmpty()) {
-                Map<String, String> taxon = taxonSearch.findTaxon(scientificName, null);
-                if (taxon != null) {
-                    if (taxon.containsKey(PropertyAndValueDictionary.EXTERNAL_ID)) {
-                        taxonImage = imageSearch.lookupImageForExternalId(taxon.get(PropertyAndValueDictionary.EXTERNAL_ID));
-                        if (taxonImage == null) {
-                            taxonImage = new TaxonImage();
-                        }
-                        TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage);
+            Map<String, String> taxon = taxonSearch.findTaxon(scientificName);
+            if (taxon != null) {
+                Collection<String> links = taxonSearch.findTaxonIds(scientificName);
+                if (links != null) {
+                    Optional<String> aFirst = links.stream().filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix())).findFirst();
+                    if (aFirst.isPresent()) {
+                        taxonImage = imageSearch.lookupImageForExternalId(aFirst.get());
                     }
+
+                    if (taxonImage == null && !links.isEmpty()) {
+                        taxonImage = new TaxonImage();
+                        taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(links.iterator().next()));
+                    }
+                    TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage);
                 }
-            } else {
-                taxonImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonWithImage, new TaxonImage());
             }
         }
         if (taxonImage == null) {
