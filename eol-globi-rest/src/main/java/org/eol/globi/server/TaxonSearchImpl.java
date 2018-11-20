@@ -179,7 +179,6 @@ public class TaxonSearchImpl implements TaxonSearch {
                 ", taxon.externalId? as `" + PropertyAndValueDictionary.EXTERNAL_ID + "`" +
                 ", taxon.externalUrl? as `" + PropertyAndValueDictionary.EXTERNAL_URL + "`" +
                 ", taxon.thumbnailUrl? as `" + PropertyAndValueDictionary.THUMBNAIL_URL +
-                ", taxon.externalIds? as `" + PropertyAndValueDictionary.EXTERNAL_IDS +
                 "` LIMIT 1";
     }
 }
