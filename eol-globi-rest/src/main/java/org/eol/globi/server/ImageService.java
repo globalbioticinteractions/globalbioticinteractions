@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class ImageService {
@@ -40,9 +42,12 @@ public class ImageService {
             if (taxon != null) {
                 Collection<String> links = taxonSearch.findTaxonIds(scientificName);
                 if (links != null) {
-                    Optional<String> aFirst = replaceFullWithPrefix(links);
-                    if (aFirst.isPresent()) {
-                        taxonImage = imageSearch.lookupImageForExternalId(aFirst.get());
+                    Stream<String> ids = replaceWithPrefix(links);
+                    for (String id : ids.collect(Collectors.toList())) {
+                        taxonImage = imageSearch.lookupImageForExternalId(id);
+                        if (taxonImage != null) {
+                            break;
+                        }
                     }
 
                     if (taxonImage == null && !links.isEmpty()) {
@@ -60,12 +65,16 @@ public class ImageService {
     }
 
     static Optional<String> replaceFullWithPrefix(Collection<String> links) {
+        return replaceWithPrefix(links)
+                                .findFirst();
+    }
+
+    static Stream<String> replaceWithPrefix(Collection<String> links) {
         return links.stream()
                                 .map(x -> StringUtils.replace(x
                                         , "https://www.wikidata.org/wiki/"
                                         , TaxonomyProvider.WIKIDATA.getIdPrefix()))
-                                .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix()))
-                                .findFirst();
+                                .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix()));
     }
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
