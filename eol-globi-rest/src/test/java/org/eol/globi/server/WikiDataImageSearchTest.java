@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 public class WikiDataImageSearchTest {
@@ -13,8 +15,8 @@ public class WikiDataImageSearchTest {
     public void lookupLion() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:140");
         assertNotNull(taxonImage);
-        assertNotNull(taxonImage.getThumbnailURL());
-        assertNotNull(taxonImage.getInfoURL());
+        assertThat(taxonImage.getThumbnailURL(), startsWith("http://commons.wikimedia.org"));
+        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q20739486"));
     }
 
     @Test

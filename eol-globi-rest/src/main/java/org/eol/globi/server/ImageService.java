@@ -40,11 +40,7 @@ public class ImageService {
             if (taxon != null) {
                 Collection<String> links = taxonSearch.findTaxonIds(scientificName);
                 if (links != null) {
-                    Optional<String> aFirst = links.stream()
-                            .map(x -> StringUtils.replace(x
-                                    , "https://www.wikidata.org/wiki/"
-                                    , TaxonomyProvider.WIKIDATA.getIdPrefix()))
-                            .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix())).findFirst();
+                    Optional<String> aFirst = replaceFullWithPrefix(links);
                     if (aFirst.isPresent()) {
                         taxonImage = imageSearch.lookupImageForExternalId(aFirst.get());
                     }
@@ -61,6 +57,15 @@ public class ImageService {
             throw new ResourceNotFoundException("no image for [" + scientificName + "]");
         }
         return taxonImage;
+    }
+
+    static Optional<String> replaceFullWithPrefix(Collection<String> links) {
+        return links.stream()
+                                .map(x -> StringUtils.replace(x
+                                        , "https://www.wikidata.org/wiki/"
+                                        , TaxonomyProvider.WIKIDATA.getIdPrefix()))
+                                .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix()))
+                                .findFirst();
     }
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

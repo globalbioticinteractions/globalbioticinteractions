@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -204,6 +205,13 @@ public class ImageServiceTest {
     public void imagesForNames() throws IOException {
         List<TaxonImage> images = imageService.findImagesForNames(new String[]{"Homo sapiens", "Ariopsis felis"});
         assertThat(images.size(), is(2));
+    }
+
+    @Test
+    public void replaceFullWithPrefix() {
+        Optional<String> s = ImageService.replaceFullWithPrefix(Collections.singletonList("https://www.wikidata.org/wiki/Q1390"));
+        assertThat(s.get(), is("WD:Q1390"));
+
     }
 
 }

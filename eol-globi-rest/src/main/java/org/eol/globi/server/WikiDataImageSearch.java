@@ -42,7 +42,7 @@ public class WikiDataImageSearch implements ImageSearch {
                     }
                     JsonNode pic = binding.get("pic");
                     if (pic.has("value")) {
-                        taxonImage.setThumbnailURL(info.get("value").asText() + "?width=100");
+                        taxonImage.setThumbnailURL(pic.get("value").asText() + "?width=100");
                     }
                 }
             }
