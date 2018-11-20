@@ -161,6 +161,12 @@ public class TaxonUtil {
     }
 
     public static TaxonImage enrichTaxonImageWithTaxon(Map<String, String> taxon, TaxonImage taxonImage) {
+        return (taxonImage == null || taxon == null)
+                ? null
+                : enrich(taxon, taxonImage);
+    }
+
+    private static TaxonImage enrich(Map<String, String> taxon, TaxonImage taxonImage) {
         if (StringUtils.isBlank(taxonImage.getCommonName())) {
             String commonName = taxon.get(COMMON_NAMES);
             if (StringUtils.isNotBlank(commonName)) {

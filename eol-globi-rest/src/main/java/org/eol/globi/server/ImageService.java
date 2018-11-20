@@ -54,6 +54,7 @@ public class ImageService {
                         taxonImage = new TaxonImage();
                         taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(links.iterator().next()));
                     }
+
                     TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage);
                 }
             }
@@ -66,15 +67,15 @@ public class ImageService {
 
     static Optional<String> replaceFullWithPrefix(Collection<String> links) {
         return replaceWithPrefix(links)
-                                .findFirst();
+                .findFirst();
     }
 
     static Stream<String> replaceWithPrefix(Collection<String> links) {
         return links.stream()
-                                .map(x -> StringUtils.replace(x
-                                        , "https://www.wikidata.org/wiki/"
-                                        , TaxonomyProvider.WIKIDATA.getIdPrefix()))
-                                .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix()));
+                .map(x -> StringUtils.replace(x
+                        , "https://www.wikidata.org/wiki/"
+                        , TaxonomyProvider.WIKIDATA.getIdPrefix()))
+                .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix()));
     }
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
