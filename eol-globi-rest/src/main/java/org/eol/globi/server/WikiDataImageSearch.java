@@ -29,9 +29,9 @@ public class WikiDataImageSearch implements ImageSearch {
         TaxonImage taxonImage;
         taxonImage = new TaxonImage();
         String wikiDataId = StringUtils.replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
-        String url = "https://query.wikidata.org/sparql?query=SELECT%20%3Fitem%20%3Fpic%20WHERE%20%7B%20%3Fitem%20wdt%3AP31%20wd%3A"
+        String url = "https://query.wikidata.org/sparql?query=SELECT%20%3Fitem%20%3Fpic%20WHERE%20%7B%20wd%3A"
                 + wikiDataId
-                + "%20.%20%3Fitem%20wdt%3AP18%20%3Fpic%20%7D%20limit%201";
+                + "%20wdt%3AP18%20%3Fpic%20%7D%20limit%201";
         LOG.info("requesting image [" + url + "]");
         HttpGet httpGet = HttpUtil.httpGetJson(url);
         String jsonString = HttpUtil.executeAndRelease(httpGet, HttpUtil.getFailFastHttpClient());
