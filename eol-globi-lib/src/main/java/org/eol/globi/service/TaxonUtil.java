@@ -183,7 +183,10 @@ public class TaxonUtil {
             taxonImage.setInfoURL(taxon.get(EXTERNAL_URL));
         }
         if (StringUtils.isBlank(taxonImage.getThumbnailURL())) {
-            taxonImage.setThumbnailURL(taxon.get(THUMBNAIL_URL));
+            String thumbnailURL = taxon.get(THUMBNAIL_URL);
+            if (!thumbnailURL.contains("media.eol.org")) {
+                taxonImage.setThumbnailURL(thumbnailURL);
+            }
         }
 
         if (StringUtils.isNotBlank(taxonImage.getThumbnailURL())) {

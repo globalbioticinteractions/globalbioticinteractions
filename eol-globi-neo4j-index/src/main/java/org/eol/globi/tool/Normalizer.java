@@ -194,7 +194,7 @@ public class Normalizer {
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
-            // see 
+            // see https://github.com/jhpoelen/eol-globi-data/issues/382
             //LinkUtil.doTimedLink(new ImageLinker(graphService, null));
         } else {
             LOG.info("skipping linking of taxa to thumbnails ...");

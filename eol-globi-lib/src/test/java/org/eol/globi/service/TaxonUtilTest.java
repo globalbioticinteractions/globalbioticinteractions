@@ -151,6 +151,33 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void toTaxonImageIgnoreEOL() {
+        // related to https://github.com/jhpoelen/eol-globi-data/issues/382
+        TaxonImage image = new TaxonImage();
+
+        Taxon taxon = new TaxonImpl("Donald duckus", "EOL:123");
+        taxon.setThumbnailUrl("something-media.eol.org");
+        Map<String, String> taxonMap = new TreeMap<>(TaxonUtil.taxonToMap(taxon));
+        TaxonImage enrichedImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonMap, image);
+
+        assertThat(enrichedImage.getThumbnailURL(), is(nullValue()));
+    }
+
+    @Test
+    public void toTaxonImageIgnoreEOL2() {
+        // related to https://github.com/jhpoelen/eol-globi-data/issues/382
+        TaxonImage image = new TaxonImage();
+
+        Taxon taxon = new TaxonImpl("Donald duckus", "EOL:123");
+        taxon.setThumbnailUrl("https://example.org");
+        Map<String, String> taxonMap = new TreeMap<>(TaxonUtil.taxonToMap(taxon));
+        TaxonImage enrichedImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonMap, image);
+
+        assertThat(enrichedImage.getThumbnailURL(), is("https://example.org"));
+        assertThat(enrichedImage.getPageId(), is("123"));
+    }
+
+    @Test
     public void toTaxonImageNonEOL() {
         TaxonImage image = new TaxonImage();
 

@@ -13,10 +13,10 @@ public class WikiDataImageSearchTest {
 
     @Test
     public void lookupLion() throws IOException {
-        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:140");
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140");
         assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("http://commons.wikimedia.org"));
-        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q20739486"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
     }
 
     @Test
