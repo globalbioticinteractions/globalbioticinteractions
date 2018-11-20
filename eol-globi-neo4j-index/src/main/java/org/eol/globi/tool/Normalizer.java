@@ -52,7 +52,6 @@ public class Normalizer {
     private static final String OPTION_SKIP_LINK_THUMBNAILS = "skipLinkThumbnails";
     private static final String OPTION_SKIP_LINK = "skipLink";
     private static final String OPTION_SKIP_REPORT = "skipReport";
-    private static final String OPTION_USE_DARK_DATA = "useDarkData";
     private static final String OPTION_DATASET_DIR = "datasetDir";
     private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
 
@@ -85,7 +84,6 @@ public class Normalizer {
         options.addOption(OPTION_SKIP_LINK_THUMBNAILS, false, "skip linking of names to thumbnails");
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
         options.addOption(OPTION_SKIP_REPORT, false, "skip report generation step");
-        options.addOption(OPTION_USE_DARK_DATA, false, "use only dark datasets (requires permission)");
         options.addOption(OPTION_DATASET_DIR, true, "specifies location of dataset cache");
 
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
@@ -193,12 +191,6 @@ public class Normalizer {
             LOG.info("skipping linking ...");
         }
 
-        if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
-            // see https://github.com/jhpoelen/eol-globi-data/issues/382
-            //LinkUtil.doTimedLink(new ImageLinker(graphService, null));
-        } else {
-            LOG.info("skipping linking of taxa to thumbnails ...");
-        }
     }
 
     public void appendOpenTreeTaxonLinker(GraphDatabaseService graphService, List<Linker> linkers) {
