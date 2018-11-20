@@ -194,7 +194,8 @@ public class Normalizer {
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK_THUMBNAILS)) {
-            LinkUtil.doTimedLink(new ImageLinker(graphService, null));
+            // see 
+            //LinkUtil.doTimedLink(new ImageLinker(graphService, null));
         } else {
             LOG.info("skipping linking of taxa to thumbnails ...");
         }
