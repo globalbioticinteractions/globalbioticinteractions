@@ -26,8 +26,7 @@ public class WikiDataImageSearch implements ImageSearch {
     }
 
     private TaxonImage requestImage(String externalId) throws IOException {
-        TaxonImage taxonImage;
-        taxonImage = new TaxonImage();
+        TaxonImage taxonImage = null;
         String wikiDataId = StringUtils.replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
         String url = "https://query.wikidata.org/sparql?query=SELECT%20%3Fitem%20%3Fpic%20WHERE%20%7B%20wd%3A"
                 + wikiDataId
@@ -41,6 +40,7 @@ public class WikiDataImageSearch implements ImageSearch {
             if (results.has("bindings")) {
                 JsonNode bindings = results.get("bindings");
                 for (JsonNode binding : bindings) {
+                    taxonImage = new TaxonImage();
                     taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(externalId));
                     JsonNode pic = binding.get("pic");
                     if (pic.has("value")) {
