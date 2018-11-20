@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -99,13 +100,15 @@ public class TaxonSearchImplIT {
     @Test
     public void taxonLinks() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Homo sapiens", null);
-        assertThat(links, hasItem("http://eol.org/pages/327955"));
+        assertThat(links, not(hasItem("http://eol.org/pages/327955")));
+        assertThat(links, hasItem("https://www.wikidata.org/wiki/Q15978631"));
     }
 
     @Test
     public void taxonLinks3() throws IOException {
         Collection<String> links = new TaxonSearchImpl().findTaxonIds("Homo sapiens");
-        assertThat(links, hasItem("http://eol.org/pages/327955"));
+        assertThat(links, not(hasItem("http://eol.org/pages/327955")));
+        assertThat(links, hasItem("https://www.wikidata.org/wiki/Q15978631"));
     }
 
     @Test
@@ -144,7 +147,7 @@ public class TaxonSearchImplIT {
     public void findCloseMatchesScientificChineseCharacters() throws IOException {
         CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("Ariidae", null);
         String response = new CypherQueryExecutor(cypherQuery.getQuery(), cypherQuery.getParams()).execute(null);
-        assertThat(response, StringContains.containsString("海鱨"));
+        assertThat(response, StringContains.containsString("印度尼西亚海鲶"));
     }
 
     @Test

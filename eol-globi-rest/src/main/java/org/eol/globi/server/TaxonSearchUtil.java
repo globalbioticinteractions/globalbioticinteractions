@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.server.CypherQueryBuilder;
 import org.eol.globi.server.CypherReturnClauseBuilder;
 import org.eol.globi.server.util.ResultField;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class TaxonSearchUtil {
     public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request) throws IOException {
@@ -70,6 +72,7 @@ public class TaxonSearchUtil {
                 }
             }
         }
+        links.removeIf(x -> StringUtils.contains(x, "eol.org"));
         return links;
     }
 }
