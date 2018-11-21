@@ -60,9 +60,6 @@
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dott.url=file://${shapefiles.dir}/ott/taxonomy.tsv</argument>
-                        <argument>
-                            -Dnodc.url=file://${shapefiles.dir}/0050418/1.1/data/0-data/NODC_TaxonomicCode_V8_CD-ROM/TAXBRIEF.DAT
-                        </argument>
                         <argument>-classpath</argument>
                         <argument>
                             ${project.build.directory}/eol-globi-neo4j-index-${globi.neo4j.index.version}-jar-with-dependencies.jar
@@ -270,14 +267,6 @@
                                             <groupId>org.eol.globi.opentree</groupId>
                                             <artifactId>opentree-taxonomy</artifactId>
                                             <version>2.9</version>
-                                            <type>tar.gz</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.eol.globi.nodc</groupId>
-                                            <artifactId>nodc-taxonomy</artifactId>
-                                            <version>8.0</version>
                                             <type>tar.gz</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${shapefiles.dir}</outputDirectory>
