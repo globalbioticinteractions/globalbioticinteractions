@@ -3,9 +3,6 @@ package org.eol.globi.server;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.server.CypherQueryBuilder;
-import org.eol.globi.server.CypherReturnClauseBuilder;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
@@ -22,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 public class TaxonSearchUtil {
     public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request) throws IOException {
@@ -48,7 +44,7 @@ public class TaxonSearchUtil {
 
         query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl? as externalUrl ");
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap() {
+        final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap<String, String>() {
             {
                 put("pathQuery", pathQuery);
             }
