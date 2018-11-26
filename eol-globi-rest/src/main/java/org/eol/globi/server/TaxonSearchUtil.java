@@ -68,7 +68,6 @@ public class TaxonSearchUtil {
                 }
             }
         }
-        links.removeIf(x -> StringUtils.contains(x, "eol.org"));
         return links;
     }
 }

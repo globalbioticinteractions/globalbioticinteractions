@@ -16,12 +16,11 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Mockito.when;
 
 public class TaxonSearchImplIT {
@@ -100,14 +99,21 @@ public class TaxonSearchImplIT {
     @Test
     public void taxonLinks() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Homo sapiens", null);
-        assertThat(links, not(hasItem("http://eol.org/pages/327955")));
+        assertThat(links, hasItem("http://eol.org/pages/327955"));
         assertThat(links, hasItem("https://www.wikidata.org/wiki/Q15978631"));
+    }
+
+    @Test
+    public void taxonLinksEOLv2() throws IOException {
+        Collection<String> links = new TaxonSearchImpl().taxonLinks("Lepidochelys kempii", null);
+        assertThat(links, not(hasItem("http://eol.org/pages/1056176")));
+        assertThat(links, hasItem("https://www.wikidata.org/wiki/Q301089"));
     }
 
     @Test
     public void taxonLinks3() throws IOException {
         Collection<String> links = new TaxonSearchImpl().findTaxonIds("Homo sapiens");
-        assertThat(links, not(hasItem("http://eol.org/pages/327955")));
+        assertThat(links, hasItem("http://eol.org/pages/327955"));
         assertThat(links, hasItem("https://www.wikidata.org/wiki/Q15978631"));
     }
 
@@ -213,13 +219,9 @@ public class TaxonSearchImplIT {
     }
 
     @Test
-    public void findTaxonAriopsisFelisWithThumbnail() throws IOException {
+    public void findTaxonNoAriopsisFelisWithThumbnail() throws IOException {
         Map<String, String> props = new TaxonSearchImpl().findTaxonWithImage("Ariopsis felis");
-        assertThat(props.get("name"), is("Ariopsis felis"));
-        assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
-        assertThat(props.get("externalId"), StringContains.containsString(":"));
-        assertThat(props.get("externalUrl"), is("http://eol.org/pages/223038"));
-        assertThat(props.get("thumbnailUrl"), startsWith("http://media.eol.org"));
+        assertThat(props.get("name"), is(nullValue()));
     }
 
     @Test
