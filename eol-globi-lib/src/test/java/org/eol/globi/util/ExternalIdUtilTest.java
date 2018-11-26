@@ -34,6 +34,7 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("GEONAMES:123"), is("http://www.geonames.org/123"));
         assertThat(ExternalIdUtil.urlForExternalId("ALATaxon:NZOR-4-77345"), is("https://bie.ala.org.au/species/NZOR-4-77345"));
         assertThat(ExternalIdUtil.urlForExternalId("BioGoMx:Spp-23-0494"), is("http://gulfbase.org/biogomx/biospecies.php?species=Spp-23-0494"));
+        assertThat(ExternalIdUtil.urlForExternalId("EOL_V2:1234"), is("https://doi.org/10.5281/zenodo.1495266#1234"));
     }
 
     @Test

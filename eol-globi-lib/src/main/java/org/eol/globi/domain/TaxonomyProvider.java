@@ -10,6 +10,7 @@ public enum TaxonomyProvider {
     NCBI("NCBI:"),
     NCBITaxon("NCBITaxon:"),
     EOL("EOL:"),
+    EOL_V2("EOL_V2:"),
     GEONAMES("GEONAMES:"),
     WIKIPEDIA("W:"),
     ENVO("ENVO:"),
