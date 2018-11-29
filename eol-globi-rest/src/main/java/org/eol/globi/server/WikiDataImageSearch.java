@@ -44,7 +44,7 @@ public class WikiDataImageSearch implements ImageSearch {
                     taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(externalId));
                     JsonNode pic = binding.get("pic");
                     if (pic.has("value")) {
-                        taxonImage.setThumbnailURL(pic.get("value").asText() + "?width=100");
+                        taxonImage.setThumbnailURL(StringUtils.replace(pic.get("value").asText(), "http:", "https:") + "?width=100");
                     }
                 }
             }

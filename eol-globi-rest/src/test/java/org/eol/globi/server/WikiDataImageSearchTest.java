@@ -15,7 +15,7 @@ public class WikiDataImageSearchTest {
     public void lookupLion() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140");
         assertNotNull(taxonImage);
-        assertThat(taxonImage.getThumbnailURL(), startsWith("http://commons.wikimedia.org"));
+        assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
     }
 
