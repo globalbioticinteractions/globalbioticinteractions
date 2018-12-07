@@ -15,6 +15,7 @@ import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 public class CacheLocalReadonly implements Cache {
@@ -53,7 +54,7 @@ public class CacheLocalReadonly implements Cache {
             String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
             accessFile = CacheLog.getAccessFile(cacheDirForNamespace);
             if (accessFile.exists()) {
-                String[] rows = IOUtils.toString(accessFile.toURI()).split("\n");
+                String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
                 for (String row : rows) {
                     String[] split = CSVTSVUtil.splitTSV(row);
                     if (split.length > 3) {

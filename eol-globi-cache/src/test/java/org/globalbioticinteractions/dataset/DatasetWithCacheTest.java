@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.Dataset;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CachedURI;
@@ -16,7 +17,6 @@ import java.net.URISyntaxException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class DatasetWithCacheTest {
@@ -85,6 +85,50 @@ public class DatasetWithCacheTest {
         when(cache.asMeta(any(URI.class))).thenReturn(cacheURI);
         Dataset datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
         return new DatasetWithCache(datasetUncached, cache);
+    }
+
+    @Test
+    public void requestLastSeenAtTwice() throws IOException {
+        assertInvokedOnce(DatasetConstant.LAST_SEEN_AT, createCacheMockLastSeen());
+    }
+
+    @Test
+    public void requestContentHashTwice() throws IOException {
+        assertInvokedOnce(DatasetConstant.CONTENT_HASH, createCacheMockContentHash());
+    }
+
+    private void assertInvokedOnce(String propertyName, Cache cacheMock) {
+        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cacheMock);
+        String firstLastSeen = datasetWithCache.getOrDefault(propertyName, "");
+        assertThat(firstLastSeen, is("first"));
+        String secondLastSeen = datasetWithCache.getOrDefault(propertyName, "");
+        assertThat(secondLastSeen, is("first"));
+    }
+
+    private Cache createCacheMockLastSeen() {
+        Cache cache = Mockito.mock(Cache.class);
+        CachedURI firstCachedURI = Mockito.mock(CachedURI.class);
+        when(firstCachedURI.getAccessedAt()).thenReturn("first");
+        CachedURI secondCachedURI = Mockito.mock(CachedURI.class);
+        when(secondCachedURI.getAccessedAt()).thenReturn("second");
+        when(cache.asMeta(URI.create("some:bla")))
+                .thenReturn(firstCachedURI)
+                .thenReturn(secondCachedURI);
+        return cache;
+    }
+
+    private Cache createCacheMockContentHash() {
+        Cache cache = Mockito.mock(Cache.class);
+        CachedURI firstCachedURI = Mockito.mock(CachedURI.class);
+        when(firstCachedURI.getSha256()).thenReturn("first");
+        CachedURI secondCachedURI = Mockito.mock(CachedURI.class);
+        when(secondCachedURI.getSha256()).thenReturn("second");
+        when(cache.asMeta(URI.create("some:bla")))
+                .thenReturn(firstCachedURI)
+                .thenReturn(secondCachedURI);
+        return cache;
     }
 
 }

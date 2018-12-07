@@ -26,6 +26,7 @@ public class DatasetWithCache extends DatasetMapped {
 
     private final Cache cache;
     private final Dataset datasetCached;
+    private CachedURI cachedUri;
 
     public DatasetWithCache(Dataset dataset, Cache cache) {
         this.datasetCached = dataset;
@@ -73,13 +74,18 @@ public class DatasetWithCache extends DatasetMapped {
     }
 
     private String getAccessedAt() {
-        CachedURI cachedUri = cache.asMeta(getDatasetCached().getArchiveURI());
-        return cachedUri == null ? null : cachedUri.getAccessedAt();
+        return getCachedURI() == null ? null : getCachedURI().getAccessedAt();
+    }
+
+    private CachedURI getCachedURI() {
+        if (this.cachedUri == null) {
+            this.cachedUri = cache.asMeta(getDatasetCached().getArchiveURI());
+        }
+        return this.cachedUri;
     }
 
     private String getHash() {
-        CachedURI cachedUri = cache.asMeta(getDatasetCached().getArchiveURI());
-        return cachedUri == null ? null : cachedUri.getSha256();
+        return getCachedURI() == null ? null : getCachedURI().getSha256();
     }
 
     public URI getArchiveURI() {
@@ -91,7 +97,7 @@ public class DatasetWithCache extends DatasetMapped {
         if (equalsIgnoreCase(DatasetConstant.LAST_SEEN_AT, key)) {
             String accessedAt = getAccessedAt();
             return accessedAt == null ? "" : accessedAt;
-        } else if (equalsIgnoreCase("contentHash", key)) {
+        } else if (equalsIgnoreCase(DatasetConstant.CONTENT_HASH, key)) {
             return getHash();
         } else {
             return datasetCached.getOrDefault(key, defaultValue);
