@@ -11,6 +11,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,7 @@ public class ExportNCBIResourceFile implements GraphExporter {
                             "         <ObjId>%s</ObjId>\n"
                             , ncbiTaxonId);
 
-                    IOUtils.write(aLink, os == null ? (os = open(fileFactory, rowCount)) : os);
+                    IOUtils.write(aLink, os == null ? (os = open(fileFactory, rowCount)) : os, StandardCharsets.UTF_8);
                 }
                 rowCount++;
             }
@@ -86,7 +88,9 @@ public class ExportNCBIResourceFile implements GraphExporter {
                 "   <ProviderId>%s</ProviderId>\n" +
                 "   <ObjectSelector>\n" +
                 "     <Database>Taxonomy</Database>\n" +
-                "     <ObjectList>\n", linkBatch(rowCount), ExportNCBIIdentityFile.PROVIDER_ID), os);
+                "     <ObjectList>\n", linkBatch(rowCount), ExportNCBIIdentityFile.PROVIDER_ID),
+                os,
+                StandardCharsets.UTF_8);
         return os;
     }
 
@@ -103,8 +107,8 @@ public class ExportNCBIResourceFile implements GraphExporter {
                     "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
                     "      <UrlName>Show Biotic Interactions</UrlName>\n" +
                     "   </ObjectUrl>\n" +
-                    " </Link>", os);
-            IOUtils.write("\n</LinkSet>", os);
+                    " </Link>", os, StandardCharsets.UTF_8);
+            IOUtils.write("\n</LinkSet>", os, StandardCharsets.UTF_8);
             IOUtils.closeQuietly(os);
         }
     }

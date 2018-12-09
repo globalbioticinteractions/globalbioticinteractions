@@ -40,6 +40,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
@@ -243,7 +244,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public SpecimenNode createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
-        return createSpecimen(study, taxon, RelTypes.COLLECTED);
+        return createSpecimen(study, taxon, RelTypes.COLLECTED, RelTypes.SUPPORTS);
     }
 
     @Override
@@ -458,20 +459,31 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
         if (specimen != null && date != null) {
-            Relationship rel = getCollectedRel(specimen);
-            Transaction tx = rel.getGraphDatabase().beginTx();
+            Iterable<Relationship> rels = getCollectedRel(specimen);
+            Transaction tx = null;
             try {
-                rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
-                tx.success();
+                for (Relationship rel : rels) {
+                    tx = tx == null ? rel.getGraphDatabase().beginTx() : tx;
+                    rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
+                }
+                if (tx != null) {
+                    tx.success();
+                }
             } finally {
-                tx.finish();
+                if (tx != null) {
+                    tx.finish();
+                }
             }
         }
     }
 
-    protected Relationship getCollectedRel(Specimen specimen) throws NodeFactoryException {
-        Relationship rel = ((NodeBacked) specimen).getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED), Direction.INCOMING);
-        if (null == rel) {
+    private Iterable<Relationship> getCollectedRel(Specimen specimen) throws NodeFactoryException {
+        Iterable<Relationship> rel = ((NodeBacked) specimen).getUnderlyingNode().getRelationships(Direction.INCOMING,
+                NodeUtil.asNeo4j(RelTypes.COLLECTED),
+                NodeUtil.asNeo4j(RelTypes.SUPPORTS),
+                NodeUtil.asNeo4j(RelTypes.REFUTES)
+        );
+        if (!rel.iterator().hasNext()) {
             throw new NodeFactoryException("specimen not associated with study");
         }
         return rel;
@@ -480,12 +492,14 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
         Date date = null;
-        Relationship rel = getCollectedRel(specimen);
-        if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
-            Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
-            date = new Date(unixEpoch);
+        Iterable<Relationship> rels = getCollectedRel(specimen);
+        if (rels.iterator().hasNext()) {
+            Relationship rel = rels.iterator().next();
+            if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
+                Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
+                date = new Date(unixEpoch);
+            }
         }
-
         return date;
     }
 

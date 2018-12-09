@@ -195,7 +195,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_ID, "mouse");
-        link.put(ARGUMENT_TYPE_ID, "http://example.org/refutes");
+        link.put(ARGUMENT_TYPE_ID, "https://en.wiktionary.org/wiki/refute");
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");

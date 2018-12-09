@@ -35,7 +35,7 @@ public class PropertyAndValueDictionary {
     public static final String NAME_SOURCE_ACCESSED_AT = "nameSourceAccessedAt";
     public static final String NAME_MATCH_TYPE = "nameMatchType";
 
-    public static final String REFUTES = "http://example.org/refutes";
-    public static final String SUPPORTS = "http://example.org/supports";
+    public static final String REFUTES = "https://en.wiktionary.org/wiki/refute";
+    public static final String SUPPORTS = "https://en.wiktionary.org/wiki/support";
 
 }
