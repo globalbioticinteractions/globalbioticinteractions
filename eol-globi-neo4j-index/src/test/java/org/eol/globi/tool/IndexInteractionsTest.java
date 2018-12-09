@@ -70,10 +70,12 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         List<Long> idList = new ArrayList<>();
         for (Relationship specimen : specimens) {
             assertThat(specimen.getEndNode().hasRelationship(Direction.INCOMING, hasParticipant), Is.is(true));
-            Relationship singleRelationship = specimen.getEndNode().getSingleRelationship(hasParticipant, Direction.INCOMING);
-            long id = singleRelationship.getStartNode().getId();
-            ids.add(id);
-            idList.add(id);
+            Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(hasParticipant, Direction.INCOMING);
+            for (Relationship relationship : relationships) {
+                long id = relationship.getStartNode().getId();
+                ids.add(id);
+                idList.add(id);
+            }
         }
 
         assertThat(ids.size(), Is.is(1));

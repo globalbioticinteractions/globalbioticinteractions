@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -35,14 +36,14 @@ public class CSVTSVUtilTest {
     @Ignore("reading with unix style csv for now")
     @Test
     public void readQuotes() throws IOException {
-        LabeledCSVParser csvParser = CSVTSVUtil.createLabeledCSVParser(IOUtils.toInputStream("name\n\"hello \"\"world\"\"\""));
+        LabeledCSVParser csvParser = CSVTSVUtil.createLabeledCSVParser(IOUtils.toInputStream("name\n\"hello \"\"world\"\"\"", StandardCharsets.UTF_8));
         csvParser.getLine();
         assertThat(csvParser.getValueByLabel("name"), is("hello \"world\""));
     }
 
     @Test
     public void readQuotesAgain() throws IOException {
-        CSVParse csvParser = CSVTSVUtil.createCSVParse(IOUtils.toInputStream("\"hello \"\"world\"\"\""));
+        CSVParse csvParser = CSVTSVUtil.createCSVParse(IOUtils.toInputStream("\"hello \"\"world\"\"\"", StandardCharsets.UTF_8));
         assertThat(csvParser.nextValue(), is("hello \"world\""));
     }
 

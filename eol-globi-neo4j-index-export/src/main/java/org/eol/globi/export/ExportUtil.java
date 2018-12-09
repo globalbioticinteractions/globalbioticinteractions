@@ -32,6 +32,7 @@ public final class ExportUtil {
     public static void export(GraphDatabaseService graphService, String baseDir, String filename, String cypherQuery, ValueJoiner joiner) throws StudyImporterException {
         export(graphService, baseDir, filename, Arrays.asList(cypherQuery), joiner);
     }
+
     public static void export(GraphDatabaseService graphService, String baseDir, String filename, List<String> cypherQueries, ValueJoiner joiner) throws StudyImporterException {
         try {
             mkdirIfNeeded(baseDir);
@@ -52,7 +53,7 @@ public final class ExportUtil {
     }
 
     public static void export(Appender appender, GraphDatabaseService graphService, String query) throws IOException {
-        export(appender, graphService, Collections.emptyList());
+        export(appender, graphService, Collections.singletonList(query));
     }
 
     public static void export(Appender appender, GraphDatabaseService graphService, List<String> queries) throws IOException {

@@ -28,8 +28,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         createTestData(null);
         resolveNames();
 
-        String expected = "globi:assoc:4\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1\n" +
-                "globi:assoc:6\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1\n";
+        String expected = "globi:assoc:6\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1\n" +
+                "globi:assoc:8\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1\n";
 
 
         Study myStudy1 = nodeFactory.findStudy("myStudy");

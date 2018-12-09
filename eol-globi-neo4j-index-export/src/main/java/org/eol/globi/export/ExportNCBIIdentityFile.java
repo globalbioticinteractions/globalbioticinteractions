@@ -7,6 +7,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ExportNCBIIdentityFile implements GraphExporter {
 
@@ -33,7 +34,7 @@ public class ExportNCBIIdentityFile implements GraphExporter {
                 "    <SubjectType>taxonomy/phylogenetic</SubjectType>\n" +
                 "    <Url>http://www.globalbioticinteractions.org</Url>\n" +
                 "    <Brief>helps access existing species interaction datasets</Brief>\n" +
-                "</Provider>\n", PROVIDER_ID), os);
+                "</Provider>\n", PROVIDER_ID), os, StandardCharsets.UTF_8);
     }
 
 

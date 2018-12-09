@@ -7,6 +7,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class CacheLog {
         List<String> accessLogEntry = compileLogEntries(meta);
         String prefix = accessLog.exists() ? "\n" : "";
         String accessLogLine = StringUtils.join(accessLogEntry, '\t');
-        FileUtils.writeStringToFile(accessLog, prefix + accessLogLine, true);
+        FileUtils.writeStringToFile(accessLog, prefix + accessLogLine, StandardCharsets.UTF_8, true);
     }
 
     static List<String> compileLogEntries(CachedURI meta) {

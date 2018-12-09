@@ -32,7 +32,7 @@ public class IndexInteractions implements Linker {
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         do {
             ExecutionResult result = engine.execute("START dataset = node:datasets('*:*')\n" +
-                    "MATCH dataset<-[:IN_DATASET]-study-[:COLLECTED|REFUTES|SUPPORTS]->specimen\n" +
+                    "MATCH dataset<-[:IN_DATASET]-study-[:REFUTES|SUPPORTS]->specimen\n" +
                     "WHERE not(specimen<-[:HAS_PARTICIPANT]-())\n" +
                     "WITH specimen, study, dataset LIMIT {batchSize}\n" +
                     "MATCH specimen-[i:" + InteractUtil.allInteractionsCypherClause() + "]->otherSpecimen\n" +
