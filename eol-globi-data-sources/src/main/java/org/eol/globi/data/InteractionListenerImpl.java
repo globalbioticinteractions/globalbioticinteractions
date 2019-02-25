@@ -301,6 +301,9 @@ class InteractionListenerImpl implements InteractionListener {
         } else if (StringUtils.isNotBlank(localityId) || StringUtils.isNotBlank(LOCALITY_NAME)) {
             location = new LocationImpl(null,
                     null, null, null);
+        }
+
+        if (location != null) {
             if (StringUtils.isNotBlank(localityId)) {
                 location.setLocalityId(localityId);
             }

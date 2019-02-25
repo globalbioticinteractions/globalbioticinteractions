@@ -9,7 +9,6 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -22,6 +21,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
+import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
+import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
@@ -211,6 +214,59 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             final SpecimenNode someSpecimen = new SpecimenNode(specimenRel.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.REFUTES)));
             assertFalse(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
+            foundSpecimen = true;
+        }
+        assertThat(foundSpecimen, is(true));
+    }
+
+    @Test
+    public void importWithLocalityAndLatLng() throws StudyImporterException {
+        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
+            @Override
+            public void warn(LogContext study, String message) {
+                fail("got message: " + message);
+            }
+
+            @Override
+            public void info(LogContext study, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext study, String message) {
+                fail("got message: " + message);
+            }
+        });
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(SOURCE_TAXON_ID, "duck");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(TARGET_TAXON_ID, "mouse");
+        link.put(LOCALITY_ID, "back:yard");
+        link.put(LOCALITY_NAME, "my back yard");
+        link.put(DECIMAL_LATITUDE, "12.2");
+        link.put(DECIMAL_LONGITUDE, "13.2");
+        link.put(REFERENCE_ID, "123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "doi:1234");
+        listener.newLink(link);
+
+        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        final Study study = allStudies.get(0);
+
+
+        boolean foundSpecimen = false;
+        for (Relationship specimenRel : NodeUtil.getSpecimens(study, RelTypes.SUPPORTS)) {
+            final SpecimenNode someSpecimen = new SpecimenNode(specimenRel.getEndNode());
+            assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
+            LocationNode sampleLocation = someSpecimen.getSampleLocation();
+            assertThat(sampleLocation.getLatitude(), is(12.2d));
+            assertThat(sampleLocation.getLongitude(), is(13.2d));
+            assertThat(sampleLocation.getLocality(), is("my back yard"));
+            assertThat(sampleLocation.getLocalityId(), is("back:yard"));
+
             foundSpecimen = true;
         }
         assertThat(foundSpecimen, is(true));
