@@ -14,6 +14,7 @@ import org.eol.globi.taxon.TermMatcher;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -37,20 +38,29 @@ public class LinkerTermMatcher implements Linker {
 
     @Override
     public void link() {
-        Index<Node> taxons = graphDb.index().forNodes("taxons");
-        IndexHits<Node> hits = taxons.query("*:*");
+        Transaction transaction = graphDb.beginTx();
+        try {
+            Index<Node> taxons = graphDb.index().forNodes("taxons");
+            IndexHits<Node> hits = taxons.query("*:*");
 
-        final Map<Long, TaxonNode> nodeMap = new HashMap<Long, TaxonNode>();
-        int counter = 1;
-        for (Node hit : hits) {
-            if (counter % BATCH_SIZE == 0) {
-                handleBatch(graphDb, termMatcher, nodeMap, counter);
+            final Map<Long, TaxonNode> nodeMap = new HashMap<>();
+            int counter = 1;
+            for (Node hit : hits) {
+                if (counter % BATCH_SIZE == 0) {
+                    handleBatch(graphDb, termMatcher, nodeMap, counter);
+                    transaction.success();
+                    transaction.finish();
+                    transaction = graphDb.beginTx();
+                }
+                TaxonNode node = new TaxonNode(hit);
+                nodeMap.put(node.getNodeID(), node);
+                counter++;
             }
-            TaxonNode node = new TaxonNode(hit);
-            nodeMap.put(node.getNodeID(), node);
-            counter++;
+            handleBatch(graphDb, termMatcher, nodeMap, counter);
+            transaction.success();
+        } finally {
+            transaction.finish();
         }
-        handleBatch(graphDb, termMatcher, nodeMap, counter);
     }
 
     private void handleBatch(final GraphDatabaseService graphDb, TermMatcher termMatcher, final Map<Long, TaxonNode> nodeMap, int counter) {
@@ -58,22 +68,19 @@ public class LinkerTermMatcher implements Linker {
         stopWatch.start();
         String msgPrefix = "batch #" + counter / BATCH_SIZE;
         LOG.info(msgPrefix + " preparing...");
-        List<String> nodeIdAndNames = new ArrayList<String>();
+        List<String> nodeIdAndNames = new ArrayList<>();
         for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
             String name = entry.getKey() + "|" + entry.getValue().getName();
             nodeIdAndNames.add(name);
         }
         try {
             if (nodeIdAndNames.size() > 0) {
-                termMatcher.findTermsForNames(nodeIdAndNames, new TermMatchListener() {
-                    @Override
-                    public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType relType) {
-                        TaxonNode taxonNode = nodeMap.get(nodeId);
-                        if (taxonNode != null
-                                && NameType.NONE != relType
-                                && !TaxonUtil.likelyHomonym(taxon, taxonNode)) {
-                            NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.forType(relType));
-                        }
+                termMatcher.findTermsForNames(nodeIdAndNames, (nodeId, name, taxon, relType) -> {
+                    TaxonNode taxonNode = nodeMap.get(nodeId);
+                    if (taxonNode != null
+                            && NameType.NONE != relType
+                            && !TaxonUtil.likelyHomonym(taxon, taxonNode)) {
+                        NodeUtil.connectTaxa(taxon, taxonNode, graphDb, RelTypes.forType(relType));
                     }
                 });
             }

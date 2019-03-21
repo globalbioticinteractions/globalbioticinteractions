@@ -12,6 +12,7 @@ import org.eol.globi.service.TaxonUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,8 +35,11 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
 
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
+        Transaction transaction = getGraphDb().beginTx();
         assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
+        transaction.success();
+        transaction.finish();
 
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon(new TaxonImpl("some name")));
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"));

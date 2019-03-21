@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -80,8 +81,15 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(propertyOf(taxon, "speciesId"), is("a species id"));
     }
 
-    private Object propertyOf(TaxonNode taxon, String proopertyName) {
-        return taxon.getUnderlyingNode().getProperty(proopertyName);
+    private Object propertyOf(TaxonNode taxon, String propertyName) {
+        Transaction transaction = taxon.getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            Object value = taxon.getUnderlyingNode().getProperty(propertyName);
+            transaction.success();
+            return value;
+        } finally {
+            transaction.finish();
+        }
     }
 
     @Test
@@ -101,6 +109,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     @Test
     public final void findCloseMatch() throws NodeFactoryException {
         taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
+        Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonName("Homo sapiens");
         assertThat(hits.hasNext(), is(true));
         hits.close();
@@ -110,6 +119,8 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(hits.hasNext(), is(true));
         hits = taxonService.findCloseMatchesForTaxonName("homo sa");
         assertThat(hits.hasNext(), is(true));
+        transaction.success();
+        transaction.finish();
     }
 
     @Test

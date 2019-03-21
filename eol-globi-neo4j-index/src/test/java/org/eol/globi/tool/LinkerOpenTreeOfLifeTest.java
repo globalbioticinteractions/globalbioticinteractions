@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.NameType;
+import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
@@ -14,6 +15,7 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TermMatchListener;
 import org.eol.globi.taxon.TermMatcher;
 import org.junit.Test;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,25 +42,31 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
         OpenTreeTaxonIndex index = null;
         try {
             index = new OpenTreeTaxonIndex(getClass().getResource("taxonomy-small.tsv"));
-            taxonIndex.getOrCreateTaxon(taxon);
+            Taxon createdTaxon = taxonIndex.getOrCreateTaxon(taxon);
+            long nodeID = ((NodeBacked) createdTaxon).getNodeID();
+
             new LinkerTermMatcher(getGraphDb(), new TermMatcher() {
                 @Override
                 public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
                     for (String name : names) {
-                        termMatchListener.foundTaxonForName(1L, name, taxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForName(nodeID, name, taxon, NameType.SAME_AS);
                     }
                 }
 
                 @Override
                 public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
                     for (Term term : terms) {
-                        termMatchListener.foundTaxonForName(1L, term.getName(), taxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForName(nodeID, term.getName(), taxon, NameType.SAME_AS);
                     }
                 }
             }).link();
             new LinkerOpenTreeOfLife(getGraphDb(), index).link();
+
+            Transaction transaction = getGraphDb().beginTx();
             Collection<String> externalIds = LinkerTestUtil.assertHasOther(taxon.getName(), expectedCount, taxonIndex, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
+            transaction.success();
+            transaction.finish();
         } finally {
             if (index != null) {
                 index.destroy();

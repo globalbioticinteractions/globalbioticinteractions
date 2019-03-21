@@ -15,6 +15,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -29,62 +30,65 @@ public class LinkerOpenTreeOfLife implements Linker {
     private final GraphDatabaseService graphDb;
     private final OpenTreeTaxonIndex index;
 
-    public LinkerOpenTreeOfLife(GraphDatabaseService graphDb, OpenTreeTaxonIndex index){
+    public LinkerOpenTreeOfLife(GraphDatabaseService graphDb, OpenTreeTaxonIndex index) {
         this.graphDb = graphDb;
         this.index = index;
     }
 
     public void link() {
-            Index<Node> taxons = graphDb.index().forNodes("taxons");
-            IndexHits<Node> hits = taxons.query("*:*");
-            for (Node hit : hits) {
-                Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
-                Map<String, Long> ottIds = new HashMap<String, Long>();
-                for (Relationship rel : rels) {
-                    if (link(graphDb, index, ottIds, rel)) {
-                        break;
-                    }
-
-                }
-                validate(ottIds);
-            }
-
-
-        }
-
-        protected void validate(Map<String, Long> ottIds) {
-            if (ottIds.size() > 1) {
-                Set<Long> uniqueIds = new HashSet<Long>(ottIds.values());
-                if (uniqueIds.size() > 1) {
-                    LOG.error("found mismatching ottIds for sameAs taxa with ids: [" + ottIds + "]");
-                }
-
-            }
-        }
-
-        protected boolean link(GraphDatabaseService graphDb, OpenTreeTaxonIndex index, Map<String, Long> ottIds, Relationship rel) {
-            boolean hasPrexistingLink = false;
-            TaxonNode taxonNode = new TaxonNode(rel.getEndNode());
-            String externalId = taxonNode.getExternalId();
-            if (StringUtils.contains(externalId, TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix())) {
-                ottIds.clear();
-                hasPrexistingLink = true;
-            } else {
-                externalId = StringUtils.replace(externalId, TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "irmng:");
-                externalId = StringUtils.replace(externalId, TaxonomyProvider.GBIF.getIdPrefix(), "gbif:");
-                externalId = StringUtils.replace(externalId, TaxonomyProvider.INDEX_FUNGORUM.getIdPrefix(), "if:");
-                externalId = StringUtils.replace(externalId, TaxonomyProvider.NCBI.getIdPrefix(), "ncbi:");
-                Long ottId = index.findOpenTreeTaxonIdFor(externalId);
-                if (ottId != null) {
-                    if (ottIds.size() == 0) {
-                        Taxon taxonCopy = copyAndLinkToOpenTreeTaxon(taxonNode, ottId);
-                        NodeUtil.connectTaxa(taxonCopy, new TaxonNode(rel.getStartNode()), graphDb, RelTypes.SAME_AS);
-                    }
-                    ottIds.put(externalId, ottId);
+        Transaction transaction = graphDb.beginTx();
+        Index<Node> taxons = graphDb.index().forNodes("taxons");
+        IndexHits<Node> hits = taxons.query("*:*");
+        for (Node hit : hits) {
+            Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
+            Map<String, Long> ottIds = new HashMap<String, Long>();
+            for (Relationship rel : rels) {
+                if (link(graphDb, index, ottIds, rel)) {
+                    break;
                 }
             }
-            return hasPrexistingLink;
+            validate(ottIds);
         }
+        hits.close();
+        transaction.success();
+        transaction.finish();
+
+
+    }
+
+    protected void validate(Map<String, Long> ottIds) {
+        if (ottIds.size() > 1) {
+            Set<Long> uniqueIds = new HashSet<Long>(ottIds.values());
+            if (uniqueIds.size() > 1) {
+                LOG.error("found mismatching ottIds for sameAs taxa with ids: [" + ottIds + "]");
+            }
+
+        }
+    }
+
+    protected boolean link(GraphDatabaseService graphDb, OpenTreeTaxonIndex index, Map<String, Long> ottIds, Relationship rel) {
+        boolean hasPrexistingLink = false;
+        TaxonNode taxonNode = new TaxonNode(rel.getEndNode());
+        String externalId = taxonNode.getExternalId();
+        if (StringUtils.contains(externalId, TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix())) {
+            ottIds.clear();
+            hasPrexistingLink = true;
+        } else {
+            externalId = StringUtils.replace(externalId, TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA.getIdPrefix(), "irmng:");
+            externalId = StringUtils.replace(externalId, TaxonomyProvider.GBIF.getIdPrefix(), "gbif:");
+            externalId = StringUtils.replace(externalId, TaxonomyProvider.INDEX_FUNGORUM.getIdPrefix(), "if:");
+            externalId = StringUtils.replace(externalId, TaxonomyProvider.NCBI.getIdPrefix(), "ncbi:");
+            Long ottId = index.findOpenTreeTaxonIdFor(externalId);
+            if (ottId != null) {
+                if (ottIds.size() == 0) {
+                    Taxon taxonCopy = copyAndLinkToOpenTreeTaxon(taxonNode, ottId);
+                    NodeUtil.connectTaxa(taxonCopy, new TaxonNode(rel.getStartNode()), graphDb, RelTypes.SAME_AS);
+                }
+                ottIds.put(externalId, ottId);
+            }
+        }
+        return hasPrexistingLink;
+    }
 
     protected static Taxon copyAndLinkToOpenTreeTaxon(Taxon taxon, Long ottId) {
         Taxon taxonCopy = TaxonUtil.copy(taxon);

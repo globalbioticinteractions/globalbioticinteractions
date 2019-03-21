@@ -31,28 +31,28 @@ public class LinkerTaxonIndex implements Linker {
     }
 
     public void link() {
-        Index<Node> taxons = graphDb.index().forNodes("taxons");
-        Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-        TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
-        IndexHits<Node> hits = taxons.query("*:*");
-        for (Node hit : hits) {
-            List<String> taxonIds = new ArrayList<>();
-            List<String> taxonPathIdsAndNames = new ArrayList<>();
-            TaxonNode taxonNode = new TaxonNode(hit);
-            addTaxonId(taxonIds, taxonNode);
-            addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
+        Transaction tx = graphDb.beginTx();
+        try {
+            Index<Node> taxons = graphDb.index().forNodes("taxons");
+            Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+            TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
+            IndexHits<Node> hits = taxons.query("*:*");
+            for (Node hit : hits) {
+                List<String> taxonIds = new ArrayList<>();
+                List<String> taxonPathIdsAndNames = new ArrayList<>();
+                TaxonNode taxonNode = new TaxonNode(hit);
+                addTaxonId(taxonIds, taxonNode);
+                addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
 
-            addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, taxonNode);
+                addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, taxonNode);
 
-            Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
-            for (Relationship rel : rels) {
-                TaxonNode sameAsTaxon = new TaxonNode(rel.getEndNode());
-                addTaxonId(taxonIds, sameAsTaxon);
-                addPathIdAndNames(taxonPathIdsAndNames, sameAsTaxon);
-                addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, sameAsTaxon);
-            }
-            Transaction tx = graphDb.beginTx();
-            try {
+                Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
+                for (Relationship rel : rels) {
+                    TaxonNode sameAsTaxon = new TaxonNode(rel.getEndNode());
+                    addTaxonId(taxonIds, sameAsTaxon);
+                    addPathIdAndNames(taxonPathIdsAndNames, sameAsTaxon);
+                    addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, sameAsTaxon);
+                }
                 taxonPathIdsAndNames.addAll(taxonIds);
                 String aggregateIds = StringUtils.join(taxonPathIdsAndNames, CharsetConstant.SEPARATOR);
                 ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
@@ -61,11 +61,14 @@ public class LinkerTaxonIndex implements Linker {
                 String aggregateTaxonIds = StringUtils.join(taxonIds, CharsetConstant.SEPARATOR);
                 hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
                 tx.success();
-            } finally {
                 tx.finish();
+                tx = graphDb.beginTx();
             }
+            hits.close();
+            tx.success();
+        } finally {
+            tx.finish();
         }
-        hits.close();
     }
 
     protected void addToFuzzyIndex(GraphDatabaseService graphDb, TaxonFuzzySearchIndex fuzzySearchIndex, Node indexNode, TaxonNode taxonNode) {

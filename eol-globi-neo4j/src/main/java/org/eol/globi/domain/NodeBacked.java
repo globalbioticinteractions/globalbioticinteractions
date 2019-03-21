@@ -81,7 +81,9 @@ public class NodeBacked {
     protected Object getPropertyValueOrNull(String propertyName) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            Object value = getUnderlyingNode().hasProperty(propertyName) ? getUnderlyingNode().getProperty(propertyName) : null;
+            Object value = getUnderlyingNode().hasProperty(propertyName)
+                    ? getUnderlyingNode().getProperty(propertyName)
+                    : null;
             tx.success();
             return value;
         } finally {

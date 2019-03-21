@@ -15,6 +15,7 @@ import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
 
+        Transaction transaction = getGraphDb().beginTx();
         Iterable<Relationship> rels = ((NodeBacked) homoSapiens).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
         List<String> humanFood = new ArrayList<String>();
         List<Long> counts = new ArrayList<Long>();
@@ -60,6 +62,8 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertThat(humanFood, hasItems("Arius felis", "Canis lupus"));
         assertThat(counts, hasItems(10L, 1L));
         assertThat(labels, hasItems("eats"));
+        transaction.success();
+        transaction.finish();
     }
 
     @Test

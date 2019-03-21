@@ -18,6 +18,7 @@ import org.eol.globi.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -41,6 +42,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         new LinkerTaxonIndex(getGraphDb()).link();
 
+        Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS).query("*:*");
         Node next = hits.next();
         assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
@@ -62,6 +64,9 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").size(), is(1));
         assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").size(), is(0));
+
+        transaction.success();
+        transaction.finish();
     }
 
     @Test
@@ -71,6 +76,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         resolveNames();
         new LinkerTaxonIndex(getGraphDb()).link();
 
+        Transaction transaction = getGraphDb().beginTx();
         assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
         Index<Node> index = getGraphDb().index().forNodes("taxonNameSuggestions");
         Query query = new TermQuery(new Term("name", "name"));
@@ -95,6 +101,9 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         // queries are case sensitive . . . should all be lower cased.
         hits = index.query("name:HMO~ AND name:saPIENS~");
         assertThat(hits.size(), is(0));
+
+        transaction.success();
+        transaction.finish();
     }
 
     private Taxon setTaxonProps(Taxon taxon) {

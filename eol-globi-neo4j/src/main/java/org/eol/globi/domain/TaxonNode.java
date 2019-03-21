@@ -18,68 +18,53 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public String getPath() {
-        return getUnderlyingNode().hasProperty(PATH) ?
-                (String) getUnderlyingNode().getProperty(PATH) : null;
+        return getPropertyStringValueOrNull(PATH);
     }
 
     @Override
     public void setPath(String path) {
-        if (path != null) {
-            getUnderlyingNode().setProperty(PATH, path);
-        }
+        setPropertyWithTx(PATH, path);
     }
 
     @Override
     public String getPathNames() {
-        return getUnderlyingNode().hasProperty(PATH_NAMES) ?
-                (String) getUnderlyingNode().getProperty(PATH_NAMES) : null;
+        return getPropertyStringValueOrNull(PATH_NAMES);
     }
 
     @Override
     public void setPathNames(String pathNames) {
-        if (pathNames != null) {
-            getUnderlyingNode().setProperty(PATH_NAMES, pathNames);
-        }
+        setPropertyWithTx(PATH_NAMES, pathNames);
     }
 
     @Override
     public String getCommonNames() {
-        return getUnderlyingNode().hasProperty(COMMON_NAMES) ?
-                (String) getUnderlyingNode().getProperty(COMMON_NAMES) : null;
+        return getPropertyStringValueOrNull(COMMON_NAMES);
     }
 
     @Override
     public void setCommonNames(String commonNames) {
-        if (commonNames != null) {
-            getUnderlyingNode().setProperty(COMMON_NAMES, commonNames);
-        }
+        setPropertyWithTx(COMMON_NAMES, commonNames);
     }
 
     @Override
     public String getRank() {
-        return getUnderlyingNode().hasProperty(RANK) ?
-                (String) getUnderlyingNode().getProperty(RANK) : null;
+        return getPropertyStringValueOrNull(RANK);
 
     }
 
     @Override
     public void setRank(String rank) {
-        if (rank != null) {
-            getUnderlyingNode().setProperty(RANK, rank);
-        }
-    }
-
-    @Override
-    public void setPathIds(String pathIds) {
-        if (pathIds != null) {
-            getUnderlyingNode().setProperty(PATH_IDS, pathIds);
-        }
+        setPropertyWithTx(RANK, rank);
     }
 
     @Override
     public String getPathIds() {
-        return getUnderlyingNode().hasProperty(PATH_IDS) ?
-                (String) getUnderlyingNode().getProperty(PATH_IDS) : null;
+        return getPropertyStringValueOrNull(PATH_IDS);
+    }
+
+    @Override
+    public void setPathIds(String pathIds) {
+        setPropertyWithTx(PATH_IDS, pathIds);
     }
 
     @Override
@@ -118,14 +103,12 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public String getThumbnailUrl() {
-        return getUnderlyingNode().hasProperty(THUMBNAIL_URL) ?
-                (String) getUnderlyingNode().getProperty(THUMBNAIL_URL) : null;
+        return getPropertyStringValueOrNull(THUMBNAIL_URL);
     }
 
     @Override
     public String getExternalUrl() {
-        return getUnderlyingNode().hasProperty(EXTERNAL_URL) ?
-                (String) getUnderlyingNode().getProperty(EXTERNAL_URL) : null;
+        return getPropertyStringValueOrNull(EXTERNAL_URL);
     }
 
     @Override

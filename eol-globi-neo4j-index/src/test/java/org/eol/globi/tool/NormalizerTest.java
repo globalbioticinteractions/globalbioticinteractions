@@ -17,6 +17,7 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,15 +59,18 @@ public class NormalizerTest extends GraphDBTestCase {
     }
 
     @Test
-    public void doSingleImport() throws IOException, StudyImporterException {
+    public void doSingleImport() throws StudyImporterException {
         importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
         Study study = getStudySingleton(graphService);
         assertThat(study.getTitle(), is("Simons 1997"));
 
+        Transaction transaction = graphService.beginTx();
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));
+        transaction.success();
+        transaction.finish();
     }
 
     private Normalizer createNormalizer() {

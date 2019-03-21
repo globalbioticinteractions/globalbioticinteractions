@@ -15,6 +15,7 @@ import org.eol.globi.service.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -43,37 +44,46 @@ public class LinkerDOI implements Linker {
 
     @Override
     public void link() {
-        Index<Node> taxons = this.graphDb.index().forNodes("studies");
-        IndexHits<Node> hits = taxons.query("*:*");
+        Transaction transaction = graphDb.beginTx();
+        try {
+            Index<Node> taxons = this.graphDb.index().forNodes("studies");
+            IndexHits<Node> hits = taxons.query("*:*");
 
-        int counter = 0;
-        int counterResolved = 0;
-        String msg = "linking study citations to DOIs";
-        LOG.info(msg + " started...");
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        Map<String, StudyNode> batch = new HashMap<>();
-        for (Node hit : hits) {
-            counter++;
-            StudyNode study = new StudyNode(hit);
-            if (shouldResolve(study)) {
-                counterResolved++;
-                batch.put(study.getCitation(), study);
+            int counter = 0;
+            int counterResolved = 0;
+            String msg = "linking study citations to DOIs";
+            LOG.info(msg + " started...");
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            Map<String, StudyNode> batch = new HashMap<>();
+            for (Node hit : hits) {
+                counter++;
+                StudyNode study = new StudyNode(hit);
+                if (shouldResolve(study)) {
+                    counterResolved++;
+                    batch.put(study.getCitation(), study);
+                }
+
+                if (batch.size() >= BATCH_SIZE) {
+                    LOG.info(logProgress(counterResolved, stopWatch));
+                    resolveBatch(doiResolver, batch);
+                    batch.clear();
+                    transaction.success();
+                    transaction.finish();
+                    transaction = graphDb.beginTx();
+                }
             }
+            resolveBatch(doiResolver, batch);
 
-            if (batch.size() >= BATCH_SIZE) {
+            LOG.info(msg + " complete. Out of [" + counter + "] references, [" + counterResolved + "] needed resolving.");
+            if (counter % 100 != 0) {
                 LOG.info(logProgress(counterResolved, stopWatch));
-                resolveBatch(doiResolver, batch);
-                batch.clear();
             }
+            stopWatch.stop();
+            transaction.success();
+        } finally {
+            transaction.finish();
         }
-        resolveBatch(doiResolver, batch);
-
-        LOG.info(msg + " complete. Out of [" + counter + "] references, [" + counterResolved + "] needed resolving.");
-        if (counter % 100 != 0) {
-            LOG.info(logProgress(counterResolved, stopWatch));
-        }
-        stopWatch.stop();
     }
 
     public void resolveBatch(DOIResolver doiResolver, Map<String, StudyNode> batch) {
