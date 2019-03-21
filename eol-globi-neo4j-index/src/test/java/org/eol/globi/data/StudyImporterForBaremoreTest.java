@@ -83,7 +83,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
             totalRels.incrementAndGet();
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
         return totalRels.get();
     }
 }

@@ -141,7 +141,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
             }
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), relHandler, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), relHandler);
         assertTrue(success.get());
     }
 

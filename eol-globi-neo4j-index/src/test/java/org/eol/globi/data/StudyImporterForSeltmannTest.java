@@ -53,7 +53,7 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
                     assertThat(basisOfRecord.getName(), either(is("PreservedSpecimen")).or(is("LabelObservation")));
                     success.set(true);
                 }
-            }, getGraphDb());
+            });
 
             assertTrue(success.get());
         }

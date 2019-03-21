@@ -61,10 +61,7 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
         int interactionCount = 0;
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
         for (StudyNode study : studies) {
-            Iterable<Relationship> specimenRels = NodeUtil.getSpecimens(study);
-            for (Relationship specimenRel : specimenRels) {
-                interactionCount++;
-            }
+            interactionCount += getSpecimenCount(study);
         }
         assertThat(interactionCount, is(4900));
 

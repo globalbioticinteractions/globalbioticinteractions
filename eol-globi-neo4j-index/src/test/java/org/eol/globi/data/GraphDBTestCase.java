@@ -44,8 +44,7 @@ public abstract class GraphDBTestCase {
         final AtomicInteger count = new AtomicInteger(0);
 
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode())
-                , relationship -> count.incrementAndGet()
-                , getGraphDb());
+                , relationship -> count.incrementAndGet());
 
         return count.get();
     }

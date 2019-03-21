@@ -24,19 +24,19 @@ import static org.junit.Assert.assertThat;
 public class ExporterAssociationsTest extends GraphDBTestCase {
 
     @Test
-    public void exportWithoutHeader() throws IOException, NodeFactoryException, ParseException {
+    public void exportWithoutHeader() throws IOException, NodeFactoryException {
         createTestData(null);
         resolveNames();
 
-        String expected = "globi:assoc:6\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1\n" +
-                "globi:assoc:8\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1\n";
+        String expected = "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tdata source description\t\t\tglobi:ref:X\n" +
+                "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tdata source description\t\t\tglobi:ref:X\n";
 
 
         StringWriter row = new StringWriter();
 
         new ExporterAssociations().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
 
     private void createTestData(Double length) throws NodeFactoryException {

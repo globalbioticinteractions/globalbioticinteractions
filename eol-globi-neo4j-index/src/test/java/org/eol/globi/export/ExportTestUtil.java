@@ -80,13 +80,13 @@ public class ExportTestUtil {
         assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.tsv" + exporter.getMetaTableSuffix()));
     }
 
-    public static void assertSameAsideFromNodeIds(String actualLine, String expectedLine) {
-        assertSameAsideFromNodeIds(new String[]{actualLine}, new String[]{expectedLine});
+    static void assertSameAsideFromNodeIds(String actual, String expected) {
+        assertSameAsideFromNodeIds(actual.split("\\n"), expected.split("\\n"));
     }
 
-    public static void assertSameAsideFromNodeIds(String[] actualLines, String[] expectedLines) {
+    static void assertSameAsideFromNodeIds(String[] actualLines, String[] expectedLines) {
         Stream<String> actual = Stream.of(actualLines)
-                .map(line -> line.replaceAll("([a-z])\\:\\d+", "$1:X"));
+                .map(line -> line.replaceAll("([a-z]):\\d+", "$1:X"));
         List<String> collect = actual.collect(Collectors.toList());
         assertThat(collect, containsInAnyOrder(expectedLines));
         assertThat(collect.size(), is(expectedLines.length));

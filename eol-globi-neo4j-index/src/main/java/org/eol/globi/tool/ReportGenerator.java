@@ -11,6 +11,7 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyNodeListener;
 import org.neo4j.graphdb.Direction;
@@ -102,7 +103,7 @@ public class ReportGenerator {
     }
 
     public void generateReportForStudies() {
-        NodeUtil.findStudies(getGraphDb(), study -> generateReportForStudy(study));
+        NodeUtil.findStudies(getGraphDb(), this::generateReportForStudy);
 
     }
 
@@ -113,8 +114,7 @@ public class ReportGenerator {
     }
 
     protected void generateReportForStudy(StudyNode study, Set<Long> ids, Counter interactionCounter, HashSet<Long> idsNoMatch) {
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        countInteractionsAndTaxa(specimens, ids, interactionCounter, idsNoMatch);
+        countInteractionsAndTaxa(study, ids, interactionCounter, idsNoMatch);
 
         Transaction tx = getGraphDb().beginTx();
         try {
@@ -200,8 +200,7 @@ public class ReportGenerator {
                 @Override
                 public void onStudy(StudyNode study) {
                     if (sourceHandler.matches(study, groupByKey)) {
-                        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-                        countInteractionsAndTaxa(specimens, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
+                        countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                         studyCounter.count();
                         distinctSources.add(study.getSource());
                         distinctDatasets.add(study.getSourceId());
@@ -243,8 +242,7 @@ public class ReportGenerator {
         NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override
             public void onStudy(StudyNode study) {
-                Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-                countInteractionsAndTaxa(specimens, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
+                countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                 studyCounter.count();
                 distinctSources.add(study.getSource());
                 distinctDatasets.add(study.getSourceId());
@@ -271,8 +269,9 @@ public class ReportGenerator {
     }
 
 
-    private void countInteractionsAndTaxa(Iterable<Relationship> specimens, Set<Long> ids, Counter interactionCounter, Set<Long> idsNoMatch) {
-        for (Relationship specimen : specimens) {
+    private void countInteractionsAndTaxa(StudyNode study, Set<Long> ids, Counter interactionCounter, Set<Long> idsNoMatch) {
+
+        NodeUtil.RelationshipListener handler = specimen -> {
             Iterable<Relationship> relationships = specimen.getEndNode().getRelationships();
             for (Relationship relationship : relationships) {
                 InteractType[] types = InteractType.values();
@@ -291,7 +290,10 @@ public class ReportGenerator {
                     idsNoMatch.add(taxonNode.getId());
                 }
             }
-        }
+
+        };
+
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
     }
 
     private static class Counter {

@@ -489,16 +489,13 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
         if (specimen != null && date != null) {
-            Transaction tx = null;
+            Transaction tx = getGraphDb().beginTx();
             try {
-                tx = getGraphDb().beginTx();
                 Iterable<Relationship> rels = getCollectedRel(specimen);
                 for (Relationship rel : rels) {
                     rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
                 }
-                if (tx != null) {
-                    tx.success();
-                }
+                tx.success();
             } finally {
                 tx.finish();
             }

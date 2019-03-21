@@ -94,7 +94,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
                 assertThat(externalId, containsString(TaxonomyProvider.BIO_INFO + "rel:"));
                 success.set(true);
             }
-        }, getGraphDb());
+        });
 
         assertTrue(success.get());
 
@@ -150,7 +150,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
             specimenList.add(relationship.getEndNode());
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study1.getUnderlyingNode()), handler, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study1.getUnderlyingNode()), handler);
 
 
         assertThat(specimenList.size(), is(16));

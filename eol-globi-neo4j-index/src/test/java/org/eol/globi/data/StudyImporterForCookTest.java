@@ -68,7 +68,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
 
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
         assertThat(count.get(), is(14));
         assertThat(foundFirstHost.get(), is(true));
     }

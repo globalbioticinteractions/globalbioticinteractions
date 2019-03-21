@@ -165,8 +165,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         };
 
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(getStudySingleton(getGraphDb()).getUnderlyingNode()),
-                handler,
-                getGraphDb());
+                handler);
     }
 
     @Test

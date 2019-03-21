@@ -9,6 +9,7 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ExporterRDF implements StudyExporter {
 
@@ -34,18 +36,33 @@ public class ExporterRDF implements StudyExporter {
     public void exportStudy(StudyNode study, ExportUtil.Appender appender, boolean includeHeader)
             throws IOException {
 
-        for (Relationship r : NodeUtil.getSpecimens(study)) {
-            Node agentNode = r.getEndNode();
-            for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j())) {
-                writeStatement(appender, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
-                writeParticipantStatements(appender, ixnR, ixnR.getEndNode());
-                writeParticipantStatements(appender, ixnR, agentNode);
-                writeStatement(appender, Arrays.asList(blankNode(agentNode), iriNode(InteractType.valueOf(ixnR.getType().name()).getIRI()), blankNode(ixnR.getEndNode())));
+        AtomicReference<IOException> lastException = new AtomicReference<>();
+        NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
+
+            @Override
+            public void on(Relationship relationship) {
+                try {
+                    Node agentNode = relationship.getEndNode();
+                    for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j())) {
+                        writeStatement(appender, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
+                        writeParticipantStatements(appender, ixnR, ixnR.getEndNode());
+                        writeParticipantStatements(appender, ixnR, agentNode);
+                        writeStatement(appender, Arrays.asList(blankNode(agentNode), iriNode(InteractType.valueOf(ixnR.getType().name()).getIRI()), blankNode(ixnR.getEndNode())));
+                    }
+                } catch (IOException ex) {
+                    lastException.set(ex);
+                }
+
             }
+        };
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
+
+        if (lastException.get() != null) {
+            throw lastException.get();
         }
     }
 
-    public void writeParticipantStatements(ExportUtil.Appender writer, Relationship ixnR, Node participant1) throws IOException {
+    private void writeParticipantStatements(ExportUtil.Appender writer, Relationship ixnR, Node participant1) throws IOException {
         writeStatement(writer, Arrays.asList(blankNode(ixnR), iriNode(HAS_PARTICIPANT), blankNode(participant1)));
         writeStatement(writer, Arrays.asList(blankNode(participant1), iriNode(HAS_TYPE), iriNode(ORGANISM)));
         writeStatements(writer, taxonOfSpecimen(participant1));

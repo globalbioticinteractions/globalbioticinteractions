@@ -27,9 +27,9 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         createTestData(null, "Canis lupus", "Homo sapiens");
 
         String expected =
-                "globi:occur:stomach_volume:2\tglobi:occur:2\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1\n"
-                        + "globi:occur:volume:4\tglobi:occur:4\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1\n"
-                        + "globi:occur:volume:6\tglobi:occur:6\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1\n";
+                "globi:occur:stomach_volume:X\tglobi:occur:X\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n" +
+                        "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n" +
+                        "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
 
 
         StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
@@ -38,7 +38,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
         new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
 
     @Test
@@ -56,12 +56,15 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         createTestData(null, targetTaxonName, sourceTaxonName);
         StringWriter row = new StringWriter();
         new ExporterMeasurementOrFact().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), expected);
     }
 
     @Test
     public void noMatchTargetTaxon() throws IOException, NodeFactoryException, ParseException {
-        assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", "globi:occur:stomach_volume:2\tglobi:occur:2\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1\nglobi:occur:volume:4\tglobi:occur:4\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1\nglobi:occur:volume:6\tglobi:occur:6\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1\n");
+        String expected =
+                "globi:occur:stomach_volume:X\tglobi:occur:X\tyes\t\t\tstomach volume\t666.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n" +
+                        "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t124.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\nglobi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
+        assertResult(PropertyAndValueDictionary.NO_MATCH, "Homo sapiens", expected);
     }
 
     private void createTestData(Double length, String targetTaxonName, String sourceTaxonName) throws NodeFactoryException, ParseException {
@@ -75,9 +78,12 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         Specimen otherSpecimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(targetTaxonName, "externalId2"));
         otherSpecimen.setVolumeInMilliLiter(124.0);
 
+        nodeFactory.setUnixEpochProperty(otherSpecimen, ExportTestUtil.utcTestDate());
+
         specimen.ate(otherSpecimen);
 
         otherSpecimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(targetTaxonName, "externalId2"));
+        nodeFactory.setUnixEpochProperty(otherSpecimen, ExportTestUtil.utcTestDate());
         otherSpecimen.setVolumeInMilliLiter(18.0);
         specimen.ate(otherSpecimen);
         if (null != length) {

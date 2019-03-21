@@ -197,10 +197,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
         assertThat(allStudies.size(), is(3));
         int specimenCount = 0;
         for (StudyNode study : allStudies) {
-            final Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-            for (Relationship specimen : specimens) {
-                specimenCount++;
-            }
+            specimenCount+= getSpecimenCount(study);
         }
         assertThat(specimenCount > 0, is(true));
     }

@@ -117,7 +117,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
             }
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(foundStudy.getUnderlyingNode()), handler, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(foundStudy.getUnderlyingNode()), handler);
 
     }
 

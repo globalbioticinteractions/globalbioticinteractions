@@ -34,13 +34,14 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         exportOccurrences().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
-        assertThat(row.getBuffer().toString().trim(), equalTo(expected.trim()));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\\n"), expected.split("\\n"));
+
     }
 
     private String getExpectedData() {
-        return "globi:occur:2\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE\n" +
-                "globi:occur:6\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n" +
-                "globi:occur:8\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n";
+        return "globi:occur:X\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE\n" +
+                "globi:occur:X\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n" +
+                "globi:occur:X\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n";
     }
 
     private String getExpectedHeader() {
@@ -59,7 +60,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         exportOccurrences().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\\n"), expected.split("\\n"));
     }
 
     private ExporterOccurrences exportOccurrences() {
@@ -79,7 +80,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         exportOccurrences().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\\n"), expected.split("\\n"));
 
     }
 
@@ -96,9 +97,9 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
         String expected = "";
         expected += getExpectedHeader();
-        expected += "globi:occur:2\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\taBasisOfRecord\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n";
+        expected += "globi:occur:X\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\taBasisOfRecord\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n";
 
-        assertThat(row.getBuffer().toString(), equalTo(expected));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\\n"), expected.split("\\n"));
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {

@@ -33,7 +33,6 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findStudy(study.getTitle()));
 
         AtomicInteger count = new AtomicInteger(0);
-        Iterable<Relationship> specimenRels = NodeUtil.getSpecimens(study);
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), new NodeUtil.RelationshipListener() {
             @Override
             public void on(Relationship relationship) {
@@ -46,7 +45,7 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
                 count.incrementAndGet();
 
             }
-        }, getGraphDb());
+        });
 
         assertThat(count.get(), is(93));
     }

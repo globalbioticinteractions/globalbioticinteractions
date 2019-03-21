@@ -3,6 +3,7 @@ package org.eol.globi.export;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ExporterMeasurementOrFact extends ExporterBase {
 
@@ -46,14 +48,23 @@ public class ExporterMeasurementOrFact extends ExporterBase {
     public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
 
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        for (Relationship collectedRel : specimens) {
+        AtomicReference<IOException> lastException = new AtomicReference<>();
+        NodeUtil.RelationshipListener handler = collectedRel -> {
             Node specimenNode = collectedRel.getEndNode();
             if (isSpecimenClassified(specimenNode)) {
-                writeMeasurements(writer, properties, specimenNode, collectedRel, study);
+                try {
+                    writeMeasurements(writer, properties, specimenNode, collectedRel, study);
+                } catch (IOException ex) {
+                    lastException.set(ex);
+                }
             }
+        };
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
+
+        if (lastException.get() != null) {
+            throw lastException.get();
         }
-    }
+     }
 
     private void writeMeasurements(ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, StudyNode study) throws IOException {
         writeProperties(writer, properties, specimenNode, collectedRel, study);

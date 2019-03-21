@@ -5,6 +5,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyNodeListener;
 import org.mapdb.DB;
@@ -57,29 +58,40 @@ public class ExporterAggregateUtil {
         db.close();
     }
 
-    public static void collectDistinctInteractions(StudyNode aStudy, Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate) {
-        final Iterable<Relationship> specimens = NodeUtil.getSpecimens(aStudy);
-        for (Relationship specimen : specimens) {
-            final Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j());
-            for (Relationship interaction : interactions) {
-                if (!interaction.hasProperty(PropertyAndValueDictionary.INVERTED)) {
-                    final Node targetSpecimen = interaction.getEndNode();
-                    final Node sourceSpecimen = interaction.getStartNode();
-                    final String sourceTaxonExternalId = getExternalIdForTaxonOf(sourceSpecimen);
-                    final String targetTaxonExternalId = getExternalIdForTaxonOf(targetSpecimen);
-                    if (sourceTaxonExternalId != null && targetTaxonExternalId != null) {
-                        final Fun.Tuple3<Long, String, String> key = new Fun.Tuple3<Long, String, String>(aStudy.getNodeID(), sourceTaxonExternalId, interaction.getType().name());
-                        List<String> targetTaxonExternalIds = studyOccAggregate.get(key);
-                        if (targetTaxonExternalIds == null) {
-                            targetTaxonExternalIds = new ArrayList<String>();
+    public static void collectDistinctInteractions(StudyNode aStudy, final Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate) {
+
+
+        {
+
+            NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
+
+                @Override
+                public void on(Relationship specimen) {
+                    final Iterable<Relationship> interactions = specimen.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j());
+                    for (Relationship interaction : interactions) {
+                        if (!interaction.hasProperty(PropertyAndValueDictionary.INVERTED)) {
+                            final Node targetSpecimen = interaction.getEndNode();
+                            final Node sourceSpecimen = interaction.getStartNode();
+                            final String sourceTaxonExternalId = getExternalIdForTaxonOf(sourceSpecimen);
+                            final String targetTaxonExternalId = getExternalIdForTaxonOf(targetSpecimen);
+                            if (sourceTaxonExternalId != null && targetTaxonExternalId != null) {
+                                final Fun.Tuple3<Long, String, String> key = new Fun.Tuple3<Long, String, String>(aStudy.getNodeID(), sourceTaxonExternalId, interaction.getType().name());
+                                List<String> targetTaxonExternalIds = studyOccAggregate.get(key);
+                                if (targetTaxonExternalIds == null) {
+                                    targetTaxonExternalIds = new ArrayList<String>();
+                                }
+                                if (!targetTaxonExternalIds.contains(targetTaxonExternalId)) {
+                                    targetTaxonExternalIds.add(targetTaxonExternalId);
+                                }
+                                studyOccAggregate.put(key, targetTaxonExternalIds);
+                            }
                         }
-                        if (!targetTaxonExternalIds.contains(targetTaxonExternalId)) {
-                            targetTaxonExternalIds.add(targetTaxonExternalId);
-                        }
-                        studyOccAggregate.put(key, targetTaxonExternalIds);
                     }
+
                 }
-            }
+            };
+
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(aStudy.getUnderlyingNode()), handler);
         }
     }
 
@@ -90,7 +102,7 @@ public class ExporterAggregateUtil {
             if (!StringUtils.equals(taxonNode.getExternalId(), PropertyAndValueDictionary.NO_MATCH)
                     && !StringUtils.equals(taxonNode.getName(), PropertyAndValueDictionary.NO_MATCH)
                     && !StringUtils.equals(taxonNode.getName(), PropertyAndValueDictionary.NO_NAME)
-                    ) {
+            ) {
                 return taxonNode.getExternalId();
             }
         }

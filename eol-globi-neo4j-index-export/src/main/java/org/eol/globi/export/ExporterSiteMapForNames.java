@@ -6,6 +6,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -25,15 +26,14 @@ class ExporterSiteMapForNames implements GraphExporter {
         // just do it once
         final List<StudyNode> allStudies = NodeUtil.findAllStudies(graphDatabase);
         for (StudyNode allStudy : allStudies) {
-            final Iterable<Relationship> specimens = NodeUtil.getSpecimens(allStudy);
-            for (Relationship specimen : specimens) {
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(allStudy.getUnderlyingNode()), specimen -> {
                 final Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
                 if (relationships.iterator().hasNext()) {
                     final Node endNode = relationships.iterator().next().getEndNode();
                     final TaxonNode taxonNode = new TaxonNode(endNode);
                     names.add(taxonNode.getName());
                 }
-            }
+            });
         }
         final String queryParamName = "interactionType=interactsWith&sourceTaxon=";
         final String siteMapLocation = "https://depot.globalbioticinteractions.org/snapshot/target/data/sitemap/names/";

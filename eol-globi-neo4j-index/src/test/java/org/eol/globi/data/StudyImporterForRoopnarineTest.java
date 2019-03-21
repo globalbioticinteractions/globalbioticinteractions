@@ -111,8 +111,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
             }
         };
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(getStudySingleton(getGraphDb()).getUnderlyingNode()),
-                handler,
-                getGraphDb());
+                handler);
         return totalRels.get();
     }
 }

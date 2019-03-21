@@ -178,13 +178,13 @@ public class NodeUtil {
         return index;
     }
 
-    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener, final GraphDatabaseService graphDb) {
-        handleCollectedRelationships(ntd, listener, graphDb, TRANSACTION_BATCH_SIZE_DEFAULT);
+    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener) {
+        handleCollectedRelationships(ntd, listener, TRANSACTION_BATCH_SIZE_DEFAULT);
     }
 
-    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener, final GraphDatabaseService graphDb, int batchSize) {
+    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener, int batchSize) {
         int counter = 0;
-        Transaction tx = graphDb.beginTx();
+        Transaction tx = ntd.srcNode.getGraphDatabase().beginTx();
         try {
             Iterable<Relationship> relIterable = getOutgoingNodeRelationships(ntd.srcNode, ntd.relType, ntd.dir);
             for (Relationship rel : relIterable) {
@@ -192,7 +192,7 @@ public class NodeUtil {
                 if (++counter % batchSize == 0) {
                     tx.success();
                     tx.finish();
-                    tx = graphDb.beginTx();
+                    tx = ntd.srcNode.getGraphDatabase().beginTx();
                 }
             }
             tx.success();

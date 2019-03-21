@@ -75,7 +75,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
             }
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
 
         assertThat(specimenCollected.get(), Is.is(3));
         assertThat(preyEaten.get(), Is.is(2));

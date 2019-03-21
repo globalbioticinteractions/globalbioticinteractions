@@ -154,7 +154,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler1, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler1);
         assertTrue(success.get());
 
         success.set(false);
@@ -186,7 +186,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
             }
 
         };
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler2, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler2);
         assertTrue(success.get());
 
     }

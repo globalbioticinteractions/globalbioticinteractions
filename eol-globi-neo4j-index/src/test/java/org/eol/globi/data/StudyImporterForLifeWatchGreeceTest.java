@@ -69,7 +69,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
                 }
             };
 
-            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
         }
         assertThat(taxa.contains("Aves"), is(true));
         assertThat(totalPredatorPreyRelationships.get(), is(793));

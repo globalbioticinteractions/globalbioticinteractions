@@ -61,8 +61,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         String expected3 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:X";
         String actual = row.getBuffer().toString();
         assertThat(actual, startsWith(expected1));
-        assertThat(actual.replaceAll("\\:[0-9]", ":X"), containsString(expected2));
-        assertThat(actual.replaceAll("\\:[0-9]", ":X"), containsString(expected3));
+        ExportTestUtil.assertSameAsideFromNodeIds(actual.split("\\n"), new String[] {expected1, expected2, expected3});
     }
 
     @Test

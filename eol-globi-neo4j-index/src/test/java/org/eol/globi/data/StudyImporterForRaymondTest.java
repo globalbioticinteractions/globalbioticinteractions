@@ -77,7 +77,7 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
                     assertThat(next.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(not(nullValue())));
                     foundAtLeastOne.set(true);
                 }
-            }, getGraphDb());
+            });
         }
         assertTrue(foundAtLeastOne.get());
     }

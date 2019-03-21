@@ -120,7 +120,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         assertThat(allStudies.size(), is(1));
         final StudyNode study = (StudyNode) allStudies.get(0);
         assertThat(study.getCitation(), is(""));
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode(), collected), handler, getGraphDb(), 1);
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode(), collected), handler, 1);
     }
 
     @Test

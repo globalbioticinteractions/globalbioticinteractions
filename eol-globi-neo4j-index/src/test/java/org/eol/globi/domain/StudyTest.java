@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -13,9 +14,9 @@ import static org.junit.Assert.fail;
 
 public class StudyTest extends GraphDBTestCase {
 
-    public static final String CARCHARODON = "Carcharodon";
-    public static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";
-    public static final String CARASSIUS_AURATUS_AURATUS = "Carassius auratus auratus";
+    private static final String CARCHARODON = "Carcharodon";
+    private static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";
+    private static final String CARASSIUS_AURATUS_AURATUS = "Carassius auratus auratus";
 
     @Test
     public void populateStudy() throws NodeFactoryException {
@@ -44,7 +45,7 @@ public class StudyTest extends GraphDBTestCase {
 
         assertEquals(study.getTitle(), foundStudy.getTitle());
 
-        for (Relationship rel : NodeUtil.getSpecimens(foundStudy)) {
+        NodeUtil.RelationshipListener handler = rel -> {
             Specimen specimen = new SpecimenNode(rel.getEndNode());
             Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING);
             if (caughtDuringRel != null) {
@@ -68,7 +69,11 @@ public class StudyTest extends GraphDBTestCase {
             } else {
                 fail("found unexpected specimen [" + specimen + "] in study");
             }
-        }
+
+        };
+
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(foundStudy.getUnderlyingNode()), handler);
+
     }
 
 }

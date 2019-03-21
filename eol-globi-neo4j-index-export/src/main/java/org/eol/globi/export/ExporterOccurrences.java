@@ -7,26 +7,39 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ExporterOccurrences extends ExporterOccurrencesBase {
 
     @Override
     public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        for (Relationship collectedRel : specimens) {
+        final List<IOException> first10Exceptions = new ArrayList<>();
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), collectedRel -> {
             Node specimenNode = collectedRel.getEndNode();
             if (isSpecimenClassified(specimenNode)) {
-                handleSpecimen(study, writer, collectedRel, specimenNode);
+                try {
+                    handleSpecimen(study, writer, collectedRel, specimenNode);
+                } catch (IOException e) {
+                    if (first10Exceptions.size() < 10) {
+                        first10Exceptions.add(e);
+                    }
+                }
             }
+        });
+
+        if (first10Exceptions.size() > 0) {
+            throw first10Exceptions.get(0);
         }
     }
 
