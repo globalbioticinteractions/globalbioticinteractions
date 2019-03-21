@@ -6,9 +6,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
-import org.springframework.http.MediaType;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
@@ -55,7 +55,7 @@ public class InteractionControllerIT extends ITBase {
         HttpUtil.addJsonHeaders(httpGet);
         HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
         assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json;charset=UTF-8"));
-        String response = IOUtils.toString(execute.getEntity().getContent());
+        String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         assertThat(response, is(not(nullValue())));
     }
 
@@ -66,7 +66,7 @@ public class InteractionControllerIT extends ITBase {
         HttpUtil.addJsonHeaders(httpGet);
         HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
         assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/vnd.graphviz;charset=UTF-8"));
-        String response = IOUtils.toString(execute.getEntity().getContent());
+        String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         assertThat(response, is(not(nullValue())));
     }
 
@@ -90,7 +90,7 @@ public class InteractionControllerIT extends ITBase {
         HttpUtil.addJsonHeaders(httpGet);
         HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
         assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/csv;charset=UTF-8"));
-        String response = IOUtils.toString(execute.getEntity().getContent());
+        String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         assertThat(response, not(containsString("columns")));
         assertThat(response, anyOf(containsString("\"" + ResultField.SOURCE_TAXON_NAME + "\""),
                 containsString("\"" + ResultField.TARGET_TAXON_NAME + "\"")));

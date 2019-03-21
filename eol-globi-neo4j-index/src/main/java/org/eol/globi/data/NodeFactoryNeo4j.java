@@ -511,14 +511,21 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
         Date date = null;
-        Iterable<Relationship> rels = getCollectedRel(specimen);
-        if (rels.iterator().hasNext()) {
-            Relationship rel = rels.iterator().next();
-            if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
-                Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
-                date = new Date(unixEpoch);
+        Transaction tx = getGraphDb().beginTx();
+        try {
+            Iterable<Relationship> rels = getCollectedRel(specimen);
+            if (rels.iterator().hasNext()) {
+                Relationship rel = rels.iterator().next();
+                if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
+                    Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
+                    date = new Date(unixEpoch);
+                }
             }
+            tx.success();
+        } finally {
+            tx.finish();
         }
+
         return date;
     }
 
@@ -711,6 +718,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         this.termLookupService = termLookupService;
     }
 
+    @Deprecated
     public void setDoiResolver(DOIResolver doiResolver) {
     }
 

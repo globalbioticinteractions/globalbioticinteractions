@@ -20,7 +20,11 @@ import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -73,5 +77,17 @@ public class ExportTestUtil {
         exporter.exportDarwinCoreMetaTable(writer, "testtest.tsv");
 
         assertThat(writer.toString(), is(exporter.getMetaTablePrefix() + "testtest.tsv" + exporter.getMetaTableSuffix()));
+    }
+
+    public static void assertSameAsideFromNodeIds(String actualLine, String expectedLine) {
+        assertSameAsideFromNodeIds(new String[]{actualLine}, new String[]{expectedLine});
+    }
+
+    public static void assertSameAsideFromNodeIds(String[] actualLines, String[] expectedLines) {
+        Stream<String> actual = Stream.of(actualLines)
+                .map(line -> line.replaceAll("([a-z])\\:\\d+", "$1:X"));
+        List<String> collect = actual.collect(Collectors.toList());
+        assertThat(collect, containsInAnyOrder(expectedLines));
+        assertThat(collect.size(), is(expectedLines.length));
     }
 }

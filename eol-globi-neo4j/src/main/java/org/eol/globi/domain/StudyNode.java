@@ -14,6 +14,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -86,30 +87,26 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public String getCitation() {
-        return getUnderlyingNode().hasProperty(StudyConstant.CITATION) ? getProperty(StudyConstant.CITATION) : null;
-    }
-
-    @Override
-    public void appendLogMessage(String message, Level warning) {
-        GraphDatabaseService graphDb = getUnderlyingNode().getGraphDatabase();
-        Transaction tx = graphDb.beginTx();
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            LogMessageImpl msg = new LogMessageImpl(graphDb.createNode(), message, warning);
-            getUnderlyingNode().createRelationshipTo(msg.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.HAS_LOG_MESSAGE));
+            String citation = getUnderlyingNode().hasProperty(StudyConstant.CITATION) ? getProperty(StudyConstant.CITATION) : null;
             tx.success();
+            return citation;
         } finally {
             tx.finish();
         }
     }
 
+    @Deprecated
+    @Override
+    public void appendLogMessage(String message, Level warning) {
+
+    }
+
+    @Deprecated
     @Override
     public List<LogMessage> getLogMessages() {
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_LOG_MESSAGE), Direction.OUTGOING);
-        List<LogMessage> msgs = new ArrayList<>();
-        for (Relationship rel : rels) {
-            msgs.add(new LogMessageImpl(rel.getEndNode()));
-        }
-        return msgs;
+        return Collections.emptyList();
     }
 
     @Override

@@ -4,9 +4,11 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -18,27 +20,42 @@ public class InteractionNode extends NodeBacked implements Interaction {
 
     @Override
     public Collection<Specimen> getParticipants() {
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT), Direction.OUTGOING);
         List<Specimen> participants = new ArrayList<>();
-        for (Relationship rel : rels) {
-            participants.add(new SpecimenNode(rel.getEndNode()));
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_PARTICIPANT), Direction.OUTGOING);
+            for (Relationship rel : rels) {
+                participants.add(new SpecimenNode(rel.getEndNode()));
+            }
+            tx.success();
+        } finally {
+            tx.finish();
         }
         return participants;
     }
 
     @Override
     public Study getStudy() {
-        Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.DERIVED_FROM), Direction.OUTGOING);
-        return rels.iterator().hasNext() ? new StudyNode(rels.iterator().next().getEndNode()) : null;
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            Iterable<Relationship> rels = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.DERIVED_FROM), Direction.OUTGOING);
+            Study study = rels.iterator().hasNext() ? new StudyNode(rels.iterator().next().getEndNode()) : null;
+            tx.success();
+            return study;
+        } finally {
+            tx.finish();
+        }
     }
 
+    @Deprecated
     @Override
     public void appendLogMessage(String message, Level level) {
-        getStudy().appendLogMessage(message, level);
+        
     }
 
+    @Deprecated
     @Override
     public List<LogMessage> getLogMessages() {
-        return getStudy().getLogMessages();
+        return Collections.emptyList();
     }
 }

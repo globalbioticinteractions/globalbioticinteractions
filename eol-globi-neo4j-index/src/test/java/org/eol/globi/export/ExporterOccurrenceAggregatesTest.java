@@ -10,7 +10,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
-import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,19 +22,19 @@ import static org.junit.Assert.assertThat;
 
 public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
-    private String getExpectedData() {
-        return "globi:occur:source:1-EOL:123-ATE\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:1-EOL:123-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:1-EOL:123-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:source:1-EOL:333-ATE\tEOL:333\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:1-EOL:333-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:1-EOL:333-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:source:36-EOL:888-ATE\tEOL:888\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:36-EOL:888-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:36-EOL:888-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:source:45-EOL:888-ATE\tEOL:888\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:45-EOL:888-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
-                "globi:occur:target:45-EOL:888-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n";
+    private String[] getExpectedData() {
+        return ("globi:occur:source:X-EOL:123-ATE\tEOL:123\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:123-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:123-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:source:X-EOL:333-ATE\tEOL:333\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:333-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:333-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:source:X-EOL:888-ATE\tEOL:888\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:888-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:888-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:source:X-EOL:888-ATE\tEOL:888\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:888-ATE-EOL:555\tEOL:555\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n" +
+                "globi:occur:target:X-EOL:888-ATE-EOL:666\tEOL:666\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n").split("\n");
     }
 
     @Test
@@ -60,11 +59,10 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
         new ExporterOccurrenceAggregates().exportDistinct(myStudy1, ExportUtil.AppenderWriter.of(row));
 
-        String expectedData = getExpectedData();
 
         String actualData = row.getBuffer().toString();
-        assertThat(actualData, equalTo(expectedData));
-        assertThat(actualData.split("\n").length, Is.is(12));
+        String[] expectedData = getExpectedData();
+        ExportTestUtil.assertSameAsideFromNodeIds(actualData.split("\n"), expectedData);
 
     }
 

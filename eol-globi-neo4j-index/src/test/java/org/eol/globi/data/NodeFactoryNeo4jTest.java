@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
@@ -86,7 +87,14 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     private void assertStudyType(RelTypes studyRelationType, SpecimenNode specimen2) {
-        assertThat(specimen2.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(studyRelationType)), is(true));
+        Transaction transaction = specimen2.getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            boolean hasRelationship = specimen2.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(studyRelationType));
+            transaction.success();
+            assertThat(hasRelationship, is(true));
+        } finally {
+            transaction.finish();
+        }
     }
 
     @Test
@@ -278,9 +286,15 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         String expectedConfig = new ObjectMapper().writeValueAsString(objectNode);
         assertThat(new ObjectMapper().writeValueAsString(origDataset.getConfig()), is(expectedConfig));
         Node datasetNode = NodeUtil.getDataSetForStudy(study);
-        assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
-        assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
-        assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
+        Transaction tx = datasetNode.getGraphDatabase().beginTx();
+        try {
+            assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
+            assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
+            assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
+            tx.success();
+        } finally {
+            tx.finish();
+        }
 
         StudyImpl otherStudy = new StudyImpl("my other title", "some source", SOME_DOI, "some citation");
         otherStudy.setOriginatingDataset(dataset);
@@ -344,9 +358,15 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
         Node datasetNode = NodeUtil.getDataSetForStudy(study);
-        assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
-        assertThat(datasetNode.hasProperty(DatasetConstant.ARCHIVE_URI), is(false));
-        assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
+        Transaction tx = datasetNode.getGraphDatabase().beginTx();
+        try {
+            assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
+            assertThat(datasetNode.hasProperty(DatasetConstant.ARCHIVE_URI), is(false));
+            assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
+            tx.success();
+        } finally {
+            tx.finish();
+        }
     }
 
 
@@ -395,6 +415,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         initTaxonService();
         StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", "some source", null, null));
         Interaction interaction = getNodeFactory().createInteraction(study);
+
         assertThat(interaction.getParticipants().size(), is(0));
 
         getNodeFactory().createSpecimen(interaction, new TaxonImpl("mickey mouse", null));
@@ -446,14 +467,20 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     private void assertEcoRegions(Location location) {
-        Iterable<Relationship> relationships = ((NodeBacked) location).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
-        int count = 0;
-        for (Relationship relationship : relationships) {
-            Node associatedEcoRegion = relationship.getEndNode();
-            assertThat(associatedEcoRegion.getProperty("name"), is("some eco region"));
-            count++;
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            Iterable<Relationship> relationships = ((NodeBacked) location).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
+            int count = 0;
+            for (Relationship relationship : relationships) {
+                Node associatedEcoRegion = relationship.getEndNode();
+                assertThat(associatedEcoRegion.getProperty("name"), is("some eco region"));
+                count++;
+            }
+            assertThat(count, is(1));
+            transaction.success();
+        } finally {
+            transaction.finish();
         }
-        assertThat(count, is(1));
     }
 
 

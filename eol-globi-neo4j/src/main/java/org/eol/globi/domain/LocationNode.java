@@ -82,23 +82,35 @@ public class LocationNode extends NodeBacked implements Location {
 
     public void addEnvironment(Environment environment) {
         boolean needsAssociation = true;
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
-        for (Relationship relationship : relationships) {
-            if (relationship.getEndNode().getId() == ((NodeBacked) environment).getNodeID()) {
-                needsAssociation = false;
-                break;
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+            for (Relationship relationship : relationships) {
+                if (relationship.getEndNode().getId() == ((NodeBacked) environment).getNodeID()) {
+                    needsAssociation = false;
+                    break;
+                }
             }
-        }
-        if (needsAssociation) {
-            createRelationshipTo(environment, RelTypes.HAS_ENVIRONMENT);
+            if (needsAssociation) {
+                createRelationshipTo(environment, RelTypes.HAS_ENVIRONMENT);
+            }
+            tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     public List<Environment> getEnvironments() {
-        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
         List<Environment> environments = new ArrayList<Environment>();
-        for (Relationship relationship : relationships) {
-            environments.add(new EnvironmentNode(relationship.getEndNode()));
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+            for (Relationship relationship : relationships) {
+                environments.add(new EnvironmentNode(relationship.getEndNode()));
+            }
+            tx.success();
+        } finally {
+            tx.finish();
         }
         return environments;
 

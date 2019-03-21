@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 
 public abstract class NamedNode extends NodeBacked implements Named {
 
@@ -11,10 +12,23 @@ public abstract class NamedNode extends NodeBacked implements Named {
 
     @Override
     public String getName() {
-        return (String) getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME);
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            String property = (String) getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME);
+            tx.success();
+            return property;
+        } finally {
+            tx.finish();
+        }
     }
 
     public void setName(String name) {
-        getUnderlyingNode().setProperty(PropertyAndValueDictionary.NAME, StringUtils.isBlank(name) ? PropertyAndValueDictionary.NO_NAME : name);
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            getUnderlyingNode().setProperty(PropertyAndValueDictionary.NAME, StringUtils.isBlank(name) ? PropertyAndValueDictionary.NO_NAME : name);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
     }
 }

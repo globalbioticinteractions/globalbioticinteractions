@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 public class StudyImporterForGeminaIT extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException, IOException, URISyntaxException {
+    public void createAndPopulateStudyGitHubMostRecent() throws StudyImporterException {
         StudyImporterForGemina importer = new StudyImporterForGemina(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
     }

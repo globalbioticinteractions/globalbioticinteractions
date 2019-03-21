@@ -26,13 +26,13 @@ public class ExporterReferencesTest extends GraphDBTestCase {
 
         new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), true);
 
-        assertThat(row.getBuffer().toString(), equalTo(getExpectedData()));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\n"), getExpectedData());
 
         row = new StringWriter();
 
         new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
 
-        assertThat(row.getBuffer().toString(), equalTo(getExpectedRow()));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), getExpectedRow());
     }
 
     @Test
@@ -40,7 +40,8 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
-        assertThat(row.getBuffer().toString(), equalTo("globi:ref:1\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n"));
+        String expected = "globi:ref:X\t\tmyStudy\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString().split("\n"), expected.split("\n"));
     }
 
     @Test
@@ -48,17 +49,17 @@ public class ExporterReferencesTest extends GraphDBTestCase {
         Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, new DOI("some", "doi"), "bla \"one\""));
         StringWriter row = new StringWriter();
         new ExporterReferences().exportStudy(myStudy, ExportUtil.AppenderWriter.of(row), false);
-        assertThat(row.getBuffer().toString(), equalTo("globi:ref:1\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t\n"));
+        ExportTestUtil.assertSameAsideFromNodeIds(row.getBuffer().toString(), "globi:ref:X\t\tbla \"one\"\t\t\t\t\t\t\t\t\t\t\t\t\thttps://doi.org/10.some/doi\t10.some/doi\t\n");
     }
 
 
-    private String getExpectedData() {
-        return "identifier\tpublicationType\tfull_reference\tprimaryTitle\ttitle\tpages\tpageStart\tpageEnd\tvolume\tedition\tpublisher\tauthorList\teditorList\tcreated\tlanguage\turi\tdoi\tschema#localityName\n"
-                + getExpectedRow();
+    private String[] getExpectedData() {
+        return ("identifier\tpublicationType\tfull_reference\tprimaryTitle\ttitle\tpages\tpageStart\tpageEnd\tvolume\tedition\tpublisher\tauthorList\teditorList\tcreated\tlanguage\turi\tdoi\tschema#localityName\n"
+                + getExpectedRow()).split("\n");
     }
 
     private String getExpectedRow() {
-        return "globi:ref:1\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\t10.1234/44\t\n";
+        return "globi:ref:X\t\tJohn Doe. 1927. description study 1\t\t\t\t\t\t\t\t\t\t\t\t\thttps://public.myfwc.com/FWRI/GAME/Survey.aspx?id=444\t10.1234/44\t\n";
     }
 
     @Test

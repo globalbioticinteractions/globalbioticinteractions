@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -64,14 +65,19 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
         importStudy(importer);
 
         Taxon taxon = taxonIndex.findTaxonByName("Praon dorsale");
-        Iterable<Relationship> relationships = ((NodeBacked)taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-        for (Relationship relationship : relationships) {
-            Node predatorSpecimenNode = relationship.getStartNode();
-            assertThat((String) predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-            assertThat((String) predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
-
-        }
         assertThat(taxon, is(notNullValue()));
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship relationship : relationships) {
+                Node predatorSpecimenNode = relationship.getStartNode();
+                assertThat((String) predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+                assertThat((String) predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
+            }
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
         assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
 
         Location location = nodeFactory.findLocation(new LocationImpl(51.24, -0.34, null, null));

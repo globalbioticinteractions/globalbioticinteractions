@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -46,19 +47,25 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("NCBI:1392"));
 
-        List<String> antraxHosts = new ArrayList<String>();
-        Iterable<Relationship> relationships = ((NodeBacked)taxon).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
-        for (Relationship rel : relationships) {
-            Node specimen = rel.getStartNode();
-            Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
-            for (Relationship pathogenRel : pathogenRels) {
-                Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
-                antraxHosts.add(new TaxonNode(singleRelationship.getEndNode()).getName());
+        Transaction tx = getGraphDb().beginTx();
+        try {
+            List<String> antraxHosts = new ArrayList<String>();
+            Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
+            for (Relationship rel : relationships) {
+                Node specimen = rel.getStartNode();
+                Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
+                for (Relationship pathogenRel : pathogenRels) {
+                    Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
+                    antraxHosts.add(new TaxonNode(singleRelationship.getEndNode()).getName());
+                }
+
             }
 
+            assertThat(antraxHosts, hasItem("Equus caballus"));
+            tx.success();
+        } finally {
+            tx.finish();
         }
-
-        assertThat(antraxHosts, hasItem("Equus caballus"));
     }
 
     private void assertHuman() throws NodeFactoryException {

@@ -29,7 +29,15 @@ import java.util.Map;
 
 public class NodeUtil {
     public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
-        return node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;
+        Transaction tx = node.getGraphDatabase().beginTx();
+        try {
+            String value = node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;
+            tx.success();
+            return value;
+
+        } finally {
+            tx.finish();
+        }
     }
 
     public static String truncateTaxonName(String taxonName) {
@@ -132,9 +140,16 @@ public class NodeUtil {
     }
 
     public static Node getDataSetForStudy(StudyNode study) {
-        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
-        Iterator<Relationship> iterator = rels.iterator();
-        return iterator.hasNext() ? iterator.next().getEndNode() : null;
+        Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
+            Iterator<Relationship> iterator = rels.iterator();
+            Node datasetNode = iterator.hasNext() ? iterator.next().getEndNode() : null;
+            tx.success();
+            return datasetNode;
+        } finally {
+            tx.finish();
+        }
     }
 
     public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName) {
