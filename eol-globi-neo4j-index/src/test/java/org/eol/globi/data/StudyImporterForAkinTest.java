@@ -76,7 +76,7 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterTestFactory(new TestParserFactory(csvString), nodeFactory).instantiateImporter((Class) StudyImporterForAkin.class);
         importStudy(importer);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         Taxon taxon = taxonIndex.findTaxonByName("Pogonias cromis");
         assertNotNull(taxon);
@@ -86,61 +86,62 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
         NodeUtil.RelationshipListener relHandler = rel -> {
             assertThat(rel, is(not(nullValue())));
 
-            Date expectedDate = DateUtil.parsePatternUTC("1998-03-07", "yyyy-MM-dd").toDate();
-            assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
+            if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
+                Date expectedDate = DateUtil.parsePatternUTC("1998-03-07", "yyyy-MM-dd").toDate();
+                assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
 
-            Node specimenNode = rel.getEndNode();
-            assertThat(specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(226.0));
-            assertThat(specimenNode.getProperty(SpecimenConstant.STOMACH_VOLUME_ML), is(3.0));
+                Node specimenNode = rel.getEndNode();
+                assertThat(specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(226.0));
+                assertThat(specimenNode.getProperty(SpecimenConstant.STOMACH_VOLUME_ML), is(3.0));
 
-            Specimen specimen = new SpecimenNode(specimenNode);
-            assertThat(specimen.getSampleLocation().getAltitude(), is(-0.7));
+                Specimen specimen = new SpecimenNode(specimenNode);
+                assertThat(specimen.getSampleLocation().getAltitude(), is(-0.7));
 
-            Node speciesNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
-            assertThat(speciesNode.getProperty("name"), is("Pogonias cromis"));
-            Iterable<Relationship> ateRels = specimenNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
-            Map<String, Map<String, Object>> preys = new HashMap<String, Map<String, Object>>();
-            for (Relationship ateRel : ateRels) {
-                Node preyNode = ateRel.getEndNode();
-                Node taxonNode = preyNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
-                String name = (String) taxonNode.getProperty("name");
-                HashMap<String, Object> propertyMap = new HashMap<String, Object>();
-                propertyMap.put("name", name);
-                propertyMap.put(SpecimenConstant.VOLUME_IN_ML, preyNode.getProperty(SpecimenConstant.VOLUME_IN_ML));
-                preys.put(name, propertyMap);
+                Node speciesNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
+                assertThat(speciesNode.getProperty("name"), is("Pogonias cromis"));
+                Iterable<Relationship> ateRels = specimenNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Map<String, Map<String, Object>> preys = new HashMap<String, Map<String, Object>>();
+                for (Relationship ateRel : ateRels) {
+                    Node preyNode = ateRel.getEndNode();
+                    Node taxonNode = preyNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
+                    String name = (String) taxonNode.getProperty("name");
+                    HashMap<String, Object> propertyMap = new HashMap<String, Object>();
+                    propertyMap.put("name", name);
+                    propertyMap.put(SpecimenConstant.VOLUME_IN_ML, preyNode.getProperty(SpecimenConstant.VOLUME_IN_ML));
+                    preys.put(name, propertyMap);
+                }
+                Map<String, Object> sand = preys.get("Sand");
+                assertThat(sand, is(notNullValue()));
+                assertThat(sand.get("name"), is("Sand"));
+                assertThat(sand.get(SpecimenConstant.VOLUME_IN_ML), is(0.15d));
+                Map<String, Object> chironomidae = preys.get("Chironomidae larvae");
+                assertThat(chironomidae, is(notNullValue()));
+                assertThat(chironomidae.get("name"), is("Chironomidae larvae"));
+                assertThat(chironomidae.get(SpecimenConstant.VOLUME_IN_ML), is(0.6d));
+
+                Map<String, Object> amphipoda = preys.get("Amphipoda(Gammarus spp.)");
+                assertThat(amphipoda, is(notNullValue()));
+                assertThat(amphipoda.get("name"), is("Amphipoda(Gammarus spp.)"));
+                assertThat(amphipoda.get(SpecimenConstant.VOLUME_IN_ML), is(0.45d));
+
+                Map<String, Object> insecta = preys.get("Unidentified insects");
+                assertThat(insecta, is(notNullValue()));
+                assertThat(insecta.get("name"), is("Unidentified insects"));
+                assertThat(insecta.get(SpecimenConstant.VOLUME_IN_ML), is(1.35d));
+
+                Map<String, Object> mollusca = preys.get("Mollusks (Oyster)");
+                assertThat(mollusca, is(notNullValue()));
+                assertThat(mollusca.get("name"), is("Mollusks (Oyster)"));
+                assertThat(mollusca.get(SpecimenConstant.VOLUME_IN_ML), is(0.45d));
+
+                Node locationNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
+                assertThat(locationNode.getProperty(LocationConstant.LATITUDE), is(28.645202d));
+                assertThat(locationNode.getProperty(LocationConstant.LONGITUDE), is(-96.099923d));
+                success.set(true);
             }
-            Map<String, Object> sand = preys.get("Sand");
-            assertThat(sand, is(notNullValue()));
-            assertThat((String) sand.get("name"), is("Sand"));
-            assertThat((Double) sand.get(SpecimenConstant.VOLUME_IN_ML), is(0.15d));
-            Map<String, Object> chironomidae = preys.get("Chironomidae larvae");
-            assertThat(chironomidae, is(notNullValue()));
-            assertThat((String) chironomidae.get("name"), is("Chironomidae larvae"));
-            assertThat((Double) chironomidae.get(SpecimenConstant.VOLUME_IN_ML), is(0.6d));
-
-            Map<String, Object> amphipoda = preys.get("Amphipoda(Gammarus spp.)");
-            assertThat(amphipoda, is(notNullValue()));
-            assertThat((String) amphipoda.get("name"), is("Amphipoda(Gammarus spp.)"));
-            assertThat((Double) amphipoda.get(SpecimenConstant.VOLUME_IN_ML), is(0.45d));
-
-            Map<String, Object> insecta = preys.get("Unidentified insects");
-            assertThat(insecta, is(notNullValue()));
-            assertThat((String) insecta.get("name"), is("Unidentified insects"));
-            assertThat((Double) insecta.get(SpecimenConstant.VOLUME_IN_ML), is(1.35d));
-
-            Map<String, Object> mollusca = preys.get("Mollusks (Oyster)");
-            assertThat(mollusca, is(notNullValue()));
-            assertThat((String) mollusca.get("name"), is("Mollusks (Oyster)"));
-            assertThat((Double) mollusca.get(SpecimenConstant.VOLUME_IN_ML), is(0.45d));
-
-            Node locationNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
-            assertThat((Double) locationNode.getProperty(LocationConstant.LATITUDE), is(28.645202d));
-            assertThat((Double) locationNode.getProperty(LocationConstant.LONGITUDE), is(-96.099923d));
-            success.set(true);
         };
 
-
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(((StudyNode)study).getUnderlyingNode()), relHandler, getGraphDb());
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), relHandler, getGraphDb());
         assertTrue(success.get());
     }
 
