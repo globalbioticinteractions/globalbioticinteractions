@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
@@ -21,8 +22,9 @@ import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 public class StudyImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, IOException {
+    public void importAll() throws StudyImporterException {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
+        importer.setDataset(new DatasetLocal());
         importStudy(importer);
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());

@@ -144,7 +144,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             LocationImpl location = new LocationImpl(null, null, null, null);
             String longitude = columnValueOrNull(record, "Longitude_dd");
             String latitude = columnValueOrNull(record, "Latitude_dd");
-            if (NumberUtils.isCreatable(latitude) && NumberUtils.isCreatable(longitude)) {
+            if (NumberUtils.isParsable(latitude) && NumberUtils.isCreatable(longitude)) {
                 try {
                     LatLng latLng = LocationUtil.parseLatLng(latitude, longitude);
                     String altitude = columnValueOrNull(record, "Altitude_mean_m");

@@ -45,7 +45,8 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         try {
             List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
             final String sourceCitation = "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/");
-            final List<String> networkNames = getNetworkNames(getDataset().getResource(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
+            InputStream resource = getDataset().getResource(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All");
+            final List<String> networkNames = getNetworkNames(resource);
             LOG.info("found [" + networkNames.size() + "] networks.");
             for (String networkName : networkNames) {
                 final List<String> networkNames1 = Collections.singletonList(networkName);
