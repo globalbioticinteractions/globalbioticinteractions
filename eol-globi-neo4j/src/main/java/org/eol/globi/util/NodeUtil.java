@@ -66,12 +66,18 @@ public class NodeUtil {
     }
 
     public static void findStudies(GraphDatabaseService graphService, StudyNodeListener listener) {
-        Index<Node> studyIndex = graphService.index().forNodes("studies");
-        IndexHits<Node> hits = studyIndex.query("title", "*");
-        for (Node hit : hits) {
-            listener.onStudy(new StudyNode(hit));
+        Transaction transaction = graphService.beginTx();
+        try {
+            Index<Node> studyIndex = graphService.index().forNodes("studies");
+            IndexHits<Node> hits = studyIndex.query("title", "*");
+            for (Node hit : hits) {
+                listener.onStudy(new StudyNode(hit));
+            }
+            hits.close();
+            transaction.success();
+        } finally {
+            transaction.finish();
         }
-        hits.close();
     }
 
     public static RelationshipType asNeo4j(RelType type) {

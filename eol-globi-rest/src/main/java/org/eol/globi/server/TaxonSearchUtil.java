@@ -23,7 +23,7 @@ import java.util.Map;
 public class TaxonSearchUtil {
     public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request) throws IOException {
         final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), true);
-        StringBuilder query = new StringBuilder("START someTaxon = node:taxons({pathQuery}) ");
+        StringBuilder query = new StringBuilder("CYPHER 1.9 START someTaxon = node:taxons({pathQuery}) ");
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {

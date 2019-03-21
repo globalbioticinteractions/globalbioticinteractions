@@ -109,7 +109,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     @ResponseBody
     public CypherQuery findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
         String luceneQuery = buildLuceneQuery(taxonName, "name");
-        StringBuilder query = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
+        StringBuilder query = new StringBuilder("CYPHER 1.9 START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
@@ -166,7 +166,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     public String queryPrefix() {
-        return "START taxon = node:taxonPaths({taxonPathQuery}) " +
+        return "CYPHER 1.9 START taxon = node:taxonPaths({taxonPathQuery}) " +
                 "MATCH taxon-[:SAME_AS*0..1]->otherTaxon\n" +
                 "WHERE ((has(otherTaxon.name) AND otherTaxon.name = {taxonName})\n" +
                 "OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName}))\n";

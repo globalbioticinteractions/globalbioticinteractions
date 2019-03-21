@@ -86,7 +86,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         }
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = engine.execute("START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
+        ExecutionResult result = engine.execute("CYPHER 1.9 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
         ResourceIterator<Map<String, Object>> iterator = result.iterator();
         List<String> interactions = new ArrayList<String>();
         while (iterator.hasNext()) {

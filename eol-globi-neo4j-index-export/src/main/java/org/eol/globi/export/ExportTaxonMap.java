@@ -16,7 +16,7 @@ public class ExportTaxonMap implements StudyExporter {
     }
 
     protected void doExport(Study study, ExportUtil.Appender writer) throws IOException {
-        String query = "START study = node:studies('*:*')\n" +
+        String query = "CYPHER 1.9 START study = node:studies('*:*')\n" +
                 "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon, specimen-[:CLASSIFIED_AS]->taxon " +
                 "WITH distinct(origTaxon.name) as origName, origTaxon.externalId? as origId, taxon " +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +

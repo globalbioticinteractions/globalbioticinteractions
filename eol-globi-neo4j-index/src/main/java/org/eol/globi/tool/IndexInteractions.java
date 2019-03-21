@@ -31,7 +31,7 @@ public class IndexInteractions implements Linker {
         boolean done;
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         do {
-            ExecutionResult result = engine.execute("START dataset = node:datasets('*:*')\n" +
+            ExecutionResult result = engine.execute("CYPHER 1.9 START dataset = node:datasets('*:*')\n" +
                     "MATCH dataset<-[:IN_DATASET]-study-[:REFUTES|SUPPORTS]->specimen\n" +
                     "WHERE not(specimen<-[:HAS_PARTICIPANT]-())\n" +
                     "WITH specimen, study, dataset LIMIT {batchSize}\n" +

@@ -11,7 +11,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
     @Override
     public void exportStudy(final Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
 
-        String query = "START study = node:studies(title={study_title}) " +
+        String query = "CYPHER 1.9 START study = node:studies(title={study_title}) " +
                 "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:CLASSIFIED_AS]->taxon " +
                 "WITH distinct(taxon) as dtaxon, study " +
                 "MATCH dtaxon-[sameAs?:SAME_AS]->otherTaxon " +

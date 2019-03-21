@@ -21,7 +21,7 @@ public class ReportController {
     @RequestMapping(value = "/reports/studies", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery studies(@RequestParam(required = false) final String source, final HttpServletRequest request) throws IOException {
-        String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
+        String cypherQuery = "CYPHER 1.9 START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
             + " WHERE has(report.title) "
             + " RETURN report.citation? as " + ResultField.STUDY_CITATION
             + ", report.externalId? as " + ResultField.STUDY_URL
@@ -81,7 +81,7 @@ public class ReportController {
         if (StringUtils.isBlank(sourceId)) {
             searchMatch = "'" + "sourceId" + ":*'";
         }
-        String cypherQuery = "START report = node:reports(" + searchMatch + ") "
+        String cypherQuery = "CYPHER 1.9 START report = node:reports(" + searchMatch + ") "
             + " RETURN report.citation? as " + ResultField.STUDY_CITATION
             + ", report.externalId? as " + ResultField.STUDY_URL
             + ", report.doi? as " + ResultField.STUDY_DOI
@@ -106,7 +106,7 @@ public class ReportController {
         if (StringUtils.isBlank(searchValue)) {
             searchMatch = "'" + searchKey + ":*'";
         }
-        String cypherQuery = "START dataset = node:datasets(" + searchMatch + "), report = node:reports('sourceId:*') "
+        String cypherQuery = "CYPHER 1.9 START dataset = node:datasets(" + searchMatch + "), report = node:reports('sourceId:*') "
             + " WHERE ('globi:' + dataset.namespace) = report.sourceId "
             + " RETURN report.citation? as " + ResultField.STUDY_CITATION
             + ", report.externalId? as " + ResultField.STUDY_URL
@@ -136,7 +136,7 @@ public class ReportController {
         if (StringUtils.isBlank(searchValue)) {
             searchMatch = "'" + searchKey + ":*'";
         }
-        String cypherQuery = "START dataset = node:datasets(" + searchMatch + ") "
+        String cypherQuery = "CYPHER 1.9 START dataset = node:datasets(" + searchMatch + ") "
             + " RETURN null as " + ResultField.STUDY_CITATION
             + ", null as " + ResultField.STUDY_URL
             + ", null as " + ResultField.STUDY_DOI
@@ -163,7 +163,7 @@ public class ReportController {
     @RequestMapping(value = "/reports/collections", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery collections() throws IOException {
-        String cypherQuery = "START report = node:reports('collection:*')" +
+        String cypherQuery = "CYPHER 1.9 START report = node:reports('collection:*')" +
             " WHERE not(has(report.title)) AND not(has(report.source)) "
             + " RETURN report.citation? as " + ResultField.STUDY_CITATION
             + ", report.externalId? as " + ResultField.STUDY_URL

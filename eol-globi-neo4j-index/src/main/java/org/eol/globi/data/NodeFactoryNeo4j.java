@@ -396,7 +396,14 @@ public class NodeFactoryNeo4j implements NodeFactory {
         if (StringUtils.isBlank(study.getSource())) {
             throw new NodeFactoryException("null or empty study source");
         }
-        StudyNode studyNode = findStudy(study);
+
+        Transaction transaction = getGraphDb().beginTx();
+        StudyNode studyNode = null;
+        try {
+            studyNode = findStudy(study);
+        } finally {
+            transaction.finish();
+        }
 
         return studyNode == null
                 ? createStudy(study)
@@ -412,7 +419,14 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Deprecated
     @Override
     public StudyNode findStudy(String title) {
-        return findStudy(new StudyImpl(title));
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            StudyNode study = findStudy(new StudyImpl(title));
+            transaction.success();
+            return study;
+        } finally {
+            transaction.finish();
+        }
     }
 
     private StudyNode findStudy(Study study) {
@@ -538,8 +552,14 @@ public class NodeFactoryNeo4j implements NodeFactory {
                     transaction.finish();
                 }
             }
-            location.addEnvironment(environment);
-            normalizedEnvironments.add(environment);
+            Transaction transaction = graphDb.beginTx();
+            try {
+                location.addEnvironment(environment);
+                normalizedEnvironments.add(environment);
+                transaction.success();
+            } finally {
+                transaction.finish();
+            }
         }
         return normalizedEnvironments;
     }
@@ -637,13 +657,19 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     protected EnvironmentNode findEnvironment(String name) {
-        String query = "name:\"" + name + "\"";
-        IndexHits<Node> matches = environments.query(query);
         EnvironmentNode firstMatchingEnvironment = null;
-        if (matches.hasNext()) {
-            firstMatchingEnvironment = new EnvironmentNode(matches.next());
+        String query = "name:\"" + name + "\"";
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            IndexHits<Node> matches = environments.query(query);
+            if (matches.hasNext()) {
+                firstMatchingEnvironment = new EnvironmentNode(matches.next());
+            }
+            matches.close();
+            transaction.success();
+        } finally {
+            transaction.finish();
         }
-        matches.close();
         return firstMatchingEnvironment;
     }
 

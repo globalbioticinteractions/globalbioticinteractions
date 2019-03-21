@@ -54,15 +54,21 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         TaxonNode firstMatchingTaxon = null;
         if (StringUtils.isNotBlank(value)) {
             String query = key + ":\"" + QueryParser.escape(value) + "\"";
-            IndexHits<Node> matchingTaxa = taxons.query(query);
-            Node matchingTaxon;
-            if (matchingTaxa.hasNext()) {
-                matchingTaxon = matchingTaxa.next();
-                if (matchingTaxon != null) {
-                    firstMatchingTaxon = new TaxonNode(matchingTaxon);
+            Transaction transaction = graphDbService.beginTx();
+            try {
+                IndexHits<Node> matchingTaxa = taxons.query(query);
+                Node matchingTaxon;
+                if (matchingTaxa.hasNext()) {
+                    matchingTaxon = matchingTaxa.next();
+                    if (matchingTaxon != null) {
+                        firstMatchingTaxon = new TaxonNode(matchingTaxon);
+                    }
                 }
+                matchingTaxa.close();
+                transaction.success();
+            } finally {
+                transaction.finish();
             }
-            matchingTaxa.close();
         }
         return firstMatchingTaxon;
     }

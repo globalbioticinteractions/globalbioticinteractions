@@ -16,7 +16,7 @@ public class ExportTaxonCache implements StudyExporter {
     }
 
     protected void doExport(Study study, ExportUtil.Appender appender) throws IOException {
-        String query = "START taxon = node:taxons('*:*') " +
+        String query = "CYPHER 1.9 START taxon = node:taxons('*:*') " +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
                 "WHERE has(linkedTaxon.path) " +
                 "RETURN linkedTaxon.externalId? as id" +

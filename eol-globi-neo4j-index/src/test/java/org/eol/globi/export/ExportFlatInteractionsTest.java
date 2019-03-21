@@ -22,6 +22,7 @@ import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
@@ -49,11 +50,11 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
         final String[] actualExportLines = actualExport.split("\\n");
         assertThat(actualExportLines.length, is(22));
         final String header = "sourceTaxonId\tsourceTaxonIds\tsourceTaxonName\tsourceTaxonRank\tsourceTaxonPathNames\tsourceTaxonPathIds\tsourceTaxonPathRankNames\tsourceTaxonSpeciesName\tsourceTaxonSpeciesId\tsourceTaxonGenusName\tsourceTaxonGenusId\tsourceTaxonFamilyName\tsourceTaxonFamilyId\tsourceTaxonOrderName\tsourceTaxonOrderId\tsourceTaxonClassName\tsourceTaxonClassId\tsourceTaxonPhylumName\tsourceTaxonPhylumId\tsourceTaxonKingdomName\tsourceTaxonKingdomId\tsourceId\tsourceOccurrenceId\tsourceCatalogNumber\tsourceBasisOfRecordId\tsourceBasisOfRecordName\tsourceLifeStageId\tsourceLifeStageName\tsourceBodyPartId\tsourceBodyPartName\tsourcePhysiologicalStateId\tsourcePhysiologicalStateName\tinteractionTypeName\tinteractionTypeId\ttargetTaxonId\ttargetTaxonIds\ttargetTaxonName\ttargetTaxonRank\ttargetTaxonPathNames\ttargetTaxonPathIds\ttargetTaxonPathRankNames\ttargetTaxonSpeciesName\ttargetTaxonSpeciesId\ttargetTaxonGenusName\ttargetTaxonGenusId\ttargetTaxonFamilyName\ttargetTaxonFamilyId\ttargetTaxonOrderName\ttargetTaxonOrderId\ttargetTaxonClassName\ttargetTaxonClassId\ttargetTaxonPhylumName\ttargetTaxonPhylumId\ttargetTaxonKingdomName\ttargetTaxonKingdomId\ttargetId\ttargetOccurrenceId\ttargetCatalogNumber\ttargetBasisOfRecordId\ttargetBasisOfRecordName\ttargetLifeStageId\ttargetLifeStageName\ttargetBodyPartId\ttargetBodyPartName\ttargetPhysiologicalStateId\ttargetPhysiologicalStateName\tdecimalLatitude\tdecimalLongitude\tlocalityId\tlocalityName\teventDateUnixEpoch\targumentTypeId\treferenceCitation\treferenceDoi\treferenceUrl\tsourceCitation\tsourceNamespace\tsourceArchiveURI\tsourceDOI\tsourceLastSeenAtUnixEpoch";
-        final String first = "EOL:333\t\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tGLOBI:JUVENILE\tJUVENILE\tGLOBI:BONE\tBONE\tGLOBI:DIGESTATE\tDIGESTATE\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\t\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t12.0\t-45.9\tsome:localeid\tsome locale\t701942400000\thttps://en.wiktionary.org/wiki/support\t\t\t\t<http://example.com>\tsome/namespace\thttp://example.com\t\t";
-        final String firstRefute = "EOL:333\t\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tGLOBI:JUVENILE\tJUVENILE\tGLOBI:BONE\tBONE\tGLOBI:DIGESTATE\tDIGESTATE\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\t\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t12.0\t-45.9\tsome:localeid\tsome locale\t701942400000\thttps://en.wiktionary.org/wiki/refute\t\t\t\t<http://example.com>\tsome/namespace\thttp://example.com\t\t";
+        final String first = "\nEOL:333\t\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tGLOBI:JUVENILE\tJUVENILE\tGLOBI:BONE\tBONE\tGLOBI:DIGESTATE\tDIGESTATE\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\t\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t12.0\t-45.9\tsome:localeid\tsome locale\t701942400000\thttps://en.wiktionary.org/wiki/support\t\t\t\t<http://example.com>\tsome/namespace\thttp://example.com\t\t";
+        final String firstRefute = "\nEOL:333\t\tHomo sapiens\t\tpathElem1 | pathElem 2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tGLOBI:JUVENILE\tJUVENILE\tGLOBI:BONE\tBONE\tGLOBI:DIGESTATE\tDIGESTATE\teats\thttp://purl.obolibrary.org/obo/RO_0002470\tEOL:555\t\tCanis lupus\t\tpreyPathElem1 | preyPathElem2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t12.0\t-45.9\tsome:localeid\tsome locale\t701942400000\thttps://en.wiktionary.org/wiki/refute\t\t\t\t<http://example.com>\tsome/namespace\thttp://example.com\t\t";
         assertThat(actualExportLines[0], is(header));
-        assertThat(actualExportLines[1], startsWith(first));
-        assertThat(actualExportLines[22-3], startsWith(firstRefute));
+        assertThat(actualExport, containsString(first));
+        assertThat(actualExport, containsString(firstRefute));
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {

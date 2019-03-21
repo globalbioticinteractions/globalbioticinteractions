@@ -78,7 +78,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());
-        String query = "START resourceTaxon = node:taxons(name='Suaeda spp.')" +
+        String query = "CYPHER 1.9 START resourceTaxon = node:taxons(name='Suaeda spp.')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon, specimen-[:COLLECTED_AT]->location" +
                 " RETURN taxon.name, specimen.lifeStage?, type(r), resourceTaxon.name, resourceSpecimen.lifeStage?, location.latitude as lat, location.longitude as lng";
         ExecutionResult result = engine.execute(query);
@@ -88,7 +88,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         assertThat(result.dumpToString(), containsString("Anas acuta"));
         assertThat(result.dumpToString(), containsString("30.378207 | -115.938835 |"));
 
-        query = "START taxon = node:taxons('*:*')" +
+        query = "CYPHER 1.9 START taxon = node:taxons('*:*')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:PARASITE_OF]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN taxon.name";
         result = engine.execute(query);
@@ -103,7 +103,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         }
 
         // Trypanorhyncha (kind of tapeworms) are typically parasites, not prey
-        query = "START resourceTaxon = node:taxons(name='Trypanorhyncha')" +
+        query = "CYPHER 1.9 START resourceTaxon = node:taxons(name='Trypanorhyncha')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r:PREYS_UPON]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN specimen.externalId + type(r) + resourceSpecimen.externalId as `resourceExternalId`";
         result = engine.execute(query);

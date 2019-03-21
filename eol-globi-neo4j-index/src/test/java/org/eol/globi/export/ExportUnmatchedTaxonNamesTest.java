@@ -20,7 +20,9 @@ import org.neo4j.graphdb.Transaction;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -64,11 +66,11 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
-        assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
-                        "\nCaniz\t\t\t\t\t\tcitation my study\tmy first source" +
-                        "\nHomo sapiens2\t\t\t\t\t\tcitation my study\tmy first source" +
-                        "\nHomo sapiens3\tno:match\t\t\t\t\tcitation my study\tmy first source\n"
-        ));
+        String actual = writer.toString();
+        assertThat(actual, startsWith("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource"));
+        assertThat(actual, containsString("\nCaniz\t\t\t\t\t\tcitation my study\tmy first source"));
+        assertThat(actual, containsString("\nHomo sapiens2\t\t\t\t\t\tcitation my study\tmy first source"));
+        assertThat(actual, containsString("\nHomo sapiens3\tno:match\t\t\t\t\tcitation my study\tmy first source"));
     }
 
     private Taxon dog() {
@@ -97,14 +99,14 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         Taxon humanz = taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapienz", null));
         TaxonImpl taxon = new TaxonImpl("Homo sapiens", "TESTING:123");
         taxon.setPath("one | two | Homo sapiens");
-        NodeUtil.connectTaxa(taxon, (TaxonNode)humanz, getGraphDb(), RelTypes.SIMILAR_TO);
+        NodeUtil.connectTaxa(taxon, (TaxonNode) humanz, getGraphDb(), RelTypes.SIMILAR_TO);
         assertNotNull(humanz);
         Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Caniz", null));
         predatorSpecimen.interactsWith(preySpecimen, InteractType.ATE);
 
         predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", null));
-        Node synonymNode = ((NodeBacked)taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens Synonym", null))).getUnderlyingNode();
-        Node node = ((NodeBacked)taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null))).getUnderlyingNode();
+        Node synonymNode = ((NodeBacked) taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens Synonym", null))).getUnderlyingNode();
+        Node node = ((NodeBacked) taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null))).getUnderlyingNode();
         Transaction tx = getGraphDb().beginTx();
         try {
             node.createRelationshipTo(synonymNode, NodeUtil.asNeo4j(RelTypes.SAME_AS));
@@ -118,11 +120,11 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         resolveNames();
         StringWriter writer = new StringWriter();
         new ExportUnmatchedTaxonNames().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
-        assertThat(writer.toString(), is("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource" +
-                        "\nHomo sapienz\t\t\tHomo sapiens\tone | two | Homo sapiens\tTESTING:123\tcite, study\tmy first, source" +
-                        "\nCaniz\t\t\t\t\t\tcite, study\tmy first, source" +
-                        "\nCanis\t\t\t\t\t\tcite, study\tmy first, source\n"
-        ));
+        String actual = writer.toString();
+        assertThat(actual, startsWith("unmatched taxon name\tunmatched taxon id\tname status\tsimilar to taxon name\tsimilar to taxon path\tsimilar to taxon id\tstudy\tsource"));
+        assertThat(actual, containsString("\nHomo sapienz\t\t\tHomo sapiens\tone | two | Homo sapiens\tTESTING:123\tcite, study\tmy first, source"));
+        assertThat(actual, containsString("\nCaniz\t\t\t\t\t\tcite, study\tmy first, source"));
+        assertThat(actual, containsString("\nCanis\t\t\t\t\t\tcite, study\tmy first, source"));
     }
 
 }

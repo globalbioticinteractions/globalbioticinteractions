@@ -89,6 +89,7 @@ public class NameResolver {
                                 }
                                 watchForBatch.reset();
                                 watchForBatch.start();
+
                             }
                         }
                     }

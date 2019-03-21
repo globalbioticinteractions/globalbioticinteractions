@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -67,10 +69,11 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
 
         StringWriter writer = new StringWriter();
         new ExportTaxonMap().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
-        assertThat(writer.toString(), is("providedTaxonId\tprovidedTaxonName\tresolvedTaxonId\tresolvedTaxonName" +
-                "\nhomoSapiensId\tHomo sapiens\thomoSapiensId\tHomo sapiens" +
-                "\nhomoSapiensId\tHomo sapiens\talt:123\tAlternate Homo sapiens" +
-                "\ncanisLupusId\tCanis lupus\tcanisLupusId\tCanis lupus\n"));
+        String actual = writer.toString();
+        assertThat(actual, startsWith("providedTaxonId\tprovidedTaxonName\tresolvedTaxonId\tresolvedTaxonName"));
+        assertThat(actual, containsString("\nhomoSapiensId\tHomo sapiens\thomoSapiensId\tHomo sapiens"));
+        assertThat(actual, containsString("\nhomoSapiensId\tHomo sapiens\talt:123\tAlternate Homo sapiens"));
+        assertThat(actual, containsString("\ncanisLupusId\tCanis lupus\tcanisLupusId\tCanis lupus\n"));
     }
 
 }

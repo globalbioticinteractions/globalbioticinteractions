@@ -14,6 +14,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -38,13 +39,20 @@ public class ExporterAggregateUtil {
         });
 
         for (Map.Entry<Fun.Tuple3<Long, String, String>, List<String>> distinctInteractions : studyOccAggregate.entrySet()) {
-            rowWriter.writeRow(
-                    writer,
-                    new StudyNode(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
-                    distinctInteractions.getKey().b,
-                    distinctInteractions.getKey().c,
-                    distinctInteractions.getValue()
-            );
+            Transaction transaction = graphDatabase.beginTx();
+            try {
+                rowWriter.writeRow(
+                        writer,
+                        new StudyNode(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
+                        distinctInteractions.getKey().b,
+                        distinctInteractions.getKey().c,
+                        distinctInteractions.getValue()
+                );
+                transaction.success();
+            } finally {
+                transaction.finish();
+            }
+
         }
         db.close();
     }

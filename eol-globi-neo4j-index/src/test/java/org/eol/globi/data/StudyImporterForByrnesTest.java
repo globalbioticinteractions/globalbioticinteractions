@@ -51,7 +51,7 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
         assertThat(citations, not(hasItem("17(8)")));
 
         ExecutionEngine executionEngine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = executionEngine.execute("START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
+        ExecutionResult result = executionEngine.execute("CYPHER 1.9 START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
                 " RETURN collect(distinct(preyTaxon.name))");
         assertThat(result.dumpToString(), containsString("Bossiella orbigiana"));
