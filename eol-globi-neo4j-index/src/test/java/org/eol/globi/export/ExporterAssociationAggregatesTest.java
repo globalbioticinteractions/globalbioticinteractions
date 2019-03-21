@@ -56,12 +56,12 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
         String expected1 = "associationID\toccurrenceID\tassociationType\ttargetOccurrenceID\tmeasurementDeterminedDate\tmeasurementDeterminedBy\tmeasurementMethod\tmeasurementRemarks\tsource\tbibliographicCitation\tcontributor\treferenceID";
-        String expected2 = "globi:assoc:0-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:0-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:0-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:0";
-        String expected3 = "globi:assoc:7-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:7-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:7-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:7";
+        String expected2 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:X";
+        String expected3 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:X";
         String actual = row.getBuffer().toString();
         assertThat(actual, startsWith(expected1));
-        assertThat(actual, containsString(expected2));
-        assertThat(actual, containsString(expected3));
+        assertThat(actual.replaceAll("\\:[0-9]", ":X"), containsString(expected2));
+        assertThat(actual.replaceAll("\\:[0-9]", ":X"), containsString(expected3));
     }
 
     @Test

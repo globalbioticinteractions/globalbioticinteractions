@@ -398,9 +398,10 @@ public class NodeFactoryNeo4j implements NodeFactory {
         }
 
         Transaction transaction = getGraphDb().beginTx();
-        StudyNode studyNode = null;
+        StudyNode studyNode;
         try {
             studyNode = findStudy(study);
+            transaction.success();
         } finally {
             transaction.finish();
         }
@@ -766,7 +767,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             interactionNode = new InteractionNode(node);
             interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
             Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-            if (dataset != null && dataset instanceof DatasetNode) {
+            if (dataset instanceof DatasetNode) {
                 interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
             }
             transaction.success();
