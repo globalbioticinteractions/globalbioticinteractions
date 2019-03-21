@@ -63,7 +63,9 @@ public class LocationNode extends NodeBacked implements Location {
     private Double getDoubleOrNull(String altitude) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
-            return getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
+            Double aDouble = getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
+            tx.success();
+            return aDouble;
         } finally {
             tx.finish();
         }

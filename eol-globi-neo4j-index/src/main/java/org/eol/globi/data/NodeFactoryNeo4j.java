@@ -128,6 +128,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 }
             }
             matchingLocations.close();
+            transaction.success();
         } finally {
             transaction.finish();
         }
@@ -189,6 +190,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 }
             }
             matchingLocations.close();
+            transaction.success();
         } finally {
             transaction.finish();
         }
