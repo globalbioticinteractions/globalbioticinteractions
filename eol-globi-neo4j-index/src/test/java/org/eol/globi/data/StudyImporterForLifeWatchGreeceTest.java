@@ -7,6 +7,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -15,6 +16,7 @@ import org.neo4j.graphdb.Relationship;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -52,24 +54,25 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
         Set<String> taxa = new HashSet<String>();
 
-        int totalPredatorPreyRelationships = 0;
+        final AtomicInteger totalPredatorPreyRelationships = new AtomicInteger(0);
 
         for (StudyNode study : studies) {
             assertThat(study.getCitation(), is(notNullValue()));
             assertThat(study.getTitle(), containsString("greece"));
-            Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-            for (Relationship collectedRel : specimens) {
-                addTaxonNameForSpecimenNode(taxa, collectedRel.getEndNode());
-                Specimen predatorSpecimen = new SpecimenNode(collectedRel.getEndNode());
+            NodeUtil.RelationshipListener handler = relationship -> {
+                addTaxonNameForSpecimenNode(taxa, relationship.getEndNode());
+                Specimen predatorSpecimen = new SpecimenNode(relationship.getEndNode());
                 Iterable<Relationship> prey = NodeUtil.getStomachContents(predatorSpecimen);
                 for (Relationship ateRel : prey) {
-                    totalPredatorPreyRelationships++;
+                    totalPredatorPreyRelationships.incrementAndGet();
                     addTaxonNameForSpecimenNode(taxa, ateRel.getEndNode());
                 }
-            }
+            };
+
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
         }
         assertThat(taxa.contains("Aves"), is(true));
-        assertThat(totalPredatorPreyRelationships, is(793));
+        assertThat(totalPredatorPreyRelationships.get(), is(793));
     }
 
     private void addTaxonNameForSpecimenNode(Set<String> taxa, Node startNode) {

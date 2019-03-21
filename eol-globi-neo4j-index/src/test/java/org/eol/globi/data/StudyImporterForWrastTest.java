@@ -6,8 +6,8 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -20,7 +20,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -29,14 +31,14 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForWrastTest extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException, ParseException {
+    public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException {
         String csvString =
                 "\"Month\",\"Day\",\"Year\",\"Region\",\"Season\",\"Habitat\",\"Site\",\"Family\",\"Predator Species\",\"TL (mm)\",\"Prey Item Species\",\"Prey item\",\"Number\",\"Condition Index\",\"Volume\",\"Percent Content\",\"Prey Item Trophic Level\",\"Notes\",\"Call #\"\n";
         csvString += "7,24,2001,\"Lower\",\"Fall\",\"Marsh\",1,\"Sciaenidae\",\"Sciaenops ocellatus\",420,\"Acrididae spp. \",\"Acrididae \",1,\"III\",0.4,3.2520325203,2.5,,1\n";
         csvString += "7,25,2001,\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
         csvString += "7,26,2001,\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
 
-        Map<String, String> contentMap = new HashMap<String, String>();
+        Map<String, String> contentMap = new HashMap<>();
         String locationString = "\"Location\",\"Latitude\",\"Longitude\",,\"Region\",\"Habitat\",\"Site\"\n" +
                 "\"LM1\",28.595267,-96.477033,,\"Lower\",\"Marsh edge\",1\n" +
                 "\"LSG1\",28.596233,-96.476483,,\"Lower\",\"Marsh edge\",1\n" +
@@ -66,15 +68,9 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
 
         importStudy(importer);
-        StudyNode study = getStudySingleton(getGraphDb());
 
 
-        int specimenCount = 0;
-        for (Relationship specimen : NodeUtil.getSpecimens(study)) {
-            specimenCount++;
-        }
-
-        assertThat(specimenCount, is(5));
+        assertThat(getSpecimenCount(getStudySingleton(getGraphDb())), is(5));
 
 
         assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
@@ -87,17 +83,33 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
         Study foundStudy = nodeFactory.findStudy("Wrast 2008");
         assertNotNull(foundStudy);
-        for (Relationship rel : NodeUtil.getSpecimens(study)) {
-            Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(rel.getEndNode()));
+
+        NodeUtil.RelationshipListener handler = relationship -> {
+            Date unixEpochProperty = null;
+            try {
+                unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(relationship.getEndNode()));
+            } catch (NodeFactoryException e) {
+                fail(e.getMessage());
+            }
             SimpleDateFormat simpleDateFormat = StudyImporterForWrast.getSimpleDateFormat();
-            Date endDate = simpleDateFormat.parse("7/27/2001");
-            Date startDate = simpleDateFormat.parse("7/23/2001");
+            Date endDate = null;
+            try {
+                endDate = simpleDateFormat.parse("7/27/2001");
+            } catch (ParseException e) {
+                fail(e.getMessage());
+            }
+            Date startDate = null;
+            try {
+                startDate = simpleDateFormat.parse("7/23/2001");
+            } catch (ParseException e) {
+                fail(e.getMessage());
+            }
             assertThat(unixEpochProperty.before(endDate), is(true));
             assertThat(unixEpochProperty.after(startDate), is(true));
-            Specimen specimen = new SpecimenNode(rel.getEndNode());
+            Specimen specimen = new SpecimenNode(relationship.getEndNode());
 
-            for (Relationship ateRel : NodeUtil.getStomachContents(specimen)) {
-                TaxonNode taxon = new TaxonNode(rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode());
+            for (Relationship ignored : NodeUtil.getStomachContents(specimen)) {
+                TaxonNode taxon = new TaxonNode(relationship.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode());
                 String scientificName = taxon.getName();
                 if ("Sciaenops ocellatus".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();
@@ -148,10 +160,13 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                 } else {
                     fail("unexpected scientificName of predator [" + scientificName + "]");
                 }
-
             }
 
-        }
+        };
+
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(getStudySingleton(getGraphDb()).getUnderlyingNode()),
+                handler,
+                getGraphDb());
     }
 
     @Test

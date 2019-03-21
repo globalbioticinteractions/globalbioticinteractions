@@ -28,12 +28,7 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
     @Test
     public void importFirst500() throws StudyImporterException, IOException {
         StudyImporterForGray gray = createImporter();
-        gray.setFilter(new ImportFilter() {
-            @Override
-            public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber < 500;
-            }
-        });
+        gray.setFilter(recordNumber -> recordNumber < 500);
         importStudy(gray);
 
         assertThat(taxonIndex.findTaxonByName("Staurosira elliptica"), is(notNullValue()));
@@ -85,7 +80,7 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
         assertStaticInfo(secondLink);
     }
 
-    protected void assertStaticInfo(Map<String, String> firstLink) {
+    private void assertStaticInfo(Map<String, String> firstLink) {
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. https://doi.org/10.5281/zenodo.13751."));
         assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at <http://example.com>"));
         assertThat(firstLink.get(REFERENCE_CITATION), containsString("Ledger"));

@@ -12,6 +12,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVTSVUtil;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -20,6 +21,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,10 +29,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
@@ -79,12 +83,20 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(vectorStudy, is(notNullValue()));
 
         StudyNode study = (StudyNode) nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
-        for (Relationship collectedRel : NodeUtil.getSpecimens(study)) {
-            SpecimenNode specimen = new SpecimenNode(collectedRel.getEndNode());
-            String externalId = specimen.getExternalId();
-            assertThat(externalId, is(notNullValue()));
-            assertThat(externalId, containsString(TaxonomyProvider.BIO_INFO + "rel:"));
-        }
+
+        AtomicBoolean success = new AtomicBoolean(false);
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), new NodeUtil.RelationshipListener() {
+            @Override
+            public void on(Relationship relationship) {
+                SpecimenNode specimen = new SpecimenNode(relationship.getEndNode());
+                String externalId = specimen.getExternalId();
+                assertThat(externalId, is(notNullValue()));
+                assertThat(externalId, containsString(TaxonomyProvider.BIO_INFO + "rel:"));
+                success.set(true);
+            }
+        }, getGraphDb());
+
+        assertTrue(success.get());
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());
         ExecutionResult result = engine.execute("CYPHER 1.9 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
@@ -129,22 +141,29 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         StudyNode study1 = (StudyNode) nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study1);
         List<Node> specimenList = new ArrayList<Node>();
-        for (Relationship specimen : specimens) {
-            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
-            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.OUTGOING), is(notNullValue()));
-            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.INCOMING), is(notNullValue()));
-            assertThat(specimen.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.INCOMING), is(notNullValue()));
-            specimenList.add(specimen.getEndNode());
-        }
+        NodeUtil.RelationshipListener handler = relationship -> {
+            assertThat(relationship.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
+            assertThat(relationship.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.OUTGOING), is(notNullValue()));
+            assertThat(relationship.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.INCOMING), is(notNullValue()));
+            assertThat(relationship.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(InteractType.INTERACTS_WITH), Direction.INCOMING), is(notNullValue()));
+            specimenList.add(relationship.getEndNode());
+        };
+
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study1.getUnderlyingNode()), handler, getGraphDb());
+
 
         assertThat(specimenList.size(), is(16));
-        Relationship classifiedAs = specimenList.get(0).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
-        assertThat(classifiedAs, is(notNullValue()));
-        assertThat((String) classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("NBN:NBNSYS0000003949"));
-        assertThat(specimenList.get(1).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
-
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            Relationship classifiedAs = specimenList.get(0).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
+            assertThat(classifiedAs, is(notNullValue()));
+            assertThat((String)classifiedAs.getEndNode().getProperty(PropertyAndValueDictionary.EXTERNAL_ID), startsWith("NBN:NBNSYS"));
+            assertThat(specimenList.get(1).getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING), is(notNullValue()));
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024889"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonById(TaxonomyProvider.NBN.getIdPrefix() + "NBNSYS0000024891"), is(notNullValue()));
     }

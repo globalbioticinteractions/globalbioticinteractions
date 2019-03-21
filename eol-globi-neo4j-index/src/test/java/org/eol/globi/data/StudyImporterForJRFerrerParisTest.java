@@ -23,12 +23,7 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
         StudyImporterForJRFerrerParis studyImporterForJRFerrerParis = new StudyImporterForJRFerrerParis(new ParserFactoryLocal(), nodeFactory);
         studyImporterForJRFerrerParis.importStudy();
 
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(getStudySingleton(getGraphDb()));
-        int count = 0;
-        for (Relationship specimen : specimens) {
-            count++;
-        }
-        assertTrue(count > 0);
+        assertTrue(getSpecimenCount(getStudySingleton(getGraphDb())) > 0);
     }
 
     @Test
@@ -43,16 +38,8 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
 
         importStudy(importer);
 
-        StudyNode study = getStudySingleton(getGraphDb());
-
         assertNotNull(taxonIndex.findTaxonByName("Hesperocharis anguitia"));
 
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
-        int totalRels = 0;
-        for (Relationship collectedRel : collectedRels) {
-            totalRels++;
-        }
-
-        assertThat(totalRels, Is.is(8));
+        assertThat(getSpecimenCount(getStudySingleton(getGraphDb())), Is.is(8));
     }
 }

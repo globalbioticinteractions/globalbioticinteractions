@@ -6,12 +6,15 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -39,8 +42,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
         assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
         assertNotNull(taxonIndex.findTaxonByName("Atlantic croaker"));
 
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
-        int totalRels = validateSpecimen(collectedRels);
+        int totalRels = validateSpecimen(study);
 
         assertThat(totalRels, Is.is(11));
     }
@@ -55,21 +57,20 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
 
         assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
 
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
-        int totalRels = validateSpecimen(collectedRels);
+        int totalRels = validateSpecimen(study);
 
         assertThat(totalRels, Is.is(1450));
 
     }
 
-    private int validateSpecimen(Iterable<Relationship> collectedRels) {
-        int totalRels = 0;
-        for (Relationship rel : collectedRels) {
+    private int validateSpecimen(StudyNode study) {
+        AtomicInteger totalRels = new AtomicInteger(0);
+        NodeUtil.RelationshipListener handler = rel -> {
             assertTrue(rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
             Iterable<Relationship> rels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
-            for (Relationship relationship : rels) {
+            for (Relationship ignored : rels) {
                 assertTrue(specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM));
                 assertTrue(specimen.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL));
             }
@@ -77,10 +78,12 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
             assertNotNull(collectedAtRelationship);
             Node locationNode = collectedAtRelationship.getEndNode();
             assertNotNull(locationNode);
-            assertThat((Double) locationNode.getProperty(LocationConstant.LATITUDE), is(29.219302));
-            assertThat((Double) locationNode.getProperty(LocationConstant.LONGITUDE), is(-87.06665));
-            totalRels++;
-        }
-        return totalRels;
+            assertThat(locationNode.getProperty(LocationConstant.LATITUDE), is(29.219302));
+            assertThat(locationNode.getProperty(LocationConstant.LONGITUDE), is(-87.06665));
+            totalRels.incrementAndGet();
+        };
+
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
+        return totalRels.get();
     }
 }

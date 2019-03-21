@@ -8,6 +8,7 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -15,6 +16,9 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -41,31 +45,32 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
         assertThat(parasiteTaxon, is(notNullValue()));
         assertThat("missing location", nodeFactory.findLocation(new LocationImpl(27.85, -(97.0 + 8.0 / 60.0), -3.0, null)), is(notNullValue()));
 
-        int count = 0;
-        boolean foundFirstHost = false;
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        for (Relationship collected_rel : specimens) {
-            assertThat(collected_rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
-            Node specimen = collected_rel.getEndNode();
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicBoolean foundFirstHost = new AtomicBoolean(false);
+
+        NodeUtil.RelationshipListener handler = relationship -> {
+            assertThat(relationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+            Node specimen = relationship.getEndNode();
             if (specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
                 Object property = specimen.getProperty(SpecimenConstant.LENGTH_IN_MM);
                 if (new Double(156.0).equals(property)) {
-                    assertTaxonClassification(specimen, ((NodeBacked)hostTaxon).getUnderlyingNode());
-                    foundFirstHost = true;
+                    assertTaxonClassification(specimen, ((NodeBacked) hostTaxon).getUnderlyingNode());
+                    foundFirstHost.set(true);
                     Iterable<Relationship> parasiteRel = specimen.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(InteractType.PARASITE_OF));
-                    for (Relationship relationship : parasiteRel) {
-                        Node parasite = relationship.getStartNode();
+                    for (Relationship rel : parasiteRel) {
+                        Node parasite = rel.getStartNode();
                         assertThat(parasite.hasProperty(SpecimenConstant.LENGTH_IN_MM), is(false));
-                        assertTaxonClassification(parasite, ((NodeBacked)parasiteTaxon).getUnderlyingNode());
+                        assertTaxonClassification(parasite, ((NodeBacked) parasiteTaxon).getUnderlyingNode());
                     }
                 }
             }
-            count++;
-        }
+            count.incrementAndGet();
 
-        assertThat(count, is(14));
-        assertThat(foundFirstHost, is(true));
+        };
 
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
+        assertThat(count.get(), is(14));
+        assertThat(foundFirstHost.get(), is(true));
     }
 
     @Test
@@ -74,14 +79,9 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
         importStudy(importer);
         StudyNode study = getStudySingleton(getGraphDb());
 
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        int count = 0;
-        for (Relationship specimen : specimens) {
-            count++;
-        }
-
-        assertThat(count, is(1372));
+        assertThat(getSpecimenCount(study), is(1372));
     }
+
 
     private void assertTaxonClassification(Node parasite, Node underlyingNode) {
         Iterable<Relationship> classifiedAsRels = parasite.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));

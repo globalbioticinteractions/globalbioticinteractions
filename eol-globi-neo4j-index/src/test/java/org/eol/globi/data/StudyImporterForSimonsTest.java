@@ -9,6 +9,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -19,7 +20,10 @@ import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.Assert.*;
 import static org.hamcrest.core.Is.is;
@@ -69,56 +73,70 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
         StudyNode foundStudy = (StudyNode) nodeFactory.findStudy("Simons 1997");
         assertNotNull(foundStudy);
-        for (Relationship rel : NodeUtil.getSpecimens(foundStudy)) {
-            Node specimen = rel.getEndNode();
-            Node speciesNode = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
-            String scientificName = (String) speciesNode.getProperty("name");
-            if ("Rhynchoconger flavus".equals(scientificName)) {
-                String seasonName = "summer";
-                String genusName = "Ampelisca sp. (abdita complex)";
 
-                double length = (201.0d + 300.0d) / 2.0d;
-                assertSpecimen(specimen, LONG_1, LAT_1, -60.0, seasonName, genusName, length);
-                Iterable<Relationship> ateRelationships = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
-                List<String> preyNames = new ArrayList<String>();
+        NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
 
-                for (Relationship ateRel : ateRelationships) {
-                    Node preyTaxonNode = ateRel.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
-                    preyNames.add(preyTaxonNode.getProperty(PropertyAndValueDictionary.NAME).toString());
+            @Override
+            public void on(Relationship rel) {
+                Node specimen = rel.getEndNode();
+                Node speciesNode = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
+                String scientificName = (String) speciesNode.getProperty("name");
+                if ("Rhynchoconger flavus".equals(scientificName)) {
+                    String seasonName = "summer";
+                    String genusName = "Ampelisca sp. (abdita complex)";
+
+                    double length = (201.0d + 300.0d) / 2.0d;
+                    assertSpecimen(specimen, LONG_1, LAT_1, -60.0, seasonName, genusName, length);
+                    Iterable<Relationship> ateRelationships = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
+                    List<String> preyNames = new ArrayList<String>();
+
+                    for (Relationship ateRel : ateRelationships) {
+                        Node preyTaxonNode = ateRel.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
+                        preyNames.add(preyTaxonNode.getProperty(PropertyAndValueDictionary.NAME).toString());
+                    }
+                    assertThat(preyNames, hasItem("Ampelisca sp. (abdita complex)"));
+                    assertThat(preyNames.contains("Ampelisca agassizi"), Is.is(true));
+                    assertThat(preyNames.size(), Is.is(2));
+                } else if ("Halieutichthys aculeatus".equals(scientificName)) {
+                    String genusName = "Ampelisca sp. (abdita complex)";
+                    String seasonName = "summer";
+                    double length = (26.0d + 50.0d) / 2.0d;
+                    assertSpecimen(specimen, LONG_2, LAT_2, -20.0, seasonName, genusName, length);
+                } else if ("Ampelisca sp. (abdita complex)".equals(scientificName)) {
+                    Node locationNode = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
+                    assertNotNull(locationNode);
+                    assertTrue(locationNode.hasProperty(LocationConstant.LONGITUDE));
+                    assertTrue(locationNode.hasProperty(LocationConstant.ALTITUDE));
+                    assertTrue(locationNode.hasProperty(LocationConstant.LATITUDE));
+                } else if ("Ampelisca agassizi".equals(scientificName)) {
+                    assertPreySpecimen(specimen, LONG_1, LAT_1, -60.0);
+                } else {
+                    fail("found predator with unexpected scientificName [" + scientificName + "]");
                 }
-                assertThat(preyNames, hasItem("Ampelisca sp. (abdita complex)"));
-                assertThat(preyNames.contains("Ampelisca agassizi"), Is.is(true));
-                assertThat(preyNames.size(), Is.is(2));
-            } else if ("Halieutichthys aculeatus".equals(scientificName)) {
-                String genusName = "Ampelisca sp. (abdita complex)";
-                String seasonName = "summer";
-                double length = (26.0d + 50.0d) / 2.0d;
-                assertSpecimen(specimen, LONG_2, LAT_2, -20.0, seasonName, genusName, length);
-            } else if ("Ampelisca sp. (abdita complex)".equals(scientificName)) {
-                Node locationNode = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
-                assertNotNull(locationNode);
-                assertTrue(locationNode.hasProperty(LocationConstant.LONGITUDE));
-                assertTrue(locationNode.hasProperty(LocationConstant.ALTITUDE));
-                assertTrue(locationNode.hasProperty(LocationConstant.LATITUDE));
-            } else if ("Ampelisca agassizi".equals(scientificName)) {
-                assertPreySpecimen(specimen, LONG_1, LAT_1, -60.0);
-            } else {
-                fail("found predator with unexpected scientificName [" + scientificName + "]");
+
             }
-        }
+        };
+
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(foundStudy.getUnderlyingNode()), handler, getGraphDb());
 
     }
 
-    private void assertSpecimen(Node firstSpecimen, double longitude, double lat, double alt, String seasonName, String genusName, double length) {
+    private void assertSpecimen(Node firstSpecimen, double longitude, double lat, double alt, String seasonName, String preyName, double length) {
         Node locationNode = firstSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING).getEndNode();
         assertNotNull(locationNode);
         assertEquals(longitude, locationNode.getProperty(LocationConstant.LONGITUDE));
         assertEquals(alt, locationNode.getProperty(LocationConstant.ALTITUDE));
         assertEquals(lat, locationNode.getProperty(LocationConstant.LATITUDE));
 
-        Relationship stomachContents = firstSpecimen.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING).iterator().next();
-        Node taxonNode = stomachContents.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
-        assertThat((String)taxonNode.getProperty("name"), is(genusName));
+        Iterator<Relationship> prey = firstSpecimen.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING).iterator();
+        Set<String> preyNames = new HashSet<>();
+        while (prey.hasNext()) {
+            Relationship stomachContents = prey.next();
+            Node taxonNode = stomachContents.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
+            preyNames.add((String)taxonNode.getProperty("name"));
+
+        }
+        assertThat(preyNames, hasItem(preyName));
 
         Node endNode = firstSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING).getEndNode();
         String season = (String) endNode.getProperty("title");

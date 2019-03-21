@@ -3,8 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
@@ -14,7 +14,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -70,46 +70,49 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
 
         importStudy(importer);
 
-        StudyNode study = getStudySingleton(getGraphDb());
-
         assertNotNull(taxonIndex.findTaxonByName("Negaprion brevirostris"));
         assertNotNull(taxonIndex.findTaxonByName("Carcharhinus perezi"));
         assertNotNull(taxonIndex.findTaxonByName("Galeocerdo cuvieri"));
 
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
-        int totalRels = validateSpecimen(collectedRels);
+        int totalRels = validateSpecimen();
 
         assertThat(totalRels, Is.is(51));
     }
 
-    @Ignore ("roopnarine imports eats more memory that other study imports")
+    @Ignore("roopnarine imports eats more memory that other study imports")
     @Test
     public void importAll() throws StudyImporterException {
         StudyImporterForRoopnarine studyImporterFor = new StudyImporterForRoopnarine(new ParserFactoryLocal(), nodeFactory);
 
         studyImporterFor.importStudy();
 
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(getStudySingleton(getGraphDb()));
-        int totalRels = validateSpecimen(collectedRels);
+        int totalRels = validateSpecimen();
         assertThat(totalRels, Is.is(1939));
 
         assertNotNull(taxonIndex.findTaxonByName("Lestrigonus bengalensis"));
         assertNotNull(taxonIndex.findTaxonByName("Bracyscelus crusculum"));
     }
 
-    private int validateSpecimen(Iterable<Relationship> collectedRels) {
-        int totalRels = 0;
-        for (Relationship rel : collectedRels) {
-            Node specimen = rel.getEndNode();
-            assertNotNull(specimen);
-            Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
-            assertNotNull("missing location information", collectedAtRelationship);
-            Node locationNode = collectedAtRelationship.getEndNode();
-            assertNotNull(locationNode);
-            assertTrue(locationNode.hasProperty(LocationConstant.LATITUDE));
-            assertTrue(locationNode.hasProperty(LocationConstant.LONGITUDE));
-            totalRels++;
-        }
-        return totalRels;
+    private int validateSpecimen() {
+        AtomicInteger totalRels = new AtomicInteger(0);
+        NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
+
+            @Override
+            public void on(Relationship rel) {
+                Node specimen = rel.getEndNode();
+                assertNotNull(specimen);
+                Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
+                assertNotNull("missing location information", collectedAtRelationship);
+                Node locationNode = collectedAtRelationship.getEndNode();
+                assertNotNull(locationNode);
+                assertTrue(locationNode.hasProperty(LocationConstant.LATITUDE));
+                assertTrue(locationNode.hasProperty(LocationConstant.LONGITUDE));
+                totalRels.incrementAndGet();
+            }
+        };
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(getStudySingleton(getGraphDb()).getUnderlyingNode()),
+                handler,
+                getGraphDb());
+        return totalRels.get();
     }
 }

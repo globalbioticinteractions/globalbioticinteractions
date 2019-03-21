@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -13,6 +14,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -22,18 +24,23 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.kernel.api.Neo4jTypes;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
@@ -65,13 +72,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
         StudyNode study = getStudySingleton(getGraphDb());
 
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        int count = 0;
-        for (Relationship specimen : specimens) {
-            count++;
-        }
-        assertThat(count, is(1824));
-
+        assertThat(getSpecimenCount(study), is(1824));
 
         assertNotNull(taxonIndex.findTaxonByName("Centropomus undecimalis"));
         Taxon taxonOfType = taxonIndex.findTaxonByName("Cal sapidus");
@@ -80,7 +81,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importLines() throws StudyImporterException, NodeFactoryException {
+    public void importLines() throws StudyImporterException {
         String predatorPreyMapping = "\"Collection #\",\"Sp#\",\"Standard Length\",\"ID\",\"Far duoraum\",\"Cal sapidus\",\"Unid fish\",\"Anchoa spp\",\"Mug gyrans\",\"Bai chrysoura\",\"Portunus spp\",\"Bivalves\",\"Portunidae\",\"Lag rhomboides\",\"Xanthidae\",\"Palaemonidae\",\"Eucinostomus spp\",\"Mugil spp\",\"Alpheidae\",\"Atherinidae\",\"Syn foetens\",\"Ort chrysoptera\",\"Snails\",\"Euc gula\",\"Cynoscion spp\",\"Cyp. Variegatus\",\"Fun majalis\",\"Poe latipinna\",\"Unid crab\",\"Har jaguana\",\"Arm mierii\",\"Fun grandis\",\"Mic gulosus\",\"Ari felis\",\"Clupeidae\",\"Fundulus spp\",\"Diapterus/Eugerres spp\",\"Isopods\",\"Cyn nebulosus\",\"Opi oglinum\",\"Flo carpio\",\"Luc parva\",\"Uca spp\",\"Majidae\",\"Mug cephalus\",\"Squ empusa\",\"Opi robinsi\",\"Ariidae\",\"Sci ocellatus\",\"Unid shrimp\",\"Uca thayeri\",\"Grapsidae\",\"Lei xanthurus\",\"Elo saurus\",\"Brevoortia spp\"\n" +
                 "\"CHD01101502\",1,549,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
                 "\"CHD01102504\",1,548,\"E\",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n" +
@@ -103,68 +104,91 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         final TestParserFactory dateLocationFactory = new TestParserFactory(dateLocationString);
 
 
-        ParserFactory testFactory = new ParserFactory() {
-            @Override
-            public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
-                LabeledCSVParser parser = null;
-                if (studyResource.contains("abundance")) {
-                    parser = preyPredatorFactory.createParser(studyResource, characterEncoding);
-                } else {
-                    parser = dateLocationFactory.createParser(studyResource, characterEncoding);
-                }
-                return parser;
+        ParserFactory testFactory = (studyResource, characterEncoding) -> {
+            LabeledCSVParser parser;
+            if (studyResource.contains("abundance")) {
+                parser = preyPredatorFactory.createParser(studyResource, characterEncoding);
+            } else {
+                parser = dateLocationFactory.createParser(studyResource, characterEncoding);
             }
+            return parser;
         };
 
-        StudyImporter importer = new StudyImporterTestFactory(testFactory, nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
+        StudyImporter importer = new StudyImporterTestFactory(testFactory, nodeFactory).instantiateImporter(StudyImporterForBlewett.class);
         importStudy(importer);
 
         StudyNode study = getStudySingleton(getGraphDb());
 
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
+        AtomicBoolean success = new AtomicBoolean(false);
 
-        Relationship collectedRel = collectedRels.iterator().next();
-        Date unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(collectedRel.getEndNode()));
-        assertThat(unixEpochProperty, is(not(nullValue())));
-        assertThat(dateToString(unixEpochProperty), is("2000-03-01T10:55:00.000-06:00"));
+        NodeUtil.RelationshipListener handler1 = collectedRel -> {
+            Date unixEpochProperty = null;
+            try {
+                unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(collectedRel.getEndNode()));
+            } catch (NodeFactoryException e) {
+                fail(e.getMessage());
+            }
+            assertThat(unixEpochProperty, is(not(nullValue())));
+            String actual = dateToString(unixEpochProperty);
+            Node predatorNode = collectedRel.getEndNode();
+            if (StringUtils.equals(actual, "2000-03-01T10:55:00.000-06:00")
+                    && predatorNode.hasProperty(SpecimenConstant.LIFE_STAGE_LABEL)
+                    && predatorNode.hasRelationship(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING)) {
 
-        Node predatorNode = collectedRel.getEndNode();
-        assertThat((String) predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-        assertThat((String) predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
-        assertThat((Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(549.0));
+                assertThat(predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+                assertThat(predatorNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
 
-        Node predatorTaxonNode = predatorNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
-        assertThat((String) predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
+                Node predatorTaxonNode = predatorNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
+                assertThat(predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
 
-        Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
-        Node preyNode = ate.iterator().next().getEndNode();
-        assertThat(preyNode, is(not(nullValue())));
+                Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                Node preyNode = ate.iterator().next().getEndNode();
+                assertThat(preyNode, is(not(nullValue())));
 
-        Node taxonNode = preyNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
-        assertThat(taxonNode, is(not(nullValue())));
+                Node taxonNode = preyNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
+                assertThat(taxonNode, is(not(nullValue())));
 
-        assertThat((String) taxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Lag rhomboides"));
+                assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Lag rhomboides"));
+                success.set(true);
+            }
 
-        Iterator<Relationship> i = collectedRels.iterator();
-        i.next();
-        collectedRel = i.next();
-        predatorNode = collectedRel.getEndNode();
-        assertThat((Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(548.0));
+        };
 
-        ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
-        assertThat(ate.iterator().hasNext(), is(false));
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler1, getGraphDb());
+        assertTrue(success.get());
 
-        Location location = nodeFactory.findLocation(new LocationImpl(26.651833, -82.103833, 0.0, null));
-        assertThat(location, is(not(nullValue())));
-        Iterable<Relationship> specimenCaughtHere = NodeUtil.getSpecimenCaughtHere(location);
-        Iterator<Relationship> iterator = specimenCaughtHere.iterator();
-        assertThat(iterator.hasNext(), is(true));
-        iterator.next();
-        assertThat(iterator.hasNext(), is(true));
-        iterator.next();
-        assertThat(iterator.hasNext(), is(true));
-        iterator.next();
-        assertThat(iterator.hasNext(), is(false));
+        success.set(false);
+
+        NodeUtil.RelationshipListener handler2 = collectedRel -> {
+            Node predatorNode = collectedRel.getEndNode();
+            if (predatorNode.hasProperty(SpecimenConstant.LENGTH_IN_MM)
+                    && (Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM) == 548.0) {
+                Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
+                assertThat(ate.iterator().hasNext(), is(false));
+
+                Location location = null;
+                try {
+                    location = nodeFactory.findLocation(new LocationImpl(26.651833, -82.103833, 0.0, null));
+                } catch (NodeFactoryException e) {
+                    fail(e.getMessage());
+                }
+                assertThat(location, is(not(nullValue())));
+                Iterable<Relationship> specimenCaughtHere = NodeUtil.getSpecimenCaughtHere(location);
+                Iterator<Relationship> iterator = specimenCaughtHere.iterator();
+                assertThat(iterator.hasNext(), is(true));
+                iterator.next();
+                assertThat(iterator.hasNext(), is(true));
+                iterator.next();
+                assertThat(iterator.hasNext(), is(true));
+                iterator.next();
+                assertThat(iterator.hasNext(), is(false));
+                success.set(true);
+            }
+
+        };
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler2, getGraphDb());
+        assertTrue(success.get());
+
     }
 
 

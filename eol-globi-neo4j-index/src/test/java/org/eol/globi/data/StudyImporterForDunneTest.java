@@ -90,12 +90,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
 
         assertThat(study.getSource(), containsString("Accessed at "));
 
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        int count = 0;
-        for (Relationship specimen : specimens) {
-            count++;
-        }
-        assertThat(count, is(6774 * 2));
+        assertThat(getSpecimenCount(study), is(6774 * 2));
 
     }
 

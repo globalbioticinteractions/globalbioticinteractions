@@ -7,6 +7,7 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.DateUtil;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.neo4j.graphdb.Relationship;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
@@ -26,21 +28,10 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
         StudyImporterForICES studyImporterFor = new StudyImporterForICES(new ParserFactoryLocal(), nodeFactory);
-        studyImporterFor.setFilter(new ImportFilter() {
-            @Override
-            public boolean shouldImportRecord(Long recordNumber) {
-                return recordNumber % 1000 == 0;
-            }
-        });
+        studyImporterFor.setFilter(recordNumber -> recordNumber % 1000 == 0);
         studyImporterFor.importStudy();
 
-        Iterator<Relationship> specimens = NodeUtil.getSpecimens(getStudySingleton(getGraphDb())).iterator();
-        int specimenCount = 0;
-        while (specimens.hasNext()) {
-            specimens.next();
-            specimenCount++;
-        }
-        assertThat(specimenCount, is(388));
+        assertThat(getSpecimenCount(getStudySingleton(getGraphDb())), is(388));
     }
 
     @Test
@@ -60,31 +51,34 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         assertNotNull(taxonIndex.findTaxonByName("Polychaeta"));
         assertNotNull(taxonIndex.findTaxonByName("Nereis"));
 
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
-        int specimenCollected = 0;
-        int preyEaten = 0;
-        for (Relationship rel : collectedRels) {
-            assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(DateUtil.parsePatternUTC("1981", "yyyy").toDate().getTime()));
-            Node specimen = rel.getEndNode();
-            assertNotNull(specimen);
-            Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
-            for (Relationship ignored : relationships) {
-                assertThat(specimen.getProperty(SpecimenConstant.LENGTH_IN_MM), is(125.0));
-                preyEaten++;
+        AtomicInteger specimenCollected = new AtomicInteger(0);
+        AtomicInteger preyEaten = new AtomicInteger(0);
+        NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
+            @Override
+            public void on(Relationship rel) {
+                assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(DateUtil.parsePatternUTC("1981", "yyyy").toDate().getTime()));
+                Node specimen = rel.getEndNode();
+                assertNotNull(specimen);
+                Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));
+                for (Relationship ignored : relationships) {
+                    assertThat(specimen.getProperty(SpecimenConstant.LENGTH_IN_MM), is(125.0));
+                    preyEaten.incrementAndGet();
+                }
+
+                Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
+                assertNotNull(collectedAtRelationship);
+                Node locationNode = collectedAtRelationship.getEndNode();
+                assertNotNull(locationNode);
+                assertThat(locationNode.getProperty(LocationConstant.LATITUDE), is(55.25));
+                assertThat(locationNode.getProperty(LocationConstant.LONGITUDE), is(8.5));
+                specimenCollected.incrementAndGet();
             }
+        };
 
-            Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
-            assertNotNull(collectedAtRelationship);
-            Node locationNode = collectedAtRelationship.getEndNode();
-            assertNotNull(locationNode);
-            assertThat((Double) locationNode.getProperty(LocationConstant.LATITUDE), is(55.25));
-            assertThat((Double) locationNode.getProperty(LocationConstant.LONGITUDE), is(8.5));
-            specimenCollected++;
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler, getGraphDb());
 
-        }
-
-        assertThat(specimenCollected, Is.is(3));
-        assertThat(preyEaten, Is.is(2));
+        assertThat(specimenCollected.get(), Is.is(3));
+        assertThat(preyEaten.get(), Is.is(2));
 
     }
 

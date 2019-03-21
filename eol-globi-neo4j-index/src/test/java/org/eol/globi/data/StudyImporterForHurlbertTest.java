@@ -55,7 +55,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
     @Test
     public void importTwice() throws StudyImporterException {
-        StudyImporter importer = doImport("some/namespace");
+        doImport("some/namespace");
         doImport("some/namespace2");
     }
 

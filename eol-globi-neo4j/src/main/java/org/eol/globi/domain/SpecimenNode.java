@@ -63,7 +63,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void caughtIn(Location sampleLocation) {
-        if (null != sampleLocation && (sampleLocation instanceof LocationNode)) {
+        if ((sampleLocation instanceof LocationNode)) {
             createRelationshipTo(sampleLocation, RelTypes.COLLECTED_AT);
         }
     }

@@ -70,12 +70,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
         assertThat(study, is(notNullValue()));
 
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
-        int count = 0;
-        for (Relationship specimen : specimens) {
-            count++;
-        }
-        assertThat(count, is(27932));
+        assertThat(getSpecimenCount(study), is(27932));
 
 
         ExecutionEngine engine = new ExecutionEngine(getGraphDb());

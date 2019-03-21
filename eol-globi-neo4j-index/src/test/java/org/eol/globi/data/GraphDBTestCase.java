@@ -14,6 +14,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.tool.NameResolver;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.junit.After;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -37,6 +39,17 @@ public abstract class GraphDBTestCase {
     protected NodeFactory nodeFactory;
 
     protected TaxonIndex taxonIndex;
+
+    public int getSpecimenCount(StudyNode study) {
+        final AtomicInteger count = new AtomicInteger(0);
+
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode())
+                , relationship -> count.incrementAndGet()
+                , getGraphDb());
+
+        return count.get();
+    }
+
 
     public static StudyNode getStudySingleton(GraphDatabaseService graphService) {
         List<StudyNode> allStudies = NodeUtil.findAllStudies(graphService);

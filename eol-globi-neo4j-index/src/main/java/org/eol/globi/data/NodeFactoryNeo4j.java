@@ -448,9 +448,16 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public SeasonNode findSeason(String seasonName) {
-        IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
-        Node seasonHit = nodeIndexHits.getSingle();
-        nodeIndexHits.close();
+        Transaction transaction = getGraphDb().beginTx();
+        Node seasonHit;
+        try {
+            IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
+            seasonHit = nodeIndexHits.getSingle();
+            nodeIndexHits.close();
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
         return seasonHit == null ? null : new SeasonNode(seasonHit);
     }
 

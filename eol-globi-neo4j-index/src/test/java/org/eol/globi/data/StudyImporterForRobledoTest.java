@@ -6,9 +6,12 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
@@ -29,20 +32,23 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
 
         assertNotNull(nodeFactory.findStudy(study.getTitle()));
 
-        int count = 0;
+        AtomicInteger count = new AtomicInteger(0);
         Iterable<Relationship> specimenRels = NodeUtil.getSpecimens(study);
-        for (Relationship specimenRel : specimenRels) {
-            Specimen specimen1 = new SpecimenNode(specimenRel.getEndNode());
-            Location sampleLocation = specimen1.getSampleLocation();
-            assertThat(sampleLocation, is(notNullValue()));
-            assertThat(sampleLocation.getAltitude(), is(35.0));
-            assertThat(Math.round(sampleLocation.getLongitude()), is(-84L));
-            assertThat(Math.round(sampleLocation.getLatitude()), is(10L));
-            count++;
-        }
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), new NodeUtil.RelationshipListener() {
+            @Override
+            public void on(Relationship relationship) {
+                Specimen specimen1 = new SpecimenNode(relationship.getEndNode());
+                Location sampleLocation = specimen1.getSampleLocation();
+                assertThat(sampleLocation, is(notNullValue()));
+                assertThat(sampleLocation.getAltitude(), is(35.0));
+                assertThat(Math.round(sampleLocation.getLongitude()), is(-84L));
+                assertThat(Math.round(sampleLocation.getLatitude()), is(10L));
+                count.incrementAndGet();
 
-        assertThat(count, is(93));
+            }
+        }, getGraphDb());
 
+        assertThat(count.get(), is(93));
     }
 
 
