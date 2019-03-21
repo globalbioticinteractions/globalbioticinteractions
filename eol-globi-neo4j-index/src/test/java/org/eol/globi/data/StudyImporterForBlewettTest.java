@@ -27,7 +27,9 @@ import org.neo4j.graphdb.Relationship;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static junit.framework.Assert.fail;
@@ -37,6 +39,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
@@ -137,14 +140,18 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
                 Node predatorTaxonNode = predatorNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
                 assertThat(predatorTaxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Centropomus undecimalis"));
 
+                Set<String> preyNames = new HashSet<>();
                 Iterable<Relationship> ate = predatorNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
-                Node preyNode = ate.iterator().next().getEndNode();
-                assertThat(preyNode, is(not(nullValue())));
+                for (Relationship preyRels : ate) {
+                    Node preyNode = preyRels.getEndNode();
+                    assertThat(preyNode, is(not(nullValue())));
 
-                Node taxonNode = preyNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
-                assertThat(taxonNode, is(not(nullValue())));
+                    Node taxonNode = preyNode.getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).iterator().next().getEndNode();
+                    assertThat(taxonNode, is(not(nullValue())));
+                    preyNames.add((String)taxonNode.getProperty(PropertyAndValueDictionary.NAME));
+                }
 
-                assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME), is("Lag rhomboides"));
+                assertThat(preyNames, hasItem("Lag rhomboides"));
                 success.set(true);
             }
 
