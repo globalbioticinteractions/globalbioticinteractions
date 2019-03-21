@@ -46,7 +46,7 @@ public class ExporterReferences extends ExporterBase {
     }
 
     @Override
-    protected void doExportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
+    protected void doExportStudy(StudyNode study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<>();
         properties.put(IDENTIFIER, referenceIdForStudy(study));
         properties.put(FULL_REFERENCE, referenceForStudy(study));
@@ -55,8 +55,8 @@ public class ExporterReferences extends ExporterBase {
         writeProperties(appender, properties);
     }
 
-    public static String referenceIdForStudy(Study study) {
-        return "globi:ref:" + referenceId((StudyNode) study);
+    public static String referenceIdForStudy(StudyNode study) {
+        return "globi:ref:" + referenceId(study);
     }
 
     private String referenceForStudy(Study study) {

@@ -22,12 +22,14 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class NodeUtil {
+
+    public static final int TRANSACTION_BATCH_SIZE_DEFAULT = 1000;
+
     public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
         Transaction tx = node.getGraphDatabase().beginTx();
         try {
@@ -63,13 +65,9 @@ public class NodeUtil {
         }
     }
 
-    public static List<Study> findAllStudies(GraphDatabaseService graphService) {
-        final List<Study> studies = new ArrayList<Study>();
-        findStudies(graphService, new StudyNodeListener() {
-            public void onStudy(StudyNode study) {
-                studies.add(study);
-            }
-        });
+    public static List<StudyNode> findAllStudies(GraphDatabaseService graphService) {
+        final List<StudyNode> studies = new ArrayList<>();
+        findStudies(graphService, study -> studies.add(study));
         return studies;
     }
 
@@ -104,26 +102,30 @@ public class NodeUtil {
         return types;
     }
 
-    public static Iterable<Relationship> getSpecimens(Study study) {
+    public static Iterable<Relationship> getSpecimens(StudyNode study) {
         return getSpecimens(study, RelTypes.COLLECTED);
     }
 
     public static Iterable<Relationship> getSpecimensSupportedAndRefutedBy(Study study) {
         Node underlyingNode = ((NodeBacked) study).getUnderlyingNode();
-        return underlyingNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(new RelType[] {RelTypes.COLLECTED, RelTypes.SUPPORTS, RelTypes.REFUTES}));
+        return underlyingNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(new RelType[]{RelTypes.COLLECTED, RelTypes.SUPPORTS, RelTypes.REFUTES}));
     }
 
-    public static Iterable<Relationship> getSpecimens(Study study, RelTypes relType) {
-        Node underlyingNode = ((NodeBacked) study).getUnderlyingNode();
-        return getSpecimens(underlyingNode, relType);
+    public static Iterable<Relationship> getSpecimens(StudyNode study, RelTypes relType) {
+        Node underlyingNode = study.getUnderlyingNode();
+        return getOutgoingNodeRelationships(underlyingNode, relType);
     }
 
     public static Iterable<Relationship> getSpecimens(Node studyNode) {
-        return getSpecimens(studyNode, RelTypes.COLLECTED);
+        return getOutgoingNodeRelationships(studyNode, RelTypes.COLLECTED);
     }
 
-    public static Iterable<Relationship> getSpecimens(Node studyNode, RelTypes relType) {
-        return studyNode.getRelationships(Direction.OUTGOING, asNeo4j(relType));
+    public static Iterable<Relationship> getOutgoingNodeRelationships(Node node, RelType relType) {
+        return getOutgoingNodeRelationships(node, relType, Direction.OUTGOING);
+    }
+
+    public static Iterable<Relationship> getOutgoingNodeRelationships(Node node, RelType relType, Direction dir) {
+        return node.getRelationships(dir, asNeo4j(relType));
     }
 
     public static Iterable<Relationship> getClassifications(Specimen specimen) {
@@ -135,7 +137,7 @@ public class NodeUtil {
     }
 
     public static Iterable<Relationship> getSpecimenCaughtHere(Location location) {
-        return ((NodeBacked)location).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
+        return ((NodeBacked) location).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.INCOMING);
 
     }
 
@@ -174,5 +176,32 @@ public class NodeUtil {
             tx.finish();
         }
         return index;
+    }
+
+    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener, final GraphDatabaseService graphDb) {
+        handleCollectedRelationships(ntd, listener, graphDb, TRANSACTION_BATCH_SIZE_DEFAULT);
+    }
+
+    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener, final GraphDatabaseService graphDb, int batchSize) {
+        int counter = 0;
+        Transaction tx = graphDb.beginTx();
+        try {
+            Iterable<Relationship> relIterable = getOutgoingNodeRelationships(ntd.srcNode, ntd.relType, ntd.dir);
+            for (Relationship rel : relIterable) {
+                listener.on(rel);
+                if (++counter % batchSize == 0) {
+                    tx.success();
+                    tx.finish();
+                    tx = graphDb.beginTx();
+                }
+            }
+            tx.success();
+        } finally {
+            tx.finish();
+        }
+    }
+
+    public interface RelationshipListener {
+        void on(Relationship relationship);
     }
 }

@@ -12,7 +12,7 @@ import java.util.Map;
 public class ExporterAssociationAggregates extends ExporterAssociationsBase {
 
     @Override
-    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             ExporterAggregateUtil.exportDistinctInteractionsByStudy(writer, ((NodeBacked)study).getUnderlyingNode().getGraphDatabase(), new AssociationWriter());
         }

@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinderException;
@@ -40,7 +41,7 @@ public class StudyImporterForHurlbertIT extends GraphDBTestCase {
             }
         });
         importStudy(importer);
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 10, is(true));
 
         assertThat(allStudies.get(0).getOriginatingDataset(), is(notNullValue()));

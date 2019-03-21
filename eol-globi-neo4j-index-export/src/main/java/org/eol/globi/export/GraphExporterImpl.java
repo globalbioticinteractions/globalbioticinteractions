@@ -10,6 +10,7 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class GraphExporterImpl implements GraphExporter {
 
         LOG.info("site maps generated... ");
 
-        List<Study> studies = NodeUtil.findAllStudies(graphService);
+        List<StudyNode> studies = NodeUtil.findAllStudies(graphService);
         exportNames(baseDir, studies);
 
         // export to taxa for now, to avoid additional assemblies
@@ -60,7 +61,7 @@ public class GraphExporterImpl implements GraphExporter {
         exportDarwinCoreAll(baseDir, studies);
     }
 
-    public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir, List<Study> studies) throws StudyImporterException {
+    public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir, List<StudyNode> studies) throws StudyImporterException {
         final String ncbiDir = baseDir + "ncbi-link-out/";
         mkdir(ncbiDir);
         new ExportNCBIIdentityFile().export(graphService, ncbiDir);
@@ -73,7 +74,7 @@ public class GraphExporterImpl implements GraphExporter {
         });
     }
 
-    public void exportNames(String baseDir, List<Study> studies) throws StudyImporterException {
+    public void exportNames(String baseDir, List<StudyNode> studies) throws StudyImporterException {
         mkdir(baseDir, "taxa");
         exportNames(studies, baseDir, new ExportTaxonMap(), "taxa/taxonMap.tsv.gz");
         exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.tsv.gz");
@@ -92,11 +93,11 @@ public class GraphExporterImpl implements GraphExporter {
         }
     }
 
-    private void exportNames(List<Study> studies, String baseDir, StudyExporter exporter, String filename) throws StudyImporterException {
+    private void exportNames(List<StudyNode> studies, String baseDir, StudyExporter exporter, String filename) throws StudyImporterException {
         try {
             String filePath = baseDir + filename;
             OutputStreamWriter writer = openStream(filePath);
-            for (Study study : studies) {
+            for (StudyNode study : studies) {
                 boolean includeHeader = studies.indexOf(study) == 0;
                 exporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), includeHeader);
             }
@@ -106,7 +107,7 @@ public class GraphExporterImpl implements GraphExporter {
         }
     }
 
-    private void exportDarwinCoreAggregatedByStudy(String baseDir, List<Study> studies) throws StudyImporterException {
+    private void exportDarwinCoreAggregatedByStudy(String baseDir, List<StudyNode> studies) throws StudyImporterException {
         exportDarwinCoreArchive(studies,
                 baseDir + "aggregatedByStudy/", new HashMap<String, DarwinCoreExporter>() {
                     {
@@ -119,7 +120,7 @@ public class GraphExporterImpl implements GraphExporter {
         );
     }
 
-    private void exportDarwinCoreAll(String baseDir, List<Study> studies) throws StudyImporterException {
+    private void exportDarwinCoreAll(String baseDir, List<StudyNode> studies) throws StudyImporterException {
         exportDarwinCoreArchive(studies, baseDir + "all/", new HashMap<String, DarwinCoreExporter>() {
             {
                 put("association.tsv", new ExporterAssociations());
@@ -131,14 +132,14 @@ public class GraphExporterImpl implements GraphExporter {
         });
     }
 
-    private void exportDataOntology(List<Study> studies, String baseDir) throws StudyImporterException {
+    private void exportDataOntology(List<StudyNode> studies, String baseDir) throws StudyImporterException {
         try {
             ExporterRDF studyExporter = new ExporterRDF();
             String exportPath = baseDir + "interactions.nq.gz";
             OutputStreamWriter writer = openStream(exportPath);
             int total = studies.size();
             int count = 1;
-            for (Study study : studies) {
+            for (StudyNode study : studies) {
                 studyExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()), true);
                 if (count % 50 == 0) {
                     LOG.info("added triples for [" + count + "] of [" + total + "] studies...");
@@ -154,7 +155,7 @@ public class GraphExporterImpl implements GraphExporter {
         }
     }
 
-    private void exportDarwinCoreArchive(List<Study> studies, String pathPrefix, Map<String, DarwinCoreExporter> exporters) throws StudyImporterException {
+    private void exportDarwinCoreArchive(List<StudyNode> studies, String pathPrefix, Map<String, DarwinCoreExporter> exporters) throws StudyImporterException {
         try {
             FileUtils.forceMkdir(new File(pathPrefix));
             FileWriter darwinCoreMeta = writeMetaHeader(pathPrefix);
@@ -180,9 +181,9 @@ public class GraphExporterImpl implements GraphExporter {
         return darwinCoreMeta;
     }
 
-    private void export(List<Study> importedStudies, String exportPath, String filename, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
+    private void export(List<StudyNode> importedStudies, String exportPath, String filename, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
         OutputStreamWriter writer = openStream(exportPath + filename);
-        for (Study importedStudy : importedStudies) {
+        for (StudyNode importedStudy : importedStudies) {
             boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
             studyExporter.exportStudy(importedStudy, ExportUtil.AppenderWriter.of(writer), includeHeader);
         }
@@ -203,7 +204,7 @@ public class GraphExporterImpl implements GraphExporter {
         if (exportPath.endsWith(".gz")) {
             fos = new GZIPOutputStream(fos);
         }
-        OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
+        OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
         LOG.info("export data to [" + new File(exportPath).getAbsolutePath() + "] started...");
         return writer;
     }

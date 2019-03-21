@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertThat;
 public class StudyImporterForCruaudTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws NodeFactoryException, StudyImporterException {
+    public void importAll() throws StudyImporterException {
         StudyImporterForCruaud importer = new StudyImporterForCruaud(new ParserFactoryLocal(), nodeFactory);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override
@@ -31,7 +32,7 @@ public class StudyImporterForCruaudTest extends GraphDBTestCase {
         });
         importStudy(importer);
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 
 

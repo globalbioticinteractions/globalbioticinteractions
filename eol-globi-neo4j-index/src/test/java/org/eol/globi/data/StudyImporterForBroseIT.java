@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
@@ -25,7 +26,7 @@ public class StudyImporterForBroseIT extends GraphDBTestCase {
         StudyImporterForBrose studyImporterForBrose = new StudyImporterForBrose(new ParserFactoryLocal(), nodeFactory);
         studyImporterForBrose.importStudy();
 
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(20));
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));

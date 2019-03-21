@@ -5,6 +5,7 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
 
         importStudy(studyImporter);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
         assertNotNull(taxonIndex.findTaxonByName("Atlantic croaker"));
@@ -45,12 +46,12 @@ public class StudyImporterForBaremoreTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
         StudyImporterForBaremore studyImporter = new StudyImporterForBaremore(new ParserFactoryLocal(), nodeFactory);
 
         importStudy(studyImporter);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         assertNotNull(taxonIndex.findTaxonByName("Squatina dumeril"));
 

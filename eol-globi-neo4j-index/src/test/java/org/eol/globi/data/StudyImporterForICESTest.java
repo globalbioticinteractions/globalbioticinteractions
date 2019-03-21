@@ -5,6 +5,7 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
@@ -33,11 +34,7 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         });
         studyImporterFor.importStudy();
 
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(studies.size(), is(1));
-        Study study = studies.get(0);
-
-        Iterator<Relationship> specimens = NodeUtil.getSpecimens(study).iterator();
+        Iterator<Relationship> specimens = NodeUtil.getSpecimens(getStudySingleton(getGraphDb())).iterator();
         int specimenCount = 0;
         while (specimens.hasNext()) {
             specimens.next();
@@ -56,7 +53,8 @@ public class StudyImporterForICESTest extends GraphDBTestCase {
         StudyImporterForICES importer = new StudyImporterForICES(new TestParserFactory(firstBunchOfLines), nodeFactory);
 
         importStudy(importer);
-        Study study = getStudySingleton(getGraphDb());
+
+        StudyNode study = getStudySingleton(getGraphDb());
 
         assertNotNull(taxonIndex.findTaxonByName("Gadus morhua"));
         assertNotNull(taxonIndex.findTaxonByName("Polychaeta"));

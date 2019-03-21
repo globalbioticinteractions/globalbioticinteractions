@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -42,7 +43,7 @@ public class ExporterMeasurementOrFact extends ExporterBase {
     }
 
     @Override
-    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
 
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
@@ -54,11 +55,11 @@ public class ExporterMeasurementOrFact extends ExporterBase {
         }
     }
 
-    private void writeMeasurements(ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
+    private void writeMeasurements(ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, StudyNode study) throws IOException {
         writeProperties(writer, properties, specimenNode, collectedRel, study);
     }
 
-    private void writeProperties(ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
+    private void writeProperties(ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship collectedRel, StudyNode study) throws IOException {
         if (specimenNode.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
             Object property = specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM);
             properties.put(EOLDictionary.MEASUREMENT_VALUE, property.toString());
@@ -93,7 +94,7 @@ public class ExporterMeasurementOrFact extends ExporterBase {
         }
     }
 
-    private void addCommonProperties(Map<String, String> properties, Node specimenNode, Relationship collectedRel, Study study) throws IOException {
+    private void addCommonProperties(Map<String, String> properties, Node specimenNode, Relationship collectedRel, StudyNode study) throws IOException {
         properties.put(EOLDictionary.SOURCE, study.getTitle());
         addCollectionDate(properties, collectedRel, EOLDictionary.MEASUREMENT_DETERMINED_DATE);
         properties.put(EOLDictionary.OCCURRENCE_ID, "globi:occur:" + specimenNode.getId());

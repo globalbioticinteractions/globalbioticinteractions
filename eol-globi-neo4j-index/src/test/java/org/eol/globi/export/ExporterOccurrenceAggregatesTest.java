@@ -8,6 +8,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     @Test
     public void exportNoMatchName() throws NodeFactoryException, IOException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "some externalid"));
         resolveNames();
 
@@ -53,7 +54,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         createTestData(123.0);
         resolveNames();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 

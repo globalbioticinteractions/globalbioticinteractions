@@ -7,6 +7,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.NodeUtil;
@@ -63,8 +64,8 @@ public class StudyImporterForRaymondTest extends GraphDBTestCase {
     }
 
     protected void assertThatAllStudiesHaveAtLeastOneInteraction() {
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
-        for (Study study : studies) {
+        List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
+        for (StudyNode study : studies) {
             Iterator<Relationship> iterator = NodeUtil.getSpecimens(study).iterator();
             assertThat(iterator.hasNext(), is(true));
             while(iterator.hasNext()) {

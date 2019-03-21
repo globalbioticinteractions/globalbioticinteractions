@@ -14,7 +14,7 @@ import java.util.Map;
 public class ExporterTaxaDistinct extends ExporterTaxa {
 
     @Override
-    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             // only write the taxa once, because they are unique across studies...
             exportAllDistinctTaxa(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase());

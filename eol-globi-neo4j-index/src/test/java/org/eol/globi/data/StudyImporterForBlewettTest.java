@@ -9,6 +9,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
@@ -62,7 +63,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterTestFactory(nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
         importStudy(importer);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int count = 0;
@@ -118,7 +119,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterTestFactory(testFactory, nodeFactory).instantiateImporter((Class) StudyImporterForBlewett.class);
         importStudy(importer);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
 

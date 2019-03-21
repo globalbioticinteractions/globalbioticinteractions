@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
@@ -26,7 +27,7 @@ public class StudyImporterForCoetzerTest extends GraphDBTestCase {
         importer.setDataset(dataset);
         importStudy(importer);
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         for (Study allStudy : allStudies) {
             assertThat(allStudy.getSource(), startsWith("source citation"));
             assertThat(allStudy.getSource(), containsString("Accessed at"));

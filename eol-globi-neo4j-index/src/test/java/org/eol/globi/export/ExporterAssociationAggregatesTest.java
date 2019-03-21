@@ -8,6 +8,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
@@ -51,7 +52,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         nodeFactory.findStudy("myStudy1").setExternalId("some:id");
 
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
-        Study myStudy1 = nodeFactory.findStudy("myStudy1");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy1");
         StringWriter row = new StringWriter();
         exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
@@ -78,7 +79,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         ExporterAssociationAggregates exporter = new ExporterAssociationAggregates();
         StringWriter row = new StringWriter();
         for (String studyTitle : studyTitles) {
-            Study myStudy1 = nodeFactory.findStudy(studyTitle);
+            StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(studyTitle);
             exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         }
 

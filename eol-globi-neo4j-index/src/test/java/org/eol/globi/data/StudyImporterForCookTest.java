@@ -6,6 +6,7 @@ import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
 
         StudyImporterForCook importer = new StudyImporterForCook(new TestParserFactory(firstFiveLines), nodeFactory);
         importStudy(importer);
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         Taxon hostTaxon = taxonIndex.findTaxonByName("Micropogonias undulatus");
         assertThat(hostTaxon, is(notNullValue()));
@@ -71,7 +72,7 @@ public class StudyImporterForCookTest extends GraphDBTestCase {
     public void importAll() throws StudyImporterException {
         StudyImporterForCook importer = new StudyImporterForCook(new ParserFactoryLocal(), nodeFactory);
         importStudy(importer);
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         int count = 0;

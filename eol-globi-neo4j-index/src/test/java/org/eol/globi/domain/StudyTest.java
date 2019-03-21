@@ -40,11 +40,11 @@ public class StudyTest extends GraphDBTestCase {
         shark.setLengthInMm(1.2d);
         resolveNames();
 
-        Study foundStudy = this.nodeFactory.findStudy("Our first study");
+        StudyNode foundStudy = getStudySingleton(getGraphDb());
 
         assertEquals(study.getTitle(), foundStudy.getTitle());
 
-        for (Relationship rel : NodeUtil.getSpecimens(study)) {
+        for (Relationship rel : NodeUtil.getSpecimens(foundStudy)) {
             Specimen specimen = new SpecimenNode(rel.getEndNode());
             Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING);
             if (caughtDuringRel != null) {

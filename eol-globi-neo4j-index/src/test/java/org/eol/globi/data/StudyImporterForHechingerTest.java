@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
@@ -65,7 +66,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         });
         importStudy(importer);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         assertThat(study, is(notNullValue()));
 

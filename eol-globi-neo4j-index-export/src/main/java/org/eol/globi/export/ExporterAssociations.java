@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class ExporterAssociations extends ExporterAssociationsBase {
 
     @Override
-    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new HashMap<String, String>();
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         for (Relationship collectedRel : specimens) {
@@ -25,7 +26,7 @@ public class ExporterAssociations extends ExporterAssociationsBase {
         }
     }
 
-    private void handleSpecimen(Study study, ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode) throws IOException {
+    private void handleSpecimen(StudyNode study, ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode) throws IOException {
         Iterable<Relationship> interactRelationships = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j());
         if (interactRelationships.iterator().hasNext()) {
             for (Relationship interactRel : interactRelationships) {

@@ -9,13 +9,13 @@ import java.util.HashMap;
 public class ExportTaxonCache implements StudyExporter {
 
     @Override
-    public void exportStudy(final Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    public void exportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             doExport(study, writer);
         }
     }
 
-    protected void doExport(Study study, ExportUtil.Appender appender) throws IOException {
+    protected void doExport(StudyNode study, ExportUtil.Appender appender) throws IOException {
         String query = "CYPHER 1.9 START taxon = node:taxons('*:*') " +
                 "MATCH taxon-[?:SAME_AS*0..1]->linkedTaxon " +
                 "WHERE has(linkedTaxon.path) " +
@@ -47,7 +47,7 @@ public class ExportTaxonCache implements StudyExporter {
         }};
 
         ExportUtil.writeResults(appender,
-                ((StudyNode)study).getUnderlyingNode().getGraphDatabase(),
+                study.getUnderlyingNode().getGraphDatabase(),
                 query,
                 params,
                 true

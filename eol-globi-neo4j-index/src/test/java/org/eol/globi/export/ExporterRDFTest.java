@@ -10,6 +10,7 @@ import org.eol.globi.data.StudyImporterForSPIRE;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetLocal;
@@ -49,7 +50,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
         importer.setDataset(new DatasetLocal());
         importStudy(importer);
 
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
 
 
         Taxon taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("some taxon", null));
@@ -68,7 +69,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
         try {
             Writer writer = new FileWriter(file);
             ExporterRDF turtleExporter = new ExporterRDF();
-            for (Study study : studies) {
+            for (StudyNode study : studies) {
                 turtleExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()), true);
             }
             writer.flush();

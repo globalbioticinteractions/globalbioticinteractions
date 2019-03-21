@@ -7,6 +7,7 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -52,7 +53,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         resolveNames();
         String expected = getExpectedData();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -72,7 +73,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -84,7 +85,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setBasisOfRecord(new TermImpl("test:123", "aBasisOfRecord"));
         resolveNames();

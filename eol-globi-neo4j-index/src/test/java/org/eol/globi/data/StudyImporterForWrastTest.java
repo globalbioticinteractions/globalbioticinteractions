@@ -6,6 +6,7 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
 
 
         importStudy(importer);
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
 
         int specimenCount = 0;

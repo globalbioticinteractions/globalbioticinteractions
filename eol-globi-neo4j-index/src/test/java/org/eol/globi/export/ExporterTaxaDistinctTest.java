@@ -6,6 +6,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         taxonIndex.getOrCreateTaxon(new TaxonImpl("ThemFishes", "no:match"));
         resolveNames();
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
 
         String actual = exportStudy(myStudy1);
         assertThat(actual, containsString("EOL:123\tCanis lupus\t\t\t\t\t\t\t\t\thttp://eol.org/pages/123\t\t\t\t"));
@@ -38,7 +39,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         assertThatNoTaxaAreExportedOnMissingHeader(myStudy1, new StringWriter());
     }
 
-    protected String exportStudy(Study myStudy1) throws IOException {
+    protected String exportStudy(StudyNode myStudy1) throws IOException {
         StringWriter row = new StringWriter();
         new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
         return row.getBuffer().toString();
@@ -46,14 +47,14 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
     @Test
     public void excludeNoMatchNames() throws NodeFactoryException, IOException {
-        Study study = nodeFactory.createStudy(new StudyImpl("bla", null, null, null));
+        StudyNode study = (StudyNode) nodeFactory.createStudy(new StudyImpl("bla", null, null, null));
         Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
         Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);
         assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
     }
 
-    private void assertThatNoTaxaAreExportedOnMissingHeader(Study myStudy1, StringWriter row) throws IOException {
+    private void assertThatNoTaxaAreExportedOnMissingHeader(StudyNode myStudy1, StringWriter row) throws IOException {
         new ExporterTaxaDistinct().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), is(""));
     }

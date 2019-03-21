@@ -32,16 +32,14 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
                 "globi:assoc:8\tglobi:occur:2\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:4\t\t\t\t\tdata source description\t\t\tglobi:ref:1\n";
 
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
-
         StringWriter row = new StringWriter();
 
-        new ExporterAssociations().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterAssociations().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
 
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 
-    private void createTestData(Double length) throws NodeFactoryException, ParseException {
+    private void createTestData(Double length) throws NodeFactoryException {
         Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "data\tsource description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setStomachVolumeInMilliLiter(666.0);

@@ -4,6 +4,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -58,8 +59,8 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
         importStudy(importer);
 
         int interactionCount = 0;
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
-        for (Study study : studies) {
+        List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
+        for (StudyNode study : studies) {
             Iterable<Relationship> specimenRels = NodeUtil.getSpecimens(study);
             for (Relationship specimenRel : specimenRels) {
                 interactionCount++;

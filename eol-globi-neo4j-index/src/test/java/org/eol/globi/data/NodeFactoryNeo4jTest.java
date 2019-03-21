@@ -72,18 +72,24 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertStudyType(studyRelationType, specimen);
         assertStudyType(studyRelationType, specimen1);
 
-        final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
-        assertThat(relIter.hasNext(), is(true));
-        final Relationship rel = relIter.next();
-        assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002470"));
-        assertThat(rel.getProperty("label").toString(), is("eats"));
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
+            assertThat(relIter.hasNext(), is(true));
+            final Relationship rel = relIter.next();
+            assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002470"));
+            assertThat(rel.getProperty("label").toString(), is("eats"));
 
-        Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.EATEN_BY));
-        Iterator<Relationship> iterator = relationships.iterator();
-        assertThat(iterator.hasNext(), is(true));
-        Relationship relInverted = iterator.next();
-        assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
-        assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
+            Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.EATEN_BY));
+            Iterator<Relationship> iterator = relationships.iterator();
+            assertThat(iterator.hasNext(), is(true));
+            Relationship relInverted = iterator.next();
+            assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
+            assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
     }
 
     private void assertStudyType(RelTypes studyRelationType, SpecimenNode specimen2) {
@@ -380,7 +386,13 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl(null, "bla:123"));
-        assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
     }
 
     @Test
@@ -445,24 +457,30 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         Location locationB = getNodeFactory().getOrCreateLocation(new LocationImpl(37.689255, -122.295799, null, null));
         assertEcoRegions(locationB);
 
-        IndexHits<Node> hits = getNodeFactory().findCloseMatchesForEcoregion("some elo egion");
-        assertThat(hits.size(), is(1));
-        assertThat((String) hits.iterator().next().getProperty(PropertyAndValueDictionary.NAME), is("some eco region"));
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            IndexHits<Node> hits = getNodeFactory().findCloseMatchesForEcoregion("some elo egion");
+            assertThat(hits.size(), is(1));
+            assertThat((String) hits.iterator().next().getProperty(PropertyAndValueDictionary.NAME), is("some eco region"));
 
-        hits = getNodeFactory().findCloseMatchesForEcoregion("mickey mouse goes shopping");
-        assertThat(hits.size(), is(0));
-        hits = getNodeFactory().findCloseMatchesForEcoregionPath("mickey mouse goes shopping");
-        assertThat(hits.size(), is(0));
+            hits = getNodeFactory().findCloseMatchesForEcoregion("mickey mouse goes shopping");
+            assertThat(hits.size(), is(0));
+            hits = getNodeFactory().findCloseMatchesForEcoregionPath("mickey mouse goes shopping");
+            assertThat(hits.size(), is(0));
 
-        hits = getNodeFactory().findCloseMatchesForEcoregionPath("path");
-        assertThat(hits.size(), is(1));
-        hits = getNodeFactory().findCloseMatchesForEcoregionPath("some");
-        assertThat(hits.size(), is(1));
+            hits = getNodeFactory().findCloseMatchesForEcoregionPath("path");
+            assertThat(hits.size(), is(1));
+            hits = getNodeFactory().findCloseMatchesForEcoregionPath("some");
+            assertThat(hits.size(), is(1));
 
-        hits = getNodeFactory().suggestEcoregionByName("some eco region");
-        assertThat(hits.size(), is(1));
-        hits = getNodeFactory().suggestEcoregionByName("path");
-        assertThat(hits.size(), is(1));
+            hits = getNodeFactory().suggestEcoregionByName("some eco region");
+            assertThat(hits.size(), is(1));
+            hits = getNodeFactory().suggestEcoregionByName("path");
+            assertThat(hits.size(), is(1));
+            transaction.success();
+        } finally {
+            transaction.finish();
+        }
 
     }
 

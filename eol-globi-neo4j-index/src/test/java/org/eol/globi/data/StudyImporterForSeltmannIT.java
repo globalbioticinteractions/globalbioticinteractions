@@ -5,6 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.DatasetImpl;
@@ -50,8 +51,8 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
 
         importStudy(importer);
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        for (Study allStudy : allStudies) {
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        for (StudyNode allStudy : allStudies) {
             assertThat(allStudy.getSource(), startsWith("Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
             assertThat(allStudy.getCitation(), is("Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
             Iterable<Relationship> specimens = NodeUtil.getSpecimens(allStudy);

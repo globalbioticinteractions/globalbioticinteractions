@@ -8,7 +8,9 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -18,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
@@ -76,14 +79,9 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_DOI, "doi:1234");
         listener.newLink(link);
 
-        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(allStudies.size(), is(1));
-        final Study study = allStudies.get(0);
-        assertThat(study.getCitation(), is(""));
-
-        boolean foundPair = false;
-        for (Relationship specimenRel : NodeUtil.getSpecimens(study)) {
-            final SpecimenNode predator = new SpecimenNode(specimenRel.getEndNode());
+        final AtomicBoolean foundPair = new AtomicBoolean(false);
+        NodeUtil.RelationshipListener relationshipListener = relationship -> {
+            final SpecimenNode predator = new SpecimenNode(relationship.getEndNode());
             for (Relationship stomachRel : NodeUtil.getStomachContents(predator)) {
                 final SpecimenNode prey = new SpecimenNode(stomachRel.getEndNode());
                 final TaxonNode preyTaxon = getOrigTaxon(prey);
@@ -101,9 +99,9 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
                 assertThat(predator.getLifeStage().getId(), is("some:stage"));
                 assertThat(predator.getLifeStage().getName(), is("stage"));
-                foundPair = true;
+                foundPair.set(true);
 
-                assertThat(specimenRel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+                assertThat(relationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
 
                 List<SpecimenNode> specimens = Arrays.asList(predator, prey);
                 for (SpecimenNode specimen : specimens) {
@@ -112,9 +110,17 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 }
             }
 
+        };
+        handleRelations(relationshipListener, RelTypes.COLLECTED);
+        assertThat(foundPair.get(), is(true));
+    }
 
-        }
-        assertThat(foundPair, is(true));
+    private void handleRelations(NodeUtil.RelationshipListener handler, RelTypes collected) {
+        final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), is(1));
+        final StudyNode study = (StudyNode) allStudies.get(0);
+        assertThat(study.getCitation(), is(""));
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode(), collected), handler, getGraphDb(), 1);
     }
 
     @Test
@@ -150,14 +156,9 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_DOI, "doi:1234");
         listener.newLink(link);
 
-        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(allStudies.size(), is(1));
-        final Study study = allStudies.get(0);
-        assertThat(study.getCitation(), is(""));
-
-        boolean foundPair = false;
-        for (Relationship specimenRel : NodeUtil.getSpecimens(study)) {
-            final SpecimenNode predator = new SpecimenNode(specimenRel.getEndNode());
+        final AtomicBoolean foundPair = new AtomicBoolean(false);
+        NodeUtil.RelationshipListener relationshipListener = relationship -> {
+            final SpecimenNode predator = new SpecimenNode(relationship.getEndNode());
             for (Relationship hosts : ((NodeBacked) predator).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(InteractType.PARASITE_OF), Direction.OUTGOING)) {
                 final SpecimenNode host = new SpecimenNode(hosts.getEndNode());
                 final TaxonNode hostTaxon = getOrigTaxon(host);
@@ -166,12 +167,13 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 assertThat(predTaxon.getName(), is("donald"));
                 assertThat(predTaxon.getExternalId(), is("duck"));
 
-                foundPair = true;
+                foundPair.set(true);
             }
 
+        };
 
-        }
-        assertThat(foundPair, is(true));
+        handleRelations(relationshipListener, RelTypes.COLLECTED);
+        assertThat(foundPair.get(), is(true));
     }
 
     @Test
@@ -205,18 +207,16 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_DOI, "doi:1234");
         listener.newLink(link);
 
-        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        final Study study = allStudies.get(0);
-
-
-        boolean foundSpecimen = false;
-        for (Relationship specimenRel : NodeUtil.getSpecimens(study, RelTypes.REFUTES)) {
-            final SpecimenNode someSpecimen = new SpecimenNode(specimenRel.getEndNode());
+        AtomicBoolean foundSpecimen = new AtomicBoolean(false);
+        NodeUtil.RelationshipListener relHandler = relationship -> {
+            final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.REFUTES)));
             assertFalse(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
-            foundSpecimen = true;
-        }
-        assertThat(foundSpecimen, is(true));
+            foundSpecimen.set(true);
+        };
+        handleRelations(relHandler, RelTypes.REFUTES);
+
+        assertThat(foundSpecimen.get(), is(true));
     }
 
     @Test
@@ -253,23 +253,21 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_DOI, "doi:1234");
         listener.newLink(link);
 
-        final List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        final Study study = allStudies.get(0);
-
-
-        boolean foundSpecimen = false;
-        for (Relationship specimenRel : NodeUtil.getSpecimens(study, RelTypes.SUPPORTS)) {
-            final SpecimenNode someSpecimen = new SpecimenNode(specimenRel.getEndNode());
+        AtomicBoolean foundSpecimen = new AtomicBoolean(false);
+        NodeUtil.RelationshipListener someListener = relationship -> {
+            final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
             LocationNode sampleLocation = someSpecimen.getSampleLocation();
             assertThat(sampleLocation.getLatitude(), is(12.2d));
             assertThat(sampleLocation.getLongitude(), is(13.2d));
             assertThat(sampleLocation.getLocality(), is("my back yard"));
             assertThat(sampleLocation.getLocalityId(), is("back:yard"));
+            foundSpecimen.set(true);
+        };
 
-            foundSpecimen = true;
-        }
-        assertThat(foundSpecimen, is(true));
+        handleRelations(someListener, RelTypes.COLLECTED);
+
+        assertThat(foundSpecimen.get(), is(true));
     }
 
     public void assertLocation(LocationNode sampleLocation) {

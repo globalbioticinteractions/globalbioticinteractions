@@ -20,7 +20,7 @@ import java.util.Map;
 public class ExporterOccurrences extends ExporterOccurrencesBase {
 
     @Override
-    public void doExportStudy(Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
         for (Relationship collectedRel : specimens) {
             Node specimenNode = collectedRel.getEndNode();
@@ -30,7 +30,7 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         }
     }
 
-    private void handleSpecimen(Study study, ExportUtil.Appender writer, Relationship collectedRel, Node specimenNode) throws IOException {
+    private void handleSpecimen(StudyNode study, ExportUtil.Appender writer, Relationship collectedRel, Node specimenNode) throws IOException {
         Iterable<Relationship> collectedAt = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.COLLECTED_AT));
         Node locationNode = null;
         for (Relationship relationship1 : collectedAt) {
@@ -41,7 +41,7 @@ public class ExporterOccurrences extends ExporterOccurrencesBase {
         writeProperties(writer, properties);
     }
 
-    private void addOccurrenceProperties(Node locationNode, Relationship collectedRelationship, Map<String, String> properties, Node specimenNode, Study study) throws IOException {
+    private void addOccurrenceProperties(Node locationNode, Relationship collectedRelationship, Map<String, String> properties, Node specimenNode, StudyNode study) throws IOException {
         if (specimenNode != null) {
             Iterable<Relationship> relationships = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
             Iterator<Relationship> iterator = relationships.iterator();

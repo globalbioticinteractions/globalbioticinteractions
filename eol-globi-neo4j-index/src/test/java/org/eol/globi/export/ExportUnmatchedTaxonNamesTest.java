@@ -9,6 +9,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
@@ -34,7 +35,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
         String title = "my study\"";
         String citation = "citation my study";
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl(title, "my first source", null, citation));
+        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl(title, "my first source", null, citation));
 
         taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null));
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, human());
@@ -93,7 +94,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
 
         String citation = "cite, study";
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("my, study", "my first, source", null, citation));
+        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("my, study", "my first, source", null, citation));
 
         Specimen predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapienz", null));
         Taxon humanz = taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapienz", null));

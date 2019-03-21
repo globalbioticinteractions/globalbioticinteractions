@@ -7,6 +7,7 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -42,10 +43,7 @@ public class StudyImporterForSzoboszlaiIT extends GraphDBTestCase {
 
         importStudy(importer);
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(allStudies.size(), is(not(0)));
-        Study firstStudy = allStudies.get(0);
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(firstStudy);
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(getStudySingleton(getGraphDb()));
         for (Relationship specimen : specimens) {
             Specimen specimenNode = new SpecimenNode(specimen.getEndNode());
             Location sampleLocation = specimenNode.getSampleLocation();

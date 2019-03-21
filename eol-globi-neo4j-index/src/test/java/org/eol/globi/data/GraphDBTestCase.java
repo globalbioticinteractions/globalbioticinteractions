@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.Ecoregion;
@@ -38,10 +38,10 @@ public abstract class GraphDBTestCase {
 
     protected TaxonIndex taxonIndex;
 
-    public static Study getStudySingleton(GraphDatabaseService graphService) {
-        List<Study> allStudies = NodeUtil.findAllStudies(graphService);
+    public static StudyNode getStudySingleton(GraphDatabaseService graphService) {
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(graphService);
         assertThat(allStudies.size(), is(1));
-        Study study = allStudies.get(0);
+        StudyNode study = allStudies.get(0);
         assertNotNull(study);
         return study;
     }

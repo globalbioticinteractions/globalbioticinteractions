@@ -11,14 +11,14 @@ import java.util.Map;
 public class ExporterOccurrenceAggregates extends ExporterOccurrencesBase {
 
     @Override
-    public void doExportStudy(final Study study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
+    public void doExportStudy(final StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             exportDistinct(study, writer);
         }
     }
 
-    public void exportDistinct(Study study, ExportUtil.Appender writer) throws IOException {
-        ExporterAggregateUtil.exportDistinctInteractionsByStudy(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase(), new OccurrenceRowWriter());
+    public void exportDistinct(StudyNode study, ExportUtil.Appender writer) throws IOException {
+        ExporterAggregateUtil.exportDistinctInteractionsByStudy(writer, study.getUnderlyingNode().getGraphDatabase(), new OccurrenceRowWriter());
     }
 
     class OccurrenceRowWriter implements ExporterAggregateUtil.RowWriter {

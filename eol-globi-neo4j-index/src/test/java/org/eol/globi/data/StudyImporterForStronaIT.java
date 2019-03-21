@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class StudyImporterForStronaIT extends GraphDBTestCase {
         });
         importStudy(importer);
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
 
 

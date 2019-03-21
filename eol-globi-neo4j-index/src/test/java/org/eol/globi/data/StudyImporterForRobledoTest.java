@@ -5,6 +5,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
@@ -21,7 +22,7 @@ public class StudyImporterForRobledoTest extends GraphDBTestCase {
         StudyImporterForRobledo importer = new StudyImporterForRobledo(new ParserFactoryLocal(), nodeFactory);
 
         importStudy(importer);
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         assertNotNull(taxonIndex.findTaxonByName("Heliconia imbricata"));
         assertNotNull(taxonIndex.findTaxonByName("Renealmia alpinia"));

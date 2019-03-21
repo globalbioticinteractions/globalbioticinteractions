@@ -8,6 +8,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
 
         assertNotNull(nodeFactory.findSeason("summer"));
 
-        Study foundStudy = nodeFactory.findStudy("Simons 1997");
+        StudyNode foundStudy = (StudyNode) nodeFactory.findStudy("Simons 1997");
         assertNotNull(foundStudy);
         for (Relationship rel : NodeUtil.getSpecimens(foundStudy)) {
             Node specimen = rel.getEndNode();

@@ -6,7 +6,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ExporterRDF implements StudyExporter {
 
@@ -32,7 +31,7 @@ public class ExporterRDF implements StudyExporter {
     public static final String INTERACTION = "http://purl.obolibrary.org/obo/GO_0044419";
 
     @Override
-    public void exportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader)
+    public void exportStudy(StudyNode study, ExportUtil.Appender appender, boolean includeHeader)
             throws IOException {
 
         for (Relationship r : NodeUtil.getSpecimens(study)) {

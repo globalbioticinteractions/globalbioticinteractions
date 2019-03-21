@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -30,7 +31,7 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
         List<String> citationList = new ArrayList<String>();
         Set<String> citations = new HashSet<String>();
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
         assertTrue(studies.size() > 0);
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));

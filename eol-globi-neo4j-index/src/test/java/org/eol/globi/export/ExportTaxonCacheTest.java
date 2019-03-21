@@ -5,6 +5,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
@@ -26,7 +27,7 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
+        nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens");
         taxon.setExternalId("homoSapiensId");
         taxon.setPath("one\ttwo three");
@@ -44,7 +45,7 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
         NodeUtil.connectTaxa(new TaxonImpl("Similar Homo sapiens", "alt:456"), (TaxonNode)human, getGraphDb(), RelTypes.SIMILAR_TO);
 
         StringWriter writer = new StringWriter();
-        new ExportTaxonCache().exportStudy(study, ExportUtil.AppenderWriter.of(writer), true);
+        new ExportTaxonCache().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(writer), true);
         assertThat(writer.toString(), is("id\tname\trank\tcommonNames\tpath\tpathIds\tpathNames\tspeciesName\tspeciesId\tgenusName\tgenusId\tfamilyName\tfamilyId\torderName\torderId\tclassName\tclassId\tphylumName\tphylumId\tkingdomName\tkingdomId\texternalUrl\tthumbnailUrl" +
                 "\nhomoSapiensId\tHomo sapiens\t\tman @en | \"mens @nl\tone two three\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\thttp://some/thing\thttp://thing/some" +
                 "\nalt:123\tAlternate Homo sapiens\t\t\tsome path here\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\thttp://some/thing\thttp://thing/some" +

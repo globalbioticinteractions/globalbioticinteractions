@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
@@ -69,7 +70,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
 
         importStudy(importer);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         assertNotNull(taxonIndex.findTaxonByName("Negaprion brevirostris"));
         assertNotNull(taxonIndex.findTaxonByName("Carcharhinus perezi"));
@@ -88,11 +89,7 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
 
         studyImporterFor.importStudy();
 
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(studies.size(), is(1));
-        Study study = studies.get(0);
-
-        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(study);
+        Iterable<Relationship> collectedRels = NodeUtil.getSpecimens(getStudySingleton(getGraphDb()));
         int totalRels = validateSpecimen(collectedRels);
         assertThat(totalRels, Is.is(1939));
 

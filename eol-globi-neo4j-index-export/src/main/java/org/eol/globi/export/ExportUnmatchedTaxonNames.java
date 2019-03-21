@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class ExportUnmatchedTaxonNames implements StudyExporter {
 
     @Override
-    public void exportStudy(final Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
+    public void exportStudy(final StudyNode study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
 
         String query = "CYPHER 1.9 START study = node:studies(title={study_title}) " +
                 "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:CLASSIFIED_AS]->taxon " +
@@ -32,7 +32,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
         }};
 
         ExportUtil.writeResults(appender,
-                ((StudyNode)study).getUnderlyingNode().getGraphDatabase(),
+                study.getUnderlyingNode().getGraphDatabase(),
                 query,
                 params,
                 includeHeader

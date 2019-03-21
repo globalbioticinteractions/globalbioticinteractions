@@ -8,6 +8,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVTSVUtil;
@@ -77,7 +78,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         Study vectorStudy = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:153303");
         assertThat(vectorStudy, is(notNullValue()));
 
-        Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
+        StudyNode study = (StudyNode) nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         for (Relationship collectedRel : NodeUtil.getSpecimens(study)) {
             SpecimenNode specimen = new SpecimenNode(collectedRel.getEndNode());
             String externalId = specimen.getExternalId();
@@ -125,7 +126,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         assertNotNull(study);
         assertThat(study.getExternalId(), is("http://bioinfo.org.uk/html/b60536.htm"));
         assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));
-        Study study1 = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
+        StudyNode study1 = (StudyNode) nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
         assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
         Iterable<Relationship> specimens = NodeUtil.getSpecimens(study1);

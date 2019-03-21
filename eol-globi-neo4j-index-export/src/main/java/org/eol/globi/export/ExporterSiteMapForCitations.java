@@ -19,7 +19,7 @@ class ExporterSiteMapForCitations implements GraphExporter {
         Set<String> accordingToHits = new HashSet<String>();
         accordingToHits.add("gomexsi");
         // just do it once
-        final List<Study> allStudies = NodeUtil.findAllStudies(graphDb);
+        final List<StudyNode> allStudies = NodeUtil.findAllStudies(graphDb);
         for (Study allStudy : allStudies) {
             final String doi = allStudy.getExternalId();
             if (StringUtils.isNotBlank(doi)) {

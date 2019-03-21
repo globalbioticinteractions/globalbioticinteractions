@@ -8,6 +8,7 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
@@ -29,12 +30,12 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ExportTestUtil {
-    public static Study createTestData(NodeFactory factory) throws NodeFactoryException, ParseException {
+    public static StudyNode createTestData(NodeFactory factory) throws NodeFactoryException, ParseException {
         return createTestData(123.4, factory);
     }
 
-    public static Study createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
-        Study myStudy = factory.createStudy(new StudyImpl("myStudy", null, null, null));
+    public static StudyNode createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
+        StudyNode myStudy = (StudyNode) factory.createStudy(new StudyImpl("myStudy", null, null, null));
         Specimen specimen1 = factory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:45634"));
         specimen1.setStomachVolumeInMilliLiter(666.0);
         specimen1.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));

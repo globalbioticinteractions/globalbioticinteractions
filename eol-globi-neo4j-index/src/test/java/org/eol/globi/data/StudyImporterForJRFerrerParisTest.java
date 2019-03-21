@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
@@ -22,11 +23,7 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
         StudyImporterForJRFerrerParis studyImporterForJRFerrerParis = new StudyImporterForJRFerrerParis(new ParserFactoryLocal(), nodeFactory);
         studyImporterForJRFerrerParis.importStudy();
 
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
-        assertThat(studies.size(), is(1));
-        Study study = studies.get(0);
-
-        Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
+        Iterable<Relationship> specimens = NodeUtil.getSpecimens(getStudySingleton(getGraphDb()));
         int count = 0;
         for (Relationship specimen : specimens) {
             count++;
@@ -46,7 +43,7 @@ public class StudyImporterForJRFerrerParisTest extends GraphDBTestCase {
 
         importStudy(importer);
 
-        Study study = getStudySingleton(getGraphDb());
+        StudyNode study = getStudySingleton(getGraphDb());
 
         assertNotNull(taxonIndex.findTaxonByName("Hesperocharis anguitia"));
 

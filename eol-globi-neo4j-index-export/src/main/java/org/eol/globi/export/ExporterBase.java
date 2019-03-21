@@ -2,7 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.SpecimenConstant;
-import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
@@ -29,9 +29,9 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
     protected abstract String getRowType();
 
-    protected abstract void doExportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException;
+    protected abstract void doExportStudy(StudyNode study, ExportUtil.Appender appender, boolean includeHeader) throws IOException;
 
-    final public void exportStudy(Study study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
+    final public void exportStudy(StudyNode study, ExportUtil.Appender appender, boolean includeHeader) throws IOException {
         if (includeHeader) {
             writeHeader(appender);
         }

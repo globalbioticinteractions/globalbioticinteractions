@@ -4,6 +4,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
@@ -38,7 +39,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
     @Test
     public void readAssociations() throws StudyImporterException {
-        List<Study> studies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(0));
 
         ParserFactoryLocal parserFactory = new ParserFactoryLocal();
@@ -53,7 +54,7 @@ public class StudyImporterForLifeWatchGreeceTest extends GraphDBTestCase {
 
         int totalPredatorPreyRelationships = 0;
 
-        for (Study study : studies) {
+        for (StudyNode study : studies) {
             assertThat(study.getCitation(), is(notNullValue()));
             assertThat(study.getTitle(), containsString("greece"));
             Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);

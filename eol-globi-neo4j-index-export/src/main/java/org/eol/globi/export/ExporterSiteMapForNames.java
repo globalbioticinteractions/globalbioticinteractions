@@ -4,6 +4,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.export.SiteMapUtils;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -22,8 +23,8 @@ class ExporterSiteMapForNames implements GraphExporter {
         Set<String> names = new HashSet<String>();
         names.add("Homo sapiens");
         // just do it once
-        final List<Study> allStudies = NodeUtil.findAllStudies(graphDatabase);
-        for (Study allStudy : allStudies) {
+        final List<StudyNode> allStudies = NodeUtil.findAllStudies(graphDatabase);
+        for (StudyNode allStudy : allStudies) {
             final Iterable<Relationship> specimens = NodeUtil.getSpecimens(allStudy);
             for (Relationship specimen : specimens) {
                 final Iterable<Relationship> relationships = specimen.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));

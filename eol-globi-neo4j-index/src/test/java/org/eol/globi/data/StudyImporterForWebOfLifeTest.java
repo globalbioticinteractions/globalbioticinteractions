@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceUtil;
@@ -27,7 +28,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
         importer.importNetworks("weboflife/web-of-life_2016-01-15_192434.zip", "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         List<String> references = new ArrayList<>();
         for (Study allStudy : allStudies) {
             assertThat(allStudy.getSource(), startsWith("Web of Life. Accessed at <http://www.web-of-life.es/>"));

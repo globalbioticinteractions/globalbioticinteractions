@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
         importStudy(importer);
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         List<String> references = new ArrayList<String>();
         Set<String> referenceSet = new HashSet<String>();
         for (Study allStudy : allStudies) {

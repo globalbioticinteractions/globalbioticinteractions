@@ -8,6 +8,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
                         + "globi:occur:volume:6\tglobi:occur:6\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:1\n";
 
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
 
         StringWriter row = new StringWriter();
 
@@ -46,17 +47,15 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
         nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_NAME, "externalId1"));
         nodeFactory.createSpecimen(myStudy, new TaxonImpl("Some namus", PropertyAndValueDictionary.NO_MATCH));
 
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo(""));
     }
 
     protected void assertResult(String targetTaxonName, String sourceTaxonName, String expected) throws NodeFactoryException, ParseException, IOException {
         createTestData(null, targetTaxonName, sourceTaxonName);
-        Study myStudy1 = nodeFactory.findStudy("myStudy");
         StringWriter row = new StringWriter();
-        new ExporterMeasurementOrFact().exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), false);
+        new ExporterMeasurementOrFact().exportStudy(getStudySingleton(getGraphDb()), ExportUtil.AppenderWriter.of(row), false);
         assertThat(row.getBuffer().toString(), equalTo(expected));
     }
 

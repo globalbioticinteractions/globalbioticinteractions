@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetRegistryGitHubArchive;
@@ -53,7 +54,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
         });
         importStudy(importer);
 
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         List<String> refs = new ArrayList<String>();
         List<DOI> DOIs = new ArrayList<>();
         List<String> externalIds = new ArrayList<String>();
@@ -85,7 +86,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
     public void importWeidinger() throws StudyImporterException {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("millerse/Weidinger-et-al.-2009");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(allStudies.get(0).getSource(), containsString("Miller"));
         assertThat(taxonIndex.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
@@ -95,7 +96,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
     public void importDapstom() throws StudyImporterException {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("millerse/Dapstrom-integrated-database-and-portal-for-fish-stomach-records");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size() > 0, is(true));
     }
 
@@ -103,7 +104,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
     public void importSmithsonian() throws StudyImporterException {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("millerse/Smithsonian-Repository-Interactions");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         Map<String, String> citationDOIs = new TreeMap<String, String>();
         for (Study study : allStudies) {
             citationDOIs.put(study.getCitation(), study.getDOI().toString());
@@ -122,7 +123,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
     public void importSeltmann() throws StudyImporterException {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("globalbioticinteractions/digital-bee-collections-network");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonByName("Garrulus glandarius"), is(notNullValue()));
     }
@@ -131,7 +132,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
     public void importMillerSE() throws StudyImporterException {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("millerse/Bird-Parasite");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonByName("Bombycilla cedrorum"), is(notNullValue()));
     }
@@ -140,7 +141,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
     public void importMillerSECarribean() throws StudyImporterException {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("millerse/Caribbean-food-web");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonByName("Scarus coelestinus"), is(notNullValue()));
     }
@@ -150,7 +151,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("globalbioticinteractions/jsonld-template-dataset");
         resolveNames();
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         assertThat(taxonIndex.findTaxonById("NCBI:8782"), is(notNullValue()));
     }
@@ -160,7 +161,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
         StudyImporterForRegistry importer = createImporter();
 
         importer.importData("gomexsi/interaction-data");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         for (Study study : allStudies) {
             assertThat(study.getSource(), is(Matchers.notNullValue()));
         }
@@ -171,7 +172,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
         StudyImporterForRegistry importer = createImporter();
         importer.importData("globalbioticinteractions/natural-history-museum-london-interactions-bank");
         resolveNames();
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(taxonIndex.findTaxonByName("Magnifera indica"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Hermagoras sigillatus"), is(notNullValue()));
         List<String> citations = new ArrayList<String>();
@@ -192,10 +193,10 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
         StudyImporterForRegistry importer = createImporter();
 
         importer.importData("globalbioticinteractions/noaa-reem");
-        List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(3));
         int specimenCount = 0;
-        for (Study study : allStudies) {
+        for (StudyNode study : allStudies) {
             final Iterable<Relationship> specimens = NodeUtil.getSpecimens(study);
             for (Relationship specimen : specimens) {
                 specimenCount++;
@@ -214,7 +215,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
             try {
                 StudyImporterForRegistry importer = createImporter();
                 importer.importData(("globalbioticinteractions/" + dataset));
-                List<Study> allStudies = NodeUtil.findAllStudies(getGraphDb());
+                List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
                 assertThat(allStudies.size(), is(studyCount + 1));
                 studyCount += 1;
             } catch (Exception e) {
