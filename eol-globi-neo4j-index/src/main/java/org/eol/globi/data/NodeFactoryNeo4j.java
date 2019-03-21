@@ -21,7 +21,6 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.taxon.UberonLookupService;
-import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -40,7 +39,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
@@ -74,15 +72,15 @@ public class NodeFactoryNeo4j implements NodeFactory {
         this.lifeStageLookupService = new TermLookupServiceWithResource("life-stage-mapping.csv");
         this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv");
         this.envoLookupService = new EnvoLookupService();
-        this.studies = graphDb.index().forNodes("studies");
-        this.datasets = graphDb.index().forNodes("datasets");
-        this.seasons = graphDb.index().forNodes("seasons");
-        this.locations = graphDb.index().forNodes("locations");
-        this.environments = graphDb.index().forNodes("environments");
+        this.studies = NodeUtil.forNodes(graphDb, "studies");
+        this.datasets = NodeUtil.forNodes(graphDb, "datasets");
+        this.seasons = NodeUtil.forNodes(graphDb, "seasons");
+        this.locations = NodeUtil.forNodes(graphDb, "locations");
+        this.environments = NodeUtil.forNodes(graphDb, "environments");
 
-        this.ecoregions = graphDb.index().forNodes("ecoregions");
-        this.ecoregionPaths = graphDb.index().forNodes("ecoregionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-        this.ecoregionSuggestions = graphDb.index().forNodes("ecoregionSuggestions");
+        this.ecoregions = NodeUtil.forNodes(graphDb, "ecoregions");
+        this.ecoregionPaths = NodeUtil.forNodes(graphDb, "ecoregionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+        this.ecoregionSuggestions = NodeUtil.forNodes(graphDb, "ecoregionSuggestions");
     }
 
     public GraphDatabaseService getGraphDb() {
@@ -119,16 +117,20 @@ public class NodeFactoryNeo4j implements NodeFactory {
     private Node findLocationBy(Location location, String key, String value) {
         Node matchingLocation = null;
         String query = key + ":\"" + QueryParser.escape(value) + "\"";
-        IndexHits<Node> matchingLocations = locations.query(query);
-        for (Node node : matchingLocations) {
-            final LocationNode foundLocation = new LocationNode(node);
-            if (isSameLocation(location, foundLocation)) {
-                matchingLocation = node;
-                break;
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            IndexHits<Node> matchingLocations = locations.query(query);
+            for (Node node : matchingLocations) {
+                final LocationNode foundLocation = new LocationNode(node);
+                if (isSameLocation(location, foundLocation)) {
+                    matchingLocation = node;
+                    break;
+                }
             }
+            matchingLocations.close();
+        } finally {
+            transaction.finish();
         }
-
-        matchingLocations.close();
         return matchingLocation;
     }
 
@@ -176,16 +178,20 @@ public class NodeFactoryNeo4j implements NodeFactory {
         Node matchingLocation = null;
         validate(location);
         QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
-        IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
-        for (Node node : matchingLocations) {
-            final LocationNode foundLocation = new LocationNode(node);
-            if (isSameLocation(location, foundLocation)) {
-                matchingLocation = node;
-                break;
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
+            for (Node node : matchingLocations) {
+                final LocationNode foundLocation = new LocationNode(node);
+                if (isSameLocation(location, foundLocation)) {
+                    matchingLocation = node;
+                    break;
+                }
             }
+            matchingLocations.close();
+        } finally {
+            transaction.finish();
         }
-
-        matchingLocations.close();
         return matchingLocation;
     }
 
@@ -338,7 +344,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode.setSourceId(study.getSourceId());
 
             Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-            if (dataset != null && dataset instanceof DatasetNode) {
+            if (dataset instanceof DatasetNode) {
                 studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
             }
 
@@ -459,20 +465,18 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
         if (specimen != null && date != null) {
-            Iterable<Relationship> rels = getCollectedRel(specimen);
             Transaction tx = null;
             try {
+                tx = getGraphDb().beginTx();
+                Iterable<Relationship> rels = getCollectedRel(specimen);
                 for (Relationship rel : rels) {
-                    tx = tx == null ? rel.getGraphDatabase().beginTx() : tx;
                     rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
                 }
                 if (tx != null) {
                     tx.success();
                 }
             } finally {
-                if (tx != null) {
-                    tx.finish();
-                }
+                tx.finish();
             }
         }
     }
@@ -541,19 +545,24 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     private List<Ecoregion> getEcoRegions(Node locationNode) {
-        Iterable<Relationship> relationships = locationNode.getRelationships(NodeUtil.asNeo4j(RelTypes.IN_ECOREGION), Direction.OUTGOING);
         List<Ecoregion> ecoregions = null;
-        for (Relationship relationship : relationships) {
-            Node ecoregionNode = relationship.getEndNode();
-            Ecoregion ecoregion = new Ecoregion();
-            ecoregion.setGeometry(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "geometry", null));
-            ecoregion.setName(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.NAME, null));
-            ecoregion.setId(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID, null));
-            ecoregion.setPath(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "path", null));
-            if (ecoregions == null) {
-                ecoregions = new ArrayList<>();
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            Iterable<Relationship> relationships = locationNode.getRelationships(NodeUtil.asNeo4j(RelTypes.IN_ECOREGION), Direction.OUTGOING);
+            for (Relationship relationship : relationships) {
+                Node ecoregionNode = relationship.getEndNode();
+                Ecoregion ecoregion = new Ecoregion();
+                ecoregion.setGeometry(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "geometry", null));
+                ecoregion.setName(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.NAME, null));
+                ecoregion.setId(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID, null));
+                ecoregion.setPath(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "path", null));
+                if (ecoregions == null) {
+                    ecoregions = new ArrayList<>();
+                }
+                ecoregions.add(ecoregion);
             }
-            ecoregions.add(ecoregion);
+        } finally {
+            transaction.finish();
         }
         return ecoregions;
     }
@@ -597,11 +606,16 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private Node findEcoRegion(Ecoregion ecoregion) {
         String query = "name:\"" + ecoregion.getName() + "\"";
-        IndexHits<Node> hits = this.ecoregions.query(query);
+        Transaction transaction = getGraphDb().beginTx();
         try {
-            return hits.hasNext() ? hits.next() : null;
+            IndexHits<Node> hits = this.ecoregions.query(query);
+            try {
+                return hits.hasNext() ? hits.next() : null;
+            } finally {
+                hits.close();
+            }
         } finally {
-            hits.close();
+            transaction.finish();
         }
     }
 

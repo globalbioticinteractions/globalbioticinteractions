@@ -22,8 +22,10 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class NodeUtil {
     public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
@@ -127,5 +129,29 @@ public class NodeUtil {
         Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
         Iterator<Relationship> iterator = rels.iterator();
         return iterator.hasNext() ? iterator.next().getEndNode() : null;
+    }
+
+    public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName) {
+        Index<Node> index;
+        Transaction tx = graphDb.beginTx();
+        try {
+            index = graphDb.index().forNodes(indexName);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
+        return index;
+    }
+
+    public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName, Map properties) {
+        Index<Node> index;
+        Transaction tx = graphDb.beginTx();
+        try {
+            index = graphDb.index().forNodes(indexName, properties);
+            tx.success();
+        } finally {
+            tx.finish();
+        }
+        return index;
     }
 }

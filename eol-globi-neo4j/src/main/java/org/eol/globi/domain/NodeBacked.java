@@ -6,6 +6,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.Iterator;
+
 public class NodeBacked {
 
     private final Node underlyingNode;
@@ -48,8 +50,9 @@ public class NodeBacked {
         if (!this.equals(endNode)) {
             Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(relType));
             boolean hasRelationship = false;
-            while (relationships.iterator().hasNext() && !hasRelationship) {
-                Relationship relationship = relationships.iterator().next();
+            Iterator<Relationship> iterator = relationships.iterator();
+            while (iterator.hasNext() && !hasRelationship) {
+                Relationship relationship = iterator.next();
                 hasRelationship = endNode.equals(relationship.getEndNode());
             }
             if (!hasRelationship) {

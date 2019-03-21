@@ -30,7 +30,7 @@ public class ExportFlatInteractions implements GraphExporter {
 
     private static String createQuery(RelTypes argumentTypeRel, String argumentTypeId) {
         String argumentType = argumentTypeRel.name();
-        return "START dataset = node:datasets('namespace:*') " +
+        return "CYPHER 1.9 START dataset = node:datasets('namespace:*') " +
                 "MATCH dataset<-[:IN_DATASET]-study-[c:" + argumentType + "]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
                 "sourceSpecimen-[?:COLLECTED_AT]->loc, " +
                 "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon " +

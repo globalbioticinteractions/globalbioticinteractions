@@ -9,6 +9,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -25,7 +26,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
 
     public NonResolvingTaxonIndex(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
-        this.taxons = graphDbService.index().forNodes("taxons");
+        this.taxons = NodeUtil.forNodes(graphDbService, "taxons");
     }
 
     @Override

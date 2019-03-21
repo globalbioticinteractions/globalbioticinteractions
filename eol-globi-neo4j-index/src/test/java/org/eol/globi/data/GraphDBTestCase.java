@@ -7,8 +7,8 @@ import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
+import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetRegistryGitHubArchiveMaster;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -55,6 +55,11 @@ public abstract class GraphDBTestCase {
     public void startGraphDb() throws IOException {
         nodeFactory = createNodeFactory();
         getOrCreateTaxonIndex();
+    }
+
+    @After
+    public void shutdownGraphDb() {
+        graphDb.shutdown();
     }
 
     protected NodeFactoryNeo4j getNodeFactory() {
@@ -118,11 +123,6 @@ public abstract class GraphDBTestCase {
 
     protected TermLookupService getEnvoLookupService() {
         return new TestTermLookupService();
-    }
-
-    @After
-    public void shutdownGraphDb() {
-        graphDb.shutdown();
     }
 
     private static class TestTermLookupService implements TermLookupService {

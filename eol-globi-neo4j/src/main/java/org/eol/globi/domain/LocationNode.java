@@ -5,6 +5,7 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,12 @@ public class LocationNode extends NodeBacked implements Location {
     }
 
     private Double getDoubleOrNull(String altitude) {
-        return getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
+            return getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
+        } finally {
+            tx.finish();
+        }
     }
 
     @Override
