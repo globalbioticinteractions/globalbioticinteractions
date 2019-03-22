@@ -89,7 +89,9 @@ public class NameResolver {
                                 }
                                 watchForBatch.reset();
                                 watchForBatch.start();
-
+                                transaction.success();
+                                transaction.finish();
+                                transaction = graphService.beginTx();
                             }
                         }
                     }
