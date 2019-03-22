@@ -10,7 +10,9 @@ import java.util.Map;
 public abstract class GraphService {
 
     public static final Map<String, String> CONFIG_DEFAULT
-            = MapUtil.stringMap("keep_logical_logs", "false");
+            = MapUtil.stringMap(
+                    "keep_logical_logs", "false"
+            , "dump_configuration", "true");
 
     private static GraphDatabaseService graphDb;
 
@@ -33,6 +35,7 @@ public abstract class GraphService {
         GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storePath);
         graphDatabaseBuilder.setConfig(config);
         final GraphDatabaseService graphService = graphDatabaseBuilder.newGraphDatabase();
+
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
