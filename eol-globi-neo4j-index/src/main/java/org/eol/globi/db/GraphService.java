@@ -9,7 +9,9 @@ import java.util.Map;
 
 public abstract class GraphService {
 
-    public static final Map<String, String> CONFIG_DEFAULT = MapUtil.stringMap("keep_logical_logs", "0M size");
+    public static final Map<String, String> CONFIG_DEFAULT
+            = MapUtil.stringMap("keep_logical_logs", "false");
+
     private static GraphDatabaseService graphDb;
 
 
@@ -22,10 +24,6 @@ public abstract class GraphService {
             graphDb = startNeo4j(baseDir, config);
         }
         return graphDb;
-    }
-
-    public static GraphDatabaseService startNeo4j(String baseDir) {
-        return startNeo4j(baseDir, CONFIG_DEFAULT);
     }
 
     public static GraphDatabaseService startNeo4j(String baseDir, Map<String, String> config) {
