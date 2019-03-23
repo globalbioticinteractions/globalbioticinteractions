@@ -1,40 +1,32 @@
 package org.eol.globi.db;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.helpers.collection.MapUtil;
 
 import java.util.Map;
 
 public abstract class GraphService {
 
-    public static final Map<String, String> CONFIG_DEFAULT
-            = MapUtil.stringMap(
-                    "keep_logical_logs", "false"
-            , "dump_configuration", "true");
-
     private static GraphDatabaseService graphDb;
 
-
     public static GraphDatabaseService getGraphService(String baseDir) {
-        return getGraphService(baseDir, CONFIG_DEFAULT);
-    }
-
-    public static GraphDatabaseService getGraphService(String baseDir, Map<String, String> config) {
         if (graphDb == null) {
-            graphDb = startNeo4j(baseDir, config);
+            graphDb = startNeo4j(baseDir);
         }
         return graphDb;
     }
 
-    public static GraphDatabaseService startNeo4j(String baseDir, Map<String, String> config) {
+    public static GraphDatabaseService startNeo4j(String baseDir) {
         String storePath = baseDir + "graph.db";
         System.out.println("neo4j starting using [" + storePath + "]...");
 
-        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storePath);
-        graphDatabaseBuilder.setConfig(config);
-        final GraphDatabaseService graphService = graphDatabaseBuilder.newGraphDatabase();
+        final GraphDatabaseService graphService = new GraphDatabaseFactory()
+                .newEmbeddedDatabaseBuilder(storePath)
+                .setConfig(GraphDatabaseSettings.keep_logical_logs, "1k txs")
+                .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "10M")
+                .newGraphDatabase();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
