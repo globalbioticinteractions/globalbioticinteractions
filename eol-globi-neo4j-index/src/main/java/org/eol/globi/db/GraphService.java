@@ -24,8 +24,8 @@ public abstract class GraphService {
 
         final GraphDatabaseService graphService = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(storePath)
-                .setConfig(GraphDatabaseSettings.keep_logical_logs, "1k txs")
-                .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "10M")
+                .setConfig(GraphDatabaseSettings.keep_logical_logs, "150M size")
+                .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "50M")
                 .newGraphDatabase();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
