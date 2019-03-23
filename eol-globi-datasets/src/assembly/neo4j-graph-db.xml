@@ -16,6 +16,10 @@
             <includes>
                 <include>**</include>
             </includes>
+            <excludes>
+                <!-- leave transactions logs to reduce size -->
+                <exclude>neostore.transaction.db*</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 </assembly>
