@@ -159,9 +159,14 @@ class InteractionListenerImpl implements InteractionListener {
     static Predicate<Map<String, String>> createInteractionTypePredicate(ImportLogger logger) {
         return (Map<String, String> l) -> {
             String interactionTypeId = l.get(INTERACTION_TYPE_ID);
-            boolean hasValidId = InteractType.typeOf(interactionTypeId) != null;
-            if (StringUtils.isNotBlank(interactionTypeId) && !hasValidId && logger != null) {
-                logger.warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
+            boolean hasValidId = false;
+            if (StringUtils.isBlank(interactionTypeId) && logger != null) {
+                logger.warn(null, "missing interactionTypeId");
+            } else {
+                hasValidId = InteractType.typeOf(interactionTypeId) != null;
+                if (!hasValidId && logger != null) {
+                    logger.warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
+                }
             }
             return hasValidId;
         };
