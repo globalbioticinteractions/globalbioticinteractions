@@ -9,32 +9,35 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.eol.globi.domain.InteractType.InteractionRole.OBJECT;
+import static org.eol.globi.domain.InteractType.InteractionRole.SUBJECT;
+
 public enum InteractType implements RelType {
-    PREYS_UPON("http://purl.obolibrary.org/obo/RO_0002439", "preysOn"),
-    PARASITE_OF("http://purl.obolibrary.org/obo/RO_0002444", "parasiteOf"),
-    HAS_HOST("http://purl.obolibrary.org/obo/RO_0002454", "hasHost"),
+    PREYS_UPON("http://purl.obolibrary.org/obo/RO_0002439", "preysOn", SUBJECT, OBJECT),
+    PARASITE_OF("http://purl.obolibrary.org/obo/RO_0002444", "parasiteOf", SUBJECT, OBJECT),
+    HAS_HOST("http://purl.obolibrary.org/obo/RO_0002454", "hasHost", SUBJECT, OBJECT),
     INTERACTS_WITH("http://purl.obolibrary.org/obo/RO_0002437", "interactsWith"),
-    HOST_OF("http://purl.obolibrary.org/obo/RO_0002453", "hostOf"),
-    POLLINATES("http://purl.obolibrary.org/obo/RO_0002455", "pollinates"),
-    PERCHING_ON(PropertyAndValueDictionary.NO_MATCH, "perchingOn"),
-    ATE("http://purl.obolibrary.org/obo/RO_0002470", "eats"),
+    HOST_OF("http://purl.obolibrary.org/obo/RO_0002453", "hostOf", OBJECT, SUBJECT),
+    POLLINATES("http://purl.obolibrary.org/obo/RO_0002455", "pollinates", SUBJECT, OBJECT),
+    PERCHING_ON(PropertyAndValueDictionary.NO_MATCH, "perchingOn", SUBJECT, OBJECT),
+    ATE("http://purl.obolibrary.org/obo/RO_0002470", "eats", SUBJECT, OBJECT),
     SYMBIONT_OF("http://purl.obolibrary.org/obo/RO_0002440", "symbiontOf"),
-    PREYED_UPON_BY("http://purl.obolibrary.org/obo/RO_0002458", "preyedUponBy"),
-    POLLINATED_BY("http://purl.obolibrary.org/obo/RO_0002456", "pollinatedBy"),
-    EATEN_BY("http://purl.obolibrary.org/obo/RO_0002471", "eatenBy"),
-    HAS_PARASITE("http://purl.obolibrary.org/obo/RO_0002445", "hasParasite"),
-    PERCHED_ON_BY(PropertyAndValueDictionary.NO_MATCH, "perchedOnBy"),
-    HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557", "hasPathogen"),
-    PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556", "pathogenOf"),
+    PREYED_UPON_BY("http://purl.obolibrary.org/obo/RO_0002458", "preyedUponBy", OBJECT, SUBJECT),
+    POLLINATED_BY("http://purl.obolibrary.org/obo/RO_0002456", "pollinatedBy", OBJECT, SUBJECT),
+    EATEN_BY("http://purl.obolibrary.org/obo/RO_0002471", "eatenBy", OBJECT, SUBJECT),
+    HAS_PARASITE("http://purl.obolibrary.org/obo/RO_0002445", "hasParasite", OBJECT, SUBJECT),
+    PERCHED_ON_BY(PropertyAndValueDictionary.NO_MATCH, "perchedOnBy", OBJECT, SUBJECT),
+    HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557", "hasPathogen", OBJECT, SUBJECT),
+    PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556", "pathogenOf", SUBJECT, OBJECT),
 
-    HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460", "hasVector"),
-    VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459", "vectorOf"),
+    HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460", "hasVector", SUBJECT, OBJECT),
+    VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459", "vectorOf", OBJECT, SUBJECT),
 
-    VISITED_BY("http://purl.obolibrary.org/obo/RO_0002619", "visitedBy"),
-    VISITS("http://purl.obolibrary.org/obo/RO_0002618", "visits"),
+    VISITED_BY("http://purl.obolibrary.org/obo/RO_0002619", "visitedBy", OBJECT, SUBJECT),
+    VISITS("http://purl.obolibrary.org/obo/RO_0002618", "visits", SUBJECT, OBJECT),
 
-    FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002623", "flowersVisitedBy"),
-    VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002622", "visitsFlowersOf"),
+    FLOWERS_VISITED_BY("http://purl.obolibrary.org/obo/RO_0002623", "flowersVisitedBy", OBJECT, SUBJECT),
+    VISITS_FLOWERS_OF("http://purl.obolibrary.org/obo/RO_0002622", "visitsFlowersOf", SUBJECT, OBJECT),
 
     INHABITED_BY(PropertyAndValueDictionary.NO_MATCH, "inhabitedBy"),
     INHABITS(PropertyAndValueDictionary.NO_MATCH, "inhabits"),
@@ -58,29 +61,29 @@ public enum InteractType implements RelType {
 
     LIVES_WITH(PropertyAndValueDictionary.NO_MATCH, "livesWith"),
 
-    ENDOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002634", "endoparasiteOf"),
-    HAS_ENDOPARASITE("http://purl.obolibrary.org/obo/RO_0002635", "hasEndoparasite"),
+    ENDOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002634", "endoparasiteOf", SUBJECT, OBJECT),
+    HAS_ENDOPARASITE("http://purl.obolibrary.org/obo/RO_0002635", "hasEndoparasite", OBJECT, SUBJECT),
 
-    HYPERPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002553", "hyperparasiteOf"),
-    HAS_HYPERPARASITE("http://purl.obolibrary.org/obo/RO_0002554", "hasHyperparasite"),
+    HYPERPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002553", "hyperparasiteOf", SUBJECT, OBJECT),
+    HAS_HYPERPARASITE("http://purl.obolibrary.org/obo/RO_0002554", "hasHyperparasite", OBJECT, SUBJECT),
 
-    HYPERPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "hyperparasitoidOf"),
-    HAS_HYPERPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasHyperparasitoid"),
+    HYPERPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "hyperparasitoidOf", SUBJECT, OBJECT),
+    HAS_HYPERPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasHyperparasitoid", OBJECT, SUBJECT),
 
-    ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632", "ectoParasiteOf"),
-    HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633", "hasEctoparasite"),
+    ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632", "ectoParasiteOf", SUBJECT, OBJECT),
+    HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633", "hasEctoparasite", OBJECT, SUBJECT),
 
-    KLEPTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0008503", "kleptoparasiteOf"),
-    HAS_KLEPTOPARASITE("http://purl.obolibrary.org/obo/RO_0008503", "hasKleptoparasite"),
+    KLEPTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0008503", "kleptoparasiteOf", SUBJECT, OBJECT),
+    HAS_KLEPTOPARASITE("http://purl.obolibrary.org/obo/RO_0008503", "hasKleptoparasite", OBJECT, SUBJECT),
 
-    PARASITOID_OF("http://purl.obolibrary.org/obo/RO_0002208", "parasitoidOf"),
-    HAS_PARASITOID("http://purl.obolibrary.org/obo/RO_0002209", "hasParasitoid"),
+    PARASITOID_OF("http://purl.obolibrary.org/obo/RO_0002208", "parasitoidOf", SUBJECT, OBJECT),
+    HAS_PARASITOID("http://purl.obolibrary.org/obo/RO_0002209", "hasParasitoid", OBJECT, SUBJECT),
 
-    ENDOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "endoparasitoidOf"),
-    HAS_ENDOPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasEndoparasitoid"),
+    ENDOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "endoparasitoidOf", SUBJECT, OBJECT),
+    HAS_ENDOPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasEndoparasitoid", OBJECT, SUBJECT),
 
-    ECTOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "ectoParasitoid"),
-    HAS_ECTOPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasEctoparasitoid"),
+    ECTOPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "ectoParasitoid", SUBJECT, OBJECT),
+    HAS_ECTOPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasEctoparasitoid", OBJECT, SUBJECT),
 
     // living in something that is not the body.
     GUEST_OF(PropertyAndValueDictionary.NO_MATCH, "guestOf"),
@@ -95,14 +98,14 @@ public enum InteractType implements RelType {
     DISPERSAL_VECTOR_OF("http://eol.org/schema/terms/DispersalVector", "dispersalVectorOf"),
     HAS_DISPERAL_VECTOR("http://eol.org/schema/terms/HasDispersalVector", "hasDispersalVector"),
 
-    KILLED_BY("http://purl.obolibrary.org/obo/RO_0002627","killedBy"),
-    KILLS("http://purl.obolibrary.org/obo/RO_0002626","kills"),
+    KILLED_BY("http://purl.obolibrary.org/obo/RO_0002627", "killedBy", OBJECT, SUBJECT),
+    KILLS("http://purl.obolibrary.org/obo/RO_0002626", "kills", SUBJECT, OBJECT),
 
-    EPIPHITE_OF("http://purl.obolibrary.org/obo/RO_0008501", "epiphyteOf"),
-    HAS_EPIPHITE("http://purl.obolibrary.org/obo/RO_0008502", "hasEpiphyte"),
+    EPIPHITE_OF("http://purl.obolibrary.org/obo/RO_0008501", "epiphyteOf", SUBJECT, OBJECT),
+    HAS_EPIPHITE("http://purl.obolibrary.org/obo/RO_0008502", "hasEpiphyte", OBJECT, SUBJECT),
 
-    LAYS_EGGS_ON("http://purl.obolibrary.org/obo/RO_0008507", "laysEggsOn"),
-    HAS_EGGS_LAYED_ON_BY("http://purl.obolibrary.org/obo/RO_0008508", "hasEggsLayedOnBy"),
+    LAYS_EGGS_ON("http://purl.obolibrary.org/obo/RO_0008507", "laysEggsOn", SUBJECT, OBJECT),
+    HAS_EGGS_LAYED_ON_BY("http://purl.obolibrary.org/obo/RO_0008508", "hasEggsLayedOnBy", OBJECT, SUBJECT),
 
     CO_OCCURS_WITH("http://purl.obolibrary.org/obo/RO_0008506", "coOccursWith"),
     COMMENSALIST_OF("http://purl.obolibrary.org/obo/RO_0002441", "commensalistOf");
@@ -110,6 +113,15 @@ public enum InteractType implements RelType {
 
     String iri;
     String label;
+
+    public enum InteractionRole {
+        OBJECT,
+        SUBJECT,
+        NOT_DEFINED
+    }
+
+    InteractionRole sourceRole;
+    InteractionRole targetRole;
 
     private static final Map<String, InteractType> SYNONYMS = new HashMap<String, InteractType>() {{
         put("http://eol.org/schema/terms/FlowersVisitedBy", FLOWERS_VISITED_BY);
@@ -120,8 +132,14 @@ public enum InteractType implements RelType {
 
 
     InteractType(String iri, String label) {
+        this(iri, label, InteractionRole.NOT_DEFINED, InteractionRole.NOT_DEFINED);
+    }
+
+    InteractType(String iri, String label, InteractionRole sourceRole, InteractionRole targetRole) {
         this.iri = iri;
         this.label = StringUtils.isBlank(label) ? name() : label;
+        this.sourceRole = sourceRole;
+        this.targetRole = targetRole;
     }
 
     public String getIRI() {
@@ -195,9 +213,7 @@ public enum InteractType implements RelType {
 
         Map<InteractType, Collection<InteractType>> invertedPathMap = new HashMap<InteractType, Collection<InteractType>>() {
             {
-                for (Map.Entry<InteractType, Collection<InteractType>> entry : pathMap.entrySet())
-
-                {
+                for (Map.Entry<InteractType, Collection<InteractType>> entry : pathMap.entrySet()) {
                     ArrayList<InteractType> invertedPath = new ArrayList<InteractType>();
                     InteractType keyInverse = inverseOf(entry.getKey());
                     if (keyInverse != entry.getKey()) {

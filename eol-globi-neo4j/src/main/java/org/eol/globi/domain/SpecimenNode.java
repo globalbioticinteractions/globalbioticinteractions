@@ -25,14 +25,17 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         }
     }
 
-    public static List<Relationship> createInteraction(NodeBacked donorSpecimen, NodeBacked recipientSpecimen, InteractType relType) {
-        final Relationship interactRel = donorSpecimen.createRelationshipToNoTx(recipientSpecimen, relType);
-        enrichWithInteractProps(relType, interactRel, false);
+    private static void createInteraction(NodeBacked source, InteractType relType, NodeBacked target) {
+        NodeBacked subject = relType.targetRole == InteractType.InteractionRole.SUBJECT ? target : source;
+        NodeBacked object = relType.sourceRole == InteractType.InteractionRole.OBJECT ? source : target;
+        boolean inverted = relType.sourceRole == InteractType.InteractionRole.OBJECT;
+
+        final Relationship interactRel = subject.createRelationshipToNoTx(object, relType);
+        enrichWithInteractProps(relType, interactRel, inverted);
 
         final InteractType inverseRelType = InteractType.inverseOf(relType);
-        Relationship inverseInteractRel = recipientSpecimen.createRelationshipToNoTx(donorSpecimen, inverseRelType);
-        enrichWithInteractProps(inverseRelType, inverseInteractRel, true);
-        return inverseInteractRel == null ? Collections.singletonList(interactRel) : Arrays.asList(interactRel, interactRel);
+        Relationship inverseInteractRel = object.createRelationshipToNoTx(subject, inverseRelType);
+        enrichWithInteractProps(inverseRelType, inverseInteractRel, inverted);
     }
 
     public static void enrichWithInteractProps(InteractType interactType, Relationship interactRel, boolean inverted) {
@@ -119,7 +122,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         if (recipientSpecimen instanceof NodeBacked) {
             Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
             try {
-                createInteraction(this, (NodeBacked) recipientSpecimen, relType);
+                createInteraction(this, relType, (NodeBacked) recipientSpecimen);
                 tx.success();
             } finally {
                 tx.finish();

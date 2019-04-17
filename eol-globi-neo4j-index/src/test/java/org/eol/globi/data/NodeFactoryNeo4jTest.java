@@ -68,6 +68,15 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertInteraction(specimen, specimen1, RelTypes.COLLECTED);
     }
 
+    @Test
+    public void createPassiveInteraction() throws NodeFactoryException {
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null, null));
+        SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
+        SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
+        specimen1.interactsWith(specimen, InteractType.EATEN_BY);
+        assertInteraction(specimen1, specimen, RelTypes.COLLECTED);
+    }
+
     private void assertInteraction(SpecimenNode specimen, SpecimenNode specimen1, RelTypes studyRelationType) {
         assertStudyType(studyRelationType, specimen);
         assertStudyType(studyRelationType, specimen1);
