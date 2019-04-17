@@ -69,7 +69,7 @@ public class LinkerDOI implements Linker {
                     resolveBatch(doiResolver, batch);
                     batch.clear();
                     transaction.success();
-                    transaction.finish();
+                    transaction.close();
                     transaction = graphDb.beginTx();
                 }
             }
@@ -82,7 +82,7 @@ public class LinkerDOI implements Linker {
             stopWatch.stop();
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 

@@ -63,7 +63,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertThat(counts, hasItems(10L, 1L));
         assertThat(labels, hasItems("eats"));
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     @Test

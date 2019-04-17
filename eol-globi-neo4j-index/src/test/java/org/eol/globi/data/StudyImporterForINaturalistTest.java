@@ -132,7 +132,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
             }
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 

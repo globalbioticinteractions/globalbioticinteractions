@@ -61,13 +61,13 @@ public class LinkerTaxonIndex implements Linker {
                 String aggregateTaxonIds = StringUtils.join(taxonIds, CharsetConstant.SEPARATOR);
                 hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
                 tx.success();
-                tx.finish();
+                tx.close();
                 tx = graphDb.beginTx();
             }
             hits.close();
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -77,7 +77,7 @@ public class LinkerTaxonIndex implements Linker {
             fuzzySearchIndex.index(indexNode, taxonNode);
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 

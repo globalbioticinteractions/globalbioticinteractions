@@ -126,7 +126,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
                 createInteraction(this, relType, (NodeBacked) recipientSpecimen);
                 tx.success();
             } finally {
-                tx.finish();
+                tx.close();
             }
         }
     }
@@ -140,7 +140,7 @@ public class SpecimenNode extends NodeBacked implements Specimen {
             createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 

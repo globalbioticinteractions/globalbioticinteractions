@@ -40,7 +40,7 @@ public class StudyNode extends NodeBacked implements Study {
             transaction.success();
             return title;
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -93,7 +93,7 @@ public class StudyNode extends NodeBacked implements Study {
             tx.success();
             return citation;
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 

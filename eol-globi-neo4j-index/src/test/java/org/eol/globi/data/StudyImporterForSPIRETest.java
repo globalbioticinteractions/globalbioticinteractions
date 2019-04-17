@@ -123,7 +123,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
             }
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         assertThat(count, is(1));
     }

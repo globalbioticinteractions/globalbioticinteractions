@@ -38,7 +38,7 @@ public class NodeUtil {
             return value;
 
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -61,7 +61,7 @@ public class NodeUtil {
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -82,7 +82,7 @@ public class NodeUtil {
             hits.close();
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -150,7 +150,7 @@ public class NodeUtil {
             tx.success();
             return datasetNode;
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -161,7 +161,7 @@ public class NodeUtil {
             index = graphDb.index().forNodes(indexName);
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
         return index;
     }
@@ -173,7 +173,7 @@ public class NodeUtil {
             index = graphDb.index().forNodes(indexName, properties);
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
         return index;
     }
@@ -191,13 +191,13 @@ public class NodeUtil {
                 listener.on(rel);
                 if (++counter % batchSize == 0) {
                     tx.success();
-                    tx.finish();
+                    tx.close();
                     tx = ntd.srcNode.getGraphDatabase().beginTx();
                 }
             }
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 

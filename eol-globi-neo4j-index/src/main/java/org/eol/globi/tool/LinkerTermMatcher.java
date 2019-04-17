@@ -49,7 +49,7 @@ public class LinkerTermMatcher implements Linker {
                 if (counter % BATCH_SIZE == 0) {
                     handleBatch(graphDb, termMatcher, nodeMap, counter);
                     transaction.success();
-                    transaction.finish();
+                    transaction.close();
                     transaction = graphDb.beginTx();
                 }
                 TaxonNode node = new TaxonNode(hit);
@@ -59,7 +59,7 @@ public class LinkerTermMatcher implements Linker {
             handleBatch(graphDb, termMatcher, nodeMap, counter);
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 

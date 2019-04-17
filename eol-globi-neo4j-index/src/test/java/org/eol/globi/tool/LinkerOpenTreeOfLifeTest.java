@@ -66,7 +66,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
             Collection<String> externalIds = LinkerTestUtil.assertHasOther(taxon.getName(), expectedCount, taxonIndex, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
             transaction.success();
-            transaction.finish();
+            transaction.close();
         } finally {
             if (index != null) {
                 index.destroy();

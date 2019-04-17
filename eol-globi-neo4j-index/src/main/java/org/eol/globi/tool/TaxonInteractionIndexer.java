@@ -87,7 +87,7 @@ public class TaxonInteractionIndexer {
     public void finalizeTx(Transaction tx) {
         if (tx != null) {
             tx.success();
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -128,7 +128,7 @@ public class TaxonInteractionIndexer {
                     watchForBatch.reset();
                     watchForBatch.start();
                     transaction.success();
-                    transaction.finish();
+                    transaction.close();
                     transaction = graphService.beginTx();
                 }
             }
@@ -136,7 +136,7 @@ public class TaxonInteractionIndexer {
             watchForEntireRun.stop();
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         LOG.info("walked [" + count + "] interactions in " + getProgressMsg(count, watchForEntireRun.getTime()));
     }

@@ -67,7 +67,7 @@ public class LocationNode extends NodeBacked implements Location {
             tx.success();
             return aDouble;
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -98,7 +98,7 @@ public class LocationNode extends NodeBacked implements Location {
             }
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -112,7 +112,7 @@ public class LocationNode extends NodeBacked implements Location {
             }
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
         return environments;
 

@@ -18,7 +18,7 @@ public abstract class NamedNode extends NodeBacked implements Named {
             tx.success();
             return property;
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -28,7 +28,7 @@ public abstract class NamedNode extends NodeBacked implements Named {
             getUnderlyingNode().setProperty(PropertyAndValueDictionary.NAME, StringUtils.isBlank(name) ? PropertyAndValueDictionary.NO_NAME : name);
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 }

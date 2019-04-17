@@ -146,7 +146,7 @@ public class ReportGenerator {
             getGraphDb().index().forNodes("reports").add(node, StudyConstant.SOURCE, study.getTitle());
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -224,7 +224,7 @@ public class ReportGenerator {
                 getGraphDb().index().forNodes("reports").add(node, sourceHandler.getGroupByKeyName(), groupByKey);
                 tx.success();
             } finally {
-                tx.finish();
+                tx.close();
             }
         }
 
@@ -262,7 +262,7 @@ public class ReportGenerator {
             getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
 
 

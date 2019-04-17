@@ -51,7 +51,7 @@ public class LinkerOpenTreeOfLife implements Linker {
         }
         hits.close();
         transaction.success();
-        transaction.finish();
+        transaction.close();
 
 
     }

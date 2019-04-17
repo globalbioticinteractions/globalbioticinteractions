@@ -93,7 +93,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
             assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT)));
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
 
     }

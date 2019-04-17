@@ -70,7 +70,7 @@ public class NormalizerTest extends GraphDBTestCase {
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     private Normalizer createNormalizer() {

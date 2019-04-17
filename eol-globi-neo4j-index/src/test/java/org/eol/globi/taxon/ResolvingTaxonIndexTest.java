@@ -39,7 +39,7 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
         assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
         transaction.success();
-        transaction.finish();
+        transaction.close();
 
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon(new TaxonImpl("some name")));
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"));

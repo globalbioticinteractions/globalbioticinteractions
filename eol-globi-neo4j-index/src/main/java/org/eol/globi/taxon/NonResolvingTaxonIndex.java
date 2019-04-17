@@ -67,7 +67,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
                 matchingTaxa.close();
                 transaction.success();
             } finally {
-                transaction.finish();
+                transaction.close();
             }
         }
         return firstMatchingTaxon;
@@ -123,7 +123,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
             tx.success();
         } finally {
             if (tx != null) {
-                tx.finish();
+                tx.close();
             }
         }
     }
@@ -149,7 +149,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
 
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return taxonNode;
     }

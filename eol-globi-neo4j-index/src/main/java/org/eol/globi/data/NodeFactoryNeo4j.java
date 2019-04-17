@@ -130,7 +130,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             matchingLocations.close();
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return matchingLocation;
     }
@@ -192,7 +192,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             matchingLocations.close();
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return matchingLocation;
     }
@@ -207,7 +207,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             seasons.add(node, SeasonNode.TITLE, seasonNameLower);
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return season;
     }
@@ -238,7 +238,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return locationNode;
     }
@@ -322,7 +322,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             specimen = new SpecimenNode(graphDb.createNode(), null);
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return specimen;
     }
@@ -354,7 +354,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studies.add(node, StudyConstant.TITLE_IN_NAMESPACE, getTitleInNamespace(study));
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
 
         return studyNode;
@@ -405,7 +405,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studyNode = findStudy(study);
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
 
         return studyNode == null
@@ -428,7 +428,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             transaction.success();
             return study;
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -456,7 +456,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             nodeIndexHits.close();
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return seasonHit == null ? null : new SeasonNode(seasonHit);
     }
@@ -497,7 +497,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 }
                 tx.success();
             } finally {
-                tx.finish();
+                tx.close();
             }
         }
     }
@@ -529,7 +529,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
 
         return date;
@@ -563,7 +563,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
                     transaction.success();
                     environment = environmentNode;
                 } finally {
-                    transaction.finish();
+                    transaction.close();
                 }
             }
             Transaction transaction = graphDb.beginTx();
@@ -572,7 +572,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 normalizedEnvironments.add(environment);
                 transaction.success();
             } finally {
-                transaction.finish();
+                transaction.close();
             }
         }
         return normalizedEnvironments;
@@ -596,7 +596,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 ecoregions.add(ecoregion);
             }
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return ecoregions;
     }
@@ -634,7 +634,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             ((NodeBacked) location).getUnderlyingNode().createRelationshipTo(ecoregionNode, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -649,7 +649,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 hits.close();
             }
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -682,7 +682,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             matches.close();
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return firstMatchingEnvironment;
     }
@@ -767,7 +767,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             transaction.success();
             return datasetCreated;
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -786,7 +786,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         return interactionNode;
     }

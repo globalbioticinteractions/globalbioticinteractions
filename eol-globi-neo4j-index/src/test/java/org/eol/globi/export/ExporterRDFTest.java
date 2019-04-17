@@ -62,7 +62,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
             ((NodeBacked)taxon).getUnderlyingNode().createRelationshipTo(((NodeBacked)sameAsTaxon).getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
 
         File file = File.createTempFile("spire-as-light-globi", ".nq");

@@ -76,7 +76,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
             }
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
         assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
 

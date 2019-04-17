@@ -39,7 +39,7 @@ public class NodeBacked {
             rel = createRelationshipToNoTx((NodeBacked)endNode, relType);
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
 
         return rel;
@@ -73,7 +73,7 @@ public class NodeBacked {
                 getUnderlyingNode().setProperty(propertyName, propertyValue);
                 transaction.success();
             } finally {
-                transaction.finish();
+                transaction.close();
             }
         }
     }
@@ -87,7 +87,7 @@ public class NodeBacked {
             tx.success();
             return value;
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -121,7 +121,7 @@ public class NodeBacked {
             }
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
         return value == null ? "" : value.toString();
 

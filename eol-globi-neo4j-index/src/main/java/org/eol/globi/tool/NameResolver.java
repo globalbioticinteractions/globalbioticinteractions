@@ -90,7 +90,7 @@ public class NameResolver {
                                 watchForBatch.reset();
                                 watchForBatch.start();
                                 transaction.success();
-                                transaction.finish();
+                                transaction.close();
                                 transaction = graphService.beginTx();
                             }
                         }
@@ -103,7 +103,7 @@ public class NameResolver {
             transaction.success();
             LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watchForEntireRun.getTime()));
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 

@@ -66,7 +66,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         reports.close();
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
 
@@ -108,7 +108,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
 
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     @Test
@@ -149,7 +149,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
 
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     @Test
@@ -188,7 +188,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
 
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     @Test
@@ -215,7 +215,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     protected Study createStudy(Study study1) throws NodeFactoryException {

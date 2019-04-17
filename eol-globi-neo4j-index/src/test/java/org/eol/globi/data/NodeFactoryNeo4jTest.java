@@ -97,7 +97,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -108,7 +108,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             transaction.success();
             assertThat(hasRelationship, is(true));
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -308,7 +308,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
 
         StudyImpl otherStudy = new StudyImpl("my other title", "some source", SOME_DOI, "some citation");
@@ -380,7 +380,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 
@@ -400,7 +400,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -488,7 +488,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             assertThat(hits.size(), is(1));
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
 
     }
@@ -506,7 +506,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             assertThat(count, is(1));
             transaction.success();
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 

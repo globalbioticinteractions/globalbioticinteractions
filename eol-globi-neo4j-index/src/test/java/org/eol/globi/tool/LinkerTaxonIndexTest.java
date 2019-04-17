@@ -66,7 +66,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").size(), is(0));
 
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     @Test
@@ -103,7 +103,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(hits.size(), is(0));
 
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     private Taxon setTaxonProps(Taxon taxon) {

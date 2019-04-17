@@ -29,7 +29,7 @@ public class InteractionNode extends NodeBacked implements Interaction {
             }
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
         return participants;
     }
@@ -43,7 +43,7 @@ public class InteractionNode extends NodeBacked implements Interaction {
             tx.success();
             return study;
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 

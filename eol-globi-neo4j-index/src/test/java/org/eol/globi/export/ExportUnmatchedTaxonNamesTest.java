@@ -113,7 +113,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
             node.createRelationshipTo(synonymNode, NodeUtil.asNeo4j(RelTypes.SAME_AS));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
 
         preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Canis", null));

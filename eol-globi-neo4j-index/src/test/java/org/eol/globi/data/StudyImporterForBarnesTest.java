@@ -76,7 +76,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
             assertThat("missing location", nodeFactory.findLocation(new LocationImpl(38.0, 23.0, -75.0, null)), is(notNullValue()));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
 
     }

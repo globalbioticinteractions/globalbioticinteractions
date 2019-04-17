@@ -64,7 +64,7 @@ public class StudyImporterForGeminaTest extends GraphDBTestCase {
             assertThat(antraxHosts, hasItem("Equus caballus"));
             tx.success();
         } finally {
-            tx.finish();
+            tx.close();
         }
     }
 

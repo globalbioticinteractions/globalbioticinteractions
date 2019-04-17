@@ -88,7 +88,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
             transaction.success();
             return value;
         } finally {
-            transaction.finish();
+            transaction.close();
         }
     }
 
@@ -120,7 +120,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         hits = taxonService.findCloseMatchesForTaxonName("homo sa");
         assertThat(hits.hasNext(), is(true));
         transaction.success();
-        transaction.finish();
+        transaction.close();
     }
 
     @Test

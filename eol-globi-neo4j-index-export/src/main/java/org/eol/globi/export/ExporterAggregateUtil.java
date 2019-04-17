@@ -51,7 +51,7 @@ public class ExporterAggregateUtil {
                 );
                 transaction.success();
             } finally {
-                transaction.finish();
+                transaction.close();
             }
 
         }
