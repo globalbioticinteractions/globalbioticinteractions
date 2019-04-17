@@ -28,14 +28,15 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     private static void createInteraction(NodeBacked source, InteractType relType, NodeBacked target) {
         NodeBacked subject = relType.targetRole == InteractType.InteractionRole.SUBJECT ? target : source;
         NodeBacked object = relType.sourceRole == InteractType.InteractionRole.OBJECT ? source : target;
-        boolean inverted = relType.sourceRole == InteractType.InteractionRole.OBJECT;
+
+        boolean isFlipped = relType.sourceRole == InteractType.InteractionRole.OBJECT;
 
         final Relationship interactRel = subject.createRelationshipToNoTx(object, relType);
-        enrichWithInteractProps(relType, interactRel, inverted);
+        enrichWithInteractProps(relType, interactRel, isFlipped);
 
         final InteractType inverseRelType = InteractType.inverseOf(relType);
         Relationship inverseInteractRel = object.createRelationshipToNoTx(subject, inverseRelType);
-        enrichWithInteractProps(inverseRelType, inverseInteractRel, inverted);
+        enrichWithInteractProps(inverseRelType, inverseInteractRel, !isFlipped);
     }
 
     public static void enrichWithInteractProps(InteractType interactType, Relationship interactRel, boolean inverted) {
