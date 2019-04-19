@@ -35,7 +35,9 @@ public class PropertyAndValueDictionary {
     public static final String NAME_SOURCE_ACCESSED_AT = "nameSourceAccessedAt";
     public static final String NAME_MATCH_TYPE = "nameMatchType";
 
+    // see also http://purl.obolibrary.org/obo/SEPIO_0000008 from https://github.com/monarch-initiative/SEPIO-ontology
     public static final String REFUTES = "https://en.wiktionary.org/wiki/refute";
+    // see also http://purl.obolibrary.org/obo/SEPIO_0000007 from https://github.com/monarch-initiative/SEPIO-ontology
     public static final String SUPPORTS = "https://en.wiktionary.org/wiki/support";
 
 }
