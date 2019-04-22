@@ -20,6 +20,7 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.Dataset;
@@ -48,6 +49,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class NodeFactoryNeo4jTest extends GraphDBTestCase {
@@ -65,7 +67,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
         specimen.interactsWith(specimen1, InteractType.ATE);
-        assertInteraction(specimen, specimen1, RelTypes.COLLECTED);
+        assertInteraction(specimen, specimen1, RelTypes.COLLECTED, "Donalda duckus");
     }
 
     @Test
@@ -74,10 +76,10 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
         specimen1.interactsWith(specimen, InteractType.EATEN_BY);
-        assertInteraction(specimen1, specimen, RelTypes.COLLECTED);
+        assertInteraction(specimen, specimen1, RelTypes.COLLECTED, "Donalda duckus");
     }
 
-    private void assertInteraction(SpecimenNode specimen, SpecimenNode specimen1, RelTypes studyRelationType) {
+    private void assertInteraction(SpecimenNode specimen, SpecimenNode specimen1, RelTypes studyRelationType, String sourceTaxonName) {
         assertStudyType(studyRelationType, specimen);
         assertStudyType(studyRelationType, specimen1);
 
@@ -88,6 +90,13 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             final Relationship rel = relIter.next();
             assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002470"));
             assertThat(rel.getProperty("label").toString(), is("eats"));
+            assertFalse(rel.hasProperty("inverted"));
+
+            final Iterator<Relationship> relIterClassification = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS)).iterator();
+            assertThat(relIterClassification.hasNext(), is(true));
+            final Node taxonNode = relIterClassification.next().getEndNode();
+            TaxonNode actualSourceTaxonNode = new TaxonNode(taxonNode);
+            assertThat(actualSourceTaxonNode.getName(), is(sourceTaxonName));
 
             Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.EATEN_BY));
             Iterator<Relationship> iterator = relationships.iterator();
@@ -118,7 +127,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null), RelTypes.REFUTES);
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null), RelTypes.REFUTES);
         specimen.interactsWith(specimen1, InteractType.ATE);
-        assertInteraction(specimen, specimen1, RelTypes.REFUTES);
+        assertInteraction(specimen, specimen1, RelTypes.REFUTES, "Donalda duckus");
     }
 
 

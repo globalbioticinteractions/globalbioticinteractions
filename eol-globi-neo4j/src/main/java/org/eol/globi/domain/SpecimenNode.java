@@ -31,11 +31,11 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
         boolean isFlipped = relType.sourceRole == InteractType.InteractionRole.OBJECT;
 
-        final Relationship interactRel = subject.createRelationshipToNoTx(object, relType);
+        final Relationship interactRel = source.createRelationshipToNoTx(target, relType);
         enrichWithInteractProps(relType, interactRel, isFlipped);
 
         final InteractType inverseRelType = InteractType.inverseOf(relType);
-        Relationship inverseInteractRel = object.createRelationshipToNoTx(subject, inverseRelType);
+        Relationship inverseInteractRel = target.createRelationshipToNoTx(source, inverseRelType);
         enrichWithInteractProps(inverseRelType, inverseInteractRel, !isFlipped);
     }
 
