@@ -61,7 +61,10 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             try {
                 String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
                 for (String row : rows) {
-                    namespaces.add(CSVTSVUtil.splitTSV(row)[0]);
+                    String[] values = CSVTSVUtil.splitTSV(row);
+                    if (values.length > 0) {
+                        namespaces.add(values[0]);
+                    }
                 }
             } catch (IOException e) {
                 throw new DatasetFinderException("failed to read ", e);
