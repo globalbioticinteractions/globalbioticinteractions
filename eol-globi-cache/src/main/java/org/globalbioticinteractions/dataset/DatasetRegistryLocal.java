@@ -17,8 +17,13 @@ import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLog;
 import org.globalbioticinteractions.cache.CacheUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -59,9 +64,11 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         Collection<String> namespaces = new TreeSet<>();
         for (File accessFile : accessFiles) {
             try {
-                String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
-                for (String row : rows) {
-                    String[] values = CSVTSVUtil.splitTSV(row);
+                InputStreamReader reader = new InputStreamReader(new FileInputStream(accessFile), StandardCharsets.UTF_8);
+                BufferedReader bufferedReader = IOUtils.toBufferedReader(reader);
+                String line;
+                while((line = bufferedReader.readLine()) != null) {
+                    String[] values = CSVTSVUtil.splitTSV(line);
                     if (values.length > 0) {
                         namespaces.add(values[0]);
                     }
