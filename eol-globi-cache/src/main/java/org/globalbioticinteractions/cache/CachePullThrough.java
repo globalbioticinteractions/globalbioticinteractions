@@ -25,28 +25,31 @@ public class CachePullThrough implements Cache {
     }
 
     static File cache(URI sourceURI, File cacheDir) throws IOException {
-        InputStream sourceStream = ResourceUtil.asInputStream(sourceURI.toString());
-
-        File destinationFile = File.createTempFile("archive", "tmp", cacheDir);
-        destinationFile.deleteOnExit();
-
-        String msg = "caching [" + sourceURI + "]";
-        LOG.info(msg + " started...");
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            DigestInputStream digestInputStream = new DigestInputStream(sourceStream, md);
-            FileUtils.copyInputStreamToFile(digestInputStream, destinationFile);
-            IOUtils.closeQuietly(digestInputStream);
-            String sha256 = String.format("%064x", new java.math.BigInteger(1, md.digest()));
-            File destFile = new File(cacheDir, sha256);
-            FileUtils.deleteQuietly(destFile);
-            FileUtils.moveFile(destinationFile, destFile);
-            LOG.info(msg + " cached at [" + destFile.toURI().toString() + "]...");
-            LOG.info(msg + " complete.");
-            return destFile;
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("failed to access hash/digest algorithm", e);
-            throw new IOException("failed to cache dataset [" + sourceURI.toString() + "]");
+        File destinationFile = null;
+        try (InputStream sourceStream = ResourceUtil.asInputStream(sourceURI.toString())) {
+            destinationFile = File.createTempFile("archive", "tmp", cacheDir);
+            String msg = "caching [" + sourceURI + "]";
+            LOG.info(msg + " started...");
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                try (DigestInputStream digestInputStream = new DigestInputStream(sourceStream, md)) {
+                    FileUtils.copyInputStreamToFile(digestInputStream, destinationFile);
+                }
+                String sha256 = String.format("%064x", new java.math.BigInteger(1, md.digest()));
+                File destFile = new File(cacheDir, sha256);
+                FileUtils.deleteQuietly(destFile);
+                FileUtils.moveFile(destinationFile, destFile);
+                LOG.info(msg + " cached at [" + destFile.toURI().toString() + "]...");
+                LOG.info(msg + " complete.");
+                return destFile;
+            } catch (NoSuchAlgorithmException e) {
+                LOG.error("failed to access hash/digest algorithm", e);
+                throw new IOException("failed to cache dataset [" + sourceURI.toString() + "]");
+            }
+        } finally {
+            if (destinationFile != null && destinationFile.exists()) {
+                FileUtils.deleteQuietly(destinationFile);
+            }
         }
     }
 

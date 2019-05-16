@@ -125,7 +125,9 @@ public class ResourceUtil {
                 throw new HttpResponseException(statusLine.getStatusCode(),
                         statusLine.getReasonPhrase());
             }
-            return cacheAndOpenStream(response.getEntity().getContent());
+            try (InputStream content = response.getEntity().getContent()) {
+                return cacheAndOpenStream(content);
+            }
         } finally {
             request.releaseConnection();
         }
