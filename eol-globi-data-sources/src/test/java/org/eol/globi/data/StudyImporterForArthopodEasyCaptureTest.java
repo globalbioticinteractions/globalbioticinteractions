@@ -6,6 +6,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,34 +20,9 @@ public class StudyImporterForArthopodEasyCaptureTest {
 
     @Test
     public void readRSS() throws StudyImporterException, IOException {
-        final ParserFactory parserFactory = null;
-        final NodeFactory nodeFactory = null;
-
         final Dataset dataset = getDatasetGroup();
-
         List<Dataset> datasets = StudyImporterForArthopodEasyCapture.getDatasetsForFeed(dataset);
-
         assertThat(datasets.size(), is(3));
-
-    }
-
-    @Test
-    public void readRSS2() throws StudyImporterException, IOException {
-        final ParserFactory parserFactory = null;
-        final NodeFactory nodeFactory = null;
-
-        final Dataset dataset = getDatasetVertnet();
-
-        List<Dataset> datasets = StudyImporterForArthopodEasyCapture.getDatasetsForFeed(dataset);
-
-        for (Dataset dataset1 : datasets) {
-            System.out.println(dataset1.getArchiveURI());
-            System.out.println(dataset1.getCitation());
-
-        }
-
-        assertThat(datasets.size(), is(3));
-
     }
 
     @Test
