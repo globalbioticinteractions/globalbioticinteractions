@@ -31,6 +31,25 @@ public class StudyImporterForArthopodEasyCaptureTest {
     }
 
     @Test
+    public void readRSS2() throws StudyImporterException, IOException {
+        final ParserFactory parserFactory = null;
+        final NodeFactory nodeFactory = null;
+
+        final Dataset dataset = getDatasetVertnet();
+
+        List<Dataset> datasets = StudyImporterForArthopodEasyCapture.getDatasetsForFeed(dataset);
+
+        for (Dataset dataset1 : datasets) {
+            System.out.println(dataset1.getArchiveURI());
+            System.out.println(dataset1.getCitation());
+
+        }
+
+        assertThat(datasets.size(), is(3));
+
+    }
+
+    @Test
     public void embeddedDataset() throws IOException {
         Dataset embeddedDataset = StudyImporterForArthopodEasyCapture.embeddedDatasetFor(getDatasetGroup(), "some other citation", URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
@@ -49,6 +68,13 @@ public class StudyImporterForArthopodEasyCaptureTest {
     private DatasetImpl getDatasetGroup() throws IOException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }");
+        dataset.setConfig(config);
+        return dataset;
+    }
+
+    private DatasetImpl getDatasetVertnet() throws IOException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"rss\": \"http://ipt.vertnet.org:8080/ipt/rss.do\" } }");
         dataset.setConfig(config);
         return dataset;
     }
