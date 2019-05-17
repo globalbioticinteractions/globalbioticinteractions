@@ -25,16 +25,7 @@ import static org.junit.internal.matchers.StringContains.containsString;
 
 public class StudyImporterForGrayTest extends GraphDBTestCase {
 
-    @Test
-    public void importFirst500() throws StudyImporterException, IOException {
-        StudyImporterForGray gray = createImporter();
-        gray.setFilter(recordNumber -> recordNumber < 500);
-        importStudy(gray);
-
-        assertThat(taxonIndex.findTaxonByName("Staurosira elliptica"), is(notNullValue()));
-    }
-
-    private StudyImporterForGray createImporter() throws IOException {
+    static StudyImporterForGray createImporter(NodeFactory nodeFactory) throws IOException {
         StudyImporterForGray gray = new StudyImporterForGray(new ParserFactoryLocal(), nodeFactory);
 
         JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. https://doi.org/10.5281/zenodo.13751\",\n" +
@@ -52,7 +43,7 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        StudyImporterForGray gray = createImporter();
+        StudyImporterForGray gray = createImporter(nodeFactory);
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
         gray.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), new InteractionListener() {
