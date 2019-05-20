@@ -20,7 +20,7 @@ public class CSVTSVUtilTest {
     @Test
     public void writeQuotes() {
         StringWriter writer = new StringWriter();
-        CSVPrint csvPrint = CSVTSVUtil.createCSVPrint(writer);
+        CSVPrint csvPrint = CSVTSVUtil.createExcelCSVPrint(writer);
         csvPrint.print("hello \"world\"");
         assertThat(writer.toString(), is("\"hello \"\"world\"\"\""));
     }
@@ -28,7 +28,7 @@ public class CSVTSVUtilTest {
     @Test
     public void writeQuotes2() {
         StringWriter writer = new StringWriter();
-        CSVPrint csvPrint = CSVTSVUtil.createCSVPrint(writer);
+        CSVPrint csvPrint = CSVTSVUtil.createExcelCSVPrint(writer);
         csvPrint.print("\"Ala'ihi");
         assertThat(writer.toString(), is("\"\"\"Ala'ihi\""));
     }
@@ -43,7 +43,7 @@ public class CSVTSVUtilTest {
 
     @Test
     public void readQuotesAgain() throws IOException {
-        CSVParse csvParser = CSVTSVUtil.createCSVParse(IOUtils.toInputStream("\"hello \"\"world\"\"\"", StandardCharsets.UTF_8));
+        CSVParse csvParser = CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream("\"hello \"\"world\"\"\"", StandardCharsets.UTF_8));
         assertThat(csvParser.nextValue(), is("hello \"world\""));
     }
 

@@ -381,7 +381,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             final JsonNode dataUrl = config.get("url");
             int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
 
-            final CSVParse csvParse = CSVTSVUtil.createCSVParse(dataset.getResource(dataUrl.asText()));
+            final CSVParse csvParse = CSVTSVUtil.createExcelCSVParse(dataset.getResource(dataUrl.asText()));
             csvParse.changeDelimiter(delimiterChar);
             for (int i = 0; i < headerCount; i++) {
                 csvParse.getLine();

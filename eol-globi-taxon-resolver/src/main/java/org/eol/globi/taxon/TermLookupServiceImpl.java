@@ -48,7 +48,7 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
         for (URI uri : uriList) {
             try {
                 String response = contentToString(uri);
-                CSVParse parser = CSVTSVUtil.createCSVParse(new StringReader(response));
+                CSVParse parser = CSVTSVUtil.createExcelCSVParse(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
 
                 if (hasHeader()) {

@@ -27,10 +27,6 @@ import java.util.zip.ZipInputStream;
 
 public class CSVTSVUtil {
 
-    public static CSVPrint createCSVPrint(Writer writer) {
-        return new ExcelCSVPrinter(writer);
-    }
-
     public static LabeledCSVParser createLabeledCSVParser(InputStream inputStream) throws IOException {
         return new LabeledCSVParser(new AutoCloseCSVParser(inputStream));
     }
@@ -100,12 +96,16 @@ public class CSVTSVUtil {
         return new AutoCloseCSVParser(inputStream, delimiter);
     }
 
-    public static CSVParse createCSVParse(InputStream inputStream) {
+    public static CSVParse createExcelCSVParse(InputStream inputStream) {
         return new AutoCloseCSVExcelParser(inputStream);
     }
 
-    public static CSVParse createCSVParse(Reader reader) {
+    public static CSVParse createExcelCSVParse(Reader reader) {
         return new AutoCloseCSVExcelParser(reader);
+    }
+
+    public static CSVPrint createExcelCSVPrint(Writer writer) {
+        return new ExcelCSVPrinter(writer);
     }
 
 

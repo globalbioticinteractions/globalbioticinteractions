@@ -66,7 +66,7 @@ public class StudyImporterFelderTest {
     @Test
     public void importData() throws IOException {
         FilterInputStream fis = convertToTSV(getClass().getResourceAsStream("felder/BIRDS.BDT"));
-        CSVParse parser = CSVTSVUtil.createCSVParse(fis);
+        CSVParse parser = CSVTSVUtil.createExcelCSVParse(fis);
         parser.changeDelimiter('\t');
         String[] line = parser.getLine();
         assertThat(line, is(notNullValue()));

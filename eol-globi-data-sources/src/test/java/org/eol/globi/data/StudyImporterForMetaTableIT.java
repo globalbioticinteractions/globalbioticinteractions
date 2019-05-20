@@ -71,7 +71,7 @@ public class StudyImporterForMetaTableIT {
                     "seed disperser,direct observation,years,4,NULL,NULL,NULL,NULL,3051,Animal,Animal,Animal,Animal,animal,NULL,general animal,NULL,4176,Caesalpinioideae,Distemonanthus,benthamianus,NULL,Cameroon,NULL,NULL,yes,NULL,semideciduous tropical rain forest,\"Hardesty, B.D. and Parker, V.T.\",Community seed rain patterns and a comparison to adult community structure in a West African tropical forest,2003,Plant Ecology,164,1,49-64,Mary,8/15/12 9:35,,,\n" +
                     "ingestion,direct observation,years,2,NULL,NULL,NULL,during both summer and winter season,1462,Mammalia,Artiodactyla,Bovidae,Madoqua,kirkii,,NULL,Kirk's Dikdik,6897,Moraceae,Ficus,petersii,NULL,Namibia,South West Africa,NULL,yes,NULL,riverine thicket,\"Tinley, K.\",Dikdik; Madoqua kirkii; in south-west Africa: notes on distribution; ecology; and behaviour,1969,Madoqua,1,NULL,Jul-33,Anna,2/24/14 18:40,,,\n";
 
-            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
+            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
         };
 
 
@@ -94,7 +94,7 @@ public class StudyImporterForMetaTableIT {
                     "11012118.0,8791030401.0,9.0,9999999998.0,58.0,1994.0,7.0,11.0,AI,\"Pacific cod Gadus macrocephalus\",\"Rocks \",95.0,199401.0,148.0,51.43,178.81999999999999,222.0,228.0,11.0,0.63,0.41999999999999998,542.0,118-11,\"1994-07-11 00:00:00\",13.0,\n" +
                     "11012118.0,8791030401.0,9.0,9999999998.0,58.0,1994.0,7.0,11.0,AI,\"Pacific cod Gadus macrocephalus\",\"Rocks \",95.0,199401.0,148.0,51.43,178.81999999999999,222.0,228.0,11.0,0.63,0.41999999999999998,542.0,118-11,\"1994-07-11 00:00:00\",3.0,\n";
 
-            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
+            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
         };
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/noaa-reem/master";
@@ -130,7 +130,7 @@ public class StudyImporterForMetaTableIT {
                     ",,Record 7,PHI:17,Uniprot,Q00663,EMBL,CAA43678,MATIFLFTKNVFIALAFALFAQGLTIPDGIEKRTDKVVSLDFTVIRKPFNATAHRLIQKRSDVPTTLINEGPSYAADIVVGSNQQKQTVVIDTGSSDLWVVDTDAECQVTYSGQTNNFCKQEGTFDPSSSSSAQNLNQDFSIEYGDLTSSQGSFYKDTVGFGGISIKNQQFADVTTTSVDQGIMGIGFTAVEAGYNLYSNVPVTLKKQGIINKNAYSCDLNSEDASTGKIIFGGVDNAKYTGTLTALPVTSSVELRVHLGSINFDGTSVSTNADVVLDSGTTITYFSQSTADKFARIVGATWDSRNEIYRLPSCDLSGDAVVNFDQGVKITVPLSELILKDSDSSICYFGISRNDANILGDNFLRRAYIVYDLDDKTISLAQVKYTSSSDISAL,no data found,ATCC750,ACP,no data found,,,,,no,5482,Candida tropicalis,5482,ATCC 750,Candidiasis,Rodents,10090,Mus musculus (related: house mouse),no data found,,,no data found,Acid proteinase,\"GO:0009405, IMP; GO:0004190\",GO,no data found,reduced virulence,no data found,no data found,no data found,no data found,no data found,,,,,no data found,,,,,,,Gene disruption; gene complementation,,,TKB,7983570,PubMed,,,,,Togni et al.,1994,,,,,,,,,,,,,,,,,,,,,,,\n" +
                     ",,Record 8,PHI:18,Uniprot,Q00363,EMBL,CAA69643,MHYTTLLLSTLLVGTALAQPTNPPAKTPKKAPKTQPYNPCKPQEVIDTKCMGPKDCLYPNPDSCTTYIQCVPLDEVGNAKPVVKPCPKGLQWNDNVGKKWCDYPNLSTCPVKTPQPKPKKGGVGGKKASVGHPGY,no data found,Race 5,AVR4,no data found,,,,,no,5499,Passalora fulva,no data found,Multiple alleles from numerous strains,Leaf mould,Eudicots,4081,Solanum lycopersicum (related: tomato),no data found,,,no data found,Effector protein,no data found,no data found,no data found,effector (plant avirulence determinant),no data found,no data found,no data found,no data found,no data found,,,,,no data found,,,,,,,Biochemical analysis; gene mutation: characterised; gene complementation,,,TKB,8114941,PubMed,,Nature.� 1994 Jan 27;367(6461):384-6,,Expression during biotrophic growth,Joosten et al,1994,,,,,,,,,,,,,,,,,,,,,,,\n";
 
-            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
+            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
         };
 
         final String baseUrl = "https://raw.githubusercontent.com/phi-base/data/master";
@@ -205,7 +205,7 @@ public class StudyImporterForMetaTableIT {
                     "\"80e66e7c-75db-467f-9a89-a11f94d58eb3\",\"http://phthiraptera.info/node/94210\",\"fe5b2e50-b414-41d9-840d-189e732b2ea5\",\"Ricinus fringillae flammeae\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"f26a1199-c0bb-4d7c-a511-2fe6284c5378\",\"Acanthis flammea flammea\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"Self citation to checklist added. Requires page number.\"\n" +
                     "\"001ee8aa-dbab-43b8-9137-a61565ccf41b\",\"http://phthiraptera.info/node/94211\",\"ee17d179-9f60-4198-ac49-dc9dab3ae529\",\"Brueelia sibirica\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"f26a1199-c0bb-4d7c-a511-2fe6284c5378\",\"Acanthis flammea flammea\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"Self citation to checklist added. Requires page number.\"\n" +
                     "\"d0929673-2f4c-49ec-877f-116e74ea360e\",\"http://phthiraptera.info/node/94212\",\"46084bc3-cfbf-4e01-96f8-5ecb50bc5ff9\",\"Ricinus fringillae\",\"\",\"\",\"\",\"ectoparasite of\",\"http://purl.obolibrary.org/obo/RO_0002632\",\"2027cf09-f15d-4c2b-be28-9cb00fabf308\",\"Acanthis flammea\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"204\",\"[REF: Rheinwald, 1968:204]\"\n";
-            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
+            return CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(IOUtils.toInputStream(firstFewLines, StandardCharsets.UTF_8)));
         };
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/natural-history-museum-london-interactions-bank/master";

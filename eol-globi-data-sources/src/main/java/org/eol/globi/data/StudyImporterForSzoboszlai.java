@@ -61,7 +61,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     }
 
     protected void importLinks(InputStream is, InteractionListener interactionListener, Map<Integer, LatLng> localeMap) throws IOException, StudyImporterException {
-        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(is));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createExcelCSVParse(is));
         while (parser.getLine() != null) {
             Map<String, String> e = importLink(parser, localeMap);
             if (e != null) {

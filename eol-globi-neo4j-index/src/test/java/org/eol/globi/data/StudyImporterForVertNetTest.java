@@ -101,12 +101,12 @@ public class StudyImporterForVertNetTest extends GraphDBTestCase {
         JsonNode recs = jsonNode1.get("recs");
 
         StringWriter linkOs = new StringWriter();
-        CSVPrint linkPrinter = CSVTSVUtil.createCSVPrint(linkOs);
+        CSVPrint linkPrinter = CSVTSVUtil.createExcelCSVPrint(linkOs);
         linkPrinter.print(new String[]{"source", "interaction_type", "target"});
         linkPrinter.setAutoFlush(true);
 
         StringWriter nodeOs = new StringWriter();
-        CSVPrint nodePrinter = CSVTSVUtil.createCSVPrint(nodeOs);
+        CSVPrint nodePrinter = CSVTSVUtil.createExcelCSVPrint(nodeOs);
         String[] nodeFields = {"individualid", "decimallongitude", "decimallatitude"
                 , "year", "month", "day", "basisofrecord", "scientificname"
                 , "dataset_citation"};
