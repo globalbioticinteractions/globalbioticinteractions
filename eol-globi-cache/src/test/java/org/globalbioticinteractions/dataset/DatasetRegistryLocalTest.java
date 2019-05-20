@@ -26,12 +26,15 @@ public class DatasetRegistryLocalTest {
         URL accessFile = getClass().getResource("/test-cache/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(accessFile);
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile();
-        datasetFinderLocal = new DatasetRegistryLocal(cacheDir.getAbsolutePath(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath()));
+        datasetFinderLocal = new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
+                dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
+                cacheDir.getAbsolutePath()));
     }
 
     @Test
     public void findNamespaces() throws DatasetFinderException {
-        assertThat(datasetFinderLocal.findNamespaces(), hasItem("globalbioticinteractions/template-dataset"));
+        assertThat(datasetFinderLocal.findNamespaces(),
+                hasItem("globalbioticinteractions/template-dataset"));
     }
 
     @Test
