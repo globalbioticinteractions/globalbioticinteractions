@@ -20,15 +20,14 @@ import org.globalbioticinteractions.cache.CacheUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DatasetRegistryLocal implements DatasetRegistry {
     private final static Log LOG = LogFactory.getLog(DatasetRegistryLocal.class);
@@ -46,11 +45,14 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         Collection<String> namespaces = Collections.emptyList();
         if (directory.exists() && directory.isDirectory()) {
             namespaces = collectNamespaces(directory);
-        }
-        else {
+        } else {
             LOG.warn("Directory [" + cacheDir + "] does not exist.");
         }
         return namespaces;
+    }
+
+    private interface AccessFileLineListener {
+        void onValues(String[] values);
     }
 
     private Collection<String> collectNamespaces(File directory) throws DatasetFinderException {
@@ -62,22 +64,46 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         }, TrueFileFilter.INSTANCE);
 
         Collection<String> namespaces = new TreeSet<>();
-        for (File accessFile : accessFiles) {
-            try {
-                InputStreamReader reader = new InputStreamReader(new FileInputStream(accessFile), StandardCharsets.UTF_8);
-                BufferedReader bufferedReader = IOUtils.toBufferedReader(reader);
-                String line;
-                while((line = bufferedReader.readLine()) != null) {
-                    String[] values = CSVTSVUtil.splitTSV(line);
-                    if (values.length > 0) {
-                        namespaces.add(values[0]);
-                    }
-                }
-            } catch (IOException e) {
-                throw new DatasetFinderException("failed to read ", e);
+        AccessFileLineListener lineListener = values -> {
+            if (values.length > 0) {
+                namespaces.add(values[0]);
             }
+        };
+
+        for (File accessFile : accessFiles) {
+            readAccessFile(lineListener, accessFile);
         }
         return namespaces;
+    }
+
+    private void readAccessFile(AccessFileLineListener accessLine, File accessFile) throws DatasetFinderException {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(accessFile), StandardCharsets.UTF_8)) {
+            BufferedReader bufferedReader = IOUtils.toBufferedReader(reader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                accessLine.onValues(CSVTSVUtil.splitTSV(line));
+            }
+        } catch (IOException e) {
+            throw new DatasetFinderException("failed to read ", e);
+        }
+    }
+
+
+    private URI findLastCachedDatasetURI(String namespace) throws DatasetFinderException {
+        AtomicReference<URI> sourceURI = new AtomicReference<>();
+        AccessFileLineListener accessFileLineListener = values -> {
+            if (values.length > 4
+                    && StringUtils.equalsIgnoreCase(StringUtils.trim(values[0]), namespace)
+                    && StringUtils.equals(StringUtils.trim(values[4]), CacheUtil.MIME_TYPE_GLOBI)) {
+                sourceURI.set(URI.create(values[1]));
+            }
+
+        };
+        File accessFile = CacheLog.getAccessFile(namespace, cacheDir);
+        if (accessFile.exists()) {
+            readAccessFile(accessFileLineListener, accessFile);
+        }
+        return sourceURI.get();
     }
 
 
@@ -85,47 +111,26 @@ public class DatasetRegistryLocal implements DatasetRegistry {
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         Dataset dataset;
 
-        try {
-            final URI sourceURI = findLastCachedDatasetURI(namespace);
-            dataset = sourceURI == null ? null : DatasetFactory.datasetFor(namespace, new DatasetRegistry() {
-                @Override
-                public Collection<String> findNamespaces() throws DatasetFinderException {
-                    return Collections.singletonList(namespace);
-                }
+        final URI sourceURI = findLastCachedDatasetURI(namespace);
+        dataset = sourceURI == null ? null : DatasetFactory.datasetFor(namespace, new DatasetRegistry() {
+            @Override
+            public Collection<String> findNamespaces() throws DatasetFinderException {
+                return Collections.singletonList(namespace);
+            }
 
-                @Override
-                public Dataset datasetFor(String s) throws DatasetFinderException {
-                    Dataset dataset = new DatasetImpl(namespace, sourceURI);
-                    return new DatasetWithCache(dataset,
-                            cacheFactory.cacheFor(dataset));
-                }
-            });
-        } catch (IOException e) {
-            throw new DatasetFinderException("failed to access [" + namespace + "]", e);
-        }
+            @Override
+            public Dataset datasetFor(String s) throws DatasetFinderException {
+                Dataset dataset = new DatasetImpl(namespace, sourceURI);
+                return new DatasetWithCache(dataset,
+                        cacheFactory.cacheFor(dataset));
+            }
+        });
 
         if (dataset == null) {
             throw new DatasetFinderException("failed to retrieve/cache dataset in namespace [" + namespace + "]");
         }
 
         return dataset;
-    }
-
-    private URI findLastCachedDatasetURI(String namespace) throws IOException {
-        URI sourceURI = null;
-        File accessFile = CacheLog.getAccessFile(namespace, cacheDir);
-        if (accessFile.exists()) {
-            String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
-            for (String row : rows) {
-                String[] split = CSVTSVUtil.splitTSV(row);
-                if (split.length > 4
-                        && StringUtils.equalsIgnoreCase(StringUtils.trim(split[0]), namespace)
-                        && StringUtils.equals(StringUtils.trim(split[4]), CacheUtil.MIME_TYPE_GLOBI)) {
-                    sourceURI = URI.create(split[1]);
-                }
-            }
-        }
-        return sourceURI;
     }
 
 

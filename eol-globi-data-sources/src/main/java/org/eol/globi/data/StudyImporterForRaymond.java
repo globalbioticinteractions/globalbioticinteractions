@@ -94,8 +94,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         File sourcesFile = null;
         LabeledCSVParser sourcesParser = null;
         LabeledCSVParser dietParser = null;
-        try {
-            ZipInputStream zis = new ZipInputStream(inputStream);
+        try (ZipInputStream zis = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
                 if (DIET_CSV.equals(entry.getName())) {

@@ -10,17 +10,19 @@ import java.util.zip.ZipFile;
 public class DatasetFinderUtil {
 
     static URI getLocalDatasetURIRoot(File localDatasetURI) throws IOException {
-        Enumeration<? extends ZipEntry> entries = new ZipFile(localDatasetURI).entries();
+        try (ZipFile zipFile = new ZipFile(localDatasetURI)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-        String archiveRoot = null;
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            if (entry.isDirectory()) {
-                archiveRoot = entry.getName();
-                break;
+            String archiveRoot = null;
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.isDirectory()) {
+                    archiveRoot = entry.getName();
+                    break;
+                }
             }
-        }
 
-        return URI.create("jar:" + localDatasetURI.toURI() + "!/" + archiveRoot);
+            return URI.create("jar:" + localDatasetURI.toURI() + "!/" + archiveRoot);
+        }
     }
 }

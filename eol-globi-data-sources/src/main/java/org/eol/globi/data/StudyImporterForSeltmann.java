@@ -64,8 +64,8 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .createHashMap("assocMap")
                 .make();
 
-        try (InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive")) {
-            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+        try (InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive");
+             ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             File assocTempFile = null;
             File occTempFile = null;
