@@ -104,15 +104,23 @@ public class CacheLocalReadonly implements Cache {
 
     static URI getDatasetArchiveURI(URI candidateURI) {
         if (isJarResource(candidateURI)) {
-            URLConnection urlConnection;
+            URLConnection urlConnection = null;
             try {
                 urlConnection = candidateURI.toURL().openConnection();
                 if (urlConnection instanceof JarURLConnection) {
                     candidateURI = ((JarURLConnection) urlConnection).getJarFileURL().toURI();
-                    IOUtils.closeQuietly(urlConnection.getInputStream());
                 }
+
             } catch (IOException | URISyntaxException e) {
                 // ignore
+            } finally {
+                if (urlConnection != null) {
+                    try {
+                        IOUtils.closeQuietly(urlConnection.getInputStream());
+                    } catch (IOException e) {
+                        // ignore
+                    }
+                }
             }
         }
         return candidateURI;

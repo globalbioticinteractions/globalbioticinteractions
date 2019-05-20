@@ -3,6 +3,8 @@ package org.eol.globi.util;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,6 +19,17 @@ public class ResourceUtilTest {
         URL resource = getClass().getResource(getClass().getSimpleName() + ".class");
         assertThat(new File(resource.toURI()).exists(), is(true));
         assertTrue(ResourceUtil.resourceExists(resource.toURI()));
+    }
+
+    @Test
+    public void localJarResource() throws URISyntaxException, IOException {
+        URL resource = getClass().getResource("/java/lang/String.class");
+        assertTrue(ResourceUtil.resourceExists(resource.toURI()));
+        InputStream inputStream = ResourceUtil.asInputStream(resource.toString());
+        assertNotNull(inputStream);
+        inputStream.close();
+        assertThat(inputStream.available(), is(0));
+
     }
 
     @Test

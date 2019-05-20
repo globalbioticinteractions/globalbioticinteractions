@@ -18,7 +18,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.zip.GZIPInputStream;
 
 public class ResourceUtil {
@@ -46,7 +49,12 @@ public class ResourceUtil {
             } else if (StringUtils.startsWith(resource, "file:/")) {
                 is = new FileInputStream(new File(URI.create(resource)));
             } else if (StringUtils.startsWith(resource, "jar:file:/")) {
-                is = URI.create(resource).toURL().openStream();
+                URL url = URI.create(resource).toURL();
+                URLConnection urlConnection = url.openConnection();
+                // Prevent leaking of jar file descriptors by disabling jar cache.
+                // see https://stackoverflow.com/a/36518430
+                urlConnection.setUseCaches(false);
+                is = urlConnection.getInputStream();
             } else if (StringUtils.startsWith(resource, "ftp:/")) {
                 URI uri = URI.create(resource);
                 FTPClient ftpClient = new FTPClient();
@@ -104,9 +112,9 @@ public class ResourceUtil {
                     HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
                     exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
                 } else {
-                    InputStream input = asInputStream(descriptor.toString());
-                    IOUtils.closeQuietly(input);
-                    exists = input != null;
+                    try(InputStream input = asInputStream(descriptor.toString())) {
+                        exists = input != null;
+                    }
                 }
             } catch (IOException e) {
                 //

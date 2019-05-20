@@ -71,12 +71,12 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         };
 
         for (File accessFile : accessFiles) {
-            readAccessFile(lineListener, accessFile);
+            scanAccessFile(accessFile, lineListener);
         }
         return namespaces;
     }
 
-    private void readAccessFile(AccessFileLineListener accessLine, File accessFile) throws DatasetFinderException {
+    private void scanAccessFile(File accessFile, AccessFileLineListener accessLine) throws DatasetFinderException {
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(accessFile), StandardCharsets.UTF_8)) {
             BufferedReader bufferedReader = IOUtils.toBufferedReader(reader);
             String line;
@@ -101,7 +101,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         };
         File accessFile = CacheLog.getAccessFile(namespace, cacheDir);
         if (accessFile.exists()) {
-            readAccessFile(accessFileLineListener, accessFile);
+            scanAccessFile(accessFile, accessFileLineListener);
         }
         return sourceURI.get();
     }
