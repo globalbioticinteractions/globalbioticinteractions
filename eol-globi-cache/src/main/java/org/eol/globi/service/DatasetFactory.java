@@ -59,7 +59,7 @@ public class DatasetFactory {
     }
 
     private static Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
-        try(InputStream inputStream = dataset.getResource(configURI.toString())) {
+        try (InputStream inputStream = dataset.getResource(configURI.toString())) {
             if (inputStream == null) {
                 throw new IOException("failed to access resource [" + configURI.toString() + "]");
             }

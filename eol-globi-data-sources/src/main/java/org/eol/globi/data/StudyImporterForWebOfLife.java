@@ -15,6 +15,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.Dataset;
 import org.eol.globi.util.CSVTSVUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
@@ -42,11 +43,11 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
+
         try {
             List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
             final String sourceCitation = "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/");
-            InputStream resource = getDataset().getResource(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All");
-            final List<String> networkNames = getNetworkNames(resource);
+            final List<String> networkNames = getNetworkNames(getDataset());
             LOG.info("found [" + networkNames.size() + "] networks.");
             for (String networkName : networkNames) {
                 final List<String> networkNames1 = Collections.singletonList(networkName);
@@ -67,9 +68,8 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
     }
 
     public void importNetworks(String archiveURL, String sourceCitation) throws StudyImporterException {
-        try {
-            InputStream inputStream = getDataset().getResource(archiveURL);
-            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+        try (InputStream inputStream = getDataset().getResource(archiveURL);
+             ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             File referencesTempFile = null;
             Map<String, File> networkTempFileMap = new HashMap<String, File>();
@@ -82,7 +82,6 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
                     IOUtils.copy(zipInputStream, new NullOutputStream());
                 }
             }
-            IOUtils.closeQuietly(zipInputStream);
 
             if (referencesTempFile == null) {
                 throw new StudyImporterException("failed to find expected [references.csv] resource in [" + archiveURL + "]");
@@ -92,20 +91,22 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find expected network csv files");
             }
 
-            BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(referencesTempFile), CharsetConstant.UTF8);
-            LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
-            while (parser.getLine() != null) {
-                final String citation = parser.getValueByLabel("Reference");
-                if (StringUtils.isBlank(citation)) {
-                    throw new StudyImporterException("found missing reference");
+            try (FileInputStream is = new FileInputStream(referencesTempFile)) {
+                BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8);
+                LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
+                while (parser.getLine() != null) {
+                    final String citation = parser.getValueByLabel("Reference");
+                    if (StringUtils.isBlank(citation)) {
+                        throw new StudyImporterException("found missing reference");
+                    }
+                    final String networkId = parser.getValueByLabel("ID");
+                    if (!networkTempFileMap.containsKey(networkId)) {
+                        throw new StudyImporterException("found network id [" + networkId + "], but no associated data.");
+                    }
+                    final Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bascompte:" + citation, sourceCitation, null, citation));
+                    importNetwork(parseInteractionType(parser),
+                            parseLocation(parser), study, networkTempFileMap.get(networkId));
                 }
-                final String networkId = parser.getValueByLabel("ID");
-                if (!networkTempFileMap.containsKey(networkId)) {
-                    throw new StudyImporterException("found network id [" + networkId + "], but no associated data.");
-                }
-                final Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bascompte:" + citation, sourceCitation, null, citation));
-                importNetwork(parseInteractionType(parser),
-                        parseLocation(parser), study, networkTempFileMap.get(networkId));
             }
         } catch (IOException | NodeFactoryException e) {
             throw new StudyImporterException(e);
@@ -173,6 +174,12 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
                     sourceSpecimen.interactsWith(targetSpecimen, interactType1);
                 }
             }
+        }
+    }
+
+    public static List<String> getNetworkNames(Dataset dataset) throws IOException {
+        try (InputStream resource = dataset.getResource(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All")) {
+            return getNetworkNames(resource);
         }
     }
 

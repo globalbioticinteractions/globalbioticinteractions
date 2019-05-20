@@ -86,9 +86,8 @@ public class StudyImporterForGlobalWebDb extends BaseStudyImporter {
     }
 
     void importDietMatrices(String archiveURL, DietMatrixListener matrix) throws StudyImporterException {
-        try {
-            InputStream inputStream = getDataset().getResource(archiveURL);
-            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+        try (InputStream inputStream = getDataset().getResource(archiveURL);
+             ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 if (entry.getName().matches("WEB.*\\.csv$")) {
@@ -97,7 +96,6 @@ public class StudyImporterForGlobalWebDb extends BaseStudyImporter {
                     IOUtils.copy(zipInputStream, new NullOutputStream());
                 }
             }
-            IOUtils.closeQuietly(zipInputStream);
         } catch (IOException e) {
             throw new StudyImporterException(e);
         }

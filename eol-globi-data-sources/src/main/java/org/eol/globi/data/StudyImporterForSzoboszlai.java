@@ -52,9 +52,11 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         try {
             Map<Integer, LatLng> localeMap = importShapes();
-            importLinks(getDataset().getResource("links")
-                    , new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger())
-                    , localeMap);
+            try (InputStream inputStream = getDataset().getResource("links")) {
+                importLinks(inputStream
+                        , new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger())
+                        , localeMap);
+            }
         } catch (IOException e) {
             throw new StudyImporterException("failed to import [" + getDataset().getArchiveURI().toString() + "]");
         }
@@ -135,8 +137,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     protected Map<Integer, LatLng> importShapes() throws StudyImporterException {
         Map<Integer, LatLng> localityMap = new TreeMap<>();
         FileDataStore dataStore = null;
-        try {
-            InputStream shapeZipArchive = getDataset().getResource("shapes");
+        try (InputStream shapeZipArchive = getDataset().getResource("shapes")) {
             File tmpFolder = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
             tmpFolder.deleteOnExit();
             unpackZip(shapeZipArchive, tmpFolder);
@@ -169,8 +170,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     }
 
     private void unpackZip(InputStream is, File outputDir) throws IOException {
-        ZipInputStream zipStream = new ZipInputStream(is);
-        try {
+        try (ZipInputStream zipStream = new ZipInputStream(is)) {
             ZipEntry entry;
             while ((entry = zipStream.getNextEntry()) != null) {
                 File entryDestination = new File(outputDir, entry.getName());
@@ -185,8 +185,6 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
                     IOUtils.closeQuietly(out);
                 }
             }
-        } finally {
-            IOUtils.closeQuietly(zipStream);
         }
     }
 }

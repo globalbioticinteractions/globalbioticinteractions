@@ -37,12 +37,12 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
     }
 
     protected void handleTable(RowListener listener, String tableName) throws IOException {
-        InputStream is = getDataset().getResource("polytraits.lifewatchgreece.eu/" + tableName);
-
-        CSVParse parser = CSVTSVUtil.createCSVParser(is);
-        String[] line;
-        while ((line = parser.getLine()) != null) {
-            listener.nextLine(line);
+        try (InputStream is = getDataset().getResource("polytraits.lifewatchgreece.eu/" + tableName)) {
+            CSVParse parser = CSVTSVUtil.createCSVParser(is);
+            String[] line;
+            while ((line = parser.getLine()) != null) {
+                listener.nextLine(line);
+            }
         }
     }
 

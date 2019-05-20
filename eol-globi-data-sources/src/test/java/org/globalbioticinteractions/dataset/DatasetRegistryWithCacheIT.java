@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -70,7 +71,9 @@ public class DatasetRegistryWithCacheIT {
 
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/hafner", finder);
 
-        assertNotNull(dataset.getResource("hafner/gopher_lice_int.csv"));
+        try (InputStream resource = dataset.getResource("hafner/gopher_lice_int.csv")) {
+            assertNotNull(resource);
+        }
 
 
     }

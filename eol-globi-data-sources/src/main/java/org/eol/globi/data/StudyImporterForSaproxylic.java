@@ -86,7 +86,7 @@ public class StudyImporterForSaproxylic extends BaseStudyImporter {
 
             // associations -> occurrences, taxa, reference
             String queryString =
-                            "SELECT ?sourceTaxonName ?sourceLifeStage ?interactionTypeId ?targetTaxonName ?targetLifeStage ?referenceCitation ?localityName ?studyTitle " +
+                    "SELECT ?sourceTaxonName ?sourceLifeStage ?interactionTypeId ?targetTaxonName ?targetLifeStage ?referenceCitation ?localityName ?studyTitle " +
                             "WHERE {" +
                             "      ?interaction <sx:mentioned_by> ?studyTitle . " +
                             "      ?studyTitle <sx:hasName> ?referenceCitation . " +
@@ -142,9 +142,11 @@ public class StudyImporterForSaproxylic extends BaseStudyImporter {
 
 
     private static void handleLines(LineListener listener, InputStream is) throws IOException, StudyImporterException {
-        LabeledCSVParser parser = CSVTSVUtil.createLabeledTSVParser(is);
-        while (parser.getLine() != null) {
-            listener.onLine(parser);
+        try (InputStream inputStream = is) {
+            LabeledCSVParser parser = CSVTSVUtil.createLabeledTSVParser(inputStream);
+            while (parser.getLine() != null) {
+                listener.onLine(parser);
+            }
         }
     }
 

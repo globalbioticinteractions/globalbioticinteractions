@@ -37,9 +37,12 @@ public class CachePullThrough implements Cache {
                 }
                 String sha256 = String.format("%064x", new java.math.BigInteger(1, md.digest()));
                 File destFile = new File(cacheDir, sha256);
-                FileUtils.deleteQuietly(destFile);
-                FileUtils.moveFile(destinationFile, destFile);
-                LOG.info(msg + " cached at [" + destFile.toURI().toString() + "]...");
+                if (destFile.exists()) {
+                    LOG.info(msg + " nothing to do, [" + destFile.toURI().toString() + "] already cached...");
+                } else {
+                    FileUtils.moveFile(destinationFile, destFile);
+                    LOG.info(msg + " cached at [" + destFile.toURI().toString() + "]...");
+                }
                 LOG.info(msg + " complete.");
                 return destFile;
             } catch (NoSuchAlgorithmException e) {

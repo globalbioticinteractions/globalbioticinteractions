@@ -73,9 +73,8 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     private boolean retrieveAndImport(String resourceUrl) throws StudyImporterException {
         boolean isDone = false;
         for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
-            try {
+            try (InputStream inputStream = getDataset().getResource(resourceUrl)) {
                 LOG.info("[" + resourceUrl + "] retrieving (attempt " + attemptCount + ")...");
-                InputStream inputStream = getDataset().getResource(resourceUrl);
                 importData(inputStream);
                 isDone = true;
                 LOG.info("[" + resourceUrl + "] retrieved and imported.");

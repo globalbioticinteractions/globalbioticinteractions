@@ -23,6 +23,7 @@ import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 
@@ -49,8 +50,8 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         }
 
         Query query;
-        try {
-            query = QueryFactory.create(IOUtils.toString(new DatasetLocal().getResource("find-jsonld-interactions.rq"), CharsetConstant.UTF8));
+        try (InputStream resource = new DatasetLocal().getResource("find-jsonld-interactions.rq")) {
+            query = QueryFactory.create(IOUtils.toString(resource, CharsetConstant.UTF8));
         } catch (Throwable e) {
             throw new StudyImporterException("failed to find sparql query", e);
         }
@@ -113,7 +114,9 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        model.read(getDataset().getResource(getResourceURI().toString()), getResourceURI().toString(), "JSON-LD");
+        try (InputStream resource = getDataset().getResource(getResourceURI().toString())) {
+            model.read(resource, getResourceURI().toString(), "JSON-LD");
+        }
         return model;
     }
 

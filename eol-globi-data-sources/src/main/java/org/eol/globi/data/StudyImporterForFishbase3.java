@@ -104,15 +104,19 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
     }
 
     public static void handleTsvInputStream(RecordListener listener, InputStream is) throws StudyImporterException {
-        TsvParserSettings settings = new TsvParserSettings();
-        settings.getFormat().setLineSeparator("\n");
-        settings.setMaxCharsPerColumn(4096 * 8);
-        settings.setHeaderExtractionEnabled(true);
-        TsvParser parser = new TsvParser(settings);
-        parser.beginParsing(is, CharsetConstant.UTF8);
-        Record record;
-        while ((record = parser.parseNextRecord()) != null) {
-            listener.onRecord(record);
+        try(InputStream inputStream = is) {
+            TsvParserSettings settings = new TsvParserSettings();
+            settings.getFormat().setLineSeparator("\n");
+            settings.setMaxCharsPerColumn(4096 * 8);
+            settings.setHeaderExtractionEnabled(true);
+            TsvParser parser = new TsvParser(settings);
+            parser.beginParsing(inputStream, CharsetConstant.UTF8);
+            Record record;
+            while ((record = parser.parseNextRecord()) != null) {
+                listener.onRecord(record);
+            }
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to import tsv stream", e);
         }
     }
 

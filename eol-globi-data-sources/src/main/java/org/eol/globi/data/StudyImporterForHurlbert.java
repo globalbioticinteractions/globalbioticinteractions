@@ -49,35 +49,34 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     @Override
     public void importStudy() throws StudyImporterException {
 
-        InputStream resource;
-        try {
-            resource = getDataset().getResource(RESOURCE);
+        ;
+        try (InputStream resource = getDataset().getResource(RESOURCE)) {
             setCurrentResource(RESOURCE);
+
+            Set<String> regions = new HashSet<String>();
+            Set<String> locales = new HashSet<String>();
+            Set<String> habitats = new HashSet<String>();
+
+            TsvParserSettings settings = new TsvParserSettings();
+            settings.getFormat().setLineSeparator("\n");
+            settings.setHeaderExtractionEnabled(true);
+            TsvParser parser = new TsvParser(settings);
+            parser.beginParsing(resource, CharsetConstant.UTF8);
+            Record record;
+            while ((record = parser.parseNextRecord()) != null) {
+                setCurrentLine(parser.getContext().currentLine());
+                String columnNameSource = "Source";
+                String sourceCitation = columnValueOrNull(record, columnNameSource);
+                if (StringUtils.isBlank(sourceCitation)) {
+                    LOG.warn(createMsg("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "]"));
+                } else {
+                    importRecords(regions, locales, habitats, record, sourceCitation);
+                }
+            }
         } catch (IOException e) {
             throw new StudyImporterException("failed to access [" + RESOURCE + "]", e);
         }
 
-
-        Set<String> regions = new HashSet<String>();
-        Set<String> locales = new HashSet<String>();
-        Set<String> habitats = new HashSet<String>();
-
-        TsvParserSettings settings = new TsvParserSettings();
-        settings.getFormat().setLineSeparator("\n");
-        settings.setHeaderExtractionEnabled(true);
-        TsvParser parser = new TsvParser(settings);
-        parser.beginParsing(resource, CharsetConstant.UTF8);
-        Record record;
-        while ((record = parser.parseNextRecord()) != null) {
-            setCurrentLine(parser.getContext().currentLine());
-            String columnNameSource = "Source";
-            String sourceCitation = columnValueOrNull(record, columnNameSource);
-            if (StringUtils.isBlank(sourceCitation)) {
-                LOG.warn(createMsg("failed to extract source from column [" + columnNameSource + "] in [" + RESOURCE + "]"));
-            } else {
-                importRecords(regions, locales, habitats, record, sourceCitation);
-            }
-        }
     }
 
     private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
@@ -246,7 +245,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         // Observation_Year_Begin, Observation_Month_Begin, Observation_Season, Bird_Sample_Size,
         // Habitat_type, Location_Region, Item_Sample_Size, Taxon, and Diet_Type.
 
-       //  For some of these problem studies, all of the values are identical, and specifying an
+        //  For some of these problem studies, all of the values are identical, and specifying an
         // Observation_Month of 6.3 versus 6.7 is the only way that these sets of records are distinguished
         // by some of our summary functions. [...]
 

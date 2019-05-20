@@ -16,6 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -98,8 +99,8 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
     public static void generateTablesForNHMResources(List<JsonNode> tableList, Dataset dataset) throws StudyImporterException {
         JsonNode config = dataset.getConfig();
         String nhmUrl = config.get("url").asText();
-        try {
-            final JsonNode nhmResourceSchema = new ObjectMapper().readTree(dataset.getResource(nhmUrl));
+        try (InputStream resource1 = dataset.getResource(nhmUrl)) {
+            final JsonNode nhmResourceSchema = new ObjectMapper().readTree(resource1);
             final JsonNode result = nhmResourceSchema.get("result");
             String title = result.get("title").asText();
             String author = result.get("author").asText();
@@ -143,8 +144,10 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
 
     static public List<Column> columnsFromExternalSchema(JsonNode tableSchema, Dataset dataset) throws IOException {
         String tableSchemaLocation = tableSchema.asText();
-        final JsonNode schema = new ObjectMapper().readTree(dataset.getResource(tableSchemaLocation));
-        return columnNamesForSchema(schema);
+        try (InputStream resource = dataset.getResource(tableSchemaLocation)) {
+            final JsonNode schema = new ObjectMapper().readTree(resource);
+            return columnNamesForSchema(schema);
+        }
     }
 
     static private List<String> parseNullValues(JsonNode nullValues) {
@@ -381,7 +384,8 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
             final JsonNode dataUrl = config.get("url");
             int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
 
-            final CSVParse csvParse = CSVTSVUtil.createExcelCSVParse(dataset.getResource(dataUrl.asText()));
+            InputStream resource = dataset.getResource(dataUrl.asText());
+            final CSVParse csvParse = CSVTSVUtil.createExcelCSVParse(resource);
             csvParse.changeDelimiter(delimiterChar);
             for (int i = 0; i < headerCount; i++) {
                 csvParse.getLine();
