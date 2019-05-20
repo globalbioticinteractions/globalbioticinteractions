@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import com.Ostermiller.util.MD5;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -10,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.util.CSVTSVUtil;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -29,7 +29,18 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.eol.globi.data.StudyImporterForTSV.*;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 public class StudyImporterForSzoboszlai extends BaseStudyImporter {
 
@@ -50,7 +61,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
     }
 
     protected void importLinks(InputStream is, InteractionListener interactionListener, Map<Integer, LatLng> localeMap) throws IOException, StudyImporterException {
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(is));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(is));
         while (parser.getLine() != null) {
             Map<String, String> e = importLink(parser, localeMap);
             if (e != null) {

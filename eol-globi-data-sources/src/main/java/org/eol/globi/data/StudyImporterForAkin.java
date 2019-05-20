@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.CSVParse;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Location;
@@ -12,6 +12,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.doi.DOI;
@@ -70,7 +71,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private String[][] loadSampleSiteLocations() throws IOException {
-        CSVParser csvParser = new CSVParser(getDataset().getResource("akin/Akin2002Locations.csv"));
+        CSVParse csvParser = CSVTSVUtil.createCSVParser(getDataset().getResource("akin/Akin2002Locations.csv"));
         return csvParser.getAllValues();
     }
 

@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.CSVParse;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +66,7 @@ public class StudyImporterFelderTest {
     @Test
     public void importData() throws IOException {
         FilterInputStream fis = convertToTSV(getClass().getResourceAsStream("felder/BIRDS.BDT"));
-        CSVParser parser = new CSVParser(fis);
+        CSVParse parser = CSVTSVUtil.createCSVParse(fis);
         parser.changeDelimiter('\t');
         String[] line = parser.getLine();
         assertThat(line, is(notNullValue()));

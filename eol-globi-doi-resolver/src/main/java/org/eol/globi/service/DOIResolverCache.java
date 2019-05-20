@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
@@ -69,7 +69,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         DB db = initDb("doiCache");
         StopWatch watch = new StopWatch();
         watch.start();
-        final CSVParser parser = CSVTSVUtil.createTSVParser(reader);
+        final CSVParse parser = CSVTSVUtil.createTSVParser(reader);
 
         LOG.info("doi cache building...");
         doiCitationMap = db

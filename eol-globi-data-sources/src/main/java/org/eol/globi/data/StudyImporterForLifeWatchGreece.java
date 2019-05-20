@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,6 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
 
 public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
 
@@ -39,7 +39,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
     protected void handleTable(RowListener listener, String tableName) throws IOException {
         InputStream is = getDataset().getResource("polytraits.lifewatchgreece.eu/" + tableName);
 
-        CSVParser parser = new CSVParser(is);
+        CSVParse parser = CSVTSVUtil.createCSVParse(is);
         String[] line;
         while ((line = parser.getLine()) != null) {
             listener.nextLine(line);

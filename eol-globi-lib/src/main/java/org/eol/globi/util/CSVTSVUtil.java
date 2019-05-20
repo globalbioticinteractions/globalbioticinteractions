@@ -3,7 +3,6 @@ package org.eol.globi.util;
 import com.Ostermiller.util.CSVParse;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.CSVPrint;
-import com.Ostermiller.util.ExcelCSVParser;
 import com.Ostermiller.util.ExcelCSVPrinter;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
@@ -32,24 +31,16 @@ public class CSVTSVUtil {
         return new ExcelCSVPrinter(writer);
     }
 
-    public static CSVParse createCSVParse(InputStream inputStream) {
-        return new ExcelCSVParser(inputStream);
-    }
-
-    public static CSVParse createCSVParse(Reader reader) {
-        return new ExcelCSVParser(reader);
-    }
-
     public static LabeledCSVParser createLabeledCSVParser(InputStream inputStream) throws IOException {
-        return new LabeledCSVParser(new CSVParser(inputStream)) ;
+        return new LabeledCSVParser(new AutoCloseCSVParser(inputStream));
     }
 
     public static LabeledCSVParser createLabeledCSVParser(Reader reader) throws IOException {
-        return new LabeledCSVParser(new CSVParser(reader));
+        return new LabeledCSVParser(new AutoCloseCSVParser(reader));
     }
 
     public static LabeledCSVParser createLabeledTSVParser(InputStream is) throws IOException {
-        return new LabeledCSVParser(new CSVParser(is, '\t'));
+        return new LabeledCSVParser(new AutoCloseCSVParser(is, '\t'));
     }
 
     public static LabeledCSVParser createLabeledCSVParser(CSVParse parser) throws IOException {
@@ -57,11 +48,9 @@ public class CSVTSVUtil {
     }
 
     public static LabeledCSVParser createParser(File tmpFile, ZipInputStream zis) throws IOException {
-        LabeledCSVParser dietParser;
         streamToFile(tmpFile, zis);
         Reader reader = FileUtils.getUncompressedBufferedReader(new FileInputStream(tmpFile), "UTF-8");
-        dietParser = createLabeledCSVParser(reader);
-        return dietParser;
+        return createLabeledCSVParser(reader);
     }
 
     private static void streamToFile(File sourcesFile, ZipInputStream zis) throws IOException {
@@ -79,7 +68,7 @@ public class CSVTSVUtil {
         resultBuilder.append(StringUtils.replace(node.asText(), "\t", " "));
     }
 
-    public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName){
+    public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName) {
         return valueOrDefault(labeledCSVParser, columnName, null);
     }
 
@@ -88,7 +77,7 @@ public class CSVTSVUtil {
         return StringUtils.isBlank(value) ? defaultValue : value;
     }
 
-    public static String valueOrNull(String[] line, int index){
+    public static String valueOrNull(String[] line, int index) {
         return valueOrDefault(line, index, null);
     }
 
@@ -97,11 +86,28 @@ public class CSVTSVUtil {
         return StringUtils.isBlank(value) ? defaultValue : StringUtils.trim(value);
     }
 
-    public static CSVParser createTSVParser(Reader reader) {
-        final CSVParser parser = new CSVParser(reader);
+    public static CSVParse createTSVParser(Reader reader) {
+        final CSVParser parser = new AutoCloseCSVParser(reader);
         parser.changeDelimiter('\t');
         return parser;
     }
+
+    public static CSVParse createCSVParser(InputStream inputStream) {
+        return new AutoCloseCSVParser(inputStream);
+    }
+
+    public static CSVParse createCSVParse(InputStream inputStream, char delimiter) {
+        return new AutoCloseCSVParser(inputStream, delimiter);
+    }
+
+    public static CSVParse createCSVParse(InputStream inputStream) {
+        return new AutoCloseCSVExcelParser(inputStream);
+    }
+
+    public static CSVParse createCSVParse(Reader reader) {
+        return new AutoCloseCSVExcelParser(reader);
+    }
+
 
     public static List<String> escapeValues(String[] values) {
         return escapeValues(Arrays.stream(values));
@@ -124,7 +130,9 @@ public class CSVTSVUtil {
     public static String[] splitTSV(String aline) {
         return StringUtils.splitByWholeSeparatorPreserveAllTokens(aline, "\t");
     }
+
     public static String[] splitPipes(String aline) {
         return StringUtils.splitByWholeSeparatorPreserveAllTokens(aline, CharsetConstant.SEPARATOR_CHAR);
     }
+
 }

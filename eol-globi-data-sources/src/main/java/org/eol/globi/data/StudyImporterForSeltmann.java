@@ -64,8 +64,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .createHashMap("assocMap")
                 .make();
 
-        try {
-            InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive");
+        try (InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive")) {
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File assocTempFile = null;
@@ -148,25 +147,29 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(new FileInputStream(assocTempFile), CharsetConstant.UTF8);
         LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
         parser.changeDelimiter('\t');
-        while (parser.getLine() != null) {
-            Map<String, String> prop = new HashMap<String, String>();
-            addKeyValue(parser, prop, "dwc:coreid");
-            addKeyValue(parser, prop, "dwc:basisOfRecord");
-            addKeyValue(parser, prop, FIELD_IDIGBIO_RECORD_ID);
-            addKeyValue(parser, prop, FIELD_ASSOCIATED_GENUS);
-            addKeyValue(parser, prop, FIELD_ASSOCIATED_SPECIFIC_EPITHET);
-            addKeyValue(parser, prop, FIELD_ASSOCIATED_SCIENTIFIC_NAME);
-            addKeyValue(parser, prop, "dwc:basisOfRecord");
-            addKeyValue(parser, prop, "aec:associatedRelationshipTerm");
-            addKeyValue(parser, prop, "aec:associatedRelationshipURI");
-            addKeyValue(parser, prop, "aec:associatedLocationOnHost");
-            addKeyValue(parser, prop, "aec:associatedEmergenceVerbatimDate");
-            String coreId = parser.getValueByLabel("dwc:coreid");
-            if (StringUtils.isBlank(coreId)) {
-                LOG.warn("no coreid for line [" + parser.getLastLineNumber() + 1 + "]");
-            } else {
-                assocMap.put(coreId, prop);
+        try {
+            while (parser.getLine() != null) {
+                Map<String, String> prop = new HashMap<String, String>();
+                addKeyValue(parser, prop, "dwc:coreid");
+                addKeyValue(parser, prop, "dwc:basisOfRecord");
+                addKeyValue(parser, prop, FIELD_IDIGBIO_RECORD_ID);
+                addKeyValue(parser, prop, FIELD_ASSOCIATED_GENUS);
+                addKeyValue(parser, prop, FIELD_ASSOCIATED_SPECIFIC_EPITHET);
+                addKeyValue(parser, prop, FIELD_ASSOCIATED_SCIENTIFIC_NAME);
+                addKeyValue(parser, prop, "dwc:basisOfRecord");
+                addKeyValue(parser, prop, "aec:associatedRelationshipTerm");
+                addKeyValue(parser, prop, "aec:associatedRelationshipURI");
+                addKeyValue(parser, prop, "aec:associatedLocationOnHost");
+                addKeyValue(parser, prop, "aec:associatedEmergenceVerbatimDate");
+                String coreId = parser.getValueByLabel("dwc:coreid");
+                if (StringUtils.isBlank(coreId)) {
+                    LOG.warn("no coreid for line [" + parser.getLastLineNumber() + 1 + "]");
+                } else {
+                    assocMap.put(coreId, prop);
+                }
             }
+        } finally {
+            parser.close();
         }
     }
 
@@ -217,7 +220,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         String interactionURI = assoc.get("aec:associatedRelationshipURI");
         InteractType interactType;
         if (StringUtils.isBlank(interactionURI)) {
-          interactType = InteractType.INTERACTS_WITH;
+            interactType = InteractType.INTERACTS_WITH;
         } else {
             final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {
                 {

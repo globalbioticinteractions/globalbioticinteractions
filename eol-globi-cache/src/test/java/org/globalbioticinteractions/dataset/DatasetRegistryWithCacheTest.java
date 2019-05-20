@@ -45,10 +45,11 @@ public class DatasetRegistryWithCacheTest {
         assertThat(uri.isAbsolute(), is(true));
         assertThat(uri.toString(), startsWith("jar:file:"));
 
-        InputStream is = datasetCached.getResource("globi.json");
-        assertNotNull(is);
-        JsonNode jsonNode = new ObjectMapper().readTree(is);
-        assertThat(jsonNode.has("citation"), is(true));
+        try (InputStream is = datasetCached.getResource("globi.json")) {
+            assertNotNull(is);
+            JsonNode jsonNode = new ObjectMapper().readTree(is);
+            assertThat(jsonNode.has("citation"), is(true));
+        }
 
 
         String[] list = new File(cachePath + "/some/namespace").list();

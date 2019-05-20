@@ -26,7 +26,6 @@ public class DatasetFactory {
     }
 
     private static Dataset configDataset(Dataset dataset) throws DatasetFinderException {
-
         Map<String, DatasetConfigurer> datasetHandlers = new TreeMap<String, DatasetConfigurer>() {{
             put("/globi.json", new JSONConfigurer());
             put("/globi-dataset.jsonld", new JSONConfigurer());
@@ -60,17 +59,18 @@ public class DatasetFactory {
     }
 
     private static Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
-        InputStream inputStream = dataset.getResource(configURI.toString());
-        if (inputStream == null) {
-            throw new IOException("failed to access resource [" + configURI.toString() + "]");
+        try(InputStream inputStream = dataset.getResource(configURI.toString())) {
+            if (inputStream == null) {
+                throw new IOException("failed to access resource [" + configURI.toString() + "]");
+            }
+            String descriptor = getContent(configURI, inputStream);
+            if (StringUtils.isNotBlank(descriptor)) {
+                JsonNode desc = new ObjectMapper().readTree(descriptor);
+                dataset.setConfigURI(configURI);
+                dataset.setConfig(desc);
+            }
+            return dataset;
         }
-        String descriptor = getContent(configURI, inputStream);
-        if (StringUtils.isNotBlank(descriptor)) {
-            JsonNode desc = new ObjectMapper().readTree(descriptor);
-            dataset.setConfigURI(configURI);
-            dataset.setConfig(desc);
-        }
-        return dataset;
     }
 
     private static String getContent(URI uri, InputStream input) throws IOException {

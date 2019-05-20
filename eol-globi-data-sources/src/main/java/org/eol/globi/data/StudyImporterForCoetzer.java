@@ -53,8 +53,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                 .make();
 
 
-        try {
-            InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive");
+        try (InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive")) {
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             ZipEntry entry;
             File taxonTempFile = null;

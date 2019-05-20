@@ -1,8 +1,8 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
     }
 
     public void importLinks(InputStream inputStream, InteractionListener interactionListener, ImportFilter filter) throws IOException, StudyImporterException {
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(inputStream));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(inputStream));
 
         while ((filter == null || filter.shouldImportRecord((long) parser.lastLineNumber())) && parser.getLine() != null) {
             Map<String, String> e = importLink(parser);

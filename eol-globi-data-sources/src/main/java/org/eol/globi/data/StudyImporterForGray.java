@@ -1,10 +1,9 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.DatasetUtil;
-import org.globalbioticinteractions.dataset.CitationUtil;
+import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,15 +18,15 @@ public class StudyImporterForGray extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        try {
-            importLinks(DatasetUtil.getNamedResourceStream(getDataset(), "links"), new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+        try (InputStream links = DatasetUtil.getNamedResourceStream(getDataset(), "links")) {
+            importLinks(links, new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + DatasetUtil.getNamedResourceURI(getDataset(), "links") + "]");
         }
     }
 
     public void importLinks(InputStream inputStream, InteractionListener interactionListener, ImportFilter filter) throws IOException, StudyImporterException {
-        LabeledCSVParser parser = new LabeledCSVParser(new CSVParser(inputStream));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(CSVTSVUtil.createCSVParse(inputStream));
 
         while ((filter == null || filter.shouldImportRecord((long) parser.lastLineNumber())) && parser.getLine() != null) {
             Map<String, String> e = importLink(parser);
