@@ -12,7 +12,7 @@ import org.eol.globi.data.StudyImporterForAkin;
 import org.eol.globi.data.StudyImporterForDwCA;
 import org.eol.globi.data.StudyImporterForGlobalWebDb;
 import org.eol.globi.data.StudyImporterForSaproxylic;
-import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
+import org.eol.globi.data.StudyImporterForRSS;
 import org.eol.globi.data.StudyImporterForBaremore;
 import org.eol.globi.data.StudyImporterForBarnes;
 import org.eol.globi.data.StudyImporterForBell;
@@ -57,7 +57,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
-public class GitHubImporterFactory {
+public class StudyImporterFactory {
 
     public StudyImporter createImporter(Dataset dataset, final NodeFactory nodeFactory) throws StudyImporterException {
         Class<? extends StudyImporter> anImporter = findImporterFor(dataset);
@@ -75,7 +75,7 @@ public class GitHubImporterFactory {
 
     private Class<? extends StudyImporter> findImporterFor(Dataset dataset) throws StudyImporterException {
         Class<? extends StudyImporter> anImporter;
-        if (dataset.getConfigURI().toString().endsWith(".jsonld")) {
+        if (dataset.getConfigURI() != null && dataset.getConfigURI().toString().endsWith(".jsonld")) {
             anImporter = StudyImporterForJSONLD.class;
         } else if (isMetaTableImporter(dataset.getConfig())) {
             anImporter = StudyImporterForMetaTable.class;
@@ -102,7 +102,7 @@ public class GitHubImporterFactory {
                 put("hechinger", StudyImporterForHechinger.class);
                 put("dunne", StudyImporterForDunne.class);
                 put("seltmann", StudyImporterForSeltmann.class);
-                put("arthropodEasyCapture", StudyImporterForArthopodEasyCapture.class);
+                put("arthropodEasyCapture", StudyImporterForRSS.class);
                 put("coetzer", StudyImporterForCoetzer.class);
                 put("wood", StudyImporterForWood.class);
                 put("szoboszlai", StudyImporterForSzoboszlai.class);
@@ -139,6 +139,7 @@ public class GitHubImporterFactory {
                 put("saproxylic", StudyImporterForSaproxylic.class);
                 put("globalwebdb", StudyImporterForGlobalWebDb.class);
                 put("application/dwca", StudyImporterForDwCA.class);
+                put("rss", StudyImporterForRSS.class);
             }
         };
         Class<? extends StudyImporter> anImporter = supportedFormats.get(format);

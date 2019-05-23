@@ -9,11 +9,11 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
 
-public class GitHubImporterFactoryTest {
+public class StudyImporterFactoryTest {
 
     @Test
     public void createWebOfLife() throws StudyImporterException {
-        Class<? extends StudyImporter> clazz = GitHubImporterFactory.importerForFormat("web-of-life");
+        Class<? extends StudyImporter> clazz = StudyImporterFactory.importerForFormat("web-of-life");
         assertThat(clazz, Is.is(not(nullValue())));
     }
 

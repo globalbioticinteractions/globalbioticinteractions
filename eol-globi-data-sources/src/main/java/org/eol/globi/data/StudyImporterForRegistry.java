@@ -7,7 +7,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFactory;
 import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
-import org.eol.globi.service.GitHubImporterFactory;
+import org.eol.globi.service.StudyImporterFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,7 +66,7 @@ public class StudyImporterForRegistry extends BaseStudyImporter {
     }
 
     public void importData(Dataset dataset) throws StudyImporterException {
-        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, nodeFactory);
+        StudyImporter importer = new StudyImporterFactory().createImporter(dataset, nodeFactory);
         if (importer != null) {
             if (getLogger() != null) {
                 importer.setLogger(getLogger());

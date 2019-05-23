@@ -22,7 +22,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.eol.globi.data.StudyImporterForTSV.*;
+import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 public class StudyImporterForDwCA extends BaseStudyImporter {
 

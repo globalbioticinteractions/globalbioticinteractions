@@ -4,7 +4,7 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.data.BaseStudyImporter;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterForArthopodEasyCapture;
+import org.eol.globi.data.StudyImporterForRSS;
 import org.eol.globi.data.StudyImporterForCoetzer;
 import org.eol.globi.data.StudyImporterForGoMexSI2;
 import org.eol.globi.data.StudyImporterForHafner;
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 
-public class GitHubImporterFactoryIT {
+public class StudyImporterFactoryIT {
 
     @Test
     public void createGoMexSI() throws StudyImporterException, DatasetFinderException  {
@@ -44,7 +44,7 @@ public class GitHubImporterFactoryIT {
     @Test
     public void createHafner() throws StudyImporterException, DatasetFinderException  {
         final DatasetRegistry datasetRegistryGitHubRemote = new DatasetRegistryGitHubRemote();
-        StudyImporter importer = new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/hafner", datasetRegistryGitHubRemote), null);
+        StudyImporter importer = new StudyImporterFactory().createImporter(DatasetFactory.datasetFor("globalbioticinteractions/hafner", datasetRegistryGitHubRemote), null);
         assertThat(importer, is(notNullValue()));
         StudyImporterForHafner gomexsiImporter = (StudyImporterForHafner) importer;
         assertThat(gomexsiImporter.getDataset().getResourceURI("hafner/gopher_lice_int.csv"), is("gopher_lice_int.csv"));
@@ -89,8 +89,8 @@ public class GitHubImporterFactoryIT {
         final DatasetRegistryGitHubRemote datasetFinderGitHubRemote = new DatasetRegistryGitHubRemote();
         StudyImporter importer = importerFor(datasetFinderGitHubRemote, "globalbioticinteractions/arthropodEasyCaptureAMNH");
         assertThat(importer, is(notNullValue()));
-        assertThat(importer, is(instanceOf(StudyImporterForArthopodEasyCapture.class)));
-        assertThat(((StudyImporterForArthopodEasyCapture)importer).getRssFeedUrlString(), is(notNullValue()));
+        assertThat(importer, is(instanceOf(StudyImporterForRSS.class)));
+        assertThat(((StudyImporterForRSS)importer).getRssFeedUrlString(), is(notNullValue()));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class GitHubImporterFactoryIT {
     }
 
     public StudyImporter importerFor(DatasetRegistryGitHubRemote datasetFinderGitHubRemote, String repo) throws StudyImporterException, DatasetFinderException {
-        return new GitHubImporterFactory().createImporter(DatasetFactory.datasetFor(repo, datasetFinderGitHubRemote), null);
+        return new StudyImporterFactory().createImporter(DatasetFactory.datasetFor(repo, datasetFinderGitHubRemote), null);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class GitHubImporterFactoryIT {
     public void jsonldImporterCached() throws StudyImporterException, DatasetFinderException  {
         final DatasetRegistry datasetRegistry = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive());
         Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/jsonld-template-dataset", datasetRegistry);
-        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null);
+        StudyImporter importer = new StudyImporterFactory().createImporter(dataset, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForJSONLD.class)));
     }
@@ -160,7 +160,7 @@ public class GitHubImporterFactoryIT {
 
     StudyImporter getTemplateImporter(DatasetRegistry datasetRegistry, String repo) throws DatasetFinderException, StudyImporterException {
         Dataset dataset = DatasetFactory.datasetFor(repo, datasetRegistry);
-        StudyImporter importer = new GitHubImporterFactory().createImporter(dataset, null);
+        StudyImporter importer = new StudyImporterFactory().createImporter(dataset, null);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForTSV.class)));
         return importer;

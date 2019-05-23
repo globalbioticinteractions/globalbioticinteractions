@@ -11,8 +11,8 @@ public final class DatasetUtil {
 
     public static String getNamedResourceURI(Dataset dataset, String resourceName) {
         String resourceValue = getNamedResource(dataset, resourceName);
-        URI resourceURI = dataset.getResourceURI(resourceValue);
-        return resourceValue == null || resourceURI == null ? null : resourceURI.toString();
+        URI resourceURI = resourceValue == null ? null : dataset.getResourceURI(resourceValue);
+        return resourceURI == null ? null : resourceURI.toString();
     }
 
     public static InputStream getNamedResourceStream(Dataset dataset, String resourceName) throws IOException {

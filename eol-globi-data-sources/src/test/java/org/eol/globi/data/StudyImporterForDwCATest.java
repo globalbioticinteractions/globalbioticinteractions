@@ -23,20 +23,20 @@ import static org.junit.Assert.fail;
 public class StudyImporterForDwCATest {
 
     @Test
-    public void importRecordsFromDir() throws IOException, StudyImporterException, URISyntaxException {
+    public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/vampire-moth-dwca-master/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomething(archiveRoot);
     }
 
     @Test
-    public void importRecordsFromArchive() throws IOException, StudyImporterException, URISyntaxException {
+    public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomething(resource.toURI());
     }
 
     @Test
-    public void importRecords() throws IOException, StudyImporterException, URISyntaxException {
+    public void importRecords() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI()));
