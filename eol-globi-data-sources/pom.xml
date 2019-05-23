@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>eol-globi-data-sources</artifactId>
-    <name>EOL's Global Biotic Interactions Data Sources</name>
+    <name>Global Biotic Interactions Data Sources</name>
 
     <dependencies>
         <dependency>

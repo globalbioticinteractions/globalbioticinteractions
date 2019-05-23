@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>eol-globi-taxon-resolver</artifactId>
-    <name>EOL's Global Biotic Interactions Taxon Resolvers</name>
+    <name>Global Biotic Interactions Taxon Resolvers</name>
 
     <dependencies>
         <dependency>

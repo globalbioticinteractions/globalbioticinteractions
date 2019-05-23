@@ -7,7 +7,7 @@
     <artifactId>eol-globi-parent</artifactId>
     <version>0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>EOL's Global Biotic Interaction Shared Project Settings</name>
+    <name>Global Biotic Interaction Shared Project Settings</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

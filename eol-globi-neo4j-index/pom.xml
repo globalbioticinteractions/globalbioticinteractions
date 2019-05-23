@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>eol-globi-neo4j-index</artifactId>
-    <name>EOL's Global Biotic Interaction Neo4j Index Builder/Exporter</name>
+    <name>Global Biotic Interaction Neo4j Index Builder/Exporter</name>
 
     <dependencies>
         <dependency>

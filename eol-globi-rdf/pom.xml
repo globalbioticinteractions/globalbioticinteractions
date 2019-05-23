@@ -10,7 +10,7 @@
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
-    <name>EOL's Global Biotic Interaction RDF Store</name>
+    <name>Global Biotic Interaction RDF Store</name>
     <artifactId>eol-globi-rdf</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>

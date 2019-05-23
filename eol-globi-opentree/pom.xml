@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>eol-globi-opentree</artifactId>
-    <name>EOL's Global Biotic Interaction Open Tree of Life Integration</name>
+    <name>Global Biotic Interaction Open Tree of Life Integration</name>
 
     <properties>
         <shapefiles.dir>${project.build.testOutputDirectory}</shapefiles.dir>
