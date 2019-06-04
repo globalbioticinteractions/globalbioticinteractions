@@ -109,6 +109,7 @@ public class HttpUtil {
     public static void addJsonHeaders(HttpRequestBase httpGet) {
         httpGet.setHeader("Accept", APPLICATION_JSON);
         httpGet.setHeader("Content-Type", APPLICATION_JSON);
+        httpGet.setHeader("X-Stream", "true");
     }
 
     public static String getRemoteJson(String uri) throws IOException {
