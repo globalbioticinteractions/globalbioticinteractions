@@ -1,5 +1,8 @@
 package org.eol.globi.server.util;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.eol.globi.util.CypherQuery;
@@ -18,6 +21,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<CypherQuery> {
+
+    private static final Log LOG = LogFactory.getLog(CypherHttpMessageConverter.class);
 
     public CypherHttpMessageConverter() {
         super(MediaType.parseMediaType("application/json;charset=UTF-8"),
@@ -51,13 +56,13 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
         if (formatter == null) {
             throw new IOException("found unsupported return format type request for [" + contentType.toString() + "]");
         } else {
-            if (formatter instanceof ResultFormatterStreaming) {
+            if (formatter instanceof ResultFormatterStreaming && false) {
+                LOG.info("executing query: [" + cypherQuery.getQuery() + "] with params [" + cypherQuery.getParams() + "]");
                 HttpPost req = CypherUtil.getCypherRequest(cypherQuery);
                 HttpResponse res = HttpUtil.getHttpClient().execute(req);
-                try (InputStream is = res.getEntity().getContent();
+                try (InputStream is = IOUtils.buffer(res.getEntity().getContent());
                      OutputStream os = outputMessage.getBody()) {
                     ((ResultFormatterStreaming) formatter).format(is, os);
-                    os.flush();
                 }
             } else {
                 String result = CypherUtil.executeRemote(cypherQuery);
