@@ -1,7 +1,10 @@
 package org.eol.globi.server.util;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
+import org.eol.globi.util.HttpUtil;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -11,6 +14,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<CypherQuery> {
 
@@ -46,8 +51,18 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
         if (formatter == null) {
             throw new IOException("found unsupported return format type request for [" + contentType.toString() + "]");
         } else {
-            String result = CypherUtil.executeRemote(cypherQuery);
-            StreamUtils.copy(formatter.format(result), contentType.getCharSet(), outputMessage.getBody());
+            if (formatter instanceof ResultFormatterStreaming) {
+                HttpPost req = CypherUtil.getCypherRequest(cypherQuery);
+                HttpResponse res = HttpUtil.getHttpClient().execute(req);
+                try (InputStream is = res.getEntity().getContent();
+                     OutputStream os = outputMessage.getBody()) {
+                    ((ResultFormatterStreaming) formatter).format(is, os);
+                    os.flush();
+                }
+            } else {
+                String result = CypherUtil.executeRemote(cypherQuery);
+                StreamUtils.copy(formatter.format(result), contentType.getCharSet(), outputMessage.getBody());
+            }
         }
     }
 }

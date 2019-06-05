@@ -8,6 +8,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -15,11 +16,16 @@ public class CypherUtil {
     private static final Log LOG = LogFactory.getLog(CypherUtil.class);
 
     public static String executeCypherQuery(CypherQuery query) throws IOException {
+        HttpPost httpPost = getCypherRequest(query);
+        BasicResponseHandler responseHandler = new BasicResponseHandler();
+        return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
+    }
+
+    public static HttpPost getCypherRequest(CypherQuery query) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(getCypherURI());
         HttpUtil.addJsonHeaders(httpPost);
         httpPost.setEntity(new StringEntity(wrapQuery(query)));
-        BasicResponseHandler responseHandler = new BasicResponseHandler();
-        return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
+        return httpPost;
     }
 
     private static String getCypherURI() {
