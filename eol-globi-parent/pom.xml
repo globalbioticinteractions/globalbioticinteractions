@@ -7,7 +7,7 @@
     <artifactId>eol-globi-parent</artifactId>
     <version>0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Global Biotic Interaction Shared Project Settings</name>
+    <name>Global Biotic Interactions Shared Project Settings</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,7 +19,7 @@
         <mapdb.version>1.0.9</mapdb.version>
         <jena.version>1.0.2</jena.version>
         <commons-io.version>2.6</commons-io.version>
-        <httpcomponents.version>4.3.6</httpcomponents.version>
+        <httpcomponents.version>4.5.8</httpcomponents.version>
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>

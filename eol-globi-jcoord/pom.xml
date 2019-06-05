@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>eol-globi-jcoord</artifactId>
-    <name>EOL's Global Biotic Interaction Wrapper for JCoord</name>
+    <name>Global Biotic Interactions Wrapper for JCoord</name>
     <packaging>pom</packaging>
     <!-- note that this module was created to avoid including the mygrid repository for all artifacts -->
 

@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>eol-globi-lib</artifactId>
-    <name>EOL's Global Biotic Interaction Shared Library</name>
+    <name>Global Biotic Interactions Shared Library</name>
 
     <repositories>
         <repository>

@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>eol-globi-geo</artifactId>
-    <name>EOL's Global Biotic Interaction Geographic Library</name>
+    <name>Global Biotic Interactions Geographic Library</name>
 
     <properties>
         <shapefiles.dir>${project.build.testOutputDirectory}</shapefiles.dir>

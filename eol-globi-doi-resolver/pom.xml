@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>eol-globi-doi-resolver</artifactId>
-    <name>EOL's Global Biotic Interaction DOI Resolver</name>
+    <name>Global Biotic Interactions DOI Resolver</name>
 
     <dependencies>
         <dependency>

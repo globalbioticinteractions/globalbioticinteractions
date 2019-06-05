@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>eol-globi-neo4j</artifactId>
-    <name>EOL's Global Biotic Interaction Neo4j Support</name>
+    <name>Global Biotic Interactions Neo4j Support</name>
 
     <dependencies>
         <dependency>

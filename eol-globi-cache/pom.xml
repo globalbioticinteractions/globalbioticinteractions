@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>eol-globi-cache</artifactId>
-    <name>Global Biotic Interaction Caching</name>
+    <name>Global Biotic Interactions Caching</name>
 
     <dependencies>
         <dependency>

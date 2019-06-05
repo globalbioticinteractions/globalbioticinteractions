@@ -12,7 +12,7 @@
     <artifactId>eol-globi-rest</artifactId>
     <packaging>war</packaging>
 
-    <name>Global Biotic Interaction Rest Services</name>
+    <name>Global Biotic Interactions Rest Services</name>
 
     <properties>
         <spring.version>3.2.13.RELEASE</spring.version>
