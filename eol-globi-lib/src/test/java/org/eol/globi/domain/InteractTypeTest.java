@@ -33,6 +33,7 @@ import static org.eol.globi.domain.InteractType.POLLINATED_BY;
 import static org.eol.globi.domain.InteractType.POLLINATES;
 import static org.eol.globi.domain.InteractType.PREYED_UPON_BY;
 import static org.eol.globi.domain.InteractType.PREYS_UPON;
+import static org.eol.globi.domain.InteractType.RELATED_TO;
 import static org.eol.globi.domain.InteractType.SYMBIONT_OF;
 import static org.eol.globi.domain.InteractType.VECTOR_OF;
 import static org.eol.globi.domain.InteractType.VISITS_FLOWERS_OF;
@@ -69,9 +70,9 @@ public class InteractTypeTest {
             assertThat("found missing path for interaction [" + type + "]", InteractType.hasTypes(type), is(notNullValue()));
         }
 
-        assertThat(InteractType.hasTypes(PREYS_UPON), hasItems(KILLS, ATE, INTERACTS_WITH));
-        assertThat(InteractType.hasTypes(PREYED_UPON_BY), hasItems(KILLED_BY, EATEN_BY, INTERACTS_WITH));
-        assertThat(InteractType.hasTypes(DAMAGED_BY), hasItems(INTERACTS_WITH));
+        assertThat(InteractType.hasTypes(PREYS_UPON), hasItems(KILLS, ATE, INTERACTS_WITH, RELATED_TO));
+        assertThat(InteractType.hasTypes(PREYED_UPON_BY), hasItems(KILLED_BY, EATEN_BY, INTERACTS_WITH, RELATED_TO));
+        assertThat(InteractType.hasTypes(DAMAGED_BY), hasItems(INTERACTS_WITH, RELATED_TO));
     }
 
     @Test

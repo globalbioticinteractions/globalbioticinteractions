@@ -108,7 +108,9 @@ public enum InteractType implements RelType {
     HAS_EGGS_LAYED_ON_BY("http://purl.obolibrary.org/obo/RO_0008508", "hasEggsLayedOnBy", OBJECT, SUBJECT),
 
     CO_OCCURS_WITH("http://purl.obolibrary.org/obo/RO_0008506", "coOccursWith"),
-    COMMENSALIST_OF("http://purl.obolibrary.org/obo/RO_0002441", "commensalistOf");
+    COMMENSALIST_OF("http://purl.obolibrary.org/obo/RO_0002441", "commensalistOf"),
+
+    RELATED_TO("http://purl.obolibrary.org/obo/RO_0002321", "ecologicallyRelatedTo");
 
 
     String iri;
@@ -170,44 +172,44 @@ public enum InteractType implements RelType {
     public static Collection<InteractType> hasTypes(InteractType type) {
         final Map<InteractType, Collection<InteractType>> pathMap = new HashMap<InteractType, Collection<InteractType>>() {
             {
-                put(INTERACTS_WITH, new ArrayList<InteractType>());
-                put(CO_OCCURS_WITH, new ArrayList<InteractType>());
-                put(ADJACENT_TO, Collections.singletonList(INTERACTS_WITH));
-                put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH));
-                put(ATE, Collections.singletonList(INTERACTS_WITH));
-                put(SYMBIONT_OF, Collections.singletonList(INTERACTS_WITH));
-                put(PREYS_UPON, Arrays.asList(ATE, KILLS, INTERACTS_WITH));
-                put(PATHOGEN_OF, Arrays.asList(PARASITE_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
-                put(VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH));
-                put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH, VECTOR_OF));
-                put(PARASITOID_OF, Arrays.asList(PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
-                put(ENDOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
-                put(ECTOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, LIVES_ON, ADJACENT_TO, SYMBIONT_OF, INTERACTS_WITH));
-                put(HYPERPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
-                put(PARASITE_OF, Arrays.asList(ATE, DAMAGES, LIVES_WITH, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
-                put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, HAS_HOST, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH));
-                put(ENDOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_INSIDE_OF, HAS_HOST, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
-                put(ECTOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_ON, ADJACENT_TO, ATE, HAS_HOST, DAMAGES, SYMBIONT_OF, INTERACTS_WITH));
-                put(POLLINATES, Arrays.asList(VISITS_FLOWERS_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH));
-                put(VISITS, Arrays.asList(HAS_HOST, INTERACTS_WITH));
-                put(LAYS_EGGS_ON, Arrays.asList(HAS_HOST, INTERACTS_WITH, VISITS));
-                put(VISITS_FLOWERS_OF, Arrays.asList(HAS_HOST, INTERACTS_WITH, VISITS));
-                put(HOST_OF, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH));
-                put(KLEPTOPARASITE_OF, Arrays.asList(INTERACTS_WITH, PARASITE_OF, SYMBIONT_OF, HAS_HOST, LIVES_WITH, ATE, DAMAGES));
-                put(INHABITS, Collections.singletonList(INTERACTS_WITH));
-                put(CREATES_HABITAT_FOR, Arrays.asList(INTERACTS_WITH, ADJACENT_TO));
-                put(LIVES_ON, Arrays.asList(INTERACTS_WITH, ADJACENT_TO, CREATES_HABITAT_FOR));
-                put(LIVES_INSIDE_OF, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR));
-                put(LIVES_NEAR, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR));
-                put(LIVES_UNDER, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR));
-                put(LIVES_WITH, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR));
-                put(GUEST_OF, Collections.singletonList(INTERACTS_WITH));
-                put(FARMS, Arrays.asList(ATE, SYMBIONT_OF, INTERACTS_WITH));
-                put(DAMAGES, Collections.singletonList(INTERACTS_WITH));
-                put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, INTERACTS_WITH, VECTOR_OF));
-                put(KILLS, Collections.singletonList(INTERACTS_WITH));
-                put(EPIPHITE_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF));
-                put(COMMENSALIST_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF));
+                put(RELATED_TO, new ArrayList<>());
+                put(INTERACTS_WITH, Collections.singletonList(RELATED_TO));
+                put(CO_OCCURS_WITH, Collections.singletonList(RELATED_TO));
+                put(ADJACENT_TO, Collections.singletonList(CO_OCCURS_WITH));
+                put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH, RELATED_TO));
+                put(ATE, Arrays.asList(INTERACTS_WITH, RELATED_TO));
+                put(SYMBIONT_OF, Arrays.asList(INTERACTS_WITH, RELATED_TO));
+                put(PREYS_UPON, Arrays.asList(ATE, KILLS, INTERACTS_WITH, RELATED_TO));
+                put(PATHOGEN_OF, Arrays.asList(PARASITE_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH, VECTOR_OF, RELATED_TO));
+                put(PARASITOID_OF, Arrays.asList(PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(ENDOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(ECTOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, LIVES_ON, ADJACENT_TO, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(HYPERPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(PARASITE_OF, Arrays.asList(ATE, DAMAGES, LIVES_WITH, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, HAS_HOST, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(ENDOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_INSIDE_OF, HAS_HOST, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(ECTOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_ON, ADJACENT_TO, ATE, HAS_HOST, DAMAGES, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(POLLINATES, Arrays.asList(VISITS_FLOWERS_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(VISITS, Arrays.asList(HAS_HOST, INTERACTS_WITH, RELATED_TO));
+                put(LAYS_EGGS_ON, Arrays.asList(HAS_HOST, INTERACTS_WITH, VISITS, RELATED_TO));
+                put(VISITS_FLOWERS_OF, Arrays.asList(HAS_HOST, INTERACTS_WITH, VISITS, RELATED_TO));
+                put(HOST_OF, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(KLEPTOPARASITE_OF, Arrays.asList(INTERACTS_WITH, PARASITE_OF, SYMBIONT_OF, HAS_HOST, LIVES_WITH, ATE, DAMAGES, RELATED_TO));
+                put(INHABITS, Arrays.asList(INTERACTS_WITH, RELATED_TO));
+                put(CREATES_HABITAT_FOR, Arrays.asList(INTERACTS_WITH, ADJACENT_TO, RELATED_TO));
+                put(LIVES_ON, Arrays.asList(INTERACTS_WITH, ADJACENT_TO, CREATES_HABITAT_FOR, RELATED_TO));
+                put(LIVES_INSIDE_OF, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO));
+                put(LIVES_NEAR, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO));
+                put(LIVES_UNDER, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO));
+                put(LIVES_WITH, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO));
+                put(GUEST_OF, Arrays.asList(INTERACTS_WITH, RELATED_TO));
+                put(FARMS, Arrays.asList(ATE, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO));
+                put(DAMAGES, Arrays.asList(INTERACTS_WITH, RELATED_TO));
+                put(KILLS, Arrays.asList(INTERACTS_WITH, RELATED_TO));
+                put(EPIPHITE_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO));
+                put(COMMENSALIST_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO));
             }
         };
 
@@ -283,6 +285,7 @@ public enum InteractType implements RelType {
                 put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);
                 put(EPIPHITE_OF, HAS_EPIPHITE);
                 put(COMMENSALIST_OF, COMMENSALIST_OF);
+                put(RELATED_TO, RELATED_TO);
             }
         };
 
