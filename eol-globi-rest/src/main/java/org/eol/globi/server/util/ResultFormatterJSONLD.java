@@ -6,4 +6,5 @@ public class ResultFormatterJSONLD implements ResultFormatter {
     public String format(String result) throws ResultFormattingException {
        return "{\"@context\": \"https://raw.githubusercontent.com/globalbioticinteractions/jsonld-template-dataset/master/context.jsonld\"}";
     }
+
 }

@@ -1,20 +1,117 @@
 package org.eol.globi.server.util;
 
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class ResultFormatterSeparatedValues implements ResultFormatter {
+import static org.codehaus.jackson.JsonToken.END_ARRAY;
+import static org.codehaus.jackson.JsonToken.FIELD_NAME;
+import static org.codehaus.jackson.JsonToken.START_ARRAY;
+import static org.codehaus.jackson.JsonToken.VALUE_FALSE;
+import static org.codehaus.jackson.JsonToken.VALUE_NUMBER_FLOAT;
+import static org.codehaus.jackson.JsonToken.VALUE_NUMBER_INT;
+import static org.codehaus.jackson.JsonToken.VALUE_STRING;
+import static org.codehaus.jackson.JsonToken.VALUE_TRUE;
+
+public abstract class ResultFormatterSeparatedValues implements ResultFormatterStreaming {
 
     abstract protected void addCSVSeparator(StringBuilder resultBuilder, boolean hasNext);
+
+    abstract protected String getFieldSeparator();
+
+    abstract protected String getStringQuotes();
+
+    abstract protected String escapeValue(String value);
 
     abstract protected String writeToCSVCellValue(JsonNode cell);
 
     abstract protected void writeAsCSVCell(StringBuilder resultBuilder, JsonNode node);
 
+
+    @Override
+    public void format(InputStream is, OutputStream os) throws ResultFormattingException {
+        try (InputStream inputStream = is) {
+            JsonFactory factory = new JsonFactory();
+            JsonParser jsonParser = factory.createJsonParser(inputStream);
+            JsonToken token;
+            while (!jsonParser.isClosed()
+                    && (token = jsonParser.nextToken()) != null) {
+                if (FIELD_NAME.equals(token) && "columns".equals(jsonParser.getCurrentName())) {
+                    token = jsonParser.nextToken();
+                    if (START_ARRAY.equals(token)) {
+                        boolean isFirstValue = true;
+                        while ((token = jsonParser.nextToken()) != null && !END_ARRAY.equals(token)) {
+                            if (isValue(token)) {
+                                if (!isFirstValue) {
+                                    IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
+                                }
+                                if (VALUE_STRING.equals(token)) {
+                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
+                                }
+                                IOUtils.write(escapeValue(jsonParser.getText()), os, StandardCharsets.UTF_8);
+                                if (VALUE_STRING.equals(token)) {
+                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
+                                }
+                                isFirstValue = false;
+                            }
+                        }
+                    }
+                } else if (FIELD_NAME.equals(token) && "data".equals(jsonParser.getCurrentName())) {
+                    token = jsonParser.nextToken();
+                    if (START_ARRAY.equals(token)) {
+                        boolean isFirstValue = true;
+                        boolean endOfLine = false;
+                        boolean endOfData = false;
+                        while ((token = jsonParser.nextToken()) != null && !endOfData) {
+                            if (START_ARRAY.equals(token)) {
+                                endOfLine = false;
+                                endOfData = false;
+                                isFirstValue = true;
+                            } else if (isValue(token)) {
+                                if (isFirstValue) {
+                                    IOUtils.write("\n", os, StandardCharsets.UTF_8);
+                                } else {
+                                    IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
+                                }
+                                if (VALUE_STRING.equals(token)) {
+                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
+                                }
+                                IOUtils.write(escapeValue(jsonParser.getText()), os, StandardCharsets.UTF_8);
+                                if (VALUE_STRING.equals(token)) {
+                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
+                                }
+                                isFirstValue = false;
+                            } else if (END_ARRAY.equals(token)) {
+                                endOfData = endOfLine;
+                                endOfLine = true;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new ResultFormattingException("failed to format incoming stream", e);
+        }
+    }
+
+    private boolean isValue(JsonToken token) {
+        return VALUE_STRING.equals(token)
+                || VALUE_FALSE.equals(token)
+                || VALUE_NUMBER_FLOAT.equals(token)
+                || VALUE_TRUE.equals(token)
+                || VALUE_NUMBER_INT.equals(token);
+    }
 
     @Override
     public String format(String s) throws ResultFormattingException {
@@ -68,7 +165,7 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatter 
                 }
                 for (JsonNode cellElem : cell) {
                     if (arrayCell == null) {
-                        arrayCell = new ArrayList<String>();
+                        arrayCell = new ArrayList<>();
                     }
                     arrayCell.add(writeToCSVCellValue(cellElem));
                 }
@@ -131,6 +228,5 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatter 
         writeAsCSVCell(resultBuilder, node);
         addCSVSeparator(resultBuilder, hasNext);
     }
-
 
 }

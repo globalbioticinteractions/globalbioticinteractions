@@ -18,6 +18,21 @@ public class ResultFormatterTSV extends ResultFormatterSeparatedValues {
     }
 
     @Override
+    protected String getFieldSeparator() {
+        return "\t";
+    }
+
+    @Override
+    protected String getStringQuotes() {
+        return "";
+    }
+
+    @Override
+    protected String escapeValue(String value) {
+        return CSVTSVUtil.escapeTSV(value);
+    }
+
+    @Override
     protected void writeAsCSVCell(StringBuilder resultBuilder, JsonNode node) {
         if (!node.isNull()) {
             CSVTSVUtil.escapeTSV(resultBuilder, node);

@@ -57,11 +57,21 @@ public class CSVTSVUtil {
     }
 
     public static void escapeQuotes(StringBuilder resultBuilder, JsonNode node) {
-        resultBuilder.append(StringUtils.replace(node.asText(), "\"", "\"\""));
+        resultBuilder.append(escapeCSV(node.asText()));
+    }
+
+    public static String escapeCSV(String text) {
+        return StringUtils.replace(text, "\"", "\"\"");
     }
 
     public static void escapeTSV(StringBuilder resultBuilder, JsonNode node) {
-        resultBuilder.append(StringUtils.replace(node.asText(), "\t", " "));
+        String text = node.asText();
+        String replace = escapeTSV(text);
+        resultBuilder.append(replace);
+    }
+
+    public static String escapeTSV(String text) {
+        return StringUtils.replace(text, "\t", " ");
     }
 
     public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName) {

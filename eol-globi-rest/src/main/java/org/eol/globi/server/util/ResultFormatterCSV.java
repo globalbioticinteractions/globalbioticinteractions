@@ -11,6 +11,21 @@ public class ResultFormatterCSV extends ResultFormatterSeparatedValues {
     }
 
     @Override
+    protected String getFieldSeparator() {
+        return ",";
+    }
+
+    @Override
+    protected String getStringQuotes() {
+        return "\"";
+    }
+
+    @Override
+    protected String escapeValue(String value) {
+        return CSVTSVUtil.escapeCSV(value);
+    }
+
+    @Override
     protected String writeToCSVCellValue(JsonNode cell) {
         StringBuilder builder = new StringBuilder();
         writeAsCSVCell(builder, cell);
