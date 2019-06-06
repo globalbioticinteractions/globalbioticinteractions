@@ -4,9 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.InteractType;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.TreeSet;
 
 public class InteractUtil {
 
@@ -19,7 +18,7 @@ public class InteractUtil {
     }
 
     public static String interactionsCypherClause(InteractType... values) {
-        List<InteractType> types = new ArrayList<InteractType>();
+        TreeSet<InteractType> types = new TreeSet<>();
         for (InteractType value : values) {
             types.addAll(InteractType.typesOf(value));
         }

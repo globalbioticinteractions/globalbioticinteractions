@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -579,7 +580,7 @@ public class CypherQueryBuilder {
 
 
     protected static String createInteractionTypeSelector(List<String> interactionTypeSelectors) {
-        List<InteractType> cypherTypes = new ArrayList<InteractType>();
+        TreeSet<InteractType> cypherTypes = new TreeSet<InteractType>();
         for (String type : interactionTypeSelectors) {
             if (StringUtils.isNotBlank(type)) {
                 InteractType interactType = InteractType.typeOf(type);

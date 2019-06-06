@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 import static org.eol.globi.domain.InteractType.InteractionRole.OBJECT;
 import static org.eol.globi.domain.InteractType.InteractionRole.SUBJECT;
@@ -235,7 +236,7 @@ public enum InteractType implements RelType {
     }
 
     public static Collection<InteractType> typesOf(InteractType type) {
-        Collection<InteractType> inversePath = new ArrayList<InteractType>();
+        Collection<InteractType> inversePath = new TreeSet<>();
         inversePath.add(type);
         for (InteractType interactType : values()) {
             if (hasTypes(interactType).contains(type)) {
