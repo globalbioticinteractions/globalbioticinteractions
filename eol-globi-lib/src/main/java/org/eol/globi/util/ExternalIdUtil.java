@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExternalIdUtil {
 
@@ -61,6 +63,7 @@ public class ExternalIdUtil {
     }};
 
     private static final Log LOG = LogFactory.getLog(ExternalIdUtil.class);
+    public static final Pattern LIKELY_ID_PATTERN = Pattern.compile(".*[:-].*");
 
     public static String urlForExternalId(String externalId) {
         URI uri = null;
@@ -206,5 +209,13 @@ public class ExternalIdUtil {
 
     public static String prefixForUrl(String url) {
         return URL_TO_PREFIX_MAP.get(url);
+    }
+
+    public static boolean isLikelyId(String idCandidate) {
+        return !StringUtils.isBlank(idCandidate) && LIKELY_ID_PATTERN.matcher(idCandidate).matches();
+    }
+
+    public static boolean isUnlikelyId(String idCandidate) {
+        return !isLikelyId(idCandidate);
     }
 }

@@ -264,6 +264,21 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void enrichByUnlikelyId() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "1276240");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is(nullValue()));
+        assertThat(enrichedTaxon.getExternalId(), is("1276240"));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
     public void enrichByIdLowerCase() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {

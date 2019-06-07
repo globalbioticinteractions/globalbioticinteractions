@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ExternalIdUtilTest {
 
@@ -66,5 +68,16 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.toCitation("Joe Smith", "my study", "1984"), is("Joe Smith. 1984. my study"));
         assertThat(ExternalIdUtil.toCitation("Joe Smith", null, "1984"), is("Joe Smith. 1984"));
         assertThat(ExternalIdUtil.toCitation("Joe Smith", "my study", null), is("Joe Smith. my study"));
+    }
+
+    @Test
+    public void isLikelyId() {
+        assertFalse(ExternalIdUtil.isLikelyId("1234"));
+        assertFalse(ExternalIdUtil.isLikelyId("something here"));
+        assertFalse(ExternalIdUtil.isLikelyId(null));
+        assertTrue(ExternalIdUtil.isLikelyId("1234-123"));
+        assertTrue(ExternalIdUtil.isLikelyId("bla:1234-123"));
+        assertTrue(ExternalIdUtil.isLikelyId("bla:1234-123"));
+        assertTrue(ExternalIdUtil.isLikelyId("https://some/thing"));
     }
 }
