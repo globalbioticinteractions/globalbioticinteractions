@@ -14,6 +14,7 @@ public class ResultFormatterTSVTest {
 
     public static final String WITH_QUOTED_TEXT_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"and he said: \\\"boo\\\"\", \"two\" ], [ \"three\", \"four\" ] ]}";
     public static final String WITH_STRING_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"one\", \"two\" ], [ \"three\", \"four\" ] ]}";
+    public static final String WITH_NULL_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ null, \"two\" ], [ null, \"four\" ] ]}";
     public static final String WITH_NUMERIC_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ -25.0, 135.0 ], [ 40.9777996, -79.5252906 ] ]}";
 
     @Test
@@ -51,6 +52,19 @@ public class ResultFormatterTSVTest {
     public void toTSVQuotedTextOutputStream() throws ResultFormattingException {
         assertResults(WITH_QUOTED_TEXT_VALUES,
                 "loc.latitude\tloc.longitude\nand he said: \"boo\"\ttwo\nthree\tfour");
+    }
+
+    @Test
+    public void toTSVNullText() throws ResultFormattingException {
+        String format = new ResultFormatterTSV().format(WITH_NULL_VALUES);
+        String expectedValues = "loc.latitude\tloc.longitude\n\ttwo\n\tfour\n";
+        assertThat(format, is(expectedValues));
+    }
+
+    @Test
+    public void toTSVNullTextOutputStream() throws ResultFormattingException {
+        assertResults(WITH_NULL_VALUES,
+                "loc.latitude\tloc.longitude\n\ttwo\n\tfour");
     }
 
     private void assertResults(String inputText, String expectedValues) throws ResultFormattingException {

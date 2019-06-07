@@ -19,6 +19,7 @@ import static org.codehaus.jackson.JsonToken.END_ARRAY;
 import static org.codehaus.jackson.JsonToken.FIELD_NAME;
 import static org.codehaus.jackson.JsonToken.START_ARRAY;
 import static org.codehaus.jackson.JsonToken.VALUE_FALSE;
+import static org.codehaus.jackson.JsonToken.VALUE_NULL;
 import static org.codehaus.jackson.JsonToken.VALUE_NUMBER_FLOAT;
 import static org.codehaus.jackson.JsonToken.VALUE_NUMBER_INT;
 import static org.codehaus.jackson.JsonToken.VALUE_STRING;
@@ -38,7 +39,6 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
 
     abstract protected void writeAsCSVCell(StringBuilder resultBuilder, JsonNode node);
 
-
     @Override
     public void format(InputStream is, OutputStream os) throws ResultFormattingException {
         try (InputStream inputStream = is) {
@@ -56,13 +56,8 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
                                 if (!isFirstValue) {
                                     IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
                                 }
-                                if (VALUE_STRING.equals(token)) {
-                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
-                                }
-                                IOUtils.write(escapeValue(jsonParser.getText()), os, StandardCharsets.UTF_8);
-                                if (VALUE_STRING.equals(token)) {
-                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
-                                }
+                                writeValue(os, jsonParser, token);
+
                                 isFirstValue = false;
                             }
                         }
@@ -81,16 +76,13 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
                             } else if (isValue(token)) {
                                 if (isFirstValue) {
                                     IOUtils.write("\n", os, StandardCharsets.UTF_8);
+                                    os.flush();
                                 } else {
                                     IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
                                 }
-                                if (VALUE_STRING.equals(token)) {
-                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
-                                }
-                                IOUtils.write(escapeValue(jsonParser.getText()), os, StandardCharsets.UTF_8);
-                                if (VALUE_STRING.equals(token)) {
-                                    IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
-                                }
+
+                                writeValue(os, jsonParser, token);
+
                                 isFirstValue = false;
                             } else if (END_ARRAY.equals(token)) {
                                 endOfData = endOfLine;
@@ -105,12 +97,26 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
         }
     }
 
+    public void writeValue(OutputStream os, JsonParser jsonParser, JsonToken token) throws IOException {
+        if (VALUE_STRING.equals(token)) {
+            IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
+        }
+
+        String text = VALUE_NULL.equals(token) ? "" : jsonParser.getText();
+        IOUtils.write(escapeValue(text), os, StandardCharsets.UTF_8);
+
+        if (VALUE_STRING.equals(token)) {
+            IOUtils.write(getStringQuotes(), os, StandardCharsets.UTF_8);
+        }
+    }
+
     private boolean isValue(JsonToken token) {
         return VALUE_STRING.equals(token)
                 || VALUE_FALSE.equals(token)
                 || VALUE_NUMBER_FLOAT.equals(token)
                 || VALUE_TRUE.equals(token)
-                || VALUE_NUMBER_INT.equals(token);
+                || VALUE_NUMBER_INT.equals(token)
+                || VALUE_NULL.equals(token);
     }
 
     @Override

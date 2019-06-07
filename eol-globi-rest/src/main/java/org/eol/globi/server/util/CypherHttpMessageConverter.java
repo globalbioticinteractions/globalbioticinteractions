@@ -4,10 +4,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
-import org.eol.globi.util.HttpUtil;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -16,6 +14,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.util.StreamUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,13 +55,12 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
         if (formatter == null) {
             throw new IOException("found unsupported return format type request for [" + contentType.toString() + "]");
         } else {
-            if (formatter instanceof ResultFormatterStreaming && false) {
-                LOG.info("executing query: [" + cypherQuery.getQuery() + "] with params [" + cypherQuery.getParams() + "]");
-                HttpPost req = CypherUtil.getCypherRequest(cypherQuery);
-                HttpResponse res = HttpUtil.getHttpClient().execute(req);
+            if (formatter instanceof ResultFormatterStreaming) {
+                HttpResponse res = CypherUtil.execute(cypherQuery);
                 try (InputStream is = IOUtils.buffer(res.getEntity().getContent());
-                     OutputStream os = outputMessage.getBody()) {
+                     OutputStream os = IOUtils.buffer(outputMessage.getBody())) {
                     ((ResultFormatterStreaming) formatter).format(is, os);
+                    os.flush();
                 }
             } else {
                 String result = CypherUtil.executeRemote(cypherQuery);
@@ -70,4 +68,5 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
             }
         }
     }
+
 }

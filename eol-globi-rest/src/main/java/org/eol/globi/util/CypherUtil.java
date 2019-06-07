@@ -3,6 +3,7 @@ package org.eol.globi.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -61,7 +62,17 @@ public class CypherUtil {
     }
 
     public static String executeRemote(CypherQuery query) throws IOException {
-        LOG.info("executing query: [" + query.getQuery() + "] with params [" + query.getParams() + "]");
+        logQuery(query);
         return executeCypherQuery(query);
+    }
+
+    private static void logQuery(CypherQuery query) {
+        LOG.info("executing query: [" + query.getQuery() + "] with params [" + query.getParams() + "]");
+    }
+
+    public static HttpResponse execute(CypherQuery cypherQuery) throws IOException {
+        logQuery(cypherQuery);
+        HttpPost req = getCypherRequest(cypherQuery);
+        return HttpUtil.getHttpClient().execute(req);
     }
 }
