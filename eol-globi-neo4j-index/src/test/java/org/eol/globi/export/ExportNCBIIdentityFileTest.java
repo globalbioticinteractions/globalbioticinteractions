@@ -17,13 +17,13 @@ public class ExportNCBIIdentityFileTest {
         new ExportNCBIIdentityFile().streamTo(baos);
         assertThat(baos.toString(), is("<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE Provider PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +
-                "\"http://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\">\n" +
+                "\"https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\">\n" +
                 "<Provider>\n" +
                 "    <ProviderId>9426</ProviderId>\n" +
                 "    <Name>Global Biotic Interactions</Name>\n" +
                 "    <NameAbbr>GloBI</NameAbbr>\n" +
                 "    <SubjectType>taxonomy/phylogenetic</SubjectType>\n" +
-                "    <Url>http://www.globalbioticinteractions.org</Url>\n" +
+                "    <Url>https://www.globalbioticinteractions.org</Url>\n" +
                 "    <Brief>helps access existing species interaction datasets</Brief>\n" +
                 "</Provider>\n"));
     }

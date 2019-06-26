@@ -80,8 +80,8 @@ public class ExportNCBIResourceFile implements GraphExporter {
         os = fileFactory.create(linkBatch(rowCount));
         IOUtils.write(String.format("<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE LinkSet PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +
-                "\"http://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\"\n" +
-                "[<!ENTITY base.url \"http://www.globalbioticinteractions.org?\">]>\n" +
+                "\"https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\"\n" +
+                "[<!ENTITY base.url \"https://www.globalbioticinteractions.org?\">]>\n" +
                 "<LinkSet>\n" +
                 " <Link>\n" +
                 "   <LinkId>%d</LinkId>\n" +
