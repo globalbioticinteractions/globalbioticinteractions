@@ -110,6 +110,7 @@ public enum InteractType implements RelType {
 
     CO_OCCURS_WITH("http://purl.obolibrary.org/obo/RO_0008506", "coOccursWith"),
     COMMENSALIST_OF("http://purl.obolibrary.org/obo/RO_0002441", "commensalistOf"),
+    MUTUALIST_OF("http://purl.obolibrary.org/obo/RO_0002442", "mutualistOf"),
 
     RELATED_TO("http://purl.obolibrary.org/obo/RO_0002321", "ecologicallyRelatedTo");
 
@@ -211,6 +212,7 @@ public enum InteractType implements RelType {
                 put(KILLS, Arrays.asList(INTERACTS_WITH, RELATED_TO));
                 put(EPIPHITE_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO));
                 put(COMMENSALIST_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO));
+                put(MUTUALIST_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO));
             }
         };
 
@@ -286,6 +288,7 @@ public enum InteractType implements RelType {
                 put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);
                 put(EPIPHITE_OF, HAS_EPIPHITE);
                 put(COMMENSALIST_OF, COMMENSALIST_OF);
+                put(MUTUALIST_OF, MUTUALIST_OF);
                 put(RELATED_TO, RELATED_TO);
             }
         };
