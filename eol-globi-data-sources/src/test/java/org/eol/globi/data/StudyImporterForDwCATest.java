@@ -6,10 +6,10 @@ import org.eol.globi.service.DatasetImpl;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,6 +33,22 @@ public class StudyImporterForDwCATest {
     public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomething(resource.toURI());
+    }
+
+    @Test
+    public void importRecordsFromArctosArchive() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/arctos_mvz_bird_small.zip");
+        StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI()));
+        AtomicBoolean someRecords = new AtomicBoolean(false);
+        studyImporterForDwCA.setListener(new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                someRecords.set(true);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+        assertThat(someRecords.get(), is(true));
     }
 
     @Test
@@ -152,6 +168,41 @@ public class StudyImporterForDwCATest {
         Map<String, String> properties = StudyImporterForDwCA.parseDynamicProperties(s);
 
         assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+    }
+
+
+    @Test
+    public void associatedOccurrences() {
+        String associateOccurrences = "(eaten by) MVZ:Bird http://arctos.database.museum/guid/MVZ:Bird:183644";
+        List<Map<String, String>> propertyList = StudyImporterForDwCA.parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("http://arctos.database.museum/guid/MVZ:Bird:183644"));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eatenBy"));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002471"));
+    }
+
+    @Test
+    public void associatedOccurrences2() {
+        String associateOccurrences = "(ate) DZTM: Denver Zoology Tissue Mammal 2822; (ate) DZTM: Denver Zoology Tissue Mammal 2823";
+        List<Map<String, String>> propertyList = StudyImporterForDwCA.parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(2));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("Denver Zoology Tissue Mammal 2822"));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+
+        properties = propertyList.get(1);
+        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("Denver Zoology Tissue Mammal 2823"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
     }

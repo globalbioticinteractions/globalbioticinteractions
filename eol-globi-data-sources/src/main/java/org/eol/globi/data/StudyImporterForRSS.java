@@ -14,6 +14,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.StudyImporterFactory;
+import org.globalbioticinteractions.dataset.DatasetWithCache;
 
 import java.io.IOException;
 import java.net.URI;
@@ -80,7 +81,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             if (entry instanceof SyndEntry) {
                 Dataset e = datasetFor(datasetOrig, (SyndEntry) entry);
                 if (e == null) {
-                    LOG.info("skipping [" + ((SyndEntry) entry).getTitle() + "] : can't handle.");
+                    LOG.info("skipping [" + ((SyndEntry) entry).getTitle() + "] : not supported (yet).");
                 } else {
                     datasets.add(e);
                 }
@@ -119,7 +120,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         String title = entry.getTitle();
 
         // for now, only include Arctos, see https://github.com/jhpoelen/eol-globi-data/issues/134
-        if (foreignEntries.containsKey("dwca") && title.contains("(Arctos)")) {
+        if (foreignEntries.containsKey("dwca") && StringUtils.contains(title, "(Arctos)")) {
             String citation = StringUtils.trim(title);
 
             dataset = embeddedDatasetFor(datasetOrig,

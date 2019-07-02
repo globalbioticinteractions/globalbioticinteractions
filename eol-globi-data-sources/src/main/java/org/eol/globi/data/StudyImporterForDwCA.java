@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
@@ -32,6 +33,7 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 public class StudyImporterForDwCA extends BaseStudyImporter {
@@ -54,12 +56,17 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
             InteractionListener interactionListener = getListener();
             for (Record rec : archive.getCore()) {
                 String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
+                String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
                 String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
-                if (associatedTaxa != null && dynamicProperties != null) {
+                if ((associatedTaxa != null && dynamicProperties != null) || associatedOccurrences != null) {
 
                     List<Map<String, String>> interactionCandidates = new ArrayList<>();
                     if (StringUtils.isNotBlank(associatedTaxa)) {
                         interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
+                    }
+
+                    if (StringUtils.isNotBlank(associatedOccurrences)) {
+                        interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
                     }
 
                     if (StringUtils.isNotBlank(dynamicProperties)) {
@@ -68,7 +75,7 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
 
                     List<Map<String, String>> interactions = interactionCandidates
                             .stream()
-                            .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME))
+                            .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
                             .collect(Collectors.toList());
 
                     logUnsupportedInteractionTypes(interactionCandidates, getLogger());
@@ -160,6 +167,43 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
             }
         }
         return properties;
+    }
+
+    static List<Map<String, String>> parseAssociatedOccurrences(String s) {
+        List<Map<String, String>> propertyList = new ArrayList<>();
+
+        Map<String, InteractType> mapping = new TreeMap<String, InteractType>() {
+            {
+                put("(ate)", InteractType.ATE);
+                put("(eaten by)", InteractType.EATEN_BY);
+                put("(parasite of)", InteractType.PARASITE_OF);
+                put("(host of)", InteractType.HOST_OF);
+            }
+        };
+
+        String[] relationships = StringUtils.split(s, ";");
+        for (String relationship : relationships) {
+            String relationshipTrimmed = StringUtils.trim(relationship);
+            for (Map.Entry<String, InteractType> mapEntry : mapping.entrySet()) {
+                if (StringUtils.startsWith(relationshipTrimmed, mapEntry.getKey())) {
+                    String targetCollectionAndOccurrenceId = StringUtils.trim(StringUtils.substring(relationshipTrimmed, mapEntry.getKey().length()));
+                    int i = StringUtils.indexOf(targetCollectionAndOccurrenceId, " ");
+                    if (i > -1) {
+                        String collection = StringUtils.substring(targetCollectionAndOccurrenceId, 0, i);
+                        String occurrenceId = StringUtils.substring(targetCollectionAndOccurrenceId, i);
+                        if (StringUtils.isNotBlank(occurrenceId)) {
+                            TreeMap<String, String> properties = new TreeMap<>();
+                            properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(occurrenceId));
+                            properties.put(INTERACTION_TYPE_ID, mapEntry.getValue().getIRI());
+                            properties.put(INTERACTION_TYPE_NAME, mapEntry.getValue().getLabel());
+                            propertyList.add(properties);
+                        }
+                    }
+                }
+            }
+
+        }
+        return propertyList;
     }
 
     static Map<String, String> parseDynamicProperties(String s) {
