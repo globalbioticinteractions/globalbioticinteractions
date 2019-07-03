@@ -41,7 +41,7 @@ public class StudyImporterForDwCATest {
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI()));
         AtomicBoolean someRecords = new AtomicBoolean(false);
-        studyImporterForDwCA.setListener(new InteractionListener() {
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
                 someRecords.set(true);
@@ -57,7 +57,7 @@ public class StudyImporterForDwCATest {
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI()));
         AtomicBoolean someRecords = new AtomicBoolean(false);
-        studyImporterForDwCA.setListener(new InteractionListener() {
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
                 String associatedTaxa = properties.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
@@ -81,7 +81,7 @@ public class StudyImporterForDwCATest {
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot));
         AtomicBoolean someRecords = new AtomicBoolean(false);
-        studyImporterForDwCA.setListener(new InteractionListener() {
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
                 someRecords.set(true);

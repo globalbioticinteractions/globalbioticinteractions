@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
@@ -39,6 +40,44 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [" + "rssFeedURL" + "] specified");
         }
 
+        index();
+
+        importWithIndex();
+    }
+
+    public InteractionListener index() throws StudyImporterException {
+        final String msgPrefix = "indexing archive(s) from [" + getRssFeedUrlString() + "]";
+        LOG.info(msgPrefix + "...");
+        final List<Dataset> datasets = getDatasetsForFeed(getDataset());
+        for (Dataset dataset : datasets) {
+            nodeFactory.getOrCreateDataset(dataset);
+            NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
+            StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
+            if (studyImporter instanceof StudyImporterWithListener) {
+                studyImporter.setDataset(dataset);
+                ((StudyImporterWithListener) studyImporter).setInteractionListener(new InteractionListener() {
+                    @Override
+                    public void newLink(Map<String, String> properties) throws StudyImporterException {
+
+                    }
+                });
+
+                if (getLogger() != null) {
+                    studyImporter.setLogger(getLogger());
+                }
+                studyImporter.importStudy();
+            }
+        }
+        LOG.info(msgPrefix + " done.");
+        return new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                // enrich with index
+            }
+        };
+    }
+
+    public void importWithIndex() throws StudyImporterException {
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
         final List<Dataset> datasets = getDatasetsForFeed(getDataset());
