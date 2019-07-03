@@ -1,16 +1,33 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.LabeledCSVParser;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Interaction;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Season;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.Term;
+import org.eol.globi.geo.EcoregionFinder;
+import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetUtil;
+import org.eol.globi.service.TermLookupService;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -38,6 +55,174 @@ public class StudyImporterForRSSTest {
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
         assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
         assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
+    }
+
+    @Test
+    public void enrichingInteractionListener() throws StudyImporterException {
+        StudyImporterWithListener studyImporter = new StudyImporterWithListener(new ParserFactory() {
+            @Override
+            public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
+                return null;
+            }
+        }, new NodeFactory() {
+            @Override
+            public Location findLocation(Location location) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Season createSeason(String seasonNameLower) {
+                return null;
+            }
+
+            @Override
+            public Specimen createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Specimen createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Study createStudy(Study study) {
+                return null;
+            }
+
+            @Override
+            public Study getOrCreateStudy(Study study) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Study findStudy(String title) {
+                return null;
+            }
+
+            @Override
+            public Season findSeason(String seasonName) {
+                return null;
+            }
+
+            @Override
+            public Location getOrCreateLocation(Location location) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
+
+            }
+
+            @Override
+            public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
+                return null;
+            }
+
+            @Override
+            public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public TermLookupService getTermLookupService() {
+                return null;
+            }
+
+            @Override
+            public EcoregionFinder getEcoregionFinder() {
+                return null;
+            }
+
+            @Override
+            public AuthorIdResolver getAuthorResolver() {
+                return null;
+            }
+
+            @Override
+            public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
+                return null;
+            }
+
+            @Override
+            public Dataset getOrCreateDataset(Dataset dataset) {
+                return null;
+            }
+
+            @Override
+            public Interaction createInteraction(Study study) throws NodeFactoryException {
+                return null;
+            }
+        }) {
+            @Override
+            public void importStudy() throws StudyImporterException {
+                //
+            }
+        };
+
+
+        final List<Map<String, String>> receivedLinks = new ArrayList<>();
+        studyImporter.setInteractionListener(new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                receivedLinks.add(properties);
+            }
+        });
+        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<String, Map<String, String>>() {{
+            put("1234", new TreeMap<String, String>() {
+                {
+                    put(StudyImporterForTSV.SOURCE_OCCURRENCE_ID, "1234");
+                    put(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, "lifeStageName");
+                    put(StudyImporterForTSV.SOURCE_LIFE_STAGE_ID, "lifeStageId");
+                    put(StudyImporterForTSV.SOURCE_BODY_PART_NAME, "bodyPartName");
+                    put(StudyImporterForTSV.SOURCE_BODY_PART_ID, "bodyPartId");
+                    put(StudyImporterForTSV.SOURCE_TAXON_NAME, "taxonName");
+                    put(StudyImporterForTSV.SOURCE_TAXON_ID, "taxonId");
+                }
+            });
+        }};
+        StudyImporterForRSS.EnrichingInteractionListener listener = new StudyImporterForRSS.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter);
+
+        listener.newLink(new TreeMap<String, String>() {{
+            put(StudyImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
+        }});
+
+        assertThat(receivedLinks.size(), is(1));
+        Map<String, String> received = receivedLinks.get(0);
+        assertThat(received.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("taxonName"));
+        assertThat(received.get(StudyImporterForTSV.TARGET_TAXON_ID), is("taxonId"));
+        assertThat(received.get(StudyImporterForTSV.TARGET_BODY_PART_NAME), is("bodyPartName"));
+        assertThat(received.get(StudyImporterForTSV.TARGET_BODY_PART_ID), is("bodyPartId"));
+        assertThat(received.get(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME), is("lifeStageName"));
+        assertThat(received.get(StudyImporterForTSV.TARGET_LIFE_STAGE_ID), is("lifeStageId"));
+
+
     }
 
     private DatasetImpl getDatasetGroup() throws IOException {

@@ -24,8 +24,12 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
+import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
+import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
@@ -90,6 +94,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                         mapIfAvailable(rec, interactionProperties, SOURCE_OCCURRENCE_ID, DwcTerm.occurrenceID);
                         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
                         mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE_NAME, DwcTerm.lifeStage);
+                        mapIfAvailable(rec, interactionProperties, LOCALITY_NAME, DwcTerm.locality);
+                        mapIfAvailable(rec, interactionProperties, LOCALITY_ID, DwcTerm.locationID);
+                        mapIfAvailable(rec, interactionProperties, DECIMAL_LONGITUDE, DwcTerm.decimalLongitude);
+                        mapIfAvailable(rec, interactionProperties, DECIMAL_LATITUDE, DwcTerm.decimalLatitude);
+                        mapIfAvailable(rec, interactionProperties, StudyImporterForMetaTable.EVENT_DATE, DwcTerm.eventDate);
                         mapReferenceInfo(rec, interactionProperties);
                         interactionProperties.put(STUDY_SOURCE_CITATION, getDataset().getCitation());
                         interactionListener.newLink(interactionProperties);

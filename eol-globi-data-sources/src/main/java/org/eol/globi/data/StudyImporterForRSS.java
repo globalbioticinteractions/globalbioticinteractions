@@ -10,12 +10,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.StudyImporterFactory;
-import org.globalbioticinteractions.dataset.DatasetWithCache;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,12 +38,13 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [" + "rssFeedURL" + "] specified");
         }
 
-        index();
+        final TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
 
-        importWithIndex();
+        index(new IndexingInteractionListener(interactionsWithUnresolvedOccurrenceIds));
+        importWithIndex(interactionsWithUnresolvedOccurrenceIds);
     }
 
-    public InteractionListener index() throws StudyImporterException {
+    public void index(InteractionListener indexingListener) throws StudyImporterException {
         final String msgPrefix = "indexing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
         final List<Dataset> datasets = getDatasetsForFeed(getDataset());
@@ -55,12 +54,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
             if (studyImporter instanceof StudyImporterWithListener) {
                 studyImporter.setDataset(dataset);
-                ((StudyImporterWithListener) studyImporter).setInteractionListener(new InteractionListener() {
-                    @Override
-                    public void newLink(Map<String, String> properties) throws StudyImporterException {
-
-                    }
-                });
+                ((StudyImporterWithListener) studyImporter).setInteractionListener(indexingListener);
 
                 if (getLogger() != null) {
                     studyImporter.setLogger(getLogger());
@@ -69,15 +63,9 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             }
         }
         LOG.info(msgPrefix + " done.");
-        return new InteractionListener() {
-            @Override
-            public void newLink(Map<String, String> properties) throws StudyImporterException {
-                // enrich with index
-            }
-        };
     }
 
-    public void importWithIndex() throws StudyImporterException {
+    public void importWithIndex(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) throws StudyImporterException {
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
         final List<Dataset> datasets = getDatasetsForFeed(getDataset());
@@ -86,6 +74,10 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
             StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
             studyImporter.setDataset(dataset);
+            if (studyImporter instanceof StudyImporterWithListener) {
+                EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, (StudyImporterWithListener) studyImporter);
+                ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
+            }
 
             if (getLogger() != null) {
                 studyImporter.setLogger(getLogger());
@@ -204,4 +196,56 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         return dataset;
     }
 
+    static class EnrichingInteractionListener implements InteractionListener {
+        private final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
+        private final StudyImporterWithListener studyImporter;
+
+        public EnrichingInteractionListener(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, StudyImporterWithListener studyImporter) {
+            this.interactionsWithUnresolvedOccurrenceIds = interactionsWithUnresolvedOccurrenceIds;
+            this.studyImporter = studyImporter;
+        }
+
+        @Override
+        public void newLink(Map<String, String> properties) throws StudyImporterException {
+            Map<String, String> enrichedProperties = null;
+            if (properties.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)) {
+                String targetOccurrenceId = properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID);
+                Map<String, String> targetProperties = interactionsWithUnresolvedOccurrenceIds.get(targetOccurrenceId);
+                if (targetProperties != null) {
+                    TreeMap<String, String> enrichedMap = new TreeMap<>(properties);
+                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_TAXON_NAME, StudyImporterForTSV.TARGET_TAXON_NAME);
+                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_TAXON_ID, StudyImporterForTSV.TARGET_TAXON_ID);
+                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, StudyImporterForTSV.TARGET_LIFE_STAGE_NAME);
+                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_LIFE_STAGE_ID, StudyImporterForTSV.TARGET_LIFE_STAGE_ID);
+                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_BODY_PART_NAME, StudyImporterForTSV.TARGET_BODY_PART_NAME);
+                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_BODY_PART_ID, StudyImporterForTSV.TARGET_BODY_PART_ID);
+                    enrichedProperties = enrichedMap;
+                }
+            }
+            (studyImporter.getInteractionListener()).newLink(enrichedProperties == null ? properties : enrichedProperties);
+        }
+
+        public void enrichProperties(Map<String, String> targetProperties, TreeMap<String, String> enrichedMap, String sourceKey, String targetKey) {
+            String value = targetProperties.get(sourceKey);
+            if (StringUtils.isNotBlank(value)) {
+                enrichedMap.put(targetKey, value);
+            }
+        }
+    }
+
+    private static class IndexingInteractionListener implements InteractionListener {
+        private final TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
+
+        public IndexingInteractionListener(TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
+            this.interactionsWithUnresolvedOccurrenceIds = interactionsWithUnresolvedOccurrenceIds;
+        }
+
+        @Override
+        public void newLink(Map<String, String> properties) throws StudyImporterException {
+            if (properties.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)
+                    && properties.containsKey(StudyImporterForTSV.SOURCE_OCCURRENCE_ID)) {
+                interactionsWithUnresolvedOccurrenceIds.put(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), properties);
+            }
+        }
+    }
 }
