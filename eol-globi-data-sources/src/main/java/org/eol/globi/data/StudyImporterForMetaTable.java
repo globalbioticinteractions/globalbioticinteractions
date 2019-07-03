@@ -28,7 +28,7 @@ import java.util.Map;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 
-public class StudyImporterForMetaTable extends BaseStudyImporter {
+public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
     public static final String SOURCE_TAXON = "sourceTaxon";
     public static final String SOURCE_TAXON_SUBSPECIFIC_EPITHET = SOURCE_TAXON + "SubspecificEpithet";
@@ -70,7 +70,7 @@ public class StudyImporterForMetaTable extends BaseStudyImporter {
                 Dataset datasetProxy = new DatasetProxy(dataset);
                 datasetProxy.setConfig(tableConfig);
 
-                InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+                InteractionListener interactionListener = getInteractionListener();
                 final InteractionListener listener = new TableInteractionListenerProxy(datasetProxy, interactionListener);
                 importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy, getLogger());
             }

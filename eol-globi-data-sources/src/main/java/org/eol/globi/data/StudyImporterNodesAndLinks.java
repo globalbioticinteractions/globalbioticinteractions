@@ -7,7 +7,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 
-public abstract class StudyImporterNodesAndLinks extends BaseStudyImporter {
+public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListener {
 
     public StudyImporterNodesAndLinks(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
-public class StudyImporterForSaproxylic extends BaseStudyImporter {
+public class StudyImporterForSaproxylic extends StudyImporterWithListener {
     private static final String KINGDOM = "Kingdom";
     private static final String PHYLUM = "Phylum";
     private static final String CLASS = "Class";
@@ -121,7 +121,7 @@ public class StudyImporterForSaproxylic extends BaseStudyImporter {
     }
 
     public void toInteractions(ResultSet results) throws StudyImporterException {
-        final InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+        final InteractionListener listener = getInteractionListener();
         while (results.hasNext()) {
             QuerySolution next = results.next();
             Iterator<String> nameIter = next.varNames();

@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static org.eol.globi.data.StudyImporterForHurlbert.columnValueOrNull;
 
-public class StudyImporterForFishbase3 extends BaseStudyImporter {
+public class StudyImporterForFishbase3 extends StudyImporterWithListener {
     private static final Log LOG = LogFactory.getLog(StudyImporterForFishbase3.class);
     public static final String C_CODE_GLOBAL = "9999";
 
@@ -39,7 +39,7 @@ public class StudyImporterForFishbase3 extends BaseStudyImporter {
             importSpecies(speciesMap, getDataset().getResource("species_fishbase.tsv"), "FB");
 
             InteractionListener listener = new InteractionListener() {
-                private final InteractionListener listener = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+                private final InteractionListener listener = getInteractionListener();
 
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {

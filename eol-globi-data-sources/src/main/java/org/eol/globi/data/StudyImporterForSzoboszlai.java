@@ -42,7 +42,7 @@ import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
-public class StudyImporterForSzoboszlai extends BaseStudyImporter {
+public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
 
     public StudyImporterForSzoboszlai(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -54,7 +54,7 @@ public class StudyImporterForSzoboszlai extends BaseStudyImporter {
             Map<Integer, LatLng> localeMap = importShapes();
             try (InputStream inputStream = getDataset().getResource("links")) {
                 importLinks(inputStream
-                        , new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger())
+                        , getInteractionListener()
                         , localeMap);
             }
         } catch (IOException e) {

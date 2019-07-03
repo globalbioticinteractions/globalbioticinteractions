@@ -23,7 +23,7 @@ interface DietMatrixListener {
     void onMatrix(String matrix) throws StudyImporterException;
 }
 
-public class StudyImporterForGlobalWebDb extends BaseStudyImporter {
+public class StudyImporterForGlobalWebDb extends StudyImporterWithListener {
 
     public StudyImporterForGlobalWebDb(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -31,10 +31,10 @@ public class StudyImporterForGlobalWebDb extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        InteractionListenerImpl interactionListenerImpl = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+        InteractionListener interactionListener = getInteractionListener();
         importDietMatrices("https://www.globalwebdb.com/Service/DownloadArchive", dietMatrixString -> {
             try {
-                parseDietMatrix(interactionListenerImpl, dietMatrixString, getSourceCitation());
+                parseDietMatrix(interactionListener, dietMatrixString, getSourceCitation());
             } catch (IOException e) {
                 throw new StudyImporterException(e);
             }

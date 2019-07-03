@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class StudyImporterForGray extends BaseStudyImporter {
+public class StudyImporterForGray extends StudyImporterWithListener {
 
     public StudyImporterForGray(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -19,7 +19,7 @@ public class StudyImporterForGray extends BaseStudyImporter {
     @Override
     public void importStudy() throws StudyImporterException {
         try (InputStream links = DatasetUtil.getNamedResourceStream(getDataset(), "links")) {
-            importLinks(links, new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(links, getInteractionListener(), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + DatasetUtil.getNamedResourceURI(getDataset(), "links") + "]");
         }

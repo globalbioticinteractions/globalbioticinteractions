@@ -18,7 +18,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
     @Override
     public void importStudy() throws StudyImporterException {
         try (InputStream resource = getDataset().getResource(getLinksResourceName())) {
-            importLinks(resource, new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger()), getFilter());
+            importLinks(resource, getInteractionListener(), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException(e);
         }

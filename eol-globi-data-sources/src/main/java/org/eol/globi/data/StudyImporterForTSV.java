@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class StudyImporterForTSV extends BaseStudyImporter {
+public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String INTERACTION_TYPE_ID = "interactionTypeId";
     public static final String TARGET_TAXON_ID = "targetTaxonId";
     public static final String TARGET_TAXON_NAME = "targetTaxonName";
@@ -66,7 +66,7 @@ public class StudyImporterForTSV extends BaseStudyImporter {
 
 
     private void importRepository(String namespace, String sourceCitation) throws IOException, StudyImporterException {
-        InteractionListenerImpl interactionListenerImpl = new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+        InteractionListener interactionListenerImpl = getInteractionListener();
         String resourceURIString = getDataset().getResourceURI("/interactions.tsv").toString();
         LabeledCSVParser parser = parserFactory.createParser(resourceURIString, "UTF-8");
         parser.changeDelimiter('\t');

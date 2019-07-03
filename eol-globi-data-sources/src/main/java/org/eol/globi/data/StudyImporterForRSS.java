@@ -41,8 +41,8 @@ public class StudyImporterForRSS extends BaseStudyImporter {
 
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
-        final List<Dataset> studyImporters = getDatasetsForFeed(getDataset());
-        for (Dataset dataset : studyImporters) {
+        final List<Dataset> datasets = getDatasetsForFeed(getDataset());
+        for (Dataset dataset : datasets) {
             nodeFactory.getOrCreateDataset(dataset);
             NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
             StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);

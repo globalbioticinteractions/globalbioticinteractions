@@ -36,9 +36,7 @@ import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
-public class StudyImporterForDwCA extends BaseStudyImporter {
-
-    private InteractionListener listener;
+public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -53,7 +51,7 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
 
             Path tmpDwA = Files.createTempDirectory("dwca");
             Archive archive = DwCAUtil.archiveFor(getDataset().getResourceURI(getDataset().getArchiveURI().toString()), tmpDwA.toString());
-            InteractionListener interactionListener = getListener();
+            InteractionListener interactionListener = getInteractionListener();
             for (Record rec : archive.getCore()) {
                 String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
                 String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
@@ -137,16 +135,6 @@ public class StudyImporterForDwCA extends BaseStudyImporter {
         if ((StringUtils.isNotBlank(value))) {
             interactionProperties.put(key, value);
         }
-    }
-
-    InteractionListener getListener() {
-        return listener == null
-                ? new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger())
-                : listener;
-    }
-
-    void setListener(InteractionListener listener) {
-        this.listener = listener;
     }
 
     static List<Map<String, String>> parseAssociatedTaxa(String s) {
