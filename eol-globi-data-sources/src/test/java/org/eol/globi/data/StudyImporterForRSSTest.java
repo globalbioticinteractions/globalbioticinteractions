@@ -207,7 +207,7 @@ public class StudyImporterForRSSTest {
                 }
             });
         }};
-        StudyImporterForRSS.EnrichingInteractionListener listener = new StudyImporterForRSS.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter);
+        StudyImporterForRSS.EnrichingInteractionListener listener = new StudyImporterForRSS.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
         listener.newLink(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.TARGET_OCCURRENCE_ID, "1234");

@@ -75,7 +75,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
             studyImporter.setDataset(dataset);
             if (studyImporter instanceof StudyImporterWithListener) {
-                EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, (StudyImporterWithListener) studyImporter);
+                EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, ((StudyImporterWithListener) studyImporter).getInteractionListener());
                 ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
             }
 
@@ -198,11 +198,11 @@ public class StudyImporterForRSS extends BaseStudyImporter {
 
     static class EnrichingInteractionListener implements InteractionListener {
         private final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
-        private final StudyImporterWithListener studyImporter;
+        private final InteractionListener interactionListener;
 
-        public EnrichingInteractionListener(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, StudyImporterWithListener studyImporter) {
+        public EnrichingInteractionListener(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, InteractionListener interactionListener) {
             this.interactionsWithUnresolvedOccurrenceIds = interactionsWithUnresolvedOccurrenceIds;
-            this.studyImporter = studyImporter;
+            this.interactionListener = interactionListener;
         }
 
         @Override
@@ -222,7 +222,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
                     enrichedProperties = enrichedMap;
                 }
             }
-            (studyImporter.getInteractionListener()).newLink(enrichedProperties == null ? properties : enrichedProperties);
+            interactionListener.newLink(enrichedProperties == null ? properties : enrichedProperties);
         }
 
         public void enrichProperties(Map<String, String> targetProperties, TreeMap<String, String> enrichedMap, String sourceKey, String targetKey) {
