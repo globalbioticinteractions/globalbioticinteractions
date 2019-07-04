@@ -31,6 +31,7 @@ import java.util.TreeMap;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class StudyImporterForRSSTest {
 
@@ -55,6 +56,22 @@ public class StudyImporterForRSSTest {
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
         assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
         assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
+    }
+
+    @Test
+    public void indexingInteractionListener() throws StudyImporterException {
+
+        TreeMap<String, Map<String, String>> index = new TreeMap<>();
+        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener = new StudyImporterForRSS.IndexingInteractionListener(index);
+
+        indexingInteractionListener.newLink(new TreeMap<String, String>() {{
+            put(StudyImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
+            put(StudyImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
+        }});
+
+        assertTrue(index.containsKey("http://arctos.database.museum/guid/MVZ:Bird:180448"));
+
+
     }
 
     @Test

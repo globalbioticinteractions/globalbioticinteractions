@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -46,6 +47,16 @@ public class StudyImporterForDwCATest {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), startsWith("http://arctos.database.museum/guid/"));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), anyOf(
+                        is("http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053"),
+                        is("http://arctos.database.museum/guid/MVZ:Bird:183644?seid=158590"),
+                        is("http://arctos.database.museum/guid/MVZ:Bird:58090?seid=657121")
+                        ));
+                assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), anyOf(
+                        is("http://arctos.database.museum/guid/MVZ:Herp:241200"),
+                        is("http://arctos.database.museum/guid/MVZ:Bird:183643"),
+                        is("http://arctos.database.museum/guid/MVZ:Bird:58093")
+                        ));
                 someRecords.set(true);
             }
         });

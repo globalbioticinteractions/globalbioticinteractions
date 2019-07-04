@@ -233,7 +233,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         }
     }
 
-    private static class IndexingInteractionListener implements InteractionListener {
+    static class IndexingInteractionListener implements InteractionListener {
         private final TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
 
         public IndexingInteractionListener(TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
@@ -244,7 +244,13 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         public void newLink(Map<String, String> properties) throws StudyImporterException {
             if (properties.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)
                     && properties.containsKey(StudyImporterForTSV.SOURCE_OCCURRENCE_ID)) {
-                interactionsWithUnresolvedOccurrenceIds.put(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), properties);
+                String value = properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID);
+
+                if (StringUtils.startsWith(value, "http://arctos.database.museum/guid/")) {
+                    String[] splitValue = StringUtils.split(value, "?");
+                    value = splitValue.length == 1 ? value : splitValue[0];
+                }
+                interactionsWithUnresolvedOccurrenceIds.put(value, properties);
             }
         }
     }
