@@ -14,6 +14,9 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.StudyImporterFactory;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
 
 import java.io.IOException;
 import java.net.URI;
@@ -38,8 +41,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [" + "rssFeedURL" + "] specified");
         }
 
-        final TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
-
+        final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
         index(new IndexingInteractionListener(interactionsWithUnresolvedOccurrenceIds));
         importWithIndex(interactionsWithUnresolvedOccurrenceIds);
     }
@@ -234,9 +236,9 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     }
 
     static class IndexingInteractionListener implements InteractionListener {
-        private final TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
+        private final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
 
-        public IndexingInteractionListener(TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
+        public IndexingInteractionListener(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
             this.interactionsWithUnresolvedOccurrenceIds = interactionsWithUnresolvedOccurrenceIds;
         }
 
