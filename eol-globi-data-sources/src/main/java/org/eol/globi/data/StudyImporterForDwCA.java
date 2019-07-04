@@ -186,7 +186,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     String targetCollectionAndOccurrenceId = StringUtils.trim(StringUtils.substring(relationshipTrimmed, mapEntry.getKey().length()));
                     int i = StringUtils.indexOf(targetCollectionAndOccurrenceId, " ");
                     if (i > -1) {
-                        String collection = StringUtils.substring(targetCollectionAndOccurrenceId, 0, i);
                         String occurrenceId = StringUtils.substring(targetCollectionAndOccurrenceId, i);
                         if (StringUtils.isNotBlank(occurrenceId)) {
                             TreeMap<String, String> properties = new TreeMap<>();

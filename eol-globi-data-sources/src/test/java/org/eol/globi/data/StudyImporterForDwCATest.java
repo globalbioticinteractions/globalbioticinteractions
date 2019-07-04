@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
@@ -44,6 +45,7 @@ public class StudyImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), startsWith("http://arctos.database.museum/guid/"));
                 someRecords.set(true);
             }
         });
