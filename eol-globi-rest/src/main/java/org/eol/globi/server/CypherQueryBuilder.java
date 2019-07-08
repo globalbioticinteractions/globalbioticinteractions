@@ -663,6 +663,10 @@ public class CypherQueryBuilder {
             offset = getValueOrDefault(request, "skip", defaultValue);
         }
         long limit = getValueOrDefault(request, "limit", defaultLimit);
+        return createPagedQuery(query, offset, limit);
+    }
+
+    public static CypherQuery createPagedQuery(CypherQuery query, long offset, long limit) {
         return new CypherQuery(query.getQuery() + " SKIP " + offset + " LIMIT " + limit, query.getParams());
     }
 

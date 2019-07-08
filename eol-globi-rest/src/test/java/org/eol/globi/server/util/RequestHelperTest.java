@@ -5,6 +5,7 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.eol.globi.geo.LatLng;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +133,18 @@ public class RequestHelperTest {
                 put("bbox", new String[]{"a,b,c,d"});
             }
         });
+    }
+
+    @Test
+    public void emptyData() throws IOException {
+        String response = "{\"columns\":[\"source_taxon_external_id\",\"source_taxon_name\",\"source_taxon_path\",\"source_specimen_life_stage\",\"source_specimen_basis_of_record\",\"interaction_type\",\"target_taxon_external_id\",\"target_taxon_name\",\"target_taxon_path\",\"target_specimen_life_stage\",\"target_specimen_basis_of_record\",\"latitude\",\"longitude\",\"study_title\"],\"data\":[]}";
+        assertThat(RequestHelper.nonEmptyData(response), Is.is(false));
+    }
+
+    @Test
+    public void nonEmptyData() throws IOException {
+        String response = "{\"columns\":[\"source_taxon_external_id\",\"source_taxon_name\",\"source_taxon_path\",\"source_specimen_life_stage\",\"source_specimen_basis_of_record\",\"interaction_type\",\"target_taxon_external_id\",\"target_taxon_name\",\"target_taxon_path\",\"target_specimen_life_stage\",\"target_specimen_basis_of_record\",\"latitude\",\"longitude\",\"study_title\"],\"data\":[[\"EOL_V2:328629\",\"Phoca vitulina\",\"Animalia | Chordata | Mammalia | Carnivora | Phocidae | Phoca | Phoca vitulina\",null,\"PreservedSpecimen\",\"hasParasite\",\"EOL:2857069\",\"Ascarididae\",\"Animalia | Nematoda | Secernentea | Ascaridida | Ascarididae\",null,\"PreservedSpecimen\",null,null,\"http://arctos.database.museum/guid/MSB:Para:1678\"]]}";
+        assertThat(RequestHelper.nonEmptyData(response), Is.is(true));
     }
 
 }

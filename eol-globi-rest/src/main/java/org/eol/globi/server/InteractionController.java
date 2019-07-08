@@ -1,6 +1,8 @@
 package org.eol.globi.server;
 
+import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,18 @@ import java.util.Map;
 
 @Controller
 public class InteractionController {
+
+    @RequestMapping(value = "/interaction", method = RequestMethod.HEAD)
+    @ResponseBody
+    protected void atLeastOneInteraction(HttpServletRequest request) throws IOException {
+        Map parameterMap = getParamMap(request);
+        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, QueryType.forParams(parameterMap));
+        CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(query, 0, 1);
+        String s = CypherUtil.executeRemote(pagedQuery);
+        if (RequestHelper.emptyData(s)) {
+            throw new ResourceNotFoundException("no results for query with params: " + parameterMap);
+        }
+    }
 
     @RequestMapping(value = "/interaction", method = RequestMethod.GET)
     @ResponseBody

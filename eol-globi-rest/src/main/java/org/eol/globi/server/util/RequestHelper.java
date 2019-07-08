@@ -154,4 +154,20 @@ public class RequestHelper {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(content);
     }
+
+    public static boolean emptyData(String body) throws IOException {
+        return !nonEmptyData(body);
+    }
+
+    public static boolean nonEmptyData(String body) throws IOException {
+        JsonNode result = parse(body);
+        boolean nonEmpty = false;
+        if (result.has("data")) {
+            JsonNode data = result.get("data");
+            if (data.isArray() && data.size() > 0) {
+                nonEmpty = true;
+            }
+        }
+        return nonEmpty;
+    }
 }
