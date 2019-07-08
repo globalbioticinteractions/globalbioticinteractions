@@ -18,19 +18,22 @@ import java.util.Map;
 @Controller
 public class InteractionController {
 
-    @RequestMapping(value = "/interaction", method = RequestMethod.HEAD)
+    @RequestMapping(value = "/exists", method = {RequestMethod.GET, RequestMethod.HEAD})
     @ResponseBody
-    protected void atLeastOneInteraction(HttpServletRequest request) throws IOException {
+    protected String atLeastOneInteraction(HttpServletRequest request) throws IOException {
+        // see https://github.com/jhpoelen/eol-globi-data/issues/401
         Map parameterMap = getParamMap(request);
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, QueryType.forParams(parameterMap));
         CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(query, 0, 1);
         String s = CypherUtil.executeRemote(pagedQuery);
+
         if (RequestHelper.emptyData(s)) {
             throw new ResourceNotFoundException("no results for query with params: " + parameterMap);
         }
+        return "OK";
     }
 
-    @RequestMapping(value = "/interaction", method = RequestMethod.GET)
+    @RequestMapping(value = "/interaction", method = {RequestMethod.GET})
     @ResponseBody
     protected CypherQuery findInteractions(HttpServletRequest request) {
         Map parameterMap = getParamMap(request);
