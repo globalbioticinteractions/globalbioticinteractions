@@ -67,8 +67,15 @@ public class CMECSService implements TermLookupService {
         if (resourceURI == null) {
             throw new IOException("failed to access [" + uri + "]");
         }
+        File mdbFile;
+        try {
+            mdbFile = new File(resourceURI);
+        } catch (IllegalArgumentException ex) {
+            throw new IOException("failed to access [" + uri + "] via [" + resourceURI + "]", ex);
+        }
+
         Database db = new DatabaseBuilder()
-                .setFile(new File(resourceURI))
+                .setFile(mdbFile)
                 .setReadOnly(true)
                 .open();
 
