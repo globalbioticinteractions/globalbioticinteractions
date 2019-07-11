@@ -2,7 +2,6 @@ package org.eol.globi.service;
 
 import org.eol.globi.data.CMECSService;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import static org.junit.Assert.assertThat;
 public class CMECSServiceTest {
 
     @Test
-    public void lookupCMECSTerms() throws IOException, TermLookupServiceException {
+    public void lookupCMECSTerms() throws TermLookupServiceException {
         TermLookupService service = new CMECSService();
 
         List<Term> estuarine = service.lookupTermByName("Estuarine");
@@ -33,7 +32,7 @@ public class CMECSServiceTest {
 
    @Test
 
-    public void lookupStripsCaseInsensitive() throws IOException, TermLookupServiceException {
+    public void lookupStripsCaseInsensitive() throws TermLookupServiceException {
         TermLookupService service = new CMECSService();
         List<Term> estuarine = service.lookupTermByName("lacustrine Littoral ");
         assertThat(estuarine.size(), is(1));

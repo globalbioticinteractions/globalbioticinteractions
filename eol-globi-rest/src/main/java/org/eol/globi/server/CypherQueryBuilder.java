@@ -72,6 +72,7 @@ public class CypherQueryBuilder {
 
     public static final String INTERACTION_SYMBIONT_OF = InteractType.SYMBIONT_OF.getLabel();
     public static final String INTERACTION_INTERACTS_WITH = InteractType.INTERACTS_WITH.getLabel();
+    public static final String INTERACTION_RELATED_TO = InteractType.RELATED_TO.getLabel();
 
     public static final String INTERACTION_KILLS = InteractType.KILLS.getLabel();
     public static final String INTERACTION_KILLED_BY = InteractType.KILLED_BY.getLabel();
@@ -592,7 +593,7 @@ public class CypherQueryBuilder {
             }
         }
         if (cypherTypes.isEmpty()) {
-            cypherTypes.addAll(InteractType.typesOf(InteractType.INTERACTS_WITH));
+            cypherTypes.addAll(InteractType.typesOf(InteractType.RELATED_TO));
         }
         return StringUtils.join(cypherTypes, "|");
     }
