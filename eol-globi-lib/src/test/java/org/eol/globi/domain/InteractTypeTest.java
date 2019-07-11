@@ -3,6 +3,7 @@ package org.eol.globi.domain;
 import org.junit.Test;
 
 import static org.eol.globi.domain.InteractType.ATE;
+import static org.eol.globi.domain.InteractType.CO_OCCURS_WITH;
 import static org.eol.globi.domain.InteractType.DAMAGED_BY;
 import static org.eol.globi.domain.InteractType.DISPERSAL_VECTOR_OF;
 import static org.eol.globi.domain.InteractType.EATEN_BY;
@@ -72,7 +73,7 @@ public class InteractTypeTest {
 
         assertThat(InteractType.hasTypes(PREYS_UPON), hasItems(KILLS, ATE, INTERACTS_WITH, RELATED_TO));
         assertThat(InteractType.hasTypes(PREYED_UPON_BY), hasItems(KILLED_BY, EATEN_BY, INTERACTS_WITH, RELATED_TO));
-        assertThat(InteractType.hasTypes(DAMAGED_BY), hasItems(INTERACTS_WITH, RELATED_TO));
+        assertThat(InteractType.hasTypes(DAMAGED_BY), hasItems(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
     }
 
     @Test
