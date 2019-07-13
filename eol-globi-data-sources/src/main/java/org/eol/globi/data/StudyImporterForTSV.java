@@ -8,6 +8,8 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -66,10 +68,29 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
 
 
     private void importRepository(String namespace, String sourceCitation) throws IOException, StudyImporterException {
-        InteractionListener interactionListenerImpl = getInteractionListener();
-        String resourceURIString = getDataset().getResourceURI("/interactions.tsv").toString();
-        LabeledCSVParser parser = parserFactory.createParser(resourceURIString, "UTF-8");
-        parser.changeDelimiter('\t');
+        ArrayList<IOException> parserExceptions = new ArrayList<>();
+        importResource(namespace, sourceCitation, "/interactions.tsv", '\t', parserExceptions);
+        importResource(namespace, sourceCitation, "/interactions.csv", ',', parserExceptions);
+        if (parserExceptions.size() > 1) {
+            throw parserExceptions.get(0);
+        }
+    }
+
+    private void importResource(String namespace, String sourceCitation, String resourceName, char newDelim, List<IOException> parserExceptions) throws IOException, StudyImporterException {
+        String resourceURIString = getDataset().getResourceURI(resourceName).toString();
+        LabeledCSVParser parser = null;
+        try {
+            parser = parserFactory.createParser(resourceURIString, "UTF-8");
+            parser.changeDelimiter(newDelim);
+        } catch (IOException ex) {
+            parserExceptions.add(new IOException("failed to access [" + resourceURIString + "]", ex));
+        }
+        if (parser != null) {
+            importResource(namespace, sourceCitation, getInteractionListener(), resourceURIString, parser);
+        }
+    }
+
+    private void importResource(String namespace, String sourceCitation, InteractionListener interactionListenerImpl, String resourceURIString, LabeledCSVParser parser) throws IOException, StudyImporterException {
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<>();
             final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");

@@ -28,15 +28,68 @@ import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class StudyImporterForTSVTest extends GraphDBTestCase {
 
-    private static final String firstFewLines = "sourceTaxonId\tsourceTaxonName\tinteractionTypeId\tinteractionTypeName\ttargetTaxonId\ttargetTaxonName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceCitation\n" +
+    private static final String firstFewLinesTSV = "sourceTaxonId\tsourceTaxonName\tinteractionTypeId\tinteractionTypeName\ttargetTaxonId\ttargetTaxonName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceCitation\n" +
             "\tLeptoconchus incycloseris\tRO:0002444\tparasite of\t\tFungia (Cycloseris) costulata\t\t\t\t\t\tdoi:10.1007/s13127-011-0039-1\tGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\n" +
             "\tLeptoconchus infungites\tRO:0002444\tparasite of\t\tFungia (Fungia) fungites\t\t\t\t\t\tdoi:10.1007/s13127-011-0039-1\tGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\n" +
             "\tLeptoconchus ingrandifungi\tRO:0002444\tparasite of\t\tSandalolitha dentata\t\t\t\t\t\tdoi:10.1007/s13127-011-0039-1\tGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\n" +
             "\tLeptoconchus ingranulosa\tRO:0002444\tparasite of\t\tFungia (Wellsofungia) granulosa\t\t\t\t\t\tdoi:10.1007/s13127-011-0039-1\tGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\n";
 
+    private static final String firstFewLinesCSV = "sourceTaxonId,sourceTaxonName,interactionTypeId,interactionTypeName,targetTaxonId,targetTaxonName,localityId,localityName,decimalLatitude,decimalLongitude,observationDateTime,referenceDoi,referenceCitation\n" +
+            ",TESTLeptoconchus incycloseris,RO:0002444,parasite of,,Fungia (Cycloseris) costulata,,,,,,doi:10.1007/s13127-011-0039-1,\"Gittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\"\n" +
+            ",Leptoconchus infungites,RO:0002444,parasite of,,Fungia (Fungia) fungites,,,,,,doi:10.1007/s13127-011-0039-1,\"Gittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\"\n" +
+            ",Leptoconchus ingrandifungi,RO:0002444,parasite of,,Sandalolitha dentata,,,,,,doi:10.1007/s13127-011-0039-1,\"Gittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\"\n" +
+            ",Leptoconchus ingranulosa,RO:0002444,parasite of,,Fungia (Wellsofungia) granulosa,,,,,,doi:10.1007/s13127-011-0039-1,\"Gittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\"\n";
+
+    @Test
+    public void importFewLinesTSV() throws StudyImporterException {
+        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
+            put("http://example.com/interactions.tsv", firstFewLinesTSV);
+        }});
+        StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
+        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com")));
+        importStudy(importer);
+
+        assertExists("Leptoconchus incycloseris");
+        assertExists("Sandalolitha dentata");
+
+        assertStudyTitles("someRepodoi:10.1007/s13127-011-0039-1");
+    }
+
+    @Test
+    public void importFewLinesCSV() throws StudyImporterException {
+        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
+            put("http://example.com/interactions.csv", firstFewLinesCSV);
+        }});
+        StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
+        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com")));
+        importStudy(importer);
+
+        assertExists("TESTLeptoconchus incycloseris");
+        assertExists("Sandalolitha dentata");
+
+        assertStudyTitles("someRepodoi:10.1007/s13127-011-0039-1");
+    }
+
+    @Test
+    public void importFewLinesCSVAndTSV() throws StudyImporterException {
+        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
+            put("http://example.com/interactions.tsv", firstFewLinesTSV);
+            put("http://example.com/interactions.csv", firstFewLinesCSV);
+        }});
+        StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
+        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com")));
+        importStudy(importer);
+
+        assertExists("Leptoconchus incycloseris");
+        assertExists("TESTLeptoconchus incycloseris");
+        assertExists("Sandalolitha dentata");
+
+        assertStudyTitles("someRepodoi:10.1007/s13127-011-0039-1");
+    }
+
     @Test
     public void importFewLines() throws StudyImporterException {
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
+        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLinesTSV), nodeFactory);
         importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com")));
         importStudy(importer);
 

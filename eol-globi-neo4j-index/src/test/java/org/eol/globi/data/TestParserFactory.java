@@ -26,6 +26,9 @@ public class TestParserFactory implements ParserFactory {
         if (content == null) {
             content = map.get(studyResource);
         }
+        if (content == null) {
+            throw new IOException("failed to get [" + studyResource + "]");
+        }
         return CSVTSVUtil.createLabeledCSVParser(new StringReader(content));
 
     }
