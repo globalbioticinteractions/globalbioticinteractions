@@ -72,7 +72,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
         importResource(namespace, sourceCitation, "/interactions.tsv", '\t', parserExceptions);
         importResource(namespace, sourceCitation, "/interactions.csv", ',', parserExceptions);
         if (parserExceptions.size() > 1) {
-            throw parserExceptions.get(0);
+            throw new IOException("failed to access/parse [/interactions.tsv] and [/interactions.csv]", parserExceptions.get(0));
         }
     }
 
