@@ -1,0 +1,443 @@
+{
+  "columns": [
+    {
+      "name": "Curation_comments_temp",
+      "titles": "Curation_comments_temp",
+      "datatype": "string"
+    },
+    {
+      "name": "X_to_do_",
+      "titles": "X_to_do_",
+      "datatype": "string"
+    },
+    {
+      "name": "Record.ID",
+      "titles": "Record.ID",
+      "datatype": "string"
+    },
+    {
+      "name": "PHI_MolConn_ID",
+      "titles": "PHI_MolConn_ID",
+      "datatype": "string"
+    },
+    {
+      "name": "IdentifierTypeOfProteinID",
+      "titles": "IdentifierTypeOfProteinID",
+      "datatype": "string"
+    },
+    {
+      "name": "ProteinID",
+      "titles": "ProteinID",
+      "datatype": "string"
+    },
+    {
+      "name": "IdentifierTypeOfGeneLocusID",
+      "titles": "IdentifierTypeOfGeneLocusID",
+      "datatype": "string"
+    },
+    {
+      "name": "GeneLocusID",
+      "titles": "GeneLocusID",
+      "datatype": "string"
+    },
+    {
+      "name": "AA.sequence..no.EMBL.",
+      "titles": "AA.sequence..no.EMBL.",
+      "datatype": "string"
+    },
+    {
+      "name": "NT.sequence..no.EMBL.",
+      "titles": "NT.sequence..no.EMBL.",
+      "datatype": "string"
+    },
+    {
+      "name": "Genomic.sequence.providing.strain",
+      "titles": "Genomic.sequence.providing.strain",
+      "datatype": "string"
+    },
+    {
+      "name": "Gene_name",
+      "titles": "Gene_name",
+      "datatype": "string"
+    },
+    {
+      "name": "Genome.location",
+      "titles": "Genome.location",
+      "datatype": "string"
+    },
+    {
+      "name": "Specific.modification.s.to.the.targeted.protein.or.promoter",
+      "titles": "Specific.modification.s.to.the.targeted.protein.or.promoter",
+      "datatype": "string"
+    },
+    {
+      "name": "Accession.ID.for.the.modified.genetic.element",
+      "titles": "Accession.ID.for.the.modified.genetic.element",
+      "datatype": "string"
+    },
+    {
+      "name": "Known.interacting.protein.s..in.the.pathogen",
+      "titles": "Known.interacting.protein.s..in.the.pathogen",
+      "datatype": "string"
+    },
+    {
+      "name": "Interacting.protein...locus.ID",
+      "titles": "Interacting.protein...locus.ID",
+      "datatype": "string"
+    },
+    {
+      "name": "Multiple_mutation",
+      "titles": "Multiple_mutation",
+      "datatype": "string"
+    },
+    {
+      "name": "sourceTaxonId",
+      "titles": "Pathogen_NCBI_species_Taxonomy.ID",
+      "datatype": {
+        "base" : "string",
+        "valueUrl" : "http://purl.obolibrary.org/obo/NCBITaxon_{sourceTaxonId}"
+      }
+    },
+    {
+      "name": "sourceTaxonName",
+      "titles": "Pathogen_species",
+      "datatype": "string"
+    },
+    {
+      "name": "Pathogen_NCBI_strain_Taxonomy_ID",
+      "titles": "Pathogen_NCBI_strain_Taxonomy_ID",
+      "datatype": "string"
+    },
+    {
+      "name": "Experimental_strain",
+      "titles": "Experimental_strain",
+      "datatype": "string"
+    },
+    {
+      "name": "Disease_name",
+      "titles": "Disease_name",
+      "datatype": "string"
+    },
+    {
+      "name": "Host_descripton",
+      "titles": "Host_descripton",
+      "datatype": "string"
+    },
+    {
+      "name": "targetTaxonId",
+      "titles": "Host_NCBI_Taxonomy_ID",
+      "datatype": {
+        "base" : "string",
+        "valueUrl" : "http://purl.obolibrary.org/obo/NCBITaxon_{targetTaxonId}"
+      }
+    },
+    {
+      "name": "targetTaxonName",
+      "titles": "Experimental_host_species",
+      "datatype": "string"
+    },
+    {
+      "name": "Host_strain_genotype..MOVED.this.to.new.col.03.10.2016_or.cultivar_taxonomy_ID_NCBI.",
+      "titles": "Host_strain_genotype..MOVED.this.to.new.col.03.10.2016_or.cultivar_taxonomy_ID_NCBI.",
+      "datatype": "string"
+    },
+    {
+      "name": "HostGenotype_definedGene.of.interest",
+      "titles": "HostGenotype_definedGene.of.interest",
+      "datatype": "string"
+    },
+    {
+      "name": "HostGenotype_definedGene.of.interest._AccessionID",
+      "titles": "HostGenotype_definedGene.of.interest._AccessionID",
+      "datatype": "string"
+    },
+    {
+      "name": "tissue_type",
+      "titles": "tissue_type",
+      "datatype": "string"
+    },
+    {
+      "name": "Function",
+      "titles": "Function",
+      "datatype": "string"
+    },
+    {
+      "name": "GO_annotation",
+      "titles": "GO_annotation",
+      "datatype": "string"
+    },
+    {
+      "name": "Database",
+      "titles": "Database",
+      "datatype": "string"
+    },
+    {
+      "name": "Pathway_secretion_systems",
+      "titles": "Pathway_secretion_systems",
+      "datatype": "string"
+    },
+    {
+      "name": "Phenotype_of_mutant",
+      "titles": "Phenotype_of_mutant",
+      "datatype": "string"
+    },
+    {
+      "name": "Mating_defect_prior_to_penetration",
+      "titles": "Mating_defect_prior_to_penetration",
+      "datatype": "string"
+    },
+    {
+      "name": "Pre_penetration_defect",
+      "titles": "Pre_penetration_defect",
+      "datatype": "string"
+    },
+    {
+      "name": "Penetration_defect",
+      "titles": "Penetration_defect",
+      "datatype": "string"
+    },
+    {
+      "name": "Post_penetration_defect",
+      "titles": "Post_penetration_defect",
+      "datatype": "string"
+    },
+    {
+      "name": "Disease_development_macroscopically_visible._RENAMED_Interaction.Macroscopic.pathogen.disease.development.in.host",
+      "titles": "Disease_development_macroscopically_visible._RENAMED_Interaction.Macroscopic.pathogen.disease.development.in.host",
+      "datatype": "string"
+    },
+    {
+      "name": "Vegetative_spores",
+      "titles": "Vegetative_spores",
+      "datatype": "string"
+    },
+    {
+      "name": "Sexual_spores",
+      "titles": "Sexual_spores",
+      "datatype": "string"
+    },
+    {
+      "name": "In_vitro_growth",
+      "titles": "In_vitro_growth",
+      "datatype": "string"
+    },
+    {
+      "name": "Spore_germination",
+      "titles": "Spore_germination",
+      "datatype": "string"
+    },
+    {
+      "name": "Essential_gene_Lethal_knockout",
+      "titles": "Essential_gene_Lethal_knockout",
+      "datatype": "string"
+    },
+    {
+      "name": "Inducer",
+      "titles": "Inducer",
+      "datatype": "string"
+    },
+    {
+      "name": "ChemicalAccession..Chebi.CAS.",
+      "titles": "ChemicalAccession..Chebi.CAS.",
+      "datatype": "string"
+    },
+    {
+      "name": "Tested_First_Host_target",
+      "titles": "Tested_First_Host_target",
+      "datatype": "string"
+    },
+    {
+      "name": "TestedHostTarget_AccessionID",
+      "titles": "TestedHostTarget_AccessionID",
+      "datatype": "string"
+    },
+    {
+      "name": "Interaction.phenotype._.RENAMED_.Interaction..Disease.outcome",
+      "titles": "Interaction.phenotype._.RENAMED_.Interaction..Disease.outcome",
+      "datatype": "string"
+    },
+    {
+      "name": "Host_response._.RENAMED_.Interaction..Macro.microscopic.host.reponse.to.pathogen",
+      "titles": "Host_response._.RENAMED_.Interaction..Macro.microscopic.host.reponse.to.pathogen",
+      "datatype": "string"
+    },
+    {
+      "name": "experimental_evidence",
+      "titles": "experimental_evidence",
+      "datatype": "string"
+    },
+    {
+      "name": "Transient.Assay.Experimental.Evidence",
+      "titles": "Transient.Assay.Experimental.Evidence",
+      "datatype": "string"
+    },
+    {
+      "name": "Species_Expert",
+      "titles": "Species_Expert",
+      "datatype": "string"
+    },
+    {
+      "name": "Entered_by",
+      "titles": "Entered_by",
+      "datatype": "string"
+    },
+    {
+      "name": "referenceUrl",
+      "titles": "Literature_ID",
+      "datatype": {
+        "base" : "long",
+        "valueUrl" : "https://www.ncbi.nlm.nih.gov/pubmed/{referenceUrl}"
+      }
+    },
+    {
+      "name": "Literature_source",
+      "titles": "Literature_source",
+      "datatype": "string"
+    },
+    {
+      "name": "referenceDoi",
+      "titles": "DOI",
+      "datatype": "string"
+    },
+    {
+      "name": "referenceCitation",
+      "titles": "Full_citation",
+      "datatype": "string"
+    },
+    {
+      "name": "Author_email",
+      "titles": "Author_email",
+      "datatype": "string"
+    },
+    {
+      "name": "Comments",
+      "titles": "Comments",
+      "datatype": "string"
+    },
+    {
+      "name": "Reference",
+      "titles": "Reference",
+      "datatype": "string"
+    },
+    {
+      "name": "Year_published",
+      "titles": "Year_published",
+      "datatype": "string"
+    },
+    {
+      "name": "Curation.details",
+      "titles": "Curation.details",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    },
+    {
+      "name": "",
+      "titles": "",
+      "datatype": "string"
+    }
+  ]
+}

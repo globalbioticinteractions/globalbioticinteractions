@@ -275,7 +275,9 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
             while ((line = csvParse.getLine()) != null) {
                 Map<String, String> mappedLine = new HashMap<>(defaults);
                 if (line.length < columnNames.size()) {
-                    throw new StudyImporterException("read [" + line.length + "] columns, but found [" + columnNames.size() + "] column definitions.");
+                    if (importLogger != null) {
+                        importLogger.warn(null, "found [" + columnNames.size() + "] column definitions, but only [" + line.length + "] values: assuming undefined values are empty.");
+                    }
                 } else if (line.length > columnNames.size()) {
                     if (importLogger != null) {
                         importLogger.warn(null, "found [" + line.length + "] columns, but only [" + columnNames.size() + "] columns are defined: ignoring remaining undefined columns.");
@@ -285,7 +287,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
                 final JsonNode nullValues = config.get("null");
                 final List<String> nullValueArray = parseNullValues(nullValues);
 
-                for (int i = 0; i < columnNames.size(); i++) {
+                for (int i = 0; i < columnNames.size() && i < line.length; i++) {
                     final String value = nullValueArray.contains(line[i]) ? null : line[i];
                     final Column column = columnNames.get(i);
                     try {

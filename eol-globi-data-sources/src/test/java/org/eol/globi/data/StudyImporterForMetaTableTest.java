@@ -3,15 +3,20 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.service.DatasetTest;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -230,6 +235,45 @@ public class StudyImporterForMetaTableTest {
 
         assertThat(StudyImporterForMetaTable.generateReferenceCitation(properties), is("Johnny, 1981. My first pony. journal of bla, 123(11), pp.33."));
 
+    }
+
+    @Test
+    public void phibaseColumnCount() throws IOException, StudyImporterException {
+        final InputStream inputStream = StudyImporterForMetaTable.class.getResourceAsStream("phi-base-schema.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnNamesForSchema(config);
+        assertThat(columnNames.size(), is(86));
+
+        StudyImporterForMetaTable importer = new StudyImporterForMetaTable(null, null);
+        DatasetLocal dataset = new DatasetLocal();
+
+        JsonNode phibaseConfig = new ObjectMapper().readTree("{\n" +
+                "  \"@context\": [\"http://www.w3.org/ns/csvw\", {\"@language\": \"en\"}],\n" +
+                "  \"rdfs:comment\": [\"inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/\"],\n" +
+                "  \"tables\": [\n" +
+                "    { \"url\": \"phi-base_current-head.csv\",\n" +
+                "      \"dcterms:bibliographicCitation\": \"Urban M, Cuzick A, Rutherford K, Irvine A, Pedro H, Pant R, Sadanadan V, Khamari L, Billal S, Mohanty S, Hammond-Kosack KE. PHI-base: a new interface and further additions for the multi-species pathogen-host interactions database. Nucleic Acids Res. 2017 Jan 4;45(D1):D604-D610. doi: 10.1093/nar/gkw1089. Epub 2016 Dec 3. PMID:27915230\",\n" +
+                "      \"tableSchema\": \"phi-base-schema.json\",\n" +
+                "      \"headerRowCount\": 1,\n" +
+                "      \"interactionTypeId\": \"http://purl.obolibrary.org/obo/RO_0002556\",\n" +
+                "      \"interactionTypeName\": \"pathogenOf\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n");
+
+        dataset.setConfig(phibaseConfig);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(properties -> links.add(properties));
+        importer.importStudy();
+
+        assertThat(links.size(), is(9));
+
+        assertThat(links.get(1).get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NCBITaxon:5499"));
+        assertThat(links.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002556"));
+        assertThat(links.get(1).get(StudyImporterForTSV.TARGET_TAXON_ID), is("NCBITaxon:4081"));
     }
 
 
