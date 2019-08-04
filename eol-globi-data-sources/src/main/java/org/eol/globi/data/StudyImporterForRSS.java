@@ -14,9 +14,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.StudyImporterFactory;
-import org.mapdb.DB;
 import org.mapdb.DBMaker;
-import org.mapdb.HTreeMap;
 
 import java.io.IOException;
 import java.net.URI;
@@ -42,51 +40,77 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         }
 
         final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
-        index(new IndexingInteractionListener(interactionsWithUnresolvedOccurrenceIds));
-        importWithIndex(interactionsWithUnresolvedOccurrenceIds);
+        final List<Dataset> datasets = getDatasetsForFeed(getDataset());
+
+
+        indexArchives(interactionsWithUnresolvedOccurrenceIds, datasets);
+        importArchives(interactionsWithUnresolvedOccurrenceIds, datasets);
     }
 
-    public void index(InteractionListener indexingListener) throws StudyImporterException {
+    public void importArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets) throws StudyImporterException {
+        final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
+        LOG.info(msgPrefix + "...");
+        for (Dataset dataset : datasets) {
+            handleDataset(studyImporter -> {
+                if (studyImporter instanceof StudyImporterWithListener) {
+                    final EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, ((StudyImporterWithListener) studyImporter).getInteractionListener());
+                    ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
+                }
+
+            }, dataset);
+        }
+        LOG.info(msgPrefix + " done.");
+    }
+
+    public void indexArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets) throws StudyImporterException {
+        final String msgPrefix1 = "indexing archive(s) from [" + getRssFeedUrlString() + "]";
+        LOG.info(msgPrefix1 + "...");
+
+        final IndexingInteractionListener indexingListener = new IndexingInteractionListener(interactionsWithUnresolvedOccurrenceIds);
+        for (Dataset dataset : datasets) {
+            handleDataset(studyImporter -> {
+                if (studyImporter instanceof StudyImporterWithListener) {
+                    ((StudyImporterWithListener) studyImporter).setInteractionListener(indexingListener);
+                }
+            }, dataset);
+        }
+        LOG.info(msgPrefix1 + " done.");
+    }
+
+    public void index(StudyImporterConfigurator studyImporterConfigurator) throws StudyImporterException {
         final String msgPrefix = "indexing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
         final List<Dataset> datasets = getDatasetsForFeed(getDataset());
         for (Dataset dataset : datasets) {
-            nodeFactory.getOrCreateDataset(dataset);
-            NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
-            StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
-            if (studyImporter instanceof StudyImporterWithListener) {
-                studyImporter.setDataset(dataset);
-                ((StudyImporterWithListener) studyImporter).setInteractionListener(indexingListener);
-
-                if (getLogger() != null) {
-                    studyImporter.setLogger(getLogger());
-                }
-                studyImporter.importStudy();
-            }
+            handleDataset(studyImporterConfigurator, dataset);
         }
         LOG.info(msgPrefix + " done.");
     }
 
-    public void importWithIndex(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) throws StudyImporterException {
+    interface StudyImporterConfigurator {
+        void configure(StudyImporter studyImporter);
+    }
+
+    public void importWithIndex(StudyImporterConfigurator studyImporterConfigurator) throws StudyImporterException {
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
         final List<Dataset> datasets = getDatasetsForFeed(getDataset());
         for (Dataset dataset : datasets) {
-            nodeFactory.getOrCreateDataset(dataset);
-            NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
-            StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
-            studyImporter.setDataset(dataset);
-            if (studyImporter instanceof StudyImporterWithListener) {
-                EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, ((StudyImporterWithListener) studyImporter).getInteractionListener());
-                ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
-            }
-
-            if (getLogger() != null) {
-                studyImporter.setLogger(getLogger());
-            }
-            studyImporter.importStudy();
+            handleDataset(studyImporterConfigurator, dataset);
         }
         LOG.info(msgPrefix + " done.");
+    }
+
+    public void handleDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset) throws StudyImporterException {
+        nodeFactory.getOrCreateDataset(dataset);
+        NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
+        StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
+        studyImporter.setDataset(dataset);
+        studyImporterConfigurator.configure(studyImporter);
+        if (getLogger() != null) {
+            studyImporter.setLogger(getLogger());
+        }
+        studyImporter.importStudy();
     }
 
     public String getRssFeedUrlString() {
@@ -97,6 +121,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     static String getRss(Dataset dataset) {
         return DatasetUtil.getNamedResourceURI(dataset, "rss");
     }
+
 
     public static List<Dataset> getDatasetsForFeed(Dataset datasetOrig) throws StudyImporterException {
         SyndFeedInput input = new SyndFeedInput();
