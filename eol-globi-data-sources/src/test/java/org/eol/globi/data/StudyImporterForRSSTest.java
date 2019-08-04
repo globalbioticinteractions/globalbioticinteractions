@@ -20,11 +20,13 @@ import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.TermLookupService;
 import org.junit.Test;
+import org.mapdb.DBMaker;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -70,8 +72,22 @@ public class StudyImporterForRSSTest {
         }});
 
         assertTrue(index.containsKey("http://arctos.database.museum/guid/MVZ:Bird:180448"));
+    }
+
+    @Test
+    public void indexingInteractionListenerDBMaker() throws StudyImporterException {
+
+        final Map<String, Map<String, String>> index = DBMaker.newTempTreeMap();
 
 
+        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener = new StudyImporterForRSS.IndexingInteractionListener(index);
+
+        indexingInteractionListener.newLink(new TreeMap<String, String>() {{
+            put(StudyImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
+            put(StudyImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
+        }});
+
+        assertTrue(index.containsKey("http://arctos.database.museum/guid/MVZ:Bird:180448"));
     }
 
     @Test

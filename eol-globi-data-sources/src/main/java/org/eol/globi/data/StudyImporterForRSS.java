@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -74,7 +75,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
                 }
             }, dataset);
         }
-        LOG.info(msgPrefix1 + " done.");
+        LOG.info(msgPrefix1 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrences");
     }
 
     public void index(StudyImporterConfigurator studyImporterConfigurator) throws StudyImporterException {
@@ -91,25 +92,15 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         void configure(StudyImporter studyImporter);
     }
 
-    public void importWithIndex(StudyImporterConfigurator studyImporterConfigurator) throws StudyImporterException {
-        final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
-        LOG.info(msgPrefix + "...");
-        final List<Dataset> datasets = getDatasetsForFeed(getDataset());
-        for (Dataset dataset : datasets) {
-            handleDataset(studyImporterConfigurator, dataset);
-        }
-        LOG.info(msgPrefix + " done.");
-    }
-
     public void handleDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset) throws StudyImporterException {
         nodeFactory.getOrCreateDataset(dataset);
         NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
         StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
         studyImporter.setDataset(dataset);
-        studyImporterConfigurator.configure(studyImporter);
         if (getLogger() != null) {
             studyImporter.setLogger(getLogger());
         }
+        studyImporterConfigurator.configure(studyImporter);
         studyImporter.importStudy();
     }
 
@@ -277,7 +268,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
                     String[] splitValue = StringUtils.split(value, "?");
                     value = splitValue.length == 1 ? value : splitValue[0];
                 }
-                interactionsWithUnresolvedOccurrenceIds.put(value, properties);
+                interactionsWithUnresolvedOccurrenceIds.put(value, new HashMap<>(properties));
             }
         }
     }
