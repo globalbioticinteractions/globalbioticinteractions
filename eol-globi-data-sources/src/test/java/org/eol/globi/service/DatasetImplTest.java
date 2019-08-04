@@ -66,5 +66,26 @@ public class DatasetImplTest {
         assertThat(dataset.getCitation(), is("a citation; other citation"));
     }
 
+    @Test
+    public void doiScrubbing() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        dataset.setConfig(new ObjectMapper().readTree("{\"doi\": \"doi:http://dx.doi.org/10.2980/1195-6860(2006)13[23:TDOFUB]2.0.CO;2\" }"));
+        assertThat(dataset.getDOI(), is(new DOI("2980", "1195-6860(2006)13[23:TDOFUB]2.0.CO;2")));
+    }
+
+    @Test
+    public void doiExpected() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        dataset.setConfig(new ObjectMapper().readTree("{\"doi\": \"http://dx.doi.org/10.2980/1195-6860(2006)13[23:TDOFUB]2.0.CO;2\" }"));
+        assertThat(dataset.getDOI(), is(new DOI("2980", "1195-6860(2006)13[23:TDOFUB]2.0.CO;2")));
+    }
+
+    @Test
+    public void doiExpectedPrefix() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        dataset.setConfig(new ObjectMapper().readTree("{\"doi\": \"doi:10.2980/1195-6860(2006)13[23:TDOFUB]2.0.CO;2\" }"));
+        assertThat(dataset.getDOI(), is(new DOI("2980", "1195-6860(2006)13[23:TDOFUB]2.0.CO;2")));
+    }
+
 
 }

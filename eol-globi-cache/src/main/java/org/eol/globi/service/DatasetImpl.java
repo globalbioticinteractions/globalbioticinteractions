@@ -77,7 +77,8 @@ public class DatasetImpl extends DatasetMapped {
     public DOI getDOI() {
         String doi = getOrDefault("doi", "");
         try {
-            return StringUtils.isBlank(doi) ? null : DOI.create(doi);
+            String doiScrubbed = StringUtils.replace(doi, "doi:http://dx.doi.org/", "https://doi.org/");
+            return StringUtils.isBlank(doiScrubbed) ? null : DOI.create(doiScrubbed);
         } catch (MalformedDOIException e) {
             LOG.warn("found malformed doi [" + doi + "", e);
             return null;
