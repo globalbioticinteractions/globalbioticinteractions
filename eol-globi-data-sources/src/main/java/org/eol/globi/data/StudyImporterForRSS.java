@@ -78,16 +78,6 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         LOG.info(msgPrefix1 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrences");
     }
 
-    public void index(StudyImporterConfigurator studyImporterConfigurator) throws StudyImporterException {
-        final String msgPrefix = "indexing archive(s) from [" + getRssFeedUrlString() + "]";
-        LOG.info(msgPrefix + "...");
-        final List<Dataset> datasets = getDatasetsForFeed(getDataset());
-        for (Dataset dataset : datasets) {
-            handleDataset(studyImporterConfigurator, dataset);
-        }
-        LOG.info(msgPrefix + " done.");
-    }
-
     interface StudyImporterConfigurator {
         void configure(StudyImporter studyImporter);
     }
@@ -109,12 +99,12 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         return getRss(dataset);
     }
 
-    static String getRss(Dataset dataset) {
+    private static String getRss(Dataset dataset) {
         return DatasetUtil.getNamedResourceURI(dataset, "rss");
     }
 
 
-    public static List<Dataset> getDatasetsForFeed(Dataset datasetOrig) throws StudyImporterException {
+    static List<Dataset> getDatasetsForFeed(Dataset datasetOrig) throws StudyImporterException {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed;
         String rss = getRss(datasetOrig);
