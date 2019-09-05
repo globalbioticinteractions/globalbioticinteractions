@@ -1,15 +1,19 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetImpl;
+import org.gbif.dwc.Archive;
+import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,9 +24,11 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class StudyImporterForDwCATest {
+
 
     @Test
     public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
@@ -34,6 +40,12 @@ public class StudyImporterForDwCATest {
     @Test
     public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
+        assertImportsSomething(resource.toURI());
+    }
+
+    @Test
+    public void importRecordsFromArchiveWithAssociatedTaxa() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/eol/globi/data/AEC-DBCNet_DwC-A20160308-sample.zip");
         assertImportsSomething(resource.toURI());
     }
 
@@ -51,12 +63,12 @@ public class StudyImporterForDwCATest {
                         is("http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:183644?seid=158590"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:58090?seid=657121")
-                        ));
+                ));
                 assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), anyOf(
                         is("http://arctos.database.museum/guid/MVZ:Herp:241200"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:183643"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:58093")
-                        ));
+                ));
                 someRecords.set(true);
             }
         });
@@ -69,6 +81,38 @@ public class StudyImporterForDwCATest {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI()));
+        AtomicBoolean someRecords = new AtomicBoolean(false);
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                String associatedTaxa = properties.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
+                String dynamicProperties = properties.get("http://rs.tdwg.org/dwc/terms/dynamicProperties");
+                assertThat(StringUtils.isNotBlank(associatedTaxa) || StringUtils.isNotBlank(dynamicProperties), is(true));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), is(not(nullValue())));
+                someRecords.set(true);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+        assertThat(someRecords.get(), is(true));
+    }
+
+    @Test
+    public void importRecordsFromZip() throws StudyImporterException, URISyntaxException, IOException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
+        StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
+        DatasetImpl dataset = new DatasetImpl("some/namespace", null);
+        JsonNode jsonNode = new ObjectMapper().readTree("{ " +
+                "\"interactionTypeId\": \"http://purl.obolibrary.org/obo/RO_0002437\"," +
+                "\"url\": \"" + resource.toExternalForm() + "\"" +
+                "}");
+        dataset.setConfig(jsonNode);
+        studyImporterForDwCA.setDataset(dataset);
         AtomicBoolean someRecords = new AtomicBoolean(false);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
@@ -219,5 +263,50 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
     }
+
+    @Test
+    public void hasAssociatedTaxaExtension() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("AEC-DBCNet_DwC-A20160308-sample.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        boolean withAssociatedTaxa = StudyImporterForDwCA.hasAssociatedTaxaExtension(archive);
+
+        assertTrue(withAssociatedTaxa);
+    }
+
+    @Test
+    public void hasAssociatedTaxa() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("AEC-DBCNet_DwC-A20160308-sample.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        AtomicBoolean foundLink = new AtomicBoolean(false);
+        StudyImporterForDwCA.importAssociateTaxa(archive, new InteractionListener() {
+
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Andrena wilkella"));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_SEX_NAME), is("Female"));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME), is("Adult"));
+                assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Melilotus officinalis"));
+                assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("associated with"));
+                assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
+                assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("LabelObservation"));
+
+                assertThat(properties.get(StudyImporterForTSV.DECIMAL_LATITUDE), is("42.40000"));
+                assertThat(properties.get(StudyImporterForTSV.DECIMAL_LONGITUDE), is("-76.50000"));
+                assertThat(properties.get(StudyImporterForTSV.LOCALITY_NAME), is("Tompkins County"));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("urn:uuid:859e1708-d8e1-11e2-99a2-0026552be7ea"));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("Digital Bee Collections Network, 2014 (and updates). Version: 2016-03-08. National Science Foundation grant DBI 0956388"));
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
+                foundLink.set(true);
+
+            }
+        }, "some citation");
+
+        assertTrue(foundLink.get());
+    }
+
 
 }

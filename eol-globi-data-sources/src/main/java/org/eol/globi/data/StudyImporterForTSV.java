@@ -43,6 +43,10 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String SOURCE_LIFE_STAGE_NAME = "sourceLifeStageName";
     public static final String TARGET_LIFE_STAGE_ID = "targetLifeStageId";
     public static final String TARGET_LIFE_STAGE_NAME = "targetLifeStageName";
+    public static final String SOURCE_SEX_ID = "sourceSexId";
+    public static final String SOURCE_SEX_NAME = "sourceSexName";
+    public static final String TARGET_SEX_ID = "targetSexId";
+    public static final String TARGET_SEX_NAME = "targetSexName";
     public static final String ASSOCIATED_TAXA = "associatedTaxa";
     public static final String ARGUMENT_TYPE_ID = "argumentTypeId";
 

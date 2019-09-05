@@ -139,6 +139,7 @@ public class StudyImporterFactory {
                 put("saproxylic", StudyImporterForSaproxylic.class);
                 put("globalwebdb", StudyImporterForGlobalWebDb.class);
                 put("application/dwca", StudyImporterForDwCA.class);
+                put("dwca", StudyImporterForDwCA.class);
                 put("rss", StudyImporterForRSS.class);
             }
         };

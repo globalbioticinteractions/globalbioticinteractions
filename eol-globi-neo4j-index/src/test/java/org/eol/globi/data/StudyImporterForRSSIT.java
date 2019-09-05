@@ -32,6 +32,25 @@ public class StudyImporterForRSSIT extends GraphDBTestCase {
     }
 
     @Test
+    public void importUCSB() throws StudyImporterException, IOException {
+        File tempFile = File.createTempFile("test", ".tmp", new File("target"));
+        StudyImporter importer = new StudyImporterTestFactory(nodeFactory)
+                .instantiateImporter(StudyImporterForRSS.class);
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath()));
+
+        ObjectNode rssUrl = new ObjectMapper().createObjectNode();
+
+        rssUrl.put("rss", "https://symbiota.ccber.ucsb.edu/webservices/dwc/rss.xml");
+        ObjectNode configNode = new ObjectMapper().createObjectNode();
+        configNode.put("resources", rssUrl);
+        datasetWithCache.setConfig(configNode);
+
+        importer.setDataset(datasetWithCache);
+        importStudy(importer);
+    }
+
+    @Test
     public void importEasyArthoprodCapture() throws StudyImporterException {
         StudyImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(StudyImporterForRSS.class);

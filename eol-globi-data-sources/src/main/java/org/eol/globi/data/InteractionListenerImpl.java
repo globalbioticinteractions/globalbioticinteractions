@@ -16,12 +16,12 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.CSVTSVUtil;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
 import org.gbif.dwc.terms.DwcTerm;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -248,7 +248,7 @@ class InteractionListenerImpl implements InteractionListener {
         final String eventDate = link.get(StudyImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
-                final DateTime dateTime = ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(eventDate);
+                final DateTime dateTime = DateUtil.parseDateUTC(eventDate);
                 nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
             } catch (IllegalArgumentException ex) {
                 getLogger().warn(null, "invalid date string [" + eventDate + "]");

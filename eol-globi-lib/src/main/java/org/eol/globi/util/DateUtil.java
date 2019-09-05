@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -17,14 +18,26 @@ public final class DateUtil {
     }
 
     public static DateTime parseYearUTC(String dateString) {
-        return ISODateTimeFormat.year().withZoneUTC().parseDateTime(dateString);
+        String firstInRange = splitPossibleRange(dateString);
+        return ISODateTimeFormat.year().withZoneUTC().parseDateTime(firstInRange);
     }
 
     public static DateTime parseYearMonthUTC(String dateString) {
-        return ISODateTimeFormat.yearMonth().withZoneUTC().parseDateTime(dateString);
+        String firstInRange = splitPossibleRange(dateString);
+        return ISODateTimeFormat.yearMonth().withZoneUTC().parseDateTime(firstInRange);
     }
 
     public static DateTime parsePatternUTC(String dateString, String pattern) {
-        return DateTimeFormat.forPattern(pattern).withZoneUTC().parseDateTime(dateString);
+        String firstInRange = splitPossibleRange(dateString);
+        return DateTimeFormat.forPattern(pattern).withZoneUTC().parseDateTime(firstInRange);
+    }
+
+    public static DateTime parseDateUTC(String eventDate) {
+        String firstInRange = splitPossibleRange(eventDate);
+        return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(firstInRange);
+    }
+
+    public static String splitPossibleRange(String eventDate) {
+        return StringUtils.split(eventDate, "/")[0];
     }
 }
