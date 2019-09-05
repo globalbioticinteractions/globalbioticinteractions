@@ -9,7 +9,6 @@ import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwc.terms.UnknownTerm;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -76,43 +75,41 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 importAssociateTaxa(archive, interactionListener, sourceCitation);
             } else {
                 for (Record rec : archive.getCore()) {
+                    List<Map<String, String>> interactionCandidates = new ArrayList<>();
+
                     String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
+                    if (StringUtils.isNotBlank(associatedTaxa)) {
+                        interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
+                    }
+
                     String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
+                    if (StringUtils.isNotBlank(associatedOccurrences)) {
+                        interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
+                    }
+
                     String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
-                    if ((associatedTaxa != null && dynamicProperties != null) || associatedOccurrences != null) {
+                    if (StringUtils.isNotBlank(dynamicProperties)) {
+                        interactionCandidates.add(parseDynamicProperties(dynamicProperties));
+                    }
 
-                        List<Map<String, String>> interactionCandidates = new ArrayList<>();
-                        if (StringUtils.isNotBlank(associatedTaxa)) {
-                            interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
-                        }
+                    List<Map<String, String>> interactions = interactionCandidates
+                            .stream()
+                            .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
+                            .collect(Collectors.toList());
 
-                        if (StringUtils.isNotBlank(associatedOccurrences)) {
-                            interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
-                        }
-
-                        if (StringUtils.isNotBlank(dynamicProperties)) {
-                            interactionCandidates.add(parseDynamicProperties(dynamicProperties));
-                        }
-
-                        List<Map<String, String>> interactions = interactionCandidates
-                                .stream()
-                                .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
-                                .collect(Collectors.toList());
-
-                        logUnsupportedInteractionTypes(interactionCandidates, getLogger());
+                    logUnsupportedInteractionTypes(interactionCandidates, getLogger());
 
 
-                        Map<String, String> interaction = new HashMap<>(rec.terms().size());
-                        for (Term term : rec.terms()) {
-                            interaction.put(term.qualifiedName(), rec.value(term));
-                        }
+                    Map<String, String> interaction = new HashMap<>(rec.terms().size());
+                    for (Term term : rec.terms()) {
+                        interaction.put(term.qualifiedName(), rec.value(term));
+                    }
 
-                        for (Map<String, String> interactionProperties : interactions) {
-                            interactionProperties.putAll(interaction);
-                            mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
-                            mapCoreProperties(rec, interactionProperties, sourceCitation);
-                            interactionListener.newLink(interactionProperties);
-                        }
+                    for (Map<String, String> interactionProperties : interactions) {
+                        interactionProperties.putAll(interaction);
+                        mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
+                        mapCoreProperties(rec, interactionProperties, sourceCitation);
+                        interactionListener.newLink(interactionProperties);
                     }
                 }
             }
@@ -184,18 +181,32 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         for (String part : parts) {
             String[] verbTaxon = StringUtils.splitByWholeSeparator(part, ":", 2);
             if (verbTaxon.length == 2) {
-                HashMap<String, String> e = new HashMap<>();
-                String interactionTypeName = StringUtils.lowerCase(StringUtils.trim(verbTaxon[0]));
-                e.put(INTERACTION_TYPE_NAME, interactionTypeName);
-                InteractType interactType = InteractType.typeOf(interactionTypeName);
-                if (interactType != null) {
-                    e.put(INTERACTION_TYPE_ID, interactType.getIRI());
-                }
-                e.put(TARGET_TAXON_NAME, StringUtils.trim(verbTaxon[1]));
-                properties.add(e);
+                addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
+            } else {
+                addDefaultInteractionForAssociatedTaxon(properties, part);
             }
         }
         return properties;
+    }
+
+    private static void addSpecificInteractionForAssociatedTaxon(List<Map<String, String>> properties, String[] verbTaxon) {
+        HashMap<String, String> e = new HashMap<>();
+        String interactionTypeName = StringUtils.lowerCase(StringUtils.trim(verbTaxon[0]));
+        e.put(INTERACTION_TYPE_NAME, interactionTypeName);
+        InteractType interactType = InteractType.typeOf(interactionTypeName);
+        if (interactType != null) {
+            e.put(INTERACTION_TYPE_ID, interactType.getIRI());
+        }
+        e.put(TARGET_TAXON_NAME, StringUtils.trim(verbTaxon[1]));
+        properties.add(e);
+    }
+
+    private static void addDefaultInteractionForAssociatedTaxon(List<Map<String, String>> properties, String part) {
+        properties.add(new HashMap<String, String>() {{
+            put(TARGET_TAXON_NAME, part);
+            put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+            put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
+        }});
     }
 
     static List<Map<String, String>> parseAssociatedOccurrences(String s) {

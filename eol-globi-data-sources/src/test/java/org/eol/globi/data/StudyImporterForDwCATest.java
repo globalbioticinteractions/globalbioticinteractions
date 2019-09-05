@@ -38,6 +38,13 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void importAssociatedTaxaFromDir() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        assertImportsSomething(archiveRoot);
+    }
+
+    @Test
     public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomething(resource.toURI());
