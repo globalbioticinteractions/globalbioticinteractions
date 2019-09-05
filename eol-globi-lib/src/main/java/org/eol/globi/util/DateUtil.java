@@ -28,8 +28,7 @@ public final class DateUtil {
     }
 
     public static DateTime parsePatternUTC(String dateString, String pattern) {
-        String firstInRange = splitPossibleRange(dateString);
-        return DateTimeFormat.forPattern(pattern).withZoneUTC().parseDateTime(firstInRange);
+        return DateTimeFormat.forPattern(pattern).withZoneUTC().parseDateTime(dateString);
     }
 
     public static DateTime parseDateUTC(String eventDate) {
