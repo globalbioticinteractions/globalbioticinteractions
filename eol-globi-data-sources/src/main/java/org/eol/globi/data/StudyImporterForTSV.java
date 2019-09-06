@@ -8,6 +8,7 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,16 +82,21 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     }
 
     private void importResource(String namespace, String sourceCitation, String resourceName, char newDelim, List<IOException> parserExceptions) throws IOException, StudyImporterException {
-        String resourceURIString = getDataset().getResourceURI(resourceName).toString();
-        LabeledCSVParser parser = null;
-        try {
-            parser = parserFactory.createParser(resourceURIString, "UTF-8");
-            parser.changeDelimiter(newDelim);
-        } catch (IOException ex) {
-            parserExceptions.add(new IOException("failed to access [" + resourceURIString + "]", ex));
-        }
-        if (parser != null) {
-            importResource(namespace, sourceCitation, getInteractionListener(), resourceURIString, parser);
+        URI resourceURI = getDataset().getResourceURI(resourceName);
+        if (resourceURI == null) {
+            parserExceptions.add(new IOException("failed to access [" + resourceName + "] as individual resource (e.g. local/remote data/file)."));
+        } else {
+            String resourceURIString = resourceURI.toString();
+            LabeledCSVParser parser = null;
+            try {
+                parser = parserFactory.createParser(resourceURIString, "UTF-8");
+                parser.changeDelimiter(newDelim);
+            } catch (IOException ex) {
+                parserExceptions.add(new IOException("failed to access [" + resourceURIString + "]", ex));
+            }
+            if (parser != null) {
+                importResource(namespace, sourceCitation, getInteractionListener(), resourceURIString, parser);
+            }
         }
     }
 

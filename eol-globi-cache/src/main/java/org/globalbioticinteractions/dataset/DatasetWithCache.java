@@ -64,7 +64,11 @@ public class DatasetWithCache extends DatasetMapped {
 
         URI uri;
         if (resourceURI.isAbsolute()) {
-            uri = cache.asURI(resourceURI);
+            if (isLocalDir(resourceURI)) {
+                uri = resourceURI;
+            } else {
+                uri = cache.asURI(resourceURI);
+            }
         } else {
             URI archiveURI = getArchiveURI();
             uri = isLocalDir(archiveURI)
@@ -81,10 +85,11 @@ public class DatasetWithCache extends DatasetMapped {
     }
 
     private URI cacheFileInLocalDirectory(String mappedResourceName, URI archiveURI) throws IOException {
-        return cache.asURI(ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName));
+        URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
+        return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.asURI(absoluteResourceURI);
     }
 
-    static boolean isLocalDir(URI archiveURI) {
+    public static boolean isLocalDir(URI archiveURI) {
         return archiveURI != null
                 && StringUtils.equals("file", archiveURI.getScheme())
                 && new File(archiveURI).exists()

@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -78,6 +79,22 @@ public class DatasetWithCacheTest {
         URI someURI = datasetWithCache.getResourceURI("foo.txt");
 
         assertThat(someURI, is(URI.create(cachedLocalURI.toString() + "archive.zip")));
+    }
+
+    @Test
+    public void doNotCacheLocalDirResourceURI() throws IOException, URISyntaxException {
+        Cache cache = Mockito.mock(Cache.class);
+        URI localFileURI = getClass().getResource("archive.zip").toURI();
+        URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
+        assertTrue(DatasetWithCache.isLocalDir(cachedLocalURI));
+        when(cache.asURI(any(URI.class))).thenReturn(localFileURI);
+        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI);
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
+        URI someURI = datasetWithCache.getResourceURI(cachedLocalURI.toString());
+
+        assertThat(someURI, not(is(localFileURI)));
+        assertThat(someURI, is(cachedLocalURI));
     }
 
     @Test
