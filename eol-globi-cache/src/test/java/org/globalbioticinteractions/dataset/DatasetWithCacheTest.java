@@ -10,12 +10,14 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +63,21 @@ public class DatasetWithCacheTest {
         URI someURI = datasetWithCache.getResourceURI("foo");
 
         assertThat(someURI, is(URI.create("jar:" + cachedLocalURI.toString() + "!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo")));
+    }
+
+    @Test
+    public void getLocalDirArchiveURI() throws IOException, URISyntaxException {
+        Cache cache = Mockito.mock(Cache.class);
+        URI localFileURI = getClass().getResource("archive.zip").toURI();
+        URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
+        assertTrue(DatasetWithCache.isLocalDir(cachedLocalURI));
+        when(cache.asURI(any(URI.class))).thenReturn(localFileURI);
+        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI);
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
+        URI someURI = datasetWithCache.getResourceURI("foo.txt");
+
+        assertThat(someURI, is(URI.create(cachedLocalURI.toString() + "archive.zip")));
     }
 
     @Test
