@@ -298,7 +298,7 @@ public class StudyImporterForDwCATest {
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
         AtomicBoolean foundLink = new AtomicBoolean(false);
-        StudyImporterForDwCA.importAssociateTaxa(archive, new InteractionListener() {
+        StudyImporterForDwCA.importAssociateTaxaExtension(archive, new InteractionListener() {
 
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
@@ -331,7 +331,7 @@ public class StudyImporterForDwCATest {
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
         AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
-        StudyImporterForDwCA.importRelatedRelationships(archive, new InteractionListener() {
+        StudyImporterForDwCA.importResourceRelationExtension(archive, new InteractionListener() {
 
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {

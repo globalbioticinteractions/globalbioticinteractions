@@ -45,7 +45,6 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
@@ -75,58 +74,58 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             String sourceCitation = getDataset().getCitation();
 
-            if (hasResourceRelationships(archive)) {
-                importRelatedRelationships(archive, interactionListener, sourceCitation);
-            }
+            importResourceRelationExtension(archive, interactionListener, sourceCitation);
 
-            if (hasAssociatedTaxaExtension(archive)) {
-                importAssociateTaxa(archive, interactionListener, sourceCitation);
-            }
+            importAssociateTaxaExtension(archive, interactionListener, sourceCitation);
 
-            for (Record rec : archive.getCore()) {
-                List<Map<String, String>> interactionCandidates = new ArrayList<>();
-
-                String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
-                if (StringUtils.isNotBlank(associatedTaxa)) {
-                    interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
-                }
-
-                String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
-                if (StringUtils.isNotBlank(associatedOccurrences)) {
-                    interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
-                }
-
-                String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
-                if (StringUtils.isNotBlank(dynamicProperties)) {
-                    interactionCandidates.add(parseDynamicProperties(dynamicProperties));
-                }
-
-                List<Map<String, String>> interactions = interactionCandidates
-                        .stream()
-                        .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
-                        .collect(Collectors.toList());
-
-                logUnsupportedInteractionTypes(interactionCandidates, getLogger());
-
-
-                Map<String, String> interaction = new HashMap<>(rec.terms().size());
-                for (Term term : rec.terms()) {
-                    interaction.put(term.qualifiedName(), rec.value(term));
-                }
-
-                for (Map<String, String> interactionProperties : interactions) {
-                    interactionProperties.putAll(interaction);
-                    mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
-                    mapCoreProperties(rec, interactionProperties, sourceCitation);
-                    interactionListener.newLink(interactionProperties);
-                }
-            }
+            importCore(archive, interactionListener, sourceCitation);
 
         } catch (IOException e) {
             throw new StudyImporterException("failed to read archive [" + archiveURI + "]", e);
         } finally {
             if (tmpDwA != null) {
                 org.apache.commons.io.FileUtils.deleteQuietly(tmpDwA.toFile());
+            }
+        }
+    }
+
+    public void importCore(Archive archive, InteractionListener interactionListener, String sourceCitation) throws StudyImporterException {
+        for (Record rec : archive.getCore()) {
+            List<Map<String, String>> interactionCandidates = new ArrayList<>();
+
+            String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
+            if (StringUtils.isNotBlank(associatedTaxa)) {
+                interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
+            }
+
+            String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
+            if (StringUtils.isNotBlank(associatedOccurrences)) {
+                interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
+            }
+
+            String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
+            if (StringUtils.isNotBlank(dynamicProperties)) {
+                interactionCandidates.add(parseDynamicProperties(dynamicProperties));
+            }
+
+            List<Map<String, String>> interactions = interactionCandidates
+                    .stream()
+                    .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
+                    .collect(Collectors.toList());
+
+            logUnsupportedInteractionTypes(interactionCandidates, getLogger());
+
+
+            Map<String, String> interaction = new HashMap<>(rec.terms().size());
+            for (Term term : rec.terms()) {
+                interaction.put(term.qualifiedName(), rec.value(term));
+            }
+
+            for (Map<String, String> interactionProperties : interactions) {
+                interactionProperties.putAll(interaction);
+                mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
+                mapCoreProperties(rec, interactionProperties, sourceCitation);
+                interactionListener.newLink(interactionProperties);
             }
         }
     }
@@ -273,7 +272,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         return properties;
     }
 
-    static void importAssociateTaxa(Archive archive, InteractionListener interactionListener, String sourceCitation) {
+    static void importAssociateTaxaExtension(Archive archive, InteractionListener interactionListener, String sourceCitation) {
         if (hasAssociatedTaxaExtension(archive)) {
             ArchiveFile extension = archive.getExtension(new ExtensionProperty(EXTENSION_ASSOCIATED_TAXA));
             ArchiveFile core = archive.getCore();
@@ -313,7 +312,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    static void importRelatedRelationships(Archive archive, InteractionListener interactionListener, String sourceCitation) {
+    static void importResourceRelationExtension(Archive archive, InteractionListener interactionListener, String sourceCitation) {
 
         ArchiveFile resourceExtension = findResourceRelationships(archive);
 
