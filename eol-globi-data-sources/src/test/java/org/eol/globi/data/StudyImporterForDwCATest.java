@@ -298,7 +298,7 @@ public class StudyImporterForDwCATest {
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
         AtomicBoolean foundLink = new AtomicBoolean(false);
-        StudyImporterForDwCA.importAssociateTaxaExtension(archive, new InteractionListener() {
+        StudyImporterForDwCA.importAssociatedTaxaExtension(archive, new InteractionListener() {
 
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {

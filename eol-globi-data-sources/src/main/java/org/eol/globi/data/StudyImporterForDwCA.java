@@ -76,7 +76,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             importResourceRelationExtension(archive, interactionListener, sourceCitation);
 
-            importAssociateTaxaExtension(archive, interactionListener, sourceCitation);
+            importAssociatedTaxaExtension(archive, interactionListener, sourceCitation);
 
             importCore(archive, interactionListener, sourceCitation);
 
@@ -272,7 +272,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         return properties;
     }
 
-    static void importAssociateTaxaExtension(Archive archive, InteractionListener interactionListener, String sourceCitation) {
+    static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener, String sourceCitation) {
         if (hasAssociatedTaxaExtension(archive)) {
             ArchiveFile extension = archive.getExtension(new ExtensionProperty(EXTENSION_ASSOCIATED_TAXA));
             ArchiveFile core = archive.getCore();
@@ -314,7 +314,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     static void importResourceRelationExtension(Archive archive, InteractionListener interactionListener, String sourceCitation) {
 
-        ArchiveFile resourceExtension = findResourceRelationships(archive);
+        ArchiveFile resourceExtension = findResourceRelationshipExtension(archive);
 
         if (resourceExtension != null) {
 
@@ -419,17 +419,17 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    private static ArchiveFile findResourceRelationships(Archive archive) {
-        ArchiveFile resourceExtension = null;
+    private static ArchiveFile findResourceRelationshipExtension(Archive archive) {
+        ArchiveFile resourceRelationExtension = null;
         Set<ArchiveFile> extensions = archive.getExtensions();
         for (ArchiveFile extension : extensions) {
             if (StringUtils.equals(extension.getRowType().qualifiedName(),
                     EXTENSION_RESOURCE_RELATIONSHIP)) {
-                resourceExtension = extension;
+                resourceRelationExtension = extension;
                 break;
             }
         }
-        return resourceExtension;
+        return resourceRelationExtension;
     }
 
     private static void termsToMap(Record record, Map<String, String> props) {
