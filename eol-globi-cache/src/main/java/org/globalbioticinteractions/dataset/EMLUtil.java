@@ -35,9 +35,9 @@ public class EMLUtil {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
 
-            String collectionName = getFirstIfPresent(doc, xpath, "//collectionName");
-            String pubDate = getFirstIfPresent(doc, xpath, "//pubDate");
-            String citation = getFirstIfPresent(doc, xpath, "//citation");
+            String collectionName = StringUtils.trim(getFirstIfPresent(doc, xpath, "//collectionName"));
+            String pubDate = StringUtils.trim(getFirstIfPresent(doc, xpath, "//pubDate"));
+            String citation = StringUtils.trim(getFirstIfPresent(doc, xpath, "//citation"));
 
             ObjectNode objectNode = new ObjectMapper().createObjectNode();
             String datasetCitation = StringUtils.join(Arrays.asList(collectionName, pubDate, citation), ". ") + ".";

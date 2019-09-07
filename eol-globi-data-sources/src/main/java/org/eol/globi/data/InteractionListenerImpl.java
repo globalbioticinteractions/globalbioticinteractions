@@ -147,7 +147,7 @@ class InteractionListenerImpl implements InteractionListener {
 
         Predicate<Map<String, String>> hasInteractionType = createInteractionTypePredicate(getLogger());
 
-        Predicate<Map<String, String>> hasReferenceId = (Map<String, String> l) -> StringUtils.isNotBlank(l.get(REFERENCE_ID));
+        Predicate<Map<String, String>> hasReferenceId = createReferencePredicate(getLogger());
 
         return hasSourceTaxon
                 .and(hasTargetTaxon)
@@ -156,12 +156,22 @@ class InteractionListenerImpl implements InteractionListener {
                 .test(link);
     }
 
+    static Predicate<Map<String, String>> createReferencePredicate(ImportLogger logger) {
+        return (Map<String, String> l) -> {
+            boolean isValid = StringUtils.isNotBlank(l.get(REFERENCE_ID));
+            if (!isValid && logger != null) {
+                logger.warn(null, "missing [" + REFERENCE_ID + "]");
+            }
+            return isValid;
+        };
+    }
+
     static Predicate<Map<String, String>> createInteractionTypePredicate(ImportLogger logger) {
         return (Map<String, String> l) -> {
             String interactionTypeId = l.get(INTERACTION_TYPE_ID);
             boolean hasValidId = false;
             if (StringUtils.isBlank(interactionTypeId) && logger != null) {
-                logger.warn(null, "missing interactionTypeId");
+                logger.warn(null, "missing [" + INTERACTION_TYPE_ID + "]");
             } else {
                 hasValidId = InteractType.typeOf(interactionTypeId) != null;
                 if (!hasValidId && logger != null) {

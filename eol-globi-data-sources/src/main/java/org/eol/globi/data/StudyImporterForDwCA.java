@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.collections4.map.UnmodifiableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.gbif.dwc.Archive;
@@ -44,11 +45,14 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 public class StudyImporterForDwCA extends StudyImporterWithListener {
-    public static final String ASSOCIATED_TAXA_EXTENSION = "http://purl.org/NET/aec/associatedTaxa";
+    public static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
+    public static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
 
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -71,46 +75,50 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             String sourceCitation = getDataset().getCitation();
 
+            if (hasResourceRelationships(archive)) {
+                importRelatedRelationships(archive, interactionListener, sourceCitation);
+            }
+
             if (hasAssociatedTaxaExtension(archive)) {
                 importAssociateTaxa(archive, interactionListener, sourceCitation);
-            } else {
-                for (Record rec : archive.getCore()) {
-                    List<Map<String, String>> interactionCandidates = new ArrayList<>();
+            }
 
-                    String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
-                    if (StringUtils.isNotBlank(associatedTaxa)) {
-                        interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
-                    }
+            for (Record rec : archive.getCore()) {
+                List<Map<String, String>> interactionCandidates = new ArrayList<>();
 
-                    String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
-                    if (StringUtils.isNotBlank(associatedOccurrences)) {
-                        interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
-                    }
+                String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
+                if (StringUtils.isNotBlank(associatedTaxa)) {
+                    interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
+                }
 
-                    String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
-                    if (StringUtils.isNotBlank(dynamicProperties)) {
-                        interactionCandidates.add(parseDynamicProperties(dynamicProperties));
-                    }
+                String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
+                if (StringUtils.isNotBlank(associatedOccurrences)) {
+                    interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
+                }
 
-                    List<Map<String, String>> interactions = interactionCandidates
-                            .stream()
-                            .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
-                            .collect(Collectors.toList());
+                String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
+                if (StringUtils.isNotBlank(dynamicProperties)) {
+                    interactionCandidates.add(parseDynamicProperties(dynamicProperties));
+                }
 
-                    logUnsupportedInteractionTypes(interactionCandidates, getLogger());
+                List<Map<String, String>> interactions = interactionCandidates
+                        .stream()
+                        .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
+                        .collect(Collectors.toList());
+
+                logUnsupportedInteractionTypes(interactionCandidates, getLogger());
 
 
-                    Map<String, String> interaction = new HashMap<>(rec.terms().size());
-                    for (Term term : rec.terms()) {
-                        interaction.put(term.qualifiedName(), rec.value(term));
-                    }
+                Map<String, String> interaction = new HashMap<>(rec.terms().size());
+                for (Term term : rec.terms()) {
+                    interaction.put(term.qualifiedName(), rec.value(term));
+                }
 
-                    for (Map<String, String> interactionProperties : interactions) {
-                        interactionProperties.putAll(interaction);
-                        mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
-                        mapCoreProperties(rec, interactionProperties, sourceCitation);
-                        interactionListener.newLink(interactionProperties);
-                    }
+                for (Map<String, String> interactionProperties : interactions) {
+                    interactionProperties.putAll(interaction);
+                    mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
+                    mapCoreProperties(rec, interactionProperties, sourceCitation);
+                    interactionListener.newLink(interactionProperties);
                 }
             }
 
@@ -124,10 +132,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     }
 
     public static void mapCoreProperties(Record rec, Map<String, String> interactionProperties, String sourceCitation) {
-        mapIfAvailable(rec, interactionProperties, SOURCE_OCCURRENCE_ID, DwcTerm.occurrenceID);
-        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
-        mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE_NAME, DwcTerm.lifeStage);
-        mapIfAvailable(rec, interactionProperties, SOURCE_SEX_NAME, DwcTerm.sex);
+        mapSourceProperties(rec, interactionProperties);
+        mapLocationAndReferenceInfo(rec, interactionProperties, sourceCitation);
+    }
+
+    public static void mapLocationAndReferenceInfo(Record rec, Map<String, String> interactionProperties, String sourceCitation) {
         mapIfAvailable(rec, interactionProperties, LOCALITY_NAME, DwcTerm.locality);
         mapIfAvailable(rec, interactionProperties, LOCALITY_ID, DwcTerm.locationID);
         mapIfAvailable(rec, interactionProperties, DECIMAL_LONGITUDE, DwcTerm.decimalLongitude);
@@ -135,6 +144,13 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         mapIfAvailable(rec, interactionProperties, StudyImporterForMetaTable.EVENT_DATE, DwcTerm.eventDate);
         mapReferenceInfo(rec, interactionProperties);
         interactionProperties.put(STUDY_SOURCE_CITATION, sourceCitation);
+    }
+
+    public static void mapSourceProperties(Record rec, Map<String, String> interactionProperties) {
+        mapIfAvailable(rec, interactionProperties, SOURCE_OCCURRENCE_ID, DwcTerm.occurrenceID);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
+        mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE_NAME, DwcTerm.lifeStage);
+        mapIfAvailable(rec, interactionProperties, SOURCE_SEX_NAME, DwcTerm.sex);
     }
 
     private static void mapReferenceInfo(Record rec, Map<String, String> interactionProperties) {
@@ -259,7 +275,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     static void importAssociateTaxa(Archive archive, InteractionListener interactionListener, String sourceCitation) {
         if (hasAssociatedTaxaExtension(archive)) {
-            ArchiveFile extension = archive.getExtension(new ExtensionProperty(ASSOCIATED_TAXA_EXTENSION));
+            ArchiveFile extension = archive.getExtension(new ExtensionProperty(EXTENSION_ASSOCIATED_TAXA));
             ArchiveFile core = archive.getCore();
 
             DB db = DBMaker
@@ -272,14 +288,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     .make();
 
             for (Record record : extension) {
-                Set<Term> terms = record.terms();
                 Map<String, String> props = new TreeMap<>();
-                for (Term term : terms) {
-                    String value = record.value(term);
-                    if (StringUtils.isNotBlank(value)) {
-                        props.put(term.qualifiedName(), value);
-                    }
-                }
+                termsToMap(record, props);
                 associationsMap.put(record.id(), props);
             }
 
@@ -299,6 +309,135 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                         //
                     }
                 }
+            }
+        }
+    }
+
+    static void importRelatedRelationships(Archive archive, InteractionListener interactionListener, String sourceCitation) {
+
+        ArchiveFile resourceExtension = findResourceRelationships(archive);
+
+        if (resourceExtension != null) {
+
+            DB db = DBMaker
+                    .newMemoryDirectDB()
+                    .compressionEnable()
+                    .transactionDisable()
+                    .make();
+
+            final HTreeMap<String, Map<String, String>> occurrenceMap = db
+                    .createHashMap("occurrenceMap")
+                    .make();
+
+            final Set<String> referencedSourceIds = db
+                    .createHashSet("sourceIdMap")
+                    .make();
+
+            final Set<String> referencedTargetIds = db
+                    .createHashSet("targetIdMap")
+                    .make();
+
+
+            for (Record record : resourceExtension) {
+                String sourceId = record.value(DwcTerm.relatedResourceID);
+                String targetId = record.value(DwcTerm.resourceID);
+                if (StringUtils.isNotBlank(sourceId)
+                        && StringUtils.isNotBlank(targetId)) {
+                    referencedSourceIds.add(sourceId);
+                    referencedTargetIds.add(targetId);
+                }
+            }
+
+            ArchiveFile core = archive.getCore();
+            for (Record coreRecord : core) {
+                String id = coreRecord.value(DwcTerm.occurrenceID);
+                if (referencedTargetIds.contains(id) || referencedSourceIds.contains(id)) {
+                    TreeMap<String, String> occProps = new TreeMap<>();
+                    termsToMap(coreRecord, occProps);
+                    occurrenceMap.put(id, occProps);
+                }
+            }
+
+            for (Record record : resourceExtension) {
+                Map<String, String> props = new TreeMap<>();
+                String sourceId = record.value(DwcTerm.relatedResourceID);
+                String relationship = record.value(DwcTerm.relationshipOfResource);
+                String targetId = record.value(DwcTerm.resourceID);
+
+                final Map<String, String> relationshipOfResourceToInteractionTypeIdLookup = UnmodifiableMap.unmodifiableMap(new HashMap<String, String>() {{
+                    put("Host to", InteractType.HOST_OF.getIRI());
+                    put("Ectoparasite Of", InteractType.ECTOPARASITE_OF.getIRI());
+                    put("Stomach Contents of", InteractType.EATEN_BY.getIRI());
+                    put("Stomach Contents", InteractType.ATE.getIRI());
+                }});
+
+                if (StringUtils.isNotBlank(sourceId)
+                        && StringUtils.isNotBlank(targetId)
+                        && StringUtils.isNotBlank(relationship)
+                        && relationshipOfResourceToInteractionTypeIdLookup.containsKey(relationship)) {
+
+                    String sourceCitation1 = StringUtils.trim(sourceCitation);
+                    props.put(STUDY_SOURCE_CITATION, sourceCitation1);
+                    props.put(REFERENCE_CITATION, sourceCitation1);
+                    props.put(REFERENCE_ID, sourceCitation1);
+                    props.put(INTERACTION_TYPE_NAME, relationship);
+                    props.put(INTERACTION_TYPE_ID, relationshipOfResourceToInteractionTypeIdLookup.get(relationship));
+                    props.putIfAbsent(StudyImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
+
+                    Map<String, String> sourceIdProperties = occurrenceMap.get(sourceId);
+                    populateOccurrenceProperties(props, sourceId, true, sourceIdProperties);
+
+                    Map<String, String> targetIdProperties = occurrenceMap.get(targetId);
+                    populateOccurrenceProperties(props, targetId, false, targetIdProperties);
+
+                    try {
+                        interactionListener.newLink(props);
+                    } catch (StudyImporterException e) {
+                        //
+                    }
+                }
+            }
+        }
+    }
+
+    private static void populateOccurrenceProperties(Map<String, String> props, String occurrenceId, boolean isSource, Map<String, String> occurrenceProperties) {
+        putIfAbsentAndNotBlank(props, isSource ? SOURCE_OCCURRENCE_ID : TARGET_OCCURRENCE_ID, occurrenceId);
+        if (occurrenceProperties != null) {
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_NAME : TARGET_TAXON_NAME, occurrenceProperties.get(DwcTerm.scientificName.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_SEX_NAME : TARGET_SEX_NAME, occurrenceProperties.get(DwcTerm.sex.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_LIFE_STAGE_NAME : SOURCE_LIFE_STAGE_NAME, occurrenceProperties.get(DwcTerm.lifeStage.qualifiedName()));
+            putIfAbsentAndNotBlank(props, LOCALITY_NAME, occurrenceProperties.get(DwcTerm.locality.qualifiedName()));
+            putIfAbsentAndNotBlank(props, DECIMAL_LATITUDE, occurrenceProperties.get(DwcTerm.decimalLatitude.qualifiedName()));
+            putIfAbsentAndNotBlank(props, DECIMAL_LONGITUDE, occurrenceProperties.get(DwcTerm.decimalLongitude.qualifiedName()));
+            putIfAbsentAndNotBlank(props, StudyImporterForMetaTable.EVENT_DATE, occurrenceProperties.get(DwcTerm.eventDate.qualifiedName()));
+            putIfAbsentAndNotBlank(props, BASIS_OF_RECORD_NAME, occurrenceProperties.get(DwcTerm.basisOfRecord.qualifiedName()));
+        }
+    }
+
+    private static void putIfAbsentAndNotBlank(Map<String, String> props, String key, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            props.putIfAbsent(key, value);
+        }
+    }
+
+    private static ArchiveFile findResourceRelationships(Archive archive) {
+        ArchiveFile resourceExtension = null;
+        Set<ArchiveFile> extensions = archive.getExtensions();
+        for (ArchiveFile extension : extensions) {
+            if (StringUtils.equals(extension.getRowType().qualifiedName(),
+                    EXTENSION_RESOURCE_RELATIONSHIP)) {
+                resourceExtension = extension;
+                break;
+            }
+        }
+        return resourceExtension;
+    }
+
+    private static void termsToMap(Record record, Map<String, String> props) {
+        for (Term term : record.terms()) {
+            String value = record.value(term);
+            if (StringUtils.isNotBlank(value)) {
+                props.put(term.qualifiedName(), value);
             }
         }
     }
@@ -343,16 +482,25 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         );
     }
 
-    static boolean hasAssociatedTaxaExtension(Archive archive) {
-        boolean withAssociatedTaxa = false;
+    static boolean hasExtension(Archive archive, String extensionQualitfiedName) {
+        boolean hasExtension = false;
         Set<ArchiveFile> extensions = archive.getExtensions();
         for (ArchiveFile extension : extensions) {
             Term rowType = extension.getRowType();
-            if (rowType != null && StringUtils.equals(ASSOCIATED_TAXA_EXTENSION, rowType.qualifiedName())) {
-                withAssociatedTaxa = true;
+            if (rowType != null && StringUtils.equals(extensionQualitfiedName, rowType.qualifiedName())) {
+                hasExtension = true;
             }
         }
-        return withAssociatedTaxa;
+        return hasExtension;
+
+    }
+
+    static boolean hasAssociatedTaxaExtension(Archive archive) {
+        return hasExtension(archive, EXTENSION_ASSOCIATED_TAXA);
+    }
+
+    static boolean hasResourceRelationships(Archive archive) {
+        return hasExtension(archive, EXTENSION_RESOURCE_RELATIONSHIP);
     }
 
 

@@ -17,12 +17,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -277,9 +279,16 @@ public class StudyImporterForDwCATest {
 
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
-        boolean withAssociatedTaxa = StudyImporterForDwCA.hasAssociatedTaxaExtension(archive);
+        assertTrue(StudyImporterForDwCA.hasAssociatedTaxaExtension(archive));
+    }
 
-        assertTrue(withAssociatedTaxa);
+    @Test
+    public void hasResourceRelationshipsExtension() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("fmnh-rr-test.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        assertTrue(StudyImporterForDwCA.hasResourceRelationships(archive));
     }
 
     @Test
@@ -313,6 +322,53 @@ public class StudyImporterForDwCATest {
         }, "some citation");
 
         assertTrue(foundLink.get());
+    }
+
+    @Test
+    public void hasResourceRelationships() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("fmnh-rr-test.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
+        StudyImporterForDwCA.importRelatedRelationships(archive, new InteractionListener() {
+
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                numberOfFoundLinks.incrementAndGet();
+                if (1 == numberOfFoundLinks.get()) {
+                    assertNull(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME));
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("10d8d814-2afc-4cf2-9843-a2b719346179"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Ectoparasite Of"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002632"));
+                    assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("7048675a-b110-4baf-91a3-2db138316709"));
+                } else if (2 == numberOfFoundLinks.get()) {
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("b3cba38d-38b1-4a2d-8d4f-f70bac2c5674"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Stomach Contents of"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002471"));
+                    assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
+                } else if (7 == numberOfFoundLinks.get()) {
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
+                    assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Stomach Contents"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
+                }
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("some citation"));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is("some citation"));
+
+            }
+        }, "some citation");
+
+        assertThat(numberOfFoundLinks.get(), is(7));
     }
 
 
