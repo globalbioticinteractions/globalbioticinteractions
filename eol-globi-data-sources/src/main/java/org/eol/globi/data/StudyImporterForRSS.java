@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 public class StudyImporterForRSS extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForRSS.class);
+    public static final String HAS_DEPENDENCIES = "hasDependencies";
 
     public StudyImporterForRSS(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -40,10 +41,9 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [" + "rssFeedURL" + "] specified");
         }
 
-        final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
         final List<Dataset> datasets = getDatasetsForFeed(getDataset());
 
-
+        final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
         indexArchives(interactionsWithUnresolvedOccurrenceIds, datasets);
         importArchives(interactionsWithUnresolvedOccurrenceIds, datasets);
     }
@@ -69,13 +69,19 @@ public class StudyImporterForRSS extends BaseStudyImporter {
 
         final IndexingInteractionListener indexingListener = new IndexingInteractionListener(interactionsWithUnresolvedOccurrenceIds);
         for (Dataset dataset : datasets) {
-            handleDataset(studyImporter -> {
-                if (studyImporter instanceof StudyImporterWithListener) {
-                    ((StudyImporterWithListener) studyImporter).setInteractionListener(indexingListener);
-                }
-            }, dataset);
+            if (needsIndexing(dataset)) {
+                handleDataset(studyImporter -> {
+                    if (studyImporter instanceof StudyImporterWithListener) {
+                        ((StudyImporterWithListener) studyImporter).setInteractionListener(indexingListener);
+                    }
+                }, dataset);
+            }
         }
         LOG.info(msgPrefix1 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrences");
+    }
+
+    public boolean needsIndexing(Dataset dataset) {
+        return StringUtils.equals(dataset.getOrDefault(HAS_DEPENDENCIES, null), "true");
     }
 
     interface StudyImporterConfigurator {
@@ -95,8 +101,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     }
 
     public String getRssFeedUrlString() {
-        Dataset dataset = getDataset();
-        return getRss(dataset);
+        return getRss(getDataset());
     }
 
     private static String getRss(Dataset dataset) {
@@ -139,11 +144,11 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     private static Dataset attemptEasyArthropodCapture(Dataset datasetOrig, SyndEntry entry) {
         String citation = StringUtils.trim(entry.getDescription().getValue());
         String archiveURI = StringUtils.trim(entry.getLink());
-        String format = "seltmann";
         return embeddedDatasetFor(datasetOrig,
                 citation,
                 URI.create(archiveURI),
-                format);
+                false
+        );
     }
 
     private static boolean isLikelyIPTEntry(SyndEntry entry) {
@@ -165,7 +170,8 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             dataset = embeddedDatasetFor(datasetOrig,
                     citation,
                     URI.create(foreignEntries.get("dwca")),
-                    "application/dwca");
+                    true
+            );
         }
 
         return dataset;
@@ -186,13 +192,21 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         return foreignEntries;
     }
 
-    static Dataset embeddedDatasetFor(Dataset datasetOrig, String embeddedCitation, final URI embeddedArchiveURI, String format) {
+    static Dataset embeddedDatasetFor(final Dataset datasetOrig,
+                                      final String embeddedCitation,
+                                      final URI embeddedArchiveURI) {
+        return embeddedDatasetFor(datasetOrig, embeddedCitation, embeddedArchiveURI, false);
+    }
+
+
+    static Dataset embeddedDatasetFor(final Dataset datasetOrig,
+                                      final String embeddedCitation,
+                                      final URI embeddedArchiveURI,
+                                      final boolean hasDependencies) {
         ObjectNode config = new ObjectMapper().createObjectNode();
         config.put("citation", embeddedCitation);
-        ObjectNode referencesNode = new ObjectMapper().createObjectNode();
-        referencesNode.put("archive", embeddedArchiveURI.toString());
-        config.put("resources", referencesNode);
-        config.put("format", format);
+        config.put("format", "application/dwca");
+        config.put(HAS_DEPENDENCIES, hasDependencies);
 
         DatasetProxy dataset = new DatasetProxy(datasetOrig) {
             @Override

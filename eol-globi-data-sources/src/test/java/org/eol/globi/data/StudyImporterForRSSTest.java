@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -42,22 +41,31 @@ public class StudyImporterForRSSTest {
         final Dataset dataset = getDatasetGroup();
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
         assertThat(datasets.size(), is(3));
+        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
+    }
+
+    @Test
+    public void readRSSVertnet() throws StudyImporterException, IOException {
+        final Dataset dataset = getDatasetVertnet();
+        List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
+        assertThat(datasets.size() > 0, is(true));
+        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("true"));
     }
 
     @Test
     public void embeddedDataset() throws IOException {
-        Dataset embeddedDataset = StudyImporterForRSS.embeddedDatasetFor(getDatasetGroup(), "some other citation", URI.create("http://example.com/archive.zip"), "seltmann");
+        Dataset embeddedDataset = StudyImporterForRSS.embeddedDatasetFor(getDatasetGroup(), "some other citation", URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
         assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "foo"), is("foo"));
-        assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
+        assertThat(embeddedDataset.getArchiveURI().toString(), is("http://example.com/archive.zip"));
     }
 
     @Test
     public void embeddedDatasetWithConfig() throws IOException {
-        Dataset embeddedDataset = StudyImporterForRSS.embeddedDatasetFor(getDatasetGroupWithProperty(), "some other citation", URI.create("http://example.com/archive.zip"), "seltmann");
+        Dataset embeddedDataset = StudyImporterForRSS.embeddedDatasetFor(getDatasetGroupWithProperty(), "some other citation", URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
         assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
-        assertThat(DatasetUtil.getNamedResourceURI(embeddedDataset, "archive"), is("http://example.com/archive.zip"));
+        assertThat(embeddedDataset.getArchiveURI().toString(), is("http://example.com/archive.zip"));
     }
 
     @Test
