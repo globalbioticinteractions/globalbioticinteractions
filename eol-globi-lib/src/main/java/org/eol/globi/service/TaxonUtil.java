@@ -161,19 +161,26 @@ public class TaxonUtil {
     }
 
     public static TaxonImage enrichTaxonImageWithTaxon(Map<String, String> taxon, TaxonImage taxonImage) {
-        return (taxonImage == null || taxon == null)
-                ? null
-                : enrich(taxon, taxonImage);
+        return enrichTaxonImageWithTaxon(taxon, taxonImage, "en");
     }
 
-    private static TaxonImage enrich(Map<String, String> taxon, TaxonImage taxonImage) {
+    public static TaxonImage enrichTaxonImageWithTaxon(
+            Map<String, String> taxon,
+            TaxonImage taxonImage,
+            String preferredLanguage) {
+        return (taxonImage == null || taxon == null)
+                ? null
+                : enrich(taxon, taxonImage, preferredLanguage);
+    }
+
+    private static TaxonImage enrich(Map<String, String> taxon, TaxonImage taxonImage, String preferredLanguage) {
         if (StringUtils.isBlank(taxonImage.getCommonName())) {
             String commonName = taxon.get(COMMON_NAMES);
             if (StringUtils.isNotBlank(commonName)) {
                 String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
                 for (String split : splits) {
-                    if (StringUtils.contains(split, "@en")) {
-                        taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@en", "")));
+                    if (StringUtils.contains(split, "@" + preferredLanguage)) {
+                        taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@" + preferredLanguage, "")));
                     }
                 }
             }

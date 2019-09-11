@@ -69,7 +69,7 @@ public class ImageServiceTest {
 
     @Test
     public void imagesForName() throws IOException {
-        assertThat(imageService.findTaxonImagesForTaxonWithName("Homo sapiens"), is(notNullValue()));
+        assertThat(imageService.findTaxonImagesForTaxonWithName("Homo sapiens", "en"), is(notNullValue()));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ImageServiceTest {
 
         });
 
-        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
+        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name", "en");
         assertThat(image.getInfoURL(), is("http://eol.org/pages/123"));
         assertThat(image.getScientificName(), is("some latin name"));
         assertThat(image.getCommonName(), is("one"));
@@ -156,7 +156,7 @@ public class ImageServiceTest {
 
         });
 
-        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
+        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name", "en");
         assertThat(image.getInfoURL(), is("some info url"));
         assertThat(image.getThumbnailURL(), is("bla"));
     }
@@ -195,7 +195,7 @@ public class ImageServiceTest {
 
         });
 
-        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name");
+        TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name", "en");
         assertThat(image.getInfoURL(), is(notNullValue()));
         assertThat(image.getScientificName(), is("some latin name"));
         assertThat(image.getCommonName(), is(nullValue()));
@@ -203,7 +203,7 @@ public class ImageServiceTest {
 
     @Test
     public void imagesForNames() throws IOException {
-        List<TaxonImage> images = imageService.findImagesForNames(new String[]{"Homo sapiens", "Ariopsis felis"});
+        List<TaxonImage> images = imageService.findImagesForNames(new String[]{"Homo sapiens", "Ariopsis felis"}, "en");
         assertThat(images.size(), is(2));
     }
 

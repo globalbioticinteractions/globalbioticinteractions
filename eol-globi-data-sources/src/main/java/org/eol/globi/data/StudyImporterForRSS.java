@@ -54,7 +54,9 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         for (Dataset dataset : datasets) {
             handleDataset(studyImporter -> {
                 if (studyImporter instanceof StudyImporterWithListener) {
-                    final EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, ((StudyImporterWithListener) studyImporter).getInteractionListener());
+                    final EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(
+                            interactionsWithUnresolvedOccurrenceIds,
+                            ((StudyImporterWithListener) studyImporter).getInteractionListener());
                     ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
                 }
 
@@ -72,7 +74,8 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             if (needsIndexing(dataset)) {
                 handleDataset(studyImporter -> {
                     if (studyImporter instanceof StudyImporterWithListener) {
-                        ((StudyImporterWithListener) studyImporter).setInteractionListener(indexingListener);
+                        ((StudyImporterWithListener) studyImporter)
+                                .setInteractionListener(indexingListener);
                     }
                 }, dataset);
             }

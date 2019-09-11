@@ -32,7 +32,10 @@ public class ImageService {
 
     @RequestMapping(value = "/imagesForName/{scientificName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public TaxonImage findTaxonImagesForTaxonWithName(@PathVariable("scientificName") String scientificName) throws IOException {
+    public TaxonImage findTaxonImagesForTaxonWithName(
+            @PathVariable("scientificName") String scientificName,
+            @RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage)
+            throws IOException {
         TaxonImage taxonImage = null;
         if (TaxonUtil.isEmptyValue(scientificName)) {
             taxonImage = new TaxonImage();
@@ -55,7 +58,7 @@ public class ImageService {
                         taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(links.iterator().next()));
                     }
 
-                    TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage);
+                    TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage, preferredLanguage);
                 }
             }
         }
@@ -80,12 +83,16 @@ public class ImageService {
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public TaxonImage findTaxonImagesForTaxonWithName2(@RequestParam(value = "name", required = false) String[] names, @RequestParam(value = "externalId", required = false) String[] externalIds) throws IOException {
+    public TaxonImage findTaxonImagesForTaxonWithName2(
+            @RequestParam(value = "name", required = false) String[] names,
+            @RequestParam(value = "externalId", required = false) String[] externalIds,
+            @RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage)
+            throws IOException {
         TaxonImage image = null;
         if (externalIds != null && externalIds.length > 0) {
             image = findTaxonImagesForExternalId(externalIds[0]);
         } else if (names != null && names.length > 0) {
-            image = findTaxonImagesForTaxonWithName(names[0]);
+            image = findTaxonImagesForTaxonWithName(names[0], preferredLanguage);
         } else {
             throw new BadRequestException("no names nor externalIds provided");
         }
@@ -95,10 +102,13 @@ public class ImageService {
 
     @RequestMapping(value = "/imagesForNames", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public List<TaxonImage> findImagesForNames(@RequestParam(value = "name") String[] names) throws IOException {
+    public List<TaxonImage> findImagesForNames(
+            @RequestParam(value = "name") String[] names,
+            @RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage)
+            throws IOException {
         List<TaxonImage> images = new ArrayList<TaxonImage>();
         for (String name : names) {
-            TaxonImage image = findTaxonImagesForTaxonWithName(name);
+            TaxonImage image = findTaxonImagesForTaxonWithName(name, preferredLanguage);
             if (image != null) {
                 images.add(image);
             }

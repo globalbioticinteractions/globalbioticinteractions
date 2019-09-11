@@ -151,6 +151,35 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void toTaxonImageWithPreferredLanguage() {
+        assertTaxonImageEnrichment("de", "boo");
+    }
+
+    public void assertTaxonImageEnrichment(String preferredLanguage, String expectedCommonName) {
+        TaxonImage image = new TaxonImage();
+
+        Taxon taxon = new TaxonImpl("Donald duckus", "EOL:123");
+        taxon.setCommonNames("bla @en | boo @de");
+        taxon.setPath("one | two | three");
+        Map<String, String> taxonMap = new TreeMap<String, String>(TaxonUtil.taxonToMap(taxon));
+        taxonMap.put(PropertyAndValueDictionary.THUMBNAIL_URL, "http://foo/bar/thumb");
+        taxonMap.put(PropertyAndValueDictionary.EXTERNAL_URL, "http://foo/bar");
+        TaxonImage enrichedImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonMap, image, preferredLanguage);
+
+        assertThat(enrichedImage.getCommonName(), is(expectedCommonName));
+        assertThat(enrichedImage.getTaxonPath(), is("one | two | three"));
+        assertThat(enrichedImage.getInfoURL(), is("http://foo/bar"));
+        assertThat(enrichedImage.getThumbnailURL(), is("http://foo/bar/thumb"));
+        assertThat(enrichedImage.getPageId(), is("123"));
+        assertThat(enrichedImage.getImageURL(), is(nullValue()));
+    }
+
+    @Test
+    public void toTaxonImageWithMissingPreferredLanguage() {
+        assertTaxonImageEnrichment("jp", null);
+    }
+
+    @Test
     public void toTaxonImageIgnoreEOL() {
         // related to https://github.com/jhpoelen/eol-globi-data/issues/382
         TaxonImage image = new TaxonImage();
