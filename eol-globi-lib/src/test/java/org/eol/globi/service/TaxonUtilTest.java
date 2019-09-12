@@ -116,7 +116,7 @@ public class TaxonUtilTest {
     }
 
     @Test
-    //see https://github.com/jhpoelen/eol-globi-data/issues/249
+    //see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/249
     public void notHomonymSparseHigherOrderRanks() {
         TaxonImpl taxon = new TaxonImpl();
         taxon.setName("Medicago sativa");
@@ -181,7 +181,7 @@ public class TaxonUtilTest {
 
     @Test
     public void toTaxonImageIgnoreEOL() {
-        // related to https://github.com/jhpoelen/eol-globi-data/issues/382
+        // related to https://github.com/globalbioticinteractions/globalbioticinteractions/issues/382
         TaxonImage image = new TaxonImage();
 
         Taxon taxon = new TaxonImpl("Donald duckus", "EOL:123");
@@ -194,7 +194,7 @@ public class TaxonUtilTest {
 
     @Test
     public void toTaxonImageIgnoreEOL2() {
-        // related to https://github.com/jhpoelen/eol-globi-data/issues/382
+        // related to https://github.com/globalbioticinteractions/globalbioticinteractions/issues/382
         TaxonImage image = new TaxonImage();
 
         Taxon taxon = new TaxonImpl("Donald duckus", "EOL:123");

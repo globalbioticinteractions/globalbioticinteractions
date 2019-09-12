@@ -40,7 +40,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
     @Test
     public void indexInteractions() throws NodeFactoryException {
         TaxonIndex taxonIndex = getOrCreateTaxonIndex();
-        // see https://github.com/jhpoelen/eol-globi-data/wiki/Nanopubs
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", "some source", new DOI("123.23", "222"), "some study citation");
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetImpl("some/namespace", URI.create("https://some.uri")));
         Study interaction = factory.getOrCreateStudy(study);

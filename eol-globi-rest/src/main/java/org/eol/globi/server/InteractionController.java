@@ -21,7 +21,7 @@ public class InteractionController {
     @RequestMapping(value = "/exists", method = {RequestMethod.GET, RequestMethod.HEAD})
     @ResponseBody
     protected String atLeastOneInteraction(HttpServletRequest request) throws IOException {
-        // see https://github.com/jhpoelen/eol-globi-data/issues/401
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/401
         Map parameterMap = getParamMap(request);
         CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, QueryType.forParams(parameterMap));
         CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(query, 0, 1);

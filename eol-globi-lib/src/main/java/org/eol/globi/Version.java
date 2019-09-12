@@ -39,6 +39,6 @@ public class Version {
 
     public static String getGitHubBaseUrl() {
         String sha = getManifestAttributeValue("Git-Commit-Sha");
-        return "https://github.com/jhpoelen/eol-globi-data/blob/" + (sha == null ? "master" : sha);
+        return "https://github.com/globalbioticinteractions/globalbioticinteractions/blob/" + (sha == null ? "master" : sha);
     }
 }

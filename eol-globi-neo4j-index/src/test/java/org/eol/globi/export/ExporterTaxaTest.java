@@ -150,7 +150,7 @@ public class ExporterTaxaTest {
 
         assertThat(rowFields.get(EOLDictionary.TAXON_ID), is("EOL:1251487"));
         assertThat(rowFields.get(EOLDictionary.SCIENTIFIC_NAME), is("Enhydra lutris nereis"));
-        // see https://github.com/jhpoelen/eol-globi-data/issues/114
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/114
         assertThat(rowFields.get(EOLDictionary.TAXON_RANK), is("Subspecies"));
         assertThat(rowFields.get(EOLDictionary.KINGDOM), is("Animalia"));
         assertThat(rowFields.get(EOLDictionary.PHYLUM), is("Chordata"));

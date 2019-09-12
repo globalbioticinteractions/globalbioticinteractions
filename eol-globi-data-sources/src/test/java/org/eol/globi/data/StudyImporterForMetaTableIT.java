@@ -46,7 +46,7 @@ public class StudyImporterForMetaTableIT {
         assertThat(bibliographicCitation, containsString("NHM Interactions Bank. https://doi.org/10.5519/0060767"));
 
         String resourceUrl = firstTable.get("url").asText();
-        // see https://github.com/jhpoelen/eol-globi-data/issues/266
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/266
         //assertThat(resourceUrl, is("http://data.nhm.ac.uk/dataset/82e807f0-6273-4f19-be0a-7f7558442a25/resource/1f64e2cf-d738-4a7c-9e81-a1951eac635f/download/output.csv"));
         assertThat(firstTable.get("headerRowCount").asInt(), is(1));
         assertThat(firstTable.has("tableSchema"), is(true));

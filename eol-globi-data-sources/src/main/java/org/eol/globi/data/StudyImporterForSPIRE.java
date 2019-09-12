@@ -48,7 +48,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     protected static void parseTitlesAndAuthors(String titlesAndAuthors, Map<String, String> properties) {
         String titlesAndAuthors1 = titlesAndAuthors.replace("\n", "");
-        // see https://github.com/jhpoelen/eol-globi-data/issues/28
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/28
         if ("Animal Diversity Web".equals(titlesAndAuthors1)) {
             titlesAndAuthors1 = "Myers, P., R. Espinosa, C. S. Parr, T. Jones, G. S. Hammond, and T. A. Dewey. 2013. The Animal Diversity Web (online). Accessed at http://animaldiversity.org.";
         } else if ("K. H. Mann, R. H. Britton, A. Kowalczewski, T. J. Lack, C. P. Mathews and I. McDonald, Productivity and energy flow at all trophic levels in the River Thames, England. In: Productivity Problems of Freshwaters, Z. Kajak and A.  Hillbricht-Ilkowska, Eds. (P".equals(titlesAndAuthors1)) {
@@ -148,7 +148,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     protected static boolean isValid(Map<String, String> properties) {
-        // see https://github.com/jhpoelen/eol-globi-data/issues/118
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/118
         boolean invalidInteraction = "Enhydra_lutris".equals(properties.get(PREDATOR_NAME)) && "Castor_canadensis".equals(properties.get(PREY_NAME));
         // phytoplankton are unlikely predators as suggested in https://doi.org/10.6084/m9.figshare.1414253
         invalidInteraction = invalidInteraction || "phytoplankton".equals(properties.get(PREDATOR_NAME));

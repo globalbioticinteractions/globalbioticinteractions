@@ -63,7 +63,7 @@ public class RequestHelperTest {
     public void buildCypherSpatialQueryClause() {
         /*
          * from http://www.opensearch.org/Specifications/OpenSearch/Extensions/Geo/1.0/Draft_2
-         * and https://github.com/jhpoelen/eol-globi-data/issues/10
+         * and https://github.com/globalbioticinteractions/globalbioticinteractions/issues/10
          *           N <---
          *                  |
          *

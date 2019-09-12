@@ -166,7 +166,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         Map<String, String> foreignEntries = parseForeignEntries(entry);
         String title = entry.getTitle();
 
-        // for now, only include Arctos, see https://github.com/jhpoelen/eol-globi-data/issues/134
+        // for now, only include Arctos, see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/134
         if (foreignEntries.containsKey("dwca") && StringUtils.contains(title, "(Arctos)")) {
             String citation = StringUtils.trim(title);
 

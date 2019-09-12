@@ -34,7 +34,7 @@ public class InteractionControllerTestIT {
 
     @Test
     public void findThunnusPrey() throws IOException, URISyntaxException {
-        // see https://github.com/jhpoelen/eol-globi-data/issues/11
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/11
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Thunnus", CypherQueryBuilder.INTERACTION_EATS, null)).execute(null);
         assertThat(list, containsString("Thunnus alalunga"));
         assertThat(list, containsString("Thunnus albacares"));

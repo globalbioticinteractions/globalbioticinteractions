@@ -50,9 +50,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:git@github.com:jhpoelen/eol-globi-data.git</connection>
-        <url>scm:git:git@github.com:jhpoelen/eol-globi-data.git</url>
-        <developerConnection>scm:git:git@github.com:jhpoelen/eol-globi-data</developerConnection>
+        <connection>scm:git:git@github.com:globalbioticinteractions/globalbioticinteractions.git</connection>
+        <url>scm:git:git@github.com:globalbioticinteractions/globalbioticinteractions.git</url>
+        <developerConnection>scm:git:git@github.com:globalbioticinteractions/globalbioticinteractions</developerConnection>
         <tag>HEAD</tag>
     </scm>
 

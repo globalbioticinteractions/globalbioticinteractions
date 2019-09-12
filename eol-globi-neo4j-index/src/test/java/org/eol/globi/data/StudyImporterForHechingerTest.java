@@ -112,7 +112,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
     }
 
 
-    // see https://github.com/jhpoelen/eol-globi-data/issues/67
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/67
     private String[] unlikelyParasites() {
         return new String[]{"Tringa semipalmata",
                 "Calidris mauri",
