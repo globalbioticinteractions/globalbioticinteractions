@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -36,38 +37,46 @@ public class StudyImporterForDwCATest {
     public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/vampire-moth-dwca-master/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
-        assertImportsSomething(archiveRoot);
+        assertImportsSomething(archiveRoot, new AtomicInteger(0));
     }
 
     @Test
     public void importAssociatedTaxaFromDir() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
-        assertImportsSomething(archiveRoot);
+        assertImportsSomething(archiveRoot, new AtomicInteger(0));
     }
 
     @Test
     public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
-        assertImportsSomething(resource.toURI());
+        assertImportsSomething(resource.toURI(), new AtomicInteger(0));
     }
 
     @Test
     public void importRecordsFromArchiveWithResourceRelations() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-resource-relation.zip");
-        assertImportsSomething(resource.toURI());
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        assertImportsSomething(resource.toURI(), recordCounter,
+                StudyImporterForTSV.SOURCE_TAXON_ID,
+                StudyImporterForTSV.SOURCE_TAXON_NAME,
+                StudyImporterForTSV.INTERACTION_TYPE_ID,
+                StudyImporterForTSV.INTERACTION_TYPE_NAME,
+                StudyImporterForTSV.TARGET_TAXON_ID,
+                StudyImporterForTSV.TARGET_TAXON_NAME);
+        assertThat(recordCounter.get(), is(677));
     }
 
     @Test
     public void importRecordsFromUArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
-        assertImportsSomething(resource.toURI());
+        assertImportsSomething(resource.toURI(), new AtomicInteger(0));
     }
 
     @Test
     public void importRecordsFromArchiveWithAssociatedTaxa() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/eol/globi/data/AEC-DBCNet_DwC-A20160308-sample.zip");
-        assertImportsSomething(resource.toURI());
+        assertImportsSomething(resource.toURI(), new AtomicInteger(0));
     }
 
     @Test
@@ -155,18 +164,22 @@ public class StudyImporterForDwCATest {
         assertThat(someRecords.get(), is(true));
     }
 
-    private void assertImportsSomething(URI archiveRoot) throws StudyImporterException {
+    private void assertImportsSomething(URI archiveRoot, AtomicInteger recordCounter, String... expectedProperties) throws StudyImporterException {
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot));
-        AtomicBoolean someRecords = new AtomicBoolean(false);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
-                someRecords.set(true);
+                for (String expectedProperty : expectedProperties) {
+                    assertThat("no [" + expectedProperty + "] found in " + properties, properties.containsKey(expectedProperty), is(true));
+                    assertThat("no value of [" + expectedProperty + "] found in " + properties, properties.get(expectedProperty), is(notNullValue()));
+                }
+
+                recordCounter.incrementAndGet();
             }
         });
         studyImporterForDwCA.importStudy();
-        assertThat(someRecords.get(), is(true));
+        assertThat(recordCounter.get(), is(not(0)));
     }
 
     @Test

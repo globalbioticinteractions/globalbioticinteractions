@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.collections4.map.UnmodifiableMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
@@ -44,10 +45,13 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 public class StudyImporterForDwCA extends StudyImporterWithListener {
@@ -325,8 +329,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     .transactionDisable()
                     .make();
 
-            final HTreeMap<String, Map<String, String>> occurrenceMap = db
-                    .createHashMap("occurrenceMap")
+            final HTreeMap<String, Map<String, Map<String, String>>> termIdPropMap = db
+                    .createHashMap("termIdPropMap")
                     .make();
 
             final Set<String> referencedSourceIds = db
@@ -347,14 +351,13 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     referencedTargetIds.add(targetId);
                 }
             }
+            final List<DwcTerm> idTerms = Arrays.asList(
+                    DwcTerm.occurrenceID, DwcTerm.taxonID);
 
             ArchiveFile core = archive.getCore();
             for (Record coreRecord : core) {
-                List<DwcTerm> idTerms = Arrays.asList(
-                        DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.organismID);
-
                 for (DwcTerm idTerm : idTerms) {
-                    attemptLinkUsingTerm(occurrenceMap,
+                    attemptLinkUsingTerm(termIdPropMap,
                             referencedSourceIds,
                             referencedTargetIds,
                             coreRecord,
@@ -365,35 +368,52 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             for (Record record : resourceExtension) {
                 Map<String, String> props = new TreeMap<>();
                 String sourceId = record.value(DwcTerm.relatedResourceID);
-                String relationship = StringUtils.trim(record.value(DwcTerm.relationshipOfResource));
+                String relationship = record.value(DwcTerm.relationshipOfResource);
                 String targetId = record.value(DwcTerm.resourceID);
 
-                final Map<String, String> relationshipOfResourceToInteractionTypeIdLookup = UnmodifiableMap.unmodifiableMap(new HashMap<String, String>() {{
+                final Map<String, String> relationshipOfResourceToInteractionTypeIdLookup
+                        = UnmodifiableMap.unmodifiableMap(new HashMap<String, String>() {{
                     put("host to", InteractType.HOST_OF.getIRI());
-                    put("ectoparasite Of", InteractType.ECTOPARASITE_OF.getIRI());
+                    put("ectoparasite of", InteractType.ECTOPARASITE_OF.getIRI());
                     put("parasite of", InteractType.PARASITE_OF.getIRI());
                     put("stomach contents of", InteractType.EATEN_BY.getIRI());
                     put("stomach contents", InteractType.ATE.getIRI());
                 }});
 
+                String relationshipKey = StringUtils.lowerCase(StringUtils.trim(relationship));
                 if (StringUtils.isNotBlank(sourceId)
                         && StringUtils.isNotBlank(targetId)
                         && StringUtils.isNotBlank(relationship)
-                        && relationshipOfResourceToInteractionTypeIdLookup.containsKey(relationship)) {
+                        && relationshipOfResourceToInteractionTypeIdLookup.containsKey(relationshipKey)) {
 
                     String sourceCitation1 = StringUtils.trim(sourceCitation);
                     props.put(STUDY_SOURCE_CITATION, sourceCitation1);
                     props.put(REFERENCE_CITATION, sourceCitation1);
                     props.put(REFERENCE_ID, sourceCitation1);
                     props.put(INTERACTION_TYPE_NAME, relationship);
-                    props.put(INTERACTION_TYPE_ID, relationshipOfResourceToInteractionTypeIdLookup.get(relationship));
+                    props.put(INTERACTION_TYPE_ID, relationshipOfResourceToInteractionTypeIdLookup.get(relationshipKey));
                     props.putIfAbsent(StudyImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
 
-                    Map<String, String> sourceIdProperties = occurrenceMap.get(sourceId);
-                    populateOccurrenceProperties(props, sourceId, true, sourceIdProperties);
+                    for (DwcTerm idTerm : idTerms) {
+                        if (termIdPropMap.containsKey(idTerm.qualifiedName())) {
+                            Map<String, Map<String, String>> propMap = termIdPropMap.get(idTerm.qualifiedName());
+                            Map<String, String> sourceIdProperties = propMap.get(sourceId);
 
-                    Map<String, String> targetIdProperties = occurrenceMap.get(targetId);
-                    populateOccurrenceProperties(props, targetId, false, targetIdProperties);
+                            Pair<String, String> idLabelPair = Pair.of(
+                                    SOURCE_OCCURRENCE_ID,
+                                    TARGET_OCCURRENCE_ID);
+
+                            if (idTerm.equals(DwcTerm.taxonID)) {
+                                idLabelPair = Pair.of(SOURCE_TAXON_ID, TARGET_TAXON_ID);
+                            }
+
+                            populatePropertiesAssociatedWithId(props, sourceId, true, sourceIdProperties, idLabelPair);
+
+                            Map<String, String> targetIdProperties = propMap.get(targetId);
+                            populatePropertiesAssociatedWithId(props, targetId, false, targetIdProperties, idLabelPair);
+                        }
+
+                    }
 
                     try {
                         interactionListener.newLink(props);
@@ -405,21 +425,40 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    private static void attemptLinkUsingTerm(HTreeMap<String, Map<String, String>> occurrenceMap, Set<String> referencedSourceIds, Set<String> referencedTargetIds, Record coreRecord, DwcTerm term) {
+    private static void attemptLinkUsingTerm(HTreeMap<String, Map<String, Map<String, String>>> termIdPropertyMap,
+                                             Set<String> referencedSourceIds,
+                                             Set<String> referencedTargetIds,
+                                             Record coreRecord,
+                                             DwcTerm term) {
         String id = coreRecord.value(term);
-        if (StringUtils.isNotBlank(id) && (referencedTargetIds.contains(id) || referencedSourceIds.contains(id))) {
+        if (StringUtils.isNotBlank(id) &&
+                (referencedTargetIds.contains(id) || referencedSourceIds.contains(id))) {
             TreeMap<String, String> occProps = new TreeMap<>();
             termsToMap(coreRecord, occProps);
-            occurrenceMap.put(id, occProps);
+
+            Map<String, Map<String, String>> propMap = termIdPropertyMap.get(term.qualifiedName());
+            if (propMap == null) {
+                propMap = new HashMap<>();
+                propMap.put(id, occProps);
+                termIdPropertyMap.put(term.qualifiedName(), propMap);
+            } else {
+                propMap.put(id, occProps);
+            }
         }
     }
 
-    private static void populateOccurrenceProperties(Map<String, String> props, String occurrenceId, boolean isSource, Map<String, String> occurrenceProperties) {
-        putIfAbsentAndNotBlank(props, isSource ? SOURCE_OCCURRENCE_ID : TARGET_OCCURRENCE_ID, occurrenceId);
+    private static void populatePropertiesAssociatedWithId(Map<String, String> props,
+                                                           String id,
+                                                           boolean isSource,
+                                                           Map<String, String> occurrenceProperties,
+                                                           Pair<String, String> idLabelPairs) {
+        putIfAbsentAndNotBlank(props, isSource ? idLabelPairs.getLeft() : idLabelPairs.getRight(), id);
+
         if (occurrenceProperties != null) {
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ID : TARGET_TAXON_ID, occurrenceProperties.get(DwcTerm.taxonID.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_NAME : TARGET_TAXON_NAME, occurrenceProperties.get(DwcTerm.scientificName.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_SEX_NAME : TARGET_SEX_NAME, occurrenceProperties.get(DwcTerm.sex.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_LIFE_STAGE_NAME : SOURCE_LIFE_STAGE_NAME, occurrenceProperties.get(DwcTerm.lifeStage.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_LIFE_STAGE_NAME : TARGET_LIFE_STAGE_NAME, occurrenceProperties.get(DwcTerm.lifeStage.qualifiedName()));
             putIfAbsentAndNotBlank(props, LOCALITY_NAME, occurrenceProperties.get(DwcTerm.locality.qualifiedName()));
             putIfAbsentAndNotBlank(props, DECIMAL_LATITUDE, occurrenceProperties.get(DwcTerm.decimalLatitude.qualifiedName()));
             putIfAbsentAndNotBlank(props, DECIMAL_LONGITUDE, occurrenceProperties.get(DwcTerm.decimalLongitude.qualifiedName()));
