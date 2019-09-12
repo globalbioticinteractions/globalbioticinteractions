@@ -386,10 +386,16 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                         && StringUtils.isNotBlank(relationship)
                         && relationshipOfResourceToInteractionTypeIdLookup.containsKey(relationshipKey)) {
 
-                    String sourceCitation1 = StringUtils.trim(sourceCitation);
-                    props.put(STUDY_SOURCE_CITATION, sourceCitation1);
-                    props.put(REFERENCE_CITATION, sourceCitation1);
-                    props.put(REFERENCE_ID, sourceCitation1);
+                    String sourceCitationTrimmed = StringUtils.trim(sourceCitation);
+                    props.put(STUDY_SOURCE_CITATION, sourceCitationTrimmed);
+
+                    String relationshipAccordingTo = record.value(DwcTerm.relationshipAccordingTo);
+                    String referenceCitation = StringUtils.isBlank(relationshipAccordingTo)
+                            ? sourceCitationTrimmed
+                            : relationshipAccordingTo;
+                    props.putIfAbsent(REFERENCE_CITATION, referenceCitation);
+                    props.put(REFERENCE_ID, sourceCitationTrimmed);
+
                     props.put(INTERACTION_TYPE_NAME, relationship);
                     props.put(INTERACTION_TYPE_ID, relationshipOfResourceToInteractionTypeIdLookup.get(relationshipKey));
                     props.putIfAbsent(StudyImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));

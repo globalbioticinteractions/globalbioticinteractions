@@ -22,6 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -369,6 +372,7 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("7048675a-b110-4baf-91a3-2db138316709"));
+                    assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("G. Heinrich"));
                 } else if (2 == numberOfFoundLinks.get()) {
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("b3cba38d-38b1-4a2d-8d4f-f70bac2c5674"));
@@ -377,6 +381,7 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
+                    assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("C. M. Barber"));
                 } else if (7 == numberOfFoundLinks.get()) {
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
@@ -385,9 +390,10 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
+                    assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("C. M. Barber"));
                 }
                 assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
-                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("some citation"));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is("some citation"));
 
             }
