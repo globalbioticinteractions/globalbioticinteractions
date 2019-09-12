@@ -53,6 +53,18 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void importRecordsFromArchiveWithResourceRelations() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-resource-relation.zip");
+        assertImportsSomething(resource.toURI());
+    }
+
+    @Test
+    public void importRecordsFromUArchive() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
+        assertImportsSomething(resource.toURI());
+    }
+
+    @Test
     public void importRecordsFromArchiveWithAssociatedTaxa() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/eol/globi/data/AEC-DBCNet_DwC-A20160308-sample.zip");
         assertImportsSomething(resource.toURI());

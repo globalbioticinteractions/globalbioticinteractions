@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -349,25 +350,30 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             ArchiveFile core = archive.getCore();
             for (Record coreRecord : core) {
-                String id = coreRecord.value(DwcTerm.occurrenceID);
-                if (referencedTargetIds.contains(id) || referencedSourceIds.contains(id)) {
-                    TreeMap<String, String> occProps = new TreeMap<>();
-                    termsToMap(coreRecord, occProps);
-                    occurrenceMap.put(id, occProps);
+                List<DwcTerm> idTerms = Arrays.asList(
+                        DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.organismID);
+
+                for (DwcTerm idTerm : idTerms) {
+                    attemptLinkUsingTerm(occurrenceMap,
+                            referencedSourceIds,
+                            referencedTargetIds,
+                            coreRecord,
+                            idTerm);
                 }
             }
 
             for (Record record : resourceExtension) {
                 Map<String, String> props = new TreeMap<>();
                 String sourceId = record.value(DwcTerm.relatedResourceID);
-                String relationship = record.value(DwcTerm.relationshipOfResource);
+                String relationship = StringUtils.trim(record.value(DwcTerm.relationshipOfResource));
                 String targetId = record.value(DwcTerm.resourceID);
 
                 final Map<String, String> relationshipOfResourceToInteractionTypeIdLookup = UnmodifiableMap.unmodifiableMap(new HashMap<String, String>() {{
-                    put("Host to", InteractType.HOST_OF.getIRI());
-                    put("Ectoparasite Of", InteractType.ECTOPARASITE_OF.getIRI());
-                    put("Stomach Contents of", InteractType.EATEN_BY.getIRI());
-                    put("Stomach Contents", InteractType.ATE.getIRI());
+                    put("host to", InteractType.HOST_OF.getIRI());
+                    put("ectoparasite Of", InteractType.ECTOPARASITE_OF.getIRI());
+                    put("parasite of", InteractType.PARASITE_OF.getIRI());
+                    put("stomach contents of", InteractType.EATEN_BY.getIRI());
+                    put("stomach contents", InteractType.ATE.getIRI());
                 }});
 
                 if (StringUtils.isNotBlank(sourceId)
@@ -396,6 +402,15 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     }
                 }
             }
+        }
+    }
+
+    private static void attemptLinkUsingTerm(HTreeMap<String, Map<String, String>> occurrenceMap, Set<String> referencedSourceIds, Set<String> referencedTargetIds, Record coreRecord, DwcTerm term) {
+        String id = coreRecord.value(term);
+        if (StringUtils.isNotBlank(id) && (referencedTargetIds.contains(id) || referencedSourceIds.contains(id))) {
+            TreeMap<String, String> occProps = new TreeMap<>();
+            termsToMap(coreRecord, occProps);
+            occurrenceMap.put(id, occProps);
         }
     }
 
