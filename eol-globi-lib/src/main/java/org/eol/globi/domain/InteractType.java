@@ -127,11 +127,13 @@ public enum InteractType implements RelType {
     InteractionRole sourceRole;
     InteractionRole targetRole;
 
-    private static final Map<String, InteractType> SYNONYMS = new HashMap<String, InteractType>() {{
+    private static final Map<String, InteractType> SYNONYMS_OR_HYPORNYMS = new HashMap<String, InteractType>() {{
         put("http://eol.org/schema/terms/FlowersVisitedBy", FLOWERS_VISITED_BY);
         put("http://eol.org/schema/terms/VisitsFlowersOf", VISITS_FLOWERS_OF);
         put("http://eol.org/schema/terms/kills", KILLS);
         put("http://eol.org/schema/terms/isKilledBy", KILLED_BY);
+        put("http://eol.org/schema/terms/emergedFrom", INTERACTS_WITH);
+        put("http://purl.obolibrary.org/obo/RO_0001025", INTERACTS_WITH);
     }};
 
 
@@ -168,7 +170,7 @@ public enum InteractType implements RelType {
                 return interactType;
             }
         }
-        return SYNONYMS.get(iri);
+        return SYNONYMS_OR_HYPORNYMS.get(iri);
     }
 
     public static Collection<InteractType> hasTypes(InteractType type) {

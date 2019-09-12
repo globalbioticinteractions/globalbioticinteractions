@@ -56,6 +56,8 @@ public class InteractTypeTest {
         assertThat(typeOf("http://eol.org/schema/terms/HasDispersalVector"), is(HAS_DISPERAL_VECTOR));
         assertThat(typeOf("http://eol.org/schema/terms/FlowersVisitedBy"), is(FLOWERS_VISITED_BY));
         assertThat(typeOf("http://eol.org/schema/terms/VisitsFlowersOf"), is(VISITS_FLOWERS_OF));
+        assertThat(typeOf("http://eol.org/schema/terms/emergedFrom"), is(INTERACTS_WITH));
+        assertThat(typeOf("http://purl.obolibrary.org/obo/RO_0001025"), is(INTERACTS_WITH));
         assertThat(typeOf("VISITS_FLOWERS_OF"), is(VISITS_FLOWERS_OF));
 
         assertThat(typeOf("hasParasite"), is(HAS_PARASITE));
