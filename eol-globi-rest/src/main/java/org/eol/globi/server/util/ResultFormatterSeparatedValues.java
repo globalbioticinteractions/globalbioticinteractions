@@ -48,53 +48,67 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
             while (!jsonParser.isClosed()
                     && (token = jsonParser.nextToken()) != null) {
                 if (FIELD_NAME.equals(token) && "columns".equals(jsonParser.getCurrentName())) {
-                    token = jsonParser.nextToken();
-                    if (START_ARRAY.equals(token)) {
-                        boolean isFirstValue = true;
-                        while ((token = jsonParser.nextToken()) != null && !END_ARRAY.equals(token)) {
-                            if (isValue(token)) {
-                                if (!isFirstValue) {
-                                    IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
-                                }
-                                writeValue(os, jsonParser, token);
-
-                                isFirstValue = false;
-                            }
-                        }
-                    }
+                    handleHeader(os, jsonParser);
                 } else if (FIELD_NAME.equals(token) && "data".equals(jsonParser.getCurrentName())) {
-                    token = jsonParser.nextToken();
-                    if (START_ARRAY.equals(token)) {
-                        boolean isFirstValue = true;
-                        boolean endOfLine = false;
-                        boolean endOfData = false;
-                        while ((token = jsonParser.nextToken()) != null && !endOfData) {
-                            if (START_ARRAY.equals(token)) {
-                                endOfLine = false;
-                                endOfData = false;
-                                isFirstValue = true;
-                            } else if (isValue(token)) {
-                                if (isFirstValue) {
-                                    IOUtils.write("\n", os, StandardCharsets.UTF_8);
-                                    os.flush();
-                                } else {
-                                    IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
-                                }
-
-                                writeValue(os, jsonParser, token);
-
-                                isFirstValue = false;
-                            } else if (END_ARRAY.equals(token)) {
-                                endOfData = endOfLine;
-                                endOfLine = true;
-                            }
-                        }
-                    }
+                    handleRows(os, jsonParser);
                 }
             }
         } catch (IOException e) {
             throw new ResultFormattingException("failed to format incoming stream", e);
         }
+    }
+
+    private void handleRows(OutputStream os, JsonParser jsonParser) throws IOException {
+        JsonToken token;
+        token = jsonParser.nextToken();
+        if (START_ARRAY.equals(token)) {
+            boolean isFirstValue = true;
+            boolean endOfLine = false;
+            boolean endOfData = false;
+            while ((token = jsonParser.nextToken()) != null && !endOfData) {
+                if (START_ARRAY.equals(token)) {
+                    endOfLine = false;
+                    endOfData = false;
+                    isFirstValue = true;
+                } else if (isValue(token)) {
+                    if (!isFirstValue) {
+                        IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
+                    }
+                    writeValue(os, jsonParser, token);
+                    isFirstValue = false;
+                } else if (END_ARRAY.equals(token)) {
+                    if (!endOfLine) {
+                        addNewline(os);
+                    }
+                    endOfData = endOfLine;
+                    endOfLine = true;
+                }
+            }
+        }
+    }
+
+    public void handleHeader(OutputStream os, JsonParser jsonParser) throws IOException {
+        JsonToken token;
+        token = jsonParser.nextToken();
+        if (START_ARRAY.equals(token)) {
+            boolean isFirstValue = true;
+            while ((token = jsonParser.nextToken()) != null && !END_ARRAY.equals(token)) {
+                if (isValue(token)) {
+                    if (!isFirstValue) {
+                        IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
+                    }
+                    writeValue(os, jsonParser, token);
+
+                    isFirstValue = false;
+                }
+            }
+            addNewline(os);
+        }
+    }
+
+    private void addNewline(OutputStream os) throws IOException {
+        IOUtils.write("\n", os, StandardCharsets.UTF_8);
+        os.flush();
     }
 
     public void writeValue(OutputStream os, JsonParser jsonParser, JsonToken token) throws IOException {

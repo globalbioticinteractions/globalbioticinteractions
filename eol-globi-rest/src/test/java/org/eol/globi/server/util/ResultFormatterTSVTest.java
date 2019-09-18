@@ -12,10 +12,10 @@ import static org.junit.Assert.assertThat;
 
 public class ResultFormatterTSVTest {
 
-    public static final String WITH_QUOTED_TEXT_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"and he said: \\\"boo\\\"\", \"two\" ], [ \"three\", \"four\" ] ]}";
-    public static final String WITH_STRING_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"one\", \"two\" ], [ \"three\", \"four\" ] ]}";
-    public static final String WITH_NULL_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ null, \"two\" ], [ null, \"four\" ] ]}";
-    public static final String WITH_NUMERIC_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ -25.0, 135.0 ], [ 40.9777996, -79.5252906 ] ]}";
+    private static final String WITH_QUOTED_TEXT_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"and he said: \\\"boo\\\"\", \"two\" ], [ \"three\", \"four\" ] ]}";
+    private static final String WITH_STRING_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"one\", \"two\" ], [ \"three\", \"four\" ] ]}";
+    private static final String WITH_NULL_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ null, \"two\" ], [ null, \"four\" ] ]}";
+    private static final String WITH_NUMERIC_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ -25.0, 135.0 ], [ 40.9777996, -79.5252906 ] ]}";
 
     @Test
     public void toTSV() throws ResultFormattingException {
@@ -26,7 +26,7 @@ public class ResultFormatterTSVTest {
     @Test
     public void toTSVStream() throws ResultFormattingException {
         assertResults(WITH_NUMERIC_VALUES,
-                "loc.latitude\tloc.longitude\n-25.0\t135.0\n40.9777996\t-79.5252906");
+                "loc.latitude\tloc.longitude\n-25.0\t135.0\n40.9777996\t-79.5252906\n");
     }
 
     @Test
@@ -38,7 +38,7 @@ public class ResultFormatterTSVTest {
     @Test
     public void toTSVTextStream() throws ResultFormattingException {
         assertResults(WITH_STRING_VALUES,
-                "loc.latitude\tloc.longitude\none\ttwo\nthree\tfour");
+                "loc.latitude\tloc.longitude\none\ttwo\nthree\tfour\n");
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ResultFormatterTSVTest {
     @Test
     public void toTSVQuotedTextOutputStream() throws ResultFormattingException {
         assertResults(WITH_QUOTED_TEXT_VALUES,
-                "loc.latitude\tloc.longitude\nand he said: \"boo\"\ttwo\nthree\tfour");
+                "loc.latitude\tloc.longitude\nand he said: \"boo\"\ttwo\nthree\tfour\n");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ResultFormatterTSVTest {
     @Test
     public void toTSVNullTextOutputStream() throws ResultFormattingException {
         assertResults(WITH_NULL_VALUES,
-                "loc.latitude\tloc.longitude\n\ttwo\n\tfour");
+                "loc.latitude\tloc.longitude\n\ttwo\n\tfour\n");
     }
 
     private void assertResults(String inputText, String expectedValues) throws ResultFormattingException {

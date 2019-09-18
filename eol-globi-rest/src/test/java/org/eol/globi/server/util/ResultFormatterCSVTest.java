@@ -28,7 +28,7 @@ public class ResultFormatterCSVTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new ResultFormatterCSV().format(is, os);
         assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
-                is("\"loc.latitude\",\"loc.longitude\"\n-25.0,135.0\n40.9777996,-79.5252906"));
+                is("\"loc.latitude\",\"loc.longitude\"\n-25.0,135.0\n40.9777996,-79.5252906\n"));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ResultFormatterCSVTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new ResultFormatterCSV().format(is, os);
         assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
-                is("\"loc.latitude\",\"loc.longitude\"\n\"one\",\"two\"\n\"three\",\"four\""));
+                is("\"loc.latitude\",\"loc.longitude\"\n\"one\",\"two\"\n\"three\",\"four\"\n"));
     }
 
 
@@ -59,7 +59,7 @@ public class ResultFormatterCSVTest {
         InputStream is = IOUtils.toInputStream(CSV_WITH_QUOTED_TEXT_VALUES, StandardCharsets.UTF_8);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new ResultFormatterCSV().format(is, os);
-        String expectedValue = "\"loc.latitude\",\"loc.longitude\"\n\"and he said: \"\"boo\"\"\",\"two\"\n\"three\",\"four\"";
+        String expectedValue = "\"loc.latitude\",\"loc.longitude\"\n\"and he said: \"\"boo\"\"\",\"two\"\n\"three\",\"four\"\n";
         assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
                 is(expectedValue));
     }
