@@ -1,0 +1,11 @@
+providedTaxonId	providedTaxonName	resolvedTaxonId	resolvedTaxonName
+EOL:2888778	Rhus sylvestris	EOL:2888778	Toxicodendron sylvestre
+EOL:2888778	Rhus sylvestris	GBIF:4928886	Toxicodendron sylvestre
+EOL:2888778	Rhus sylvestris	NCBI:269722	Toxicodendron sylvestre
+EOL:2888778	Rhus sylvestris	OTT:301953	Toxicodendron sylvestre
+EOL:2888778	Rhus sylvestris	WD:Q1193796	Toxicodendron sylvestre
+	Rhus sylvestris	EOL:2888778	Toxicodendron sylvestre
+	Rhus sylvestris	GBIF:4928886	Toxicodendron sylvestre
+	Rhus sylvestris	NCBI:269722	Toxicodendron sylvestre
+	Rhus sylvestris	OTT:301953	Toxicodendron sylvestre
+	Rhus sylvestris	WD:Q1193796	Toxicodendron sylvestre

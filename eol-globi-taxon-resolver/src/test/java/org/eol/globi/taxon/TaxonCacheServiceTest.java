@@ -30,6 +30,10 @@ import java.util.function.Predicate;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -477,7 +481,25 @@ public class TaxonCacheServiceTest {
         cacheService.setCacheDir(mapdbDir);
         Set<String> listIds = new HashSet<>();
         Set<String> listNames = new HashSet<>();
-        cacheService.findTerms(Arrays.asList(new TermImpl("", "Homo sapiens")), new TermMatchListener() {
+        assertRhus(cacheService, listIds, listNames, new TermImpl("", "Homo sapiens"));
+    }
+
+    @Test
+    public void resolveWithSameIdDifferentName() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheRhusSylvestris.tsv",
+                "/org/eol/globi/taxon/taxonMapRhusSylvestris.tsv");
+        cacheService.setMaxTaxonLinks(125);
+        cacheService.setCacheDir(mapdbDir);
+        Set<String> listIds = new HashSet<>();
+        Set<String> listNames = new HashSet<>();
+        assertRhus(cacheService, listIds, listNames, new TermImpl("", "Rhus sylvestris"));
+        assertRhus(cacheService, listIds, listNames, new TermImpl("EOL:2888778", ""));
+        assertRhus(cacheService, listIds, listNames, new TermImpl("EOL:2888778", "Rhus sylvestris"));
+    }
+
+    private void assertRhus(TaxonCacheService cacheService, Set<String> listIds, Set<String> listNames, TermImpl searchTerm) throws PropertyEnricherException {
+        cacheService.findTerms(Collections.singletonList(searchTerm), new TermMatchListener() {
 
             @Override
             public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
@@ -486,9 +508,9 @@ public class TaxonCacheServiceTest {
             }
         });
 
-        assertThat(listIds, hasItem("INAT_TAXON:43584"));
-        assertThat(listNames, hasItem("Homo sapiens"));
-        assertThat(listNames.size(), is(1));
+        assertThat(listNames, not(hasItem("Rhus sylvestris")));
+        assertThat(listNames, hasItem("Toxicodendron sylvestre"));
+        assertThat(listIds, contains("GBIF:4928886", "NCBI:269722", "OTT:301953", "WD:Q1193796"));
     }
 
     @Test
