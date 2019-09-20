@@ -165,11 +165,11 @@ public class TaxonSearchImpl implements TaxonSearch {
         return queryString;
     }
 
-    public String queryPrefix() {
+    private String queryPrefix() {
         return "CYPHER 1.9 START taxon = node:taxonPaths({taxonPathQuery}) " +
-                "MATCH taxon-[:SAME_AS*0..1]->otherTaxon\n" +
-                "WHERE ((has(otherTaxon.name) AND otherTaxon.name = {taxonName})\n" +
-                "OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName}))\n";
+                "MATCH taxon-[:SAME_AS*0..1]->otherTaxon " +
+                "WHERE ((has(taxon.name) AND taxon.name = {taxonName}) OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})) " +
+                "AND (((has(otherTaxon.name) AND otherTaxon.name = {taxonName}) OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})))";
     }
 
     private String returnClause() {
