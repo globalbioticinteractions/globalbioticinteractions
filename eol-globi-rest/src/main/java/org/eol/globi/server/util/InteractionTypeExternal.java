@@ -25,6 +25,7 @@ public enum InteractionTypeExternal {
 
     SYMBIONT_OF(CypherQueryBuilder.INTERACTION_SYMBIONT_OF, "symbiont", "symbiont", InteractType.SYMBIONT_OF),
     MUTUALIST_OF(CypherQueryBuilder.INTERACTION_MUTUALIST_OF, "mutualist", "mutualist", InteractType.MUTUALIST_OF),
+    COMMENSALIST_OF(CypherQueryBuilder.INTERACTION_COMMENSALIST_OF, "commensalist", "commensalist", InteractType.COMMENSALIST_OF),
     FLOWERS_VISITED_BY(CypherQueryBuilder.INTERACTION_FLOWERS_VISITED_BY, "plant", "visitor", InteractType.FLOWERS_VISITED_BY),
     VISITS_FLOWERS_OF(CypherQueryBuilder.INTERACTION_VISITS_FLOWERS_OF, "visitor", "plant", InteractType.VISITS_FLOWERS_OF),
     RELATED_TO(CypherQueryBuilder.INTERACTION_RELATED_TO, "source", "target", InteractType.RELATED_TO),

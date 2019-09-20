@@ -72,6 +72,7 @@ public class CypherQueryBuilder {
 
     public static final String INTERACTION_SYMBIONT_OF = InteractType.SYMBIONT_OF.getLabel();
     public static final String INTERACTION_MUTUALIST_OF = InteractType.MUTUALIST_OF.getLabel();
+    public static final String INTERACTION_COMMENSALIST_OF = InteractType.COMMENSALIST_OF.getLabel();
     public static final String INTERACTION_INTERACTS_WITH = InteractType.INTERACTS_WITH.getLabel();
     public static final String INTERACTION_RELATED_TO = InteractType.RELATED_TO.getLabel();
     public static final String INTERACTION_CO_OCCURS_WITH = InteractType.CO_OCCURS_WITH.getLabel();
