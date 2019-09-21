@@ -85,7 +85,9 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             importCore(archive, interactionListener, sourceCitation);
 
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
+            // catching IllegalStateException to prevents RuntimeException from stopping all
+            // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/409
             throw new StudyImporterException("failed to read archive [" + archiveURI + "]", e);
         } finally {
             if (tmpDwA != null) {
