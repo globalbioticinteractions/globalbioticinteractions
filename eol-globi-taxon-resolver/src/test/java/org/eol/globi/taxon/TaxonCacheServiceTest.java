@@ -5,7 +5,6 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,14 +31,10 @@ import java.util.function.Predicate;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 public class TaxonCacheServiceTest {
 
@@ -472,17 +468,6 @@ public class TaxonCacheServiceTest {
         taxonCacheService.shutdown();
     }
 
-    @Test
-    public void resolveWithMultipleSchemes() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService(
-                "/org/eol/globi/taxon/taxonCacheHomoSapiens.tsv",
-                "/org/eol/globi/taxon/taxonMapHomoSapiens.tsv");
-        cacheService.setMaxTaxonLinks(125);
-        cacheService.setCacheDir(mapdbDir);
-        Set<String> listIds = new HashSet<>();
-        Set<String> listNames = new HashSet<>();
-        assertRhus(cacheService, listIds, listNames, new TermImpl("", "Homo sapiens"));
-    }
 
     @Test
     public void resolveWithSameIdDifferentName() throws PropertyEnricherException {
@@ -491,14 +476,15 @@ public class TaxonCacheServiceTest {
                 "/org/eol/globi/taxon/taxonMapRhusSylvestris.tsv");
         cacheService.setMaxTaxonLinks(125);
         cacheService.setCacheDir(mapdbDir);
-        Set<String> listIds = new HashSet<>();
-        Set<String> listNames = new HashSet<>();
-        assertRhus(cacheService, listIds, listNames, new TermImpl("", "Rhus sylvestris"));
-        assertRhus(cacheService, listIds, listNames, new TermImpl("EOL:2888778", ""));
-        assertRhus(cacheService, listIds, listNames, new TermImpl("EOL:2888778", "Rhus sylvestris"));
+        assertRhus(cacheService, new TermImpl("", "Rhus sylvestris"));
+        assertRhus(cacheService, new TermImpl("EOL:2888778", ""));
+        assertRhus(cacheService, new TermImpl("EOL:2888778", "Rhus sylvestris"));
     }
 
-    private void assertRhus(TaxonCacheService cacheService, Set<String> listIds, Set<String> listNames, TermImpl searchTerm) throws PropertyEnricherException {
+    private void assertRhus(TaxonCacheService cacheService, TermImpl searchTerm) throws PropertyEnricherException {
+        Set<String> listIds = new HashSet<>();
+        Set<String> listNames = new HashSet<>();
+
         cacheService.findTerms(Collections.singletonList(searchTerm), new TermMatchListener() {
 
             @Override
@@ -511,6 +497,32 @@ public class TaxonCacheServiceTest {
         assertThat(listNames, not(hasItem("Rhus sylvestris")));
         assertThat(listNames, hasItem("Toxicodendron sylvestre"));
         assertThat(listIds, contains("GBIF:4928886", "NCBI:269722", "OTT:301953", "WD:Q1193796"));
+    }
+
+    @Test
+    public void resolveWithMultipleSchemes() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheHomoSapiens.tsv",
+                "/org/eol/globi/taxon/taxonMapHomoSapiens.tsv");
+        cacheService.setMaxTaxonLinks(125);
+        cacheService.setCacheDir(mapdbDir);
+        Set<String> listIds = new TreeSet<>();
+        Set<String> listNames = new HashSet<>();
+        cacheService.findTerms(Collections.singletonList(new TermImpl("", "Homo sapiens")), new TermMatchListener() {
+
+            @Override
+            public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
+                listIds.add(taxon.getExternalId());
+                listNames.add(taxon.getName());
+            }
+        });
+
+        assertThat(listNames, hasItem("Homo sapiens"));
+        assertThat(listIds, contains("EOL:327955", "GBIF:2436436",
+                "INAT_TAXON:43584", "IRMNG:10857762",
+                "NCBI:741158", "OTT:933436", "WD:Q15978631"));
+
+
     }
 
     @Test
