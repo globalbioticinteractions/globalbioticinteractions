@@ -267,24 +267,48 @@ public class StudyImporterForRSSTest {
     }
 
     private DatasetImpl getDatasetGroup() throws IOException {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
-        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }");
-        dataset.setConfig(config);
-        return dataset;
+        String configJson = "{ \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }";
+        return datasetFor(configJson);
     }
 
     private DatasetImpl getDatasetVertnet() throws IOException {
+        String configJson = "{ \"resources\": { \"rss\": \"http://ipt.vertnet.org:8080/ipt/rss.do\" } }";
+        return datasetFor(configJson);
+    }
+
+    private DatasetImpl getDatasetGroupWithProperty() throws IOException {
+        String configJson = "{ \"" + DatasetConstant.SHOULD_RESOLVE_REFERENCES + "\": false, \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }";
+        return datasetFor(configJson);
+    }
+
+    @Test
+    public void useUrl() throws IOException {
+        DatasetImpl dataset = datasetFor("{ \"url\": \"bar\", " +
+                "\"resources\": { \"rss\": \"foo\" } " +
+                "}");
+        assertThat(StudyImporterForRSS.getRSSEndpoint(dataset), is("bar"));
+    }
+
+    private DatasetImpl datasetFor(String configJson) throws IOException {
+        JsonNode config = new ObjectMapper().readTree(
+                configJson);
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
-        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"rss\": \"http://ipt.vertnet.org:8080/ipt/rss.do\" } }");
         dataset.setConfig(config);
         return dataset;
     }
 
-    private DatasetImpl getDatasetGroupWithProperty() throws IOException {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
-        JsonNode config = new ObjectMapper().readTree("{ \"" + DatasetConstant.SHOULD_RESOLVE_REFERENCES + "\": false, \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }");
-        dataset.setConfig(config);
-        return dataset;
+    @Test
+    public void useRssNamedProperty() throws IOException {
+        DatasetImpl dataset = datasetFor("{ \"url\": \"bar\", " +
+                "\"resources\": { \"rss\": \"foo\" } " +
+                "}");
+        assertThat(StudyImporterForRSS.getRSSEndpoint(dataset), is("bar"));
+    }
+
+    @Test
+    public void useUrlOnly() throws IOException {
+        DatasetImpl dataset = datasetFor("{ \"url\": \"bar\" }");
+        assertThat(StudyImporterForRSS.getRSSEndpoint(dataset), is("bar"));
     }
 
 }

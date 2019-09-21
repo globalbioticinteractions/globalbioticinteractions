@@ -104,18 +104,19 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     }
 
     public String getRssFeedUrlString() {
-        return getRss(getDataset());
+        return getRSSEndpoint(getDataset());
     }
 
-    private static String getRss(Dataset dataset) {
-        return DatasetUtil.getNamedResourceURI(dataset, "rss");
+    static String getRSSEndpoint(Dataset dataset) {
+        String rss = DatasetUtil.getNamedResourceURI(dataset, "rss");
+        return DatasetUtil.getValueOrDefault(dataset.getConfig(), "url", rss);
     }
 
 
     static List<Dataset> getDatasetsForFeed(Dataset datasetOrig) throws StudyImporterException {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed;
-        String rss = getRss(datasetOrig);
+        String rss = getRSSEndpoint(datasetOrig);
         try {
             feed = input.build(new XmlReader(new URL(rss)));
         } catch (FeedException | IOException e) {
