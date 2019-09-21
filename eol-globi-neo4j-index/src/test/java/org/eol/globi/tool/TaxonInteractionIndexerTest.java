@@ -24,7 +24,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
+import static org.hamcrest.Matchers.hasItems;
 
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 

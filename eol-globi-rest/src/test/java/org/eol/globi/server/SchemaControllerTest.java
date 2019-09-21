@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CSVTSVUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -39,7 +40,7 @@ public class SchemaControllerTest {
         when(request.getParameter("type")).thenReturn("csv");
 
         String interactionFields = new SchemaController().getInteractionFields(request);
-        assertThat(interactionFields, containsString("name,description"));
+        assertThat(interactionFields, CoreMatchers.containsString("name,description"));
     }
 
     @Test

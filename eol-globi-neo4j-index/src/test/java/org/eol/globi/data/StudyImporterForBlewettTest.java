@@ -39,7 +39,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
+import static org.hamcrest.Matchers.hasItem;
 
 public class StudyImporterForBlewettTest extends GraphDBTestCase {
 

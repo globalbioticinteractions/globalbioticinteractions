@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -26,8 +27,8 @@ public class ResultFormatterFactoryTest {
         assertThat(q, is(MediaType.parseMediaType("application/json;q=0.2;charset=UTF-8")));
         assertThat(q, not(is(MediaType.parseMediaType("application/json;charset=UTF-8"))));
 
-        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("text/html;charset=UTF-8")).getClass(), is(ResultFormatterJSONv2.class.getClass()));
-        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("application/json;charset=UTF-8")).getClass(), is(ResultFormatterJSON.class.getClass()));
+        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("text/html;charset=UTF-8")).getClass(), instanceOf(ResultFormatterJSONv2.class));
+        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("application/json;charset=UTF-8")).getClass(), instanceOf(ResultFormatterJSON.class));
     }
 
 

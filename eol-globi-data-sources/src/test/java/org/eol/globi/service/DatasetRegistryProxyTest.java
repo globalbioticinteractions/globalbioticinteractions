@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.net.URI;
@@ -24,8 +25,8 @@ public class DatasetRegistryProxyTest {
         );
 
         assertThat(finder.findNamespaces().size(), is(2));
-        assertThat(finder.findNamespaces(), hasItem("one"));
-        assertThat(finder.findNamespaces(), hasItem("two"));
+        assertThat(finder.findNamespaces(), CoreMatchers.hasItem("one"));
+        assertThat(finder.findNamespaces(), CoreMatchers.hasItem("two"));
 
         assertThat(finder.datasetFor("one").getNamespace(), is("one"));
         assertThat(finder.datasetFor("two").getNamespace(), is("one|two"));
@@ -39,7 +40,7 @@ public class DatasetRegistryProxyTest {
         );
 
         assertThat(finder.findNamespaces().size(), is(1));
-        assertThat(finder.findNamespaces(), hasItem("one"));
+        assertThat(finder.findNamespaces(), CoreMatchers.hasItem("one"));
 
         finder.datasetFor("foo");
     }

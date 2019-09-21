@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
+import static org.hamcrest.Matchers.hasItem;
 
 public class StudyImporterForRegistryIT extends GraphDBTestCase {
 

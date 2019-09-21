@@ -18,7 +18,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForByrnesTest extends GraphDBTestCase {

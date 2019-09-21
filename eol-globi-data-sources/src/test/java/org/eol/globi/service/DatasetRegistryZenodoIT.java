@@ -13,7 +13,7 @@ import java.util.Collection;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.StringContains.containsString;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class DatasetRegistryZenodoIT {

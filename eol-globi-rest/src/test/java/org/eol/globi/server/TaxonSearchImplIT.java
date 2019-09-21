@@ -3,9 +3,10 @@ package org.eol.globi.server;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.CypherQuery;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.StringContains;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.internal.matchers.StringContains;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +15,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.when;
 
@@ -99,15 +100,15 @@ public class TaxonSearchImplIT {
     @Test
     public void taxonLinks() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Homo sapiens", null);
-        assertThat(links, hasItem("http://eol.org/pages/327955"));
-        assertThat(links, hasItem("https://www.wikidata.org/wiki/Q15978631"));
+        assertThat(links, CoreMatchers.hasItem("http://eol.org/pages/327955"));
+        assertThat(links, CoreMatchers.hasItem("https://www.wikidata.org/wiki/Q15978631"));
     }
 
     @Test
     public void taxonLinksEOLv2() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Lepidochelys kempii", null);
-        assertThat(links, not(hasItem("http://eol.org/pages/1056176")));
-        assertThat(links, hasItem("https://www.wikidata.org/wiki/Q301089"));
+        assertThat(links, not(CoreMatchers.hasItem("http://eol.org/pages/1056176")));
+        assertThat(links, CoreMatchers.hasItem("https://www.wikidata.org/wiki/Q301089"));
     }
 
     @Test

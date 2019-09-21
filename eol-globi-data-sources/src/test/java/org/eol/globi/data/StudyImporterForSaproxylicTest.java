@@ -14,7 +14,7 @@ import java.util.TreeSet;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
+import static org.hamcrest.Matchers.hasItem;
 
 public class StudyImporterForSaproxylicTest {
 

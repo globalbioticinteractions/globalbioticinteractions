@@ -33,7 +33,7 @@ import java.util.zip.GZIPInputStream;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItems;
+import static org.hamcrest.Matchers.hasItems;
 
 /**
  * Note that Animal Diversity Web data tested below is currently assumed to be part of SPIRE.

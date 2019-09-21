@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,10 +16,10 @@ public class DatasetRegistryProxyIT {
         DatasetRegistryProxy proxy = new DatasetRegistryProxy(Arrays.asList(new DatasetRegistryZenodo(), new DatasetRegistryGitHubArchive()));
 
         Dataset dataset = proxy.datasetFor("globalbioticinteractions/template-dataset");
-        assertThat(dataset.getArchiveURI().toString(), containsString("zenodo.org"));
+        assertThat(dataset.getArchiveURI().toString(), CoreMatchers.containsString("zenodo.org"));
 
         dataset = proxy.datasetFor("millerse/Bird-Parasite");
-        assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
+        assertThat(dataset.getArchiveURI().toString(), CoreMatchers.containsString("github.com"));
     }
 
     @Test
@@ -26,10 +27,10 @@ public class DatasetRegistryProxyIT {
         DatasetRegistryProxy proxy = new DatasetRegistryProxy(Arrays.asList(new DatasetRegistryGitHubArchive()));
 
         Dataset dataset = proxy.datasetFor("globalbioticinteractions/template-dataset");
-        assertThat(dataset.getArchiveURI().toString(), not(containsString("zenodo.org")));
+        assertThat(dataset.getArchiveURI().toString(), not(CoreMatchers.containsString("zenodo.org")));
 
         dataset = proxy.datasetFor("millerse/Bird-Parasite");
-        assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
+        assertThat(dataset.getArchiveURI().toString(), CoreMatchers.containsString("github.com"));
     }
 
 }
