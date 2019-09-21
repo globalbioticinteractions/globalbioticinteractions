@@ -199,7 +199,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     static List<Map<String, String>> parseAssociatedTaxa(String s) {
         List<Map<String, String>> properties = new ArrayList<>();
-        String[] parts = StringUtils.splitByWholeSeparator(s, "|");
+        String[] parts = StringUtils.split(s, "|;");
         for (String part : parts) {
             String[] verbTaxon = StringUtils.splitByWholeSeparator(part, ":", 2);
             if (verbTaxon.length == 2) {
@@ -373,20 +373,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 String relationship = record.value(DwcTerm.relationshipOfResource);
                 String targetId = record.value(DwcTerm.resourceID);
 
-                final Map<String, String> relationshipOfResourceToInteractionTypeIdLookup
-                        = UnmodifiableMap.unmodifiableMap(new HashMap<String, String>() {{
-                    put("host to", InteractType.HOST_OF.getIRI());
-                    put("ectoparasite of", InteractType.ECTOPARASITE_OF.getIRI());
-                    put("parasite of", InteractType.PARASITE_OF.getIRI());
-                    put("stomach contents of", InteractType.EATEN_BY.getIRI());
-                    put("stomach contents", InteractType.ATE.getIRI());
-                }});
+                String relationshipTypeId = findRelationshipTypeIdByLabel(relationship);
 
-                String relationshipKey = StringUtils.lowerCase(StringUtils.trim(relationship));
                 if (StringUtils.isNotBlank(sourceId)
                         && StringUtils.isNotBlank(targetId)
-                        && StringUtils.isNotBlank(relationship)
-                        && relationshipOfResourceToInteractionTypeIdLookup.containsKey(relationshipKey)) {
+                        && StringUtils.isNotBlank(relationshipTypeId)) {
 
                     String sourceCitationTrimmed = StringUtils.trim(sourceCitation);
                     props.put(STUDY_SOURCE_CITATION, sourceCitationTrimmed);
@@ -399,7 +390,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     props.put(REFERENCE_ID, sourceCitationTrimmed);
 
                     props.put(INTERACTION_TYPE_NAME, relationship);
-                    props.put(INTERACTION_TYPE_ID, relationshipOfResourceToInteractionTypeIdLookup.get(relationshipKey));
+                    props.put(INTERACTION_TYPE_ID, relationshipTypeId);
                     props.putIfAbsent(StudyImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
 
                     for (DwcTerm idTerm : idTerms) {
@@ -431,6 +422,28 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 }
             }
         }
+    }
+
+    private static String findRelationshipTypeIdByLabel(String relationship) {
+        final Map<String, String> relationshipOfResourceToInteractionTypeIdLookup
+                = UnmodifiableMap.unmodifiableMap(new HashMap<String, String>() {{
+            put("associated with", InteractType.INTERACTS_WITH.getIRI());
+            put("ex", InteractType.HAS_HOST.getIRI());
+            put("host to", InteractType.HOST_OF.getIRI());
+            put("host", InteractType.HAS_HOST.getIRI());
+            put("h", InteractType.HAS_HOST.getIRI());
+            put("larval foodplant", InteractType.ATE.getIRI());
+            put("ectoparasite of", InteractType.ECTOPARASITE_OF.getIRI());
+            put("parasite of", InteractType.PARASITE_OF.getIRI());
+            put("stomach contents of", InteractType.EATEN_BY.getIRI());
+            put("stomach contents", InteractType.ATE.getIRI());
+        }});
+
+        String relationshipKey = StringUtils.lowerCase(StringUtils.trim(relationship));
+
+        return StringUtils.isBlank(relationship)
+                ? null
+                : relationshipOfResourceToInteractionTypeIdLookup.get(relationshipKey);
     }
 
     private static void attemptLinkUsingTerm(HTreeMap<String, Map<String, Map<String, String>>> termIdPropertyMap,

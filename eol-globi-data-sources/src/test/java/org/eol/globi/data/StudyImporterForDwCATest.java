@@ -194,6 +194,30 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxaMultiple() {
+        String associatedTaxa = "eats: Homo sapiens | eats: Canis lupus";
+        assertTwoInteractions(associatedTaxa);
+    }
+
+    @Test
+    public void associatedTaxaMultipleSemicolon() {
+        String associatedTaxa = "eats: Homo sapiens ; eats: Canis lupus";
+        assertTwoInteractions(associatedTaxa);
+    }
+
+    public void assertTwoInteractions(String associatedTaxa) {
+        List<Map<String, String>> properties = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(2));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(properties.get(1).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Canis lupus"));
+        assertThat(properties.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+    }
+
+    @Test
     public void associatedTaxaUnsupported() {
         String associatedTaxa = "eatz: Homo sapiens";
         List<Map<String, String>> properties = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
