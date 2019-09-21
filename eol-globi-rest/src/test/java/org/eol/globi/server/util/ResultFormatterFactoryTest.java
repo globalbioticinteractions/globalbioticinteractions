@@ -27,8 +27,10 @@ public class ResultFormatterFactoryTest {
         assertThat(q, is(MediaType.parseMediaType("application/json;q=0.2;charset=UTF-8")));
         assertThat(q, not(is(MediaType.parseMediaType("application/json;charset=UTF-8"))));
 
-        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("text/html;charset=UTF-8")).getClass(), instanceOf(ResultFormatterJSONv2.class));
-        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("application/json;charset=UTF-8")).getClass(), instanceOf(ResultFormatterJSON.class));
+        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("text/html;charset=UTF-8")),
+                instanceOf(ResultFormatterJSONv2.class));
+        assertThat(new ResultFormatterFactory().create(MediaType.parseMediaType("application/json;charset=UTF-8")),
+                instanceOf(ResultFormatterJSON.class));
     }
 
 
