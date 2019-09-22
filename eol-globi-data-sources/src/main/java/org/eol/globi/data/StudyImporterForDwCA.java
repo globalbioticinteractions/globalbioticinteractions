@@ -72,9 +72,14 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 throw new IllegalArgumentException("no dataset found");
             }
 
-            tmpDwA = Files.createTempDirectory("dwca");
             String archiveURL = getDataset().getOrDefault("url", archiveURI == null ? null : archiveURI.toString());
-            Archive archive = DwCAUtil.archiveFor(getDataset().getResourceURI(archiveURL), tmpDwA.toString());
+            URI resourceURI = getDataset().getResourceURI(archiveURL);
+            if (resourceURI == null) {
+                throw new StudyImporterException("failed to access DwC archive at [" + archiveURL + "]");
+            }
+
+            tmpDwA = Files.createTempDirectory("dwca");
+            Archive archive = DwCAUtil.archiveFor(resourceURI, tmpDwA.toString());
             InteractionListener interactionListener = getInteractionListener();
 
             String sourceCitation = getDataset().getCitation();
