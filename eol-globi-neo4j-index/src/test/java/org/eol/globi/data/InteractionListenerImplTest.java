@@ -259,6 +259,11 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         assertSymbiotaDateString("2016-00-30", "2016-01-01T00:00:00Z");
     }
 
+    @Test
+    public void importWithDateTimezone() throws StudyImporterException {
+        assertSymbiotaDateString("2019-09-23T20:34:37-00:00", "2019-09-23T20:34:37Z");
+    }
+
     public void assertSymbiotaDateString(String symbiotaTime, String expectedUTC) throws StudyImporterException {
         final InteractionListenerImpl listener = getAssertingListener();
         final HashMap<String, String> link = new HashMap<>();

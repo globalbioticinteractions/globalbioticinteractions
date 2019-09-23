@@ -271,7 +271,7 @@ class InteractionListenerImpl implements InteractionListener {
 
     }
 
-    private String applySymbiotaDateTimeFix(String eventDate) {
+    private static String applySymbiotaDateTimeFix(String eventDate) {
         String eventDateCorrected = eventDate;
         if (StringUtils.contains(eventDate, "-00")) {
             // see https://github.com/globalbioticinteractions/scan/issues/2
