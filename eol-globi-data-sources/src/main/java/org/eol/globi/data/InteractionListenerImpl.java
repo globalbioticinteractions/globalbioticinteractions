@@ -258,12 +258,8 @@ class InteractionListenerImpl implements InteractionListener {
         final String eventDate = link.get(StudyImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
-                String eventDateCorrected = eventDate;
-                if (StringUtils.contains(eventDate, "-00")) {
-                    String[] parts = StringUtils.splitByWholeSeparator(eventDate, "-00");
-                    eventDateCorrected = parts[0];
-                }
-                final DateTime dateTime = DateUtil.parseDateUTC(eventDateCorrected);
+                final DateTime dateTime = DateUtil
+                        .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
                 nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
             } catch (IllegalArgumentException ex) {
                 getLogger().warn(null, "invalid date string [" + eventDate + "]");
@@ -273,6 +269,17 @@ class InteractionListenerImpl implements InteractionListener {
 
         }
 
+    }
+
+    private String applySymbiotaDateTimeFix(String eventDate) {
+        String eventDateCorrected = eventDate;
+        if (StringUtils.contains(eventDate, "-00")) {
+            // see https://github.com/globalbioticinteractions/scan/issues/2
+            // see http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#eventDate
+            String[] parts = StringUtils.splitByWholeSeparator(eventDate, "-00");
+            eventDateCorrected = parts[0];
+        }
+        return eventDateCorrected;
     }
 
     private void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
