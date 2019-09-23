@@ -3,13 +3,12 @@ package org.eol.globi.data;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.LogContext;
-import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -17,6 +16,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,22 +125,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
     @Test
     public void importAssociatedTaxa() throws StudyImporterException {
-        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
-            @Override
-            public void warn(LogContext study, String message) {
-                fail("got message: " + message);
-            }
-
-            @Override
-            public void info(LogContext study, String message) {
-
-            }
-
-            @Override
-            public void severe(LogContext study, String message) {
-                fail("got message: " + message);
-            }
-        });
+        final InteractionListenerImpl listener = getAssertingListener();
         final HashMap<String, String> link = new HashMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
@@ -159,7 +144,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final AtomicBoolean foundPair = new AtomicBoolean(false);
         NodeUtil.RelationshipListener relationshipListener = relationship -> {
             final SpecimenNode predator = new SpecimenNode(relationship.getEndNode());
-            for (Relationship hosts : ((NodeBacked) predator).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(InteractType.PARASITE_OF), Direction.OUTGOING)) {
+            for (Relationship hosts : predator.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(InteractType.PARASITE_OF), Direction.OUTGOING)) {
                 final SpecimenNode host = new SpecimenNode(hosts.getEndNode());
                 final TaxonNode hostTaxon = getOrigTaxon(host);
                 final TaxonNode predTaxon = getOrigTaxon(predator);
@@ -176,9 +161,8 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         assertThat(foundPair.get(), is(true));
     }
 
-    @Test
-    public void importRefutingClaim() throws StudyImporterException {
-        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
+    public InteractionListenerImpl getAssertingListener() {
+        return new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
             @Override
             public void warn(LogContext study, String message) {
                 fail("got message: " + message);
@@ -194,6 +178,11 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 fail("got message: " + message);
             }
         });
+    }
+
+    @Test
+    public void importRefutingClaim() throws StudyImporterException {
+        final InteractionListenerImpl listener = getAssertingListener();
         final HashMap<String, String> link = new HashMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
@@ -221,22 +210,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
     @Test
     public void importWithLocalityAndLatLng() throws StudyImporterException {
-        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
-            @Override
-            public void warn(LogContext study, String message) {
-                fail("got message: " + message);
-            }
-
-            @Override
-            public void info(LogContext study, String message) {
-
-            }
-
-            @Override
-            public void severe(LogContext study, String message) {
-                fail("got message: " + message);
-            }
-        });
+        final InteractionListenerImpl listener = getAssertingListener();
         final HashMap<String, String> link = new HashMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
@@ -262,6 +236,52 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             assertThat(sampleLocation.getLongitude(), is(13.2d));
             assertThat(sampleLocation.getLocality(), is("my back yard"));
             assertThat(sampleLocation.getLocalityId(), is("back:yard"));
+            foundSpecimen.set(true);
+        };
+
+        handleRelations(someListener, RelTypes.COLLECTED);
+
+        assertThat(foundSpecimen.get(), is(true));
+    }
+
+    @Test
+    public void importWithSymbiotaDateTimeYearOnly() throws StudyImporterException {
+        assertSymbiotaDateString("2016-00-00", "2016-01-01T00:00:00Z");
+    }
+
+    @Test
+    public void importWithSymbiotaDateTimeMonth() throws StudyImporterException {
+        assertSymbiotaDateString("2016-04-00", "2016-04-01T00:00:00Z");
+    }
+
+    @Test
+    public void importWithSymbiotaDateTimeDayNotMonth() throws StudyImporterException {
+        assertSymbiotaDateString("2016-00-30", "2016-01-01T00:00:00Z");
+    }
+
+    public void assertSymbiotaDateString(String symbiotaTime, String expectedUTC) throws StudyImporterException {
+        final InteractionListenerImpl listener = getAssertingListener();
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(StudyImporterForMetaTable.EVENT_DATE, symbiotaTime);
+        link.put(REFERENCE_ID, "123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        listener.newLink(link);
+
+        AtomicBoolean foundSpecimen = new AtomicBoolean(false);
+        NodeUtil.RelationshipListener someListener = relationship -> {
+
+            final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
+            assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
+            try {
+                Date eventDate = nodeFactory.getUnixEpochProperty(someSpecimen);
+                assertThat(DateUtil.printDate(eventDate), is(expectedUTC));
+            } catch (NodeFactoryException e) {
+                fail(e.getMessage());
+            }
             foundSpecimen.set(true);
         };
 
