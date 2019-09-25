@@ -276,7 +276,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         Map<String, String> properties = new HashMap<>();
         String[] parts = StringUtils.splitByWholeSeparator(s, ";");
         for (String part : parts) {
-            String[] propertyValue = StringUtils.splitByWholeSeparator(part, ":", 2);
+            String[] propertyValue = StringUtils.split(part, ":=", 2);
             if (propertyValue.length == 2) {
                 properties.put(StringUtils.trim(propertyValue[0]), StringUtils.trim(propertyValue[1]));
             }

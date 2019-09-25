@@ -287,6 +287,18 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
     }
 
+    @Test
+    public void dynamicProperties2() {
+        String s = "sourceLifeStageName=pupae ; sourceLifeStageID= ; experimentalConditionName=in nature ; experimentalConditionID=http://purl.obolibrary.org/obo/ENVO_01001226 ; interactionTypeName=inside ; interactionTypeId=http://purl.obolibrary.org/obo/RO_0001025 ; targetTaxonName=Mus ; targetTaxonId=https://www.gbif.org/species/2311167";
+        Map<String, String> properties = StudyImporterForDwCA.parseDynamicProperties(s);
+
+        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Mus"));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("inside"));
+        assertThat(properties.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME), is("pupae"));
+        assertThat(properties.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_ID), is(nullValue()));
+        assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0001025"));
+    }
+
 
     @Test
     public void associatedOccurrences() {
