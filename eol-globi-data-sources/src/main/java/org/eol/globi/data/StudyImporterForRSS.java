@@ -128,10 +128,11 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         for (Object entry : entries) {
             if (entry instanceof SyndEntry) {
                 Dataset e = datasetFor(datasetOrig, (SyndEntry) entry);
+                String title = StringUtils.trim(((SyndEntry) entry).getTitle());
                 if (e == null) {
-                    LOG.info("skipping [" + ((SyndEntry) entry).getTitle() + "] : not supported (yet).");
+                    LOG.info("skipping [" + title + "] : not supported (yet).");
                 } else {
-                    LOG.info("including [" + ((SyndEntry) entry).getTitle() + "].");
+                    LOG.info("including [" + title + "].");
                     datasets.add(e);
                 }
             }
