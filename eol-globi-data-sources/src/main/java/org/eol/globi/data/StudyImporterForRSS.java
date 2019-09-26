@@ -131,6 +131,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
                 if (e == null) {
                     LOG.info("skipping [" + ((SyndEntry) entry).getTitle() + "] : not supported (yet).");
                 } else {
+                    LOG.info("including [" + ((SyndEntry) entry).getTitle() + "].");
                     datasets.add(e);
                 }
             }
@@ -168,7 +169,10 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         String title = entry.getTitle();
 
         // for now, only include Arctos, see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/134
-        if (foreignEntries.containsKey("dwca") && StringUtils.contains(title, "(Arctos)")) {
+        if (foreignEntries.containsKey("dwca")
+                && StringUtils.contains(title, "(Arctos)")
+                && !StringUtils.contains(title, "GGBN")
+        ) {
             String citation = StringUtils.trim(title);
 
             dataset = embeddedDatasetFor(datasetOrig,

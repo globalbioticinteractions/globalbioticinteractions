@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -48,6 +50,10 @@ public class StudyImporterForRSSTest {
     public void readRSSVertnet() throws StudyImporterException, IOException {
         final Dataset dataset = getDatasetVertnet();
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
+        for (Dataset dataset1 : datasets) {
+            assertThat(dataset1.getCitation(), containsString("(Arctos)"));
+            assertThat(dataset1.getCitation(), not(containsString("GGBN")));
+        }
         assertThat(datasets.size() > 0, is(true));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("true"));
     }
