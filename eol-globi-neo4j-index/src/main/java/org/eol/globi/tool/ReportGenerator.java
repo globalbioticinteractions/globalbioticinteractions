@@ -55,9 +55,9 @@ public class ReportGenerator {
         generateReportForSourceOrganizations();
         LOG.info("report for source organizations done.");
 
-        LOG.info("report for studies generating ...");
-        generateReportForStudies();
-        LOG.info("report for studies done.");
+//        LOG.info("report for studies generating ...");
+//        generateReportForStudies();
+//        LOG.info("report for studies done.");
     }
 
     public void generateReportForSourceCitations() {
