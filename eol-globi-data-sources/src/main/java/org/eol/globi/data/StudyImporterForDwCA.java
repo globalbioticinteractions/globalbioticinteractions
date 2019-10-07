@@ -204,7 +204,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     static List<Map<String, String>> parseAssociatedTaxa(String s) {
         List<Map<String, String>> properties = new ArrayList<>();
-        String[] parts = StringUtils.split(s, "|;");
+        String[] parts = StringUtils.split(s, "|;,");
         for (String part : parts) {
             String[] verbTaxon = StringUtils.splitByWholeSeparator(part, ":", 2);
             if (verbTaxon.length == 2) {

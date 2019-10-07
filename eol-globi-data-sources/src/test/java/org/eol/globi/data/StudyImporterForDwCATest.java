@@ -200,6 +200,34 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxaMultipleCommas() {
+        String associatedTaxa = "Ceramium, Chaetomorpha linum, Enteromorpha intestinalis, Ulva angusta, Porphyra perforata, Sargassum muticum, Gigartina spp., Rhodoglossum affine, and Grateloupia sp.";
+        List<Map<String, String>> properties = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(9));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Ceramium"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
+        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is(" and Grateloupia sp."));
+        assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
+        assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
+    }
+
+    @Test
+    public void associatedTaxaMixed() {
+        String associatedTaxa = "Ceramium, Chaetomorpha linum| Enteromorpha intestinalis; Ulva angusta, Porphyra perforata, Sargassum muticum, Gigartina spp., Rhodoglossum affine, and Grateloupia sp.";
+        List<Map<String, String>> properties = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(9));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Ceramium"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
+        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is(" and Grateloupia sp."));
+        assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
+        assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
+    }
+
+    @Test
     public void associatedTaxaMultipleSemicolon() {
         String associatedTaxa = "eats: Homo sapiens ; eats: Canis lupus";
         assertTwoInteractions(associatedTaxa);
