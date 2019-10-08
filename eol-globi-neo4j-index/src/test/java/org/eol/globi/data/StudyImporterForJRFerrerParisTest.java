@@ -1,17 +1,10 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.util.NodeUtil;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
-
-import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
