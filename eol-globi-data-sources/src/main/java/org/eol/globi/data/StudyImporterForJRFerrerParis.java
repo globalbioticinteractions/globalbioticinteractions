@@ -58,9 +58,9 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
     private boolean validNames(String butterflyName, String plantName, Study study, int lineNumber) {
         boolean isValid = false;
         if (StringUtils.length(butterflyName) < 3) {
-            study.appendLogMessage("butterfly name [" + butterflyName + "] on line [" + lineNumber + "] too short: skipping association", Level.WARNING);
+            getLogger().warn(study,"butterfly name [" + butterflyName + "] on line [" + lineNumber + "] too short: skipping association");
         } else if (StringUtils.length(plantName) < 3) {
-            study.appendLogMessage("plant name [" + plantName + "] on line [" + lineNumber + "] too short: skipping association", Level.WARNING);
+            getLogger().warn(study, "plant name [" + plantName + "] on line [" + lineNumber + "] too short: skipping association");
         } else {
             isValid = true;
         }

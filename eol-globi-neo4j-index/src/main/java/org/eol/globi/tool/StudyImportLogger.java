@@ -8,18 +8,18 @@ import java.util.logging.Level;
 public class StudyImportLogger implements ImportLogger {
 
     @Override
-    public void warn(LogContext study, String message) {
-        createMsg(study, message, Level.WARNING);
+    public void warn(LogContext ctx, String message) {
+        createMsg(ctx, message, Level.WARNING);
     }
 
     @Override
-    public void info(LogContext study, String message) {
-        createMsg(study, message, Level.INFO);
+    public void info(LogContext ctx, String message) {
+        createMsg(ctx, message, Level.INFO);
     }
 
     @Override
-    public void severe(LogContext study, String message) {
-        createMsg(study, message, Level.SEVERE);
+    public void severe(LogContext ctx, String message) {
+        createMsg(ctx, message, Level.SEVERE);
     }
 
     private void createMsg(LogContext study, String message, Level warning) {

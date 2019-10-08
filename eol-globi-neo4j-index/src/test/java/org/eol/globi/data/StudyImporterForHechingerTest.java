@@ -50,17 +50,17 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
         importer.setLogger(new ImportLogger() {
             @Override
-            public void warn(LogContext study, String message) {
+            public void warn(LogContext ctx, String message) {
                 LOG.warn(message);
             }
 
             @Override
-            public void info(LogContext study, String message) {
+            public void info(LogContext ctx, String message) {
                 LOG.info(message);
             }
 
             @Override
-            public void severe(LogContext study, String message) {
+            public void severe(LogContext ctx, String message) {
                 LOG.error(message);
             }
         });

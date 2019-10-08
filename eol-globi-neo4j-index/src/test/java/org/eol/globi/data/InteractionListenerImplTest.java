@@ -164,17 +164,17 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     public InteractionListenerImpl getAssertingListener() {
         return new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
             @Override
-            public void warn(LogContext study, String message) {
+            public void warn(LogContext ctx, String message) {
                 fail("got message: " + message);
             }
 
             @Override
-            public void info(LogContext study, String message) {
+            public void info(LogContext ctx, String message) {
 
             }
 
             @Override
-            public void severe(LogContext study, String message) {
+            public void severe(LogContext ctx, String message) {
                 fail("got message: " + message);
             }
         });

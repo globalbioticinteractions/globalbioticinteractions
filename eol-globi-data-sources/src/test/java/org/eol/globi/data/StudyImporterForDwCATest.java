@@ -264,18 +264,18 @@ public class StudyImporterForDwCATest {
         final AtomicBoolean loggedSomething = new AtomicBoolean(false);
         StudyImporterForDwCA.logUnsupportedInteractionTypes(properties, new ImportLogger() {
             @Override
-            public void warn(LogContext study, String message) {
+            public void warn(LogContext ctx, String message) {
                 assertThat(message, is("found unsupported interaction type [eatz]"));
                 loggedSomething.set(true);
             }
 
             @Override
-            public void info(LogContext study, String message) {
+            public void info(LogContext ctx, String message) {
 
             }
 
             @Override
-            public void severe(LogContext study, String message) {
+            public void severe(LogContext ctx, String message) {
 
             }
         });
@@ -289,17 +289,17 @@ public class StudyImporterForDwCATest {
 
         StudyImporterForDwCA.logUnsupportedInteractionTypes(properties, new ImportLogger() {
             @Override
-            public void warn(LogContext study, String message) {
+            public void warn(LogContext ctx, String message) {
                 fail("boom!");
             }
 
             @Override
-            public void info(LogContext study, String message) {
+            public void info(LogContext ctx, String message) {
 
             }
 
             @Override
-            public void severe(LogContext study, String message) {
+            public void severe(LogContext ctx, String message) {
 
             }
         });

@@ -26,17 +26,17 @@ public class StudyImporterForHurlbertIT extends GraphDBTestCase {
         importer.setDataset(dataset);
         importer.setLogger(new ImportLogger() {
             @Override
-            public void warn(LogContext study, String message) {
+            public void warn(LogContext ctx, String message) {
                 fail("did not expect warning [" + message + "]");
             }
 
             @Override
-            public void info(LogContext study, String message) {
+            public void info(LogContext ctx, String message) {
 
             }
 
             @Override
-            public void severe(LogContext study, String message) {
+            public void severe(LogContext ctx, String message) {
                 fail("did not expect error [" + message + "]");
             }
         });
