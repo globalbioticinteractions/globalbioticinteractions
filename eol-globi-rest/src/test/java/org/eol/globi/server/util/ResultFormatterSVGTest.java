@@ -1,6 +1,5 @@
 package org.eol.globi.server.util;
 
-import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;

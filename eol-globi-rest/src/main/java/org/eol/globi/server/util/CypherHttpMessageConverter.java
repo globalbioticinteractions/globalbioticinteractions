@@ -1,8 +1,7 @@
 package org.eol.globi.server.util;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
@@ -14,14 +13,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.util.StreamUtils;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<CypherQuery> {
-
-    private static final Log LOG = LogFactory.getLog(CypherHttpMessageConverter.class);
 
     public CypherHttpMessageConverter() {
         super(MediaType.parseMediaType("application/json;charset=UTF-8"),
@@ -54,19 +50,37 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
         ResultFormatter formatter = new ResultFormatterFactory().create(contentType);
         if (formatter == null) {
             throw new IOException("found unsupported return format type request for [" + contentType.toString() + "]");
-        } else {
-            if (formatter instanceof ResultFormatterStreaming) {
-                HttpResponse res = CypherUtil.execute(cypherQuery);
-                try (InputStream is = IOUtils.buffer(res.getEntity().getContent());
-                     OutputStream os = IOUtils.buffer(outputMessage.getBody())) {
-                    ((ResultFormatterStreaming) formatter).format(is, os);
-                    os.flush();
-                }
-            } else {
-                String result = CypherUtil.executeRemote(cypherQuery);
-                StreamUtils.copy(formatter.format(result), contentType.getCharSet(), outputMessage.getBody());
-            }
         }
+
+        cypherQuery = optimizeQueryForType(cypherQuery, formatter);
+
+        if (formatter instanceof ResultFormatterStreaming) {
+            HttpResponse res = CypherUtil.execute(cypherQuery);
+            try (InputStream is = IOUtils.buffer(res.getEntity().getContent());
+                 OutputStream os = IOUtils.buffer(outputMessage.getBody())) {
+                ((ResultFormatterStreaming) formatter).format(is, os);
+                os.flush();
+            }
+        } else {
+            String result = CypherUtil.executeRemote(cypherQuery);
+            StreamUtils.copy(formatter.format(result), contentType.getCharSet(), outputMessage.getBody());
+        }
+    }
+
+    static CypherQuery optimizeQueryForType(CypherQuery cypherQuery, ResultFormatter formatter) {
+        if (formatter instanceof ResultFormatterSVG) {
+            cypherQuery = attemptQueryRewrite(cypherQuery, " LIMIT ");
+            cypherQuery = attemptQueryRewrite(cypherQuery, " limit ");
+        }
+        return cypherQuery;
+    }
+
+    private static CypherQuery attemptQueryRewrite(CypherQuery cypherQuery, String limit_) {
+        if (StringUtils.contains(cypherQuery.getQuery(), limit_)) {
+            String[] queryParts = StringUtils.splitByWholeSeparator(cypherQuery.getQuery(), limit_);
+            cypherQuery = new CypherQuery(queryParts[0] + limit_ + "1", cypherQuery.getParams());
+        }
+        return cypherQuery;
     }
 
 }
