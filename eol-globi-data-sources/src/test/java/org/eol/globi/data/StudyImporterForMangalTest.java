@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.ResourceService;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForMangalTest {
 
@@ -101,7 +103,8 @@ public class StudyImporterForMangalTest {
 
         assertThat(refMap.containsKey("36"), Is.is(true));
 
-        assertThat(refMap.get("36"), Is.is("bla"));
+        assertThat(refMap.get("36").get(StudyImporterForTSV.REFERENCE_CITATION), CoreMatchers.containsString("The biology of Knysna estuary"));
+        assertThat(refMap.get("36").get(StudyImporterForTSV.REFERENCE_ID), Is.is("mangal:ref:id:36"));
 
     }
 
