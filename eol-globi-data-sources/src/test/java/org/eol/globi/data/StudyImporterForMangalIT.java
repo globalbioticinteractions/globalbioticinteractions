@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 
 public class StudyImporterForMangalIT {
 
-    @Test(expected = StudyImporterException.class)
+    @Test
     public void importAll() throws StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);
         StudyImporterForMangal importer = new StudyImporterForMangal(null, null);
