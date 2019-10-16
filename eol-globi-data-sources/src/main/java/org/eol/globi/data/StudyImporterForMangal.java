@@ -210,7 +210,7 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
             retrievePagedResource(getDataset(), new NodeListener() {
                 @Override
                 public void onNode(JsonNode node) throws StudyImporterException {
-                    Map<String, String> interaction = parseInteraction(node, nodeMap, networkMap);
+                    Map<String, String> interaction = parseInteraction(getLogger(), node, nodeMap, networkMap);
                     getInteractionListener().newLink(interaction);
                 }
             }, 100, 0, MANGAL_API_ENDPOINT + "/interaction");
