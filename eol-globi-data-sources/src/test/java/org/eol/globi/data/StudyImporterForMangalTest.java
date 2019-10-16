@@ -190,7 +190,7 @@ public class StudyImporterForMangalTest {
 
         JsonNode singleInteraction = jsonNode.get(0);
 
-        Map<String, String> interaction = StudyImporterForMangal.parseInteraction(singleInteraction, nodeMap, networkMap);
+        Map<String, String> interaction = StudyImporterForMangal.parseInteraction(null, singleInteraction, nodeMap, networkMap);
 
         assertThat(interaction.get(StudyImporterForTSV.SOURCE_TAXON_NAME), Is.is("donald duck"));
         assertThat(interaction.get(StudyImporterForTSV.TARGET_TAXON_NAME), Is.is("mickey mouse"));
