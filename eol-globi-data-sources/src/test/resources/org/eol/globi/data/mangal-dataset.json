@@ -1,0 +1,1002 @@
+[
+  {
+    "id": 2,
+    "name": "howking_1968",
+    "description": "Insect activity recorded on flower at Lake Hazen, Ellesmere Island, N.W.T., Canada",
+    "public": true,
+    "created_at": "2019-02-22T15:39:00.427Z",
+    "updated_at": "2019-02-22T15:39:00.427Z",
+    "ref_id": 2,
+    "user_id": 2
+  },
+  {
+    "id": 7,
+    "name": "lundgren_olesen_2005",
+    "description": "Pollnator activity recorded on flowers, Uummannaq Island, Greenland, Danmark",
+    "public": true,
+    "created_at": "2019-02-22T20:04:25.322Z",
+    "updated_at": "2019-02-22T20:04:25.322Z",
+    "ref_id": 7,
+    "user_id": 2
+  },
+  {
+    "id": 9,
+    "name": "elberling_olesen_1999",
+    "description": "Flower-visiting insect at Mt. Latnjatjarro, northern Sweden",
+    "public": true,
+    "created_at": "2019-02-22T20:09:17.994Z",
+    "updated_at": "2019-02-22T20:09:17.994Z",
+    "ref_id": 9,
+    "user_id": 2
+  },
+  {
+    "id": 14,
+    "name": "johnston_1956",
+    "description": "Predation by short-eared owls on a salicornia salt marsh",
+    "public": true,
+    "created_at": "2019-02-22T21:10:45.269Z",
+    "updated_at": "2019-02-22T21:10:45.269Z",
+    "ref_id": 14,
+    "user_id": 3
+  },
+  {
+    "id": 15,
+    "name": "havens_1992",
+    "description": "Pelagic communities of small lakes and ponds of the Adirondack",
+    "public": true,
+    "created_at": "2019-02-23T01:47:06.347Z",
+    "updated_at": "2019-02-23T01:47:06.347Z",
+    "ref_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 16,
+    "name": "kemp_1977",
+    "description": "Food web for the Crystal River estuary",
+    "public": true,
+    "created_at": "2019-02-23T03:02:31.697Z",
+    "updated_at": "2019-02-23T03:02:31.697Z",
+    "ref_id": 16,
+    "user_id": 3
+  },
+  {
+    "id": 17,
+    "name": "bradstreet_1982",
+    "description": "Food web of High Arctic Ice Edges",
+    "public": true,
+    "created_at": "2019-02-23T03:35:19.158Z",
+    "updated_at": "2019-02-23T03:35:19.158Z",
+    "ref_id": 17,
+    "user_id": 3
+  },
+  {
+    "id": 18,
+    "name": "patten_1979",
+    "description": "Food web of Ross Sea pelagic ecosystem",
+    "public": true,
+    "created_at": "2019-02-23T14:11:59.139Z",
+    "updated_at": "2019-02-23T14:11:59.139Z",
+    "ref_id": 18,
+    "user_id": 3
+  },
+  {
+    "id": 19,
+    "name": "clarke_1967",
+    "description": "Food web of the sand-bottom community",
+    "public": true,
+    "created_at": "2019-02-23T14:43:08.748Z",
+    "updated_at": "2019-02-23T14:43:08.748Z",
+    "ref_id": 19,
+    "user_id": 3
+  },
+  {
+    "id": 20,
+    "name": "van_es_1967",
+    "description": "Food web of the Ems estuary",
+    "public": true,
+    "created_at": "2019-02-23T14:57:03.926Z",
+    "updated_at": "2019-02-23T14:57:03.926Z",
+    "ref_id": 20,
+    "user_id": 3
+  },
+  {
+    "id": 21,
+    "name": "macginitie_1935",
+    "description": "Food web of the Monterey Bay",
+    "public": true,
+    "created_at": "2019-02-23T16:24:47.107Z",
+    "updated_at": "2019-02-23T16:24:47.107Z",
+    "ref_id": 21,
+    "user_id": 3
+  },
+  {
+    "id": 22,
+    "name": "zetina_2003",
+    "description": "Dietary matrix of the Huizache–Caimanero lagoon",
+    "public": true,
+    "created_at": "2019-02-23T17:04:32.017Z",
+    "updated_at": "2019-02-23T17:04:32.017Z",
+    "ref_id": 22,
+    "user_id": 3
+  },
+  {
+    "id": 23,
+    "name": "cruz_2007",
+    "description": "Dietary matrix of the Laguna Alvarado",
+    "public": true,
+    "created_at": "2019-02-23T17:20:14.675Z",
+    "updated_at": "2019-02-23T17:20:14.675Z",
+    "ref_id": 23,
+    "user_id": 3
+  },
+  {
+    "id": 24,
+    "name": "lancraft_1991",
+    "description": "Diets of common micronekton and macrozooplankton species in the Antarctic ice edge zone during winter. Predator are in sp_taxon_1 and prey in sp_taxon_2",
+    "public": true,
+    "created_at": "2019-02-23T18:01:33.933Z",
+    "updated_at": "2019-02-23T18:01:33.933Z",
+    "ref_id": 24,
+    "user_id": 3
+  },
+  {
+    "id": 25,
+    "name": "lin_2006",
+    "description": "Dietary matrix of the Tapong Bay",
+    "public": true,
+    "created_at": "2019-02-23T21:33:12.032Z",
+    "updated_at": "2019-02-23T21:33:12.032Z",
+    "ref_id": 25,
+    "user_id": 3
+  },
+  {
+    "id": 26,
+    "name": "smith_2007",
+    "description": "Food web of the Ross Sea continental shelf ecosystem",
+    "public": true,
+    "created_at": "2019-02-24T00:46:01.124Z",
+    "updated_at": "2019-02-24T00:46:01.124Z",
+    "ref_id": 26,
+    "user_id": 3
+  },
+  {
+    "id": 27,
+    "name": "torres_2013",
+    "description": "Food web of the the Gulf of Cadiz",
+    "public": true,
+    "created_at": "2019-02-24T14:22:31.670Z",
+    "updated_at": "2019-02-24T14:22:31.670Z",
+    "ref_id": 27,
+    "user_id": 3
+  },
+  {
+    "id": 28,
+    "name": "yodzis_1998",
+    "description": "Food web of the Benguela ecosystem",
+    "public": true,
+    "created_at": "2019-02-24T14:33:36.569Z",
+    "updated_at": "2019-02-24T14:33:36.569Z",
+    "ref_id": 28,
+    "user_id": 3
+  },
+  {
+    "id": 29,
+    "name": "kremer_1978",
+    "description": "Food web of Narragansett Bay",
+    "public": true,
+    "created_at": "2019-02-24T14:48:46.980Z",
+    "updated_at": "2019-02-24T14:48:46.980Z",
+    "ref_id": 29,
+    "user_id": 3
+  },
+  {
+    "id": 30,
+    "name": "rosenthal_1974",
+    "description": "Food web of the Del Mar kelp bed",
+    "public": true,
+    "created_at": "2019-02-24T15:00:56.257Z",
+    "updated_at": "2019-02-24T15:00:56.257Z",
+    "ref_id": 30,
+    "user_id": 3
+  },
+  {
+    "id": 31,
+    "name": "peterson_1979",
+    "description": "Food web of the intertidal epifauna of the bay piling system and of the ocean jetty system",
+    "public": true,
+    "created_at": "2019-02-24T15:10:14.486Z",
+    "updated_at": "2019-02-24T15:10:14.486Z",
+    "ref_id": 31,
+    "user_id": 3
+  },
+  {
+    "id": 32,
+    "name": "gontikaki_2011",
+    "description": "Food web of a sub-arctic deep-sea benthic community",
+    "public": true,
+    "created_at": "2019-02-24T15:16:24.404Z",
+    "updated_at": "2019-02-24T15:16:24.404Z",
+    "ref_id": 32,
+    "user_id": 3
+  },
+  {
+    "id": 33,
+    "name": "christian_1999",
+    "description": "Food web of a winter’s seagrass",
+    "public": true,
+    "created_at": "2019-02-24T15:32:43.245Z",
+    "updated_at": "2019-02-24T15:32:43.245Z",
+    "ref_id": 33,
+    "user_id": 3
+  },
+  {
+    "id": 34,
+    "name": "hiatt_1960",
+    "description": "Food web of the Marshalles reefs",
+    "public": true,
+    "created_at": "2019-02-24T15:43:02.324Z",
+    "updated_at": "2019-02-24T15:43:02.324Z",
+    "ref_id": 34,
+    "user_id": 3
+  },
+  {
+    "id": 35,
+    "name": "landry_1977",
+    "description": "Food web of the pelagic ecosystems",
+    "public": true,
+    "created_at": "2019-02-24T15:54:33.169Z",
+    "updated_at": "2019-02-24T15:54:33.169Z",
+    "ref_id": 35,
+    "user_id": 3
+  },
+  {
+    "id": 36,
+    "name": "mackintosh_1967",
+    "description": "A survey of antarctic biology",
+    "public": true,
+    "created_at": "2019-02-24T16:29:45.863Z",
+    "updated_at": "2019-02-24T16:29:45.863Z",
+    "ref_id": 38,
+    "user_id": 3
+  },
+  {
+    "id": 37,
+    "name": "qazim_1970",
+    "description": "Food web of Cohin backwater",
+    "public": true,
+    "created_at": "2019-02-24T16:37:00.060Z",
+    "updated_at": "2019-02-24T16:37:00.060Z",
+    "ref_id": 39,
+    "user_id": 3
+  },
+  {
+    "id": 38,
+    "name": "knox_1970",
+    "description": "Food web of Antarctic marine ecosystems",
+    "public": true,
+    "created_at": "2019-02-24T16:48:12.675Z",
+    "updated_at": "2019-02-24T16:48:12.675Z",
+    "ref_id": 40,
+    "user_id": 3
+  },
+  {
+    "id": 39,
+    "name": "parin_1970",
+    "description": "Food web of tropical seas",
+    "public": true,
+    "created_at": "2019-02-24T16:57:31.588Z",
+    "updated_at": "2019-02-24T16:57:31.588Z",
+    "ref_id": 41,
+    "user_id": 3
+  },
+  {
+    "id": 40,
+    "name": "shushkina_1979",
+    "description": "Food web of tropical pelagic ecosystem",
+    "public": true,
+    "created_at": "2019-02-24T17:05:19.747Z",
+    "updated_at": "2019-02-24T17:05:19.747Z",
+    "ref_id": 42,
+    "user_id": 3
+  },
+  {
+    "id": 43,
+    "name": "hogetsu_1979",
+    "description": "Food web of the Suruga Bay",
+    "public": true,
+    "created_at": "2019-02-24T18:20:32.678Z",
+    "updated_at": "2019-02-24T18:20:32.678Z",
+    "ref_id": 44,
+    "user_id": 3
+  },
+  {
+    "id": 44,
+    "name": "hatanaka_1977",
+    "description": "Food web of Sendai Bay",
+    "public": true,
+    "created_at": "2019-02-24T18:27:33.951Z",
+    "updated_at": "2019-02-24T18:27:33.951Z",
+    "ref_id": 45,
+    "user_id": 3
+  },
+  {
+    "id": 45,
+    "name": "odum_1975",
+    "description": "Food Web of estuarine mangrove",
+    "public": true,
+    "created_at": "2019-02-24T18:56:39.471Z",
+    "updated_at": "2019-02-24T18:56:39.471Z",
+    "ref_id": 46,
+    "user_id": 3
+  },
+  {
+    "id": 46,
+    "name": "petipa_1979",
+    "description": "Food web of pelagic communities of the southern seas of the USSR and in the tropical Pacific.",
+    "public": true,
+    "created_at": "2019-02-24T19:53:37.411Z",
+    "updated_at": "2019-02-24T19:53:37.411Z",
+    "ref_id": 47,
+    "user_id": 3
+  },
+  {
+    "id": 47,
+    "name": "thompson_2004",
+    "description": "Food web of the intertidal mudflat of Company Bay",
+    "public": true,
+    "created_at": "2019-02-24T20:15:04.764Z",
+    "updated_at": "2019-02-24T20:15:04.764Z",
+    "ref_id": 48,
+    "user_id": 3
+  },
+  {
+    "id": 48,
+    "name": "closs_1994",
+    "description": "Food web of australian interminttent-stream",
+    "public": true,
+    "created_at": "2019-02-24T20:45:37.727Z",
+    "updated_at": "2019-02-24T20:45:37.727Z",
+    "ref_id": 49,
+    "user_id": 3
+  },
+  {
+    "id": 49,
+    "name": "petipa_1970",
+    "description": "Food web of the plankton communities of the Black Sea",
+    "public": true,
+    "created_at": "2019-02-24T21:35:28.093Z",
+    "updated_at": "2019-02-24T21:35:28.093Z",
+    "ref_id": 50,
+    "user_id": 3
+  },
+  {
+    "id": 50,
+    "name": "milne_1972",
+    "description": "Food web of the Ythan estuary",
+    "public": true,
+    "created_at": "2019-02-24T22:16:44.267Z",
+    "updated_at": "2019-02-24T22:16:44.267Z",
+    "ref_id": 51,
+    "user_id": 3
+  },
+  {
+    "id": 51,
+    "name": "simenstad_1978",
+    "description": "Food web of the western Aleutian Islands",
+    "public": true,
+    "created_at": "2019-02-24T23:15:41.293Z",
+    "updated_at": "2019-02-24T23:15:41.293Z",
+    "ref_id": 52,
+    "user_id": 3
+  },
+  {
+    "id": 52,
+    "name": "yanez_1978",
+    "description": "Food web of the Guerrero lagoon",
+    "public": true,
+    "created_at": "2019-02-24T23:42:52.062Z",
+    "updated_at": "2019-02-24T23:42:52.062Z",
+    "ref_id": 53,
+    "user_id": 3
+  },
+  {
+    "id": 53,
+    "name": "dexter_1947",
+    "description": "Food web of the tidal inlet at Cape Ann",
+    "public": true,
+    "created_at": "2019-02-25T00:23:21.785Z",
+    "updated_at": "2019-02-25T00:23:21.785Z",
+    "ref_id": 54,
+    "user_id": 3
+  },
+  {
+    "id": 54,
+    "name": "brodeur_1992",
+    "description": "Food web of coastal upwelling pelagic zone off Oregon and Washington",
+    "public": true,
+    "created_at": "2019-02-25T01:37:36.741Z",
+    "updated_at": "2019-02-25T01:37:36.741Z",
+    "ref_id": 55,
+    "user_id": 3
+  },
+  {
+    "id": 55,
+    "name": "saldanha_1980",
+    "description": "Food web of the Tage estuary",
+    "public": true,
+    "created_at": "2019-02-25T02:11:25.912Z",
+    "updated_at": "2019-02-25T02:11:25.912Z",
+    "ref_id": 37,
+    "user_id": 3
+  },
+  {
+    "id": 56,
+    "name": "dunbar_1953",
+    "description": "Food web in arctic and subarctic marine zones",
+    "public": true,
+    "created_at": "2019-02-25T02:35:12.865Z",
+    "updated_at": "2019-02-25T02:35:12.865Z",
+    "ref_id": 56,
+    "user_id": 3
+  },
+  {
+    "id": 57,
+    "name": "day_1967",
+    "description": "Food web of Knysna estuary",
+    "public": true,
+    "created_at": "2019-02-25T02:43:12.902Z",
+    "updated_at": "2019-02-25T02:43:12.902Z",
+    "ref_id": 36,
+    "user_id": 3
+  },
+  {
+    "id": 58,
+    "name": "bulman_2001",
+    "description": "Dietary matrix of  demersal fishes of the south-eastern Australian shelf",
+    "public": true,
+    "created_at": "2019-02-25T03:01:02.681Z",
+    "updated_at": "2019-02-25T03:01:02.681Z",
+    "ref_id": 57,
+    "user_id": 3
+  },
+  {
+    "id": 1,
+    "name": "roberson_1929",
+    "description": "Insects observed pollinating flowers, ten miles of Carlinville, Illinois, USA",
+    "public": true,
+    "created_at": "2019-02-21T21:17:07.943Z",
+    "updated_at": "2019-02-21T21:17:07.943Z",
+    "ref_id": 1,
+    "user_id": 3
+  },
+  {
+    "id": 3,
+    "name": "witt_1998",
+    "description": "Unknown",
+    "public": true,
+    "created_at": "2019-02-22T16:24:45.770Z",
+    "updated_at": "2019-02-22T16:24:45.770Z",
+    "ref_id": 3,
+    "user_id": 3
+  },
+  {
+    "id": 5,
+    "name": "silva_2002",
+    "description": "Fruit-bird interaction at the Intervales State Park, Brazil",
+    "public": true,
+    "created_at": "2019-02-22T17:04:59.092Z",
+    "updated_at": "2019-02-22T17:04:59.092Z",
+    "ref_id": 5,
+    "user_id": 3
+  },
+  {
+    "id": 4,
+    "name": "mosquin_martin_1967",
+    "description": "Occurence of flower-visiting insect on plant species, two miles north of Bailey Point, Melville Island, N.W.T., Canada",
+    "public": true,
+    "created_at": "2019-02-22T16:45:59.451Z",
+    "updated_at": "2019-02-22T16:45:59.451Z",
+    "ref_id": 4,
+    "user_id": 3
+  },
+  {
+    "id": 8,
+    "name": "kaehler_et_al_2005",
+    "description": "Pollination of a bromeliad community in the high montane Atlantic rain forest in Paran? state, Brazil",
+    "public": true,
+    "created_at": "2019-02-22T20:07:42.814Z",
+    "updated_at": "2019-02-22T20:07:42.814Z",
+    "ref_id": 8,
+    "user_id": 3
+  },
+  {
+    "id": 10,
+    "name": "elberling_olesen",
+    "description": "null",
+    "public": true,
+    "created_at": "2019-02-22T20:12:29.956Z",
+    "updated_at": "2019-02-22T20:12:29.956Z",
+    "ref_id": 10,
+    "user_id": 3
+  },
+  {
+    "id": 11,
+    "name": "woodwell_1967",
+    "description": "Plant and animals interaction in Long Islands estuary",
+    "public": true,
+    "created_at": "2019-02-22T20:16:46.384Z",
+    "updated_at": "2019-02-22T20:16:46.384Z",
+    "ref_id": 11,
+    "user_id": 3
+  },
+  {
+    "id": 12,
+    "name": "barret_helenurm_1987",
+    "description": "Understory perennial plants interaction with pollinator, 5 km east of Doaktown, Northumberland County, central New Brunswick, Canada",
+    "public": true,
+    "created_at": "2019-02-22T20:53:11.840Z",
+    "updated_at": "2019-02-22T20:53:11.840Z",
+    "ref_id": 12,
+    "user_id": 3
+  },
+  {
+    "id": 13,
+    "name": "copeland_1974",
+    "description": "Food web of the oligohaline systeme",
+    "public": true,
+    "created_at": "2019-02-22T21:01:47.249Z",
+    "updated_at": "2019-02-22T21:01:47.249Z",
+    "ref_id": 13,
+    "user_id": 3
+  },
+  {
+    "id": 59,
+    "name": "varassin_sazima_2012",
+    "description": "Bromeliad-pollinator interaction in the Estacao Biologica de Santa Lucia in southeastern Brazil",
+    "public": true,
+    "created_at": "2019-02-25T15:33:29.226Z",
+    "updated_at": "2019-02-25T15:33:29.226Z",
+    "ref_id": 58,
+    "user_id": 2
+  },
+  {
+    "id": 60,
+    "name": "bezerra_2009",
+    "description": "oil-flowers (Malpighiaceae) and their bee visitors from a Brazilian steppe, Parque Nacional do Catimbau, in the municipality of Buique (PE), northeastern Brazil",
+    "public": true,
+    "created_at": "2019-02-25T15:58:06.242Z",
+    "updated_at": "2019-02-25T15:58:06.242Z",
+    "ref_id": 59,
+    "user_id": 2
+  },
+  {
+    "id": 61,
+    "name": "frost_1980",
+    "description": "Fruit-frugivore interactions in a South African costal dune forest",
+    "public": true,
+    "created_at": "2019-02-25T16:10:32.779Z",
+    "updated_at": "2019-02-25T16:10:32.779Z",
+    "ref_id": 60,
+    "user_id": 2
+  },
+  {
+    "id": 111,
+    "name": "paine",
+    "description": "Structure of two rocky intertidal food webs",
+    "public": true,
+    "created_at": "2019-03-05T20:08:18.967Z",
+    "updated_at": "2019-03-05T20:08:18.967Z",
+    "ref_id": 110,
+    "user_id": 4
+  },
+  {
+    "id": 6,
+    "name": "kolpelke_et_al_2017",
+    "description": "Food-web structure of willow-galling sawflies and their natural enemies across Europe.",
+    "public": true,
+    "created_at": "2019-02-22T17:25:01.282Z",
+    "updated_at": "2019-03-26T16:27:22.595Z",
+    "ref_id": 6,
+    "user_id": 3
+  },
+  {
+    "id": 62,
+    "name": "olesen_al_2002",
+    "description": "Pollination networks for two oceanic islands, the Azorean Flores and the Mauritian Ile aux Aigrettes",
+    "public": true,
+    "created_at": "2019-02-25T16:27:42.376Z",
+    "updated_at": "2019-02-25T16:27:42.376Z",
+    "ref_id": 61,
+    "user_id": 2
+  },
+  {
+    "id": 63,
+    "name": "percival_1974",
+    "description": "Plant-pollinator interaction at Morant Point, Jamaica",
+    "public": true,
+    "created_at": "2019-02-25T16:46:44.365Z",
+    "updated_at": "2019-02-25T16:46:44.365Z",
+    "ref_id": 62,
+    "user_id": 2
+  },
+  {
+    "id": 64,
+    "name": "fautin_1993",
+    "description": "Anemonfishes-anemons intractions in the tropical Indo-Pacific ocean",
+    "public": true,
+    "created_at": "2019-02-25T19:30:26.618Z",
+    "updated_at": "2019-02-25T19:30:26.618Z",
+    "ref_id": 63,
+    "user_id": 2
+  },
+  {
+    "id": 65,
+    "name": "mccullen_1993",
+    "description": "compilation of records on plant-flower visitor interactions in the Galápagos archipelago found in the literature. Pinta Island",
+    "public": true,
+    "created_at": "2019-02-25T19:35:49.243Z",
+    "updated_at": "2019-02-25T19:35:49.243Z",
+    "ref_id": 64,
+    "user_id": 2
+  },
+  {
+    "id": 66,
+    "name": "kato_1993",
+    "description": "Flower and anthophilous insect interactions in the primary cool-temperate subalpine forests and meadows at Mt. Kushigata, Yamanashi Prefecture, Japan",
+    "public": true,
+    "created_at": "2019-02-25T19:40:04.448Z",
+    "updated_at": "2019-02-25T19:40:04.448Z",
+    "ref_id": 65,
+    "user_id": 2
+  },
+  {
+    "id": 67,
+    "name": "wheelwringht_1984",
+    "description": "Bird-fruit interaction in the lower montane forests of Monteverde, Costa Rica",
+    "public": true,
+    "created_at": "2019-02-25T19:56:46.465Z",
+    "updated_at": "2019-02-25T19:56:46.465Z",
+    "ref_id": 66,
+    "user_id": 2
+  },
+  {
+    "id": 68,
+    "name": "motten_1982",
+    "description": "spring wildflower community of mesic deciduous forests in piedmont North Carolina",
+    "public": true,
+    "created_at": "2019-02-25T20:07:25.621Z",
+    "updated_at": "2019-02-25T20:07:25.621Z",
+    "ref_id": 67,
+    "user_id": 2
+  },
+  {
+    "id": 69,
+    "name": "arroyo_1982",
+    "description": "Plant-pollinator interaction at three altudinal levels (subandean scrub, cushion-plant, subnival feldfield) in the Andrean zone on the Cordon del Cepo in central Chile",
+    "public": true,
+    "created_at": "2019-02-25T21:13:48.837Z",
+    "updated_at": "2019-02-25T21:13:48.837Z",
+    "ref_id": 68,
+    "user_id": 2
+  },
+  {
+    "id": 70,
+    "name": "kohler_2011",
+    "description": "Hummingbirds-flowers interactions in an altitudinal gradient in the Brazilian Atlantic Rainforest",
+    "public": true,
+    "created_at": "2019-02-25T21:28:48.689Z",
+    "updated_at": "2019-02-25T21:28:48.689Z",
+    "ref_id": 69,
+    "user_id": 2
+  },
+  {
+    "id": 71,
+    "name": "olesen",
+    "description": "Plant-pollinator interaction at Garajonay, Gomera, Spain (Canary Islands)",
+    "public": true,
+    "created_at": "2019-02-25T21:37:25.184Z",
+    "updated_at": "2019-02-25T21:37:25.184Z",
+    "ref_id": 70,
+    "user_id": 2
+  },
+  {
+    "id": 72,
+    "name": "hadfield_2014",
+    "description": "Flea distribution and abundance on small mammals (Soricomorpha and Rodentia) in 51 different regions of the Palearctic",
+    "public": true,
+    "created_at": "2019-02-26T19:15:35.831Z",
+    "updated_at": "2019-02-26T19:15:35.831Z",
+    "ref_id": 71,
+    "user_id": 2
+  },
+  {
+    "id": 73,
+    "name": "filgueira_2011",
+    "description": "Food web of the Ria de Vigo",
+    "public": true,
+    "created_at": "2019-02-26T19:15:58.087Z",
+    "updated_at": "2019-02-26T19:15:58.087Z",
+    "ref_id": 72,
+    "user_id": 3
+  },
+  {
+    "id": 74,
+    "name": "baeta_2011",
+    "description": "Food web of the Mondego bay estuary",
+    "public": true,
+    "created_at": "2019-02-26T19:50:23.243Z",
+    "updated_at": "2019-02-26T19:50:23.243Z",
+    "ref_id": 73,
+    "user_id": 3
+  },
+  {
+    "id": 75,
+    "name": "ricciardi_2010",
+    "description": "structure of local anemonefish-anemone networks across the Manado region of Sulawesi, Indonesia",
+    "public": true,
+    "created_at": "2019-02-26T20:12:00.676Z",
+    "updated_at": "2019-02-26T20:12:00.676Z",
+    "ref_id": 74,
+    "user_id": 2
+  },
+  {
+    "id": 76,
+    "name": "ponisio_2017",
+    "description": "assembly of plant-pollinator communities at native plant restoration sites in an agricultural landscape, California",
+    "public": true,
+    "created_at": "2019-02-26T20:48:08.126Z",
+    "updated_at": "2019-02-26T20:48:08.126Z",
+    "ref_id": 75,
+    "user_id": 2
+  },
+  {
+    "id": 77,
+    "name": "angelini_2010",
+    "description": "Food web of the Angolan fishery landings",
+    "public": true,
+    "created_at": "2019-02-26T21:18:55.909Z",
+    "updated_at": "2019-02-26T21:18:55.909Z",
+    "ref_id": 76,
+    "user_id": 3
+  },
+  {
+    "id": 78,
+    "name": "cornejo-donoso_2008",
+    "description": "Food Web of the Antarctic Peninsula Ecosystem",
+    "public": true,
+    "created_at": "2019-02-26T23:57:11.283Z",
+    "updated_at": "2019-02-26T23:57:11.283Z",
+    "ref_id": 77,
+    "user_id": 3
+  },
+  {
+    "id": 79,
+    "name": "douglas_2011",
+    "description": "Food web of the Chesapeake's Bay Eelgrass Bed",
+    "public": true,
+    "created_at": "2019-02-27T00:20:35.186Z",
+    "updated_at": "2019-02-27T00:20:35.186Z",
+    "ref_id": 78,
+    "user_id": 3
+  },
+  {
+    "id": 80,
+    "name": "ruzicka_2012",
+    "description": "Food web of the Northern California Current",
+    "public": true,
+    "created_at": "2019-02-27T04:10:01.429Z",
+    "updated_at": "2019-02-27T04:10:01.429Z",
+    "ref_id": 79,
+    "user_id": 3
+  },
+  {
+    "id": 81,
+    "name": "vinogradov_1978",
+    "description": "Food web of the plankton community in the zone of upwelling",
+    "public": true,
+    "created_at": "2019-02-27T14:48:28.090Z",
+    "updated_at": "2019-02-27T14:48:28.090Z",
+    "ref_id": 80,
+    "user_id": 3
+  },
+  {
+    "id": 82,
+    "name": "alcorlo_et_al_2001",
+    "description": "The biotic interactions within two shallow salt lake, Los Monegros, Spain",
+    "public": true,
+    "created_at": "2019-02-27T16:34:14.178Z",
+    "updated_at": "2019-02-27T16:34:14.178Z",
+    "ref_id": 81,
+    "user_id": 4
+  },
+  {
+    "id": 83,
+    "name": "allan_1982",
+    "description": "Food web structure of a mountain stream, Cement Creek, Gunnison County, Colorado, USA",
+    "public": true,
+    "created_at": "2019-02-28T14:08:49.355Z",
+    "updated_at": "2019-02-28T14:08:49.355Z",
+    "ref_id": 82,
+    "user_id": 4
+  },
+  {
+    "id": 84,
+    "name": "angelini_agostinho_2005",
+    "description": "Food web structure in term of diet composition in the Parana River, Brazil",
+    "public": true,
+    "created_at": "2019-02-28T15:29:43.375Z",
+    "updated_at": "2019-02-28T15:29:43.375Z",
+    "ref_id": 83,
+    "user_id": 4
+  },
+  {
+    "id": 85,
+    "name": "angelini_et_al_2006",
+    "description": "Food web structure in term of percentage of diet composition during two periods, Itaipu Reservoir, Brazil",
+    "public": true,
+    "created_at": "2019-02-28T16:29:53.593Z",
+    "updated_at": "2019-02-28T16:29:53.593Z",
+    "ref_id": 84,
+    "user_id": 4
+  },
+  {
+    "id": 86,
+    "name": "angelini_et_al_2010",
+    "description": "Interaction of a mixed food web in the Corrente River in the Paraná River Basin, Brazil",
+    "public": true,
+    "created_at": "2019-02-28T17:26:45.617Z",
+    "updated_at": "2019-02-28T17:26:45.617Z",
+    "ref_id": 85,
+    "user_id": 4
+  },
+  {
+    "id": 87,
+    "name": "beaver_1985",
+    "description": "The geographical variation of food web structure in different species of Nepenthes pitcher plants",
+    "public": true,
+    "created_at": "2019-02-28T20:12:00.625Z",
+    "updated_at": "2019-02-28T20:12:00.625Z",
+    "ref_id": 86,
+    "user_id": 4
+  },
+  {
+    "id": 88,
+    "name": "bird_1930",
+    "description": "The biotic interactions of different communities of the Aspen Parkland, North America",
+    "public": true,
+    "created_at": "2019-03-01T16:05:09.261Z",
+    "updated_at": "2019-03-01T16:05:09.261Z",
+    "ref_id": 87,
+    "user_id": 4
+  },
+  {
+    "id": 89,
+    "name": "carlson_1968",
+    "description": "Food web structure of the biological community in the Mississippi River above Dam 19, Keokuk, Iowa",
+    "public": true,
+    "created_at": "2019-03-01T17:08:50.325Z",
+    "updated_at": "2019-03-01T17:08:50.325Z",
+    "ref_id": 88,
+    "user_id": 4
+  },
+  {
+    "id": 90,
+    "name": "collins_et_al_1976",
+    "description": "Community interaction of a alkalin thermal spring ecosystem, Yellowstone National Park, Wyoming, USA",
+    "public": true,
+    "created_at": "2019-03-01T17:17:10.115Z",
+    "updated_at": "2019-03-01T17:17:10.115Z",
+    "ref_id": 89,
+    "user_id": 4
+  },
+  {
+    "id": 91,
+    "name": "cornaby_1974",
+    "description": "The insect community of a toad carrion in tropical forests, Costa Rica",
+    "public": true,
+    "created_at": "2019-03-01T18:22:23.034Z",
+    "updated_at": "2019-03-01T18:22:23.034Z",
+    "ref_id": 90,
+    "user_id": 4
+  },
+  {
+    "id": 92,
+    "name": "cruz_escalona_et_al_2007",
+    "description": "Food web structure and diet composition based on an Ecopath model in Laguna Alvarado, western Gulf of Mexico",
+    "public": true,
+    "created_at": "2019-03-01T18:55:28.793Z",
+    "updated_at": "2019-03-01T18:55:28.793Z",
+    "ref_id": 91,
+    "user_id": 4
+  },
+  {
+    "id": 93,
+    "name": "edwards_1982",
+    "description": "Food web structure of an intertidal community at Hodgkin's Cove, Cape Ann, Massachusetts",
+    "public": true,
+    "created_at": "2019-03-01T19:42:58.744Z",
+    "updated_at": "2019-03-01T19:42:58.744Z",
+    "ref_id": 92,
+    "user_id": 4
+  },
+  {
+    "id": 94,
+    "name": "fetahi_et_al_2011",
+    "description": "Food web structure and diet composition based on an Ecopath model in Lake Hayq, Ethiopia",
+    "public": true,
+    "created_at": "2019-03-01T20:10:53.367Z",
+    "updated_at": "2019-03-01T20:10:53.367Z",
+    "ref_id": 93,
+    "user_id": 4
+  },
+  {
+    "id": 95,
+    "name": "fryer_1959",
+    "description": "Food web structure of different places in Lake Nyasa (Lake Malawi), Malawi",
+    "public": true,
+    "created_at": "2019-03-04T15:02:14.590Z",
+    "updated_at": "2019-03-04T15:02:14.590Z",
+    "ref_id": 94,
+    "user_id": 4
+  },
+  {
+    "id": 96,
+    "name": "gaedke_straile_1994",
+    "description": "Food web structure of the mesoeutrophic Lake Constance, Central Europe",
+    "public": true,
+    "created_at": "2019-03-04T15:16:04.862Z",
+    "updated_at": "2019-03-04T15:16:04.862Z",
+    "ref_id": 95,
+    "user_id": 4
+  },
+  {
+    "id": 97,
+    "name": "hampton_et_al_2011",
+    "description": "Food web structure of a deep oligotrophic lake (Lake Crescent), Washington, USA",
+    "public": true,
+    "created_at": "2019-03-04T15:45:31.613Z",
+    "updated_at": "2019-03-04T15:45:31.613Z",
+    "ref_id": 96,
+    "user_id": 4
+  },
+  {
+    "id": 98,
+    "name": "hildrew_et_al_1985",
+    "description": "Food web structure of an iron-rich stream (Broadstone stream), England",
+    "public": true,
+    "created_at": "2019-03-04T16:24:23.613Z",
+    "updated_at": "2019-03-04T16:24:23.613Z",
+    "ref_id": 97,
+    "user_id": 4
+  },
+  {
+    "id": 99,
+    "name": "jiron_cartin_1981",
+    "description": "The insect community of a dog carcass in a premontane humid forest, University of Costa Rica, Costa Rica",
+    "public": true,
+    "created_at": "2019-03-04T18:22:30.350Z",
+    "updated_at": "2019-03-04T18:22:30.350Z",
+    "ref_id": 98,
+    "user_id": 4
+  },
+  {
+    "id": 100,
+    "name": "jones_1949",
+    "description": "Food web structure of a calcareous stream (Clydach river), Black Mountain district, south Wales",
+    "public": true,
+    "created_at": "2019-03-04T18:41:18.722Z",
+    "updated_at": "2019-03-04T18:41:18.722Z",
+    "ref_id": 99,
+    "user_id": 4
+  },
+  {
+    "id": 101,
+    "name": "liu_et_al_2007",
+    "description": "Biotic interactions and diet composition based on an Ecopath model in Lake Qiandaohu, Chun’an County, Zhejiang Province, China",
+    "public": true,
+    "created_at": "2019-03-04T19:35:15.232Z",
+    "updated_at": "2019-03-04T19:35:15.232Z",
+    "ref_id": 100,
+    "user_id": 4
+  }
+]

@@ -1,0 +1,1898 @@
+[
+  {
+    "id": 19,
+    "name": "roberson_1929_18990701_19",
+    "date": "1899-07-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -89.8818,
+        39.2798
+      ]
+    },
+    "description": "Insects observed pollinating flowers, ten miles of Carlinville, Illinois, USA",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T18:47:30.657Z",
+    "updated_at": "2019-02-22T18:47:30.657Z",
+    "dataset_id": 1,
+    "user_id": 3
+  },
+  {
+    "id": 12,
+    "name": "howking_1968_19680601_12",
+    "date": "1968-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -71.3,
+        81.8166667
+      ]
+    },
+    "description": "Insect activity recorded on flower at Lake Hazen, Ellesmere Island, N.W.T., Canada",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T18:21:58.543Z",
+    "updated_at": "2019-02-22T18:21:58.543Z",
+    "dataset_id": 2,
+    "user_id": 2
+  },
+  {
+    "id": 13,
+    "name": "witt_1998_19980101_13",
+    "date": "1998-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -50.55,
+        66.9667
+      ]
+    },
+    "description": "Unknown",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T18:28:26.093Z",
+    "updated_at": "2019-02-22T18:28:26.093Z",
+    "dataset_id": 3,
+    "user_id": 3
+  },
+  {
+    "id": 18,
+    "name": "mosquin_martin_1967_19650731_18",
+    "date": "1965-07-31T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -114.966667,
+        75
+      ]
+    },
+    "description": "Occurence of flower-visiting insect on plant species, two miles north of Bailey Point, Melville Island, N.W.T., Canada",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T18:38:37.491Z",
+    "updated_at": "2019-02-22T18:38:37.491Z",
+    "dataset_id": 4,
+    "user_id": 3
+  },
+  {
+    "id": 15,
+    "name": "silva_2002_20000301_15",
+    "date": "2000-03-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -48.4069,
+        -24.2653
+      ]
+    },
+    "description": "Fruit-bird interaction at the Intervales State Park, Brazil",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T18:34:15.460Z",
+    "updated_at": "2019-02-22T18:34:15.460Z",
+    "dataset_id": 5,
+    "user_id": 3
+  },
+  {
+    "id": 3259,
+    "name": "teal_1962",
+    "date": null,
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -81.261573,
+        31.460082
+      ]
+    },
+    "description": "Food web structure of a salt marsh, Sapelo Island, Georgia, USA",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-27T15:30:50.001Z",
+    "updated_at": "2019-03-27T15:30:50.001Z",
+    "dataset_id": 177,
+    "user_id": 4
+  },
+  {
+    "id": 908,
+    "name": "lundgren_olesen_2005_20020804_908",
+    "date": "2002-08-04T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -52.144531836264,
+        70.722635596545
+      ]
+    },
+    "description": "Pollnator activity recorded on flowers, Uummannaq Island, Greenland, Danmark",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T22:02:40.398Z",
+    "updated_at": "2019-02-24T22:02:40.398Z",
+    "dataset_id": 7,
+    "user_id": 2
+  },
+  {
+    "id": 23,
+    "name": "kaehler_et_al_2005_20020401_23",
+    "date": "2002-04-01T00:00:00.000Z",
+    "geom": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -48.972930908203125,
+            -25.537485071759033
+          ],
+          [
+            -48.88263702392578,
+            -25.537485071759033
+          ],
+          [
+            -48.88263702392578,
+            -25.461254675964103
+          ],
+          [
+            -48.972930908203125,
+            -25.461254675964103
+          ],
+          [
+            -48.972930908203125,
+            -25.537485071759033
+          ]
+        ]
+      ]
+    },
+    "description": "Pollination of a bromeliad community in the high montane Atlantic rain forest in Paran? state, Brazil",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T20:07:44.629Z",
+    "updated_at": "2019-02-27T15:50:31.373Z",
+    "dataset_id": 8,
+    "user_id": 3
+  },
+  {
+    "id": 909,
+    "name": "elberling_olesen_1999_19940823_909",
+    "date": "1994-08-23T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        18.5,
+        68.35
+      ]
+    },
+    "description": "Flower-visiting insect at Mt. Latnjatjarro, northern Sweden",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T22:21:32.444Z",
+    "updated_at": "2019-02-24T22:21:32.444Z",
+    "dataset_id": 9,
+    "user_id": 2
+  },
+  {
+    "id": 946,
+    "name": "elberling_olesen__946",
+    "date": null,
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -20.5,
+        74.5
+      ]
+    },
+    "description": "null",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-25T20:09:37.677Z",
+    "updated_at": "2019-02-25T20:09:37.677Z",
+    "dataset_id": 10,
+    "user_id": 2
+  },
+  {
+    "id": 26,
+    "name": "woodwell_1967_19670101_26",
+    "date": "1967-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -72.9993,
+        40.828245
+      ]
+    },
+    "description": "Plant and animals interaction in Long Islands estuary",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T20:25:23.358Z",
+    "updated_at": "2019-02-22T20:25:23.358Z",
+    "dataset_id": 11,
+    "user_id": 3
+  },
+  {
+    "id": 27,
+    "name": "barret_helenurm_1987_19870101_27",
+    "date": "1987-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -66.071245,
+        46.553731
+      ]
+    },
+    "description": "Understory perennial plants interaction with pollinator, 5 km east of Doaktown, Northumberland County, central New Brunswick, Canada",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T20:53:13.665Z",
+    "updated_at": "2019-02-22T20:53:13.665Z",
+    "dataset_id": 12,
+    "user_id": 3
+  },
+  {
+    "id": 28,
+    "name": "copeland_1974_19740101_28",
+    "date": "1974-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -76.230878,
+        35.20674
+      ]
+    },
+    "description": "Food web of the oligohaline systeme",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-22T21:04:52.617Z",
+    "updated_at": "2019-02-22T21:04:52.617Z",
+    "dataset_id": 13,
+    "user_id": 3
+  },
+  {
+    "id": 947,
+    "name": "johnston_1956_19560101_947",
+    "date": "1956-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -122.36325,
+        38.003734
+      ]
+    },
+    "description": "Predation by short-eared owls on a salicornia salt marsh",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-25T20:51:26.739Z",
+    "updated_at": "2019-02-25T20:51:26.739Z",
+    "dataset_id": 14,
+    "user_id": 3
+  },
+  {
+    "id": 1262,
+    "name": "havens_1992_19840601_1262",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6355555555556,
+        43.6202777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Twin Lake West.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:16.261Z",
+    "updated_at": "2019-03-03T18:54:59.370Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1261,
+    "name": "havens_1992_19840601_1261",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3416666666667,
+        44.3416666666667
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Twin Lake East.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:15.890Z",
+    "updated_at": "2019-03-03T18:54:59.245Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1219,
+    "name": "havens_1992_19840601_1219",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.125,
+        44.5119444444444
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Beaver Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:03.364Z",
+    "updated_at": "2019-03-03T18:54:53.535Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1237,
+    "name": "havens_1992_19840601_1237",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -75.0680555555556,
+        43.5513888888889
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Gull Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:08.922Z",
+    "updated_at": "2019-03-03T18:54:56.002Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1218,
+    "name": "havens_1992_19840601_1218",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7522222222222,
+        43.6511111111111
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Burntbridge Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:03.114Z",
+    "updated_at": "2019-03-03T18:54:53.396Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1235,
+    "name": "havens_1992_19840601_1235",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.9052777777778,
+        43.7802777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Goose Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:08.331Z",
+    "updated_at": "2019-03-03T18:54:55.748Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1236,
+    "name": "havens_1992_19840601_1236",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3472222222222,
+        44.3769444444444
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Grass Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:08.601Z",
+    "updated_at": "2019-03-03T18:54:55.875Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1221,
+    "name": "havens_1992_19840601_1221",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.5697222222222,
+        44.1625
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Brandy Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:03.938Z",
+    "updated_at": "2019-03-03T18:54:53.846Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1251,
+    "name": "havens_1992_19840601_1251",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.1530555555556,
+        44.2683333333333
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Owl Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:12.605Z",
+    "updated_at": "2019-03-03T18:54:57.826Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1252,
+    "name": "havens_1992_19840601_1252",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3116666666667,
+        44.3527777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Rat Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:12.874Z",
+    "updated_at": "2019-03-03T18:54:57.974Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1253,
+    "name": "havens_1992_19840601_1253",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.9230555555555,
+        43.8486111111111
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Razorback Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:13.154Z",
+    "updated_at": "2019-03-03T18:54:58.104Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1250,
+    "name": "havens_1992_19840601_1250",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.9,
+        43.8502777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the OswegoLake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:12.347Z",
+    "updated_at": "2019-03-03T18:54:57.695Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1217,
+    "name": "havens_1992_19840601_1217",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7972222222222,
+        43.6283333333333
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Balsom Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:02.758Z",
+    "updated_at": "2019-03-03T18:54:53.247Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1256,
+    "name": "havens_1992_19840601_1256",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.9152777777778,
+        43.7841666666667
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Safford Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:14.316Z",
+    "updated_at": "2019-03-03T18:54:58.500Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1257,
+    "name": "havens_1992_19840601_1257",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -75.0108333333333,
+        44.0105555555556
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Sand Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:14.744Z",
+    "updated_at": "2019-03-03T18:54:58.625Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1220,
+    "name": "havens_1992_19840601_1220",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3594444444444,
+        44.2847222222222
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the BigHope Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:03.643Z",
+    "updated_at": "2019-03-03T18:54:53.689Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1233,
+    "name": "havens_1992_19840601_1233",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7794444444445,
+        43.7133333333333
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Fawn Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:07.432Z",
+    "updated_at": "2019-03-03T18:54:55.483Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1234,
+    "name": "havens_1992_19840601_1234",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.4122222222222,
+        44.3397222222222
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Federation Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:08.020Z",
+    "updated_at": "2019-03-03T18:54:55.614Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1259,
+    "name": "havens_1992_19840601_1259",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7388888888889,
+        45.6361111111111
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Squaw Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:15.359Z",
+    "updated_at": "2019-03-03T18:54:58.876Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1248,
+    "name": "havens_1992_19840601_1248",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6661111111111,
+        43.6877777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Little Rainbow Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:11.824Z",
+    "updated_at": "2019-03-03T18:54:57.433Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1260,
+    "name": "havens_1992_19840601_1260",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.8102777777778,
+        43.6308333333333
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Stink Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:15.611Z",
+    "updated_at": "2019-03-03T18:54:59.002Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1225,
+    "name": "havens_1992_19840601_1225",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.8127777777778,
+        43.7891666666667
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Cascade Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:05.031Z",
+    "updated_at": "2019-03-03T18:54:54.425Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1264,
+    "name": "havens_1992_19840601_1264",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3027777777778,
+        44.3938888888889
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Whipple Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:16.898Z",
+    "updated_at": "2019-03-03T18:54:59.696Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1265,
+    "name": "havens_1992_19840601_1265",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6563888888889,
+        43.6272222222222
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Wolf Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:17.356Z",
+    "updated_at": "2019-03-03T18:54:59.828Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1254,
+    "name": "havens_1992_19840601_1254",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -75.0183333333333,
+        44.0105555555556
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Rock Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:13.493Z",
+    "updated_at": "2019-03-03T18:54:58.251Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1255,
+    "name": "havens_1992_19840601_1255",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.8069444444444,
+        43.8413888888889
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Russian Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:14.002Z",
+    "updated_at": "2019-03-03T18:54:58.376Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1242,
+    "name": "havens_1992_19840601_1242",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3605555555555,
+        44.3172222222222
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Horseshoe Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:10.328Z",
+    "updated_at": "2019-03-03T18:54:56.650Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1243,
+    "name": "havens_1992_19840601_1243",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7622222222222,
+        43.6233333333333
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Indian Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:10.563Z",
+    "updated_at": "2019-03-03T18:54:56.779Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1231,
+    "name": "havens_1992_19840601_1231",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -75.0211111111111,
+        44.0227777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Emerald Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:06.846Z",
+    "updated_at": "2019-03-03T18:54:55.223Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1232,
+    "name": "havens_1992_19840601_1232",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6833333333333,
+        43.6325
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Falls Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:07.090Z",
+    "updated_at": "2019-03-03T18:54:55.353Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1246,
+    "name": "havens_1992_19840601_1246",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.1672222222222,
+        44.4875
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Lost Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:11.329Z",
+    "updated_at": "2019-03-03T18:54:57.168Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1247,
+    "name": "havens_1992_19840601_1247",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.2838888888889,
+        44.4619444444444
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the .",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:11.573Z",
+    "updated_at": "2019-03-03T18:54:57.302Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1227,
+    "name": "havens_1992_19840601_1227",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -75.0555555555556,
+        43.5277777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Chub Pond.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:05.598Z",
+    "updated_at": "2019-03-03T20:54:21.148Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1249,
+    "name": "havens_1992_19840601_1249",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7777777777778,
+        43.8716666666667
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Lower Sister Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:12.091Z",
+    "updated_at": "2019-03-03T18:54:57.560Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1263,
+    "name": "havens_1992_19840601_1263",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6416666666667,
+        43.6175
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Twelfth Tee Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:16.572Z",
+    "updated_at": "2019-03-03T18:54:59.555Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1238,
+    "name": "havens_1992_19840601_1238",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.8197222222222,
+        43.8625
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Gull Lake North.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:09.207Z",
+    "updated_at": "2019-03-03T18:54:56.130Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1239,
+    "name": "havens_1992_19840601_1239",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7,
+        43.6694444444444
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Helldiver Pond.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:09.513Z",
+    "updated_at": "2019-03-03T18:54:56.260Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1230,
+    "name": "havens_1992_19840601_1230",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6644444444444,
+        43.6161111111111
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Deep Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:06.564Z",
+    "updated_at": "2019-03-03T18:54:55.088Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1245,
+    "name": "havens_1992_19840601_1245",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -73.9291666666667,
+        44.3163888888889
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Loon Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:11.081Z",
+    "updated_at": "2019-03-03T18:54:57.042Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1222,
+    "name": "havens_1992_19840601_1222",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6625,
+        43.6
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Bridge Brook Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:04.207Z",
+    "updated_at": "2019-03-03T18:54:53.996Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1229,
+    "name": "havens_1992_19840601_1229",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.8075,
+        43.8305555555556
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Constable Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:06.269Z",
+    "updated_at": "2019-03-03T18:54:54.952Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1244,
+    "name": "havens_1992_19840601_1244",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3291666666667,
+        44.3591666666667
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Long Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:10.823Z",
+    "updated_at": "2019-03-03T18:54:56.910Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1224,
+    "name": "havens_1992_19840601_1224",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7094444444444,
+        44.2122222222222
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Buck Pond.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:04.752Z",
+    "updated_at": "2019-03-03T18:54:54.284Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1228,
+    "name": "havens_1992_19840601_1228",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -73.935,
+        44.3063888888889
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Connery Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:05.953Z",
+    "updated_at": "2019-03-03T18:54:54.814Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1258,
+    "name": "havens_1992_19840601_1258",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.8813888888889,
+        43.8438888888889
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the South Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:15.095Z",
+    "updated_at": "2019-03-03T18:54:58.746Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1226,
+    "name": "havens_1992_19840601_1226",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.7872222222222,
+        43.8325
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the .",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:05.313Z",
+    "updated_at": "2019-03-03T18:54:54.555Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1240,
+    "name": "havens_1992_19840601_1240",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.6594444444444,
+        44.0852777777778
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the High Pond.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:09.761Z",
+    "updated_at": "2019-03-03T18:54:56.401Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1223,
+    "name": "havens_1992_19840601_1223",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -75.0633333333333,
+        45.53
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Brook Trout Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:04.463Z",
+    "updated_at": "2019-03-03T18:54:54.138Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1216,
+    "name": "havens_1992_19840601_1216",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.0386111111111,
+        44.26
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Alford Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:02.463Z",
+    "updated_at": "2019-03-03T18:54:53.089Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 1241,
+    "name": "havens_1992_19840601_1241",
+    "date": "1984-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.3619444444444,
+        44.3580555555556
+      ]
+    },
+    "description": "Food web of pelagic communities of small lakes and ponds of the Hoel Lake.",
+    "public": true,
+    "all_interactions": true,
+    "created_at": "2019-02-27T02:23:10.035Z",
+    "updated_at": "2019-03-03T18:54:56.525Z",
+    "dataset_id": 15,
+    "user_id": 3
+  },
+  {
+    "id": 80,
+    "name": "kemp_1977_19770101_80",
+    "date": "1977-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -82.685704,
+        28.846405
+      ]
+    },
+    "description": "Food web for the Crystal River estuary",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T03:03:04.151Z",
+    "updated_at": "2019-02-23T03:03:04.151Z",
+    "dataset_id": 16,
+    "user_id": 3
+  },
+  {
+    "id": 81,
+    "name": "bradstreet_1982_19780101_81",
+    "date": "1978-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -77.890472,
+        72.69767
+      ]
+    },
+    "description": "Food web of High Arctic Ice Edges",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T03:35:28.405Z",
+    "updated_at": "2019-02-23T03:35:28.405Z",
+    "dataset_id": 17,
+    "user_id": 3
+  },
+  {
+    "id": 82,
+    "name": "patten_1979_19780101_82",
+    "date": "1978-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -166.274713,
+        -74.666783
+      ]
+    },
+    "description": "Food web of Ross Sea pelagic ecosystem",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T14:12:09.162Z",
+    "updated_at": "2019-02-23T14:12:09.162Z",
+    "dataset_id": 18,
+    "user_id": 3
+  },
+  {
+    "id": 83,
+    "name": "clarke_1967_19650831_83",
+    "date": "1965-08-31T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -117.267107,
+        32.869956
+      ]
+    },
+    "description": "Food web of the sand-bottom community",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T14:43:11.020Z",
+    "updated_at": "2019-02-23T14:43:11.020Z",
+    "dataset_id": 19,
+    "user_id": 3
+  },
+  {
+    "id": 84,
+    "name": "van_es_1967_19750101_84",
+    "date": "1975-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        6.966782,
+        53.404687
+      ]
+    },
+    "description": "Food web of the Ems estuary",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T14:57:22.680Z",
+    "updated_at": "2019-02-23T14:57:22.680Z",
+    "dataset_id": 20,
+    "user_id": 3
+  },
+  {
+    "id": 85,
+    "name": "macginitie_1935_19260601_85",
+    "date": "1926-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -121.809076,
+        36.776964
+      ]
+    },
+    "description": "Food web of the Monterey Bay",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T16:24:51.283Z",
+    "updated_at": "2019-02-23T16:24:51.283Z",
+    "dataset_id": 21,
+    "user_id": 3
+  },
+  {
+    "id": 86,
+    "name": "zetina_2003_20030101_86",
+    "date": "2003-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -106.10993,
+        22.985307
+      ]
+    },
+    "description": "Dietary matrix of the Huizache–Caimanero lagoon",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T17:04:34.046Z",
+    "updated_at": "2019-02-23T17:04:34.046Z",
+    "dataset_id": 22,
+    "user_id": 3
+  },
+  {
+    "id": 87,
+    "name": "cruz_2007_20070101_87",
+    "date": "2007-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -95.827863,
+        18.774254
+      ]
+    },
+    "description": "Dietary matrix of the Laguna Alvarado",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T17:20:16.448Z",
+    "updated_at": "2019-02-23T17:20:16.448Z",
+    "dataset_id": 23,
+    "user_id": 3
+  },
+  {
+    "id": 88,
+    "name": "lancraft_1991_19880620_88",
+    "date": "1988-06-20T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -41.38671,
+        -58.230498
+      ]
+    },
+    "description": "Diets of common micronekton and macrozooplankton species in the Antarctic ice edge zone during winter",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T18:01:38.068Z",
+    "updated_at": "2019-02-23T18:01:38.068Z",
+    "dataset_id": 24,
+    "user_id": 3
+  },
+  {
+    "id": 89,
+    "name": "lin_2006_20060101_89",
+    "date": "2006-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        120.433333,
+        22.45
+      ]
+    },
+    "description": "Dietary matrix of the Tapong Bay",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-23T21:33:15.418Z",
+    "updated_at": "2019-02-23T21:33:15.418Z",
+    "dataset_id": 25,
+    "user_id": 3
+  },
+  {
+    "id": 930,
+    "name": "smith_2007_20070101_930",
+    "date": "2007-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -175,
+        -76
+      ]
+    },
+    "description": "Food web of the Ross Sea continental shelf ecosystem",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-25T16:07:30.813Z",
+    "updated_at": "2019-02-25T16:07:30.813Z",
+    "dataset_id": 26,
+    "user_id": 3
+  },
+  {
+    "id": 91,
+    "name": "torres_2013_20130101_91",
+    "date": "2013-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -7.087689,
+        36.970697
+      ]
+    },
+    "description": "Food web of the the Gulf of Cadiz",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T14:22:38.207Z",
+    "updated_at": "2019-02-24T14:22:38.207Z",
+    "dataset_id": 27,
+    "user_id": 3
+  },
+  {
+    "id": 92,
+    "name": "yodzis_1998_19980101_92",
+    "date": "1998-01-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web of the Benguela ecosystem",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T14:33:38.034Z",
+    "updated_at": "2019-02-24T14:33:38.034Z",
+    "dataset_id": 28,
+    "user_id": 3
+  },
+  {
+    "id": 93,
+    "name": "kremer_1978_19780101_93",
+    "date": "1978-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -71.353295,
+        41.62041
+      ]
+    },
+    "description": "Food web of Narragansett Bay",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T14:48:48.942Z",
+    "updated_at": "2019-02-24T14:48:48.942Z",
+    "dataset_id": 29,
+    "user_id": 3
+  },
+  {
+    "id": 94,
+    "name": "rosenthal_1974_19670901_94",
+    "date": "1967-09-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -117.266667,
+        32.95
+      ]
+    },
+    "description": "Food web of the Del Mar kelp bed.",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T15:00:58.460Z",
+    "updated_at": "2019-02-24T15:00:58.460Z",
+    "dataset_id": 30,
+    "user_id": 3
+  },
+  {
+    "id": 95,
+    "name": "peterson_1979_19721001_95",
+    "date": "1972-10-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -74.097138,
+        39.759597
+      ]
+    },
+    "description": "Food web of the intertidal epifauna of the bay piling system and of the ocean jetty system",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T15:10:15.563Z",
+    "updated_at": "2019-02-24T15:10:15.563Z",
+    "dataset_id": 31,
+    "user_id": 3
+  },
+  {
+    "id": 96,
+    "name": "gontikaki_2011_20070501_96",
+    "date": "2007-05-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -2.666583,
+        61.219111
+      ]
+    },
+    "description": "Food web of a sub-arctic deep-sea benthic community",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T15:16:25.766Z",
+    "updated_at": "2019-02-24T15:16:25.766Z",
+    "dataset_id": 32,
+    "user_id": 3
+  },
+  {
+    "id": 97,
+    "name": "christian_1999_19940101_97",
+    "date": "1994-01-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web of a winter’s seagrass",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T15:32:44.338Z",
+    "updated_at": "2019-02-24T15:32:44.338Z",
+    "dataset_id": 33,
+    "user_id": 3
+  },
+  {
+    "id": 98,
+    "name": "hiatt_1960_19601001_98",
+    "date": "1960-10-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        168.656502,
+        7.916452
+      ]
+    },
+    "description": "Food web of the Marshalles reefs",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T15:43:02.799Z",
+    "updated_at": "2019-02-24T15:43:02.799Z",
+    "dataset_id": 34,
+    "user_id": 3
+  },
+  {
+    "id": 99,
+    "name": "landry_1977_19770101_99",
+    "date": "1977-01-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web of the pelagic ecosystems",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T15:54:34.920Z",
+    "updated_at": "2019-02-24T15:54:34.920Z",
+    "dataset_id": 35,
+    "user_id": 3
+  },
+  {
+    "id": 100,
+    "name": "mackintosh_1967_19450101_100",
+    "date": "1945-01-01T00:00:00.000Z",
+    "geom": null,
+    "description": "A survey of antarctic biology",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T16:29:51.548Z",
+    "updated_at": "2019-02-24T16:29:51.548Z",
+    "dataset_id": 36,
+    "user_id": 3
+  },
+  {
+    "id": 101,
+    "name": "qazim_1970_19700101_101",
+    "date": "1970-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        76.243846,
+        9.970888
+      ]
+    },
+    "description": "Food web of Cohin backwater",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T16:37:00.832Z",
+    "updated_at": "2019-02-24T16:37:00.832Z",
+    "dataset_id": 37,
+    "user_id": 3
+  },
+  {
+    "id": 102,
+    "name": "knox_1970_19700101_102",
+    "date": "1970-01-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web of Antarctic marine ecosystems",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T16:48:13.869Z",
+    "updated_at": "2019-02-24T16:48:13.869Z",
+    "dataset_id": 38,
+    "user_id": 3
+  },
+  {
+    "id": 103,
+    "name": "parin_1970_19700101_103",
+    "date": "1970-01-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web of tropical seas",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-24T16:57:35.144Z",
+    "updated_at": "2019-02-24T16:57:35.144Z",
+    "dataset_id": 39,
+    "user_id": 3
+  },
+  {
+    "id": 1280,
+    "name": "shushkina_1979_19790101_1280",
+    "date": "1979-01-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web of tropical pelagic ecosystem",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-02-27T13:07:23.895Z",
+    "updated_at": "2019-02-27T13:07:23.895Z",
+    "dataset_id": 40,
+    "user_id": 3
+  },
+  {
+    "id": 2462,
+    "name": "yamazaki_kato_2003",
+    "date": "2001-04-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        131.5,
+        33.4
+      ]
+    },
+    "description": "Interactions of a plant-pollinator community in a grassland ecosystem at Mt. Yufu, Western Japan",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-26T16:27:46.992Z",
+    "updated_at": "2019-03-26T16:27:46.992Z",
+    "dataset_id": 175,
+    "user_id": 4
+  },
+  {
+    "id": 1575,
+    "name": "thompson_townsend_2004_7",
+    "date": "1995-11-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web structure of the Venlaw stream (2 years post harvest) , New Zealand",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-18T18:20:13.749Z",
+    "updated_at": "2019-03-18T18:20:13.749Z",
+    "dataset_id": 157,
+    "user_id": 4
+  },
+  {
+    "id": 1574,
+    "name": "thompson_townsend_2004_6",
+    "date": "1995-11-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web structure of the Control pine stream (1 year post harvest) , New Zealand",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-18T18:19:32.066Z",
+    "updated_at": "2019-03-18T18:19:32.066Z",
+    "dataset_id": 157,
+    "user_id": 4
+  },
+  {
+    "id": 1580,
+    "name": "thompson_townsend_2004_12",
+    "date": "1995-11-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web structure of the Control pine stream (2 years post harvest) , New Zealand",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-18T18:23:47.307Z",
+    "updated_at": "2019-03-18T18:23:47.307Z",
+    "dataset_id": 157,
+    "user_id": 4
+  },
+  {
+    "id": 1571,
+    "name": "thompson_townsend_2004_3",
+    "date": "1995-11-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web structure of the Berwick stream (1 year post harvest) , New Zealand",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-18T18:17:09.751Z",
+    "updated_at": "2019-03-18T18:17:09.751Z",
+    "dataset_id": 157,
+    "user_id": 4
+  },
+  {
+    "id": 1577,
+    "name": "thompson_townsend_2004_9",
+    "date": "1995-11-01T00:00:00.000Z",
+    "geom": null,
+    "description": "Food web structure of the Berwick stream (2 years post harvest) , New Zealand",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-18T18:21:50.440Z",
+    "updated_at": "2019-03-18T18:21:50.440Z",
+    "dataset_id": 157,
+    "user_id": 4
+  },
+  {
+    "id": 2472,
+    "name": "2005_ruzicka_2012",
+    "date": "2005-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -126,
+            42
+          ],
+          [
+            -124,
+            42
+          ],
+          [
+            -124,
+            48.34
+          ],
+          [
+            -126,
+            48.34
+          ],
+          [
+            -126,
+            42
+          ],
+          [
+            -126,
+            42
+          ]
+        ]
+      ]
+    },
+    "description": "Food web of the Northern California Current in 2005",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-27T13:36:12.791Z",
+    "updated_at": "2019-04-10T20:44:50.845Z",
+    "dataset_id": 80,
+    "user_id": 3
+  },
+  {
+    "id": 2474,
+    "name": "2007_ruzicka_2012",
+    "date": "2007-06-01T00:00:00.000Z",
+    "geom": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -126,
+            42
+          ],
+          [
+            -124,
+            42
+          ],
+          [
+            -124,
+            48.34
+          ],
+          [
+            -126,
+            48.34
+          ],
+          [
+            -126,
+            42
+          ],
+          [
+            -126,
+            42
+          ]
+        ]
+      ]
+    },
+    "description": "Food web of the Northern California Current in 2007",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-27T13:36:14.443Z",
+    "updated_at": "2019-04-10T20:44:54.146Z",
+    "dataset_id": 80,
+    "user_id": 3
+  },
+  {
+    "id": 2463,
+    "name": "cohen_et_al_2003_1",
+    "date": "1984-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -89.4974112,
+        46.25131
+      ]
+    },
+    "description": "Food web structure of a pelagic community within Tuesday Lake (1984), Michigan, USA",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-26T19:33:00.495Z",
+    "updated_at": "2019-03-26T19:33:00.495Z",
+    "dataset_id": 156,
+    "user_id": 4
+  },
+  {
+    "id": 2464,
+    "name": "cohen_et_al_2003_2",
+    "date": "1986-01-01T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        -89.4974112,
+        46.25131
+      ]
+    },
+    "description": "Food web structure of a pelagic community within Tuesday Lake (1986), Michigan, USA",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2019-03-26T19:33:51.657Z",
+    "updated_at": "2019-03-26T19:33:51.657Z",
+    "dataset_id": 156,
+    "user_id": 4
+  },
+  {
+    "id": 4230,
+    "name": "kolpelke_2007_285",
+    "date": "1997-09-27T00:00:00.000Z",
+    "geom": {
+      "type": "Point",
+      "coordinates": [
+        9.016667,
+        39.23333
+      ]
+    },
+    "description": "Food-web structure of willow-galling sawflies and their natural enemies at Riu Malliu, bei Cagliari, Sardinien (Italy) in 1997",
+    "public": true,
+    "all_interactions": false,
+    "created_at": "2018-04-13T14:51:37.000Z",
+    "updated_at": "2019-03-27T19:55:40.028Z",
+    "dataset_id": 6,
+    "user_id": 2
+  }
+]
