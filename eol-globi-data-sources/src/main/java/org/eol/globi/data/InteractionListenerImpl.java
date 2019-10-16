@@ -124,12 +124,16 @@ class InteractionListenerImpl implements InteractionListener {
     }
 
     private boolean validLink(Map<String, String> link) {
+        return validLink(link, getLogger());
+    }
+
+    public static boolean validLink(Map<String, String> link, ImportLogger logger) {
         Predicate<Map<String, String>> hasSourceTaxon = (Map<String, String> l) -> {
             String sourceTaxonName = l.get(SOURCE_TAXON_NAME);
             String sourceTaxonId = l.get(SOURCE_TAXON_ID);
             boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
             if (!isValid) {
-                getLogger().warn(null, "no source taxon info found in [" + l + "]");
+                logger.warn(null, "no source taxon info found in [" + l + "]");
             }
             return isValid;
         };
@@ -140,14 +144,14 @@ class InteractionListenerImpl implements InteractionListener {
 
             boolean isValid = StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId);
             if (!isValid) {
-                getLogger().warn(null, "no target taxon info found in [" + l + "]");
+                logger.warn(null, "no target taxon info found in [" + l + "]");
             }
             return isValid;
         };
 
-        Predicate<Map<String, String>> hasInteractionType = createInteractionTypePredicate(getLogger());
+        Predicate<Map<String, String>> hasInteractionType = createInteractionTypePredicate(logger);
 
-        Predicate<Map<String, String>> hasReferenceId = createReferencePredicate(getLogger());
+        Predicate<Map<String, String>> hasReferenceId = createReferencePredicate(logger);
 
         return hasSourceTaxon
                 .and(hasTargetTaxon)

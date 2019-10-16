@@ -4,16 +4,34 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.ResourceService;
+import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 
 public class StudyImporterForMangal extends StudyImporterWithListener {
     private static final Log LOG = LogFactory.getLog(StudyImporterForMangal.class);
     public static final String MANGAL_API_ENDPOINT = "https://mangal.io/api/v2";
+    public static final Map<String, InteractType> INTERACTION_TYPE_MAP = new HashMap<String, InteractType>() {{
+        put("competition", InteractType.RELATED_TO);
+        put("detritivore", InteractType.ATE);
+        put("herbivory", InteractType.ATE);
+        put("mutualism", InteractType.INTERACTS_WITH);
+        put("parasitism", InteractType.PARASITE_OF);
+        put("predation", InteractType.PREYS_UPON);
+        put("scavenger", InteractType.ATE);
+        put("symbiosis", InteractType.SYMBIONT_OF);
+        put("unspecified", InteractType.RELATED_TO);
+    }};
 
     public StudyImporterForMangal(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -80,7 +98,10 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
                 props.put(StudyImporterForTSV.REFERENCE_URL, aReference.get("paper_url").asText());
             }
 
-            refMap.put(aReference.get("id").asText(), props);
+            String id = aReference.get("id").asText();
+            props.put(StudyImporterForTSV.REFERENCE_ID, "mangal:ref:id:" + id);
+
+            refMap.put(id, props);
         }
     }
 
@@ -120,7 +141,10 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
                 throw new StudyImporterException("failed to lookup reference with id [" + refId + "]");
             }
             Map<String, String> props = new TreeMap<>(refProps);
-            datasetMap.put(aDataset.get("id").asText(), props);
+            props.put("mangal:reference:id", refId);
+            String datasetId = aDataset.get("id").asText();
+            props.put("mangal:dataset:id", datasetId);
+            datasetMap.put(datasetId, props);
         }
     }
 
@@ -150,13 +174,9 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
         if (networkProps == null) {
             throw new StudyImporterException("failed to find network with id [" + networkId + "]");
         }
+        interaction.putAll(networkProps);
+        interaction.put("mangal:network:id", networkId);
 
-        interaction.put(StudyImporterForTSV.REFERENCE_CITATION, networkProps.get("bibtex"));
-        interaction.put(StudyImporterForTSV.REFERENCE_URL, networkProps.get("url"));
-        interaction.put(StudyImporterForTSV.REFERENCE_DOI, networkProps.get("doi"));
-
-        interaction.put(StudyImporterForTSV.DECIMAL_LATITUDE, networkProps.get("decimalLatitude"));
-        interaction.put(StudyImporterForTSV.DECIMAL_LONGITUDE, networkProps.get("decimalLongitude"));
         return interaction;
     }
 
@@ -207,13 +227,21 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
                 }
             }, 100, 0, MANGAL_API_ENDPOINT + "/network");
 
+
             retrievePagedResource(getDataset(), new NodeListener() {
                 @Override
                 public void onNode(JsonNode node) throws StudyImporterException {
                     Map<String, String> interaction = parseInteraction(getLogger(), node, nodeMap, networkMap);
+                    interaction.put(STUDY_SOURCE_CITATION, getDataset().getCitation() + " " + CitationUtil.createLastAccessedString(MANGAL_API_ENDPOINT + "/network/" + interaction.get("mangal:network:id")));
+
+                    String interactionTypeName = interaction.get(StudyImporterForTSV.INTERACTION_TYPE_NAME);
+                    if (INTERACTION_TYPE_MAP.containsKey(interactionTypeName)) {
+                        interaction.put(StudyImporterForTSV.INTERACTION_TYPE_ID, INTERACTION_TYPE_MAP.get(interactionTypeName).getIRI());
+                    }
                     getInteractionListener().newLink(interaction);
                 }
             }, 100, 0, MANGAL_API_ENDPOINT + "/interaction");
+
         } catch (IOException e) {
             throw new StudyImporterException("failed to retrieve resource", e);
         }

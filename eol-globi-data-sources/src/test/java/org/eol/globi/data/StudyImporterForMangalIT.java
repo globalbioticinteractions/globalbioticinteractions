@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class StudyImporterForMangalIT {
 
@@ -19,6 +21,23 @@ public class StudyImporterForMangalIT {
         importer.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
+
+                InteractionListenerImpl.validLink(properties, new ImportLogger() {
+                    @Override
+                    public void warn(LogContext ctx, String message) {
+                        fail(message + "for [" + properties + "]");
+                    }
+
+                    @Override
+                    public void info(LogContext ctx, String message) {
+
+                    }
+
+                    @Override
+                    public void severe(LogContext ctx, String message) {
+
+                    }
+                });
                 counter.incrementAndGet();
             }
         });

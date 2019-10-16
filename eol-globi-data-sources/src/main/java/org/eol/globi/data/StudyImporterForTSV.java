@@ -100,7 +100,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
         }
     }
 
-    private void importResource(String namespace, String sourceCitation, InteractionListener interactionListenerImpl, String resourceURIString, LabeledCSVParser parser) throws IOException, StudyImporterException {
+    private void importResource(String namespace, String sourceCitation, InteractionListener interactionListener, String resourceURIString, LabeledCSVParser parser) throws IOException, StudyImporterException {
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<>();
             final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");
@@ -137,7 +137,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 
-            interactionListenerImpl.newLink(link);
+            interactionListener.newLink(link);
         }
     }
 

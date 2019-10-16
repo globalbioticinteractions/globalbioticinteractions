@@ -88,18 +88,20 @@ public class StudyImporterForMangalTest {
     }
 
     @Test
-    public void buildIdMap() throws IOException {
+    public void buildReferenceMap() throws IOException {
 
-        Map<String, JsonNode> refMap = new HashMap<>();
+        Map<String, Map<String, String>> refMap = new HashMap<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(getClass().getResourceAsStream("mangal-reference.json"));
 
         JsonNode singleReference = jsonNode.get(0);
 
-        addReferenceToMap(refMap, singleReference);
+        StudyImporterForMangal.appendReferenceToMap(singleReference, refMap);
 
         assertThat(refMap.containsKey("36"), Is.is(true));
+
+        assertThat(refMap.get("36"), Is.is("bla"));
 
     }
 
@@ -197,12 +199,7 @@ public class StudyImporterForMangalTest {
 
     }
 
-    public void addReferenceToMap(Map<String, JsonNode> refMap, JsonNode singleReference) {
-        String key = "id";
-        if (StudyImporterForMangal.hasNonEmptyValueFor(singleReference, key)) {
-            String id = singleReference.get(key).asText();
-            refMap.put(id, singleReference);
-        }
-    }
+
+
 
 }
