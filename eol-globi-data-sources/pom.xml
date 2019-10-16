@@ -62,11 +62,6 @@
             <version>2.3.0</version>
         </dependency>
         <dependency>
-            <groupId>org.jbibtex</groupId>
-            <artifactId>jbibtex</artifactId>
-            <version>1.0.17</version>
-        </dependency>
-        <dependency>
             <groupId>org.gbif</groupId>
             <artifactId>dwca-io</artifactId>
             <version>2.3</version>
