@@ -25,7 +25,7 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
         put("competition", InteractType.RELATED_TO);
         put("detritivore", InteractType.ATE);
         put("herbivory", InteractType.ATE);
-        put("mutualism", InteractType.INTERACTS_WITH);
+        put("mutualism", InteractType.MUTUALIST_OF);
         put("parasitism", InteractType.PARASITE_OF);
         put("predation", InteractType.PREYS_UPON);
         put("scavenger", InteractType.ATE);
