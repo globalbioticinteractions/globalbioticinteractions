@@ -118,10 +118,21 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
             putNotBlank(link, DECIMAL_LONGITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LONGITUDE)));
             putNotBlank(link, LOCALITY_ID, StringUtils.trim(parser.getValueByLabel(LOCALITY_ID)));
             putNotBlank(link, LOCALITY_NAME, StringUtils.trim(parser.getValueByLabel(LOCALITY_NAME)));
+
             putNotBlank(link, SOURCE_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
             putNotBlank(link, SOURCE_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
             putNotBlank(link, TARGET_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
             putNotBlank(link, TARGET_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
+
+            putNotBlank(link, SOURCE_LIFE_STAGE_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_ID)));
+            putNotBlank(link, SOURCE_LIFE_STAGE_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_NAME)));
+            putNotBlank(link, TARGET_LIFE_STAGE_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_ID)));
+            putNotBlank(link, TARGET_LIFE_STAGE_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_NAME)));
+
+            putNotBlank(link, SOURCE_SEX_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_SEX_ID)));
+            putNotBlank(link, SOURCE_SEX_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_SEX_NAME)));
+            putNotBlank(link, TARGET_SEX_ID, StringUtils.trim(parser.getValueByLabel(TARGET_SEX_ID)));
+            putNotBlank(link, TARGET_SEX_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_SEX_NAME)));
 
             String argumentTypeId = StringUtils.trim(parser.getValueByLabel(ARGUMENT_TYPE_ID));
             if (StringUtils.isBlank(argumentTypeId)) {
