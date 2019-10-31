@@ -146,6 +146,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                         .forEach(triple -> {
                             addIfNeeded(taxonLookupService, triple.getLeft().getExternalId(), triple.getRight().getExternalId());
                             addIfNeeded(taxonLookupService, triple.getLeft().getName(), triple.getRight().getExternalId());
+                            addIfNeeded(taxonLookupService, triple.getRight().getExternalId(), triple.getRight().getExternalId());
                             addIfNeeded(taxonLookupService, triple.getRight().getName(), triple.getRight().getExternalId());
                             count.incrementAndGet();
                         });

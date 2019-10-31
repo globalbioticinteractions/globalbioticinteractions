@@ -264,6 +264,21 @@ public class TaxonCacheServiceTest {
     }
 
     @Test
+    public void enrichByResolvedId2() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "NCBI:9606");
+            }
+        };
+        final TaxonCacheService taxonCacheService = getTaxonCacheService();
+        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
+        assertThat(enrichedTaxon.getName(), is("Homo sapiens"));
+        assertThat(enrichedTaxon.getExternalId(), is("NCBI:9606"));
+        taxonCacheService.shutdown();
+    }
+
+    @Test
     public void enrichByUnlikelyId() throws PropertyEnricherException {
         Map<String, String> properties = new HashMap<String, String>() {
             {
@@ -421,7 +436,7 @@ public class TaxonCacheServiceTest {
     public void resolveWithCrossDomainMapping() throws PropertyEnricherException {
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
         List<Taxon> taxa = new ArrayList<>();
-        taxonCacheService.findTerms(Arrays.asList(new TermImpl("EOL:327955", null)), new TermMatchListener() {
+        taxonCacheService.findTerms(Collections.singletonList(new TermImpl("EOL:327955", null)), new TermMatchListener() {
             @Override
             public void foundTaxonForName(Long nodeId, String name, Taxon taxon, NameType nameType) {
                 taxa.add(taxon);
