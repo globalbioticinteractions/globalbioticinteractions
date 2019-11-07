@@ -414,7 +414,7 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
-    public void hasResourceRelationships() throws IOException, URISyntaxException {
+    public void hasResourceRelationshipsOccurrenceToOccurrence() throws IOException, URISyntaxException {
         URI sampleArchive = getClass().getResource("fmnh-rr-test.zip").toURI();
 
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
@@ -461,6 +461,39 @@ public class StudyImporterForDwCATest {
         }, "some citation");
 
         assertThat(numberOfFoundLinks.get(), is(7));
+    }
+
+    @Test
+    public void hasResourceRelationshipsOccurrenceToTaxa() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("inaturalist-dwca-rr.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
+        StudyImporterForDwCA.importResourceRelationExtension(archive, new InteractionListener() {
+
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                numberOfFoundLinks.incrementAndGet();
+                if (1 == numberOfFoundLinks.get()) {
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("http://www.inaturalist.org/taxa/465153"));
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Gorgonocephalus eucnemis"));
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("http://www.inaturalist.org/observations/2309983"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Eaten by"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://www.inaturalist.org/observation_fields/879"));
+                    assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("HumanObservation"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_ID), is("http://www.inaturalist.org/taxa/133061"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Enhydra lutris kenyoni"));
+                    assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("https://www.inaturalist.org/users/dpom"));
+                }
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is("some citation"));
+
+            }
+        }, "some citation");
+
+        assertThat(numberOfFoundLinks.get(), is(1));
     }
 
 

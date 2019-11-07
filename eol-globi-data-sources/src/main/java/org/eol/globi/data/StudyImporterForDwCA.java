@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
+import org.gbif.dwc.extensions.Extension;
 import org.gbif.dwc.extensions.ExtensionProperty;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -57,6 +59,7 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 public class StudyImporterForDwCA extends StudyImporterWithListener {
     public static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
     public static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
+    public static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
 
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -350,8 +353,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
 
             for (Record record : resourceExtension) {
-                String sourceId = record.value(DwcTerm.relatedResourceID);
-                String targetId = record.value(DwcTerm.resourceID);
+                String targetId = record.value(DwcTerm.relatedResourceID);
+                String sourceId = record.value(DwcTerm.resourceID);
                 if (StringUtils.isNotBlank(sourceId)
                         && StringUtils.isNotBlank(targetId)) {
                     referencedSourceIds.add(sourceId);
@@ -361,24 +364,41 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             final List<DwcTerm> idTerms = Arrays.asList(
                     DwcTerm.occurrenceID, DwcTerm.taxonID);
 
-            ArchiveFile core = archive.getCore();
-            for (Record coreRecord : core) {
-                for (DwcTerm idTerm : idTerms) {
-                    attemptLinkUsingTerm(termIdPropMap,
-                            referencedSourceIds,
-                            referencedTargetIds,
-                            coreRecord,
-                            idTerm);
+            List<ArchiveFile> archiveFiles = new ArrayList<>();
+            archiveFiles.add(archive.getCore());
+
+            ArchiveFile taxon = findResourceExtension(archive, EXTENSION_TAXON);
+            if (taxon != null) {
+                archiveFiles.add(taxon);
+            }
+
+            for (ArchiveFile archiveFile : archiveFiles) {
+                for (Record record : archiveFile) {
+                    for (DwcTerm idTerm : idTerms) {
+                        attemptLinkUsingTerm(termIdPropMap,
+                                referencedSourceIds,
+                                referencedTargetIds,
+                                record,
+                                idTerm);
+                    }
                 }
             }
 
+
             for (Record record : resourceExtension) {
                 Map<String, String> props = new TreeMap<>();
-                String sourceId = record.value(DwcTerm.relatedResourceID);
+                String sourceId = record.value(DwcTerm.resourceID);
                 String relationship = record.value(DwcTerm.relationshipOfResource);
-                String targetId = record.value(DwcTerm.resourceID);
 
-                String relationshipTypeId = findRelationshipTypeIdByLabel(relationship);
+                Optional<Term> relationshipOfResourceIDTerm = record.terms().stream().filter(x -> StringUtils.equals(x.simpleName(), "relationshipOfResourceID")).findFirst();
+                String relationshipTypeIdValue = relationshipOfResourceIDTerm
+                        .map(record::value)
+                        .orElse(null);
+                String targetId = record.value(DwcTerm.relatedResourceID);
+
+                String relationshipTypeId = StringUtils.isBlank(relationshipTypeIdValue)
+                        ? findRelationshipTypeIdByLabel(relationship)
+                        : relationshipTypeIdValue;
 
                 if (StringUtils.isNotBlank(sourceId)
                         && StringUtils.isNotBlank(targetId)
@@ -442,6 +462,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             put("parasite of", InteractType.PARASITE_OF.getIRI());
             put("stomach contents of", InteractType.EATEN_BY.getIRI());
             put("stomach contents", InteractType.ATE.getIRI());
+            put("eaten by", InteractType.EATEN_BY.getIRI());
         }});
 
         String relationshipKey = StringUtils.lowerCase(StringUtils.trim(relationship));
@@ -500,11 +521,15 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     }
 
     private static ArchiveFile findResourceRelationshipExtension(Archive archive) {
+        return findResourceExtension(archive, EXTENSION_RESOURCE_RELATIONSHIP);
+    }
+
+    private static ArchiveFile findResourceExtension(Archive archive, String extensionType) {
         ArchiveFile resourceRelationExtension = null;
         Set<ArchiveFile> extensions = archive.getExtensions();
         for (ArchiveFile extension : extensions) {
             if (StringUtils.equals(extension.getRowType().qualifiedName(),
-                    EXTENSION_RESOURCE_RELATIONSHIP)) {
+                    extensionType)) {
                 resourceRelationExtension = extension;
                 break;
             }
