@@ -52,6 +52,15 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_PARASITE_OF = InteractType.PARASITE_OF.getLabel();
     public static final String INTERACTION_HAS_PARASITE = InteractType.HAS_PARASITE.getLabel();
 
+    public static final String INTERACTION_ENDOPARASITE_OF = InteractType.ENDOPARASITE_OF.getLabel();
+    public static final String INTERACTION_HAS_ENDOPARASITE = InteractType.HAS_ENDOPARASITE.getLabel();
+
+    public static final String INTERACTION_ECTOPARASITE_OF = InteractType.ECTOPARASITE_OF.getLabel();
+    public static final String INTERACTION_HAS_ECTOPARASITE = InteractType.HAS_ECTOPARASITE.getLabel();
+
+    public static final String INTERACTION_PARASITOID_OF = InteractType.PARASITOID_OF.getLabel();
+    public static final String INTERACTION_HAS_PARASITOID = InteractType.HAS_PARASITOID.getLabel();
+
     public static final String INTERACTION_POLLINATES = InteractType.POLLINATES.getLabel();
     public static final String INTERACTION_POLLINATED_BY = InteractType.POLLINATED_BY.getLabel();
 
@@ -98,6 +107,8 @@ public class CypherQueryBuilder {
             put(InteractType.HOST_OF.toString(), InteractionTypeExternal.HOST_OF);
             put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
             put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
+            put(InteractType.PARASITOID_OF.toString(), InteractionTypeExternal.PARASITOID_OF);
+            put(InteractType.HAS_PARASITOID.toString(), InteractionTypeExternal.HAS_PARASITOID);
             put(InteractType.PATHOGEN_OF.toString(), InteractionTypeExternal.PATHOGEN_OF);
             put(InteractType.HAS_PATHOGEN.toString(), InteractionTypeExternal.HAS_PATHOGEN);
             put(InteractType.VECTOR_OF.toString(), InteractionTypeExternal.VECTOR_OF);
