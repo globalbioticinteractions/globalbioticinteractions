@@ -426,23 +426,23 @@ public class StudyImporterForDwCATest {
             public void newLink(Map<String, String> properties) throws StudyImporterException {
                 numberOfFoundLinks.incrementAndGet();
                 if (1 == numberOfFoundLinks.get()) {
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
+                    assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Ectoparasite of"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002632"));
+                    assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
+                    assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
+                } else if (2 == numberOfFoundLinks.get()) {
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("7048675a-b110-4baf-91a3-2db138316709"));
-                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Ectoparasite Of"));
-                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002632"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Host to"));
+                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002453"));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("10d8d814-2afc-4cf2-9843-a2b719346179"));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("G. Heinrich"));
-                } else if (2 == numberOfFoundLinks.get()) {
-                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
-                    assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
-                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Stomach Contents of"));
-                    assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002471"));
-                    assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
-                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
-                    assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("b3cba38d-38b1-4a2d-8d4f-f70bac2c5674"));
-                    assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("C. M. Barber"));
                 } else if (7 == numberOfFoundLinks.get()) {
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
@@ -460,7 +460,7 @@ public class StudyImporterForDwCATest {
             }
         }, "some citation");
 
-        assertThat(numberOfFoundLinks.get(), is(7));
+        assertThat(numberOfFoundLinks.get(), is(5));
     }
 
     @Test
