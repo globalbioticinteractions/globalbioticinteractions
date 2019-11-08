@@ -16,7 +16,7 @@
 
     <properties>
         <globi.neo4j.index.version>0.6-SNAPSHOT</globi.neo4j.index.version>
-        <globi.taxa.version>0.3.18</globi.taxa.version>
+        <globi.taxa.version>0.3.19</globi.taxa.version>
         <globi.tsv.version>1.0-SNAPSHOT</globi.tsv.version>
         <github.client.id>specified on commandline</github.client.id>
         <github.client.secret>specified on commandline</github.client.secret>
