@@ -632,9 +632,10 @@ public class CypherQueryBuilder {
                     appendNameWhereClause(query, taxonLabel, ids, "externalId");
                 }
             } else {
-                query.append("(exists(").append(taxonLabel).append(".externalIds) AND ").append(taxonLabel).append(".externalIds =~ '(.*([ ]){1}(");
-                query.append(StringUtils.join(taxonNames, "|"));
-                query.append(")([ ]){1}.*)') ");
+                query.append("(exists(").append(taxonLabel).append(".externalIds) AND ANY(x IN split(")
+                        .append(taxonLabel).append(".externalIds, '|') WHERE trim(x) in [");
+                query.append(StringUtils.join(taxonNames.stream().map(x -> "'" + x + "'").collect(Collectors.toList()), ","));
+                query.append("])) ");
             }
         }
     }
