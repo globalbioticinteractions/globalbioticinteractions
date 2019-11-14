@@ -15,7 +15,7 @@ public class CypherQuery {
     }
 
     public CypherQuery(String query, Map<String, String> params) {
-        this(query, params, "1.9");
+        this(query, params, "2.3");
     }
 
     public CypherQuery(String query, String version) {
@@ -33,7 +33,11 @@ public class CypherQuery {
     }
 
     public String getQuery() {
-        return ("CYPHER " + version + " " + query).replaceAll("\\s+", " ");
+        return query.replaceAll("\\s+", " ");
+    }
+
+    public String getVersionedQuery() {
+        return ("CYPHER " + version + " " + getQuery());
     }
 
     public String getVersion() {

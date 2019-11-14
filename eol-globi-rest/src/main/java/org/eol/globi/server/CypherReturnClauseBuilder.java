@@ -3,7 +3,6 @@ package org.eol.globi.server;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.SpecimenConstant;
-import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultObject;
 
@@ -14,10 +13,58 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.eol.globi.server.CypherQueryBuilder.collectParamValues;
-import static org.eol.globi.server.util.ResultField.*;
+import static org.eol.globi.server.util.ResultField.ALTITUDE;
+import static org.eol.globi.server.util.ResultField.COLLECTION_TIME_IN_UNIX_EPOCH;
+import static org.eol.globi.server.util.ResultField.FOOTPRINT_WKT;
+import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
+import static org.eol.globi.server.util.ResultField.LATITUDE;
+import static org.eol.globi.server.util.ResultField.LOCALITY;
+import static org.eol.globi.server.util.ResultField.LONGITUDE;
+import static org.eol.globi.server.util.ResultField.NUMBER_OF_INTERACTIONS;
+import static org.eol.globi.server.util.ResultField.NUMBER_OF_SOURCES;
+import static org.eol.globi.server.util.ResultField.NUMBER_OF_STUDIES;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BASIS_OF_RECORD;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_LIFE_STAGE;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_LIFE_STAGE_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_COMMON_NAMES;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_EXTERNAL_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_NAME;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH_IDS;
+import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH_RANKS;
+import static org.eol.globi.server.util.ResultField.STUDY_CITATION;
+import static org.eol.globi.server.util.ResultField.STUDY_DOI;
+import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_CITATION;
+import static org.eol.globi.server.util.ResultField.STUDY_TITLE;
+import static org.eol.globi.server.util.ResultField.STUDY_URL;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BASIS_OF_RECORD;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BODY_PART;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BODY_PART_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_LIFE_STAGE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_LIFE_STAGE_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_COUNT;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_COUNT_PERCENT;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_VOLUME_ML;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_COMMON_NAMES;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_EXTERNAL_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_NAME;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_PATH;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_PATH_IDS;
+import static org.eol.globi.server.util.ResultField.TARGET_TAXON_PATH_RANKS;
+import static org.eol.globi.server.util.ResultField.values;
 
 public class CypherReturnClauseBuilder {
 
@@ -53,10 +100,10 @@ public class CypherReturnClauseBuilder {
         return new HashMap<ResultField, String>(selectors) {
             {
                 put(STUDY_TITLE, ResultObject.STUDY.getLabel() + ".title");
-                put(STUDY_URL, ResultObject.STUDY.getLabel() + ".externalId?");
-                put(STUDY_DOI, ResultObject.STUDY.getLabel() + ".doi?");
-                put(STUDY_CITATION, ResultObject.STUDY.getLabel() + ".citation?");
-                put(STUDY_SOURCE_CITATION, ResultObject.STUDY.getLabel() + ".source?");
+                put(STUDY_URL, ResultObject.STUDY.getLabel() + ".externalId");
+                put(STUDY_DOI, ResultObject.STUDY.getLabel() + ".doi");
+                put(STUDY_CITATION, ResultObject.STUDY.getLabel() + ".citation");
+                put(STUDY_SOURCE_CITATION, ResultObject.STUDY.getLabel() + ".source");
             }
         };
     }
@@ -66,16 +113,16 @@ public class CypherReturnClauseBuilder {
             {
                 put(SOURCE_SPECIMEN_ID, "ID(" + ResultObject.SOURCE_SPECIMEN.getLabel() + ")");
                 put(TARGET_SPECIMEN_ID, "ID(" + ResultObject.TARGET_SPECIMEN.getLabel() + ")");
-                put(TARGET_SPECIMEN_TOTAL_COUNT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_COUNT + "?");
-                put(TARGET_SPECIMEN_TOTAL_COUNT_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_COUNT_PERCENT + "?");
-                put(TARGET_SPECIMEN_TOTAL_VOLUME_ML, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_VOLUME_IN_ML + "?");
-                put(TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_VOLUME_PERCENT + "?");
-                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.FREQUENCY_OF_OCCURRENCE + "?");
-                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT + "?");
-                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
-                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL + "?");
-                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
-                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL + "?");
+                put(TARGET_SPECIMEN_TOTAL_COUNT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_COUNT);
+                put(TARGET_SPECIMEN_TOTAL_COUNT_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_COUNT_PERCENT);
+                put(TARGET_SPECIMEN_TOTAL_VOLUME_ML, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_VOLUME_IN_ML);
+                put(TARGET_SPECIMEN_TOTAL_VOLUME_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.TOTAL_VOLUME_PERCENT);
+                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.FREQUENCY_OF_OCCURRENCE);
+                put(TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE_PERCENT, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT);
+                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL);
+                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
+                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL);
+                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
 
             }
         };
@@ -130,7 +177,7 @@ public class CypherReturnClauseBuilder {
 
         if (requestedFields.contains(ResultField.NUMBER_OF_SOURCES.getLabel())) {
             query.append(", count(distinct(").append(ResultObject.STUDY.getLabel())
-                    .append(".source?)) as ")
+                    .append(".source)) as ")
                     .append(ResultObject.STUDY_SOURCE_COUNT.getLabel());
         }
     }
@@ -225,7 +272,7 @@ public class CypherReturnClauseBuilder {
                         appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
                             {
                                 put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label");
-                                put(COLLECTION_TIME_IN_UNIX_EPOCH, ResultObject.COLLECTED_REL.getLabel() + ".dateInUnixEpoch?");
+                                put(COLLECTION_TIME_IN_UNIX_EPOCH, ResultObject.COLLECTED_REL.getLabel() + ".dateInUnixEpoch");
 
                             }
                         }));
@@ -247,18 +294,18 @@ public class CypherReturnClauseBuilder {
                 Map<ResultField, String> actualSelectors = defaultSelectors(ResultObject.SOURCE_TAXON_DISTINCT.getLabel(), ResultObject.TARGET_TAXON_DISTINCT.getLabel());
                 selectors = new HashMap<ResultField, String>(actualSelectors) {
                     {
-                        put(SOURCE_TAXON_EXTERNAL_ID, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".externalId?");
+                        put(SOURCE_TAXON_EXTERNAL_ID, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".externalId");
                         put(SOURCE_TAXON_NAME, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".name");
-                        put(SOURCE_TAXON_PATH, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".path?");
+                        put(SOURCE_TAXON_PATH, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".path");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
                         put(INTERACTION_TYPE, ResultObject.INTERACTION_TYPE.getLabel());
                         put(NUMBER_OF_INTERACTIONS, ResultObject.INTERACTION_COUNT.getLabel());
                         put(NUMBER_OF_STUDIES, ResultObject.STUDY_COUNT.getLabel());
                         put(NUMBER_OF_SOURCES, ResultObject.STUDY_SOURCE_COUNT.getLabel());
-                        put(TARGET_TAXON_EXTERNAL_ID, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".externalId?");
+                        put(TARGET_TAXON_EXTERNAL_ID, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".externalId");
                         put(TARGET_TAXON_NAME, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".name");
-                        put(TARGET_TAXON_PATH, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".path?");
+                        put(TARGET_TAXON_PATH, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".path");
                         put(TARGET_SPECIMEN_LIFE_STAGE, "NULL");
                         put(TARGET_SPECIMEN_BASIS_OF_RECORD, "NULL");
                         put(LATITUDE, "NULL");
@@ -276,7 +323,7 @@ public class CypherReturnClauseBuilder {
             case MULTI_TAXON_DISTINCT_BY_NAME_ONLY:
                 selectors = new HashMap<ResultField, String>(defaultSelectors()) {
                     {
-                        put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label?");
+                        put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label");
                         put(NUMBER_OF_INTERACTIONS, ResultObject.INTERACTION.getLabel() + ".count");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
@@ -329,43 +376,43 @@ public class CypherReturnClauseBuilder {
             {
                 addSourceTaxonFields(sourceTaxonPrefix);
                 addTargetTaxonFields(targetTaxonPrefix);
-                put(LATITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LATITUDE + "?");
-                put(LONGITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LONGITUDE + "?");
-                put(ALTITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.ALTITUDE + "?");
-                put(FOOTPRINT_WKT, ResultObject.LOCATION.getLabel() + "." + LocationConstant.FOOTPRINT_WKT + "?");
-                put(LOCALITY, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LOCALITY + "?");
-                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
-                put(SOURCE_SPECIMEN_LIFE_STAGE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_ID + "?");
-                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL + "?");
-                put(TARGET_SPECIMEN_LIFE_STAGE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_ID + "?");
-                put(SOURCE_SPECIMEN_BODY_PART, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_LABEL + "?");
-                put(SOURCE_SPECIMEN_BODY_PART_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_ID + "?");
-                put(TARGET_SPECIMEN_BODY_PART, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_LABEL + "?");
-                put(TARGET_SPECIMEN_BODY_PART_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_ID + "?");
-                put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + "?");
-                put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + "?");
-                put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + "?");
-                put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + "?");
-                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL + "?");
-                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL + "?");
+                put(LATITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LATITUDE);
+                put(LONGITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LONGITUDE);
+                put(ALTITUDE, ResultObject.LOCATION.getLabel() + "." + LocationConstant.ALTITUDE);
+                put(FOOTPRINT_WKT, ResultObject.LOCATION.getLabel() + "." + LocationConstant.FOOTPRINT_WKT);
+                put(LOCALITY, ResultObject.LOCATION.getLabel() + "." + LocationConstant.LOCALITY);
+                put(SOURCE_SPECIMEN_LIFE_STAGE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL);
+                put(SOURCE_SPECIMEN_LIFE_STAGE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_ID);
+                put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL);
+                put(TARGET_SPECIMEN_LIFE_STAGE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_ID);
+                put(SOURCE_SPECIMEN_BODY_PART, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_LABEL);
+                put(SOURCE_SPECIMEN_BODY_PART_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_ID);
+                put(TARGET_SPECIMEN_BODY_PART, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_LABEL);
+                put(TARGET_SPECIMEN_BODY_PART_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BODY_PART_ID);
+                put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL);
+                put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID);
+                put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL);
+                put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID);
+                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
+                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
             }
 
             private void addTargetTaxonFields(String prefix) {
                 put(TARGET_TAXON_NAME, prefix + ".name");
-                put(TARGET_TAXON_COMMON_NAMES, prefix + ".commonNames?");
-                put(TARGET_TAXON_EXTERNAL_ID, prefix + ".externalId?");
-                put(TARGET_TAXON_PATH, prefix + ".path?");
-                put(TARGET_TAXON_PATH_RANKS, prefix + ".pathNames?");
-                put(TARGET_TAXON_PATH_IDS, prefix + ".pathIds?");
+                put(TARGET_TAXON_COMMON_NAMES, prefix + ".commonNames");
+                put(TARGET_TAXON_EXTERNAL_ID, prefix + ".externalId");
+                put(TARGET_TAXON_PATH, prefix + ".path");
+                put(TARGET_TAXON_PATH_RANKS, prefix + ".pathNames");
+                put(TARGET_TAXON_PATH_IDS, prefix + ".pathIds");
             }
 
             private void addSourceTaxonFields(String prefix) {
                 put(SOURCE_TAXON_NAME, prefix + ".name");
-                put(SOURCE_TAXON_COMMON_NAMES, prefix + ".commonNames?");
-                put(SOURCE_TAXON_EXTERNAL_ID, prefix + ".externalId?");
-                put(SOURCE_TAXON_PATH, prefix + ".path?");
-                put(SOURCE_TAXON_PATH_RANKS, prefix + ".pathNames?");
-                put(SOURCE_TAXON_PATH_IDS, prefix + ".pathIds?");
+                put(SOURCE_TAXON_COMMON_NAMES, prefix + ".commonNames");
+                put(SOURCE_TAXON_EXTERNAL_ID, prefix + ".externalId");
+                put(SOURCE_TAXON_PATH, prefix + ".path");
+                put(SOURCE_TAXON_PATH_RANKS, prefix + ".pathNames");
+                put(SOURCE_TAXON_PATH_IDS, prefix + ".pathIds");
             }
         };
     }

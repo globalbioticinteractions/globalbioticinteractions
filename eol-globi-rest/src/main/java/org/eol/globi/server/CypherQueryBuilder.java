@@ -179,9 +179,9 @@ public class CypherQueryBuilder {
         for (int i = 0; i < returnFields.size(); i++) {
             ResultField fieldName = returnFields.get(i);
             if (i == 0) {
-                builder.append("RETURN distinct(").append(FIELD_MAP.get(fieldName)).append("?) as ").append(fieldName);
+                builder.append("RETURN distinct(").append(FIELD_MAP.get(fieldName)).append(") as ").append(fieldName);
             } else {
-                builder.append(", ").append(FIELD_MAP.get(fieldName)).append("? as ").append(fieldName);
+                builder.append(", ").append(FIELD_MAP.get(fieldName)).append(" as ").append(fieldName);
             }
         }
         return new CypherQuery(builder.toString(), new HashMap<>());
@@ -321,8 +321,8 @@ public class CypherQueryBuilder {
     public static CypherQuery shortestPathQuery(final String startTaxon, final String endTaxon) {
         String query = "START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
                 "MATCH p = allShortestPaths(startNode-[:" + InteractUtil.allInteractionsCypherClause() + "|CLASSIFIED_AS*..100]-endNode) " +
-                "RETURN extract(n in (filter(x in nodes(p) : has(x.name))) : " +
-                "coalesce(n.name?)) as shortestPaths ";
+                "RETURN extract(n in (filter(x in nodes(p) : exists(x.name))) : " +
+                "coalesce(n.name)) as shortestPaths ";
 
 
         HashMap<String, String> params = new HashMap<String, String>() {{
@@ -335,7 +335,7 @@ public class CypherQueryBuilder {
 
     public static CypherQuery externalIdForStudy(final String studyTitle) {
         String query = "START study = node:studies(title={studyTitle}) " +
-                " RETURN study.externalId? as study";
+                " WHERE exists(study.externalId) RETURN study.externalId as study";
 
         HashMap<String, String> params = new HashMap<String, String>() {{
             put("studyTitle", studyTitle);
@@ -346,7 +346,7 @@ public class CypherQueryBuilder {
 
     public static CypherQuery externalIdForTaxon(final String taxonName) {
         String query = "START taxon = node:taxons(name={taxonName}) " +
-                " RETURN taxon.externalId? as externalId";
+                " WHERE exists(taxon.externalId) RETURN taxon.externalId as externalId";
 
         HashMap<String, String> taxonName1 = new HashMap<String, String>() {{
             put("taxonName", taxonName);
@@ -369,7 +369,7 @@ public class CypherQueryBuilder {
         } else {
             query.append("START " + ALL_LOCATIONS_INDEX_SELECTOR);
         }
-        query.append(" RETURN loc.latitude? as latitude, loc.longitude? as longitude, loc.footprintWKT? as footprintWKT");
+        query.append(" RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT as footprintWKT");
         return new CypherQuery(query.toString(), getParams(null, null, false, parameterMap));
     }
 
@@ -508,11 +508,11 @@ public class CypherQueryBuilder {
         } else {
             String whereClause;
             if (hasDOIs(accordingToParams)) {
-                whereClause = "(has(study.doi) AND study.doi =~ {accordingTo})";
+                whereClause = "(exists(study.doi) AND study.doi =~ {accordingTo})";
             } else if (hasAtLeastOneURL(accordingToParams)) {
-                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo})";
+                whereClause = "(exists(study.externalId) AND study.externalId =~ {accordingTo})";
             } else {
-                whereClause = "(has(study.externalId) AND study.externalId =~ {accordingTo}) OR (has(study.citation) AND study.citation =~ {accordingTo}) OR (has(study.source) AND study.source =~ {accordingTo})";
+                whereClause = "(exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo})";
             }
             query.append(" study = node:studies('*:*') WHERE ")
                     .append(whereClause)
@@ -633,7 +633,7 @@ public class CypherQueryBuilder {
                     appendNameWhereClause(query, taxonLabel, ids, "externalId");
                 }
             } else {
-                query.append("(has(").append(taxonLabel).append(".externalIds) AND ").append(taxonLabel).append(".externalIds =~ '(.*([ ]){1}(");
+                query.append("(exists(").append(taxonLabel).append(".externalIds) AND ").append(taxonLabel).append(".externalIds =~ '(.*([ ]){1}(");
                 query.append(StringUtils.join(taxonNames, "|"));
                 query.append(")([ ]){1}.*)') ");
             }
@@ -641,7 +641,7 @@ public class CypherQueryBuilder {
     }
 
     private static void appendNameWhereClause(StringBuilder query, String taxonLabel, List<String> taxonNames, String property) {
-        query.append("(has(").append(taxonLabel).append("." + property + ") AND ");
+        query.append("(exists(").append(taxonLabel).append("." + property + ") AND ");
         query.append(taxonLabel).append("." + property + " IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
     }
 
@@ -677,7 +677,7 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery createPagedQuery(CypherQuery query, long offset, long limit) {
-        return new CypherQuery(query.getQuery() + " SKIP " + offset + " LIMIT " + limit, query.getParams());
+        return new CypherQuery(query.getQuery() + " SKIP " + offset + " LIMIT " + limit, query.getParams(), query.getVersion());
     }
 
     private static long getValueOrDefault(HttpServletRequest request, String paramName, long defaultValue) {
@@ -710,7 +710,7 @@ public class CypherQueryBuilder {
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             query.append(", sourceSpecimen-[:COLLECTED_AT]->loc");
         }
-        query.append(" WHERE not(has(interact.");
+        query.append(" WHERE not(exists(interact.");
         query.append(PropertyAndValueDictionary.INVERTED);
         query.append("))");
 
@@ -721,7 +721,7 @@ public class CypherQueryBuilder {
                 .append(", count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`")
                 .append(", count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`")
                 .append(", count(distinct(study.source)) as `number of distinct study sources`")
-                .append(", count(c." + SpecimenConstant.DATE_IN_UNIX_EPOCH + "?) as `number of interactions with timestamp`")
+                .append(", count(c." + SpecimenConstant.DATE_IN_UNIX_EPOCH + ") as `number of interactions with timestamp`")
         ;
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             query.append(", count(distinct(loc))");

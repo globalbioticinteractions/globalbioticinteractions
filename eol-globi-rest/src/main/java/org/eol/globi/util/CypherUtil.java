@@ -36,7 +36,7 @@ public class CypherUtil {
 
     private static String wrapQuery(CypherQuery cypherQuery) {
         String query = "{\"query\":\"";
-        query += cypherQuery.getQuery();
+        query += cypherQuery.getVersionedQuery();
         query += " \", \"params\": {" + buildJSONParamList(cypherQuery.getParams()) + " } }";
         return query;
     }
@@ -67,7 +67,7 @@ public class CypherUtil {
     }
 
     private static void logQuery(CypherQuery query) {
-        LOG.info("executing query: [" + query.getQuery() + "] with params [" + query.getParams() + "] and version [" + query.getVersion() + "]" );
+        LOG.info("executing query: [" + query.getVersionedQuery() + "] with params [" + query.getParams() + "]");
     }
 
     public static HttpResponse execute(CypherQuery cypherQuery) throws IOException {

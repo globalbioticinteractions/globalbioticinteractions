@@ -112,7 +112,7 @@ public class RequestHelper {
             query.append(", sourceSpecimen-[:COLLECTED_AT]->loc ");
         } else if (QueryType.MULTI_TAXON_ALL.equals(queryType)
                 || QueryType.SINGLE_TAXON_ALL.equals(queryType)){
-            query.append(", sourceSpecimen-[?:COLLECTED_AT]->loc ");
+            query.append(" OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc ");
         } else {
             query.append(" ");
         }
@@ -125,7 +125,7 @@ public class RequestHelper {
 
     public static void addSpatialWhereClause(List<LatLng> points, StringBuilder query) {
         if (points.size() == 1 || points.size() == 2) {
-            query.append("has(loc.latitude) AND has(loc.longitude) AND ");
+            query.append("exists(loc.latitude) AND exists(loc.longitude) AND ");
         }
         if (points.size() == 1) {
             query.append("loc.latitude = ");
