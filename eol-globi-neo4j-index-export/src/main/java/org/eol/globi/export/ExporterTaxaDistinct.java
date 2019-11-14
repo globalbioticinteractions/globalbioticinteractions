@@ -20,15 +20,15 @@ public class ExporterTaxaDistinct extends ExporterTaxa {
     }
 
     private void exportAllDistinctTaxa(ExportUtil.Appender writer, GraphDatabaseService graphDatabase) throws IOException {
-        Result results = graphDatabase.execute("CYPHER 1.9 START taxon = node:taxons('*:*') " +
+        Result results = graphDatabase.execute("CYPHER 2.3 START taxon = node:taxons('*:*') " +
                 "MATCH taxon<-[:CLASSIFIED_AS]-specimen " +
-                "WHERE has(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
-                "AND has(taxon.name) AND taxon.name <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+                "WHERE exists(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
+                "AND exists(taxon.name) AND taxon.name <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "RETURN distinct(taxon)" +
                 ", taxon.name as scientificName" +
-                ", taxon.path? as path" +
-                ", taxon.pathNames? as pathNames" +
-                ", taxon.rank? as rank" +
+                ", taxon.path as path" +
+                ", taxon.pathNames as pathNames" +
+                ", taxon.rank as rank" +
                 ", taxon.externalId as taxonId");
 
         Map<String, String> row = new HashMap<String, String>();

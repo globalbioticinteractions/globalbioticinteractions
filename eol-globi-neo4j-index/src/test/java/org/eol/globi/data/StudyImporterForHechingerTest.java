@@ -68,9 +68,9 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         assertThat(getSpecimenCount(study), is(27932));
 
 
-        String query = "CYPHER 1.9 START resourceTaxon = node:taxons(name='Suaeda spp.')" +
+        String query = "CYPHER 2.3 START resourceTaxon = node:taxons(name='Suaeda spp.')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon, specimen-[:COLLECTED_AT]->location" +
-                " RETURN taxon.name, specimen.lifeStage?, type(r), resourceTaxon.name, resourceSpecimen.lifeStage?, location.latitude as lat, location.longitude as lng";
+                " RETURN taxon.name, specimen.lifeStage, type(r), resourceTaxon.name, resourceSpecimen.lifeStage, location.latitude as lat, location.longitude as lng";
         Result result = getGraphDb().execute(query);
 
         assertThat(result.resultAsString(), CoreMatchers.containsString("Branta bernicla"));
@@ -78,7 +78,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         assertThat(result.resultAsString(), CoreMatchers.containsString("Anas acuta"));
         assertThat(result.resultAsString(), CoreMatchers.containsString("30.378207 | -115.938835 |"));
 
-        query = "CYPHER 1.9 START taxon = node:taxons('*:*')" +
+        query = "CYPHER 2.3 START taxon = node:taxons('*:*')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:PARASITE_OF]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN taxon.name";
         result = getGraphDb().execute(query);
@@ -93,7 +93,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         }
 
         // Trypanorhyncha (kind of tapeworms) are typically parasites, not prey
-        query = "CYPHER 1.9 START resourceTaxon = node:taxons(name='Trypanorhyncha')" +
+        query = "CYPHER 2.3 START resourceTaxon = node:taxons(name='Trypanorhyncha')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r:PREYS_UPON]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN specimen.externalId + type(r) + resourceSpecimen.externalId as `resourceExternalId`";
         result = getGraphDb().execute(query);

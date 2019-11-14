@@ -29,7 +29,7 @@ public class StudyImporterForBellTest extends GraphDBTestCase {
             assertThat(study.getDOI().toString(), is("10.1654/4756.1"));
             assertThat(study.getCitation(), startsWith("Bell, K. C., Matek, D., Demboski, J. R., & Cook, J. A. (2015). Expanded Host Range of Sucking Lice and Pinworms of Western North American Chipmunks. Comparative Parasitology, 82(2), 312–321. doi:10.1654/4756.1 . Data provided by Kayce C. Bell."));
         }
-        Result execute = getGraphDb().execute("CYPHER 1.9 START taxon = node:taxons('*:*') RETURN taxon.name");
+        Result execute = getGraphDb().execute("CYPHER 2.3 START taxon = node:taxons('*:*') RETURN taxon.name");
         String actual = execute.resultAsString();
         assertThat(actual, CoreMatchers.containsString("Tamias"));
         assertThat(taxonIndex.findTaxonByName("Tamias speciosus"), is(notNullValue()));

@@ -13,8 +13,8 @@ public class ExportCitations implements GraphExporter {
         this.joiner = joiner;
     }
 
-    public static final String CYPHER_QUERY = "CYPHER 1.9 START study = node:studies('*:*') " +
-            "RETURN study.doi? as doi, study.citation? as citation";
+    public static final String CYPHER_QUERY = "CYPHER 2.3 START study = node:studies('*:*') " +
+            "RETURN study.doi as doi, study.citation as citation";
 
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
