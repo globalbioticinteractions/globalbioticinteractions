@@ -5,27 +5,22 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LogContext;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
-import org.eol.globi.util.NodeUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Result;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
@@ -73,25 +68,24 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         assertThat(getSpecimenCount(study), is(27932));
 
 
-        ExecutionEngine engine = new ExecutionEngine(getGraphDb());
         String query = "CYPHER 1.9 START resourceTaxon = node:taxons(name='Suaeda spp.')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon, specimen-[:COLLECTED_AT]->location" +
                 " RETURN taxon.name, specimen.lifeStage?, type(r), resourceTaxon.name, resourceSpecimen.lifeStage?, location.latitude as lat, location.longitude as lng";
-        ExecutionResult result = engine.execute(query);
+        Result result = getGraphDb().execute(query);
 
-        assertThat(result.dumpToString(), containsString("Branta bernicla"));
-        assertThat(result.dumpToString(), containsString("Athya affinis"));
-        assertThat(result.dumpToString(), containsString("Anas acuta"));
-        assertThat(result.dumpToString(), containsString("30.378207 | -115.938835 |"));
+        assertThat(result.resultAsString(), CoreMatchers.containsString("Branta bernicla"));
+        assertThat(result.resultAsString(), CoreMatchers.containsString("Athya affinis"));
+        assertThat(result.resultAsString(), CoreMatchers.containsString("Anas acuta"));
+        assertThat(result.resultAsString(), CoreMatchers.containsString("30.378207 | -115.938835 |"));
 
         query = "CYPHER 1.9 START taxon = node:taxons('*:*')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:PARASITE_OF]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN taxon.name";
-        result = engine.execute(query);
+        result = getGraphDb().execute(query);
         Set<String> actualParasites = new HashSet<String>();
-        for (Map<String, Object> row : result) {
-            actualParasites.add((String) row.get("taxon.name"));
-        }
+        result.forEachRemaining(row ->
+                actualParasites.add((String) row.get("taxon.name"))
+        );
 
         assertThat(actualParasites.size() > 0, is(true));
         for (String unlikelyParasite : unlikelyParasites()) {
@@ -102,11 +96,9 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
         query = "CYPHER 1.9 START resourceTaxon = node:taxons(name='Trypanorhyncha')" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r:PREYS_UPON]->resourceSpecimen-[:CLASSIFIED_AS]-resourceTaxon" +
                 " RETURN specimen.externalId + type(r) + resourceSpecimen.externalId as `resourceExternalId`";
-        result = engine.execute(query);
+        result = getGraphDb().execute(query);
         Set<String> actualPrey = new HashSet<String>();
-        for (Map<String, Object> row : result) {
-            actualPrey.add((String) row.get("resourceExternalId"));
-        }
+        result.forEachRemaining(row -> actualPrey.add((String) row.get("resourceExternalId")));
 
         assertThat(actualPrey.size(), is(0));
     }

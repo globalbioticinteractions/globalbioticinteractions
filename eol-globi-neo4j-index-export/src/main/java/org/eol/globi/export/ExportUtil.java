@@ -6,9 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.translate.CsvTranslators;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.CSVTSVUtil;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Result;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -132,18 +131,20 @@ public final class ExportUtil {
 
     static void writeResults(Appender appender, GraphDatabaseService dbService, List<String> queries, HashMap<String, Object> params, boolean includeHeader) throws IOException {
         for (String query : queries) {
-            ExecutionResult rows = new ExecutionEngine(dbService).execute(query, params);
+            Result rows = dbService.execute(query, params);
             List<String> columns = rows.columns();
             if (includeHeader && queries.indexOf(query) == 0) {
-                final String[] values = columns.toArray(new String[columns.size()]);
+                final String[] values = columns.toArray(new String[0]);
                 appender.append(Stream.of(values));
             }
             appendRow(appender, rows, columns);
         }
     }
 
-    static void appendRow(Appender appender, Iterable<Map<String, Object>> rows, List<String> columns) throws IOException {
-        for (Map<String, Object> row : rows) {
+    static void appendRow(Appender appender, Iterator<Map<String, Object>> rows, List<String> columns) throws IOException {
+        Map<String, Object> row;
+        while (rows.hasNext()) {
+            row = rows.next();
             List<String> values = new ArrayList<String>();
             for (String column : columns) {
                 Object value = row.get(column);

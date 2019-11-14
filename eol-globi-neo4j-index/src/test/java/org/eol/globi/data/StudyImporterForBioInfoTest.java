@@ -14,13 +14,13 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
@@ -35,9 +35,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
@@ -98,18 +100,16 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
 
         assertTrue(success.get());
 
-        ExecutionEngine engine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = engine.execute("CYPHER 1.9 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
-        ResourceIterator<Map<String, Object>> iterator = result.iterator();
+        Result result = getGraphDb().execute("CYPHER 1.9 START taxon = node:taxons('*:*') MATCH taxon<-[:CLASSIFIED_AS]-specimen-[r]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon RETURN taxon.externalId + ' ' + lower(type(r)) + ' ' + targetTaxon.externalId as interaction");
         List<String> interactions = new ArrayList<String>();
-        while (iterator.hasNext()) {
-            Map<String, Object> next = iterator.next();
+        while (((ResourceIterator<Map<String, Object>>) result).hasNext()) {
+            Map<String, Object> next = ((ResourceIterator<Map<String, Object>>) result).next();
             interactions.add((String) next.get("interaction"));
         }
-        assertThat(interactions, hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
-        assertThat(interactions, hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
-        assertThat(interactions, hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
-        assertThat(interactions, hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
+        assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000455771 interacts_with NBN:NBNSYS0000024890"));
+        assertThat(interactions, CoreMatchers.hasItem("NBN:NBNSYS0000030148 endoparasitoid_of NBN:NHMSYS0000502366"));
+        assertThat(interactions, CoreMatchers.hasItem("NBN:NHMSYS0000500943 has_endoparasitoid NBN:NBNSYS0000030148"));
+        assertThat(interactions, CoreMatchers.hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
 
         assertThat(study.getTitle(), is("bioinfo:ref:60527"));
         assertThat(study.getSource(), is("Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from http://bioinfo.org.uk."));

@@ -3,9 +3,9 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.Result;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,12 +14,11 @@ import java.util.Set;
 
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
@@ -51,10 +50,9 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
 
         assertThat(citations, not(hasItem("17(8)")));
 
-        ExecutionEngine executionEngine = new ExecutionEngine(getGraphDb());
-        ExecutionResult result = executionEngine.execute("CYPHER 1.9 START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
+        Result result = getGraphDb().execute("CYPHER 1.9 START taxon = node:taxons(name=\"Strongylocentrotus purpuratus\")" +
                 " MATCH taxon<-[:CLASSIFIED_AS]-specimen-[:ATE]->prey-[:CLASSIFIED_AS]->preyTaxon " +
                 " RETURN collect(distinct(preyTaxon.name))");
-        assertThat(result.dumpToString(), containsString("Bossiella orbigiana"));
+        assertThat(result.resultAsString(), CoreMatchers.containsString("Bossiella orbigiana"));
     }
 }

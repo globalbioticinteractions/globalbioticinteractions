@@ -4,16 +4,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Result;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,13 +43,15 @@ public class ExportNCBIResourceFile implements GraphExporter {
                 "WHERE has(linkedTaxon.externalId) AND linkedTaxon.externalId =~ 'NCBI:.*'" +
                 "RETURN distinct(linkedTaxon.externalId) as id";
 
-        ExecutionResult rows = new ExecutionEngine(graphService).execute(query, new HashMap<String, Object>());
+        Result rows = graphService.execute(query);
 
         int rowCount = 0;
         OutputStream os = null;
         try {
             List<String> columns = rows.columns();
-            for (Map<String, Object> row : rows) {
+            Map<String, Object> row;
+            while (rows.hasNext()) {
+                row = rows.next();
                 if (rowCount % getLinksPerResourceFile() == 0) {
                     close(os);
                     os = null;
@@ -79,16 +78,16 @@ public class ExportNCBIResourceFile implements GraphExporter {
         OutputStream os;
         os = fileFactory.create(linkBatch(rowCount));
         IOUtils.write(String.format("<?xml version=\"1.0\"?>\n" +
-                "<!DOCTYPE LinkSet PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +
-                "\"https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\"\n" +
-                "[<!ENTITY base.url \"https://www.globalbioticinteractions.org?\">]>\n" +
-                "<LinkSet>\n" +
-                " <Link>\n" +
-                "   <LinkId>%d</LinkId>\n" +
-                "   <ProviderId>%s</ProviderId>\n" +
-                "   <ObjectSelector>\n" +
-                "     <Database>Taxonomy</Database>\n" +
-                "     <ObjectList>\n", linkBatch(rowCount), ExportNCBIIdentityFile.PROVIDER_ID),
+                        "<!DOCTYPE LinkSet PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +
+                        "\"https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd\"\n" +
+                        "[<!ENTITY base.url \"https://www.globalbioticinteractions.org?\">]>\n" +
+                        "<LinkSet>\n" +
+                        " <Link>\n" +
+                        "   <LinkId>%d</LinkId>\n" +
+                        "   <ProviderId>%s</ProviderId>\n" +
+                        "   <ObjectSelector>\n" +
+                        "     <Database>Taxonomy</Database>\n" +
+                        "     <ObjectList>\n", linkBatch(rowCount), ExportNCBIIdentityFile.PROVIDER_ID),
                 os,
                 StandardCharsets.UTF_8);
         return os;

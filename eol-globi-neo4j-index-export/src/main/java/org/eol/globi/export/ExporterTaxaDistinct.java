@@ -1,11 +1,9 @@
 package org.eol.globi.export;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Result;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,13 +15,12 @@ public class ExporterTaxaDistinct extends ExporterTaxa {
     public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         if (includeHeader) {
             // only write the taxa once, because they are unique across studies...
-            exportAllDistinctTaxa(writer, ((StudyNode)study).getUnderlyingNode().getGraphDatabase());
+            exportAllDistinctTaxa(writer, ((StudyNode) study).getUnderlyingNode().getGraphDatabase());
         }
     }
 
     private void exportAllDistinctTaxa(ExportUtil.Appender writer, GraphDatabaseService graphDatabase) throws IOException {
-        ExecutionEngine engine = new ExecutionEngine(graphDatabase);
-        ExecutionResult results = engine.execute("CYPHER 1.9 START taxon = node:taxons('*:*') " +
+        Result results = graphDatabase.execute("CYPHER 1.9 START taxon = node:taxons('*:*') " +
                 "MATCH taxon<-[:CLASSIFIED_AS]-specimen " +
                 "WHERE has(taxon.externalId) AND taxon.externalId <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
                 "AND has(taxon.name) AND taxon.name <> '" + PropertyAndValueDictionary.NO_MATCH + "' " +
@@ -35,7 +32,9 @@ public class ExporterTaxaDistinct extends ExporterTaxa {
                 ", taxon.externalId as taxonId");
 
         Map<String, String> row = new HashMap<String, String>();
-        for (Map<String, Object> result : results) {
+        Map<String, Object> result;
+        while (results.hasNext()) {
+            result = results.next();
             resultsToRow(row, result);
             writeProperties(writer, row);
             row.clear();
