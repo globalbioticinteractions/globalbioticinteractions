@@ -1,18 +1,13 @@
 package org.eol.globi.server;
 
-import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.server.util.ResultField;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
-import org.eol.globi.tool.LinkerTaxonIndex;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.QueryExecutionException;
-import org.neo4j.test.TestGraphDatabaseFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -120,7 +115,7 @@ public class CypherQueryBuilderTest {
     @After
     public void validateQuery() {
         if (query != null) {
-            validate(query);
+            CypherTestUtil.validate(query);
         }
     }
 
@@ -1331,27 +1326,7 @@ public class CypherQueryBuilderTest {
     public void queryValidation() {
         String malformed = "malformed";
         CypherQuery cypherQuery = new CypherQuery(malformed);
-        validate(cypherQuery);
-    }
-
-    public void validate(CypherQuery cypherQuery) {
-        TestGraphDatabaseFactory testGraphDatabaseFactory = new TestGraphDatabaseFactory();
-        GraphDatabaseService graphDatabaseService = testGraphDatabaseFactory.newImpermanentDatabase();
-        new NodeFactoryNeo4j(graphDatabaseService);
-        new NonResolvingTaxonIndex(graphDatabaseService);
-        new LinkerTaxonIndex(graphDatabaseService).link();
-        HashMap<String, Object> params = new HashMap<>(cypherQuery.getParams());
-        try {
-            graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
-        } catch (NullPointerException ex) {
-            // encountered nullpointer exceptions were caused by initialization of graph database
-        } catch (RuntimeException ex) {
-            // for some reason lucene queries like "node:taxons('externalId:\"NCBI:9606\"') "
-            // work fine in cypher query, but cause parse exception when running programatically
-            if (!ex.getMessage().contains("Encountered \" \":\" \": \"\"")) {
-                throw ex;
-            }
-        }
+        CypherTestUtil.validate(cypherQuery);
     }
 
 }

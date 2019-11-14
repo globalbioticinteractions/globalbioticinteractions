@@ -1,6 +1,15 @@
 package org.eol.globi.server;
 
+import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.server.util.ResultField;
+import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.tool.LinkerTaxonIndex;
+import org.eol.globi.tool.ReportGenerator;
+import org.eol.globi.util.CypherQuery;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.test.TestGraphDatabaseFactory;
+
+import java.util.HashMap;
 
 public class CypherTestUtil {
     public static final String CYPHER_RESULT = "{\n" +
@@ -10,4 +19,25 @@ public class CypherTestUtil {
             "[ \"Centropomus undecimalis\", 26.823367, -82.271067, 0.0, \"Blewett 2006\", 984584100000, 217081, \"ADULT\", null, null, null, null, null, \"Ariopsis felis\", \"preyedUponBy\" ], " +
             "[ \"Centropomus undecimalis\", 26.823367, -82.271067, 0.0, \"Blewett 2006\", 984584100000, 217081, \"ADULT\", null, null, null, null, null, \"Ariopsis felis\", \"preyedUponBy\" ], [ \"Centropomus undecimalis\", 26.688167, -82.245667, 0.0, \"Blewett 2006\", 971287200000, 216530, \"ADULT\", null, null, null, null, null, \"Ariopsis felis\", \"preyedUponBy\" ] ]\n" +
             "}";
+
+    public static void validate(CypherQuery cypherQuery) {
+        TestGraphDatabaseFactory testGraphDatabaseFactory = new TestGraphDatabaseFactory();
+        GraphDatabaseService graphDatabaseService = testGraphDatabaseFactory.newImpermanentDatabase();
+        new NodeFactoryNeo4j(graphDatabaseService);
+        new NonResolvingTaxonIndex(graphDatabaseService);
+        new LinkerTaxonIndex(graphDatabaseService).link();
+        new ReportGenerator(graphDatabaseService).run();
+        HashMap<String, Object> params = new HashMap<>(cypherQuery.getParams());
+        try {
+            graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
+        } catch (NullPointerException ex) {
+            // encountered nullpointer exceptions were caused by initialization of graph database
+        } catch (RuntimeException ex) {
+            // for some reason lucene queries like "node:taxons('externalId:\"NCBI:9606\"') "
+            // work fine in cypher query, but cause parse exception when running programatically
+            if (!ex.getMessage().contains("Encountered \" \":\" \": \"\"")) {
+                throw ex;
+            }
+        }
+    }
 }
