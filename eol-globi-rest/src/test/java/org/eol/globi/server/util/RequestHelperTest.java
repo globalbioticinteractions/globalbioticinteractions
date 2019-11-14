@@ -34,7 +34,7 @@ public class RequestHelperTest {
         StringBuilder clause = new StringBuilder();
         RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "), Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc " +
-                "WHERE has(loc.latitude) AND has(loc.longitude)" +
+                "WHERE exists(loc.latitude) AND exists(loc.longitude)" +
                 " AND loc.latitude = 12.2" +
                 " AND loc.longitude = 12.1"));
     }
@@ -51,8 +51,8 @@ public class RequestHelperTest {
          RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
                 Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE" +
-                        " has(loc.latitude)" +
-                        " AND has(loc.longitude)" +
+                        " exists(loc.latitude)" +
+                        " AND exists(loc.longitude)" +
                         " AND loc.latitude < 10.0" +
                         " AND loc.longitude > -20.0" +
                         " AND loc.latitude > -10.0" +
@@ -102,8 +102,8 @@ public class RequestHelperTest {
         RequestHelper.addSpatialClause(points, clause, QueryType.MULTI_TAXON_ALL);
         assertThat(clause.toString().trim().replaceAll("\\s+", " "),
                 Is.is(", sourceSpecimen-[:COLLECTED_AT]->loc WHERE" +
-                        " has(loc.latitude)" +
-                        " AND has(loc.longitude)" +
+                        " exists(loc.latitude)" +
+                        " AND exists(loc.longitude)" +
                         " AND loc.latitude = 10.0" +
                         " AND loc.longitude = 12.4"));
     }

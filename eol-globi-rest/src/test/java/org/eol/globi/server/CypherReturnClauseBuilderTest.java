@@ -18,19 +18,19 @@ public class CypherReturnClauseBuilderTest {
                 QueryType.MULTI_TAXON_ALL,
                 unknownFields());
         assertThat(query.toString(), is(" RETURN " +
-                "sourceTaxon.externalId? as source_taxon_external_id," +
+                "sourceTaxon.externalId as source_taxon_external_id," +
                 "sourceTaxon.name as source_taxon_name," +
-                "sourceTaxon.path? as source_taxon_path," +
-                "sourceSpecimen.lifeStageLabel? as source_specimen_life_stage," +
-                "sourceSpecimen.basisOfRecordLabel? as source_specimen_basis_of_record," +
+                "sourceTaxon.path as source_taxon_path," +
+                "sourceSpecimen.lifeStageLabel as source_specimen_life_stage," +
+                "sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record," +
                 "interaction.label as interaction_type," +
-                "targetTaxon.externalId? as target_taxon_external_id," +
+                "targetTaxon.externalId as target_taxon_external_id," +
                 "targetTaxon.name as target_taxon_name," +
-                "targetTaxon.path? as target_taxon_path," +
-                "targetSpecimen.lifeStageLabel? as target_specimen_life_stage," +
-                "targetSpecimen.basisOfRecordLabel? as target_specimen_basis_of_record," +
-                "loc.latitude? as latitude," +
-                "loc.longitude? as longitude," +
+                "targetTaxon.path as target_taxon_path," +
+                "targetSpecimen.lifeStageLabel as target_specimen_life_stage," +
+                "targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record," +
+                "loc.latitude as latitude," +
+                "loc.longitude as longitude," +
                 "study.title as study_title"));
     }
 
@@ -61,19 +61,19 @@ public class CypherReturnClauseBuilderTest {
                 "loc, " +
                 "study " +
                 "RETURN " +
-                "sourceTaxon.externalId? as source_taxon_external_id," +
+                "sourceTaxon.externalId as source_taxon_external_id," +
                 "sourceTaxon.name as source_taxon_name," +
-                "sourceTaxon.path? as source_taxon_path," +
-                "sourceSpecimen.lifeStageLabel? as source_specimen_life_stage," +
-                "sourceSpecimen.basisOfRecordLabel? as source_specimen_basis_of_record," +
+                "sourceTaxon.path as source_taxon_path," +
+                "sourceSpecimen.lifeStageLabel as source_specimen_life_stage," +
+                "sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record," +
                 "interaction.label as interaction_type," +
-                "targetTaxon.externalId? as target_taxon_external_id," +
+                "targetTaxon.externalId as target_taxon_external_id," +
                 "targetTaxon.name as target_taxon_name," +
-                "targetTaxon.path? as target_taxon_path," +
-                "targetSpecimen.lifeStageLabel? as target_specimen_life_stage," +
-                "targetSpecimen.basisOfRecordLabel? as target_specimen_basis_of_record," +
-                "loc.latitude? as latitude," +
-                "loc.longitude? as longitude," +
+                "targetTaxon.path as target_taxon_path," +
+                "targetSpecimen.lifeStageLabel as target_specimen_life_stage," +
+                "targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record," +
+                "loc.latitude as latitude," +
+                "loc.longitude as longitude," +
                 "study.title as study_title"));
     }
 
@@ -244,15 +244,15 @@ public class CypherReturnClauseBuilderTest {
         assertThat(query.toString(), is(" WITH distinct targetTaxon, " +
                 "interaction.label as iType, " +
                 "sourceTaxon " +
-                "RETURN sourceTaxon.externalId? as source_taxon_external_id," +
+                "RETURN sourceTaxon.externalId as source_taxon_external_id," +
                 "sourceTaxon.name as source_taxon_name," +
-                "sourceTaxon.path? as source_taxon_path," +
+                "sourceTaxon.path as source_taxon_path," +
                 "NULL as source_specimen_life_stage," +
                 "NULL as source_specimen_basis_of_record," +
                 "iType as interaction_type," +
-                "targetTaxon.externalId? as target_taxon_external_id," +
+                "targetTaxon.externalId as target_taxon_external_id," +
                 "targetTaxon.name as target_taxon_name," +
-                "targetTaxon.path? as target_taxon_path," +
+                "targetTaxon.path as target_taxon_path," +
                 "NULL as target_specimen_life_stage," +
                 "NULL as target_specimen_basis_of_record," +
                 "NULL as latitude," +

@@ -321,8 +321,7 @@ public class CypherQueryBuilder {
     public static CypherQuery shortestPathQuery(final String startTaxon, final String endTaxon) {
         String query = "START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
                 "MATCH p = allShortestPaths(startNode-[:" + InteractUtil.allInteractionsCypherClause() + "|CLASSIFIED_AS*..100]-endNode) " +
-                "RETURN extract(n in (filter(x in nodes(p) : exists(x.name))) : " +
-                "coalesce(n.name)) as shortestPaths ";
+                "RETURN extract(n in (filter(x in nodes(p) where exists(x.name))) | n.name ) as shortestPaths ";
 
 
         HashMap<String, String> params = new HashMap<String, String>() {{

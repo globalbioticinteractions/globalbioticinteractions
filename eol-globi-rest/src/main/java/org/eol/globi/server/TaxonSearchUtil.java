@@ -22,34 +22,9 @@ import java.util.Map;
 
 public class TaxonSearchUtil {
     public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request) throws IOException {
-        final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), true);
-        StringBuilder query = new StringBuilder("CYPHER 1.9 START someTaxon = node:taxons({pathQuery}) ");
 
-        Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
-            {
-                put(ResultField.TAXON_EXTERNAL_ID, "externalId");
-                put(ResultField.TAXON_EXTERNAL_URL, "externalUrl");
-            }
-        };
+        final CypherQuery pagedQuery = createPagedQuery(taxonPath, request);
 
-        ResultField[] returnFieldsCloseMatches = new ResultField[]{
-                ResultField.TAXON_EXTERNAL_ID,
-                ResultField.TAXON_EXTERNAL_URL
-        };
-
-        List<String> requestedFields = new ArrayList<>();
-        if (request != null) {
-            requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
-        }
-
-        query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl? as externalUrl ");
-        CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        final CypherQuery query1 = new CypherQuery(query.toString(), new HashMap<String, String>() {
-            {
-                put("pathQuery", pathQuery);
-            }
-        });
-        final CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(request, query1, 30);
         final String response = CypherUtil.executeRemote(pagedQuery);
         JsonNode node = new ObjectMapper().readTree(response);
         JsonNode dataNode = node.get("data");
@@ -69,5 +44,41 @@ public class TaxonSearchUtil {
             }
         }
         return links;
+    }
+
+    public static CypherQuery createPagedQuery(String taxonPath, HttpServletRequest request) {
+        Map parameterMap = request.getParameterMap();
+        final CypherQuery query1 = getCypherQuery(taxonPath, parameterMap);
+        return CypherQueryBuilder.createPagedQuery(request, query1, 30);
+    }
+
+    public static CypherQuery getCypherQuery(String taxonPath, Map parameterMap) {
+        final String pathQuery = CypherQueryBuilder.lucenePathQuery(Collections.singletonList(taxonPath), true);
+        StringBuilder query = new StringBuilder("START someTaxon = node:taxons({pathQuery}) ");
+
+        Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
+            {
+                put(ResultField.TAXON_EXTERNAL_ID, "externalId");
+                put(ResultField.TAXON_EXTERNAL_URL, "externalUrl");
+            }
+        };
+
+        ResultField[] returnFieldsCloseMatches = new ResultField[]{
+                ResultField.TAXON_EXTERNAL_ID,
+                ResultField.TAXON_EXTERNAL_URL
+        };
+
+        List<String> requestedFields = new ArrayList<>();
+        if (parameterMap != null) {
+            requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(parameterMap));
+        }
+
+        query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE has(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl? as externalUrl ");
+        CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
+        return new CypherQuery(query.toString(), new HashMap<String, String>() {
+            {
+                put("pathQuery", pathQuery);
+            }
+        }, "1.9");
     }
 }
