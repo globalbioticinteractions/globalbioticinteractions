@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.CypherUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,21 +23,21 @@ public class ReportController {
     @ResponseBody
     public CypherQuery studies(@RequestParam(required = false) final String source, final HttpServletRequest request) throws IOException {
         String cypherQuery = "START report = node:reports(" + (StringUtils.isBlank(source) ? "'source:*'" : "source={source}") + ") "
-            + " WHERE has(report.title) "
-            + " RETURN report.citation? as " + ResultField.STUDY_CITATION
-            + ", report.externalId? as " + ResultField.STUDY_URL
-            + ", report.doi? as " + ResultField.STUDY_DOI
-            + ", report.source? as " + ResultField.STUDY_SOURCE_CITATION
+            + " WHERE exists(report.title) "
+            + " RETURN report.citation as " + ResultField.STUDY_CITATION
+            + ", report.externalId as " + ResultField.STUDY_URL
+            + ", report.doi as " + ResultField.STUDY_DOI
+            + ", report.source as " + ResultField.STUDY_SOURCE_CITATION
             + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
             + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
-            + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
-            + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES
-            + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
+            + ", report.nStudies as " + ResultField.NUMBER_OF_STUDIES
+            + ", report.nSources as " + ResultField.NUMBER_OF_SOURCES
+            + ", report.nTaxaNoMatch as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
         Map<String, String> params = StringUtils.isBlank(source) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, "1.9"));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
     }
 
     @RequestMapping(value = "/dataset", method = RequestMethod.GET)
@@ -82,23 +83,23 @@ public class ReportController {
             searchMatch = "'" + "sourceId" + ":*'";
         }
         String cypherQuery = "START report = node:reports(" + searchMatch + ") "
-            + " RETURN report.citation? as " + ResultField.STUDY_CITATION
-            + ", report.externalId? as " + ResultField.STUDY_URL
-            + ", report.doi? as " + ResultField.STUDY_DOI
-            + ", report.source? as " + ResultField.STUDY_SOURCE_CITATION
+            + " RETURN report.citation as " + ResultField.STUDY_CITATION
+            + ", report.externalId as " + ResultField.STUDY_URL
+            + ", report.doi as " + ResultField.STUDY_DOI
+            + ", report.source as " + ResultField.STUDY_SOURCE_CITATION
             + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
             + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
-            + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
-            + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES
-            + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH
-            + ", report.sourceId? as " + ResultField.STUDY_SOURCE_ID;
+            + ", report.nStudies as " + ResultField.NUMBER_OF_STUDIES
+            + ", report.nSources as " + ResultField.NUMBER_OF_SOURCES
+            + ", report.nTaxaNoMatch as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH
+            + ", report.sourceId as " + ResultField.STUDY_SOURCE_ID;
 
         String sourceIdActual = StringUtils.countMatches(sourceId, ":") > 0 ? sourceId : "globi:" + sourceId;
         Map<String, String> params = StringUtils.isBlank(sourceId) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
             put("sourceId", sourceIdActual);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, "1.9"));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
     }
 
     private CypherQuery datasetQuery(HttpServletRequest request, String searchKey, final String searchValue) {
@@ -108,27 +109,27 @@ public class ReportController {
         }
         String cypherQuery = "START dataset = node:datasets(" + searchMatch + "), report = node:reports('sourceId:*') "
             + " WHERE ('globi:' + dataset.namespace) = report.sourceId "
-            + " RETURN report.citation? as " + ResultField.STUDY_CITATION
-            + ", report.externalId? as " + ResultField.STUDY_URL
-            + ", report.doi? as " + ResultField.STUDY_DOI
-            + ", dataset.citation? as " + ResultField.STUDY_SOURCE_CITATION
+            + " RETURN report.citation as " + ResultField.STUDY_CITATION
+            + ", report.externalId as " + ResultField.STUDY_URL
+            + ", report.doi as " + ResultField.STUDY_DOI
+            + ", dataset.citation as " + ResultField.STUDY_SOURCE_CITATION
             + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
             + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
-            + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
-            + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES
-            + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH
-            + ", report.sourceId? as " + ResultField.STUDY_SOURCE_ID
-            + ", dataset.doi? as " + ResultField.STUDY_SOURCE_DOI
-            + ", dataset.format? as " + ResultField.STUDY_SOURCE_FORMAT
-            + ", dataset.archiveURI? as " + ResultField.STUDY_SOURCE_ARCHIVE_URI
-            + ", dataset.lastSeenAt? as " + ResultField.STUDY_SOURCE_LAST_SEEN_AT;
+            + ", report.nStudies as " + ResultField.NUMBER_OF_STUDIES
+            + ", report.nSources as " + ResultField.NUMBER_OF_SOURCES
+            + ", report.nTaxaNoMatch as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH
+            + ", report.sourceId as " + ResultField.STUDY_SOURCE_ID
+            + ", dataset.doi as " + ResultField.STUDY_SOURCE_DOI
+            + ", dataset.format as " + ResultField.STUDY_SOURCE_FORMAT
+            + ", dataset.archiveURI as " + ResultField.STUDY_SOURCE_ARCHIVE_URI
+            + ", dataset.lastSeenAt as " + ResultField.STUDY_SOURCE_LAST_SEEN_AT;
 
 
         Map<String, String> params = StringUtils.isBlank(searchValue) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
             put("namespace", searchValue);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, "1.9"));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
     }
 
     private CypherQuery datasetQuery2(HttpServletRequest request, String searchKey, final String searchValue) {
@@ -147,34 +148,34 @@ public class ReportController {
             + ", null as " + ResultField.NUMBER_OF_SOURCES
             + ", null as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH
             + ", 'globi:' + dataset.namespace as " + ResultField.STUDY_SOURCE_ID
-            + ", dataset.doi? as " + ResultField.STUDY_SOURCE_DOI
-            + ", dataset.format? as " + ResultField.STUDY_SOURCE_FORMAT
-            + ", dataset.archiveURI? as " + ResultField.STUDY_SOURCE_ARCHIVE_URI
-            + ", dataset.lastSeenAt? as " + ResultField.STUDY_SOURCE_LAST_SEEN_AT;
+            + ", dataset.doi as " + ResultField.STUDY_SOURCE_DOI
+            + ", dataset.format as " + ResultField.STUDY_SOURCE_FORMAT
+            + ", dataset.archiveURI as " + ResultField.STUDY_SOURCE_ARCHIVE_URI
+            + ", dataset.lastSeenAt as " + ResultField.STUDY_SOURCE_LAST_SEEN_AT;
 
 
         Map<String, String> params = StringUtils.isBlank(searchValue) ? CypherQueryBuilder.EMPTY_PARAMS : new HashMap<String, String>() {{
             put("namespace", searchValue);
         }};
 
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, "1.9"));
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(cypherQuery, params, CypherUtil.CYPHER_VERSION_2_3));
     }
 
     @RequestMapping(value = "/reports/collections", method = RequestMethod.GET)
     @ResponseBody
     public CypherQuery collections() throws IOException {
         String cypherQuery = "START report = node:reports('collection:*')" +
-            " WHERE not(has(report.title)) AND not(has(report.source)) "
-            + " RETURN report.citation? as " + ResultField.STUDY_CITATION
-            + ", report.externalId? as " + ResultField.STUDY_URL
-            + ", report.doi? as " + ResultField.STUDY_DOI
-            + ", report.source? as " + ResultField.STUDY_SOURCE_CITATION
+            " WHERE not(exists(report.title)) AND not(exists(report.source)) "
+            + " RETURN report.citation as " + ResultField.STUDY_CITATION
+            + ", report.externalId as " + ResultField.STUDY_URL
+            + ", report.doi as " + ResultField.STUDY_DOI
+            + ", report.source as " + ResultField.STUDY_SOURCE_CITATION
             + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
             + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
-            + ", report.nStudies? as " + ResultField.NUMBER_OF_STUDIES
-            + ", report.nSources? as " + ResultField.NUMBER_OF_SOURCES
-            + ", report.nTaxaNoMatch? as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
-        return new CypherQuery(cypherQuery, null, "1.9");
+            + ", report.nStudies as " + ResultField.NUMBER_OF_STUDIES
+            + ", report.nSources as " + ResultField.NUMBER_OF_SOURCES
+            + ", report.nTaxaNoMatch as " + ResultField.NUMBER_OF_DISTINCT_TAXA_NO_MATCH;
+        return new CypherQuery(cypherQuery, null, CypherUtil.CYPHER_VERSION_2_3);
     }
 
 }
