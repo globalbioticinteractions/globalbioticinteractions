@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.util.HttpUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -18,7 +19,7 @@ public class ImageServiceIT extends ITBase {
     @Test
     public void findImagesForExternalId() throws IOException {
         String uri = getURLPrefix() + "images/EOL:276287";
-        assertThat(HttpUtil.getRemoteJson(uri), containsString("Oospila albicoma"));
+        assertThat(HttpUtil.getRemoteJson(uri), CoreMatchers.containsString("Oospila albicoma"));
     }
 
     @Test

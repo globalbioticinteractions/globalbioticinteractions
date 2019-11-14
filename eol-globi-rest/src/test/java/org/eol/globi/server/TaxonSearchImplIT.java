@@ -114,14 +114,14 @@ public class TaxonSearchImplIT {
     @Test
     public void taxonLinks3() throws IOException {
         Collection<String> links = new TaxonSearchImpl().findTaxonIds("Homo sapiens");
-        assertThat(links, hasItem("http://eol.org/pages/327955"));
-        assertThat(links, hasItem("https://www.wikidata.org/wiki/Q15978631"));
+        assertThat(links, CoreMatchers.hasItem("http://eol.org/pages/327955"));
+        assertThat(links, CoreMatchers.hasItem("https://www.wikidata.org/wiki/Q15978631"));
     }
 
     @Test
     public void taxonLinks2() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Enhydra lutris nereis", null);
-        assertThat(links, hasItem("http://www.marinespecies.org/aphia.php?p=taxdetails&id=242601"));
+        assertThat(links, CoreMatchers.hasItem("http://www.marinespecies.org/aphia.php?p=taxdetails&id=242601"));
     }
 
     @Test

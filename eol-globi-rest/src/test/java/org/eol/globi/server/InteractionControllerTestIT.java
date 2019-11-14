@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.eol.globi.util.CypherUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -23,21 +24,21 @@ public class InteractionControllerTestIT {
     @Test
     public void findPrey() throws IOException, URISyntaxException {
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Homo sapiens", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
-        assertThat(list, containsString("Homo sapiens"));
+        assertThat(list, CoreMatchers.containsString("Homo sapiens"));
     }
 
     @Test
     public void findPreyExternalId() throws IOException, URISyntaxException {
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "OTT:770315", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(null);
-        assertThat(list, containsString("Homo sapiens"));
+        assertThat(list, CoreMatchers.containsString("Homo sapiens"));
     }
 
     @Test
     public void findThunnusPrey() throws IOException, URISyntaxException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/11
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(null, "Thunnus", CypherQueryBuilder.INTERACTION_EATS, null)).execute(null);
-        assertThat(list, containsString("Thunnus alalunga"));
-        assertThat(list, containsString("Thunnus albacares"));
+        assertThat(list, CoreMatchers.containsString("Thunnus alalunga"));
+        assertThat(list, CoreMatchers.containsString("Thunnus albacares"));
     }
 
     @Test
@@ -121,7 +122,7 @@ public class InteractionControllerTestIT {
         when(request.getParameter("includeObservations")).thenReturn("true");
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_PREYS_ON, null)).execute(request);
-        assertThat(list, allOf(containsString("\"latitude\",\"longitude\""), not(containsString(",null,"))));
+        assertThat(list, allOf(CoreMatchers.containsString("\"latitude\",\"longitude\""), not(CoreMatchers.containsString(",null,"))));
     }
 
     @Test
@@ -131,9 +132,9 @@ public class InteractionControllerTestIT {
         when(request.getParameter("includeObservations")).thenReturn("true");
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
-        assertThat(list, containsString("\"source\":"));
-        assertThat(list, containsString("\"target\":"));
-        assertThat(list, containsString("\"type\":\"eats\""));
+        assertThat(list, CoreMatchers.containsString("\"source\":"));
+        assertThat(list, CoreMatchers.containsString("\"target\":"));
+        assertThat(list, CoreMatchers.containsString("\"type\":\"eats\""));
     }
 
     @Test
@@ -150,9 +151,9 @@ public class InteractionControllerTestIT {
         });
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
-        assertThat(list, containsString("\"source\":"));
-        assertThat(list, containsString("\"target\":"));
-        assertThat(list, containsString("\"type\":\"preysOn\""));
+        assertThat(list, CoreMatchers.containsString("\"source\":"));
+        assertThat(list, CoreMatchers.containsString("\"target\":"));
+        assertThat(list, CoreMatchers.containsString("\"type\":\"preysOn\""));
     }
 
     @Test
@@ -167,8 +168,8 @@ public class InteractionControllerTestIT {
         });
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
-        assertThat(list, containsString("Plantae"));
-        assertThat(list, containsString("hasPathogen"));
+        assertThat(list, CoreMatchers.containsString("Plantae"));
+        assertThat(list, CoreMatchers.containsString("hasPathogen"));
     }
 
     @Test
@@ -184,8 +185,8 @@ public class InteractionControllerTestIT {
         });
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
-        assertThat(list, containsString("Quercus"));
-        assertThat(list, containsString("hasPathogen"));
+        assertThat(list, CoreMatchers.containsString("Quercus"));
+        assertThat(list, CoreMatchers.containsString("hasPathogen"));
     }
 
     @Test
@@ -202,8 +203,8 @@ public class InteractionControllerTestIT {
         });
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
-        assertThat(list, containsString("Quercus"));
-        assertThat(list, containsString("hasPathogen"));
+        assertThat(list, CoreMatchers.containsString("Quercus"));
+        assertThat(list, CoreMatchers.containsString("hasPathogen"));
     }
 
     @Test
@@ -221,7 +222,7 @@ public class InteractionControllerTestIT {
         });
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request)).execute(request);
-        assertThat(list, containsString("Viridiplantae"));
+        assertThat(list, CoreMatchers.containsString("Viridiplantae"));
     }
 
     @Test
@@ -230,7 +231,10 @@ public class InteractionControllerTestIT {
         when(request.getParameter("type")).thenReturn("json.v2");
 
         String list = new CypherQueryExecutor(new InteractionController().findInteractions(request, "Ariopsis felis", CypherQueryBuilder.INTERACTION_EATS, null)).execute(request);
-        assertThat(list, allOf(containsString("\"source\":"), containsString("\"target\":"), containsString("\"type\":\"eats\"")));
+        assertThat(list, allOf(
+                CoreMatchers.containsString("\"source\":"),
+                CoreMatchers.containsString("\"target\":"),
+                CoreMatchers.containsString("\"type\":\"eats\"")));
     }
 
     @Test
