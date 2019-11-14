@@ -8,6 +8,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.PropertyEnricher;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,8 +40,8 @@ public class ExportNCBIResourceFileTest extends GraphDBTestCase {
             }
         });
 
-        assertThat(osMap.keySet(), hasItem(0));
-        assertThat(osMap.keySet(), hasItem(1));
+        assertThat(osMap.keySet(), CoreMatchers.hasItem(0));
+        assertThat(osMap.keySet(), CoreMatchers.hasItem(1));
 
         assertThat(osMap.get(0).toString(), is("<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE LinkSet PUBLIC \"-//NLM//DTD LinkOut 1.0//EN\"\n" +

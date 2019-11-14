@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;

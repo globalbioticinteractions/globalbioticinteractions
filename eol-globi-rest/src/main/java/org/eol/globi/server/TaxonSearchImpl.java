@@ -74,7 +74,7 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
         CypherQuery cypherQuery = new CypherQuery(queryPrefix() +
-                returnClause(), paramForName(taxonName));
+                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_1_9);
         return CypherUtil.executeRemote(cypherQuery);
     }
 
@@ -91,7 +91,7 @@ public class TaxonSearchImpl implements TaxonSearch {
         CypherQuery cypherQuery = new CypherQuery(queryPrefix()
                 + " AND has(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
                 "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0 " +
-                returnClause(), paramForName(taxonName));
+                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_1_9);
         return toMap(CypherUtil.executeRemote(cypherQuery));
     }
 
@@ -110,7 +110,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     @ResponseBody
     public CypherQuery findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
         String luceneQuery = buildLuceneQuery(taxonName, "name");
-        StringBuilder query = new StringBuilder("CYPHER 1.9 START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
+        StringBuilder query = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
@@ -134,7 +134,7 @@ public class TaxonSearchImpl implements TaxonSearch {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString()), 30);
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null, "1.9"), 30);
     }
 
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -167,7 +167,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     private String queryPrefix() {
-        return "CYPHER 1.9 START taxon = node:taxonPaths({taxonPathQuery}) " +
+        return "START taxon = node:taxonPaths({taxonPathQuery}) " +
                 "MATCH taxon-[:SAME_AS*0..1]->otherTaxon " +
                 "WHERE ((has(taxon.name) AND taxon.name = {taxonName}) OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})) " +
                 "AND (((has(otherTaxon.name) AND otherTaxon.name = {taxonName}) OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})))";

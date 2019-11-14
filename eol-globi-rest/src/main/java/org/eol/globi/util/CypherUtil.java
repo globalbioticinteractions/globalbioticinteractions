@@ -14,6 +14,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class CypherUtil {
+    public static final String CYPHER_VERSION_1_9 = "1.9";
+    public static final String CYPHER_VERSION_2_3 = "2.3";
+
     private static final Log LOG = LogFactory.getLog(CypherUtil.class);
 
     public static String executeCypherQuery(CypherQuery query) throws IOException {

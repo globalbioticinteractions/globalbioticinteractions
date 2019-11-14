@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TaxonSearchUtil {
+
     public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request) throws IOException {
 
         final CypherQuery pagedQuery = createPagedQuery(taxonPath, request);
@@ -47,7 +48,7 @@ public class TaxonSearchUtil {
     }
 
     public static CypherQuery createPagedQuery(String taxonPath, HttpServletRequest request) {
-        Map parameterMap = request.getParameterMap();
+        Map parameterMap = request == null ? null : request.getParameterMap();
         final CypherQuery query1 = getCypherQuery(taxonPath, parameterMap);
         return CypherQueryBuilder.createPagedQuery(request, query1, 30);
     }
@@ -79,6 +80,6 @@ public class TaxonSearchUtil {
             {
                 put("pathQuery", pathQuery);
             }
-        }, "1.9");
+        }, CypherUtil.CYPHER_VERSION_1_9);
     }
 }

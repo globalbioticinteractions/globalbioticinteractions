@@ -29,12 +29,12 @@ public class IndexInteractions implements Linker {
 
         boolean done;
         do {
-            Result result = graphDb.execute("CYPHER 1.9 START dataset = node:datasets('*:*')\n" +
+            Result result = graphDb.execute("CYPHER 2.3 START dataset = node:datasets('*:*')\n" +
                     "MATCH dataset<-[:IN_DATASET]-study-[:REFUTES|SUPPORTS]->specimen\n" +
                     "WHERE not(specimen<-[:HAS_PARTICIPANT]-())\n" +
                     "WITH specimen, study, dataset LIMIT {batchSize}\n" +
                     "MATCH specimen-[i:" + InteractUtil.allInteractionsCypherClause() + "]->otherSpecimen\n" +
-                    "WHERE not(has(i.inverted))\n" +
+                    "WHERE not(exists(i.inverted))\n" +
                     "CREATE specimen<-[:HAS_PARTICIPANT]-interaction-[:DERIVED_FROM]->study" +
                     ", interaction-[:HAS_PARTICIPANT]->otherSpecimen " +
                     ", interaction-[:ACCESSED_AT]->dataset\n" +

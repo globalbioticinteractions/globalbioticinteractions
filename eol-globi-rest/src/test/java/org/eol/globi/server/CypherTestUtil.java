@@ -9,6 +9,7 @@ import org.eol.globi.util.CypherQuery;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
 
 public class CypherTestUtil {
@@ -27,7 +28,7 @@ public class CypherTestUtil {
         new NonResolvingTaxonIndex(graphDatabaseService);
         new LinkerTaxonIndex(graphDatabaseService).link();
         new ReportGenerator(graphDatabaseService).run();
-        HashMap<String, Object> params = new HashMap<>(cypherQuery.getParams());
+        HashMap<String, Object> params = cypherQuery.getParams() == null ? null : new HashMap<>(cypherQuery.getParams());
         try {
             graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
         } catch (NullPointerException ex) {
