@@ -34,7 +34,10 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
         TaxonImpl taxon1 = new TaxonImpl("Homo sapiens also", "FOO:444");
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
+        TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
+        taxon1.setPathIds("BARZ:111 | FOOZ:777");
         NodeUtil.connectTaxa(taxon1, (TaxonNode)taxon, getGraphDb(), RelTypes.SAME_AS);
+        NodeUtil.connectTaxa(taxon2, (TaxonNode)taxon, getGraphDb(), RelTypes.SAME_AS);
 
         taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Bla blaus", null));
         taxon.setExternalId("FOO 1234");
@@ -73,6 +76,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     public void findByStringWithWhitespaces() throws NodeFactoryException {
         NonResolvingTaxonIndex taxonService = new NonResolvingTaxonIndex(getGraphDb());
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
+        resolveNames();
         resolveNames();
         new LinkerTaxonIndex(getGraphDb()).link();
 

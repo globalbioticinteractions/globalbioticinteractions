@@ -20,6 +20,7 @@ import org.neo4j.helpers.collection.MapUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LinkerTaxonIndex implements Linker {
 
@@ -54,11 +55,11 @@ public class LinkerTaxonIndex implements Linker {
                     addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, sameAsTaxon);
                 }
                 taxonPathIdsAndNames.addAll(taxonIds);
-                String aggregateIds = StringUtils.join(taxonPathIdsAndNames, CharsetConstant.SEPARATOR);
+                String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
                 ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
                 hit.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
 
-                String aggregateTaxonIds = StringUtils.join(taxonIds, CharsetConstant.SEPARATOR);
+                String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
                 hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
                 tx.success();
                 tx.close();
