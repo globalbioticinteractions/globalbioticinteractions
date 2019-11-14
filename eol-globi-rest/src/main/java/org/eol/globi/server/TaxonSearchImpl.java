@@ -74,7 +74,7 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
         CypherQuery cypherQuery = new CypherQuery(queryPrefix() +
-                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_1_9);
+                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_2_3);
         return CypherUtil.executeRemote(cypherQuery);
     }
 
@@ -89,9 +89,9 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     public Map<String, String> findTaxonWithImage(final String taxonName) throws IOException {
         CypherQuery cypherQuery = new CypherQuery(queryPrefix()
-                + " AND has(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
+                + " AND exists(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") " +
                 "AND length(taxon." + PropertyAndValueDictionary.THUMBNAIL_URL + ") > 0 " +
-                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_1_9);
+                returnClause(), paramForName(taxonName), CypherUtil.CYPHER_VERSION_2_3);
         return toMap(CypherUtil.executeRemote(cypherQuery));
     }
 
@@ -114,12 +114,12 @@ public class TaxonSearchImpl implements TaxonSearch {
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
-                put(TAXON_NAME, "taxon.name?");
-                put(TAXON_COMMON_NAMES, "taxon.commonNames?");
-                put(TAXON_PATH, "taxon.path?");
-                put(TAXON_EXTERNAL_ID, "taxon.externalId?");
-                put(TAXON_PATH_IDS, "taxon.pathIds?");
-                put(TAXON_PATH_RANKS, "taxon.pathNames?");
+                put(TAXON_NAME, "taxon.name");
+                put(TAXON_COMMON_NAMES, "taxon.commonNames");
+                put(TAXON_PATH, "taxon.path");
+                put(TAXON_EXTERNAL_ID, "taxon.externalId");
+                put(TAXON_PATH_IDS, "taxon.pathIds");
+                put(TAXON_PATH_RANKS, "taxon.pathNames");
             }
         };
 
@@ -134,7 +134,7 @@ public class TaxonSearchImpl implements TaxonSearch {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null, "1.9"), 30);
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null, CypherUtil.CYPHER_VERSION_2_3), 30);
     }
 
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -169,17 +169,17 @@ public class TaxonSearchImpl implements TaxonSearch {
     private String queryPrefix() {
         return "START taxon = node:taxonPaths({taxonPathQuery}) " +
                 "MATCH taxon-[:SAME_AS*0..1]->otherTaxon " +
-                "WHERE ((has(taxon.name) AND taxon.name = {taxonName}) OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})) " +
-                "AND (((has(otherTaxon.name) AND otherTaxon.name = {taxonName}) OR (has(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})))";
+                "WHERE ((exists(taxon.name) AND taxon.name = {taxonName}) OR (exists(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})) " +
+                "AND (((exists(otherTaxon.name) AND otherTaxon.name = {taxonName}) OR (exists(otherTaxon.externalId) AND otherTaxon.externalId = {taxonName})))";
     }
 
     private String returnClause() {
-        return "RETURN taxon.name? as `" + PropertyAndValueDictionary.NAME + "`" +
-                ", taxon.commonNames? as `" + PropertyAndValueDictionary.COMMON_NAMES + "`" +
-                ", taxon.path? as `" + PropertyAndValueDictionary.PATH + "`" +
-                ", taxon.externalId? as `" + PropertyAndValueDictionary.EXTERNAL_ID + "`" +
-                ", taxon.externalUrl? as `" + PropertyAndValueDictionary.EXTERNAL_URL + "`" +
-                ", taxon.thumbnailUrl? as `" + PropertyAndValueDictionary.THUMBNAIL_URL +
+        return "RETURN taxon.name as `" + PropertyAndValueDictionary.NAME + "`" +
+                ", taxon.commonNames as `" + PropertyAndValueDictionary.COMMON_NAMES + "`" +
+                ", taxon.path as `" + PropertyAndValueDictionary.PATH + "`" +
+                ", taxon.externalId as `" + PropertyAndValueDictionary.EXTERNAL_ID + "`" +
+                ", taxon.externalUrl as `" + PropertyAndValueDictionary.EXTERNAL_URL + "`" +
+                ", taxon.thumbnailUrl as `" + PropertyAndValueDictionary.THUMBNAIL_URL +
                 "` LIMIT 1";
     }
 }
