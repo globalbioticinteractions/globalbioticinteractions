@@ -639,9 +639,9 @@ public class CypherQueryBuilder {
                     appendNameWhereClause(query, taxonLabel, ids, "externalId");
                 }
             } else {
-                query.append("(has(").append(taxonLabel).append(".externalIds) AND ").append(taxonLabel).append(".externalIds =~ '(.*(");
+                query.append("(has(").append(taxonLabel).append(".externalIds) AND ").append(taxonLabel).append(".externalIds =~ '(.*([ ]){1}(");
                 query.append(StringUtils.join(taxonNames, "|"));
-                query.append(").*)') ");
+                query.append(")([ ]){1}.*)') ");
             }
         }
     }
