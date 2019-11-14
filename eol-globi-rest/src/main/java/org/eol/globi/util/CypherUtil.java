@@ -67,7 +67,7 @@ public class CypherUtil {
     }
 
     private static void logQuery(CypherQuery query) {
-        LOG.info("executing query: [" + query.getQuery() + "] with params [" + query.getParams() + "]");
+        LOG.info("executing query: [" + query.getQuery() + "] with params [" + query.getParams() + "] and version [" + query.getVersion() + "]" );
     }
 
     public static HttpResponse execute(CypherQuery cypherQuery) throws IOException {

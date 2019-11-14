@@ -1,19 +1,31 @@
 package org.eol.globi.util;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class CypherQuery {
-    private String query;
+    private final String query;
 
     private final Map<String, String> params;
 
+    private final String version;
+
     public CypherQuery(String query) {
-        this(query, null);
+        this(query, Collections.emptyMap());
     }
 
     public CypherQuery(String query, Map<String, String> params) {
+        this(query, params, "1.9");
+    }
+
+    public CypherQuery(String query, String version) {
+        this(query, null, version);
+    }
+
+    public CypherQuery(String query, Map<String, String> params, String version) {
         this.query = query;
         this.params = params;
+        this.version = version;
     }
 
     public Map<String, String> getParams() {
@@ -21,7 +33,10 @@ public class CypherQuery {
     }
 
     public String getQuery() {
-        return query.replaceAll("\\s+", " ");
+        return ("CYPHER " + version + " " + query).replaceAll("\\s+", " ");
     }
 
+    public String getVersion() {
+        return version;
+    }
 }

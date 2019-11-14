@@ -93,7 +93,7 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
                 SpecimenNode specimen = new SpecimenNode(relationship.getEndNode());
                 String externalId = specimen.getExternalId();
                 assertThat(externalId, is(notNullValue()));
-                assertThat(externalId, containsString(TaxonomyProvider.BIO_INFO + "rel:"));
+                assertThat(externalId, CoreMatchers.containsString(TaxonomyProvider.BIO_INFO + "rel:"));
                 success.set(true);
             }
         });

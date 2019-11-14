@@ -153,7 +153,7 @@ public class CypherQueryBuilder {
         if (RequestHelper.isSpatialSearch(params)) {
             appendSpatialStartWhereWith(params, builder);
         } else {
-            builder.append("CYPHER 1.9 START taxon = node:taxons('*:*') ");
+            builder.append("START taxon = node:taxons('*:*') ");
         }
 
         if (RequestHelper.isSpatialSearch(params)) {
@@ -319,7 +319,7 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery shortestPathQuery(final String startTaxon, final String endTaxon) {
-        String query = "CYPHER 1.9 START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
+        String query = "START startNode = node:taxons(name={startTaxon}),endNode = node:taxons(name={endTaxon}) " +
                 "MATCH p = allShortestPaths(startNode-[:" + InteractUtil.allInteractionsCypherClause() + "|CLASSIFIED_AS*..100]-endNode) " +
                 "RETURN extract(n in (filter(x in nodes(p) : has(x.name))) : " +
                 "coalesce(n.name?)) as shortestPaths ";
@@ -334,7 +334,7 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery externalIdForStudy(final String studyTitle) {
-        String query = "CYPHER 1.9 START study = node:studies(title={studyTitle}) " +
+        String query = "START study = node:studies(title={studyTitle}) " +
                 " RETURN study.externalId? as study";
 
         HashMap<String, String> params = new HashMap<String, String>() {{
@@ -345,7 +345,7 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery externalIdForTaxon(final String taxonName) {
-        String query = "CYPHER 1.9 START taxon = node:taxons(name={taxonName}) " +
+        String query = "START taxon = node:taxons(name={taxonName}) " +
                 " RETURN taxon.externalId? as externalId";
 
         HashMap<String, String> taxonName1 = new HashMap<String, String>() {{
@@ -367,7 +367,7 @@ public class CypherQueryBuilder {
             query.append(" MATCH study-[:" + createStudyRel(parameterMap) + "]->specimen-[:COLLECTED_AT]->location");
             query.append(" WITH DISTINCT(location) as loc");
         } else {
-            query.append("CYPHER 1.9 START " + ALL_LOCATIONS_INDEX_SELECTOR);
+            query.append("START " + ALL_LOCATIONS_INDEX_SELECTOR);
         }
         query.append(" RETURN loc.latitude? as latitude, loc.longitude? as longitude, loc.footprintWKT? as footprintWKT");
         return new CypherQuery(query.toString(), getParams(null, null, false, parameterMap));
@@ -406,7 +406,7 @@ public class CypherQueryBuilder {
 
     public static CypherQuery buildInteractionTypeQuery(Map parameterMap) {
         final List<String> taxa = collectParamValues(parameterMap, ParamName.TAXON);
-        String query = "CYPHER 1.9 START taxon = " + getTaxonPathSelector(TAXON_NAME.getLabel(), false)
+        String query = "START taxon = " + getTaxonPathSelector(TAXON_NAME.getLabel(), false)
                 + " MATCH taxon-[rel:" + InteractUtil.allInteractionsCypherClause() + "]->otherTaxon RETURN distinct(type(rel)) as " + INTERACTION_TYPE;
         return new CypherQuery(query
                 , new HashMap<String, String>() {
@@ -470,7 +470,7 @@ public class CypherQueryBuilder {
     }
 
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
-        query.append("CYPHER 1.9 START");
+        query.append("START");
         List<String> accordingToParams = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingToParams.size() > 0) {
             appendWithStudy(query, accordingToParams);
@@ -588,12 +588,6 @@ public class CypherQueryBuilder {
         return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:" + studyRel + "]-study";
     }
 
-    public static CypherQuery sourcesQuery() {
-        String cypherQuery = "CYPHER 1.9 START study=node:studies('*:*')" +
-                " RETURN distinct(study.source)";
-        return new CypherQuery(cypherQuery, EMPTY_PARAMS);
-    }
-
 
     protected static String createInteractionTypeSelector(List<String> interactionTypeSelectors) {
         TreeSet<InteractType> cypherTypes = new TreeSet<InteractType>();
@@ -708,7 +702,7 @@ public class CypherQueryBuilder {
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             appendSpatialStartWhereWith(parameterMap, query);
         } else {
-            query.append("CYPHER 1.9 START study = node:studies('*:*') ");
+            query.append("START study = node:studies('*:*') ");
         }
 
         query.append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:" + createStudyRel(parameterMap) + "]-study")
@@ -740,7 +734,7 @@ public class CypherQueryBuilder {
     }
 
     public static void appendSpatialStartWhereWith(Map<String, String[]> parameterMap, StringBuilder query) {
-        query.append("CYPHER 1.9 START loc = node:locations('latitude:*') WHERE ");
+        query.append("START loc = node:locations('latitude:*') WHERE ");
         RequestHelper.addSpatialWhereClause(RequestHelper.parseSpatialSearchParams(parameterMap), query);
         query.append("WITH loc ");
     }
