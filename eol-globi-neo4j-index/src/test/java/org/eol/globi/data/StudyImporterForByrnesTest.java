@@ -28,8 +28,8 @@ public class StudyImporterForByrnesTest extends GraphDBTestCase {
         studyImporterForByrnes.importStudy();
         resolveNames();
 
-        List<String> citationList = new ArrayList<String>();
-        Set<String> citations = new HashSet<String>();
+        List<String> citationList = new ArrayList<>();
+        Set<String> citations = new HashSet<>();
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
         assertTrue(studies.size() > 0);
         for (Study study : studies) {
