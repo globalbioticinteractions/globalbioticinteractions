@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ import static org.eol.globi.server.util.ResultField.TAXON_PATH_RANKS;
 public class TaxonSearchImpl implements TaxonSearch {
     private static final Log LOG = LogFactory.getLog(TaxonSearchImpl.class);
 
-    public static final HashMap<String, String> NO_PROPERTIES = new HashMap<String, String>();
+    public static final Map<String, String> NO_PROPERTIES = Collections.emptyMap();
 
     @RequestMapping(value = "/findTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -51,7 +52,7 @@ public class TaxonSearchImpl implements TaxonSearch {
         Map<String, String> props = NO_PROPERTIES;
 
         if (dataNode != null && dataNode.size() > 0) {
-            props = new HashMap<String, String>();
+            props = new HashMap<>();
             JsonNode first = dataNode.get(0);
             props.put(PropertyAndValueDictionary.NAME, StringUtils.defaultString(first.get(0).getTextValue()));
             props.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.defaultString(first.get(1).getTextValue()));
@@ -133,7 +134,7 @@ public class TaxonSearchImpl implements TaxonSearch {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
         CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null), 30);
+        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString()), 30);
     }
 
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
