@@ -23,11 +23,10 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForHechingerTest extends GraphDBTestCase {
+public class StudyImporterForHechingerIT extends GraphDBTestCase {
 
-    private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerTest.class);
+    private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerIT.class);
 
-    @Ignore(value = "slow test since neo4j 3.3.9")
     @Test
     public void importStudy() throws StudyImporterException, IOException {
         JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Ryan F. Hechinger, Kevin D. Lafferty, John P. McLaughlin, Brian L. Fredensborg, Todd C. Huspeni, Julio Lorda, Parwant K. Sandhu, Jenny C. Shaw, Mark E. Torchin, Kathleen L. Whitney, and Armand M. Kuris 2011. Food webs including parasites, biomass, body sizes, and life stages for three California/Baja California estuaries. Ecology 92:791–791. https://doi.org/10.1890/10-1383.1 .\",\n" +
