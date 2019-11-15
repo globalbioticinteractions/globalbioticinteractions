@@ -16,7 +16,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForCoetzerTest extends GraphDBTestCase {
+public class StudyImporterForCoetzerIT extends GraphDBTestCase {
 
     @Test
     public void importSome() throws StudyImporterException, IOException {
