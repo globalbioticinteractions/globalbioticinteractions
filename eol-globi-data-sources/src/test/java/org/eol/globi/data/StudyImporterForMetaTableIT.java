@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;

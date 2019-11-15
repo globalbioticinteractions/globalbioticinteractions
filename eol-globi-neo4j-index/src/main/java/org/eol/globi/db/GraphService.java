@@ -5,6 +5,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.helpers.collection.MapUtil;
 
+import java.io.File;
 import java.util.Map;
 
 public abstract class GraphService {
@@ -23,7 +24,7 @@ public abstract class GraphService {
         System.out.println("neo4j starting using [" + storePath + "]...");
 
         final GraphDatabaseService graphService = new GraphDatabaseFactory()
-                .newEmbeddedDatabaseBuilder(storePath)
+                .newEmbeddedDatabaseBuilder(new File(storePath))
                 .setConfig(GraphDatabaseSettings.keep_logical_logs, "150M size")
                 .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "50M")
                 .setConfig(GraphDatabaseSettings.check_point_interval_tx, "1000")
