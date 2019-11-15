@@ -99,17 +99,16 @@ public class ExportNCBIResourceFile implements GraphExporter {
 
     private void close(OutputStream os) throws IOException {
         if (os != null) {
-            try (OutputStream os1 = os) {
-                IOUtils.write("      </ObjectList>\n" +
-                        "   </ObjectSelector>\n" +
-                        "   <ObjectUrl>\n" +
-                        "      <Base>&base.url;</Base>\n" +
-                        "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
-                        "      <UrlName>Show Biotic Interactions</UrlName>\n" +
-                        "   </ObjectUrl>\n" +
-                        " </Link>", os, StandardCharsets.UTF_8);
-                IOUtils.write("\n</LinkSet>", os1, StandardCharsets.UTF_8);
-            }
+            IOUtils.write("      </ObjectList>\n" +
+                    "   </ObjectSelector>\n" +
+                    "   <ObjectUrl>\n" +
+                    "      <Base>&base.url;</Base>\n" +
+                    "      <Rule>sourceTaxon=NCBI:&lo.id;</Rule>\n" +
+                    "      <UrlName>Show Biotic Interactions</UrlName>\n" +
+                    "   </ObjectUrl>\n" +
+                    " </Link>", os, StandardCharsets.UTF_8);
+            IOUtils.write("\n</LinkSet>", os, StandardCharsets.UTF_8);
+            IOUtils.closeQuietly(os);
         }
     }
 

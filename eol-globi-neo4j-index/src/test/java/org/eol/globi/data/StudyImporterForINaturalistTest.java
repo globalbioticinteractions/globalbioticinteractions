@@ -14,7 +14,6 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.util.NodeUtil;
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -95,12 +94,12 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
         Study anotherStudy = nodeFactory.findStudy("INAT:831");
         assertThat(anotherStudy, is(notNullValue()));
-        assertThat(anotherStudy.getCitation(), CoreMatchers.containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at <https://www.inaturalist.org/observations/831> on "));
+        assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at <https://www.inaturalist.org/observations/831> on "));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/831"));
 
         anotherStudy = nodeFactory.findStudy("INAT:97380");
         assertThat(anotherStudy, is(notNullValue()));
-        assertThat(anotherStudy.getCitation(), CoreMatchers.containsString("annetanne. 2012. Misumena vatia eating Eristalis nemorum."));
+        assertThat(anotherStudy.getCitation(), containsString("annetanne. 2012. Misumena vatia eating Eristalis nemorum."));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/97380"));
 
         Taxon sourceTaxonNode = taxonIndex.findTaxonByName("Arenaria interpres");
@@ -115,7 +114,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
                 assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getName(), is("HumanObservation"));
                 assertThat(new SpecimenNode(sourceSpecimen).getBasisOfRecord().getId(), is("TEST:HumanObservation"));
-                assertThat(new SpecimenNode(sourceSpecimen).getExternalId(), CoreMatchers.containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
+                assertThat(new SpecimenNode(sourceSpecimen).getExternalId(), containsString(TaxonomyProvider.ID_PREFIX_INATURALIST));
                 Relationship ateRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
                 Node preySpecimen = ateRel.getEndNode();
                 assertThat(preySpecimen, is(not(nullValue())));

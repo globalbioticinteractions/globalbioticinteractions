@@ -128,7 +128,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             File luceneDir = new File(getCacheDir().getAbsolutePath(), "lucene");
             boolean preexisting = luceneDir.exists();
             createCacheDir(luceneDir, isTemporary());
-            TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir.toPath())) {{
+            TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir)) {{
                 setMaxHits(getMaxTaxonLinks());
                 start();
             }};

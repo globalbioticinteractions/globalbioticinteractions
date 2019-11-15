@@ -17,7 +17,6 @@ import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.neo4j.graphdb.Transaction;
 
@@ -85,8 +84,8 @@ public class ExporterRDFTest extends GraphDBTestCase {
             Model model = ModelFactory.createDefaultModel();
             model.read(IOUtils.toInputStream(content, StandardCharsets.UTF_8), "https://example.org", "N-TRIPLE");
 
-            assertThat(content, not(CoreMatchers.containsString("no:match")));
-            assertThat(content, CoreMatchers.containsString("http://purl.obolibrary.org/obo/ENVO_"));
+            assertThat(content, not(containsString("no:match")));
+            assertThat(content, containsString("http://purl.obolibrary.org/obo/ENVO_"));
         } finally {
             FileUtils.deleteQuietly(file);
         }

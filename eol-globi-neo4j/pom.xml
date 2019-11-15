@@ -25,11 +25,6 @@
             <artifactId>neo4j</artifactId>
             <version>${neo4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-lucene-index</artifactId>
-            <version>${neo4j.version}</version>
-        </dependency>
     </dependencies>
 
 </project>

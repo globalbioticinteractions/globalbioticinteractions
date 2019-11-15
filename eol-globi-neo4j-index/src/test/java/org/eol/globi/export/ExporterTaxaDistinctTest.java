@@ -4,10 +4,10 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,6 +17,7 @@ import java.text.ParseException;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
@@ -31,9 +32,9 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
 
         String actual = exportStudy(myStudy1);
-        assertThat(actual, CoreMatchers.containsString("EOL:123\tCanis lupus\t\t\t\t\t\t\t\t\thttp://eol.org/pages/123\t\t\t\t"));
-        assertThat(actual, CoreMatchers.containsString("EOL:45634\tHomo sapiens\t\t\t\t\t\t\t\t\thttp://eol.org/pages/45634\t\t\t\t"));
-        assertThat(actual, not(CoreMatchers.containsString("no:match\tThemFishes\t\t\t\t\t\t\t\t\t\t\t\t\t")));
+        assertThat(actual, containsString("EOL:123\tCanis lupus\t\t\t\t\t\t\t\t\thttp://eol.org/pages/123\t\t\t\t"));
+        assertThat(actual, containsString("EOL:45634\tHomo sapiens\t\t\t\t\t\t\t\t\thttp://eol.org/pages/45634\t\t\t\t"));
+        assertThat(actual, not(containsString("no:match\tThemFishes\t\t\t\t\t\t\t\t\t\t\t\t\t")));
 
         assertThatNoTaxaAreExportedOnMissingHeader(myStudy1, new StringWriter());
     }
@@ -50,7 +51,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
         Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);
-        assertThat(exportStudy(study), not(CoreMatchers.containsString(PropertyAndValueDictionary.NO_MATCH)));
+        assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
     }
 
     private void assertThatNoTaxaAreExportedOnMissingHeader(StudyNode myStudy1, StringWriter row) throws IOException {

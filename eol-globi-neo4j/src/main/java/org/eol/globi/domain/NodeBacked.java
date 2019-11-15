@@ -33,11 +33,13 @@ public class NodeBacked {
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType) {
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         Relationship rel;
-
-        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
-            rel = createRelationshipToNoTx((NodeBacked) endNode, relType);
+        try {
+            rel = createRelationshipToNoTx((NodeBacked)endNode, relType);
             tx.success();
+        } finally {
+            tx.close();
         }
 
         return rel;
@@ -66,20 +68,26 @@ public class NodeBacked {
 
     public void setPropertyWithTx(String propertyName, Object propertyValue) {
         if (propertyName != null && propertyValue != null) {
-            try (Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx()) {
+            Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+            try {
                 getUnderlyingNode().setProperty(propertyName, propertyValue);
                 transaction.success();
+            } finally {
+                transaction.close();
             }
         }
     }
 
     protected Object getPropertyValueOrNull(String propertyName) {
-        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
             Object value = getUnderlyingNode().hasProperty(propertyName)
                     ? getUnderlyingNode().getProperty(propertyName)
                     : null;
             tx.success();
             return value;
+        } finally {
+            tx.close();
         }
     }
 
@@ -106,11 +114,14 @@ public class NodeBacked {
 
     protected String getProperty(String propertyName) {
         Object value = null;
-        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
+        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
             if (getUnderlyingNode().hasProperty(propertyName)) {
                 value = getUnderlyingNode().getProperty(propertyName);
             }
             tx.success();
+        } finally {
+            tx.close();
         }
         return value == null ? "" : value.toString();
 

@@ -9,7 +9,6 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.hamcrest.CoreMatchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Result;
 
@@ -23,9 +22,9 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForHechingerIT extends GraphDBTestCase {
+public class StudyImporterForHechingerTest extends GraphDBTestCase {
 
-    private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerIT.class);
+    private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerTest.class);
 
     @Test
     public void importStudy() throws StudyImporterException, IOException {

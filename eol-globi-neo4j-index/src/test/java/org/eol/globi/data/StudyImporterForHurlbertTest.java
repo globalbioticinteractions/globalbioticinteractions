@@ -6,7 +6,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
         study = allStudies.get(1);
         assertThat(study.getSource(), startsWith("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at <AvianDietDatabase.txt>"));
-        assertThat(study.getCitation(), CoreMatchers.containsString("Cash, K. J., J. P. Austin-Smith"));
+        assertThat(study.getCitation(), containsString("Cash, K. J., J. P. Austin-Smith"));
 
         assertThat(taxonIndex.findTaxonByName("Haliaeetus leucocephalus"), is(notNullValue()));
         Taxon preyTaxon = taxonIndex.findTaxonByName("Ictalurus");

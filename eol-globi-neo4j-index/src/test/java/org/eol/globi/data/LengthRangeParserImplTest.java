@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 
 public class LengthRangeParserImplTest {
 
@@ -14,7 +14,7 @@ public class LengthRangeParserImplTest {
     public void parse() throws IOException, StudyImporterException {
         LengthRangeParserImpl parser = new LengthRangeParserImpl("johnny");
         LabeledCSVParser csvParser = initParser();
-        assertEquals((146d + 123d) / 2d, parser.parseLengthInMm(csvParser), 0.01);
+        assertEquals((146d + 123d) / 2d, parser.parseLengthInMm(csvParser));
     }
 
     private LabeledCSVParser initParser() throws IOException {

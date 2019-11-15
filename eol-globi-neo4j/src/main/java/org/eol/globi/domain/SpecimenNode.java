@@ -121,20 +121,26 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void interactsWith(Specimen recipientSpecimen, InteractType relType) {
         if (recipientSpecimen instanceof NodeBacked) {
-            try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
+            Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
+            try {
                 createInteraction(this, relType, (NodeBacked) recipientSpecimen);
                 tx.success();
+            } finally {
+                tx.close();
             }
         }
     }
 
     @Override
     public void setOriginalTaxonDescription(Taxon taxon) {
-        try (Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx()) {
+        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
+        try {
             TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
             TaxonUtil.copy(taxon, taxonNode);
             createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
             transaction.success();
+        } finally {
+            transaction.close();
         }
     }
 

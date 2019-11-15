@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.Map;
 
-import static org.junit.Assert.assertNull;
+import static junit.framework.Assert.assertNull;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;

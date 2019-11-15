@@ -6,7 +6,8 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class DatasetRegistryProxyIT {
 
