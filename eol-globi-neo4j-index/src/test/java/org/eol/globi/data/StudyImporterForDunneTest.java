@@ -6,6 +6,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
@@ -83,7 +84,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
 
         assertThat(study, is(notNullValue()));
 
-        assertThat(study.getSource(), containsString("Accessed at "));
+        assertThat(study.getSource(), CoreMatchers.containsString("Accessed at "));
 
         assertThat(getSpecimenCount(study), is(6774 * 2));
 

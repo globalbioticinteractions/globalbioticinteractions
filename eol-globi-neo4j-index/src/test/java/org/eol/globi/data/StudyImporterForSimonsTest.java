@@ -7,10 +7,10 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -25,10 +25,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class StudyImporterForSimonsTest extends GraphDBTestCase {
@@ -42,8 +43,8 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     public void convertLatLongIntoUMT() {
         LatLng latLng = new LatLng(30.031055, -88.066406);
         UTMRef utmRef = latLng.toUTMRef();
-        assertEquals(397176.66307791235, utmRef.getEasting());
-        assertEquals(3322705.434795696, utmRef.getNorthing());
+        assertEquals(397176.66307791235, utmRef.getEasting(), 0.00001);
+        assertEquals(3322705.434795696, utmRef.getNorthing(), 0.00001);
         assertEquals('R', utmRef.getLatZone());
         assertEquals(16, utmRef.getLngZone());
     }
@@ -94,7 +95,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
                         Node preyTaxonNode = ateRel.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS)).iterator().next().getEndNode();
                         preyNames.add(preyTaxonNode.getProperty(PropertyAndValueDictionary.NAME).toString());
                     }
-                    assertThat(preyNames, hasItem("Ampelisca sp. (abdita complex)"));
+                    assertThat(preyNames, CoreMatchers.hasItem("Ampelisca sp. (abdita complex)"));
                     assertThat(preyNames.contains("Ampelisca agassizi"), Is.is(true));
                     assertThat(preyNames.size(), Is.is(2));
                 } else if ("Halieutichthys aculeatus".equals(scientificName)) {
@@ -136,7 +137,7 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
             preyNames.add((String)taxonNode.getProperty("name"));
 
         }
-        assertThat(preyNames, hasItem(preyName));
+        assertThat(preyNames, CoreMatchers.hasItem(preyName));
 
         Node endNode = firstSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING).getEndNode();
         String season = (String) endNode.getProperty("title");
