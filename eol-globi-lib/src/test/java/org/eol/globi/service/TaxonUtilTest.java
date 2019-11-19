@@ -133,6 +133,7 @@ public class TaxonUtilTest {
     @Test
     public void toTaxonImage() {
         TaxonImage image = new TaxonImage();
+        image.setCommonName("foo @en | bar @de");
 
         Taxon taxon = new TaxonImpl("Donald duckus", "EOL:123");
         taxon.setCommonNames("bla @en | boo @de");
@@ -142,7 +143,7 @@ public class TaxonUtilTest {
         taxonMap.put(PropertyAndValueDictionary.EXTERNAL_URL, "http://foo/bar");
         TaxonImage enrichedImage = TaxonUtil.enrichTaxonImageWithTaxon(taxonMap, image);
 
-        assertThat(enrichedImage.getCommonName(), is("bla"));
+        assertThat(enrichedImage.getCommonName(), is("foo"));
         assertThat(enrichedImage.getTaxonPath(), is("one | two | three"));
         assertThat(enrichedImage.getInfoURL(), is("http://foo/bar"));
         assertThat(enrichedImage.getThumbnailURL(), is("http://foo/bar/thumb"));
