@@ -174,17 +174,11 @@ public class TaxonUtil {
     }
 
     private static TaxonImage enrich(Map<String, String> taxon, TaxonImage taxonImage, String preferredLanguage) {
-        if (StringUtils.isBlank(taxonImage.getCommonName())) {
-            String commonName = taxon.get(COMMON_NAMES);
-            if (StringUtils.isNotBlank(commonName)) {
-                String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
-                for (String split : splits) {
-                    if (StringUtils.contains(split, "@" + preferredLanguage)) {
-                        taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@" + preferredLanguage, "")));
-                    }
-                }
-            }
-        }
+        String commonName = StringUtils.isBlank(taxonImage.getCommonName())
+                ? taxon.get(COMMON_NAMES)
+                : taxonImage.getCommonName();
+
+        eraseLanguageTag(taxonImage, preferredLanguage, commonName);
 
         if (StringUtils.isBlank(taxonImage.getScientificName())) {
             taxonImage.setScientificName(taxon.get(NAME));
@@ -214,6 +208,17 @@ public class TaxonUtil {
             }
         }
         return taxonImage;
+    }
+
+    private static void eraseLanguageTag(TaxonImage taxonImage, String preferredLanguage, String commonName) {
+        if (StringUtils.isNotBlank(commonName)) {
+            String[] splits = StringUtils.split(commonName, CharsetConstant.SEPARATOR_CHAR);
+            for (String split : splits) {
+                if (StringUtils.contains(split, "@" + preferredLanguage)) {
+                    taxonImage.setCommonName(StringUtils.trim(StringUtils.replace(split, "@" + preferredLanguage, "")));
+                }
+            }
+        }
     }
 
     public static boolean isResolved(Taxon taxon) {
