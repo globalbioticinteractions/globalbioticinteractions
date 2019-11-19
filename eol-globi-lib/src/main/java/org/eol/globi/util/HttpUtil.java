@@ -100,7 +100,7 @@ public class HttpUtil {
                 .setDefaultRequestConfig(config).build();
     }
 
-    public static HttpGet httpGetJson(String uri) {
+    public static HttpGet httpGetJson(URI uri) {
         HttpGet httpGet = new HttpGet(uri);
         addJsonHeaders(httpGet);
         return httpGet;
@@ -113,7 +113,7 @@ public class HttpUtil {
     }
 
     public static String getRemoteJson(String uri) throws IOException {
-        return executeAndRelease(httpGetJson(uri));
+        return executeAndRelease(httpGetJson(URI.create(uri)));
     }
 
     public static String getContent(URI uri) throws IOException {

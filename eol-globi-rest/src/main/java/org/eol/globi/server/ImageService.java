@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.ImageSearch;
+import org.eol.globi.service.SearchContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,8 @@ import java.util.stream.Stream;
 
 @Controller
 public class ImageService {
-    private ImageSearch imageSearch = new WikiDataImageSearch();
+
+    ImageSearch imageSearch = new WikiDataImageSearch();
 
     @Autowired
     private TaxonSearch taxonSearch;
@@ -47,7 +49,13 @@ public class ImageService {
                 if (links != null) {
                     Stream<String> ids = replaceWithPrefix(links);
                     for (String id : ids.collect(Collectors.toList())) {
-                        taxonImage = imageSearch.lookupImageForExternalId(id);
+                        taxonImage = imageSearch.lookupImageForExternalId(id, new SearchContext() {
+
+                            @Override
+                            public String getPreferredLanguage() {
+                                return preferredLanguage;
+                            }
+                        });
                         if (taxonImage != null) {
                             break;
                         }
@@ -90,7 +98,7 @@ public class ImageService {
             throws IOException {
         TaxonImage image = null;
         if (externalIds != null && externalIds.length > 0) {
-            image = findTaxonImagesForExternalId(externalIds[0]);
+            image = findTaxonImagesForExternalId(externalIds[0], preferredLanguage);
         } else if (names != null && names.length > 0) {
             image = findTaxonImagesForTaxonWithName(names[0], preferredLanguage);
         } else {
@@ -118,8 +126,12 @@ public class ImageService {
 
     @RequestMapping(value = "/images/{externalId}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public TaxonImage findTaxonImagesForExternalId(@PathVariable("externalId") String externalId) throws IOException {
-        TaxonImage taxonImage = imageSearch.lookupImageForExternalId(externalId);
+    public TaxonImage findTaxonImagesForExternalId(
+            @PathVariable("externalId") String externalId,
+            @RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage)
+            throws IOException {
+
+        TaxonImage taxonImage = imageSearch.lookupImageForExternalId(externalId, () -> preferredLanguage);
         if (taxonImage == null) {
             throw new ResourceNotFoundException("no image for [" + externalId + "]");
         }

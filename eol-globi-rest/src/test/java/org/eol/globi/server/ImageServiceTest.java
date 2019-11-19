@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.ImageSearch;
+import org.eol.globi.service.SearchContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,12 +59,17 @@ public class ImageServiceTest {
                 return taxonImage;
             }
 
+            @Override
+            public TaxonImage lookupImageForExternalId(String externalId, SearchContext context) throws IOException {
+                return this.lookupImageForExternalId(externalId);
+            }
+
         });
     }
 
     @Test
     public void findImagesForExternalId() throws IOException {
-        TaxonImage image = imageService.findTaxonImagesForExternalId("EOL:1234");
+        TaxonImage image = imageService.findTaxonImagesForExternalId("EOL:1234", "en");
         assertThat(image.getCommonName(), is("some common name for EOL:1234"));
     }
 
@@ -106,6 +112,11 @@ public class ImageServiceTest {
                 TaxonImage taxonImage = new TaxonImage();
                 taxonImage.setInfoURL("some info url");
                 return taxonImage;
+            }
+
+            @Override
+            public TaxonImage lookupImageForExternalId(String externalId, SearchContext context) throws IOException {
+                return null;
             }
 
         });
@@ -154,6 +165,11 @@ public class ImageServiceTest {
                 return taxonImage;
             }
 
+            @Override
+            public TaxonImage lookupImageForExternalId(String externalId, SearchContext context) throws IOException {
+                return this.lookupImageForExternalId(externalId);
+            }
+
         });
 
         TaxonImage image = imageService.findTaxonImagesForTaxonWithName("some name", "en");
@@ -190,6 +206,11 @@ public class ImageServiceTest {
 
             @Override
             public TaxonImage lookupImageForExternalId(String externalId) {
+                return null;
+            }
+
+            @Override
+            public TaxonImage lookupImageForExternalId(String externalId, SearchContext context) throws IOException {
                 return null;
             }
 
