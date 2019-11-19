@@ -39,12 +39,11 @@ public class WikiDataImageSearch implements ImageSearch {
         TaxonImage taxonImage = null;
         String wikiDataId = StringUtils.replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
 
-        String languageCode = "en";
         String sparql = "SELECT ?item ?pic ?name WHERE { \n" +
                 "  wd:" + wikiDataId + " wdt:P18 ?pic . \n" +
                 "  SERVICE wikibase:label {\n" +
                 "    bd:serviceParam wikibase:language \"" + context.getPreferredLanguage() + "\" .\n" +
-                "    wd:Q140 wdt:P1843 ?name .\n" +
+                "    wd:" + wikiDataId + " wdt:P1843 ?name .\n" +
                 "  }\n" +
                 "} limit 1";
 
