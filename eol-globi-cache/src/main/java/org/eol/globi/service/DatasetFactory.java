@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.EMLUtil;
 
@@ -19,13 +20,36 @@ interface DatasetConfigurer {
     Dataset configure(Dataset dataset, URI configURI) throws IOException;
 }
 
-public class DatasetFactory {
+interface DatasetFactoryInterface {
+    Dataset datasetFor(String datasetURI) throws DatasetFinderException;
+}
 
-    public static Dataset datasetFor(String repo, DatasetRegistry finder) throws DatasetFinderException {
-        return configDataset(finder.datasetFor(repo));
+public class DatasetFactory implements DatasetFactoryInterface {
+
+    private final DatasetRegistry registry;
+    private final InputStreamFactory inputStreamFactory;
+
+    public DatasetFactory(DatasetRegistry registry) {
+        this(registry, inStream -> inStream);
     }
 
-    private static Dataset configDataset(Dataset dataset) throws DatasetFinderException {
+    public DatasetFactory(DatasetRegistry registry, InputStreamFactory factory) {
+        this.registry = registry;
+        this.inputStreamFactory = factory;
+    }
+
+    @Override
+    public Dataset datasetFor(String datasetURI) throws DatasetFinderException {
+        return configDataset(registry.datasetFor(datasetURI));
+    }
+
+
+    @Deprecated
+    public static Dataset datasetFor(String repo, DatasetRegistry finder) throws DatasetFinderException {
+        return new DatasetFactory(finder).datasetFor(repo);
+    }
+
+    private Dataset configDataset(Dataset dataset) throws DatasetFinderException {
         Map<String, DatasetConfigurer> datasetHandlers = new TreeMap<String, DatasetConfigurer>() {{
             put("/globi.json", new JSONConfigurer());
             put("/globi-dataset.jsonld", new JSONConfigurer());

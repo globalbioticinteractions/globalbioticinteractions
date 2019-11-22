@@ -50,7 +50,7 @@ public class StudyImporterForRegistry extends BaseStudyImporter {
     public void importData(String repository) throws StudyImporterException {
         try {
             LOG.info("importing github repo [" + repository + "]...");
-            Dataset dataset = DatasetFactory.datasetFor(repository, getDatasetFinder());
+            Dataset dataset = new DatasetFactory(getDatasetFinder()).datasetFor(repository);
             nodeFactory.getOrCreateDataset(dataset);
             importData(dataset);
             LOG.info("importing github repo [" + repository + "] done.");

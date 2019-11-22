@@ -112,7 +112,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         Dataset dataset;
 
         final URI sourceURI = findLastCachedDatasetURI(namespace);
-        dataset = sourceURI == null ? null : DatasetFactory.datasetFor(namespace, new DatasetRegistry() {
+        dataset = sourceURI == null ? null : new DatasetFactory(new DatasetRegistry() {
             @Override
             public Collection<String> findNamespaces() throws DatasetFinderException {
                 return Collections.singletonList(namespace);
@@ -124,7 +124,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
                 return new DatasetWithCache(dataset,
                         cacheFactory.cacheFor(dataset));
             }
-        });
+        }).datasetFor(namespace);
 
         if (dataset == null) {
             throw new DatasetFinderException("failed to retrieve/cache dataset in namespace [" + namespace + "]");

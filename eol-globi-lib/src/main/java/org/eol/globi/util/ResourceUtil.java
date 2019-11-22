@@ -18,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -112,6 +111,16 @@ public class ResourceUtil {
     }
 
     public static boolean resourceExists(URI descriptor) {
+        return resourceExists(descriptor, new InputStreamFactory() {
+
+            @Override
+            public InputStream create(InputStream inStream) throws IOException {
+                return inStream;
+            }
+        });
+    }
+
+    public static boolean resourceExists(URI descriptor, InputStreamFactory factory) {
         boolean exists = false;
         if (null != descriptor) {
             try {
@@ -119,7 +128,7 @@ public class ResourceUtil {
                     HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
                     exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
                 } else {
-                    try (InputStream input = asInputStream(descriptor.toString())) {
+                    try (InputStream input = asInputStream(descriptor.toString(), factory)) {
                         exists = input != null;
                     }
                 }

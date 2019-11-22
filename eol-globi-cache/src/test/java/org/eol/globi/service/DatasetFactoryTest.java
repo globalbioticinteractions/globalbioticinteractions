@@ -33,7 +33,7 @@ public class DatasetFactoryTest {
                 return new DatasetImpl(namespace, URI.create(meta));
             }
         };
-        return DatasetFactory.datasetFor("some/repo", finder);
+        return new DatasetFactory(finder).datasetFor("some/repo");
     }
 
     @Test

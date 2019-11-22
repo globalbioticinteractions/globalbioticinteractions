@@ -45,7 +45,7 @@ public class DatasetRegistryWithCacheIT {
     private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetFinderException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, cachePath);
 
-        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/template-dataset", finder);
+        Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
         assertThat(dataset.getArchiveURI().toString(), containsString(expectedURIFragment));
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
@@ -57,7 +57,7 @@ public class DatasetRegistryWithCacheIT {
     public void gitHubTest() throws DatasetFinderException {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), cachePath);
 
-        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees", finder);
+        Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
         assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
@@ -69,7 +69,7 @@ public class DatasetRegistryWithCacheIT {
     public void hafnerTest() throws DatasetFinderException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), cachePath);
 
-        Dataset dataset = DatasetFactory.datasetFor("globalbioticinteractions/hafner", finder);
+        Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
 
         try (InputStream resource = dataset.getResource("hafner/gopher_lice_int.csv")) {
             assertNotNull(resource);
