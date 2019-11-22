@@ -59,7 +59,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
         Pair<URI, DatasetConfigurer> configPair = null;
         for (String configResource : datasetHandlers.keySet()) {
             URI configURI = dataset.getResourceURI(configResource);
-            if (ResourceUtil.resourceExists(configURI)) {
+            if (ResourceUtil.resourceExists(configURI, getInputStreamFactory())) {
                 configPair = Pair.of(configURI, datasetHandlers.get(configResource));
                 break;
             }
@@ -72,6 +72,10 @@ public class DatasetFactory implements DatasetFactoryInterface {
         } catch (IOException e) {
             throw new DatasetFinderException("failed to import [" + dataset.getNamespace() + "]", e);
         }
+    }
+
+    private InputStreamFactory getInputStreamFactory() {
+        return inputStreamFactory;
     }
 
     private static class JSONConfigurer implements DatasetConfigurer {

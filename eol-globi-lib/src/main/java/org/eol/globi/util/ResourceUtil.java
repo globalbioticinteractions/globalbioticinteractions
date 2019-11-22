@@ -109,15 +109,9 @@ public class ResourceUtil {
                 ? resourceURI
                 : absoluteURIFor(context, resourceName);
     }
-
-    public static boolean resourceExists(URI descriptor) {
-        return resourceExists(descriptor, new InputStreamFactory() {
-
-            @Override
-            public InputStream create(InputStream inStream) throws IOException {
-                return inStream;
-            }
-        });
+    
+    static boolean resourceExists(URI descriptor) {
+        return resourceExists(descriptor, inStream -> inStream);
     }
 
     public static boolean resourceExists(URI descriptor, InputStreamFactory factory) {
