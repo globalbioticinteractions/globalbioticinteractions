@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.CSVTSVUtil;
+import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -23,10 +24,16 @@ public class CacheLocalReadonly implements Cache {
 
     private final String namespace;
     private final String cachePath;
+    private final InputStreamFactory inputStreamFactory;
 
     public CacheLocalReadonly(String namespace, String cachePath) {
+        this(namespace, cachePath, inStream -> inStream);
+    }
+
+    public CacheLocalReadonly(String namespace, String cachePath, InputStreamFactory factory) {
         this.namespace = namespace;
         this.cachePath = cachePath;
+        this.inputStreamFactory = factory;
     }
 
     static URI getRemoteJarURIIfNeeded(URI remoteArchiveURI, URI localResourceURI) {
@@ -133,7 +140,11 @@ public class CacheLocalReadonly implements Cache {
     @Override
     public InputStream asInputStream(URI resourceURI) throws IOException {
         URI resourceURI1 = asURI(resourceURI);
-        return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString());
+        return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString(), getInputStreamFactory());
+    }
+
+    private InputStreamFactory getInputStreamFactory() {
+        return this.inputStreamFactory;
     }
 }
 

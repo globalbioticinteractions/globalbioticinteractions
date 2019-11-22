@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
+import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.doi.DOI;
@@ -16,20 +17,26 @@ import java.net.URI;
 public class DatasetImpl extends DatasetMapped {
     private static final Log LOG = LogFactory.getLog(DatasetImpl.class);
 
-    private String namespace;
-    private URI archiveURI;
+    private final String namespace;
+    private final URI archiveURI;
+    private final InputStreamFactory inputStreamFactory;
     private JsonNode config;
     private URI configURI;
 
     public DatasetImpl(String namespace, URI archiveURI) {
+        this(namespace, archiveURI, inStream -> inStream);
+    }
+
+    public DatasetImpl(String namespace, URI archiveURI, InputStreamFactory factory) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
+        this.inputStreamFactory = factory;
     }
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
         String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
-        return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString());
+        return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), getInputStreamFactory());
     }
 
     @Override
@@ -92,5 +99,9 @@ public class DatasetImpl extends DatasetMapped {
     @Override
     public URI getConfigURI() {
         return configURI;
+    }
+
+    public InputStreamFactory getInputStreamFactory() {
+        return inputStreamFactory;
     }
 }
