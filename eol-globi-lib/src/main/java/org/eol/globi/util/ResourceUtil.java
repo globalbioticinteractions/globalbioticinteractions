@@ -40,21 +40,25 @@ public class ResourceUtil {
     }
 
     public static InputStream asInputStream(String resource) throws IOException {
+        return asInputStream(resource, inStream -> inStream);
+    }
+
+    public static InputStream asInputStream(String resource, InputStreamFactory factory) throws IOException {
         try {
             InputStream is;
             if (isHttpURI(resource)) {
                 LOG.info("caching of [" + resource + "] started...");
-                is = getCachedRemoteInputStream(resource);
+                is = getCachedRemoteInputStream(resource, factory);
                 LOG.info("caching of [" + resource + "] complete.");
             } else if (StringUtils.startsWith(resource, "file:/")) {
-                is = new FileInputStream(new File(URI.create(resource)));
+                is = factory.create(new FileInputStream(new File(URI.create(resource))));
             } else if (StringUtils.startsWith(resource, "jar:file:/")) {
                 URL url = URI.create(resource).toURL();
                 URLConnection urlConnection = url.openConnection();
                 // Prevent leaking of jar file descriptors by disabling jar cache.
                 // see https://stackoverflow.com/a/36518430
                 urlConnection.setUseCaches(false);
-                is = urlConnection.getInputStream();
+                is = factory.create(urlConnection.getInputStream());
             } else if (StringUtils.startsWith(resource, "ftp:/")) {
                 URI uri = URI.create(resource);
                 FTPClient ftpClient = new FTPClient();
@@ -66,7 +70,7 @@ public class ResourceUtil {
                     ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 
                     is = ftpClient.isConnected()
-                            ? cacheAndOpenStream(ftpClient.retrieveFileStream(uri.getPath()))
+                            ? cacheAndOpenStream(ftpClient.retrieveFileStream(uri.getPath()), factory)
                             : null;
                 } finally {
                     if (ftpClient.isConnected()) {
@@ -78,8 +82,9 @@ public class ResourceUtil {
                 if (StringUtils.startsWith(resource, "classpath:")) {
                     classpathResource = StringUtils.replace(resource, "classpath:", "");
                 }
-                is = ResourceUtil.class.getResourceAsStream(classpathResource);
+                is = factory.create(ResourceUtil.class.getResourceAsStream(classpathResource));
             }
+
             if (is == null) {
                 final URI uri = fromShapefileDir(resource);
                 if (uri == null) {
@@ -88,9 +93,11 @@ public class ResourceUtil {
                     is = new FileInputStream(new File(uri));
                 }
             }
+
             if (StringUtils.endsWith(resource, ".gz")) {
                 is = new GZIPInputStream(is);
             }
+
             return is;
         } catch (IOException ex) {
             throw new IOException("issue accessing [" + resource + "]", ex);
@@ -112,7 +119,7 @@ public class ResourceUtil {
                     HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
                     exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
                 } else {
-                    try(InputStream input = asInputStream(descriptor.toString())) {
+                    try (InputStream input = asInputStream(descriptor.toString())) {
                         exists = input != null;
                     }
                 }
@@ -123,7 +130,7 @@ public class ResourceUtil {
         return exists;
     }
 
-    private static InputStream getCachedRemoteInputStream(String resource) throws IOException {
+    private static InputStream getCachedRemoteInputStream(String resource, InputStreamFactory factory) throws IOException {
         URI resourceURI = URI.create(resource);
         HttpGet request = new HttpGet(resourceURI);
         try {
@@ -134,7 +141,7 @@ public class ResourceUtil {
                         statusLine.getReasonPhrase());
             }
             try (InputStream content = response.getEntity().getContent()) {
-                return cacheAndOpenStream(content);
+                return cacheAndOpenStream(content, factory);
             }
         } finally {
             request.releaseConnection();
@@ -142,13 +149,13 @@ public class ResourceUtil {
 
     }
 
-    private static InputStream cacheAndOpenStream(InputStream is) throws IOException {
+    private static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory) throws IOException {
         File tempFile = File.createTempFile("globiRemote", "tmp");
         tempFile.deleteOnExit();
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        IOUtils.copy(is, fos);
-        fos.flush();
-        IOUtils.closeQuietly(fos);
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            IOUtils.copy(factory.create(is), fos);
+            fos.flush();
+        }
         return new FileInputStream(tempFile);
     }
 
