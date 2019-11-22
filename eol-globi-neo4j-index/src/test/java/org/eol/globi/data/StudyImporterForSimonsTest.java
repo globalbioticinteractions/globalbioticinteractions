@@ -42,8 +42,8 @@ public class StudyImporterForSimonsTest extends GraphDBTestCase {
     public void convertLatLongIntoUMT() {
         LatLng latLng = new LatLng(30.031055, -88.066406);
         UTMRef utmRef = latLng.toUTMRef();
-        assertEquals(397176.66307791235, utmRef.getEasting());
-        assertEquals(3322705.434795696, utmRef.getNorthing());
+        assertEquals(397176.66307791235, utmRef.getEasting(), 0.001);
+        assertEquals(3322705.434795696, utmRef.getNorthing(), 0.001);
         assertEquals('R', utmRef.getLatZone());
         assertEquals(16, utmRef.getLngZone());
     }
