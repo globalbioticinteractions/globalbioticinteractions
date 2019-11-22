@@ -95,25 +95,25 @@ public class ResourceUtilTest {
 
     @Test
     public void relativeURI() throws URISyntaxException {
-        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), "/path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), URI.create("/path"));
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
     @Test
     public void relativeURINoSlash() throws URISyntaxException {
-        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example"), "path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example"), URI.create("path"));
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
     @Test
     public void relativeURISlashContext() throws URISyntaxException {
-        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), "path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), URI.create("path"));
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
     @Test
     public void relativeURISlashResource() throws URISyntaxException {
-        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example"), "/path");
+        URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example"), URI.create("/path"));
         assertThat(uri.toString(), is("some:/example/path"));
     }
 

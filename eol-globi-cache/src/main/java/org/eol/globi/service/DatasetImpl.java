@@ -19,7 +19,7 @@ public class DatasetImpl extends DatasetMapped {
 
     private final String namespace;
     private final URI archiveURI;
-    private final InputStreamFactory inputStreamFactory;
+    private final ResourceService<URI> resourceService;
     private JsonNode config;
     private URI configURI;
 
@@ -27,22 +27,32 @@ public class DatasetImpl extends DatasetMapped {
         this(namespace, archiveURI, inStream -> inStream);
     }
 
-    public DatasetImpl(String namespace, URI archiveURI, InputStreamFactory factory) {
+    public DatasetImpl(String namespace, URI archiveURI, final InputStreamFactory factory) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
-        this.inputStreamFactory = factory;
+        this.resourceService = new ResourceService<URI>() {
+            @Override
+            public InputStream getResource(URI resourceName) throws IOException {
+                URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+                return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), factory);
+            }
+
+            @Override
+            public URI getResourceURI(URI resourceName) throws IOException {
+                URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+                return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
+            }
+        };
     }
 
     @Override
     public InputStream getResource(String resourceName) throws IOException {
-        String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
-        return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), getInputStreamFactory());
+        return resourceService.getResource(URI.create(resourceName));
     }
 
     @Override
-    public URI getResourceURI(String resourceName) {
-        String mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
-        return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
+    public URI getResourceURI(String resourceName) throws IOException {
+        return resourceService.getResourceURI(URI.create(resourceName));
     }
 
     @Override
@@ -101,7 +111,4 @@ public class DatasetImpl extends DatasetMapped {
         return configURI;
     }
 
-    public InputStreamFactory getInputStreamFactory() {
-        return inputStreamFactory;
-    }
 }

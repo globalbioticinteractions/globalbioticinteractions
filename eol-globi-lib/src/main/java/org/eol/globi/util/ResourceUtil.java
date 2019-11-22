@@ -103,10 +103,9 @@ public class ResourceUtil {
         }
     }
 
-    public static URI getAbsoluteResourceURI(URI context, String resourceName) {
-        URI resourceURI = URI.create(resourceName);
-        return resourceURI.isAbsolute()
-                ? resourceURI
+    public static URI getAbsoluteResourceURI(URI context, URI resourceName) {
+        return resourceName.isAbsolute()
+                ? resourceName
                 : absoluteURIFor(context, resourceName);
     }
 
@@ -162,10 +161,10 @@ public class ResourceUtil {
         return new FileInputStream(tempFile);
     }
 
-    private static URI absoluteURIFor(URI context, String resourceName) {
-        String resourceNameNoSlashPrefix = StringUtils.startsWith(resourceName, "/")
-                ? StringUtils.substring(resourceName, 1)
-                : resourceName;
+    private static URI absoluteURIFor(URI context, URI resourceName) {
+        String resourceNameNoSlashPrefix = StringUtils.startsWith(resourceName.toString(), "/")
+                ? StringUtils.substring(resourceName.toString(), 1)
+                : resourceName.toString();
         String contextString = context.toString();
         String contextNoSlashSuffix = StringUtils.endsWith(contextString, "/")
                 ? StringUtils.substring(contextString, 0, contextString.length() - 1)

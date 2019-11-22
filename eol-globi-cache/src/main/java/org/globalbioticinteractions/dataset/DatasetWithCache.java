@@ -58,9 +58,9 @@ public class DatasetWithCache extends DatasetMapped {
     }
 
     private URI getResourceURI2(String resourceName) throws IOException {
-        String mappedResourceName = mapResourceNameIfRequested(resourceName, this.getConfig());
+        URI mappedResourceName = mapResourceNameIfRequested(URI.create(resourceName), this.getConfig());
 
-        URI resourceURI = URI.create(mappedResourceName);
+        URI resourceURI = mappedResourceName;
 
         URI uri;
         if (resourceURI.isAbsolute()) {
@@ -78,13 +78,13 @@ public class DatasetWithCache extends DatasetMapped {
         return uri;
     }
 
-    private URI cacheRemoteArchive(String mappedResourceName, URI archiveURI) throws IOException {
+    private URI cacheRemoteArchive(URI mappedResourceName, URI archiveURI) throws IOException {
         URI localArchiveURI = cache.getResourceURI(archiveURI);
         URI localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
         return ResourceUtil.getAbsoluteResourceURI(localDatasetRoot, mappedResourceName);
     }
 
-    private URI cacheFileInLocalDirectory(String mappedResourceName, URI archiveURI) throws IOException {
+    private URI cacheFileInLocalDirectory(URI mappedResourceName, URI archiveURI) throws IOException {
         URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
         return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.getResourceURI(absoluteResourceURI);
     }
