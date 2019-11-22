@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public interface ResourceService {
+public interface ResourceService<T> {
 
-    InputStream getResource(String resourceName) throws IOException;
+    InputStream getResource(T resourceName) throws IOException;
 
-    URI getResourceURI(String resourceName);
+    URI getResourceURI(T resourceName) throws IOException;
 
 }

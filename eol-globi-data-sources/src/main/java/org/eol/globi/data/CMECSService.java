@@ -97,7 +97,7 @@ public class CMECSService implements TermLookupService {
         return service;
     }
 
-    private static class ResourceServiceDefault implements ResourceService {
+    private static class ResourceServiceDefault implements ResourceService<String> {
 
         @Override
         public InputStream getResource(String resourceName) throws IOException {

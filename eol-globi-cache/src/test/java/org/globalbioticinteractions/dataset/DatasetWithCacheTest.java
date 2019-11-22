@@ -57,7 +57,7 @@ public class DatasetWithCacheTest {
     public void getURIRelative() throws IOException, URISyntaxException {
         Cache cache = Mockito.mock(Cache.class);
         URI cachedLocalURI = getClass().getResource("archive.zip").toURI();
-        when(cache.asURI(any(URI.class))).thenReturn(cachedLocalURI);
+        when(cache.getResourceURI(any(URI.class))).thenReturn(cachedLocalURI);
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
@@ -72,7 +72,7 @@ public class DatasetWithCacheTest {
         URI localFileURI = getClass().getResource("archive.zip").toURI();
         URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
         assertTrue(DatasetWithCache.isLocalDir(cachedLocalURI));
-        when(cache.asURI(any(URI.class))).thenReturn(localFileURI);
+        when(cache.getResourceURI(any(URI.class))).thenReturn(localFileURI);
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
@@ -87,7 +87,7 @@ public class DatasetWithCacheTest {
         URI localFileURI = getClass().getResource("archive.zip").toURI();
         URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
         assertTrue(DatasetWithCache.isLocalDir(cachedLocalURI));
-        when(cache.asURI(any(URI.class))).thenReturn(localFileURI);
+        when(cache.getResourceURI(any(URI.class))).thenReturn(localFileURI);
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
@@ -103,7 +103,7 @@ public class DatasetWithCacheTest {
         URI resourceURI = URI.create(resourceName);
         Cache cache = Mockito.mock(Cache.class);
         URI cachedLocalURI = URI.create("someCached.txt");
-        when(cache.asURI(resourceURI)).thenReturn(cachedLocalURI);
+        when(cache.getResourceURI(resourceURI)).thenReturn(cachedLocalURI);
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);

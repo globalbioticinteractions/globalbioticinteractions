@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 public class CacheLocalReadonly implements Cache {
     private final Log LOG = LogFactory.getLog(CacheLocalReadonly.class);
@@ -46,8 +44,8 @@ public class CacheLocalReadonly implements Cache {
     }
 
     @Override
-    public URI asURI(URI resourceURI) throws IOException {
-        CachedURI cachedUri = asMeta(resourceURI);
+    public URI getResourceURI(URI resourceName) {
+        CachedURI cachedUri = asMeta(resourceName);
         return cachedUri == null ? null : cachedUri.getCachedURI();
     }
 
@@ -138,8 +136,8 @@ public class CacheLocalReadonly implements Cache {
     }
 
     @Override
-    public InputStream asInputStream(URI resourceURI) throws IOException {
-        URI resourceURI1 = asURI(resourceURI);
+    public InputStream getResource(URI resourceURI) throws IOException {
+        URI resourceURI1 = getResourceURI(resourceURI);
         return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString(), getInputStreamFactory());
     }
 

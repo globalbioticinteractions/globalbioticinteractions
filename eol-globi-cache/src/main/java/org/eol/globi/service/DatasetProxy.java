@@ -28,7 +28,7 @@ public class DatasetProxy implements Dataset {
     }
 
     @Override
-    public URI getResourceURI(String resourcePath) {
+    public URI getResourceURI(String resourcePath) throws IOException {
         return datasetProxied.getResourceURI(resourcePath);
     }
 

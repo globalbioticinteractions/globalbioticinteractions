@@ -109,7 +109,7 @@ public class ResourceUtil {
                 ? resourceURI
                 : absoluteURIFor(context, resourceName);
     }
-    
+
     static boolean resourceExists(URI descriptor) {
         return resourceExists(descriptor, inStream -> inStream);
     }

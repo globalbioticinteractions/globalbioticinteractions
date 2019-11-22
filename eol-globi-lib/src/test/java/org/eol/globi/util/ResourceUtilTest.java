@@ -20,8 +20,15 @@ import static org.junit.Assert.*;
 public class ResourceUtilTest {
 
     @Test
+    public void URIString() {
+        URI bobo = URI.create("bobo");
+        assertThat(bobo.toString(), is("bobo"));
+    }
+
+    @Test
     public void localResource() throws URISyntaxException {
-        URL resource = getClass().getResource(getClass().getSimpleName() + ".class");
+        String name = getClass().getSimpleName() + ".class";
+        URL resource = getClass().getResource(name);
         assertThat(new File(resource.toURI()).exists(), is(true));
         assertTrue(ResourceUtil.resourceExists(resource.toURI()));
     }

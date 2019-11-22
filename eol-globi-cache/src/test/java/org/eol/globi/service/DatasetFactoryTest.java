@@ -30,7 +30,7 @@ public class DatasetFactoryTest {
 
             @Override
             public Dataset datasetFor(String namespace) throws DatasetFinderException {
-                return new DatasetImpl(namespace, URI.create(meta));
+                return new DatasetImpl(namespace, URI.create(meta), inStream -> inStream);
             }
         };
         return new DatasetFactory(finder).datasetFor("some/repo");

@@ -13,6 +13,7 @@ import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.CSVTSVUtil;
+import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLog;
 import org.globalbioticinteractions.cache.CacheUtil;
@@ -33,10 +34,16 @@ public class DatasetRegistryLocal implements DatasetRegistry {
     private final static Log LOG = LogFactory.getLog(DatasetRegistryLocal.class);
     private final String cacheDir;
     private final CacheFactory cacheFactory;
+    private final InputStreamFactory inputStreamFactory;
 
     public DatasetRegistryLocal(String cacheDir, CacheFactory cacheFactory) {
+        this(cacheDir, cacheFactory, inStream -> inStream);
+    }
+
+    public DatasetRegistryLocal(String cacheDir, CacheFactory cacheFactory, InputStreamFactory factory) {
         this.cacheDir = cacheDir;
         this.cacheFactory = cacheFactory;
+        this.inputStreamFactory = factory;
     }
 
     @Override
@@ -120,7 +127,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
             @Override
             public Dataset datasetFor(String s) throws DatasetFinderException {
-                Dataset dataset = new DatasetImpl(namespace, sourceURI);
+                Dataset dataset = new DatasetImpl(namespace, sourceURI, getInputStreamFactory());
                 return new DatasetWithCache(dataset,
                         cacheFactory.cacheFor(dataset));
             }
@@ -131,6 +138,10 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         }
 
         return dataset;
+    }
+
+    private InputStreamFactory getInputStreamFactory() {
+        return inputStreamFactory;
     }
 
 

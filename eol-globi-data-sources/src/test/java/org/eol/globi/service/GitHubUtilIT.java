@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class GitHubUtilIT {
 
@@ -19,8 +19,8 @@ public class GitHubUtilIT {
     @Test
     public void discoverRepos() throws IOException, URISyntaxException {
         List<String> reposWithData = GitHubUtil.find();
-        assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY_TSV));
-        assertThat(reposWithData, hasItem(TEMPLATE_DATA_REPOSITORY_JSONLD));
+        assertThat(reposWithData, CoreMatchers.hasItem(TEMPLATE_DATA_REPOSITORY_TSV));
+        assertThat(reposWithData, CoreMatchers.hasItem(TEMPLATE_DATA_REPOSITORY_JSONLD));
     }
 
     @Test

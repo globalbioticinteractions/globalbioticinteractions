@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.Location;
@@ -14,7 +13,6 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
@@ -30,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
@@ -65,23 +65,27 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
     }
 
-    protected String getPreyResourcePath() {
+    protected String getPreyResourcePath() throws StudyImporterException {
         return getResourcePath("/Prey.csv");
     }
 
-    private String getResourcePath(String resourceName) {
-        return getDataset().getResourceURI(resourceName).toString();
+    private String getResourcePath(String resourceName) throws StudyImporterException {
+        try {
+            return getDataset().getResourceURI(resourceName).toString();
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to locate [" + resourceName + "]", e);
+        }
     }
 
-    protected String getPredatorResourcePath() {
+    protected String getPredatorResourcePath() throws StudyImporterException {
         return getResourcePath("/Predators.csv");
     }
 
-    protected String getReferencesResourcePath() {
+    protected String getReferencesResourcePath() throws StudyImporterException {
         return getResourcePath("/References.csv");
     }
 
-    protected String getLocationsResourcePath() {
+    protected String getLocationsResourcePath() throws StudyImporterException {
         return getResourcePath("/Locations.csv");
     }
 

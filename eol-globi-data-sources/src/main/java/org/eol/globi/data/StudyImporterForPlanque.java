@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.lowerCase;
+import static org.apache.commons.lang3.StringUtils.replace;
 
 public class StudyImporterForPlanque extends BaseStudyImporter {
     private final static Log LOG = LogFactory.getLog(StudyImporterForPlanque.class);
@@ -39,16 +41,17 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
-            dataParser = parserFactory.createParser(getLinks(), CharsetConstant.UTF8);
+            String links = getLinks();
+            dataParser = parserFactory.createParser(links, CharsetConstant.UTF8);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to read resource [" + getLinks() + "]", e);
+            throw new StudyImporterException("failed to read links", e);
         }
         dataParser.changeDelimiter('\t');
 
-        Map<String, String> authorYearToFullReference = ReferenceUtil.buildRefMap(parserFactory, getReferences(), "AUTHOR_YEAR", "FULL_REFERENCE", '\t');
 
         Map<String, List<String>> pairwiseKeyToAuthorYears = new TreeMap<String, List<String>>();
         try {
+            Map<String, String> authorYearToFullReference = ReferenceUtil.buildRefMap(parserFactory, getReferences(), "AUTHOR_YEAR", "FULL_REFERENCE", '\t');
             LabeledCSVParser referenceParser = parserFactory.createParser(getReferencesForLinks(), CharsetConstant.UTF8);
             referenceParser.changeDelimiter('\t');
 
@@ -64,17 +67,14 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
                     pairwiseKeyToAuthorYears.put(pairwiseKey, authorYears);
                 }
             }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + getReferencesForLinks() + "]", e);
-        }
 
-        Map<String, List<String>> pairwiseKeyToFullCitation = new TreeMap<String, List<String>>();
+        Map<String, List<String>> pairwiseKeyToFullCitation = new TreeMap<>();
         for (String pairwiseKey : pairwiseKeyToAuthorYears.keySet()) {
             List<String> authorYearList = pairwiseKeyToAuthorYears.get(pairwiseKey);
             if (CollectionUtils.isEmpty(authorYearList)) {
                 throw new StudyImporterException("found no AUTHOR_YEAR for PWKEY: [" + pairwiseKey + "]");
             }
-            List<String> references = new ArrayList<String>();
+            List<String> references = new ArrayList<>();
             for (String authorYear : authorYearList) {
                 String reference = authorYearToFullReference.get(authorYear);
                 if (StringUtils.isBlank(reference)) {
@@ -87,7 +87,6 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
             pairwiseKeyToFullCitation.put(pairwiseKey, references);
         }
 
-        try {
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     importLine(dataParser, pairwiseKeyToFullCitation);
@@ -152,15 +151,15 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         }
     }
 
-    public String getLinks() {
+    public String getLinks() throws IOException {
         return DatasetUtil.getNamedResourceURI(getDataset(), "links");
     }
 
-    public String getReferences() {
+    public String getReferences() throws IOException {
         return DatasetUtil.getNamedResourceURI(getDataset(), "references");
     }
 
-    public String getReferencesForLinks() {
+    public String getReferencesForLinks() throws IOException {
         return DatasetUtil.getNamedResourceURI(getDataset(), "referencesForLinks");
     }
 }

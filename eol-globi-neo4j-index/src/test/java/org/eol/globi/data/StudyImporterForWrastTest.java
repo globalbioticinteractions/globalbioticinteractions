@@ -20,9 +20,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -130,7 +130,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     assertEquals(1, count);
                     Season season = specimen.getSeason();
                     assertEquals("fall", season.getTitle());
-                    assertEquals(420.0d, specimen.getLengthInMm());
+                    assertEquals(420.0d, specimen.getLengthInMm(), 0.01);
 
 
                 } else if ("Arius felis".equals(scientificName)) {
@@ -152,7 +152,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                     Season season = specimen.getSeason();
                     assertEquals("spring", season.getTitle());
 
-                    assertEquals(176.0d, specimen.getLengthInMm());
+                    assertEquals(176.0d, specimen.getLengthInMm(), 0.01);
                 } else if ("Missing depth".equals(scientificName)) {
                     Location location = specimen.getSampleLocation();
                     assertThat(location, is(not(nullValue())));

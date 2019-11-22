@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public interface Dataset extends ResourceService {
+public interface Dataset extends ResourceService<String> {
 
     URI getArchiveURI();
 

@@ -14,10 +14,10 @@ public class CacheProxy implements Cache {
     }
 
     @Override
-    public URI asURI(URI resourceURI) throws IOException {
+    public URI getResourceURI(URI resourceName) throws IOException {
         URI uri = null;
         for (Cache cache : caches) {
-                uri = uri == null ? cache.asURI(resourceURI) : uri;
+                uri = uri == null ? cache.getResourceURI(resourceName) : uri;
         }
         return uri;
     }
@@ -32,10 +32,10 @@ public class CacheProxy implements Cache {
     }
 
     @Override
-    public InputStream asInputStream(URI resourceURI) throws IOException {
+    public InputStream getResource(URI resourceURI) throws IOException {
         InputStream is = null;
         for (Cache cache : caches) {
-            is = is == null ? cache.asInputStream(resourceURI) : is;
+            is = is == null ? cache.getResource(resourceURI) : is;
         }
         return is;
     }

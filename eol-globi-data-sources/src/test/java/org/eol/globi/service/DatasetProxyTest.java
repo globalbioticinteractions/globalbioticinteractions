@@ -71,7 +71,7 @@ public class DatasetProxyTest {
     }
 
     @Test
-    public void getLocalJarResource() {
+    public void getLocalJarResource() throws IOException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("jar:file:/home/homer/dataset.zip!"));
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
         assertThat(datasetProxy.getResourceURI("somefile.json"), is(URI.create("jar:file:/home/homer/dataset.zip!/somefile.json")));

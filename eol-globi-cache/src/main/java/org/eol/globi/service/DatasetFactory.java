@@ -58,10 +58,14 @@ public class DatasetFactory implements DatasetFactoryInterface {
 
         Pair<URI, DatasetConfigurer> configPair = null;
         for (String configResource : datasetHandlers.keySet()) {
-            URI configURI = dataset.getResourceURI(configResource);
-            if (ResourceUtil.resourceExists(configURI, getInputStreamFactory())) {
-                configPair = Pair.of(configURI, datasetHandlers.get(configResource));
-                break;
+            try {
+                URI configURI = dataset.getResourceURI(configResource);
+                if (ResourceUtil.resourceExists(configURI, getInputStreamFactory())) {
+                    configPair = Pair.of(configURI, datasetHandlers.get(configResource));
+                    break;
+                }
+            } catch (IOException e) {
+                throw new DatasetFinderException("failed to access configURI", e);
             }
         }
         try {

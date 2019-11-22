@@ -7,7 +7,7 @@ import org.eol.globi.geo.LatLng;
 
 import java.io.IOException;
 
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;

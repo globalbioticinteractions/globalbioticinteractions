@@ -9,7 +9,7 @@ import java.net.URI;
 
 public final class DatasetUtil {
 
-    public static String getNamedResourceURI(Dataset dataset, String resourceName) {
+    public static String getNamedResourceURI(Dataset dataset, String resourceName) throws IOException {
         String resourceValue = getNamedResource(dataset, resourceName);
         URI resourceURI = resourceValue == null ? null : dataset.getResourceURI(resourceValue);
         return resourceURI == null ? null : resourceURI.toString();

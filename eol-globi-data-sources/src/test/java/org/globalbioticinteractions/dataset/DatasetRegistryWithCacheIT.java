@@ -54,7 +54,7 @@ public class DatasetRegistryWithCacheIT {
 
 
     @Test
-    public void gitHubTest() throws DatasetFinderException {
+    public void gitHubTest() throws DatasetFinderException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), cachePath);
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");

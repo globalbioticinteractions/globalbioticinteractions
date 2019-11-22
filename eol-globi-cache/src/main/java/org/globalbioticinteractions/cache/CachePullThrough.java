@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.InputStreamFactory;
@@ -68,10 +67,10 @@ public class CachePullThrough implements Cache {
     }
 
     @Override
-    public URI asURI(URI resourceURI) throws IOException {
+    public URI getResourceURI(URI resourceName) throws IOException {
         File cacheDir = CacheUtil.getCacheDirForNamespace(cachePath, namespace);
-        File resourceCached = cache(resourceURI, cacheDir, getInputStreamFactory());
-        CacheLog.appendCacheLog(namespace, resourceURI, cacheDir, resourceCached.toURI());
+        File resourceCached = cache(resourceName, cacheDir, getInputStreamFactory());
+        CacheLog.appendCacheLog(namespace, resourceName, cacheDir, resourceCached.toURI());
         return resourceCached.toURI();
     }
 
@@ -81,8 +80,8 @@ public class CachePullThrough implements Cache {
     }
 
     @Override
-    public InputStream asInputStream(URI resourceURI) throws IOException {
-        URI resourceURI1 = asURI(resourceURI);
+    public InputStream getResource(URI resourceURI) throws IOException {
+        URI resourceURI1 = getResourceURI(resourceURI);
         return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString(), getInputStreamFactory());
     }
 

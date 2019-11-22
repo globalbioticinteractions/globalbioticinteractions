@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import junit.framework.Assert;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -20,12 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 
 public class StudyImporterForMetaTableIT {
 
@@ -34,7 +33,7 @@ public class StudyImporterForMetaTableIT {
         final Class<StudyImporterForMetaTable> clazz = StudyImporterForMetaTable.class;
         final String name = "test-meta-globi-nhm.json";
         final URL resource = clazz.getResource(name);
-        Assert.assertNotNull(resource);
+        org.junit.Assert.assertNotNull(resource);
 
         final JsonNode config = new ObjectMapper().readTree(clazz.getResourceAsStream(name));
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
@@ -58,7 +57,7 @@ public class StudyImporterForMetaTableIT {
     @Test
     public void importAll() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
-        final InteractionListener interactionListener = properties -> links.add(properties);
+        final InteractionListener interactionListener = links::add;
         final StudyImporterForMetaTable.TableParserFactory tableFactory = (config, dataset) -> {
             String firstFewLines = "intertype,obstype,effunit,effort,obsunit,obsquant,germnotes,\"REPLACE(Interaction.notes, ',', ';')\",AnimalNumber,AnimalClass,AnimalOrder,AnimalFamily,AnimalGenus,AnimalSpecies,AnimalSubSpecies,AnimalType,AnimalCommonName,PlantNumber,PlantFamily,PlantGenus,PlantSpecies,PlantSubSpecies,country,region,ProvinceDistrictCity,ProtectedArea,HabitatWhite,HabitatAuthor,author,title,year,journal,volume,number,pages,USER,DEF_timestamp,,,\n" +
                     "seed disperser,direct observation,months,4,dung density,,,Article focused on elephant density per habitat type based on seed/plant types identified in dung at the various research locations. All identified plant types are being assumed to be dispersed by the elephants,1441,Mammalia,Proboscidea,Elephantidae,Loxodonta,africana,,NULL,African Bush Elephant,4035,Poaceae,Cynodon,dactylon,NULL,Mozambique,NULL,NULL,yes,forest transitions and mosaics,mangroves dune grass plains forest woodland riverine,\"De Boer, W.F. and Ntumi, C.P. and Correia, A.U. and Mafuca, J.M.\",Diet and distribution of elephant in the Maputo Elephant Reserve; Mozambique,2000,African Journal of Ecology,38,3,188-201,Mary,0000-00-00 00:00:00,,,\n" +
@@ -85,7 +84,7 @@ public class StudyImporterForMetaTableIT {
     @Test
     public void importREEMWithStaticCSV() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
-        final InteractionListener interactionListener = properties -> links.add(properties);
+        final InteractionListener interactionListener = links::add;
 
         final StudyImporterForMetaTable.TableParserFactory tableFactory = (config, dataset) -> {
             String firstFewLines = "Hauljoin,\" Pred_nodc\",\" Pred_specn\",\" Prey_nodc\",\" Pred_len\",\" Year\",\" Month\",\" day\",\" region\",\" Pred_name\",\" Prey_Name\",\" Vessel\",\" Cruise\",\" Haul\",\" Rlat\",\" Rlong\",\" Gear_depth\",\" Bottom_depth\",\" Start_hour\",\" Surface_temp\",\" Gear_temp\",\" INPFC_Area\",\" Stationid\",\" Start_date\",\" Prey_sz1\",\" Prey_sex\"\n" +
@@ -118,7 +117,7 @@ public class StudyImporterForMetaTableIT {
     @Test
     public void importPHIBaseWithStaticCSV() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<>();
-        final InteractionListener interactionListener = properties -> links.add(properties);
+        final InteractionListener interactionListener = links::add;
 
         final StudyImporterForMetaTable.TableParserFactory tableFactory = (config, dataset) -> {
             String firstFewLines = ",,Record 1,PHI:3,Uniprot,P26215,EMBL,AAA79885,MVAYALTSMLLSAGALVAAAPSGLDARDGCTFTDAATAIKNKASCSNIVISGMTVPAGTTLDLTGLKSGATVTFQGTTTFGYKEWEGPLISVSGTNIKVVGASGHTIDAAGQKWWDGKGSNGGKTKPKFFYAHSLTTSSISGLNIKNTPVQAFSINGVTGLTLDRITIDNSAGDSAGAHNTDAFDIGSSSGITISNANIKNQDDCVAINSGSDIHVTNCQCSGGHGVSIGSVGGRKDNTVKGVVVSGTTIANSDNGVRIKTISGATGSVSDITYENITLKNIAKYGIVIEQDYLNGGPTGKPTTGVPITGVTLKNVAGSVTGSGTEIYVLCGKGSCSGWNWSGVSITGGKKSSSCLNVPSGASC,no data found,SB111,PGN1,no data found,,,,,no,5017,Bipolaris zeicola,no data found,SB111,Leaf spot,Monocots,4577,Zea mays (related: maize),no data found,,,no data found,Endopolygalacturonase,GO:0004650,GO,no data found,unaffected pathogenicity,no data found,no,no,no,no data found,,,,,no data found,pectin,,,,,,Gene disruption,,,MU; JA,2152162,PubMed,,,,Expression during all infection stages. pathogen formerly called Cochliobolus carbonum teleomorph name,Scott-Craig et al.,1990,,,,,,,,,,,,,,,,,,,,,,,\n" +
@@ -155,7 +154,7 @@ public class StudyImporterForMetaTableIT {
     @Test
     public void importAPSNET() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
-        final InteractionListener interactionListener = properties -> links.add(properties);
+        final InteractionListener interactionListener = links::add;
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/apsnet-common-names-plant-diseases/master";
         final String resource = baseUrl + "/globi.json";
@@ -224,9 +223,9 @@ public class StudyImporterForMetaTableIT {
     }
 
     static public void importAll(InteractionListener interactionListener, StudyImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
-        final InputStream inputStream = ResourceUtil.asInputStream(resource);
+        final InputStream inputStream = ResourceUtil.asInputStream(resource, inStream -> inStream);
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-        final Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        final Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
         for (JsonNode table : StudyImporterForMetaTable.collectTables(dataset)) {
             StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetImpl(null, URI.create(baseUrl)), null);

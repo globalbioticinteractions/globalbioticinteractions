@@ -11,7 +11,6 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVTSVUtil;
-import org.globalbioticinteractions.dataset.CitationUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -35,7 +34,8 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        if (org.apache.commons.lang.StringUtils.isBlank(getResourceArchiveURI())) {
+        String resourceArchiveURI = getResourceArchiveURI();
+        if (org.apache.commons.lang.StringUtils.isBlank(resourceArchiveURI)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
 
@@ -153,8 +153,12 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
         return StringUtils.isBlank(speciesName) ? StringUtils.trim(line[4]) : speciesName;
     }
 
-    public String getResourceArchiveURI() {
-        return DatasetUtil.getNamedResourceURI(getDataset(), "archive");
+    public String getResourceArchiveURI() throws StudyImporterException {
+        try {
+            return DatasetUtil.getNamedResourceURI(getDataset(), "archive");
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to locate archive resource in [" + getDataset().getNamespace() + "]", e);
+        }
     }
 
 }

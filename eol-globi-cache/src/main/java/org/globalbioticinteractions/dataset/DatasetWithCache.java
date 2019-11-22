@@ -39,7 +39,7 @@ public class DatasetWithCache extends DatasetMapped {
         if (null == resourceURI2) {
             throw new IOException("resource [" + resourceName + "] not found");
         }
-        InputStream inputStream = cache.asInputStream(resourceURI2);
+        InputStream inputStream = cache.getResource(resourceURI2);
         if (null == inputStream) {
             throw new IOException("resource [" + resourceName + "] not found");
         }
@@ -67,7 +67,7 @@ public class DatasetWithCache extends DatasetMapped {
             if (isLocalDir(resourceURI)) {
                 uri = resourceURI;
             } else {
-                uri = cache.asURI(resourceURI);
+                uri = cache.getResourceURI(resourceURI);
             }
         } else {
             URI archiveURI = getArchiveURI();
@@ -79,14 +79,14 @@ public class DatasetWithCache extends DatasetMapped {
     }
 
     private URI cacheRemoteArchive(String mappedResourceName, URI archiveURI) throws IOException {
-        URI localArchiveURI = cache.asURI(archiveURI);
+        URI localArchiveURI = cache.getResourceURI(archiveURI);
         URI localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
         return ResourceUtil.getAbsoluteResourceURI(localDatasetRoot, mappedResourceName);
     }
 
     private URI cacheFileInLocalDirectory(String mappedResourceName, URI archiveURI) throws IOException {
         URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-        return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.asURI(absoluteResourceURI);
+        return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.getResourceURI(absoluteResourceURI);
     }
 
     public static boolean isLocalDir(URI archiveURI) {

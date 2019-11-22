@@ -50,7 +50,14 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        final String archiveURL = DatasetUtil.getNamedResourceURI(getDataset(), "archive");
+        final String archiveURL;
+
+        try {
+            archiveURL = DatasetUtil.getNamedResourceURI(getDataset(), "archive");
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to locate archive", e);
+        }
+
         if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }

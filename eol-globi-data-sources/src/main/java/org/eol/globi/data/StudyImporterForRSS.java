@@ -108,7 +108,12 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     }
 
     static String getRSSEndpoint(Dataset dataset) {
-        String rss = DatasetUtil.getNamedResourceURI(dataset, "rss");
+        String rss = null;
+        try {
+            rss = DatasetUtil.getNamedResourceURI(dataset, "rss");
+        } catch (IOException e) {
+            //
+        }
         return DatasetUtil.getValueOrDefault(dataset.getConfig(), "url", rss);
     }
 
