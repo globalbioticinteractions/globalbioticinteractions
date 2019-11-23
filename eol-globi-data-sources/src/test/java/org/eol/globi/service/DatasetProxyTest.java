@@ -60,14 +60,14 @@ public class DatasetProxyTest {
         JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
         DatasetProxy testDataset = getTestDataset(null, configProxy);
         assertThat(testDataset.getResourceURI(URI.create("someResource.csv")).toString(), Is.is("http://example.com/someResource.csv"));
-        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is("http://example.com/archive.zip"));
+        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is(URI.create("http://example.com/archive.zip")));
 
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"someOtherArchive.zip\" } }");
         testDataset = getTestDataset(config, configProxy);
-        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is("http://example.com/archive.zip"));
+        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is(URI.create("http://example.com/archive.zip")));
 
         testDataset = getTestDataset(config, null);
-        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is("http://example.com/someOtherArchive.zip"));
+        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is(URI.create("http://example.com/someOtherArchive.zip")));
     }
 
     @Test
