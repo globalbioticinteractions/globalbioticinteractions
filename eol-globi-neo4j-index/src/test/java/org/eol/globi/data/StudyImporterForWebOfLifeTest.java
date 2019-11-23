@@ -57,7 +57,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
 
         String expectedArchiveURL = "http://www.web-of-life.es/map_download_fast2.php?format=csv&networks=" + "A_HP_002,A_HP_003" + "&species=yes&type=All&data=All&speciesrange=&interactionsrange=&searchbox=&checked=false";
 
-        assertThat(generatedArchiveURL, is(expectedArchiveURL));
+        assertThat(generatedArchiveURL, is(URI.create(expectedArchiveURL)));
     }
 
 
