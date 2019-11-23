@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class StudyImporterForMangalTest {
 
@@ -50,10 +48,10 @@ public class StudyImporterForMangalTest {
     @Test
     public void pageThroughEndpoint() throws IOException, StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);
-        ResourceService resourceService = new ResourceService<String>() {
+        ResourceService<URI> resourceService = new ResourceService<URI>() {
 
             @Override
-            public InputStream getResource(String resourceName) throws IOException {
+            public InputStream getResource(URI resourceName) throws IOException {
                 int pageNumber = counter.getAndIncrement();
                 if (pageNumber == 0) {
                     return getClass().getResourceAsStream("mangal-dataset.json");
@@ -65,7 +63,7 @@ public class StudyImporterForMangalTest {
             }
 
             @Override
-            public URI getResourceURI(String resourceName) {
+            public URI getResourceURI(URI resourceName) {
                 return null;
             }
         };

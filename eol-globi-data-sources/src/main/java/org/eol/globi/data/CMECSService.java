@@ -34,13 +34,13 @@ public class CMECSService implements TermLookupService {
 
     private Map<String, Term> termMap = null;
 
-    private final ResourceService service;
+    private final ResourceService<URI> service;
 
     public CMECSService() {
         this(new ResourceServiceDefault());
     }
 
-    public CMECSService(ResourceService resourceServiceDefault) {
+    public CMECSService(ResourceService<URI> resourceServiceDefault) {
         this.service = resourceServiceDefault;
     }
 
@@ -57,9 +57,9 @@ public class CMECSService implements TermLookupService {
         return term == null ? Collections.emptyList() : Collections.singletonList(term);
     }
 
-    private static Map<String, Term> buildTermMap(ResourceService service) throws IOException {
+    private static Map<String, Term> buildTermMap(ResourceService<URI> service) throws IOException {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
-        String uri = "https://cmecscatalog.org/cmecs/documents/cmecs4.accdb";
+        URI uri = URI.create("https://cmecscatalog.org/cmecs/documents/cmecs4.accdb");
         LOG.info("CMECS data [" + uri + "] downloading ...");
 
         URI resourceURI = service.getResourceURI(uri);
@@ -93,19 +93,19 @@ public class CMECSService implements TermLookupService {
         return aquaticSettingsTerms;
     }
 
-    public ResourceService getService() {
+    public ResourceService<URI> getService() {
         return service;
     }
 
-    private static class ResourceServiceDefault implements ResourceService<String> {
+    private static class ResourceServiceDefault implements ResourceService<URI> {
 
         @Override
-        public InputStream getResource(String resourceName) throws IOException {
+        public InputStream getResource(URI resourceName) throws IOException {
             throw new NotImplementedException();
         }
 
         @Override
-        public URI getResourceURI(String resourceName) {
+        public URI getResourceURI(URI resourceName) {
             URI resourceURI = null;
             HttpGet get = new HttpGet(resourceName);
             try {
