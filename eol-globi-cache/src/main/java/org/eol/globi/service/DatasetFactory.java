@@ -42,12 +42,13 @@ public class DatasetFactory implements DatasetFactoryInterface {
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         Dataset dataset = registry.datasetFor(namespace);
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
-        JsonNode jsonNode = configDataset(dataset);
-        datasetProxy.setConfig(jsonNode);
+        Pair<URI, JsonNode> jsonNode = configDataset(dataset);
+        datasetProxy.setConfig(jsonNode.getRight());
+        datasetProxy.setConfigURI(jsonNode.getLeft());
         return datasetProxy;
     }
 
-    private JsonNode configDataset(ResourceService<URI> dataset) throws DatasetFinderException {
+    private Pair<URI, JsonNode> configDataset(ResourceService<URI> dataset) throws DatasetFinderException {
         Map<URI, DatasetConfigurer> datasetHandlers = new TreeMap<URI, DatasetConfigurer>() {{
             put(URI.create("/globi.json"), new JSONConfigurer());
             put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
@@ -70,7 +71,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
             if (configPair == null) {
                 throw new DatasetFinderException("failed to access find configuration");
             }
-            return configPair.getRight().configure(dataset, configPair.getLeft());
+            return Pair.of(configPair.getLeft(), configPair.getRight().configure(dataset, configPair.getLeft()));
         } catch (IOException e) {
             throw new DatasetFinderException("failed to access find configuration", e);
 
