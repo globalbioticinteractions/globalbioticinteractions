@@ -10,11 +10,10 @@ import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 
@@ -38,12 +37,12 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
     }
 
 
-    public static String getPagedUrl(String urlEndpoint, int page, int limit) {
-        return String.format("%s?page=%d&count=%d", urlEndpoint, page, limit);
+    public static URI getPagedUrl(String urlEndpoint, int page, int limit) {
+        return URI.create(String.format("%s?page=%d&count=%d", urlEndpoint, page, limit));
     }
 
-    public static void retrievePagedResource(ResourceService resourceService, NodeListener listener, int pageSize, int pageNumber, String urlEndpoint) throws StudyImporterException, IOException {
-        String pageUrl;
+    public static void retrievePagedResource(ResourceService<URI> resourceService, NodeListener listener, int pageSize, int pageNumber, String urlEndpoint) throws StudyImporterException, IOException {
+        URI pageUrl;
         do {
             pageUrl = getPagedUrl(urlEndpoint, pageNumber, pageSize);
             pageNumber++;

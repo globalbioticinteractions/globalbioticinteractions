@@ -25,13 +25,13 @@ import static org.hamcrest.CoreMatchers.containsString;
 public class StudyImporterForMangalTest {
 
     @Test
-    public void generatePagedURL() throws MalformedURLException {
+    public void generatePagedURL() {
         String urlEndpoint = "https://example.org/";
         int page = 0;
         int limit = 100;
 
-        String pagedUrlEndpoint = StudyImporterForMangal.getPagedUrl(urlEndpoint, page, limit);
-        assertThat(pagedUrlEndpoint, Is.is("https://example.org/?page=0&count=100"));
+        URI pagedUrlEndpoint = StudyImporterForMangal.getPagedUrl(urlEndpoint, page, limit);
+        assertThat(pagedUrlEndpoint, Is.is(URI.create("https://example.org/?page=0&count=100")));
     }
 
     @Test
