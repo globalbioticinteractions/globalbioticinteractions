@@ -1,6 +1,7 @@
 package org.eol.globi.server;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import com.sun.xml.internal.bind.api.impl.NameConverter;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,11 +13,12 @@ import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.Mockito.when;
 
 public class SchemaControllerTest {
@@ -49,7 +51,7 @@ public class SchemaControllerTest {
         when(request.getParameter("type")).thenReturn("csv");
 
         String interactionTypes = new SchemaController().getInteractionTypes(request);
-        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(IOUtils.toInputStream(interactionTypes));
+        LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(IOUtils.toInputStream(interactionTypes, StandardCharsets.UTF_8));
         assertThat(parser.getLabels(), is(new String[]{"interaction", "source", "target", "termIRI"}));
         while (parser.getLine() != null) {
             assertThat(parser.getValueByLabel("interaction"), is(notNullValue()));

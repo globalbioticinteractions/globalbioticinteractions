@@ -18,6 +18,7 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -30,11 +31,11 @@ public class StudyImporterForAkin extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        importStudy("akin/Senol-akin-(mad-island)-data-edited-sheet3-winter2.csv");
-        importStudy("akin/Senol-akin-(mad-island)-data-edited-sheet4-summer2.csv");
+        importStudy(URI.create("akin/Senol-akin-(mad-island)-data-edited-sheet3-winter2.csv"));
+        importStudy(URI.create("akin/Senol-akin-(mad-island)-data-edited-sheet4-summer2.csv"));
     }
 
-    private Study importAkinStudyFile(String[][] siteInfos, String studyResource, Study study) throws IOException, StudyImporterException, NodeFactoryException {
+    private Study importAkinStudyFile(String[][] siteInfos, URI studyResource, Study study) throws IOException, StudyImporterException, NodeFactoryException {
         LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
         String[] header = parser.getLabels();
         String[] line;
@@ -57,7 +58,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
 
-    private void parseLine(String[][] siteInfos, String studyResource, Study study, LabeledCSVParser parser, String[] header, String[] line) throws NodeFactoryException, IOException {
+    private void parseLine(String[][] siteInfos, URI studyResource, Study study, LabeledCSVParser parser, String[] header, String[] line) throws NodeFactoryException, IOException {
         try {
             Specimen specimen = addSpecimen(study, parser, header, line);
             if (specimen != null) {
@@ -71,7 +72,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private String[][] loadSampleSiteLocations() throws IOException {
-        CSVParse csvParser = CSVTSVUtil.createCSVParser(getDataset().getResource("akin/Akin2002Locations.csv"));
+        CSVParse csvParser = CSVTSVUtil.createCSVParser(getDataset().getResource(URI.create("akin/Akin2002Locations.csv")));
         return csvParser.getAllValues();
     }
 
@@ -225,7 +226,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         return index;
     }
 
-    private Study importStudy(String studyResource) throws StudyImporterException {
+    private Study importStudy(URI studyResource) throws StudyImporterException {
         Study study;
         try {
             DOI doi = new DOI("1007", "bf02784282");

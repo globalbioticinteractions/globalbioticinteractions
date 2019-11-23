@@ -15,7 +15,7 @@ import java.net.URI;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.hamcrest.CoreMatchers.containsString;
 
 public class StudyImporterForDunneTest extends GraphDBTestCase {
 

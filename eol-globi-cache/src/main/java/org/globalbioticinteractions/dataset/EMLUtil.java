@@ -1,12 +1,12 @@
 package org.globalbioticinteractions.dataset;
 
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
+import org.eol.globi.service.ResourceService;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -25,13 +25,12 @@ import java.util.Arrays;
 
 public class EMLUtil {
 
-    public static DatasetProxy datasetWithEML(Dataset origDataset, URI emlURI) throws IOException {
-        DatasetProxy proxy;
+    public static JsonNode datasetWithEML(ResourceService<URI> origDataset, URI emlURI) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(emlURI.toString());
+            Document doc = builder.parse(origDataset.getResource(emlURI));
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
 
@@ -47,15 +46,10 @@ public class EMLUtil {
 
 
             String string = new ObjectMapper().writeValueAsString(objectNode);
-            proxy = new DatasetProxy(origDataset);
-            proxy.setConfig(new ObjectMapper().readTree(string));
-            proxy.setConfigURI(emlURI);
-
-
+            return new ObjectMapper().readTree(string);
         } catch (XPathExpressionException | ParserConfigurationException | IOException | SAXException e) {
             throw new IOException("failed to handle xpath", e);
         }
-        return proxy;
     }
 
     private static String getFirstIfPresent(Document doc, XPath xpath, String expression) throws XPathExpressionException {

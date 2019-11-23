@@ -11,6 +11,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +32,12 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
             String defaultNamespace = getDataset().getOrDefault("namespace", "FB");
 
             HashMap<String, Map<String, String>> countries = new HashMap<>();
-            importCountries(countries, getDataset().getResource("countref.tsv"));
+            importCountries(countries, getDataset().getResource(URI.create("countref.tsv")));
             HashMap<String, Map<String, String>> references = new HashMap<>();
-            importReferences(references, getDataset().getResource("refrens.tsv"), defaultNamespace);
+            importReferences(references, getDataset().getResource(URI.create("refrens.tsv")), defaultNamespace);
             HashMap<String, Map<String, String>> speciesMap = new HashMap<>();
-            importSpecies(speciesMap, getDataset().getResource("species_sealifebase.tsv"), "SLB");
-            importSpecies(speciesMap, getDataset().getResource("species_fishbase.tsv"), "FB");
+            importSpecies(speciesMap, getDataset().getResource(URI.create("species_sealifebase.tsv")), "SLB");
+            importSpecies(speciesMap, getDataset().getResource(URI.create("species_fishbase.tsv")), "FB");
 
             InteractionListener listener = new InteractionListener() {
                 private final InteractionListener listener = getInteractionListener();
@@ -49,13 +50,13 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
                 }
             };
 
-            importDiet(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
-            importDietFoodII(listener, getDataset().getResource("diet.tsv"), speciesMap, references, countries, defaultNamespace);
+            importDiet(listener, getDataset().getResource(URI.create("diet.tsv")), speciesMap, references, countries, defaultNamespace);
+            importDietFoodII(listener, getDataset().getResource(URI.create("diet.tsv")), speciesMap, references, countries, defaultNamespace);
 
-            importPredators(listener, getDataset().getResource("predats.tsv"), speciesMap, references, countries, defaultNamespace);
+            importPredators(listener, getDataset().getResource(URI.create("predats.tsv")), speciesMap, references, countries, defaultNamespace);
 
-            importFoodItemsByFoodName(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
-            importFoodItemsByFoodII(listener, getDataset().getResource("fooditems.tsv"), speciesMap, references, countries, defaultNamespace);
+            importFoodItemsByFoodName(listener, getDataset().getResource(URI.create("fooditems.tsv")), speciesMap, references, countries, defaultNamespace);
+            importFoodItemsByFoodII(listener, getDataset().getResource(URI.create("fooditems.tsv")), speciesMap, references, countries, defaultNamespace);
 
         } catch (IOException e) {
             throw new StudyImporterException("failed to import", e);

@@ -17,7 +17,7 @@ public class ParserFactoryForDatasetTest {
     @Test
     public void parserWithDatasetContextLocalResource() throws IOException {
         ParserFactoryForDataset parserFactory = new ParserFactoryForDataset(new DatasetLocal());
-        LabeledCSVParser parser = parserFactory.createParser("classpath:/org/eol/globi/data/someResource.csv", "UTF-8");
+        LabeledCSVParser parser = parserFactory.createParser(URI.create("classpath:/org/eol/globi/data/someResource.csv"), "UTF-8");
         assertThat(parser.getLine(), is(new String[] { "valueA", "valueB"}));
     }
 }

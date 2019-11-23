@@ -6,17 +6,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class ReferenceUtil {
     private static final Log LOG = LogFactory.getLog(ReferenceUtil.class);
 
-    public static Map<String, String> buildRefMap(ParserFactory parserFactory, String referencePath) throws StudyImporterException {
+    public static Map<String, String> buildRefMap(ParserFactory parserFactory, URI referencePath) throws StudyImporterException {
         return buildRefMap(parserFactory, referencePath, "short", "full", ',');
     }
 
-    protected static Map<String, String> buildRefMap(ParserFactory parserFactory, String referencePath, String keyColumnName, String valueColumnName, char delimiter) throws StudyImporterException {
+    protected static Map<String, String> buildRefMap(ParserFactory parserFactory, URI referencePath, String keyColumnName, String valueColumnName, char delimiter) throws StudyImporterException {
         Map<String, String> refMap = new TreeMap<String, String>();
         try {
             LabeledCSVParser referenceParser = parserFactory.createParser(referencePath, CharsetConstant.UTF8);

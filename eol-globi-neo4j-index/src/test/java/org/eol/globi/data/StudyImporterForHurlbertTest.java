@@ -18,7 +18,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.hamcrest.CoreMatchers.containsString;
 
 public class StudyImporterForHurlbertTest extends GraphDBTestCase {
 
@@ -63,7 +63,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForHurlbert(null, nodeFactory);
         Dataset dataset = new DatasetImpl(namespace, URI.create("some:uri")) {
             @Override
-            public InputStream getResource(String name){
+            public InputStream getResource(URI name){
                 return StudyImporterForHurlbertTest.getResource();
             }
 

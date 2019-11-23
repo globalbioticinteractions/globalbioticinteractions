@@ -50,7 +50,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
         }
 
         Query query;
-        try (InputStream resource = new DatasetLocal().getResource("find-jsonld-interactions.rq")) {
+        try (InputStream resource = new DatasetLocal().getResource(URI.create("find-jsonld-interactions.rq"))) {
             query = QueryFactory.create(IOUtils.toString(resource, CharsetConstant.UTF8));
         } catch (Throwable e) {
             throw new StudyImporterException("failed to find sparql query", e);
@@ -114,7 +114,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        try (InputStream resource = getDataset().getResource(getResourceURI().toString())) {
+        try (InputStream resource = getDataset().getResource(getResourceURI())) {
             model.read(resource, getResourceURI().toString(), "JSON-LD");
         }
         return model;

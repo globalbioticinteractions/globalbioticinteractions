@@ -11,6 +11,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.DateUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
 public class StudyImporterForICES extends BaseStudyImporter {
@@ -72,7 +73,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
     private LabeledCSVParser createParser() throws StudyImporterException {
         LabeledCSVParser parser;
         try {
-            String resource = "ices/StomachDataSet.csv.gz";
+            URI resource = URI.create("ices/StomachDataSet.csv.gz");
             setCurrentResource(resource);
             parser = parserFactory.createParser(resource, CharsetConstant.UTF8);
         } catch (IOException e) {

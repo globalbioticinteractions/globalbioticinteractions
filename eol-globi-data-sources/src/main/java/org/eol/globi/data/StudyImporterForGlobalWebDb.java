@@ -10,6 +10,7 @@ import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +33,7 @@ public class StudyImporterForGlobalWebDb extends StudyImporterWithListener {
     @Override
     public void importStudy() throws StudyImporterException {
         InteractionListener interactionListener = getInteractionListener();
-        importDietMatrices("https://www.globalwebdb.com/Service/DownloadArchive", dietMatrixString -> {
+        importDietMatrices(URI.create("https://www.globalwebdb.com/Service/DownloadArchive"), dietMatrixString -> {
             try {
                 parseDietMatrix(interactionListener, dietMatrixString, getSourceCitation());
             } catch (IOException e) {
@@ -85,7 +86,7 @@ public class StudyImporterForGlobalWebDb extends StudyImporterWithListener {
         }
     }
 
-    void importDietMatrices(String archiveURL, DietMatrixListener matrix) throws StudyImporterException {
+    void importDietMatrices(URI archiveURL, DietMatrixListener matrix) throws StudyImporterException {
         try (InputStream inputStream = getDataset().getResource(archiveURL);
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;

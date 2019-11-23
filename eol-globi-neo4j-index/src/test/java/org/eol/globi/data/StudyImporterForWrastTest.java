@@ -60,9 +60,9 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
                 "4/27/2007,\"Spring\",\"L\",\"R\",2,22.4,22.3,75,23.1,18.1,10.4,9.1,\"NW\",98,\"No\",2,23.77,23.77,23.77,,,,7.01,6.82,6.915,15.04,15.04,15.04,0.38\n" +
                 "4/27/2007,\"Spring\",\"L\",\"NV\",1,22.4,22.3,75,23.1,18.1,10.4,9.1,\"NW\",98,\"No\",2,23.85,23.85,23.85,,,,6.96,6.81,6.885,14.65,14.65,14.65,0.48\n" +
                 "4/27/2007,\"Spring\",\"L\",\"NV\",2,22.4,22.3,75,23.1,18.1,10.4,9.1,\"NW\",98,\"No\",1.8,23.78,23.78,23.78,,,,6.87,6.65,6.76,15.11,15.18,15.145,0.45";
-        contentMap.put(StudyImporterForWrast.LAVACA_BAY_LOCATIONS, locationString);
-        contentMap.put(StudyImporterForWrast.LAVACA_BAY_DATA_SOURCE, csvString);
-        contentMap.put(StudyImporterForWrast.LAVACA_BAY_ENVIRONMENTAL, envString);
+        contentMap.put(StudyImporterForWrast.LAVACA_BAY_LOCATIONS.toString(), locationString);
+        contentMap.put(StudyImporterForWrast.LAVACA_BAY_DATA_SOURCE.toString(), csvString);
+        contentMap.put(StudyImporterForWrast.LAVACA_BAY_ENVIRONMENTAL.toString(), envString);
 
         StudyImporterForWrast importer = new StudyImporterForWrast(new TestParserFactory(contentMap), nodeFactory);
 

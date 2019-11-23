@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 interface DatasetConfigurer {
-    Dataset configure(Dataset dataset, URI configURI) throws IOException;
+    JsonNode configure(ResourceService<URI> dataset, URI configURI) throws IOException;
 }
 
 interface DatasetFactoryInterface {
@@ -39,25 +39,23 @@ public class DatasetFactory implements DatasetFactoryInterface {
     }
 
     @Override
-    public Dataset datasetFor(String datasetURI) throws DatasetFinderException {
-        return configDataset(registry.datasetFor(datasetURI));
+    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+        Dataset dataset = registry.datasetFor(namespace);
+        DatasetProxy datasetProxy = new DatasetProxy(dataset);
+        JsonNode jsonNode = configDataset(dataset);
+        datasetProxy.setConfig(jsonNode);
+        return datasetProxy;
     }
 
-
-    @Deprecated
-    public static Dataset datasetFor(String repo, DatasetRegistry finder) throws DatasetFinderException {
-        return new DatasetFactory(finder).datasetFor(repo);
-    }
-
-    private Dataset configDataset(Dataset dataset) throws DatasetFinderException {
-        Map<String, DatasetConfigurer> datasetHandlers = new TreeMap<String, DatasetConfigurer>() {{
-            put("/globi.json", new JSONConfigurer());
-            put("/globi-dataset.jsonld", new JSONConfigurer());
-            put("/eml.xml", (dataset1, uri) -> EMLUtil.datasetWithEML(dataset, uri));
+    private JsonNode configDataset(ResourceService<URI> dataset) throws DatasetFinderException {
+        Map<URI, DatasetConfigurer> datasetHandlers = new TreeMap<URI, DatasetConfigurer>() {{
+            put(URI.create("/globi.json"), new JSONConfigurer());
+            put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
+            put(URI.create("/eml.xml"), (dataset1, uri) -> EMLUtil.datasetWithEML(dataset, uri));
         }};
 
         Pair<URI, DatasetConfigurer> configPair = null;
-        for (String configResource : datasetHandlers.keySet()) {
+        for (URI configResource : datasetHandlers.keySet()) {
             try {
                 URI configURI = dataset.getResourceURI(configResource);
                 if (ResourceUtil.resourceExists(configURI, getInputStreamFactory())) {
@@ -65,16 +63,17 @@ public class DatasetFactory implements DatasetFactoryInterface {
                     break;
                 }
             } catch (IOException e) {
-                throw new DatasetFinderException("failed to access configURI", e);
+                throw new DatasetFinderException("failed to access configURI for [" + configResource.toString() + "]", e);
             }
         }
         try {
             if (configPair == null) {
-                throw new DatasetFinderException("failed to import [" + dataset.getNamespace() + "]: cannot locate resource at [" + StringUtils.join(datasetHandlers.keySet(), " , ") + "]");
+                throw new DatasetFinderException("failed to access find configuration");
             }
             return configPair.getRight().configure(dataset, configPair.getLeft());
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to import [" + dataset.getNamespace() + "]", e);
+            throw new DatasetFinderException("failed to access find configuration", e);
+
         }
     }
 
@@ -85,23 +84,21 @@ public class DatasetFactory implements DatasetFactoryInterface {
     private static class JSONConfigurer implements DatasetConfigurer {
 
         @Override
-        public Dataset configure(Dataset dataset, URI configURI) throws IOException {
+        public JsonNode configure(ResourceService<URI> dataset, URI configURI) throws IOException {
             return configureDataset(dataset, configURI);
         }
     }
 
-    private static Dataset configureDataset(Dataset dataset, URI configURI) throws IOException {
-        try (InputStream inputStream = dataset.getResource(configURI.toString())) {
+    private static JsonNode configureDataset(ResourceService<URI> dataset, URI configURI) throws IOException {
+        try (InputStream inputStream = dataset.getResource(configURI)) {
             if (inputStream == null) {
                 throw new IOException("failed to access resource [" + configURI.toString() + "]");
             }
             String descriptor = getContent(configURI, inputStream);
-            if (StringUtils.isNotBlank(descriptor)) {
-                JsonNode desc = new ObjectMapper().readTree(descriptor);
-                dataset.setConfigURI(configURI);
-                dataset.setConfig(desc);
+            if (StringUtils.isBlank(descriptor)) {
+                throw new IOException("no content found at [" + configURI.toString() + "]");
             }
-            return dataset;
+            return new ObjectMapper().readTree(descriptor);
         }
     }
 

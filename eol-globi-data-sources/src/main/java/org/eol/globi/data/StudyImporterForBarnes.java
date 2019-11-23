@@ -16,6 +16,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +24,8 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBarnes.class);
 
     public static final String SOURCE = "Barnes, C. et al., 2008. PREDATOR AND PREY BODY SIZES IN MARINE FOOD WEBS. Ecology, 89(3), pp.881–881. Available at: https://doi.org/10.1890/07-1551.1 . Data provided by Carolyn Barnes. Also available at " + "http://www.esapubs.org/Archive/ecol/E089/051/" + " .";
-    public static final String RESOURCE_PATH = "http://esapubs.org/archive/ecol/E089/051/Predator_and_prey_body_sizes_in_marine_food_webs_vsn4.txt";
-    public static final String REFERENCE_PATH = "barnes/references.csv";
+    public static final URI RESOURCE_PATH = URI.create("http://esapubs.org/archive/ecol/E089/051/Predator_and_prey_body_sizes_in_marine_food_webs_vsn4.txt");
+    public static final URI REFERENCE_PATH = URI.create("barnes/references.csv");
 
     public StudyImporterForBarnes(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

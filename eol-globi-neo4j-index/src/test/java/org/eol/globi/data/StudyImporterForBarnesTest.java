@@ -54,8 +54,8 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
 
         TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {
             {
-                put(StudyImporterForBarnes.RESOURCE_PATH, firstFourLines);
-                put(StudyImporterForBarnes.REFERENCE_PATH, "short,full\nBethea et al (2004),something long\nStergiou & Fourtouni 1991,something longer");
+                put(StudyImporterForBarnes.RESOURCE_PATH.toString(), firstFourLines);
+                put(StudyImporterForBarnes.REFERENCE_PATH.toString(), "short,full\nBethea et al (2004),something long\nStergiou & Fourtouni 1991,something longer");
             }
         });
         StudyImporterForBarnes importer = new StudyImporterForBarnes(parserFactory, nodeFactory);

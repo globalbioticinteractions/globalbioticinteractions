@@ -10,13 +10,13 @@ import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.Mockito.when;
 
 public class SchemaControllerTestIT {
 
     @Test
-    public void findSupportedInteractionTypes() throws IOException, URISyntaxException {
+    public void findSupportedInteractionTypes() throws IOException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
             {
@@ -31,7 +31,7 @@ public class SchemaControllerTestIT {
     }
 
     @Test
-    public void findSupportedInteractionTypesById() throws IOException, URISyntaxException {
+    public void findSupportedInteractionTypesById() throws IOException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
             {
@@ -46,7 +46,7 @@ public class SchemaControllerTestIT {
     }
 
     @Test
-    public void findSupportedInteractionTypesBees() throws IOException, URISyntaxException {
+    public void findSupportedInteractionTypesBees() throws IOException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
             {

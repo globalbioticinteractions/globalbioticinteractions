@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,10 +48,10 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         try {
             List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
             final String sourceCitation = "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/");
-            final List<String> networkNames = getNetworkNames(getDataset());
+            final List<URI> networkNames = getNetworkNames(getDataset());
             LOG.info("found [" + networkNames.size() + "] networks.");
-            for (String networkName : networkNames) {
-                final List<String> networkNames1 = Collections.singletonList(networkName);
+            for (URI networkName : networkNames) {
+                final List<URI> networkNames1 = Collections.singletonList(networkName);
                 try {
                     importNetworks(generateArchiveURL(networkNames1), sourceCitation);
                 } catch (StudyImporterException e) {
@@ -67,7 +68,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         }
     }
 
-    public void importNetworks(String archiveURL, String sourceCitation) throws StudyImporterException {
+    public void importNetworks(URI archiveURL, String sourceCitation) throws StudyImporterException {
         try (InputStream inputStream = getDataset().getResource(archiveURL);
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
@@ -177,29 +178,29 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         }
     }
 
-    public static List<String> getNetworkNames(Dataset dataset) throws IOException {
-        try (InputStream resource = dataset.getResource(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All")) {
+    public static List<URI> getNetworkNames(Dataset dataset) throws IOException {
+        try (InputStream resource = dataset.getResource(URI.create(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"))) {
             return getNetworkNames(resource);
         }
     }
 
-    public static List<String> getNetworkNames(InputStream networkList) throws IOException {
+    public static List<URI> getNetworkNames(InputStream networkList) throws IOException {
         final JsonNode networks = new ObjectMapper().readTree(networkList);
-        final List<String> networkNames = new ArrayList<String>();
+        final List<URI> networkNames = new ArrayList<>();
         for (JsonNode network : networks) {
             final JsonNode networkName = network.get("networkName");
             if (networkName != null && networkName.isTextual()) {
-                networkNames.add(networkName.asText());
+                networkNames.add(URI.create(networkName.asText()));
             }
         }
         return networkNames;
     }
 
-    public static String generateArchiveURL(List<String> networkNames) {
+    public static URI generateArchiveURL(List<URI> networkNames) {
         final String prefix = WEB_OF_LIFE_BASE_URL + "/map_download_fast2.php?format=csv&networks=";
         final String suffix = "&species=yes&type=All&data=All&speciesrange=&interactionsrange=&searchbox=&checked=false";
         final String joinedNames = StringUtils.join(networkNames, ",");
-        return StringUtils.join(Arrays.asList(prefix, joinedNames, suffix), "");
+        return URI.create(StringUtils.join(Arrays.asList(prefix, joinedNames, suffix), ""));
     }
 
 }

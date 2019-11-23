@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        final String archiveURL;
+        final URI archiveURL;
 
         try {
             archiveURL = DatasetUtil.getNamedResourceURI(getDataset(), "archive");
@@ -58,7 +59,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             throw new StudyImporterException("failed to locate archive", e);
         }
 
-        if (org.apache.commons.lang.StringUtils.isBlank(archiveURL)) {
+        if (archiveURL == null) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
 

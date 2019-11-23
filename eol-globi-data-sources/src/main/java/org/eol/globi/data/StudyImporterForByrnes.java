@@ -9,12 +9,13 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 
 public class StudyImporterForByrnes extends BaseStudyImporter {
     public static final String SOURCE = "Southern California Bight Kelp Forest Food Web data provided by Jarrett Byrnes. Also available at https://doi.org/10.1111/j.1365-2486.2011.02409.x";
-    public static final String RESOURCE_PATH = "byrnes/supplementary_table_1.csv";
-    public static final String REFERENCE_PATH = "byrnes/references.csv";
+    public static final URI RESOURCE_PATH = URI.create("byrnes/supplementary_table_1.csv");
+    public static final URI REFERENCE_PATH = URI.create("byrnes/references.csv");
 
     public StudyImporterForByrnes(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

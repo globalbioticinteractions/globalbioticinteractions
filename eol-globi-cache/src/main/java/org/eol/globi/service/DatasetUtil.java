@@ -9,10 +9,10 @@ import java.net.URI;
 
 public final class DatasetUtil {
 
-    public static String getNamedResourceURI(Dataset dataset, String resourceName) throws IOException {
+    public static URI getNamedResourceURI(Dataset dataset, String resourceName) throws IOException {
         String resourceValue = getNamedResource(dataset, resourceName);
-        URI resourceURI = resourceValue == null ? null : dataset.getResourceURI(resourceValue);
-        return resourceURI == null ? null : resourceURI.toString();
+        URI resourceURI = resourceValue == null ? null : dataset.getResourceURI(URI.create(resourceValue));
+        return resourceURI;
     }
 
     public static InputStream getNamedResourceStream(Dataset dataset, String resourceName) throws IOException {
@@ -20,7 +20,7 @@ public final class DatasetUtil {
         if (StringUtils.isBlank(resourceValue)) {
             throw new IOException("no resource found for [" + resourceName + "] in [" + dataset.getNamespace() + "]");
         }
-        return dataset.getResource(resourceValue);
+        return dataset.getResource(URI.create(resourceValue));
     }
 
     private static String getNamedResource(Dataset dataset, String resourceName) {

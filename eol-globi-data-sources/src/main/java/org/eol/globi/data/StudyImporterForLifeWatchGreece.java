@@ -13,6 +13,7 @@ import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
     }
 
     protected void handleTable(RowListener listener, String tableName) throws IOException {
-        try (InputStream is = getDataset().getResource("polytraits.lifewatchgreece.eu/" + tableName)) {
+        try (InputStream is = getDataset().getResource(URI.create("polytraits.lifewatchgreece.eu/" + tableName))) {
             CSVParse parser = CSVTSVUtil.createCSVParser(is);
             String[] line;
             while ((line = parser.getLine()) != null) {

@@ -10,6 +10,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         }
 
         // TODO: need to map date range of collections
-        String studyResource = "robledo/table_s1_extract.csv";
+        URI studyResource = URI.create("robledo/table_s1_extract.csv");
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {

@@ -14,6 +14,7 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class StudyImporterForBaremore extends BaseStudyImporter {
-    private static final String DATA_SOURCE = "baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv";
+    private static final URI DATA_SOURCE = URI.create("baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv");
 
     public StudyImporterForBaremore(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

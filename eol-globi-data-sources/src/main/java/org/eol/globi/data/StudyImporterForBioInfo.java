@@ -14,6 +14,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -221,9 +222,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
         LabeledCSVParser relationsParser;
         try {
-            refMap = buildRefMap(parserFactory.createParser(REFERENCE_DATA_FILE, CharsetConstant.UTF8));
-            Map<String, Taxon> taxonMap = buildTaxonMap(parserFactory.createParser(TAXON_DATA_FILE, CharsetConstant.UTF8));
-            relationsParser = parserFactory.createParser(RELATIONS_DATA_FILE, CharsetConstant.UTF8);
+            refMap = buildRefMap(parserFactory.createParser(URI.create(REFERENCE_DATA_FILE), CharsetConstant.UTF8));
+            Map<String, Taxon> taxonMap = buildTaxonMap(parserFactory.createParser(URI.create(TAXON_DATA_FILE), CharsetConstant.UTF8));
+            relationsParser = parserFactory.createParser(URI.create(RELATIONS_DATA_FILE), CharsetConstant.UTF8);
             createRelations(relationsParser, refMap, taxonMap);
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);

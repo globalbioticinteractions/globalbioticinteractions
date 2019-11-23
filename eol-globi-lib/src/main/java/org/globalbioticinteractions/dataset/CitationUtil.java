@@ -22,6 +22,10 @@ public class CitationUtil {
     static final String ZENODO_URL_PREFIX = "https://zenodo.org/record/";
     private static final Log LOG = LogFactory.getLog(CitationUtil.class);
 
+    public static String createLastAccessedString(URI reference) {
+        return createLastAccessedString(reference.toString());
+    }
+
     public static String createLastAccessedString(String reference) {
         return "Accessed at <" + StringUtils.trim(reference) + "> on " + new DateTime().toString("dd MMM YYYY") + ".";
     }

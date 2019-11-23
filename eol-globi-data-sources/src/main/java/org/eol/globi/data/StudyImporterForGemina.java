@@ -11,6 +11,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 
 public class StudyImporterForGemina extends BaseStudyImporter {
 
@@ -20,7 +21,7 @@ public class StudyImporterForGemina extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        String studyResource = "gemina_search_2008-01-03.txt";
+        URI studyResource = URI.create("gemina_search_2008-01-03.txt");
         try {
             String source = "Schriml, L. M., Arze, C., Nadendla, S., Ganapathy, A., Felix, V., Mahurkar, A., … Hall, N. (2009). GeMInA, Genomic Metadata for Infectious Agents, a geospatial surveillance pathogen database. Nucleic Acids Research, 38(Database), D754–D764. doi:10.1093/nar/gkp832";
             Study study = nodeFactory.getOrCreateStudy(new StudyImpl(source, source, new DOI("1093", "nar/gkp832"), source));

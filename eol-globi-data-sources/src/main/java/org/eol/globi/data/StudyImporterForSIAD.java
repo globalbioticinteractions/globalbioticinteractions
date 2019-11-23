@@ -10,6 +10,7 @@ import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,9 +61,9 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
         }
     };
     public static final String PREFIX = "http://www.discoverlife.org/siad/data/source/biodiversity.org.au:dataexport/";
-    public static final String[] RESOURCES = new String[]{
-            PREFIX + "interactions.Heteroptera.txt",
-            PREFIX + "interactions.txt"};
+    public static final URI[] RESOURCES = new URI[]{
+            URI.create(PREFIX + "interactions.Heteroptera.txt"),
+            URI.create(PREFIX + "interactions.txt")};
 
     public StudyImporterForSIAD(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -73,12 +74,12 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         String source = "Species Interactions of Australia Database (SIAD): Helping us to understand species interactions in Australia and beyond. "
                 + CitationUtil.createLastAccessedString("http://www.discoverlife.org/siad/");
-        for (String resource : RESOURCES) {
+        for (URI resource : RESOURCES) {
             downloadAndImportResource(resource, source);
         }
     }
 
-    private void downloadAndImportResource(String resource, String source) throws StudyImporterException {
+    private void downloadAndImportResource(URI resource, String source) throws StudyImporterException {
         try {
             LabeledCSVParser labeledCSVParser = parserFactory.createParser(resource, "UTF-8");
             labeledCSVParser.changeDelimiter('\t');

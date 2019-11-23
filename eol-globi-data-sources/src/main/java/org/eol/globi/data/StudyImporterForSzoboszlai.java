@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
     public void importStudy() throws StudyImporterException {
         try {
             Map<Integer, LatLng> localeMap = importShapes();
-            try (InputStream inputStream = getDataset().getResource("links")) {
+            try (InputStream inputStream = getDataset().getResource(URI.create("links"))) {
                 importLinks(inputStream
                         , getInteractionListener()
                         , localeMap);
@@ -137,7 +138,7 @@ public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
     protected Map<Integer, LatLng> importShapes() throws StudyImporterException {
         Map<Integer, LatLng> localityMap = new TreeMap<>();
         FileDataStore dataStore = null;
-        try (InputStream shapeZipArchive = getDataset().getResource("shapes")) {
+        try (InputStream shapeZipArchive = getDataset().getResource(URI.create("shapes"))) {
             File tmpFolder = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
             tmpFolder.deleteOnExit();
             unpackZip(shapeZipArchive, tmpFolder);

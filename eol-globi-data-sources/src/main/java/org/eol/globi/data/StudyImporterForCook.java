@@ -11,10 +11,11 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.util.DateUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
 public class StudyImporterForCook extends BaseStudyImporter {
-    private static final String DATASET_RESOURCE_NAME = "cook/cook_atlantic_croaker_data.csv";
+    private static final URI DATASET_RESOURCE_NAME = URI.create("cook/cook_atlantic_croaker_data.csv");
 
     public StudyImporterForCook(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -18,7 +19,8 @@ public class LengthParserImplTest {
     }
 
     private LabeledCSVParser initParser() throws IOException {
-        LabeledCSVParser csvParser = new TestParserFactory("\"johnny\"\n123\n324\n").createParser("aStudy", "UTF-8");
+        LabeledCSVParser csvParser = new TestParserFactory("\"johnny\"\n123\n324\n")
+                .createParser(URI.create("aStudy"), "UTF-8");
         csvParser.getLine();
         return csvParser;
     }
@@ -33,7 +35,8 @@ public class LengthParserImplTest {
     @Test(expected = StudyImporterException.class)
     public void parseLengthMalformed() throws IOException, StudyImporterException {
         LengthParserImpl parser = new LengthParserImpl("johnny");
-        LabeledCSVParser csvParser = new TestParserFactory("johnny\nAINTRIGHT\n324\n").createParser("aStudy", "UTF-8");
+        LabeledCSVParser csvParser = new TestParserFactory("johnny\nAINTRIGHT\n324\n")
+                .createParser(URI.create("aStudy"), "UTF-8");
         csvParser.getLine();
         parser.parseLengthInMm(csvParser);
     }

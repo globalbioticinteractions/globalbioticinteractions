@@ -6,14 +6,11 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.apache.commons.io.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -32,6 +29,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -53,8 +51,8 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
     private static final String NORTH = "NORTH";
     private static final String SOURCES_CSV = "sources.csv";
     private static final String DIET_CSV = "diet.csv";
-    private static final String RESOURCE_URL = "https://data.aad.gov.au/aadc/trophic/trophic.zip";
-    private static final String RESOURCE_URL_FALLBACK = "https://depot.globalbioticinteractions.org/datasets/org/eol/globi/data/raymond2011/0.2/raymond2011-0.2.zip";
+    private static final URI RESOURCE_URL = URI.create("https://data.aad.gov.au/aadc/trophic/trophic.zip");
+    private static final URI RESOURCE_URL_FALLBACK = URI.create("https://depot.globalbioticinteractions.org/datasets/org/eol/globi/data/raymond2011/0.2/raymond2011-0.2.zip");
 
     private static final int MAX_ATTEMPT = 3;
     private Collection<String> locations = new HashSet<String>();
@@ -70,7 +68,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
         }
     }
 
-    private boolean retrieveAndImport(String resourceUrl) throws StudyImporterException {
+    private boolean retrieveAndImport(URI resourceUrl) throws StudyImporterException {
         boolean isDone = false;
         for (int attemptCount = 1; !isDone && attemptCount <= MAX_ATTEMPT; attemptCount++) {
             try (InputStream inputStream = getDataset().getResource(resourceUrl)) {

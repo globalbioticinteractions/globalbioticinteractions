@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 
 public class StudyImporterForHurlbert extends BaseStudyImporter {
 
-    public static final String RESOURCE = "AvianDietDatabase.txt";
+    public static final URI RESOURCE = URI.create("AvianDietDatabase.txt");
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForHurlbert.class);
 
@@ -81,7 +82,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
 
     private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
         String namespace = getDataset() == null ? "" : getDataset().getNamespace();
-        StudyImpl study1 = new StudyImpl(namespace + sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE), null, sourceCitation);
+        StudyImpl study1 = new StudyImpl(namespace + sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE.toString()), null, sourceCitation);
         study1.setOriginatingDataset(getDataset());
         Study study = nodeFactory.getOrCreateStudy(study1);
 

@@ -82,25 +82,24 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     }
 
     private void importResource(String namespace, String sourceCitation, String resourceName, char newDelim, List<IOException> parserExceptions) throws IOException, StudyImporterException {
-        URI resourceURI = getDataset().getResourceURI(resourceName);
+        URI resourceURI = getDataset().getResourceURI(URI.create(resourceName));
         if (resourceURI == null) {
             parserExceptions.add(new IOException("failed to access [" + resourceName + "] as individual resource (e.g. local/remote data/file)."));
         } else {
-            String resourceURIString = resourceURI.toString();
             LabeledCSVParser parser = null;
             try {
-                parser = parserFactory.createParser(resourceURIString, "UTF-8");
+                parser = parserFactory.createParser(resourceURI, "UTF-8");
                 parser.changeDelimiter(newDelim);
             } catch (IOException ex) {
-                parserExceptions.add(new IOException("failed to access [" + resourceURIString + "]", ex));
+                parserExceptions.add(new IOException("failed to access [" + resourceURI.toString() + "]", ex));
             }
             if (parser != null) {
-                importResource(namespace, sourceCitation, getInteractionListener(), resourceURIString, parser);
+                importResource(namespace, sourceCitation, getInteractionListener(), resourceURI, parser);
             }
         }
     }
 
-    private void importResource(String namespace, String sourceCitation, InteractionListener interactionListener, String resourceURIString, LabeledCSVParser parser) throws IOException, StudyImporterException {
+    private void importResource(String namespace, String sourceCitation, InteractionListener interactionListener, URI resourceURI, LabeledCSVParser parser) throws IOException, StudyImporterException {
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<>();
             final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");
@@ -144,7 +143,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
             putNotBlank(link, ARGUMENT_TYPE_ID, argumentTypeId);
 
             putNotBlank(link, RESOURCE_LINE_NUMBER, Integer.toString(parser.getLastLineNumber()));
-            putNotBlank(link, RESOURCE_URI, resourceURIString);
+            putNotBlank(link, RESOURCE_URI, resourceURI.toString());
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 

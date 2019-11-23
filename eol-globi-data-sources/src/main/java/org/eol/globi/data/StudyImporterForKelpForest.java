@@ -11,10 +11,10 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,8 +22,8 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForKelpForest.class);
 
-    public static final String NODES = "http://kelpforest.ucsc.edu/exports/ExportNodesWithFunctionalGroupsCsv.php";
-    public static final String LINKS = "http://kelpforest.ucsc.edu/exports/exportCitedLinks2csv.php";
+    public static final URI NODES = URI.create("http://kelpforest.ucsc.edu/exports/ExportNodesWithFunctionalGroupsCsv.php");
+    public static final URI LINKS = URI.create("http://kelpforest.ucsc.edu/exports/exportCitedLinks2csv.php");
 
     public StudyImporterForKelpForest(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

@@ -12,6 +12,7 @@ import org.eol.globi.geo.LatLng;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         String suffix = ".csv";
         String prefix = "roopnarine/857470.item.";
-        String trophicGuildLookup = prefix + 4 + suffix;
+        URI trophicGuildLookup = URI.create(prefix + 4 + suffix);
         final Map<Integer, List<String>> trophicGuildNumberToSpeciesMap = buildGuildLookup(trophicGuildLookup);
 
         Map<String, LatLng> resourceLocation = resourceLocationMap(suffix, prefix);
@@ -43,7 +44,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }
-            String studyResource = resourceLatLngEntry.getKey();
+            URI studyResource = URI.create(resourceLatLngEntry.getKey());
             getLogger().info(study, "import of [" + studyResource + "] started...");
             List<Specimen> predatorSpecimen = importTrophicInteractions(trophicGuildLookup, trophicGuildNumberToSpeciesMap, studyResource, study, location);
             getLogger().info(study, "import of [" + studyResource + "] done.");
@@ -62,7 +63,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         return resourceLocation;
     }
 
-    private List<Specimen> importTrophicInteractions(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, String studyResource, Study study, Location location) throws StudyImporterException {
+    private List<Specimen> importTrophicInteractions(URI trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, URI studyResource, Study study, Location location) throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             List<Specimen> predatorSpecimen = new ArrayList<Specimen>();
@@ -83,7 +84,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         }
     }
 
-    private Map<Integer, List<String>> buildGuildLookup(String trophicGuildLookup) throws StudyImporterException {
+    private Map<Integer, List<String>> buildGuildLookup(URI trophicGuildLookup) throws StudyImporterException {
         final Map<Integer, List<String>> trophicGuildNumberToSpeciesMap = new HashMap<Integer, List<String>>();
         try {
             LabeledCSVParser parser = parserFactory.createParser(trophicGuildLookup, CharsetConstant.UTF8);
@@ -112,7 +113,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         return trophicGuildNumberToSpeciesMap;
     }
 
-    private List<Specimen> importPredatorSpecimen(String trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser, List<String> preyTaxonList, Study study, Location location) throws StudyImporterException {
+    private List<Specimen> importPredatorSpecimen(URI trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, LabeledCSVParser parser, List<String> preyTaxonList, Study study, Location location) throws StudyImporterException {
         Integer predatorGuildNumber = parseGuildNumber(trophicGuildLookup, parser);
         List<Specimen> predatorSpecimenList = new ArrayList<Specimen>();
         List<String> predatorTaxaList = trophicGuildNumberToSpeciesMap.get(predatorGuildNumber);
@@ -186,7 +187,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         }
     }
 
-    private Integer parseGuildNumber(String trophicGuildLookup, LabeledCSVParser parser) throws StudyImporterException {
+    private Integer parseGuildNumber(URI trophicGuildLookup, LabeledCSVParser parser) throws StudyImporterException {
         Integer guildNumber = null;
         String guildNumberString = parser.getValueByLabel("Guild Number");
         if (guildNumberString != null && guildNumberString.trim().length() > 0) {

@@ -5,6 +5,7 @@ import org.eol.globi.service.DatasetLocal;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class StudyImporterForGlobalWebDbTest {
         StudyImporterForGlobalWebDb importer = new StudyImporterForGlobalWebDb(null, null);
         importer.setDataset(new DatasetLocal());
         importer
-                .importDietMatrices("classpath:/org/eol/globi/data/globalwebdb-test.zip", matrices::add);
+                .importDietMatrices(URI.create("classpath:/org/eol/globi/data/globalwebdb-test.zip"), matrices::add);
         assertThat(matrices.size(), is(10));
         assertThat(matrices.get(0), is(aDietMatrix));
     }
@@ -39,7 +40,7 @@ public class StudyImporterForGlobalWebDbTest {
         StudyImporterForGlobalWebDb importer = new StudyImporterForGlobalWebDb(null, null);
         importer.setDataset(new DatasetLocal());
         importer
-                .importDietMatrices("classpath:/org/eol/globi/data/globalwebdb-test.zip", matrixString -> {
+                .importDietMatrices(URI.create("classpath:/org/eol/globi/data/globalwebdb-test.zip"), matrixString -> {
                     try {
                         StudyImporterForGlobalWebDb.parseDietMatrix(new InteractionListener() {
                             @Override

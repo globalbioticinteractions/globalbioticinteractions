@@ -21,6 +21,7 @@ import org.eol.globi.geo.LatLng;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -215,7 +216,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        try (InputStream resource = getDataset().getResource("spire/allFoodWebStudies.owl")) {
+        try (InputStream resource = getDataset().getResource(URI.create("spire/allFoodWebStudies.owl"))) {
             BufferedReader bufferedReader = FileUtils.getUncompressedBufferedReader(resource, CharsetConstant.UTF8);
             model.read(bufferedReader, null);
             return model;

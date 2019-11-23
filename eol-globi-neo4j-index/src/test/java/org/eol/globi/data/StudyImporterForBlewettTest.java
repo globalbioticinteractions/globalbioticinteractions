@@ -105,7 +105,7 @@ public class StudyImporterForBlewettTest extends GraphDBTestCase {
 
         ParserFactory testFactory = (studyResource, characterEncoding) -> {
             LabeledCSVParser parser;
-            if (studyResource.contains("abundance")) {
+            if (studyResource.toString().contains("abundance")) {
                 parser = preyPredatorFactory.createParser(studyResource, characterEncoding);
             } else {
                 parser = dateLocationFactory.createParser(studyResource, characterEncoding);

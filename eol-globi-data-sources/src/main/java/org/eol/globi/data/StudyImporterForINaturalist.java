@@ -19,11 +19,11 @@ import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,15 +32,15 @@ import java.util.TreeMap;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
-    public static final String TYPE_IGNORED_URI_DEFAULT = "interaction_types_ignored.csv";
-    public static final String TYPE_MAP_URI_DEFAULT = "interaction_types.csv";
+    public static final URI TYPE_IGNORED_URI_DEFAULT = URI.create("interaction_types_ignored.csv");
+    public static final URI TYPE_MAP_URI_DEFAULT = URI.create("interaction_types.csv");
 
     public static final String INATURALIST_URL = "https://www.inaturalist.org";
 
 
     private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<Long, String>();
-    private String typeIgnoredURI;
-    private String typeMapURI;
+    private URI typeIgnoredURI;
+    private URI typeMapURI;
     public static final String PREFIX_OBSERVATION_FIELD = INATURALIST_URL + "/observation_fields/";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -49,7 +49,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         setTypeIgnoredURI(TYPE_IGNORED_URI_DEFAULT);
     }
 
-    public static Map<Integer, InteractType> buildTypeMap(String resource, LabeledCSVParser labeledCSVParser) throws IOException {
+    public static Map<Integer, InteractType> buildTypeMap(URI resource, LabeledCSVParser labeledCSVParser) throws IOException {
         LabeledCSVParser parser = labeledCSVParser;
         Map<Integer, InteractType> typeMap = new TreeMap<Integer, InteractType>();
         while (parser.getLine() != null) {
@@ -149,7 +149,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         int previousResultCount = 0;
         int pageNumber = 1;
         do {
-            String uri = INATURALIST_URL + "/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research";
+            URI uri = URI.create(INATURALIST_URL + "/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research");
 
             try (InputStream resource = getDataset().getResource(uri)) {
                 previousResultCount = parseJSON(resource,
@@ -331,19 +331,19 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(timeObservedAtUtc);
     }
 
-    public void setTypeIgnoredURI(String typeIgnoredURI) {
+    public void setTypeIgnoredURI(URI typeIgnoredURI) {
         this.typeIgnoredURI = typeIgnoredURI;
     }
 
-    public String getTypeIgnoredURI() {
+    public URI getTypeIgnoredURI() {
         return typeIgnoredURI;
     }
 
-    public void setTypeMapURI(String typeMapURI) {
+    public void setTypeMapURI(URI typeMapURI) {
         this.typeMapURI = typeMapURI;
     }
 
-    public String getTypeMapURI() {
+    public URI getTypeMapURI() {
         return typeMapURI;
     }
 }

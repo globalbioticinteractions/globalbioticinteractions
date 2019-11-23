@@ -15,13 +15,14 @@ import org.eol.globi.geo.LatLng;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 
 public class StudyImporterForCruaud extends BaseStudyImporter {
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForCruaud.class);
 
     public static final String SOURCE = "Cruaud, A., Ronsted, N., Chantarasuwan, B., Chou, L. S., Clement, W. L., Couloux, A., … Savolainen, V. (2012). An Extreme Case of Plant-Insect Codiversification: Figs and Fig-Pollinating Wasps. Systematic Biology, 61(6), 1029–1047. doi:10.1093/sysbio/sys068";
-    public static final String RESOURCE_PATH = "cruaud/Cruaud_et_al2012_Appendix_S2-wasp_material.csv";
+    public static final URI RESOURCE_PATH = URI.create( "cruaud/Cruaud_et_al2012_Appendix_S2-wasp_material.csv");
 
     public StudyImporterForCruaud(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

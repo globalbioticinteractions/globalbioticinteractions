@@ -16,16 +16,22 @@ import org.globalbioticinteractions.doi.DOI;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StudyImporterForBell extends BaseStudyImporter {
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForBell.class);
 
-    public static final String[] RESOURCE = {"bell/Bell_GloBI_Harb.csv",
-            "bell/Bell_GloBI_Hcuc.csv", "bell/Bell_GloBI_Npac.csv", "bell/Bell_GloBI_Seut.csv"};
+    public static final List<URI> RESOURCES = Stream.of("bell/Bell_GloBI_Harb.csv",
+            "bell/Bell_GloBI_Hcuc.csv", "bell/Bell_GloBI_Npac.csv", "bell/Bell_GloBI_Seut.csv")
+            .map(URI::create)
+            .collect(Collectors.toList());
 
     private static final Map<String, String> REFS = new HashMap<String, String>() {
         {
@@ -43,7 +49,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        for (String resource : RESOURCE) {
+        for (URI resource : RESOURCES) {
             LabeledCSVParser parser = null;
             try {
                 parser = parserFactory.createParser(resource, "UTF-8");
@@ -130,7 +136,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
         return dateTime;
     }
 
-    private String getErrorMessage(String resource, LabeledCSVParser parser) {
+    private String getErrorMessage(URI resource, LabeledCSVParser parser) {
         String msg = "failed to import [" + resource + "]";
         if (parser != null) {
             msg += " on line [" + parser.lastLineNumber() + "]";

@@ -21,6 +21,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.IllegalFieldValueException;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -65,28 +66,28 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         super(parserFactory, nodeFactory);
     }
 
-    protected String getPreyResourcePath() throws StudyImporterException {
-        return getResourcePath("/Prey.csv");
+    protected URI getPreyResourcePath() throws StudyImporterException {
+        return getResourcePath(URI.create("/Prey.csv"));
     }
 
-    private String getResourcePath(String resourceName) throws StudyImporterException {
+    private URI getResourcePath(URI resourceName) throws StudyImporterException {
         try {
-            return getDataset().getResourceURI(resourceName).toString();
+            return getDataset().getResourceURI(resourceName);
         } catch (IOException e) {
             throw new StudyImporterException("failed to locate [" + resourceName + "]", e);
         }
     }
 
-    protected String getPredatorResourcePath() throws StudyImporterException {
-        return getResourcePath("/Predators.csv");
+    protected URI getPredatorResourcePath() throws StudyImporterException {
+        return getResourcePath(URI.create("/Predators.csv"));
     }
 
-    protected String getReferencesResourcePath() throws StudyImporterException {
-        return getResourcePath("/References.csv");
+    protected URI getReferencesResourcePath() throws StudyImporterException {
+        return getResourcePath(URI.create("/References.csv"));
     }
 
-    protected String getLocationsResourcePath() throws StudyImporterException {
-        return getResourcePath("/Locations.csv");
+    protected URI getLocationsResourcePath() throws StudyImporterException {
+        return getResourcePath(URI.create("/Locations.csv"));
     }
 
     @Override
@@ -118,7 +119,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     protected void addReferences(Map<String, Study> referenceIdToStudy) throws StudyImporterException {
-        String referenceResource = getReferencesResourcePath();
+        URI referenceResource = getReferencesResourcePath();
 
         try {
             LabeledCSVParser parser = parserFactory.createParser(referenceResource, CharsetConstant.UTF8);
@@ -138,7 +139,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     }
 
-    protected static Map<String, String> collectContributors(String referenceResource, LabeledCSVParser parser) throws IOException, StudyImporterException {
+    protected static Map<String, String> collectContributors(URI referenceResource, LabeledCSVParser parser) throws IOException, StudyImporterException {
         Map<String, String> studyContributorMap = new HashMap<String, String>();
         while (parser.getLine() != null) {
             String refId = getMandatoryValue(referenceResource, parser, "DATA_ID");
@@ -155,7 +156,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         return isBlank(contributor) ? name : (contributor + ", " + name);
     }
 
-    private void addNewStudy(Map<String, Study> referenceIdToStudy, String referenceResource, LabeledCSVParser parser, String refId, String contributors) throws StudyImporterException {
+    private void addNewStudy(Map<String, Study> referenceIdToStudy, URI referenceResource, LabeledCSVParser parser, String refId, String contributors) throws StudyImporterException {
         Study study;
         String refTag = getMandatoryValue(referenceResource, parser, "REF_TAG");
         String externalId = getMandatoryValue(referenceResource, parser, "GAME_ID");
@@ -171,7 +172,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     private void addObservations(Map<String, Map<String, String>> predatorIdToPredatorSpecimen, Map<String, Study> refIdToStudyMap, Map<String, List<Map<String, String>>> predatorUIToPreyLists, Study metaStudy) throws StudyImporterException {
-        String locationResource = getLocationsResourcePath();
+        URI locationResource = getLocationsResourcePath();
         try {
             TermLookupService cmecsService = new CMECSService(getDataset());
             LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
@@ -209,20 +210,20 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     }
 
-    private void enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location) throws StudyImporterException {
+    private void enrichLocation(Study metaStudy, URI locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location) throws StudyImporterException {
         String habitatSystem = getMandatoryValue(locationResource, parser, "HAB_SYSTEM");
         String habitatSubsystem = getMandatoryValue(locationResource, parser, "HAB_SUBSYSTEM");
         String habitatTidalZone = getMandatoryValue(locationResource, parser, "TIDAL_ZONE");
         enrichLocation(metaStudy, locationResource, cmecsService, parser, location, habitatSystem, habitatSubsystem, habitatTidalZone);
     }
 
-    protected static DateTime parseEventDate(String locationResource, LabeledCSVParser parser) throws StudyImporterException {
+    protected static DateTime parseEventDate(URI locationResource, LabeledCSVParser parser) throws StudyImporterException {
         DateTime startTime = parseEventDate(locationResource, parser, "START_");
         DateTime endTime = parseEventDate(locationResource, parser, "END_");
         return startTime == null ? endTime : startTime;
     }
 
-    private static DateTime parseEventDate(String locationResource, LabeledCSVParser parser, String prefix) throws StudyImporterException {
+    private static DateTime parseEventDate(URI locationResource, LabeledCSVParser parser, String prefix) throws StudyImporterException {
 
         Integer startYear = getMandatoryIntegerValue(locationResource, parser, prefix +"YEAR");
         String startMonth = getMandatoryValue(locationResource, parser, prefix + "MON");
@@ -282,7 +283,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
 
-    protected static Location parseLocation(String locationResource, LabeledCSVParser parser) throws StudyImporterException {
+    protected static Location parseLocation(URI locationResource, LabeledCSVParser parser) throws StudyImporterException {
         Double latitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LAT");
         Double longitude = getMandatoryDoubleValue(locationResource, parser, "LOC_CENTR_LONG");
         Double depth = getMandatoryDoubleValue(locationResource, parser, "MN_DEP_SAMP");
@@ -307,7 +308,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         return footprintWKT;
     }
 
-    private Location enrichLocation(Study metaStudy, String locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
+    private Location enrichLocation(Study metaStudy, URI locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
         if (location != null) {
             List<Term> terms;
             String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
@@ -460,7 +461,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         }
     }
 
-    private static Double getMandatoryDoubleValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
+    private static Double getMandatoryDoubleValue(URI locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
         String value = getMandatoryValue(locationResource, parser, label);
         try {
             return "NA".equals(value) || value == null || value.trim().length() == 0 ? null : Double.parseDouble(value);
@@ -469,7 +470,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         }
     }
 
-    private static Integer getMandatoryIntegerValue(String locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
+    private static Integer getMandatoryIntegerValue(URI locationResource, LabeledCSVParser parser, String label) throws StudyImporterException {
         String value = getMandatoryValue(locationResource, parser, label);
         try {
             return "NA".equals(value) || value == null || value.trim().length() == 0 ? null : Integer.parseInt(value);
@@ -478,7 +479,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         }
     }
 
-    private void addSpecimen(String datafile, String scientificNameLabel, ParseEventHandler specimenListener) throws StudyImporterException {
+    private void addSpecimen(URI datafile, String scientificNameLabel, ParseEventHandler specimenListener) throws StudyImporterException {
         try {
             LabeledCSVParser parser = parserFactory.createParser(datafile, CharsetConstant.UTF8);
             parseSpecimen(datafile, scientificNameLabel, specimenListener, parser);
@@ -487,7 +488,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         }
     }
 
-    protected static void parseSpecimen(String datafile, String columnNamePrefix, ParseEventHandler specimenListener, LabeledCSVParser parser) throws IOException, StudyImporterException {
+    protected static void parseSpecimen(URI datafile, String columnNamePrefix, ParseEventHandler specimenListener, LabeledCSVParser parser) throws IOException, StudyImporterException {
         while (parser.getLine() != null) {
             Map<String, String> properties = new HashMap<String, String>();
             addOptionalProperty(parser, "TOT_WO_FD", STOMACH_COUNT_WITHOUT_FOOD, properties);
@@ -531,7 +532,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         }
     }
 
-    private static String getMandatoryValue(String datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
+    private static String getMandatoryValue(URI datafile, LabeledCSVParser parser, String label) throws StudyImporterException {
         String value = parser.getValueByLabel(label);
         if (value == null) {
             throw new StudyImporterException("missing mandatory column [" + label + "] in [" + datafile + "]:[" + parser.getLastLineNumber() + "]");

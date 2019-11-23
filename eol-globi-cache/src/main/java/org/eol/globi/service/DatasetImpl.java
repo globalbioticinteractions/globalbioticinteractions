@@ -30,29 +30,17 @@ public class DatasetImpl extends DatasetMapped {
     public DatasetImpl(String namespace, URI archiveURI, final InputStreamFactory factory) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
-        this.resourceService = new ResourceService<URI>() {
-            @Override
-            public InputStream getResource(URI resourceName) throws IOException {
-                URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
-                return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), factory);
-            }
-
-            @Override
-            public URI getResourceURI(URI resourceName) throws IOException {
-                URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
-                return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
-            }
-        };
+        this.resourceService = new ResourceServiceWithMapping(factory, getConfig());
     }
 
     @Override
-    public InputStream getResource(String resourceName) throws IOException {
-        return resourceService.getResource(URI.create(resourceName));
+    public InputStream getResource(URI resourceName) throws IOException {
+        return resourceService.getResource(resourceName);
     }
 
     @Override
-    public URI getResourceURI(String resourceName) throws IOException {
-        return resourceService.getResourceURI(URI.create(resourceName));
+    public URI getResourceURI(URI resourceName) throws IOException {
+        return resourceService.getResourceURI(resourceName);
     }
 
     @Override
@@ -111,4 +99,25 @@ public class DatasetImpl extends DatasetMapped {
         return configURI;
     }
 
+    private class ResourceServiceWithMapping implements ResourceService<URI> {
+        private final InputStreamFactory factory;
+        private final JsonNode config;
+
+        public ResourceServiceWithMapping(InputStreamFactory factory, JsonNode config) {
+            this.factory = factory;
+            this.config = config;
+        }
+
+        @Override
+        public InputStream getResource(URI resourceName) throws IOException {
+            URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+            return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), factory);
+        }
+
+        @Override
+        public URI getResourceURI(URI resourceName) throws IOException {
+            URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+            return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
+        }
+    }
 }

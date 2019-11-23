@@ -7,6 +7,7 @@ import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 public class ParserFactoryForDataset implements ParserFactory {
 
@@ -16,7 +17,7 @@ public class ParserFactoryForDataset implements ParserFactory {
         this.dataset = dataset;
     }
 
-    public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
+    public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
         InputStream is = dataset.getResource(studyResource);
         return CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, characterEncoding));
     }

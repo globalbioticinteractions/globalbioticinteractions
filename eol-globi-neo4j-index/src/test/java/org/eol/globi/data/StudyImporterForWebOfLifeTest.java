@@ -9,6 +9,7 @@ import org.globalbioticinteractions.dataset.CitationUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
         importer.setDataset(new DatasetLocal());
-        importer.importNetworks("weboflife/web-of-life_2016-01-15_192434.zip", "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/"));
+        importer.importNetworks(URI.create("weboflife/web-of-life_2016-01-15_192434.zip"), "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
@@ -43,16 +44,16 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
 
     @Test
     public void retrieveNetworkList() throws IOException {
-        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
+        final List<URI> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
 
-        assertThat(networkNames, hasItem("A_HP_002"));
+        assertThat(networkNames, hasItem(URI.create("A_HP_002")));
         assertThat(networkNames.size() > 50, is(true));
     }
 
     @Test
     public void generateArchiveURL() {
-        final List<String> networkNames = Arrays.asList("A_HP_002", "A_HP_003");
-        String generatedArchiveURL = StudyImporterForWebOfLife.generateArchiveURL(networkNames);
+        final List<URI> networkNames = Arrays.asList(URI.create("A_HP_002"), URI.create("A_HP_003"));
+        URI generatedArchiveURL = StudyImporterForWebOfLife.generateArchiveURL(networkNames);
 
         String expectedArchiveURL = "http://www.web-of-life.es/map_download_fast2.php?format=csv&networks=" + "A_HP_002,A_HP_003" + "&species=yes&type=All&data=All&speciesrange=&interactionsrange=&searchbox=&checked=false";
 

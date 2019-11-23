@@ -13,6 +13,7 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.DateUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,9 +55,9 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         }
     };
 
-    protected static final String LAVACA_BAY_DATA_SOURCE = "wrast/Wrast-Thesis-Raw-Data-gut-content.csv";
-    protected static final String LAVACA_BAY_LOCATIONS = "wrast/lavacaBayLocations.csv";
-    protected static final String LAVACA_BAY_ENVIRONMENTAL = "wrast/lavacaBayEnvironmental.csv";
+    protected static final URI LAVACA_BAY_DATA_SOURCE = URI.create("wrast/Wrast-Thesis-Raw-Data-gut-content.csv");
+    protected static final URI LAVACA_BAY_LOCATIONS = URI.create("wrast/lavacaBayLocations.csv");
+    protected static final URI LAVACA_BAY_ENVIRONMENTAL = URI.create("wrast/lavacaBayEnvironmental.csv");
 
 
     private Map<String, LatLng> locationMap;

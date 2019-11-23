@@ -7,6 +7,8 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 
+import java.net.URI;
+
 public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListener {
 
     public StudyImporterNodesAndLinks(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -22,12 +24,12 @@ public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListen
         return nodeFactory.getOrCreateStudy(new StudyImpl(getNamespace(), getSourceCitation(), getSourceDOI(), null));
     }
 
-    public String getLinksResourceName() {
-        return "links";
+    public URI getLinksResourceName() {
+        return URI.create("links");
     }
 
-    public String getNodesResourceName() {
-        return "nodes";
+    public URI getNodesResourceName() {
+        return URI.create("nodes");
     }
 
     public String getNamespace() {
@@ -35,8 +37,7 @@ public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListen
     }
 
     public LatLng getLocation() {
-        LatLng loc = parseLocation(getDataset().getConfig());
-        return loc == null ? null : loc;
+        return parseLocation(getDataset().getConfig());
     }
 
     public TermImpl getLocality() {

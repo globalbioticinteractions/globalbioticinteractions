@@ -16,6 +16,7 @@ import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +42,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
-            String links = getLinks();
-            dataParser = parserFactory.createParser(links, CharsetConstant.UTF8);
+            dataParser = parserFactory.createParser(getLinks(), CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read links", e);
         }
@@ -151,15 +151,15 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
         }
     }
 
-    public String getLinks() throws IOException {
+    public URI getLinks() throws IOException {
         return DatasetUtil.getNamedResourceURI(getDataset(), "links");
     }
 
-    public String getReferences() throws IOException {
+    public URI getReferences() throws IOException {
         return DatasetUtil.getNamedResourceURI(getDataset(), "references");
     }
 
-    public String getReferencesForLinks() throws IOException {
+    public URI getReferencesForLinks() throws IOException {
         return DatasetUtil.getNamedResourceURI(getDataset(), "referencesForLinks");
     }
 }

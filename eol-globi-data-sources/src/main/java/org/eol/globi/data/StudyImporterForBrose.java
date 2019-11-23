@@ -17,6 +17,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +26,8 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBrose.class);
 
     public static final String SOURCE = "Brose, U. et al., 2005. Body sizes of consumers and their resources. Ecology 86:2545. Available from doi:10.1890/05-0379 .";
-    public static final String RESOURCE_PATH = "http://www.esapubs.org/archive/ecol/E086/135/bodysizes_2008.txt";
-    public static final String REFERENCE_PATH = "brose/references.csv";
+    public static final URI RESOURCE_PATH = URI.create("http://www.esapubs.org/archive/ecol/E086/135/bodysizes_2008.txt");
+    public static final URI REFERENCE_PATH = URI.create("brose/references.csv");
 
     private static final Map<String, LatLng> LOC_MAP = new HashMap<String, LatLng>() {{
         put("Country: United Kingdom; UTM: 51.24'N, 0.34'W; Silwood Park, Berkshire", new LatLng(51.24d, -0.34d));

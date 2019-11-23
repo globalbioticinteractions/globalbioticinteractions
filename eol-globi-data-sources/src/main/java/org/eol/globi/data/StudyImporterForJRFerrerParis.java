@@ -10,11 +10,11 @@ import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
-import java.util.logging.Level;
+import java.net.URI;
 
 public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
 
-    private static final String RESOURCE = "http://files.figshare.com/1674327/20140912_CompiledButterflyHostPlantRecords_JRFP.csv";
+    private static final URI RESOURCE = URI.create("http://files.figshare.com/1674327/20140912_CompiledButterflyHostPlantRecords_JRFP.csv");
 
 
     public StudyImporterForJRFerrerParis(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -23,7 +23,7 @@ public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        String citation = "Ferrer-Paris, José R.; Sánchez-Mercado, Ada Y.; Lozano, Cecilia; Zambrano, Liset; Soto, José; Baettig, Jessica; Leal, María (2014): A compilation of larval host-plant records for six families of butterflies (Lepidoptera: Papilionoidea) from available electronic resources. figshare. https://doi.org/10.6084/m9.figshare.1168861 . " + CitationUtil.createLastAccessedString(RESOURCE);
+        String citation = "Ferrer-Paris, José R.; Sánchez-Mercado, Ada Y.; Lozano, Cecilia; Zambrano, Liset; Soto, José; Baettig, Jessica; Leal, María (2014): A compilation of larval host-plant records for six families of butterflies (Lepidoptera: Papilionoidea) from available electronic resources. figshare. https://doi.org/10.6084/m9.figshare.1168861 . " + CitationUtil.createLastAccessedString(RESOURCE.toString());
         Study study = nodeFactory.getOrCreateStudy(new StudyImpl("Ferrer-Paris 2014", citation, new DOI("6084", "m9.figshare.1168861"), citation));
         try {
             LabeledCSVParser parser = parserFactory.createParser(RESOURCE, CharsetConstant.UTF8);

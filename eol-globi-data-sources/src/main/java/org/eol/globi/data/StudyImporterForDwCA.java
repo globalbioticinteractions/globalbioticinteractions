@@ -76,7 +76,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             }
 
             String archiveURL = getDataset().getOrDefault("url", archiveURI == null ? null : archiveURI.toString());
-            URI resourceURI = getDataset().getResourceURI(archiveURL);
+            URI resourceURI = getDataset().getResourceURI(URI.create(archiveURL));
             if (resourceURI == null) {
                 throw new StudyImporterException("failed to access DwC archive at [" + archiveURL + "]");
             }

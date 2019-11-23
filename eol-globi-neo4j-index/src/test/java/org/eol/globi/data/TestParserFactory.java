@@ -5,6 +5,7 @@ import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +22,10 @@ public class TestParserFactory implements ParserFactory {
         this.map = resourceMapper;
     }
 
-    public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
+    public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
         String content = csvString;
         if (content == null) {
-            content = map.get(studyResource);
+            content = map.get(studyResource.toString());
         }
         if (content == null) {
             throw new IOException("failed to get [" + studyResource + "]");

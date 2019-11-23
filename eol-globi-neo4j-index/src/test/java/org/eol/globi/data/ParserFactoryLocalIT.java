@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -13,7 +14,7 @@ public class ParserFactoryLocalIT {
 
     @Test
     public void retrieveRemoteResource() throws IOException {
-        LabeledCSVParser parser = new ParserFactoryLocal().createParser("http://www.esapubs.org/archive/ecol/E095/124/PairwiseList.txt", "UTF-8");
+        LabeledCSVParser parser = new ParserFactoryLocal().createParser(URI.create("http://www.esapubs.org/archive/ecol/E095/124/PairwiseList.txt"), "UTF-8");
         parser.changeDelimiter('\t');
         parser.getLine();
         assertThat(parser.getValueByLabel("PREDATOR"), is(notNullValue()));

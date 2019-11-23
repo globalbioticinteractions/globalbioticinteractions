@@ -17,6 +17,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,8 +58,8 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
 
         TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {
             {
-                put(StudyImporterForBrose.RESOURCE_PATH, headAndTail);
-                put(StudyImporterForBrose.REFERENCE_PATH, "short,full\nCohen et al. (2005),something long\nYodzis (1998),something longer");
+                put(StudyImporterForBrose.RESOURCE_PATH.toString(), headAndTail);
+                put(StudyImporterForBrose.REFERENCE_PATH.toString(), "short,full\nCohen et al. (2005),something long\nYodzis (1998),something longer");
             }
         });
         StudyImporter importer = new StudyImporterForBrose(parserFactory, nodeFactory);

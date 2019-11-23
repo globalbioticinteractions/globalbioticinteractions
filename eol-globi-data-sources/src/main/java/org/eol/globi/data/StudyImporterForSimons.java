@@ -13,6 +13,7 @@ import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         put(LENGTH_RANGE_IN_MM, "sizeclass");
     }};
 
-    protected static final String MISSISSIPPI_ALABAMA_DATA_SOURCE = "simons/mississippiAlabamaFishDiet.csv";
+    protected static final URI MISSISSIPPI_ALABAMA_DATA_SOURCE = URI.create("simons/mississippiAlabamaFishDiet.csv");
 
     private final HashMap<String, Specimen> predatorSpecimenMap = new HashMap<String, Specimen>();
     ;
@@ -53,17 +54,17 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         importStudy(MISSISSIPPI_ALABAMA_DATA_SOURCE);
     }
 
-    private Study importStudy(String studyResource) throws StudyImporterException {
+    private Study importStudy(URI studyResource) throws StudyImporterException {
         return createAndPopulateStudy(parserFactory, studyResource);
     }
 
 
-    private Study createAndPopulateStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+    private Study createAndPopulateStudy(ParserFactory parserFactory, URI studyResource) throws StudyImporterException {
         getPredatorSpecimenMap().clear();
         return importStudy(parserFactory, studyResource);
     }
 
-    private Study importStudy(ParserFactory parserFactory, String studyResource) throws StudyImporterException {
+    private Study importStudy(ParserFactory parserFactory, URI studyResource) throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy(
                 new StudyImpl("Simons 1997", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997")));
         try {

@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -48,7 +49,7 @@ public class DatasetRegistryWithCacheIT {
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
         assertThat(dataset.getArchiveURI().toString(), containsString(expectedURIFragment));
-        assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
+        assertThat(dataset.getResourceURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
         assertThat(dataset.getCitation(), startsWith(expectedCitation));
     }
 
@@ -60,7 +61,7 @@ public class DatasetRegistryWithCacheIT {
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
-        assertThat(dataset.getResourceURI("globi.json").toString(), startsWith("jar:file:/"));
+        assertThat(dataset.getResourceURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
         assertThat(dataset.getCitation(), startsWith("Shan Kothari, Pers. Comm. 2014."));
 
     }
@@ -71,7 +72,7 @@ public class DatasetRegistryWithCacheIT {
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
 
-        try (InputStream resource = dataset.getResource("hafner/gopher_lice_int.csv")) {
+        try (InputStream resource = dataset.getResource(URI.create("hafner/gopher_lice_int.csv"))) {
             assertNotNull(resource);
         }
 

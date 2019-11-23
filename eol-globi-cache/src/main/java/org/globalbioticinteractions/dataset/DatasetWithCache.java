@@ -9,6 +9,7 @@ import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetMapped;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
+import org.globalbioticinteractions.cache.CacheProxy;
 import org.globalbioticinteractions.cache.CachedURI;
 import org.globalbioticinteractions.doi.DOI;
 
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -28,66 +30,85 @@ public class DatasetWithCache extends DatasetMapped {
     private final Dataset datasetCached;
     private CachedURI cachedUri;
 
-    public DatasetWithCache(Dataset dataset, Cache cache) {
+    public DatasetWithCache(Dataset dataset, final Cache cache) {
         this.datasetCached = dataset;
-        this.cache = cache;
+        this.cache = new CacheProxy(Collections.singletonList(cache)) {
+            @Override
+            public InputStream getResource(URI resourceName) throws IOException {
+                URI resourceURI2 = getResourceURI2(resourceName);
+                if (null == resourceURI2) {
+                    throw new IOException("resource [" + resourceName + "] not found");
+                }
+                InputStream inputStream = cache.getResource(resourceURI2);
+                if (null == inputStream) {
+                    throw new IOException("resource [" + resourceName + "] not found");
+                }
+                return inputStream;
+            }
+
+            @Override
+            public URI getResourceURI(URI resourceName) {
+                URI uri = null;
+                try {
+                    uri = getResourceURI2(resourceName);
+                } catch (IOException e) {
+                    LOG.warn("failed to get resource [" + resourceName + "]", e);
+                }
+                return uri;
+            }
+
+            private URI getResourceURI2(URI resourceName1) throws IOException {
+                URI mappedResourceName = mapResourceNameIfRequested(resourceName1, getConfig());
+
+                URI uri;
+                if (mappedResourceName.isAbsolute()) {
+                    if (isLocalDir(mappedResourceName)) {
+                        uri = mappedResourceName;
+                    } else {
+                        uri = cache.getResourceURI(mappedResourceName);
+                    }
+                } else {
+                    URI archiveURI = getArchiveURI();
+                    uri = isLocalDir(archiveURI)
+                            ? cacheFileInLocalDirectory(mappedResourceName, archiveURI)
+                            : cacheRemoteArchive(mappedResourceName, archiveURI);
+                }
+                return uri;
+            }
+
+            private URI cacheRemoteArchive(URI mappedResourceName, URI archiveURI) throws IOException {
+                URI localArchiveURI = cache.getResourceURI(archiveURI);
+                URI localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
+                return ResourceUtil.getAbsoluteResourceURI(localDatasetRoot, mappedResourceName);
+            }
+
+            private URI cacheFileInLocalDirectory(URI mappedResourceName, URI archiveURI) throws IOException {
+                URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
+                return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.getResourceURI(absoluteResourceURI);
+            }
+
+
+
+        };
+
     }
 
     @Override
-    public InputStream getResource(String resourceName) throws IOException {
-        URI resourceURI2 = getResourceURI2(resourceName);
-        if (null == resourceURI2) {
-            throw new IOException("resource [" + resourceName + "] not found");
-        }
-        InputStream inputStream = cache.getResource(resourceURI2);
-        if (null == inputStream) {
-            throw new IOException("resource [" + resourceName + "] not found");
-        }
-        return inputStream;
+    public InputStream getResource(URI resourceName) throws IOException {
+        return cache.getResource(resourceName);
     }
 
     @Override
-    public URI getResourceURI(String resourceName) {
+    public URI getResourceURI(URI resourceName) {
         URI uri = null;
         try {
-            uri = getResourceURI2(resourceName);
+            uri = cache.getResourceURI(resourceName);
         } catch (IOException e) {
             LOG.warn("failed to get resource [" + resourceName + "]", e);
         }
         return uri;
     }
 
-    private URI getResourceURI2(String resourceName) throws IOException {
-        URI mappedResourceName = mapResourceNameIfRequested(URI.create(resourceName), this.getConfig());
-
-        URI resourceURI = mappedResourceName;
-
-        URI uri;
-        if (resourceURI.isAbsolute()) {
-            if (isLocalDir(resourceURI)) {
-                uri = resourceURI;
-            } else {
-                uri = cache.getResourceURI(resourceURI);
-            }
-        } else {
-            URI archiveURI = getArchiveURI();
-            uri = isLocalDir(archiveURI)
-                    ? cacheFileInLocalDirectory(mappedResourceName, archiveURI)
-                    : cacheRemoteArchive(mappedResourceName, archiveURI);
-        }
-        return uri;
-    }
-
-    private URI cacheRemoteArchive(URI mappedResourceName, URI archiveURI) throws IOException {
-        URI localArchiveURI = cache.getResourceURI(archiveURI);
-        URI localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
-        return ResourceUtil.getAbsoluteResourceURI(localDatasetRoot, mappedResourceName);
-    }
-
-    private URI cacheFileInLocalDirectory(URI mappedResourceName, URI archiveURI) throws IOException {
-        URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-        return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.getResourceURI(absoluteResourceURI);
-    }
 
     public static boolean isLocalDir(URI archiveURI) {
         return archiveURI != null

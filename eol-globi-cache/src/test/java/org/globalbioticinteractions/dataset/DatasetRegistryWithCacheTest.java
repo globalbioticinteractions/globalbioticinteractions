@@ -41,11 +41,11 @@ public class DatasetRegistryWithCacheTest {
         Dataset datasetCached = datasetCached();
 
         assertNotNull(datasetCached.getArchiveURI());
-        URI uri = datasetCached.getResourceURI("globi.json");
+        URI uri = datasetCached.getResourceURI(URI.create("globi.json"));
         assertThat(uri.isAbsolute(), is(true));
         assertThat(uri.toString(), startsWith("jar:file:"));
 
-        try (InputStream is = datasetCached.getResource("globi.json")) {
+        try (InputStream is = datasetCached.getResource(URI.create("globi.json"))) {
             assertNotNull(is);
             JsonNode jsonNode = new ObjectMapper().readTree(is);
             assertThat(jsonNode.has("citation"), is(true));

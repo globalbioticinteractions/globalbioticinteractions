@@ -14,6 +14,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertNotNull;
@@ -57,14 +58,14 @@ public class StudyImporterForRoopnarineTest extends GraphDBTestCase {
 
         StudyImporterForRoopnarine importer = new StudyImporterForRoopnarine(new ParserFactory() {
             @Override
-            public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
+            public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
                 ParserFactory factory;
-                if (studyResource.contains("4.csv")) {
+                if (studyResource.toString().contains("4.csv")) {
                     factory = new TestParserFactory(trophicGuildsToSpeciesLookup);
                 } else {
                     factory = new TestParserFactory(trophicInteractions);
                 }
-                return factory.createParser("", characterEncoding);
+                return factory.createParser(URI.create(""), characterEncoding);
             }
         }, nodeFactory);
 

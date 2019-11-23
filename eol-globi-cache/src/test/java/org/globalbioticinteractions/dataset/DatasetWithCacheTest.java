@@ -61,7 +61,7 @@ public class DatasetWithCacheTest {
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getResourceURI("foo");
+        URI someURI = datasetWithCache.getResourceURI(URI.create("foo"));
 
         assertThat(someURI, is(URI.create("jar:" + cachedLocalURI.toString() + "!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo")));
     }
@@ -76,7 +76,7 @@ public class DatasetWithCacheTest {
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getResourceURI("foo.txt");
+        URI someURI = datasetWithCache.getResourceURI(URI.create("foo.txt"));
 
         assertThat(someURI, is(URI.create(cachedLocalURI.toString() + "archive.zip")));
     }
@@ -91,7 +91,7 @@ public class DatasetWithCacheTest {
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getResourceURI(cachedLocalURI.toString());
+        URI someURI = datasetWithCache.getResourceURI(cachedLocalURI);
 
         assertThat(someURI, not(is(localFileURI)));
         assertThat(someURI, is(cachedLocalURI));
@@ -107,7 +107,7 @@ public class DatasetWithCacheTest {
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"));
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getResourceURI(resourceName);
+        URI someURI = datasetWithCache.getResourceURI(URI.create(resourceName));
 
         assertThat(someURI, is(URI.create("someCached.txt")));
     }

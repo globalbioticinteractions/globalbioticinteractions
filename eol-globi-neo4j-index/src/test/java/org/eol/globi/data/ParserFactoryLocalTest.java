@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,7 +25,7 @@ public class ParserFactoryLocalTest {
                 return csvString;
             }
 
-            public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
+            public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
                 return CSVTSVUtil.createLabeledCSVParser(new StringReader(createString()));
             }
         }.createParser(StudyImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");

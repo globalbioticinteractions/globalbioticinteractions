@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +35,8 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        String resourceArchiveURI = getResourceArchiveURI();
-        if (org.apache.commons.lang.StringUtils.isBlank(resourceArchiveURI)) {
+        URI resourceArchiveURI = getResourceArchiveURI();
+        if (resourceArchiveURI == null) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
 
@@ -153,7 +154,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
         return StringUtils.isBlank(speciesName) ? StringUtils.trim(line[4]) : speciesName;
     }
 
-    public String getResourceArchiveURI() throws StudyImporterException {
+    public URI getResourceArchiveURI() throws StudyImporterException {
         try {
             return DatasetUtil.getNamedResourceURI(getDataset(), "archive");
         } catch (IOException e) {

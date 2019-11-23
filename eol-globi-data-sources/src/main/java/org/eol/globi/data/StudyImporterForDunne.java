@@ -13,6 +13,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

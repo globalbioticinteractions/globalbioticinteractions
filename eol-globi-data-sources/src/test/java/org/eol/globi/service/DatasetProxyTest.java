@@ -59,7 +59,7 @@ public class DatasetProxyTest {
     public void getResource() throws IOException {
         JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
         DatasetProxy testDataset = getTestDataset(null, configProxy);
-        assertThat(testDataset.getResourceURI("someResource.csv").toString(), Is.is("http://example.com/someResource.csv"));
+        assertThat(testDataset.getResourceURI(URI.create("someResource.csv")).toString(), Is.is("http://example.com/someResource.csv"));
         assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is("http://example.com/archive.zip"));
 
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"someOtherArchive.zip\" } }");
@@ -74,8 +74,8 @@ public class DatasetProxyTest {
     public void getLocalJarResource() throws IOException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("jar:file:/home/homer/dataset.zip!"));
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
-        assertThat(datasetProxy.getResourceURI("somefile.json"), is(URI.create("jar:file:/home/homer/dataset.zip!/somefile.json")));
-        assertThat(datasetProxy.getResourceURI("http://example.com/somefile.json"), is(URI.create("http://example.com/somefile.json")));
+        assertThat(datasetProxy.getResourceURI(URI.create("somefile.json")), is(URI.create("jar:file:/home/homer/dataset.zip!/somefile.json")));
+        assertThat(datasetProxy.getResourceURI(URI.create("http://example.com/somefile.json")), is(URI.create("http://example.com/somefile.json")));
     }
 
     public DatasetProxy getTestDataset() {

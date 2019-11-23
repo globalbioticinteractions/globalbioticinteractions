@@ -108,7 +108,7 @@ public class StudyImporterForRSSTest {
     public void enrichingInteractionListener() throws StudyImporterException {
         StudyImporterWithListener studyImporter = new StudyImporterWithListener(new ParserFactory() {
             @Override
-            public LabeledCSVParser createParser(String studyResource, String characterEncoding) throws IOException {
+            public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
                 return null;
             }
         }, new NodeFactory() {

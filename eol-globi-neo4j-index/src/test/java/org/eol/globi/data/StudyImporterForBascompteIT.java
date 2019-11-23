@@ -8,6 +8,7 @@ import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +44,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
     public void getNetworkNames() throws IOException {
-        final List<String> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
-        assertThat(networkNames, hasItem("A_HP_001"));
+        final List<URI> networkNames = StudyImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(StudyImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
+        assertThat(networkNames, hasItem(URI.create("A_HP_001")));
     }
 }

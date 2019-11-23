@@ -9,10 +9,11 @@ import org.eol.globi.domain.TaxonImpl;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;
+import java.net.URI;
 
 public class StudyImporterForHafner extends BaseStudyImporter {
 
-    public static final String RESOURCE = "hafner/gopher_lice_int.csv";
+    public static final URI RESOURCE = URI.create("hafner/gopher_lice_int.csv");
 
     public StudyImporterForHafner(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
