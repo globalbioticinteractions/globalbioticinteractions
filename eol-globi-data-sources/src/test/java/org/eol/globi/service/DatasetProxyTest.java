@@ -60,14 +60,36 @@ public class DatasetProxyTest {
         JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
         DatasetProxy testDataset = getTestDataset(null, configProxy);
         assertThat(testDataset.getResourceURI(URI.create("someResource.csv")).toString(), Is.is("http://example.com/someResource.csv"));
-        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is(URI.create("http://example.com/archive.zip")));
+        URI expectedZipURI = URI.create("http://example.com/archive.zip");
+        assertThat(testDataset.getResourceURI(URI.create("archive")), Is.is(expectedZipURI));
 
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"someOtherArchive.zip\" } }");
         testDataset = getTestDataset(config, configProxy);
-        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is(URI.create("http://example.com/archive.zip")));
+        assertThat(testDataset.getResourceURI(URI.create("archive")), Is.is(expectedZipURI));
 
         testDataset = getTestDataset(config, null);
-        assertThat(DatasetUtil.getNamedResourceURI(testDataset, "archive"), Is.is(URI.create("http://example.com/someOtherArchive.zip")));
+        assertThat(testDataset.getResourceURI(URI.create("archive")), Is.is(URI.create("http://example.com/someOtherArchive.zip")));
+    }
+
+    @Test
+    public void getMappedResource() throws IOException {
+        JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        dataset.setConfig(null);
+
+        DatasetProxy datasetProxy = new DatasetProxy(dataset);
+        datasetProxy.setConfig(configProxy);
+        DatasetProxy testDataset = datasetProxy;
+
+        assertThat(testDataset.getResourceURI(URI.create("someResource.csv")).toString(), Is.is("http://example.com/someResource.csv"));
+        assertThat(testDataset.getResourceURI(URI.create("archive")), Is.is(URI.create("http://example.com/archive.zip")));
+
+        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"someOtherArchive.zip\" } }");
+        testDataset = getTestDataset(config, configProxy);
+        assertThat(testDataset.getResourceURI(URI.create("archive")), Is.is(URI.create("http://example.com/archive.zip")));
+
+        testDataset = getTestDataset(config, null);
+        assertThat(testDataset.getResourceURI(URI.create("archive")), Is.is(URI.create("http://example.com/someOtherArchive.zip")));
     }
 
     @Test

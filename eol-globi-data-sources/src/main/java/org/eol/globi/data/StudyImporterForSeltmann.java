@@ -51,15 +51,15 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        final URI archiveURL;
+        final URI archiveURI;
 
         try {
-            archiveURL = DatasetUtil.getNamedResourceURI(getDataset(), "archive");
+            archiveURI = getDataset().getResourceURI(URI.create("archive"));
         } catch (IOException e) {
             throw new StudyImporterException("failed to locate archive", e);
         }
 
-        if (archiveURL == null) {
+        if (archiveURI == null) {
             throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
         }
 
@@ -72,7 +72,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .createHashMap("assocMap")
                 .make();
 
-        try (InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive");
+        try (InputStream inputStream = getDataset().getResource(URI.create("archive"));
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             File assocTempFile = null;

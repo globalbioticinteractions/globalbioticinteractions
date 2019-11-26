@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
-import org.eol.globi.service.DatasetMapped;
+import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheProxy;
@@ -23,7 +23,7 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.commons.lang3.StringUtils.trim;
 
-public class DatasetWithCache extends DatasetMapped {
+public class DatasetWithCache implements Dataset {
     private final static Log LOG = LogFactory.getLog(DatasetWithCache.class);
 
     private final Cache cache;
@@ -58,7 +58,7 @@ public class DatasetWithCache extends DatasetMapped {
             }
 
             private URI getResourceURI2(URI resourceName1) throws IOException {
-                URI mappedResourceName = mapResourceNameIfRequested(resourceName1, getConfig());
+                URI mappedResourceName = DatasetUtil.getNamedResourceURI(getDatasetCached(), resourceName1);
 
                 URI uri;
                 if (mappedResourceName.isAbsolute()) {

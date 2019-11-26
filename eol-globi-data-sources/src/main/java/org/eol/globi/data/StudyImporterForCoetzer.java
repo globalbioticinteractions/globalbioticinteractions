@@ -54,7 +54,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                 .make();
 
 
-        try (InputStream inputStream = DatasetUtil.getNamedResourceStream(getDataset(), "archive");
+        try (InputStream inputStream = getDataset().getResource(URI.create("archive"));
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)
         ) {
             ZipEntry entry;
@@ -156,7 +156,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
     public URI getResourceArchiveURI() throws StudyImporterException {
         try {
-            return DatasetUtil.getNamedResourceURI(getDataset(), "archive");
+            return getDataset().getResourceURI(URI.create("archive"));
         } catch (IOException e) {
             throw new StudyImporterException("failed to locate archive resource in [" + getDataset().getNamespace() + "]", e);
         }

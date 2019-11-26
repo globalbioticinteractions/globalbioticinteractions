@@ -9,32 +9,8 @@ import java.net.URI;
 
 public final class DatasetUtil {
 
-    public static URI getNamedResourceURI(Dataset dataset, String resourceName) throws IOException {
-        String resourceValue = getNamedResource(dataset, resourceName);
-        URI resourceURI = resourceValue == null ? null : dataset.getResourceURI(URI.create(resourceValue));
-        return resourceURI;
-    }
-
-    public static InputStream getNamedResourceStream(Dataset dataset, String resourceName) throws IOException {
-        String resourceValue = getNamedResource(dataset, resourceName);
-        if (StringUtils.isBlank(resourceValue)) {
-            throw new IOException("no resource found for [" + resourceName + "] in [" + dataset.getNamespace() + "]");
-        }
-        return dataset.getResource(URI.create(resourceValue));
-    }
-
-    private static String getNamedResource(Dataset dataset, String resourceName) {
-        String resourceValue = null;
-        if (dataset != null) {
-            JsonNode config = dataset.getConfig();
-            if (config != null && config.has("resources")) {
-                JsonNode resources = config.get("resources");
-                if (resources.has(resourceName)) {
-                    resourceValue = resources.get(resourceName).asText();
-                }
-            }
-        }
-        return resourceValue;
+    public static URI getNamedResourceURI(Dataset dataset, URI resourceName) throws IOException {
+        return mapResourceNameIfRequested(resourceName, dataset.getConfig());
     }
 
     public static String getValueOrDefault(JsonNode config, String key, String defaultValue) {
@@ -46,5 +22,22 @@ public final class DatasetUtil {
     public static boolean shouldResolveReferences(Dataset dataset) {
         return dataset == null
         || StringUtils.equalsIgnoreCase("true", dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
+    }
+
+    public static URI mapResourceNameIfRequested(URI resourceName, JsonNode config) {
+        URI mappedResource = resourceName;
+        if (config != null && config.has("resources")) {
+            JsonNode resources = config.get("resources");
+            if (resources.isObject() && resources.has(resourceName.toString())) {
+                JsonNode resourceName1 = resources.get(resourceName.toString());
+                if (resourceName1.isTextual()) {
+                    String resourceNameCandidate = resourceName1.asText();
+                    mappedResource = StringUtils.isBlank(resourceNameCandidate)
+                            ? mappedResource
+                            : URI.create(resourceNameCandidate);
+                }
+            }
+        }
+        return mappedResource;
     }
 }

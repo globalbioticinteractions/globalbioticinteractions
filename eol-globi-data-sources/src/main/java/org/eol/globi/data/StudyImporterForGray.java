@@ -7,6 +7,7 @@ import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -19,7 +20,7 @@ public class StudyImporterForGray extends StudyImporterWithListener {
     @Override
     public void importStudy() throws StudyImporterException {
         String resourceName = "links";
-        try (InputStream links = DatasetUtil.getNamedResourceStream(getDataset(), resourceName)) {
+        try (InputStream links = getDataset().getResource(URI.create(resourceName))) {
             importLinks(links, getInteractionListener(), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + resourceName + "]", e);

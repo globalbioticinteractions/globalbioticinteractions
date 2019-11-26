@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public class DatasetImpl extends DatasetMapped {
+public class DatasetImpl implements Dataset {
     private static final Log LOG = LogFactory.getLog(DatasetImpl.class);
 
     private final String namespace;
@@ -30,7 +30,7 @@ public class DatasetImpl extends DatasetMapped {
     public DatasetImpl(String namespace, URI archiveURI, final InputStreamFactory factory) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
-        this.resourceService = new ResourceServiceWithMapping(factory, getConfig());
+        this.resourceService = new ResourceServiceWithMapping(factory, this);
     }
 
     @Override
@@ -101,22 +101,22 @@ public class DatasetImpl extends DatasetMapped {
 
     private class ResourceServiceWithMapping implements ResourceService<URI> {
         private final InputStreamFactory factory;
-        private final JsonNode config;
+        private final Dataset dataset;
 
-        public ResourceServiceWithMapping(InputStreamFactory factory, JsonNode config) {
+        public ResourceServiceWithMapping(InputStreamFactory factory, Dataset dataset) {
             this.factory = factory;
-            this.config = config;
+            this.dataset = dataset;
         }
 
         @Override
         public InputStream getResource(URI resourceName) throws IOException {
-            URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+            URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
             return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), factory);
         }
 
         @Override
         public URI getResourceURI(URI resourceName) throws IOException {
-            URI mappedResource = mapResourceNameIfRequested(resourceName, getConfig());
+            URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
             return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
         }
     }

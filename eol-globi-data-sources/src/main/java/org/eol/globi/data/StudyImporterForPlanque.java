@@ -152,14 +152,14 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     }
 
     public URI getLinks() throws IOException {
-        return DatasetUtil.getNamedResourceURI(getDataset(), "links");
+        return getDataset().getResourceURI(URI.create("links"));
     }
 
     public URI getReferences() throws IOException {
-        return DatasetUtil.getNamedResourceURI(getDataset(), "references");
+        return getDataset().getResourceURI(URI.create("references"));
     }
 
     public URI getReferencesForLinks() throws IOException {
-        return DatasetUtil.getNamedResourceURI(getDataset(), "referencesForLinks");
+        return getDataset().getResourceURI(URI.create("referencesForLinks"));
     }
 }
