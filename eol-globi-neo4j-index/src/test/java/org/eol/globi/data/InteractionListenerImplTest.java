@@ -146,7 +146,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
-        link.put(REFERENCE_DOI, "doi:1234");
+        link.put(REFERENCE_DOI, "doi:10.12/34");
         listener.newLink(link);
 
         final AtomicBoolean foundPair = new AtomicBoolean(false);
@@ -201,7 +201,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
-        link.put(REFERENCE_DOI, "doi:1234");
+        link.put(REFERENCE_DOI, "doi:10.12/34");
         listener.newLink(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
@@ -232,7 +232,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
-        link.put(REFERENCE_DOI, "doi:1234");
+        link.put(REFERENCE_DOI, "doi:10.12/34");
         listener.newLink(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
@@ -382,11 +382,57 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
-        link.put(REFERENCE_DOI, "doi:1234");
         try {
             interactionListener.newLink(link);
             assertThat(msgs.size(), is(1));
             assertThat(msgs.get(0), startsWith("failed to lookup [bla:123]"));
+        } catch (StudyImporterException ex) {
+            fail("should not throw on failing geoname lookup");
+        }
+    }
+    @Test
+    public void malformedDOI() throws StudyImporterException {
+        final List<String> msgs = new ArrayList<>();
+        InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, new GeoNamesService() {
+
+            @Override
+            public boolean hasTermForLocale(String locality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findLatLng(String locality) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        }, new ImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void info(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+
+            }
+        });
+
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(REFERENCE_ID, "123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "bla:XXX");
+        try {
+            interactionListener.newLink(link);
+            assertThat(msgs.size(), is(1));
+            assertThat(msgs.get(0), startsWith("found malformed doi [bla:XXX]"));
         } catch (StudyImporterException ex) {
             fail("should not throw on failing geoname lookup");
         }

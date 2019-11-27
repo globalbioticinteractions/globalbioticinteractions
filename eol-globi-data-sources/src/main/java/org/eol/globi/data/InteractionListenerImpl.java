@@ -242,7 +242,9 @@ class InteractionListenerImpl implements InteractionListener {
         try {
             doi = StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
         } catch (MalformedDOIException e) {
-            logger.warn(null, "found malformed doi [" + doiString + "]");
+            if (logger != null) {
+                logger.warn(null, "found malformed doi [" + doiString + "]");
+            }
         }
         StudyImpl study1 = new StudyImpl(link.get(REFERENCE_ID),
                 link.get(STUDY_SOURCE_CITATION),
