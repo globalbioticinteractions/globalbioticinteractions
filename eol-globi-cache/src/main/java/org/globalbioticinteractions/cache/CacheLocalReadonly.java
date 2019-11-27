@@ -107,7 +107,7 @@ public class CacheLocalReadonly implements Cache {
         return hashCandidate;
     }
 
-    static URI getDatasetArchiveURI(URI candidateURI) {
+    private static URI getDatasetArchiveURI(URI candidateURI) {
         if (isJarResource(candidateURI)) {
             URLConnection urlConnection = null;
             try {

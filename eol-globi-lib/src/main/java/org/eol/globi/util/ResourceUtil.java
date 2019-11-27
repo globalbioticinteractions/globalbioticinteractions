@@ -29,6 +29,10 @@ public class ResourceUtil {
     private final static Log LOG = LogFactory.getLog(ResourceUtil.class);
 
     public static URI fromShapefileDir(String shapeFile) {
+        return fromShapefileDir(URI.create(shapeFile));
+    }
+
+    public static URI fromShapefileDir(URI shapeFile) {
         URI resourceURI = null;
         String shapeFileDir = System.getProperty(SHAPEFILES_DIR);
         if (StringUtils.isNotBlank(shapeFileDir)) {
@@ -43,33 +47,36 @@ public class ResourceUtil {
     }
 
     public static InputStream asInputStream(String resource, InputStreamFactory factory) throws IOException {
+        return asInputStream(URI.create(resource), factory);
+    }
+
+    public static InputStream asInputStream(URI resource, InputStreamFactory factory) throws IOException {
         try {
             InputStream is;
             if (isHttpURI(resource)) {
                 LOG.info("caching of [" + resource + "] started...");
                 is = getCachedRemoteInputStream(resource, factory);
                 LOG.info("caching of [" + resource + "] complete.");
-            } else if (StringUtils.startsWith(resource, "file:/")) {
-                is = factory.create(new FileInputStream(new File(URI.create(resource))));
-            } else if (StringUtils.startsWith(resource, "jar:file:/")) {
-                URL url = URI.create(resource).toURL();
+            } else if (StringUtils.startsWith(resource.getScheme(), "file")) {
+                is = factory.create(new FileInputStream(new File(resource)));
+            } else if (StringUtils.startsWith(resource.toString(), "jar:file:/")) {
+                URL url = resource.toURL();
                 URLConnection urlConnection = url.openConnection();
                 // Prevent leaking of jar file descriptors by disabling jar cache.
                 // see https://stackoverflow.com/a/36518430
                 urlConnection.setUseCaches(false);
                 is = factory.create(urlConnection.getInputStream());
-            } else if (StringUtils.startsWith(resource, "ftp:/")) {
-                URI uri = URI.create(resource);
+            } else if (StringUtils.startsWith(resource.getScheme(), "ftp")) {
                 FTPClient ftpClient = new FTPClient();
                 try {
-                    ftpClient.connect(uri.getHost());
+                    ftpClient.connect(resource.getHost());
                     ftpClient.enterLocalPassiveMode();
                     ftpClient.login("anonymous", "info@globalbioticinteractions.org");
                     ftpClient.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
                     ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 
                     is = ftpClient.isConnected()
-                            ? cacheAndOpenStream(ftpClient.retrieveFileStream(uri.getPath()), factory)
+                            ? cacheAndOpenStream(ftpClient.retrieveFileStream(resource.getPath()), factory)
                             : null;
                 } finally {
                     if (ftpClient.isConnected()) {
@@ -77,9 +84,9 @@ public class ResourceUtil {
                     }
                 }
             } else {
-                String classpathResource = resource;
-                if (StringUtils.startsWith(resource, "classpath:")) {
-                    classpathResource = StringUtils.replace(resource, "classpath:", "");
+                String classpathResource = resource.toString();
+                if (StringUtils.startsWith(classpathResource, "classpath:")) {
+                    classpathResource = StringUtils.replace(classpathResource, "classpath:", "");
                 }
                 is = factory.create(ResourceUtil.class.getResourceAsStream(classpathResource));
             }
@@ -93,7 +100,7 @@ public class ResourceUtil {
                 }
             }
 
-            if (StringUtils.endsWith(resource, ".gz")) {
+            if (StringUtils.endsWith(resource.toString(), ".gz")) {
                 is = new GZIPInputStream(is);
             }
 
@@ -122,7 +129,7 @@ public class ResourceUtil {
                     exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
                 } else {
                     try (InputStream input = asInputStream(descriptor.toString(), factory)) {
-                        exists = input != null;
+                        exists = input != null && input.available() > 0;
                     }
                 }
             } catch (IOException e) {
@@ -132,8 +139,7 @@ public class ResourceUtil {
         return exists;
     }
 
-    private static InputStream getCachedRemoteInputStream(String resource, InputStreamFactory factory) throws IOException {
-        URI resourceURI = URI.create(resource);
+    private static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
         HttpGet request = new HttpGet(resourceURI);
         try {
             HttpResponse response = HttpUtil.getHttpClient().execute(request);
@@ -173,12 +179,9 @@ public class ResourceUtil {
         return URI.create(contextNoSlashSuffix + "/" + resourceNameNoSlashPrefix);
     }
 
-    private static boolean isHttpURI(String descriptor) {
-        return StringUtils.startsWith(descriptor, "http:/")
-                || StringUtils.startsWith(descriptor, "https:/");
+    private static boolean isHttpURI(URI descriptor) {
+        return "http".equalsIgnoreCase(descriptor.getScheme())
+                || "https".equalsIgnoreCase(descriptor.getScheme());
     }
 
-    private static boolean isHttpURI(URI descriptor) {
-        return isHttpURI(descriptor.toString());
-    }
 }
