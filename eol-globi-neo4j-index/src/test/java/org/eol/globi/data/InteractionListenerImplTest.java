@@ -8,13 +8,19 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.tool.StudyImportLogger;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.helpers.collection.MapUtil;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +52,8 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -332,6 +340,56 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         assertThat(interactionTypePredicate.test(new HashMap<String, String>() {{
             put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
         }}), is(true));
+    }
+
+    @Test
+    public void throwingGeoNamesService() throws StudyImporterException {
+        final List<String> msgs = new ArrayList<>();
+        InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, new GeoNamesService() {
+
+            @Override
+            public boolean hasTermForLocale(String locality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findLatLng(String locality) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        }, new ImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void info(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+
+            }
+        });
+
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(LOCALITY_ID, "bla:123");
+        link.put(LOCALITY_NAME, "my back yard");
+        link.put(REFERENCE_ID, "123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "doi:1234");
+        try {
+            interactionListener.newLink(link);
+            assertThat(msgs.size(), is(1));
+            assertThat(msgs.get(0), startsWith("failed to lookup [bla:123]"));
+        } catch (StudyImporterException ex) {
+            fail("should not throw on failing geoname lookup");
+        }
     }
 
 }

@@ -321,7 +321,13 @@ class InteractionListenerImpl implements InteractionListener {
 
         if (centroid == null) {
             if (StringUtils.isNotBlank(localityId)) {
-                centroid = getGeoNamesService().findLatLng(localityId);
+                try {
+                    centroid = getGeoNamesService().findLatLng(localityId);
+                } catch (IOException ex) {
+                    if (getLogger() != null) {
+                        getLogger().warn(study, "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]");
+                    }
+                }
             }
         }
 
