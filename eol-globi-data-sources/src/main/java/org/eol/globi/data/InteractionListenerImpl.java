@@ -62,7 +62,6 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 
 class InteractionListenerImpl implements InteractionListener {
-    private static final Log LOG = LogFactory.getLog(InteractionListenerImpl.class);
     private static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
     private static final String[] LOCALITY_NAME_TERMS = {LOCALITY_NAME, DwcTerm.locality.normQName, DwcTerm.verbatimLocality.normQName};
     private final NodeFactory nodeFactory;
@@ -243,7 +242,7 @@ class InteractionListenerImpl implements InteractionListener {
         try {
             doi = StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
         } catch (MalformedDOIException e) {
-            LOG.warn("found malformed doi [" + doiString + "]");
+            logger.warn(null, "found malformed doi [" + doiString + "]");
         }
         StudyImpl study1 = new StudyImpl(link.get(REFERENCE_ID),
                 link.get(STUDY_SOURCE_CITATION),

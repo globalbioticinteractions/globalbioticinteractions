@@ -147,7 +147,7 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
         }
     }
 
-    public static Map<String, String> parseInteraction(ImportLogger logger, JsonNode singleInteraction, Map<String, Map<String, String>> nodeMap, Map<String, Map<String, String>> networkMap) throws StudyImporterException {
+    public static Map<String, String> parseInteraction(JsonNode singleInteraction, Map<String, Map<String, String>> nodeMap, Map<String, Map<String, String>> networkMap) throws StudyImporterException {
         Map<String, String> interaction = new TreeMap<>();
 
         addNameLabel(nodeMap, singleInteraction, interaction, "node_from", StudyImporterForTSV.SOURCE_TAXON_NAME);
@@ -158,10 +158,6 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
         }
 
         String interactionTypeName = singleInteraction.get("type").asText();
-        if (logger != null) {
-            logger.warn(null, "unsupported interaction type [" + interactionTypeName + "]");
-        }
-
         interaction.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, interactionTypeName);
 
         String basisOfRecord = singleInteraction.get("method").asText();
@@ -230,7 +226,7 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
             retrievePagedResource(getDataset(), new NodeListener() {
                 @Override
                 public void onNode(JsonNode node) throws StudyImporterException {
-                    Map<String, String> interaction = parseInteraction(getLogger(), node, nodeMap, networkMap);
+                    Map<String, String> interaction = parseInteraction(node, nodeMap, networkMap);
                     interaction.put(STUDY_SOURCE_CITATION, getDataset().getCitation() + " " + CitationUtil.createLastAccessedString(MANGAL_API_ENDPOINT + "/network/" + interaction.get("mangal:network:id")));
 
                     String interactionTypeName = interaction.get(StudyImporterForTSV.INTERACTION_TYPE_NAME);
