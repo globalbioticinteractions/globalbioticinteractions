@@ -25,7 +25,7 @@ public class StudyImporterForWebOfLifeTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
-        importer.setDataset(new DatasetLocal());
+        importer.setDataset(new DatasetLocal(inStream -> inStream));
         importer.importNetworks(URI.create("weboflife/web-of-life_2016-01-15_192434.zip"), "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/"));
         resolveNames();
 

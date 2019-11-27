@@ -11,6 +11,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.util.HttpUtil;
+import org.eol.globi.util.InputStreamFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -117,14 +118,14 @@ public class GitHubUtil {
         return getBaseUrl(repo, lastCommitSHA);
     }
 
-    public static Dataset getArchiveDataset(String namespace, String commitSha) {
-        return new DatasetImpl(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"));
+    public static Dataset getArchiveDataset(String namespace, String commitSha, InputStreamFactory inputStreamFactory) {
+        return new DatasetImpl(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"), inputStreamFactory);
     }
 
     public static void configureStudyWithNamespace(StudyImpl study, boolean shouldResolveReferences, String namespace) {
         study.setSourceId("globi:" + namespace);
 
-        DatasetImpl originatingDataset = new DatasetImpl(namespace, URI.create(getBaseUrlMaster(namespace)));
+        DatasetImpl originatingDataset = new DatasetImpl(namespace, URI.create(getBaseUrlMaster(namespace)), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, shouldResolveReferences);
         originatingDataset.setConfig(objectNode);

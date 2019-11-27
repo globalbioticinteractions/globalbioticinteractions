@@ -130,7 +130,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     private StudyImporterForSPIRE createImporter() {
         StudyImporterForSPIRE studyImporterForSPIRE = new StudyImporterForSPIRE(null, nodeFactory);
-        studyImporterForSPIRE.setDataset(new DatasetLocal());
+        studyImporterForSPIRE.setDataset(new DatasetLocal(inStream -> inStream));
         studyImporterForSPIRE.setGeoNamesService(new GeoNamesService() {
 
             @Override

@@ -6,8 +6,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -16,7 +14,6 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -36,7 +33,7 @@ public class StudyImporterForSzoboszlaiIT extends GraphDBTestCase {
                 "  }\n" +
                 "}");
 
-        DatasetImpl dataset = new DatasetImpl("someRepo", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         StudyImporterForSzoboszlai importer = new StudyImporterForSzoboszlai(parserFactory, nodeFactory);

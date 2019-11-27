@@ -2,12 +2,9 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
-import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.net.URI;
@@ -37,7 +34,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
                 "  }\n" +
                 "}";
         JsonNode jsonNode = new ObjectMapper().readTree(configJson);
-        DatasetImpl dunne2016 = new DatasetImpl("dunne2016", URI.create("http://example.com"));
+        DatasetImpl dunne2016 = new DatasetImpl("dunne2016", URI.create("http://example.com"), inStream -> inStream);
         dunne2016.setConfig(jsonNode);
         ParserFactory parserFactory = new ParserFactoryForDataset(dunne2016);
         StudyImporterForDunne importer = new StudyImporterForDunne(parserFactory, nodeFactory);
@@ -71,7 +68,7 @@ public class StudyImporterForDunneTest extends GraphDBTestCase {
                 "    \"longitude\": 60\n" +
                 "  }\n" +
                 "}";
-        DatasetImpl dunne2016 = new DatasetImpl("dunne2016", URI.create("http://example.com"));
+        DatasetImpl dunne2016 = new DatasetImpl("dunne2016", URI.create("http://example.com"), inStream -> inStream);
         dunne2016.setConfig(new ObjectMapper().readTree(configJson));
         ParserFactory parserFactory = new ParserFactoryForDataset(dunne2016);
         StudyImporterForDunne importer = new StudyImporterForDunne(parserFactory, nodeFactory);

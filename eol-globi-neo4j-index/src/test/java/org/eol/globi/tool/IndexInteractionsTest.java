@@ -42,7 +42,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         TaxonIndex taxonIndex = getOrCreateTaxonIndex();
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", "some source", new DOI("123.23", "222"), "some study citation");
-        NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetImpl("some/namespace", URI.create("https://some.uri")));
+        NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetImpl("some/namespace", URI.create("https://some.uri"), inStream -> inStream));
         Study interaction = factory.getOrCreateStudy(study);
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
         Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
@@ -59,7 +59,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
         StudyImpl study1 = new StudyImpl("some study", "some source", null, "come citation");
-        study1.setOriginatingDataset(new DatasetImpl("some/namespace", URI.create("some:uri")));
+        study1.setOriginatingDataset(new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream));
         StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
 
         assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));

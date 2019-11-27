@@ -11,7 +11,7 @@ public class DatasetZenodoTest {
 
     @Test
     public void doi() {
-        DatasetZenodo datasetZenodo = new DatasetZenodo("some/namespace", URI.create("https://zenodo.org/record/1234/blabla"));
+        DatasetZenodo datasetZenodo = new DatasetZenodo("some/namespace", URI.create("https://zenodo.org/record/1234/blabla"), inStream -> inStream);
         assertThat(datasetZenodo.getDOI().toString(), is("10.5281/zenodo.1234"));
     }
 

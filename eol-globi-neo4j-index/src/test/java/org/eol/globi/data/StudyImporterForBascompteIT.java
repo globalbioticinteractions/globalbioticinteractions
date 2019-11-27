@@ -25,7 +25,7 @@ public class StudyImporterForBascompteIT extends GraphDBTestCase {
     @Test
     public void importAll() throws StudyImporterException {
         StudyImporterForWebOfLife importer = new StudyImporterForWebOfLife(null, nodeFactory);
-        importer.setDataset(new DatasetLocal());
+        importer.setDataset(new DatasetLocal(inStream -> inStream));
         importStudy(importer);
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());

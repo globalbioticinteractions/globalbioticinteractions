@@ -270,7 +270,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     private void assertDataset(String citationKey) {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         objectNode.put(citationKey, "some citation");
@@ -293,7 +293,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void addDatasetToStudy() throws NodeFactoryException, IOException {
         StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         dataset.setConfig(objectNode);
@@ -357,7 +357,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     private DatasetImpl datasetWithNamespace(String namespace) {
-        DatasetImpl dataset = new DatasetImpl(namespace, URI.create("some:uri"));
+        DatasetImpl dataset = new DatasetImpl(namespace, URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         dataset.setConfig(objectNode);
@@ -367,7 +367,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void addDatasetToStudyNulls() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetImpl(null, null);
+        DatasetImpl dataset = new DatasetImpl(null, null, inStream -> inStream);
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
@@ -377,7 +377,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void addDatasetToStudyNulls2() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", null);
+        DatasetImpl dataset = new DatasetImpl("some/namespace", null, inStream -> inStream);
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 

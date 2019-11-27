@@ -27,7 +27,7 @@ public class StudyImporterForGlobalWebDbTest {
     public void dietMatrix() throws StudyImporterException {
         List<String> matrices = new ArrayList<>();
         StudyImporterForGlobalWebDb importer = new StudyImporterForGlobalWebDb(null, null);
-        importer.setDataset(new DatasetLocal());
+        importer.setDataset(new DatasetLocal(inStream -> inStream));
         importer
                 .importDietMatrices(URI.create("classpath:/org/eol/globi/data/globalwebdb-test.zip"), matrices::add);
         assertThat(matrices.size(), is(10));
@@ -38,7 +38,7 @@ public class StudyImporterForGlobalWebDbTest {
     public void dietMatrices() throws StudyImporterException {
         final AtomicInteger count = new AtomicInteger();
         StudyImporterForGlobalWebDb importer = new StudyImporterForGlobalWebDb(null, null);
-        importer.setDataset(new DatasetLocal());
+        importer.setDataset(new DatasetLocal(inStream -> inStream));
         importer
                 .importDietMatrices(URI.create("classpath:/org/eol/globi/data/globalwebdb-test.zip"), matrixString -> {
                     try {

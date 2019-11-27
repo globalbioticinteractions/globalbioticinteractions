@@ -17,7 +17,7 @@ public class StudyImporterForMangalIT {
     public void importAll() throws StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);
         StudyImporterForMangal importer = new StudyImporterForMangal(null, null);
-        importer.setDataset(new DatasetLocal());
+        importer.setDataset(new DatasetLocal(inStream -> inStream));
         importer.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {

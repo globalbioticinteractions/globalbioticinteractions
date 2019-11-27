@@ -79,7 +79,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
                 "    \"shapes\": \"szoboszlai/CCPDDlocationdata_test.zip\"\n" +
                 "  }\n" +
                 "}");
-        Dataset dataset = new DatasetLocal();
+        Dataset dataset = new DatasetLocal(inStream -> inStream);
         dataset.setConfig(config);
         return dataset;
     }

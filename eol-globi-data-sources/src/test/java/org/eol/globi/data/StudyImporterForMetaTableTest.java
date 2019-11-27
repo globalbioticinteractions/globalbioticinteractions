@@ -3,10 +3,8 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
-import org.eol.globi.service.DatasetTest;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -60,7 +58,7 @@ public class StudyImporterForMetaTableTest {
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         String baseUrl = resource.toExternalForm().replaceFirst(metaTableDef + "$", "");
-        List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetImpl(null, URI.create(baseUrl)));
+        List<StudyImporterForMetaTable.Column> columnNames = StudyImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetImpl(null, URI.create(baseUrl), inStream -> inStream));
         assertThat(columnNames.size(), is(40));
     }
 
@@ -246,7 +244,7 @@ public class StudyImporterForMetaTableTest {
         assertThat(columnNames.size(), is(86));
 
         StudyImporterForMetaTable importer = new StudyImporterForMetaTable(null, null);
-        DatasetLocal dataset = new DatasetLocal();
+        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
 
         JsonNode phibaseConfig = new ObjectMapper().readTree("{\n" +
                 "  \"@context\": [\"http://www.w3.org/ns/csvw\", {\"@language\": \"en\"}],\n" +

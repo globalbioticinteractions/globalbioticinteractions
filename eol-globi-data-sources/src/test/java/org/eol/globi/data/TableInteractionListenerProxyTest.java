@@ -22,7 +22,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListenerTest() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
-        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"));
+        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override
@@ -41,7 +41,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListener2Test() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
-        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"));
+        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override

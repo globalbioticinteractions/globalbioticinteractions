@@ -19,7 +19,7 @@ public class NodeFactoryWithDatasetContextTest {
     @Test
     public void createStudy() {
         NodeFactory factory = Mockito.mock(NodeFactory.class);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
 
         StudyImpl study = new StudyImpl("some title", "some source", new DOI("123", "abc"), "some citation");
@@ -38,7 +38,7 @@ public class NodeFactoryWithDatasetContextTest {
     @Test
     public void getOrCreateStudy() throws NodeFactoryException {
         NodeFactory factory = Mockito.mock(NodeFactory.class);
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
 
         factoryWithDS.getOrCreateStudy(new StudyImpl("some title"));

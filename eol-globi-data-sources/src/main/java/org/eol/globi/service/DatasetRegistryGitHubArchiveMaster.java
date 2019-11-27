@@ -21,7 +21,7 @@ public class DatasetRegistryGitHubArchiveMaster implements DatasetRegistry {
 
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
-        return GitHubUtil.getArchiveDataset(namespace, "master");
+        return GitHubUtil.getArchiveDataset(namespace, "master", inStream -> inStream);
     }
 
 }

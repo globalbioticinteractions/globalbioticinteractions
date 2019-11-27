@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.eol.globi.taxon.XmlUtil;
 import org.eol.globi.util.HttpUtil;
+import org.eol.globi.util.InputStreamFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -24,6 +25,12 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
     private static final String PREFIX_ZENODO = "oai:zenodo.org:";
 
+    private final InputStreamFactory inputStreamFactory;
+
+    public DatasetRegistryZenodo(InputStreamFactory inputStreamFactory) {
+        this.inputStreamFactory = inputStreamFactory;
+    }
+
     @Override
     public Collection<String> findNamespaces() throws DatasetFinderException {
         return find(getFeed());
@@ -32,7 +39,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
-            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRecordNodeList(getFeed()), namespace));
+            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRecordNodeList(getFeed()), namespace), inputStreamFactory);
         } catch (XPathExpressionException | MalformedURLException e) {
             throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
         }

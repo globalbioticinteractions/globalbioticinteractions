@@ -91,7 +91,7 @@ public class StudyImporterForGoMexSI2IT extends GraphDBTestCase {
                 "  \"citation\": \"testing source citation\",\n" +
                 "  \"format\": \"gomexsi\"\n" +
                 "}");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create(baseUrlLastCommit));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create(baseUrlLastCommit), inStream -> inStream);
         importer.setDataset(dataset);
         dataset.setConfig(config);
 

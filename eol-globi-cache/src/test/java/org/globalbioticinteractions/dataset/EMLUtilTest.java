@@ -18,7 +18,7 @@ public class EMLUtilTest {
 
     @Test
     public void metaToMetaTables() throws URISyntaxException, IOException {
-        Dataset origDataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        Dataset origDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         String uriString = "jar:" + getClass().getResource("dwca.zip").toURI().toString() + "!/vampire-moth-dwca-master/eml.xml";
 
         JsonNode config = EMLUtil.datasetWithEML(origDataset, URI.create(uriString));

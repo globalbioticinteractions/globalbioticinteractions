@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
@@ -25,7 +24,6 @@ import java.util.Date;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
 
 public class ExportFlatInteractionsTest extends GraphDBTestCase {
@@ -35,7 +33,7 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
     @Before
     public void init() throws IOException {
         super.startGraphDb();
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
     }
 

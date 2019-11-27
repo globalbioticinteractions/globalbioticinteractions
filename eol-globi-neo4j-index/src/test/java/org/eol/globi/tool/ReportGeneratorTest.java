@@ -193,7 +193,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateCollectionReport() throws NodeFactoryException {
-        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         StudyImpl study1 = new StudyImpl("a title", "source", null, "citation");
         study1.setOriginatingDataset(originatingDataset);
         createStudy(study1);

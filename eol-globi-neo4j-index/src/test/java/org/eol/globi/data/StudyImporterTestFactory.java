@@ -3,8 +3,6 @@ package org.eol.globi.data;
 import org.eol.globi.service.DatasetLocal;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.Collections;
 
 public class StudyImporterTestFactory {
 
@@ -24,7 +22,7 @@ public class StudyImporterTestFactory {
         try {
             Constructor<? extends StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
             StudyImporter studyImporter = aConstructor.newInstance(parserFactory, nodeFactory);
-            studyImporter.setDataset(new DatasetLocal());
+            studyImporter.setDataset(new DatasetLocal(inStream -> inStream));
             return studyImporter;
         } catch (Exception ex) {
             throw new StudyImporterException("failed to create study importer for [" + clazz.toString() + "]", ex);

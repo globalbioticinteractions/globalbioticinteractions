@@ -83,7 +83,7 @@ public class StudyImporterForDwCATest {
     public void importRecordsFromArctosArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/arctos_mvz_bird_small.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI()));
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI(), inStream -> inStream));
         AtomicBoolean someRecords = new AtomicBoolean(false);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
@@ -110,7 +110,7 @@ public class StudyImporterForDwCATest {
     public void importRecords() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI()));
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI(), inStream -> inStream));
         AtomicBoolean someRecords = new AtomicBoolean(false);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
@@ -136,7 +136,7 @@ public class StudyImporterForDwCATest {
     public void importRecordsFromZip() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", null);
+        DatasetImpl dataset = new DatasetImpl("some/namespace", null, inStream -> inStream);
         JsonNode jsonNode = new ObjectMapper().readTree("{ " +
                 "\"interactionTypeId\": \"http://purl.obolibrary.org/obo/RO_0002437\"," +
                 "\"url\": \"" + resource.toExternalForm() + "\"" +
@@ -166,7 +166,7 @@ public class StudyImporterForDwCATest {
 
     private void assertImportsSomething(URI archiveRoot, AtomicInteger recordCounter, String... expectedProperties) throws StudyImporterException {
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot));
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {

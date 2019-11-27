@@ -38,7 +38,7 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
                 "    \"longitude\": -162.70889\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
 
         StudyImporterForWood wood = new StudyImporterForWood(new ParserFactoryForDataset(dataset), nodeFactory);

@@ -35,7 +35,7 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
                 "    \"links\": \"https://zenodo.org/record/13751/files/trophic.links.2014-11-10.csv\"  \n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
         gray.setDataset(dataset);
         return gray;

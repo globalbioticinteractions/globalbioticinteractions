@@ -21,7 +21,7 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
     @Test
     public void importStatic() throws StudyImporterException, URISyntaxException {
         StudyImporter importer = new StudyImporterForJSONLD(null, nodeFactory);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld"));
         importer.setDataset(dataset);
 
@@ -38,7 +38,7 @@ public class StudyImporterForJSONLDTest extends GraphDBTestCase {
     @Test(expected = StudyImporterException.class)
     public void importStaticInvalid() throws StudyImporterException, URISyntaxException {
         StudyImporter importer = new StudyImporterForJSONLD(null, nodeFactory);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld.invalid"));
         importer.setDataset(dataset);
 

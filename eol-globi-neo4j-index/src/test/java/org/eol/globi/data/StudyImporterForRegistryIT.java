@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.hasItem;
 public class StudyImporterForRegistryIT extends GraphDBTestCase {
 
     public static DatasetRegistry defaultFinder() {
-        List<DatasetRegistry> finders = Arrays.asList(new DatasetRegistryZenodo(), new DatasetRegistryGitHubArchive());
+        List<DatasetRegistry> finders = Arrays.asList(new DatasetRegistryZenodo(inStream -> inStream), new DatasetRegistryGitHubArchive(inStream -> inStream));
         return new DatasetRegistryWithCache(new DatasetRegistryProxy(finders), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets", inStream -> inStream));
     }
 

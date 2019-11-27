@@ -36,7 +36,7 @@ public class StudyImporterForMetaTableIT {
         org.junit.Assert.assertNotNull(resource);
 
         final JsonNode config = new ObjectMapper().readTree(clazz.getResourceAsStream(name));
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
         final List<JsonNode> tables = StudyImporterForMetaTable.collectTables(dataset);
         assertThat(tables.size(), is(1));
@@ -228,7 +228,7 @@ public class StudyImporterForMetaTableIT {
         final Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
         for (JsonNode table : StudyImporterForMetaTable.collectTables(dataset)) {
-            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetImpl(null, URI.create(baseUrl)), null);
+            StudyImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetImpl(null, URI.create(baseUrl), inStream -> inStream), null);
         }
 
     }

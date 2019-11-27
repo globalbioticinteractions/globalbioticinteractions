@@ -74,7 +74,7 @@ public class DatasetProxyTest {
     @Test
     public void getMappedResource() throws IOException {
         JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(null);
 
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
@@ -94,7 +94,7 @@ public class DatasetProxyTest {
 
     @Test
     public void getLocalJarResource() throws IOException {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("jar:file:/home/homer/dataset.zip!"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("jar:file:/home/homer/dataset.zip!"), inStream -> inStream);
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
         assertThat(datasetProxy.getResourceURI(URI.create("somefile.json")), is(URI.create("jar:file:/home/homer/dataset.zip!/somefile.json")));
         assertThat(datasetProxy.getResourceURI(URI.create("http://example.com/somefile.json")), is(URI.create("http://example.com/somefile.json")));
@@ -105,7 +105,7 @@ public class DatasetProxyTest {
     }
 
     public DatasetProxy getTestDataset(JsonNode config, JsonNode configProxy) {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
 
         DatasetProxy datasetProxy = new DatasetProxy(dataset);

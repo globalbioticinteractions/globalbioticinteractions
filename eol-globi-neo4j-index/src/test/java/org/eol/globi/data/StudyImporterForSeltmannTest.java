@@ -3,10 +3,8 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeTypeDirection;
@@ -29,7 +27,7 @@ public class StudyImporterForSeltmannTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
-        Dataset dataset = new DatasetLocal();
+        Dataset dataset = new DatasetLocal(inStream -> inStream);
         JsonNode config = new ObjectMapper().readTree("{\"citation\": \"some citation\", \"resources\": {\"archive\": \"seltmann/testArchive.zip\"}}");
         dataset.setConfig(config);
         importer.setDataset(dataset);

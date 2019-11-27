@@ -228,7 +228,7 @@ public class Normalizer {
             CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
             DatasetRegistry finder = new DatasetRegistryLocal(cacheDir, cacheFactory);
             StudyImporter importer = new StudyImporterForRegistry(new ParserFactoryLocal(), factory, finder);
-            importer.setDataset(new DatasetLocal());
+            importer.setDataset(new DatasetLocal(inStream -> inStream));
             importer.setLogger(new StudyImportLogger());
             importer.importStudy();
         } catch (StudyImporterException e) {

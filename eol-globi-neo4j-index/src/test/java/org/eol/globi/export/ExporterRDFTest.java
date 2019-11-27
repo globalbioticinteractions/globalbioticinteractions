@@ -9,7 +9,6 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForSPIRE;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -47,7 +46,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
     public void exportSPIRE() throws IOException, StudyImporterException {
         StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
         importer.setFilter(recordNumber -> recordNumber < 5);
-        importer.setDataset(new DatasetLocal());
+        importer.setDataset(new DatasetLocal(inStream -> inStream));
         importStudy(importer);
 
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());

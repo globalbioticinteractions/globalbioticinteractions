@@ -15,13 +15,13 @@ public class DatasetRegistryGitHubIT {
 
     @Test
     public void discoverDatasetsInGitHub() throws DatasetFinderException {
-        Collection<String> urls = new DatasetRegistryGitHubArchive().findNamespaces();
+        Collection<String> urls = new DatasetRegistryGitHubArchive(inStream -> inStream).findNamespaces();
         assertThat(urls.size(), is(not(0)));
     }
 
     @Test
     public void datasetFor() throws DatasetFinderException {
-        URI uri = new DatasetRegistryGitHubArchive().datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
+        URI uri = new DatasetRegistryGitHubArchive(inStream -> inStream).datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
         assertThat(uri.toString(), startsWith("https://github.com/globalbioticinteractions/template-dataset/archive/"));
         assertThat(uri.toString(), endsWith(".zip"));
     }

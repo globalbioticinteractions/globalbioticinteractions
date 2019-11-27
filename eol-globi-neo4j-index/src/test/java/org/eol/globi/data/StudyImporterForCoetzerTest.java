@@ -10,7 +10,6 @@ import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -21,7 +20,7 @@ public class StudyImporterForCoetzerTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         StudyImporterForCoetzer importer = new StudyImporterForCoetzer(null, nodeFactory);
-        DatasetImpl dataset = new DatasetLocal();
+        DatasetImpl dataset = new DatasetLocal(inStream -> inStream);
         JsonNode config = new ObjectMapper().readTree("{\"citation\": \"source citation\", \"resources\": {\"archive\": \"coetzer/CatalogOfAfrotropicalBees.zip\"}}");
         dataset.setConfig(config);
         importer.setDataset(dataset);

@@ -17,7 +17,6 @@ import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
-import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.TermLookupService;
 import org.junit.Test;
 import org.mapdb.DBMaker;
@@ -298,7 +297,7 @@ public class StudyImporterForRSSTest {
     private DatasetImpl datasetFor(String configJson) throws IOException {
         JsonNode config = new ObjectMapper().readTree(
                 configJson);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
         return dataset;
     }

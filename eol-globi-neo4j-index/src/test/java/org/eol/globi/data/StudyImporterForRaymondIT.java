@@ -30,7 +30,7 @@ public class StudyImporterForRaymondIT extends GraphDBTestCase {
             }
 
         });
-        importer.setDataset(new DatasetLocal());
+        importer.setDataset(new DatasetLocal(inStream -> inStream));
         importStudy(importer);
 
         importer.setGeoNamesService(new GeoNamesServiceImpl());

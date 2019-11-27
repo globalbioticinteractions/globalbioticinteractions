@@ -37,7 +37,7 @@ public class StudyImporterForHechingerTest extends GraphDBTestCase {
                 "    \"links\": \"hechinger/Metaweb_Links.txt\"\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetLocal();
+        DatasetImpl dataset = new DatasetLocal(inStream -> inStream);
         dataset.setConfig(config);
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         StudyImporterForHechinger importer = new StudyImporterForHechinger(parserFactory, nodeFactory);

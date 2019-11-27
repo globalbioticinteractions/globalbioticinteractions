@@ -4,10 +4,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -46,7 +44,7 @@ public class StudyImporterForSeltmannIT extends GraphDBTestCase {
     private void importArchive(String archiveName) throws StudyImporterException {
         StudyImporterForSeltmann importer = new StudyImporterForSeltmann(null, nodeFactory);
         URI archiveURI = URI.create(ARCHIVE_URI_PREFIX + archiveName);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", archiveURI);
+        DatasetImpl dataset = new DatasetImpl("some/namespace", archiveURI, inStream -> inStream);
         createAndSetConfig(archiveURI, dataset);
         importer.setDataset(dataset);
 

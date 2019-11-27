@@ -115,7 +115,7 @@ public class LinkerDOITest extends GraphDBTestCase {
     @Test
     public void createStudyDOIlookupCitationEnabled() throws NodeFactoryException {
         StudyImpl title = new StudyImpl("title", "some source", null, "some citation");
-        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, true);
         originatingDataset.setConfig(objectNode);
@@ -134,7 +134,7 @@ public class LinkerDOITest extends GraphDBTestCase {
     public void createStudyDOIlookupCitationDisabled() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("title", "some source", null, "some citation");
         study1.setExternalId("some:id");
-        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"));
+        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         originatingDataset.setConfig(objectNode);

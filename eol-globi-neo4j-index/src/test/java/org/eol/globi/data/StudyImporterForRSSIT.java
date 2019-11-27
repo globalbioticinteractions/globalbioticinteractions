@@ -18,7 +18,7 @@ public class StudyImporterForRSSIT extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(StudyImporterForRSS.class);
 
-        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath()));
+        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(inStream -> inStream), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath()));
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
@@ -37,7 +37,7 @@ public class StudyImporterForRSSIT extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(StudyImporterForRSS.class);
 
-        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath()));
+        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(inStream -> inStream), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath()));
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
@@ -54,7 +54,7 @@ public class StudyImporterForRSSIT extends GraphDBTestCase {
     public void importEasyArthoprodCapture() throws StudyImporterException {
         StudyImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(StudyImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal();
+        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
         rssUrl.put("rss", "http://amnh.begoniasociety.org/dwc/rss.xml");
