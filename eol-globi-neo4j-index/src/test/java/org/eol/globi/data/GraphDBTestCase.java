@@ -16,6 +16,7 @@ import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.junit.After;
 import org.junit.Before;
@@ -59,7 +60,7 @@ public abstract class GraphDBTestCase {
     }
 
     public static Dataset datasetFor(String namespace) throws DatasetFinderException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchiveMaster());
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchiveMaster(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets", inStream -> inStream));
         return finder.datasetFor(namespace);
     }
 

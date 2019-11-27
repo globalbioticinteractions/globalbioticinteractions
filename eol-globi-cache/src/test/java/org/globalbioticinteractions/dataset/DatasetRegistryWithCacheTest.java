@@ -63,7 +63,7 @@ public class DatasetRegistryWithCacheTest {
         Dataset dataset = Mockito.mock(Dataset.class);
         when(dataset.getNamespace()).thenReturn("some/namespace");
         when(dataset.getArchiveURI()).thenReturn(getClass().getResource("archive.zip").toURI());
-        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath);
+        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath, inStream -> inStream);
         return new DatasetWithCache(dataset, cache);
     }
 }

@@ -28,7 +28,7 @@ public class DatasetRegistryLocalTest {
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile();
         datasetFinderLocal = new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
-                cacheDir.getAbsolutePath()));
+                cacheDir.getAbsolutePath(), inStream -> inStream));
     }
 
     @Test

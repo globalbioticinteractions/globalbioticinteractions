@@ -13,14 +13,6 @@ public class DatasetRegistryWithCache implements DatasetRegistry {
 
     private final CacheFactory cacheFactory;
 
-    public DatasetRegistryWithCache(DatasetRegistry finder) {
-        this(finder, "target/datasets");
-    }
-
-    public DatasetRegistryWithCache(DatasetRegistry finder, String cachePath) {
-        this(finder, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath));
-    }
-
     public DatasetRegistryWithCache(DatasetRegistry finder, CacheFactory factory) {
         this.finder = finder;
         this.cacheFactory = factory;

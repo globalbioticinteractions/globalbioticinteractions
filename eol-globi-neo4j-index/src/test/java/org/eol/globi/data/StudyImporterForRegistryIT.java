@@ -9,11 +9,11 @@ import org.eol.globi.service.DatasetRegistryProxy;
 import org.eol.globi.service.DatasetRegistryZenodo;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class StudyImporterForRegistryIT extends GraphDBTestCase {
 
     public static DatasetRegistry defaultFinder() {
         List<DatasetRegistry> finders = Arrays.asList(new DatasetRegistryZenodo(), new DatasetRegistryGitHubArchive());
-        return new DatasetRegistryWithCache(new DatasetRegistryProxy(finders), "target/datasets");
+        return new DatasetRegistryWithCache(new DatasetRegistryProxy(finders), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets", inStream -> inStream));
     }
 
     @Test

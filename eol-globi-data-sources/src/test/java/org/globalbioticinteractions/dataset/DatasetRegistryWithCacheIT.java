@@ -7,6 +7,7 @@ import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetRegistryGitHubArchive;
 import org.eol.globi.service.DatasetRegistryZenodo;
+import org.globalbioticinteractions.cache.CacheUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public class DatasetRegistryWithCacheIT {
     }
 
     private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetFinderException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, cachePath);
+        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
@@ -56,7 +57,7 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void gitHubTest() throws DatasetFinderException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), cachePath);
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
@@ -68,7 +69,7 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void hafnerTest() throws DatasetFinderException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), cachePath);
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
 
