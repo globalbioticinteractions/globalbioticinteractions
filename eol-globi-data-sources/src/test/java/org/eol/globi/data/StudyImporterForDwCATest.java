@@ -48,6 +48,13 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void importRecordsFromMCZ() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mcz/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        assertImportsSomething(archiveRoot, new AtomicInteger(0));
+    }
+
+    @Test
     public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomething(resource.toURI(), new AtomicInteger(0));
