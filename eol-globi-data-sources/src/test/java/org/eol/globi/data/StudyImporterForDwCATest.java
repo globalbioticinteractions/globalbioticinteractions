@@ -49,9 +49,42 @@ public class StudyImporterForDwCATest {
 
     @Test
     public void importRecordsFromMCZ() throws StudyImporterException, URISyntaxException {
+        StringBuilder actualMessage = new StringBuilder();
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mcz/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
-        assertImportsSomething(archiveRoot, new AtomicInteger(0));
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
+        studyImporterForDwCA.setLogger(new ImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void info(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+                actualMessage.append(message);
+            }
+        });
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                for (String expectedProperty : new String[]{}) {
+                    assertThat("no [" + expectedProperty + "] found in " + properties, properties.containsKey(expectedProperty), is(true));
+                    assertThat("no value of [" + expectedProperty + "] found in " + properties, properties.get(expectedProperty), is(notNullValue()));
+                }
+
+                recordCounter.incrementAndGet();
+            }
+        });
+        studyImporterForDwCA.importStudy();
+        assertThat(recordCounter.get(), is(0));
+        assertThat(actualMessage.toString(), startsWith("[failed to handle dwc record]"));
     }
 
     @Test

@@ -17,8 +17,6 @@ import org.eol.globi.service.StudyImporterFactory;
 import org.mapdb.DBMaker;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,18 +62,10 @@ public class StudyImporterForRSS extends BaseStudyImporter {
 
                 }, dataset);
             } catch (StudyImporterException | IllegalStateException ex) {
-                logError(ex);
+                LogUtil.logError(getLogger(), ex);
             }
         }
         LOG.info(msgPrefix + " done.");
-    }
-
-    public void logError(Throwable ex) {
-        if (getLogger() != null) {
-            StringWriter out = new StringWriter();
-            ex.printStackTrace(new PrintWriter(out));
-            getLogger().severe(null, out.toString());
-        }
     }
 
     public void indexArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets) throws StudyImporterException {
@@ -93,7 +83,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
                         }
                     }, dataset);
                 } catch (StudyImporterException | IllegalStateException ex) {
-                    logError(ex);
+                    LogUtil.logError(getLogger(), ex);
                 }
             }
         }

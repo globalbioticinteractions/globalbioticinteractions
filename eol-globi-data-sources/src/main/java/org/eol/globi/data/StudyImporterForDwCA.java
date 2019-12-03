@@ -12,6 +12,7 @@ import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
+import org.gbif.utils.file.ClosableIterator;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -105,43 +106,56 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     }
 
     public void importCore(Archive archive, InteractionListener interactionListener, String sourceCitation) throws StudyImporterException {
-        for (Record rec : archive.getCore()) {
-            List<Map<String, String>> interactionCandidates = new ArrayList<>();
-
-            String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
-            if (StringUtils.isNotBlank(associatedTaxa)) {
-                interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
+        ClosableIterator<Record> iterator = archive.getCore().iterator();
+        while (true) {
+            try {
+                if (!iterator.hasNext()) {
+                    break;
+                }
+                Record rec = iterator.next();
+                handleRecord(interactionListener, sourceCitation, rec);
+            } catch (IllegalStateException ex) {
+                LogUtil.logError(getLogger(), "failed to handle dwc record", ex);
             }
+        }
+    }
 
-            String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
-            if (StringUtils.isNotBlank(associatedOccurrences)) {
-                interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
-            }
+    public void handleRecord(InteractionListener interactionListener, String sourceCitation, Record rec) throws StudyImporterException {
+        List<Map<String, String>> interactionCandidates = new ArrayList<>();
 
-            String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
-            if (StringUtils.isNotBlank(dynamicProperties)) {
-                interactionCandidates.add(parseDynamicProperties(dynamicProperties));
-            }
+        String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
+        if (StringUtils.isNotBlank(associatedTaxa)) {
+            interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
+        }
 
-            List<Map<String, String>> interactions = interactionCandidates
-                    .stream()
-                    .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
-                    .collect(Collectors.toList());
+        String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
+        if (StringUtils.isNotBlank(associatedOccurrences)) {
+            interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
+        }
 
-            logUnsupportedInteractionTypes(interactionCandidates, getLogger());
+        String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
+        if (StringUtils.isNotBlank(dynamicProperties)) {
+            interactionCandidates.add(parseDynamicProperties(dynamicProperties));
+        }
+
+        List<Map<String, String>> interactions = interactionCandidates
+                .stream()
+                .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
+                .collect(Collectors.toList());
+
+        logUnsupportedInteractionTypes(interactionCandidates, getLogger());
 
 
-            Map<String, String> interaction = new HashMap<>(rec.terms().size());
-            for (Term term : rec.terms()) {
-                interaction.put(term.qualifiedName(), rec.value(term));
-            }
+        Map<String, String> interaction = new HashMap<>(rec.terms().size());
+        for (Term term : rec.terms()) {
+            interaction.put(term.qualifiedName(), rec.value(term));
+        }
 
-            for (Map<String, String> interactionProperties : interactions) {
-                interactionProperties.putAll(interaction);
-                mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
-                mapCoreProperties(rec, interactionProperties, sourceCitation);
-                interactionListener.newLink(interactionProperties);
-            }
+        for (Map<String, String> interactionProperties : interactions) {
+            interactionProperties.putAll(interaction);
+            mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
+            mapCoreProperties(rec, interactionProperties, sourceCitation);
+            interactionListener.newLink(interactionProperties);
         }
     }
 
