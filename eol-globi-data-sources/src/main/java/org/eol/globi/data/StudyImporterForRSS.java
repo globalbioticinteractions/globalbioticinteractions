@@ -17,8 +17,9 @@ import org.eol.globi.service.StudyImporterFactory;
 import org.mapdb.DBMaker;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,17 +53,29 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         final String msgPrefix = "importing archive(s) from [" + getRssFeedUrlString() + "]";
         LOG.info(msgPrefix + "...");
         for (Dataset dataset : datasets) {
-            handleDataset(studyImporter -> {
-                if (studyImporter instanceof StudyImporterWithListener) {
-                    final EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(
-                            interactionsWithUnresolvedOccurrenceIds,
-                            ((StudyImporterWithListener) studyImporter).getInteractionListener());
-                    ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
-                }
+            try {
+                handleDataset(studyImporter -> {
+                    if (studyImporter instanceof StudyImporterWithListener) {
+                        final EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(
+                                interactionsWithUnresolvedOccurrenceIds,
+                                ((StudyImporterWithListener) studyImporter).getInteractionListener());
+                        ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
+                    }
 
-            }, dataset);
+                }, dataset);
+            } catch (StudyImporterException | IllegalStateException ex) {
+                logError(ex);
+            }
         }
         LOG.info(msgPrefix + " done.");
+    }
+
+    public void logError(Throwable ex) {
+        if (getLogger() != null) {
+            StringWriter out = new StringWriter();
+            ex.printStackTrace(new PrintWriter(out));
+            getLogger().severe(null, out.toString());
+        }
     }
 
     public void indexArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets) throws StudyImporterException {
@@ -72,12 +85,16 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         final IndexingInteractionListener indexingListener = new IndexingInteractionListener(interactionsWithUnresolvedOccurrenceIds);
         for (Dataset dataset : datasets) {
             if (needsIndexing(dataset)) {
-                handleDataset(studyImporter -> {
-                    if (studyImporter instanceof StudyImporterWithListener) {
-                        ((StudyImporterWithListener) studyImporter)
-                                .setInteractionListener(indexingListener);
-                    }
-                }, dataset);
+                try {
+                    handleDataset(studyImporter -> {
+                        if (studyImporter instanceof StudyImporterWithListener) {
+                            ((StudyImporterWithListener) studyImporter)
+                                    .setInteractionListener(indexingListener);
+                        }
+                    }, dataset);
+                } catch (StudyImporterException | IllegalStateException ex) {
+                    logError(ex);
+                }
             }
         }
         LOG.info(msgPrefix1 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrences");
@@ -123,7 +140,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         SyndFeed feed;
         String rss = getRSSEndpoint(datasetOrig);
         try {
-            feed = input.build(new XmlReader(new URL(rss)));
+            feed = input.build(new XmlReader(datasetOrig.getResource(URI.create(rss))));
         } catch (FeedException | IOException e) {
             throw new StudyImporterException("failed to read rss feed [" + rss + "]", e);
         }
