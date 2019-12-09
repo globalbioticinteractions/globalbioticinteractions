@@ -110,9 +110,6 @@ public class RequestHelper {
     public static void addSpatialClause(List<LatLng> points, StringBuilder query, QueryType queryType) {
         if (isPointOrBox(points)) {
             query.append(", sourceSpecimen-[:COLLECTED_AT]->loc ");
-        } else if (QueryType.MULTI_TAXON_ALL.equals(queryType)
-                || QueryType.SINGLE_TAXON_ALL.equals(queryType)){
-            query.append(" OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc ");
         } else {
             query.append(" ");
         }

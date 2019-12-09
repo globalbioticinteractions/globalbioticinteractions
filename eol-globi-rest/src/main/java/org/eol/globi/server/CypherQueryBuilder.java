@@ -568,7 +568,12 @@ public class CypherQueryBuilder {
         } else {
             appendMatchAndWhereClause(interactionTypes, parameterMap, query, queryType);
         }
-        return appendTaxonWhereClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
+        StringBuilder stringBuilder = appendTaxonWhereClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
+        if (!RequestHelper.isSpatialSearch(parameterMap) && (QueryType.MULTI_TAXON_ALL.equals(queryType)
+                || QueryType.SINGLE_TAXON_ALL.equals(queryType))){
+            query.append(" OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc ");
+        }
+        return stringBuilder;
     }
 
     protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query, QueryType queryType) {

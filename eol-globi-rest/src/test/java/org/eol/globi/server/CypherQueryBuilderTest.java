@@ -64,8 +64,8 @@ public class CypherQueryBuilderTest {
     private static String expectedMatchClause(String expectedInteractionClause, boolean hasSpatialConstraints, boolean requestedSpatialInfo, boolean refutes) {
         String studyRel = refutes ? "REFUTES" : "COLLECTED";
         String spatialClause = " ";
-        if (requestedSpatialInfo) {
-            spatialClause = (hasSpatialConstraints ? ", " : " OPTIONAL MATCH ") + "sourceSpecimen-[:COLLECTED_AT]->loc ";
+        if (requestedSpatialInfo && hasSpatialConstraints) {
+            spatialClause = ", sourceSpecimen-[:COLLECTED_AT]->loc ";
         } else {
             spatialClause = " ";
         }
@@ -622,8 +622,9 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxons({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
-                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta'])" +
-                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta']) " +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
     }
 
@@ -652,8 +653,9 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxons({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
-                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta'])" +
-                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta']) " +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=externalId:\\\"EOL:123\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
     }
 
@@ -671,8 +673,9 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxons({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
-                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta'])" +
-                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta']) " +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some name\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
     }
 
@@ -691,8 +694,9 @@ public class CypherQueryBuilderTest {
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxons({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
                 "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['some name'])" +
-                " OR (exists(targetTaxon.externalId) AND targetTaxon.externalId IN ['EOL:123'])" +
-                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                " OR (exists(targetTaxon.externalId) AND targetTaxon.externalId IN ['EOL:123']) " +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some name\\\"}")));
     }
 
@@ -761,6 +765,7 @@ public class CypherQueryBuilderTest {
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN targetTaxon.name as target_taxon_name,study.citation as study_citation"));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Enhydra\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
@@ -919,6 +924,7 @@ public class CypherQueryBuilderTest {
         String expectedQuery = CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -951,6 +957,7 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = CYPHER_VERSION + "START targetTaxon = node:taxonPaths({target_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -970,6 +977,7 @@ public class CypherQueryBuilderTest {
         String expectedQuery = CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(PREYS_UPON, PARASITE_OF), false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1009,6 +1017,7 @@ public class CypherQueryBuilderTest {
         String expectedQuery = CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(POLLINATED_BY), false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1028,6 +1037,7 @@ public class CypherQueryBuilderTest {
         String expectedQuery = CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(expectedInteractionClause(SYMBIONT_OF), false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1048,6 +1058,7 @@ public class CypherQueryBuilderTest {
                 expectedMatchClause(expectedInteractionClause(INTERACTS_WITH),
                         false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1080,6 +1091,7 @@ public class CypherQueryBuilderTest {
         String expectedQuery = CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true) +
                 EXTERNAL_WHERE_CLAUSE_MAMMALIA +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1116,6 +1128,7 @@ public class CypherQueryBuilderTest {
 
         String expectedQuery = CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 EXPECTED_MATCH_CLAUSE_ALL +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1126,6 +1139,7 @@ public class CypherQueryBuilderTest {
     public void findInteractionNoParams() throws IOException {
         String expectedQuery = CYPHER_VERSION + "START study = node:studies('*:*') " +
                 EXPECTED_MATCH_CLAUSE_ALL +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(new HashMap<String, String[]>(), MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
@@ -1149,7 +1163,7 @@ public class CypherQueryBuilderTest {
     public void findPlantPreyObservationsWithoutLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc WHERE " + HAS_TARGET_TAXON_PLANTAE + expectedReturnClause()));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1157,7 +1171,7 @@ public class CypherQueryBuilderTest {
     public void findPlantParasiteObservationsWithoutLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "parasiteOf", "Plantae", params, SINGLE_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc WHERE " + HAS_TARGET_TAXON_PLANTAE + expectedReturnClause()));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1173,7 +1187,6 @@ public class CypherQueryBuilderTest {
     public void findKillsObservationsNoLocation() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "kills", null, params, SINGLE_TAXON_ALL);
-        //assertThat(query.getVersionedQuery(), is("bla"));
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(KILLS) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
     }
@@ -1291,7 +1304,7 @@ public class CypherQueryBuilderTest {
                     add("preysOn");
                 }}, params, new StringBuilder(), MULTI_TAXON_ALL).toString()
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
-                        ", sourceSpecimen<-[collected_rel:COLLECTED]-study OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc "));
+                        ", sourceSpecimen<-[collected_rel:COLLECTED]-study "));
     }
 
     @Test
