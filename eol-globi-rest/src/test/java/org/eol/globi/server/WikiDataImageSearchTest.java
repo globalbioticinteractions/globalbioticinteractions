@@ -23,6 +23,14 @@ public class WikiDataImageSearchTest {
     }
 
     @Test
+    public void lookupRedVole() throws IOException {
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q608821");
+        assertNotNull(taxonImage);
+        assertThat(taxonImage.getCommonName(), is("Northern Red-backed Vole, Red Vole @en"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q608821"));
+    }
+
+    @Test
     public void lookupLionJapanese() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140", new SearchContext() {
             @Override
@@ -33,7 +41,7 @@ public class WikiDataImageSearchTest {
         assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
-        assertThat(taxonImage.getCommonName(), is("ライオン (Raion) @ja"));
+        assertThat(taxonImage.getCommonName(), is("ライオン (raion) @ja"));
     }
 
     @Test

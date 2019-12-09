@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.WordUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -11,11 +12,18 @@ import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.HttpUtil;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.replace;
+import static org.apache.commons.lang3.StringUtils.split;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 
 public class WikiDataImageSearch implements ImageSearch {
 
@@ -23,21 +31,21 @@ public class WikiDataImageSearch implements ImageSearch {
 
     @Override
     public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
-        return StringUtils.startsWithIgnoreCase(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix())
+        return startsWithIgnoreCase(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix())
                 ? requestImage(externalId, () -> "en")
                 : null;
     }
 
     @Override
     public TaxonImage lookupImageForExternalId(String externalId, SearchContext context) throws IOException {
-        return StringUtils.startsWithIgnoreCase(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix())
+        return startsWithIgnoreCase(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix())
                 ? requestImage(externalId, context)
                 : null;
     }
 
     private TaxonImage requestImage(String externalId, SearchContext context) throws IOException {
         TaxonImage taxonImage = null;
-        String wikiDataId = StringUtils.replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
+        String wikiDataId = replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
 
         String sparql = "SELECT ?item ?pic ?name WHERE { \n" +
                 "  wd:" + wikiDataId + " wdt:P18 ?pic . \n" +
@@ -71,11 +79,20 @@ public class WikiDataImageSearch implements ImageSearch {
                     taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(externalId));
                     JsonNode pic = binding.get("pic");
                     if (valueExists(pic)) {
-                        taxonImage.setThumbnailURL(StringUtils.replace(pic.get("value").asText(), "http:", "https:") + "?width=100");
+                        taxonImage.setThumbnailURL(replace(pic.get("value").asText(), "http:", "https:") + "?width=100");
                     }
                     JsonNode name = binding.get("name");
                     if (valueExists(name)) {
-                        taxonImage.setCommonName(name.get("value").asText() + " @" + context.getPreferredLanguage());
+                        String value = name.get("value").asText();
+                        String[] split = split(value, ",");
+                        List<String> names = Stream
+                                .of(split)
+                                .map(String::trim)
+                                .map(WordUtils::capitalizeFully)
+                                .distinct()
+                                .collect(Collectors.toList());
+
+                        taxonImage.setCommonName(join(names, ", ") + " @" + context.getPreferredLanguage());
                     }
                 }
             }
