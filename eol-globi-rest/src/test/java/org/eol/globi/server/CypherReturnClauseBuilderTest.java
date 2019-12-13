@@ -235,6 +235,23 @@ public class CypherReturnClauseBuilderTest {
     }
 
     @Test
+    public void multiTaxonDistinctByNameOnlyDuplicates() {
+        StringBuilder query = new StringBuilder();
+        TreeMap<String, String[]> parameterMap = new TreeMap<String, String[]>() {
+            {
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "source_taxon_name"});
+            }
+        };
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY,
+                parameterMap);
+        assertThat(query.toString(), is(" RETURN " +
+                "sourceTaxon.name as source_taxon_name," +
+                "targetTaxon.name as target_taxon_name"));
+    }
+
+    @Test
     public void multiTaxonDistinctUnknownReturnFields() {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
