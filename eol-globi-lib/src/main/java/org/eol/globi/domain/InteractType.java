@@ -71,7 +71,7 @@ public enum InteractType implements RelType {
     HYPERPARASITOID_OF(PropertyAndValueDictionary.NO_MATCH, "hyperparasitoidOf", SUBJECT, OBJECT),
     HAS_HYPERPARASITOID(PropertyAndValueDictionary.NO_MATCH, "hasHyperparasitoid", OBJECT, SUBJECT),
 
-    ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632", "ectoParasiteOf", SUBJECT, OBJECT),
+    ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632", "ectoparasiteOf", SUBJECT, OBJECT),
     HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633", "hasEctoparasite", OBJECT, SUBJECT),
 
     KLEPTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0008503", "kleptoparasiteOf", SUBJECT, OBJECT),
