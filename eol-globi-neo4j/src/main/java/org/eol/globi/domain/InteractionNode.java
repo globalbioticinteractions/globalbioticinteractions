@@ -8,7 +8,6 @@ import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -53,9 +52,4 @@ public class InteractionNode extends NodeBacked implements Interaction {
         
     }
 
-    @Deprecated
-    @Override
-    public List<LogMessage> getLogMessages() {
-        return Collections.emptyList();
-    }
 }

@@ -3,8 +3,6 @@ package org.eol.globi.domain;
 import org.eol.globi.service.Dataset;
 import org.globalbioticinteractions.doi.DOI;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 
 public class StudyImpl implements Study {
@@ -71,11 +69,6 @@ public class StudyImpl implements Study {
     @Override
     public void appendLogMessage(String message, Level warning) {
         // nothing to do ... yet
-    }
-
-    @Override
-    public List<LogMessage> getLogMessages() {
-        return Collections.emptyList();
     }
 
     public String getSourceId() {
