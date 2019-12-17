@@ -6,7 +6,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
-import org.gbif.dwc.extensions.Extension;
 import org.gbif.dwc.extensions.ExtensionProperty;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
@@ -176,6 +175,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     public static void mapSourceProperties(Record rec, Map<String, String> interactionProperties) {
         mapIfAvailable(rec, interactionProperties, SOURCE_OCCURRENCE_ID, DwcTerm.occurrenceID);
+        mapIfAvailable(rec, interactionProperties, StudyImporterForTSV.SOURCE_COLLECTION_CODE, DwcTerm.collectionCode);
+        mapIfAvailable(rec, interactionProperties, StudyImporterForTSV.SOURCE_COLLECTION_ID, DwcTerm.collectionID);
+        mapIfAvailable(rec, interactionProperties, StudyImporterForTSV.SOURCE_INSTITUTION_CODE, DwcTerm.institutionCode);
+        mapIfAvailable(rec, interactionProperties, StudyImporterForTSV.SOURCE_CATALOG_NUMBER, DwcTerm.catalogNumber);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
         mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE_NAME, DwcTerm.lifeStage);
         mapIfAvailable(rec, interactionProperties, SOURCE_SEX_NAME, DwcTerm.sex);
@@ -516,6 +519,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         putIfAbsentAndNotBlank(props, isSource ? idLabelPairs.getLeft() : idLabelPairs.getRight(), id);
 
         if (occurrenceProperties != null) {
+            putIfAbsentAndNotBlank(props, isSource ? StudyImporterForTSV.SOURCE_INSTITUTION_CODE : StudyImporterForTSV.TARGET_INSTITUTION_CODE, occurrenceProperties.get(DwcTerm.institutionCode.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? StudyImporterForTSV.SOURCE_COLLECTION_ID : StudyImporterForTSV.TARGET_COLLECTION_ID, occurrenceProperties.get(DwcTerm.collectionID.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? StudyImporterForTSV.SOURCE_COLLECTION_CODE : StudyImporterForTSV.TARGET_COLLECTION_CODE, occurrenceProperties.get(DwcTerm.collectionCode.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? StudyImporterForTSV.SOURCE_CATALOG_NUMBER : StudyImporterForTSV.TARGET_CATALOG_NUMBER, occurrenceProperties.get(DwcTerm.catalogNumber.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ID : TARGET_TAXON_ID, occurrenceProperties.get(DwcTerm.taxonID.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_NAME : TARGET_TAXON_NAME, occurrenceProperties.get(DwcTerm.scientificName.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_SEX_NAME : TARGET_SEX_NAME, occurrenceProperties.get(DwcTerm.sex.qualifiedName()));

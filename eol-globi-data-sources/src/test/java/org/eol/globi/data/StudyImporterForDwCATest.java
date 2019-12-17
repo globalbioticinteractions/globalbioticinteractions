@@ -25,7 +25,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -443,6 +442,10 @@ public class StudyImporterForDwCATest {
                 assertThat(properties.get(StudyImporterForTSV.DECIMAL_LONGITUDE), is("-76.50000"));
                 assertThat(properties.get(StudyImporterForTSV.LOCALITY_NAME), is("Tompkins County"));
                 assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("urn:uuid:859e1708-d8e1-11e2-99a2-0026552be7ea"));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_COLLECTION_CODE), is(nullValue()));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_COLLECTION_ID), is(nullValue()));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_INSTITUTION_CODE), is("CUIC"));
+                assertThat(properties.get(StudyImporterForTSV.SOURCE_CATALOG_NUMBER), is("CUIC_ENT 00014070"));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("Digital Bee Collections Network, 2014 (and updates). Version: 2016-03-08. National Science Foundation grant DBI 0956388"));
                 assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
                 foundLink.set(true);
@@ -473,6 +476,9 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_CATALOG_NUMBER), is(nullValue()));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_COLLECTION_CODE), is(nullValue()));
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_INSTITUTION_CODE), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
                 } else if (2 == numberOfFoundLinks.get()) {
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
