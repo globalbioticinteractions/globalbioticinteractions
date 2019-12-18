@@ -6,6 +6,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinderException;
+import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
@@ -24,15 +25,10 @@ public class StudyImporterForHurlbertIT extends GraphDBTestCase {
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         StudyImporter importer = new StudyImporterForHurlbert(parserFactory, nodeFactory);
         importer.setDataset(dataset);
-        importer.setLogger(new ImportLogger() {
+        importer.setLogger(new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
                 fail("did not expect warning [" + message + "]");
-            }
-
-            @Override
-            public void info(LogContext ctx, String message) {
-
             }
 
             @Override

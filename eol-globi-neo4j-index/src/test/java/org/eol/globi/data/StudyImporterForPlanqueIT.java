@@ -5,6 +5,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
@@ -38,21 +39,12 @@ public class StudyImporterForPlanqueIT extends GraphDBTestCase {
         dataset.setConfig(config);
         importer.setDataset(dataset);
 
-        importer.setLogger(new ImportLogger() {
+        importer.setLogger(new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
                 errorMessages.add(message);
             }
 
-            @Override
-            public void info(LogContext ctx, String message) {
-
-            }
-
-            @Override
-            public void severe(LogContext ctx, String message) {
-
-            }
         });
         importStudy(importer);
 

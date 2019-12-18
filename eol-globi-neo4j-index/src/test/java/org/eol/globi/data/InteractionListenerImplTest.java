@@ -10,6 +10,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -129,15 +130,10 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     }
 
     public InteractionListenerImpl getAssertingListener() {
-        return new InteractionListenerImpl(nodeFactory, null, new ImportLogger() {
+        return new InteractionListenerImpl(nodeFactory, null, new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
                 fail("got message: " + message);
-            }
-
-            @Override
-            public void info(LogContext ctx, String message) {
-
             }
 
             @Override
@@ -315,20 +311,10 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             public LatLng findLatLng(String locality) throws IOException {
                 throw new IOException("kaboom!");
             }
-        }, new ImportLogger() {
+        }, new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
                 msgs.add(message);
-            }
-
-            @Override
-            public void info(LogContext ctx, String message) {
-
-            }
-
-            @Override
-            public void severe(LogContext ctx, String message) {
-
             }
         });
 
@@ -363,21 +349,12 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             public LatLng findLatLng(String locality) throws IOException {
                 throw new IOException("kaboom!");
             }
-        }, new ImportLogger() {
+        }, new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
                 msgs.add(message);
             }
 
-            @Override
-            public void info(LogContext ctx, String message) {
-
-            }
-
-            @Override
-            public void severe(LogContext ctx, String message) {
-
-            }
         });
 
         final HashMap<String, String> link = new HashMap<>();

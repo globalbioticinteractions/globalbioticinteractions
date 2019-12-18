@@ -1,11 +1,11 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
+import org.eol.globi.tool.NullImportLogger;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.doi.DOI;
 
@@ -22,22 +22,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
 
     private GeoNamesService geoNamesService = new GeoNamesServiceImpl();
 
-    private ImportLogger importLogger = new ImportLogger() {
-        @Override
-        public void warn(LogContext ctx, String message) {
-
-        }
-
-        @Override
-        public void info(LogContext ctx, String message) {
-
-        }
-
-        @Override
-        public void severe(LogContext ctx, String message) {
-
-        }
-    };
+    private ImportLogger importLogger = new NullImportLogger();
     private String sourceCitationLastAccessed;
 
     public BaseStudyImporter(ParserFactory parserFactory, NodeFactory nodeFactory) {

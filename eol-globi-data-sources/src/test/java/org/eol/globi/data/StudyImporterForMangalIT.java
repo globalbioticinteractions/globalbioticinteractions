@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.tool.NullImportLogger;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -22,21 +23,12 @@ public class StudyImporterForMangalIT {
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
 
-                InteractionListenerImpl.validLink(properties, new ImportLogger() {
+                InteractionListenerImpl.validLink(properties, new NullImportLogger() {
                     @Override
                     public void warn(LogContext ctx, String message) {
                         fail(message + "for [" + properties + "]");
                     }
 
-                    @Override
-                    public void info(LogContext ctx, String message) {
-
-                    }
-
-                    @Override
-                    public void severe(LogContext ctx, String message) {
-
-                    }
                 });
                 counter.incrementAndGet();
             }

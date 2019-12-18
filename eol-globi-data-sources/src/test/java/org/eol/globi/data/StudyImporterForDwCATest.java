@@ -5,6 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.tool.NullImportLogger;
 import org.gbif.dwc.Archive;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.junit.Test;
@@ -55,17 +56,7 @@ public class StudyImporterForDwCATest {
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         AtomicInteger recordCounter = new AtomicInteger(0);
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
-        studyImporterForDwCA.setLogger(new ImportLogger() {
-            @Override
-            public void warn(LogContext ctx, String message) {
-
-            }
-
-            @Override
-            public void info(LogContext ctx, String message) {
-
-            }
-
+        studyImporterForDwCA.setLogger(new NullImportLogger() {
             @Override
             public void severe(LogContext ctx, String message) {
                 actualMessage.append(message);
@@ -348,22 +339,13 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         final AtomicBoolean loggedSomething = new AtomicBoolean(false);
-        logUnsupportedInteractionTypes(properties, new ImportLogger() {
+        logUnsupportedInteractionTypes(properties, new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
                 assertThat(message, is("found unsupported interaction type [eatz]"));
                 loggedSomething.set(true);
             }
 
-            @Override
-            public void info(LogContext ctx, String message) {
-
-            }
-
-            @Override
-            public void severe(LogContext ctx, String message) {
-
-            }
         });
         assertThat(loggedSomething.get(), is(true));
     }
@@ -374,20 +356,10 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
         properties.get(0).put(INTERACTION_TYPE_ID, "ro:something");
 
-        logUnsupportedInteractionTypes(properties, new ImportLogger() {
+        logUnsupportedInteractionTypes(properties, new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
                 fail("boom!");
-            }
-
-            @Override
-            public void info(LogContext ctx, String message) {
-
-            }
-
-            @Override
-            public void severe(LogContext ctx, String message) {
-
             }
         });
     }
