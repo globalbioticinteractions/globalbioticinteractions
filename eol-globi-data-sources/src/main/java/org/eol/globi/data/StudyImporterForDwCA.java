@@ -4,6 +4,8 @@ import org.apache.commons.collections4.map.UnmodifiableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
 import org.gbif.dwc.extensions.ExtensionProperty;
@@ -139,6 +141,15 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
         List<Map<String, String>> interactions = interactionCandidates
                 .stream()
+                .map(x -> {
+                    if (!x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME)) {
+                        InteractType interactTypeForName = getInteractTypeForName(x.get(INTERACTION_TYPE_NAME));
+                        if (interactTypeForName != null) {
+                            x.put(INTERACTION_TYPE_ID, interactTypeForName.getIRI());
+                        }
+                    }
+                    return x;
+                })
                 .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
                 .collect(Collectors.toList());
 
@@ -240,10 +251,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         HashMap<String, String> e = new HashMap<>();
         String interactionTypeName = StringUtils.lowerCase(StringUtils.trim(verbTaxon[0]));
         e.put(INTERACTION_TYPE_NAME, interactionTypeName);
-        InteractType interactType = InteractType.typeOf(interactionTypeName);
-        if (interactType != null) {
-            e.put(INTERACTION_TYPE_ID, interactType.getIRI());
-        }
         e.put(TARGET_TAXON_NAME, StringUtils.trim(verbTaxon[1]));
         properties.add(e);
     }
@@ -259,31 +266,21 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     static List<Map<String, String>> parseAssociatedOccurrences(String s) {
         List<Map<String, String>> propertyList = new ArrayList<>();
 
-        Map<String, InteractType> mapping = new TreeMap<String, InteractType>() {
-            {
-                put("(ate)", InteractType.ATE);
-                put("(eaten by)", InteractType.EATEN_BY);
-                put("(parasite of)", InteractType.PARASITE_OF);
-                put("(host of)", InteractType.HOST_OF);
-            }
-        };
-
         String[] relationships = StringUtils.split(s, ";");
         for (String relationship : relationships) {
             String relationshipTrimmed = StringUtils.trim(relationship);
-            for (Map.Entry<String, InteractType> mapEntry : mapping.entrySet()) {
-                if (StringUtils.startsWith(relationshipTrimmed, mapEntry.getKey())) {
-                    String targetCollectionAndOccurrenceId = StringUtils.trim(StringUtils.substring(relationshipTrimmed, mapEntry.getKey().length()));
-                    int i = StringUtils.indexOf(targetCollectionAndOccurrenceId, " ");
-                    if (i > -1) {
-                        String occurrenceId = StringUtils.substring(targetCollectionAndOccurrenceId, i);
-                        if (StringUtils.isNotBlank(occurrenceId)) {
-                            TreeMap<String, String> properties = new TreeMap<>();
-                            properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(occurrenceId));
-                            properties.put(INTERACTION_TYPE_ID, mapEntry.getValue().getIRI());
-                            properties.put(INTERACTION_TYPE_NAME, mapEntry.getValue().getLabel());
-                            propertyList.add(properties);
-                        }
+            int i1 = StringUtils.indexOf(relationshipTrimmed, ")");
+            if (i1 > -1 && i1 < relationshipTrimmed.length()) {
+                String relation = StringUtils.substring(relationshipTrimmed, 0, i1 + 1);
+                String targetCollectionAndOccurrenceId = StringUtils.trim(StringUtils.substring(relationshipTrimmed, i1 + 1));
+                int i = StringUtils.indexOf(targetCollectionAndOccurrenceId, " ");
+                if (i > -1) {
+                    String occurrenceId = StringUtils.substring(targetCollectionAndOccurrenceId, i);
+                    if (StringUtils.isNotBlank(occurrenceId)) {
+                        TreeMap<String, String> properties = new TreeMap<>();
+                        properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(occurrenceId));
+                        properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(relation));
+                        propertyList.add(properties);
                     }
                 }
             }
@@ -467,26 +464,16 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     }
 
     private static String findRelationshipTypeIdByLabel(String relationship) {
-        final Map<String, String> relationshipOfResourceToInteractionTypeIdLookup
-                = UnmodifiableMap.unmodifiableMap(new HashMap<String, String>() {{
-            put("associated with", InteractType.INTERACTS_WITH.getIRI());
-            put("ex", InteractType.HAS_HOST.getIRI());
-            put("host to", InteractType.HOST_OF.getIRI());
-            put("host", InteractType.HAS_HOST.getIRI());
-            put("h", InteractType.HAS_HOST.getIRI());
-            put("larval foodplant", InteractType.ATE.getIRI());
-            put("ectoparasite of", InteractType.ECTOPARASITE_OF.getIRI());
-            put("parasite of", InteractType.PARASITE_OF.getIRI());
-            put("stomach contents of", InteractType.EATEN_BY.getIRI());
-            put("stomach contents", InteractType.ATE.getIRI());
-            put("eaten by", InteractType.EATEN_BY.getIRI());
-        }});
 
         String relationshipKey = StringUtils.lowerCase(StringUtils.trim(relationship));
 
-        return StringUtils.isBlank(relationship)
-                ? null
-                : relationshipOfResourceToInteractionTypeIdLookup.get(relationshipKey);
+        String relationshipId = null;
+        if (StringUtils.isNotBlank(relationship)) {
+            InteractType interactType = getInteractTypeForName(relationshipKey);
+            relationshipId = interactType == null ? null : interactType.getIRI();
+        }
+
+        return relationshipId;
     }
 
     private static void attemptLinkUsingTerm(HTreeMap<String, Map<String, Map<String, String>>> termIdPropertyMap,
@@ -627,6 +614,33 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     static boolean hasResourceRelationships(Archive archive) {
         return hasExtension(archive, EXTENSION_RESOURCE_RELATIONSHIP);
     }
+
+
+
+    static InteractType getInteractTypeForName(String interactionName) {
+        InteractType interactType = InteractType.typeOf(interactionName);
+        return interactType != null
+                ? interactType
+                : UnmodifiableMap.unmodifiableMap(new HashMap<String, InteractType>() {{
+            put("associated with", InteractType.RELATED_TO);
+            put("ex", InteractType.HAS_HOST);
+            put("host to", InteractType.HOST_OF);
+            put("host", InteractType.HAS_HOST);
+            put("h", InteractType.HAS_HOST);
+            put("larval foodplant", InteractType.ATE);
+            put("ectoparasite of", InteractType.ECTOPARASITE_OF);
+            put("parasite of", InteractType.PARASITE_OF);
+            put("stomach contents of", InteractType.EATEN_BY);
+            put("stomach contents", InteractType.ATE);
+            put("eaten by", InteractType.EATEN_BY);
+            put("(ate)", InteractType.ATE);
+            put("(eaten by)", InteractType.EATEN_BY);
+            put("(parasite of)", InteractType.PARASITE_OF);
+            put("(host of)", InteractType.HOST_OF);
+        }}).get(interactionName);
+    };
+
+
 
 
 }
