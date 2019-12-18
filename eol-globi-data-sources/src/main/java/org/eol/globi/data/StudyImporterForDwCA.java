@@ -1,10 +1,8 @@
 package org.eol.globi.data;
 
-import org.apache.commons.collections4.map.UnmodifiableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
@@ -143,7 +141,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 .stream()
                 .map(x -> {
                     if (!x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME)) {
-                        InteractType interactTypeForName = getInteractTypeForName(x.get(INTERACTION_TYPE_NAME));
+                        InteractType interactTypeForName = InteractUtil.getInteractTypeForName(x.get(INTERACTION_TYPE_NAME));
                         if (interactTypeForName != null) {
                             x.put(INTERACTION_TYPE_ID, interactTypeForName.getIRI());
                         }
@@ -469,7 +467,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
         String relationshipId = null;
         if (StringUtils.isNotBlank(relationship)) {
-            InteractType interactType = getInteractTypeForName(relationshipKey);
+            InteractType interactType = InteractUtil.getInteractTypeForName(relationshipKey);
             relationshipId = interactType == null ? null : interactType.getIRI();
         }
 
@@ -615,30 +613,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         return hasExtension(archive, EXTENSION_RESOURCE_RELATIONSHIP);
     }
 
-
-
-    static InteractType getInteractTypeForName(String interactionName) {
-        InteractType interactType = InteractType.typeOf(interactionName);
-        return interactType != null
-                ? interactType
-                : UnmodifiableMap.unmodifiableMap(new HashMap<String, InteractType>() {{
-            put("associated with", InteractType.RELATED_TO);
-            put("ex", InteractType.HAS_HOST);
-            put("host to", InteractType.HOST_OF);
-            put("host", InteractType.HAS_HOST);
-            put("h", InteractType.HAS_HOST);
-            put("larval foodplant", InteractType.ATE);
-            put("ectoparasite of", InteractType.ECTOPARASITE_OF);
-            put("parasite of", InteractType.PARASITE_OF);
-            put("stomach contents of", InteractType.EATEN_BY);
-            put("stomach contents", InteractType.ATE);
-            put("eaten by", InteractType.EATEN_BY);
-            put("(ate)", InteractType.ATE);
-            put("(eaten by)", InteractType.EATEN_BY);
-            put("(parasite of)", InteractType.PARASITE_OF);
-            put("(host of)", InteractType.HOST_OF);
-        }}).get(interactionName);
-    };
+    ;
 
 
 

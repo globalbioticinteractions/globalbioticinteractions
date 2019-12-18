@@ -1,8 +1,6 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -32,7 +30,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.ASSOCIATED_TAXA;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_ID;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
@@ -78,48 +75,12 @@ class InteractionListenerImpl implements InteractionListener {
     @Override
     public void newLink(Map<String, String> properties) throws StudyImporterException {
         try {
-            List<Map<String, String>> propertiesList = expandIfNeeded(properties);
-            for (Map<String, String> expandedProperties : propertiesList) {
-                if (properties != null && validLink(expandedProperties)) {
-                    importValidLink(expandedProperties);
-                }
+            if (properties != null && validLink(properties)) {
+                importValidLink(properties);
             }
         } catch (NodeFactoryException | IOException e) {
             throw new StudyImporterException("failed to import: " + properties, e);
         }
-    }
-
-    private List<Map<String, String>> expandIfNeeded(Map<String, String> properties) {
-        List<Map<String, String>> expandedList = Arrays.asList(properties);
-        String associatedTaxa = properties.get(ASSOCIATED_TAXA);
-        return StringUtils.isNotBlank(associatedTaxa)
-                ? expand(properties, associatedTaxa)
-                : expandedList;
-    }
-
-    private List<Map<String, String>> expand(Map<String, String> properties, String associatedTaxa) {
-        List<Map<String, String>> expandedList;
-        expandedList = new ArrayList<>();
-        String[] associatedPairs = CSVTSVUtil.splitPipes(associatedTaxa);
-        for (String associatedPair : associatedPairs) {
-            String[] typeAndTarget = associatedPair.split(":");
-            if (typeAndTarget.length > 1) {
-                String typeName = typeAndTarget[0];
-                String targetTaxon = typeAndTarget[1];
-                HashMap<String, String> expanded = new HashMap<>(properties);
-                expanded.put(TARGET_TAXON_NAME, StringUtils.trim(targetTaxon));
-                expanded.put(INTERACTION_TYPE_NAME, StringUtils.trim(typeName));
-                InteractType interactType = StudyImporterForMetaTable.generateInteractionType(expanded);
-                if (interactType != null) {
-                    expanded.put(INTERACTION_TYPE_NAME, interactType.getLabel());
-                    expanded.put(INTERACTION_TYPE_ID, interactType.getIRI());
-                } else {
-                    getLogger().warn(studyFromLink(expanded), "unsupported interaction type for name [" + typeName + "]");
-                }
-                expandedList.add(expanded);
-            }
-        }
-        return expandedList;
     }
 
     private boolean validLink(Map<String, String> link) {

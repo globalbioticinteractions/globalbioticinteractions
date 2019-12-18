@@ -11,6 +11,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.InteractUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -223,23 +224,8 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
     public static InteractType generateInteractionType(Map<String, String> properties) {
         final String interactionTypeName = properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME);
-        final HashMap<String, InteractType> mappedTypes = new HashMap<String, InteractType>() {{
-            put("consumption", InteractType.ATE);
-            put("flower predator", InteractType.ATE);
-            put("flower visitor", InteractType.VISITS_FLOWERS_OF);
-            put("folivory", InteractType.ATE);
-            put("fruit thief", InteractType.ATE);
-            put("ingestion", InteractType.ATE);
-            put("pollinator", InteractType.POLLINATES);
-            put("seed disperser", InteractType.DISPERSAL_VECTOR_OF);
-            put("seed predator", InteractType.ATE);
-            put("parasite of", InteractType.PARASITE_OF);
-            put("n/a", null);
-            put("neutral", null);
-            put("unknown", null);
-        }};
         return StringUtils.isNotBlank(interactionTypeName)
-                ? mappedTypes.get(interactionTypeName)
+                ? InteractUtil.getInteractTypeForName(interactionTypeName)
                 : null;
     }
 
