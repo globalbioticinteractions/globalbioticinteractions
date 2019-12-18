@@ -242,6 +242,42 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxaEx() {
+        String associatedTaxa = "ex Homo sapiens";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("ex Homo sapiens"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("ex"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void associatedTaxaExPeriod() {
+        String associatedTaxa = "ex. Homo sapiens";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("ex. Homo sapiens"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("ex"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void associatedTaxaMultipleBlanks() {
+        String associatedTaxa = "Homo sapiens, ,Felis catus";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(2));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
+        assertThat(properties.get(1).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Felis catus"));
+        assertThat(properties.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
+        assertThat(properties.get(1).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
+    }
+
+    @Test
     public void associatedTaxaMultipleCommas() {
         String associatedTaxa = "Ceramium, Chaetomorpha linum, Enteromorpha intestinalis, Ulva angusta, Porphyra perforata, Sargassum muticum, Gigartina spp., Rhodoglossum affine, and Grateloupia sp.";
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
@@ -250,7 +286,7 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Ceramium"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
-        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is(" and Grateloupia sp."));
+        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("and Grateloupia sp."));
         assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(8).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
     }
@@ -264,7 +300,7 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Ceramium"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
-        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is(" and Grateloupia sp."));
+        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("and Grateloupia sp."));
         assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(8).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
     }

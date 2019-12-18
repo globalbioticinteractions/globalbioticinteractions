@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
@@ -60,6 +61,9 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     public static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
     public static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
     public static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
+
+    // ex. notation used to indicate host of a specimen.
+    public static final Pattern EX_NOTATION = Pattern.compile("^[eE][xX].+\\W.*");
 
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -235,11 +239,12 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         List<Map<String, String>> properties = new ArrayList<>();
         String[] parts = StringUtils.split(s, "|;,");
         for (String part : parts) {
-            String[] verbTaxon = StringUtils.splitByWholeSeparator(part, ":", 2);
+            String trimmedPart = StringUtils.trim(part);
+            String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
             if (verbTaxon.length == 2) {
                 addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
             } else {
-                addDefaultInteractionForAssociatedTaxon(properties, part);
+                addDefaultInteractionForAssociatedTaxon(properties, trimmedPart);
             }
         }
         return properties;
@@ -254,11 +259,20 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     }
 
     private static void addDefaultInteractionForAssociatedTaxon(List<Map<String, String>> properties, String part) {
-        properties.add(new HashMap<String, String>() {{
-            put(TARGET_TAXON_NAME, part);
-            put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
-            put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-        }});
+        if (StringUtils.isNotBlank(part)) {
+            if (EX_NOTATION.matcher(StringUtils.trim(part)).matches()) {
+                properties.add(new HashMap<String, String>() {{
+                    put(TARGET_TAXON_NAME, part);
+                    put(INTERACTION_TYPE_NAME, "ex");
+                }});
+            } else {
+                properties.add(new HashMap<String, String>() {{
+                    put(TARGET_TAXON_NAME, part);
+                    put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+                    put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
+                }});
+            }
+        }
     }
 
     static List<Map<String, String>> parseAssociatedOccurrences(String s) {

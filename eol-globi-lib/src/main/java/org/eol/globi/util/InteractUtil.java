@@ -34,6 +34,7 @@ public class InteractUtil {
                 : UnmodifiableMap.unmodifiableMap(new HashMap<String, InteractType>() {{
             put("associated with", InteractType.RELATED_TO);
             put("ex", InteractType.HAS_HOST);
+            put("ex.", InteractType.HAS_HOST);
             put("host to", InteractType.HOST_OF);
             put("host", InteractType.HAS_HOST);
             put("h", InteractType.HAS_HOST);
