@@ -10,14 +10,12 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
-import org.eol.globi.tool.StudyImportLogger;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.helpers.collection.MapUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +51,6 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -126,47 +123,9 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     private void handleRelations(NodeUtil.RelationshipListener handler, RelTypes collected) {
         final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
-        final StudyNode study = (StudyNode) allStudies.get(0);
+        final StudyNode study = allStudies.get(0);
         assertThat(study.getCitation(), is(""));
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode(), collected), handler, 1);
-    }
-
-    @Test
-    public void importAssociatedTaxa() throws StudyImporterException {
-        final InteractionListenerImpl listener = getAssertingListener();
-        final HashMap<String, String> link = new HashMap<>();
-        link.put(SOURCE_TAXON_NAME, "donald");
-        link.put(SOURCE_TAXON_ID, "duck");
-        link.put(SOURCE_BODY_PART_ID, "bla:123");
-        link.put(SOURCE_BODY_PART_NAME, "snout");
-        link.put("associatedTaxa", "parasite of: Mini mouse");
-        link.put(StudyImporterForMetaTable.EVENT_DATE, "20160404T21:31:40Z");
-        link.put(StudyImporterForMetaTable.LATITUDE, "12.1");
-        link.put(StudyImporterForMetaTable.LONGITUDE, "13.2");
-        link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
-        link.put(REFERENCE_CITATION, "");
-        link.put(REFERENCE_DOI, "doi:10.12/34");
-        listener.newLink(link);
-
-        final AtomicBoolean foundPair = new AtomicBoolean(false);
-        NodeUtil.RelationshipListener relationshipListener = relationship -> {
-            final SpecimenNode predator = new SpecimenNode(relationship.getEndNode());
-            for (Relationship hosts : predator.getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(InteractType.PARASITE_OF), Direction.OUTGOING)) {
-                final SpecimenNode host = new SpecimenNode(hosts.getEndNode());
-                final TaxonNode hostTaxon = getOrigTaxon(host);
-                final TaxonNode predTaxon = getOrigTaxon(predator);
-                assertThat(hostTaxon.getName(), is("Mini mouse"));
-                assertThat(predTaxon.getName(), is("donald"));
-                assertThat(predTaxon.getExternalId(), is("duck"));
-
-                foundPair.set(true);
-            }
-
-        };
-
-        handleRelations(relationshipListener, RelTypes.COLLECTED);
-        assertThat(foundPair.get(), is(true));
     }
 
     public InteractionListenerImpl getAssertingListener() {
