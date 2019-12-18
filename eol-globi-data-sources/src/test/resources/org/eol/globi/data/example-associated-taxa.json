@@ -1,0 +1,32 @@
+{
+  "@context": [
+    "http://www.w3.org/ns/csvw",
+    {
+      "@language": "en"
+    }
+  ],
+  "rdfs:comment": [
+    "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"
+  ],
+  "dcterms:bibliographicCitation": "some test",
+  "url": "example-associated-taxa.csv",
+  "headerRowCount": 0,
+  "null": [
+    "NULL",
+    ""
+  ],
+  "tableSchema": {
+    "columns": [
+      {
+        "name": "sourceTaxonName",
+        "titles": "empty1",
+        "datatype": "string"
+      },
+      {
+        "name": "associatedTaxa",
+        "titles": "empty3",
+        "datatype": "string"
+      }
+    ]
+  }
+}

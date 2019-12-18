@@ -121,6 +121,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
             putNotBlank(link, SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));
             putNotBlank(link, TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TARGET_TAXON_ID)));
             putNotBlank(link, TARGET_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_TAXON_NAME)));
+            putNotBlank(link, INTERACTION_TYPE_NAME, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_NAME)));
             putNotBlank(link, INTERACTION_TYPE_ID, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_ID)));
             putNotBlank(link, DECIMAL_LATITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LATITUDE)));
             putNotBlank(link, DECIMAL_LONGITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LONGITUDE)));
@@ -129,13 +130,13 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
 
             putNotBlank(link, SOURCE_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
             putNotBlank(link, SOURCE_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
-            putNotBlank(link, TARGET_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
-            putNotBlank(link, TARGET_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
+            putNotBlank(link, TARGET_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(TARGET_BODY_PART_ID)));
+            putNotBlank(link, TARGET_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_BODY_PART_NAME)));
 
             putNotBlank(link, SOURCE_LIFE_STAGE_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_ID)));
             putNotBlank(link, SOURCE_LIFE_STAGE_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_NAME)));
-            putNotBlank(link, TARGET_LIFE_STAGE_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_ID)));
-            putNotBlank(link, TARGET_LIFE_STAGE_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_NAME)));
+            putNotBlank(link, TARGET_LIFE_STAGE_ID, StringUtils.trim(parser.getValueByLabel(TARGET_LIFE_STAGE_ID)));
+            putNotBlank(link, TARGET_LIFE_STAGE_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_LIFE_STAGE_NAME)));
 
             putNotBlank(link, SOURCE_SEX_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_SEX_ID)));
             putNotBlank(link, SOURCE_SEX_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_SEX_NAME)));

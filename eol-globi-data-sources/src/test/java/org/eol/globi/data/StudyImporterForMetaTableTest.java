@@ -275,4 +275,34 @@ public class StudyImporterForMetaTableTest {
     }
 
 
+    @Test
+    public void associatedTaxa() throws IOException, StudyImporterException {
+        final InputStream inputStream = getClass().getResourceAsStream("example-associated-taxa.json");
+        assertNotNull(inputStream);
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        StudyImporterForMetaTable importer = new StudyImporterForMetaTable(null, null);
+        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+
+        dataset.setConfig(config);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.importStudy();
+
+        assertThat(links.size(), is(2));
+
+        assertThat(links.get(0).get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(links.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Canis lupus"));
+
+        assertThat(links.get(1).get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(links.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(1).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Catus felis"));
+    }
+
+
 }

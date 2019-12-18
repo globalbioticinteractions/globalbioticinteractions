@@ -14,14 +14,22 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.hasItem;
@@ -250,5 +258,26 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         assertThat(id, is("http://bla"));
     }
 
+    @Test
+    public void associatedTaxaNotSupported() throws StudyImporterException {
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+
+        String firstFewLines = "sourceTaxonName\tassociatedTaxa\n" +
+                "Homo sapiens\teats: Canis lupus | eats: Felis catus";
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
+        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        importer.setInteractionListener(new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                int i = atomicInteger.incrementAndGet();
+                assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+                assertThat(properties.get(INTERACTION_TYPE_NAME), is(nullValue()));
+                assertThat(properties.get(TARGET_TAXON_NAME), is(nullValue()));
+            }
+        });
+        importStudy(importer);
+        assertThat(atomicInteger.get(), greaterThan(0));
+    }
 
 }

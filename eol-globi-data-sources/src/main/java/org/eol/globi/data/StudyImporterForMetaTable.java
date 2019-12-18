@@ -286,7 +286,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
                     }
                 }
 
-                interactionListener.newLink(mappedLine);
+                AssociatedTaxaUtil.expandNewLinkIfNeeded(interactionListener, mappedLine);
             }
         } catch (IOException e) {
             throw new StudyImporterException(e);

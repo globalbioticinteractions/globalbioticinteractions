@@ -13,7 +13,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.GeoNamesService;
-import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
 import org.gbif.dwc.terms.DwcTerm;
@@ -22,9 +21,6 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -35,7 +31,6 @@ import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
 import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
@@ -75,8 +70,11 @@ class InteractionListenerImpl implements InteractionListener {
     @Override
     public void newLink(Map<String, String> properties) throws StudyImporterException {
         try {
-            if (properties != null && validLink(properties)) {
-                importValidLink(properties);
+            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(properties);
+            for (Map<String, String> expandedProperties : propertiesList) {
+                if (properties != null && validLink(expandedProperties)) {
+                    importValidLink(expandedProperties);
+                }
             }
         } catch (NodeFactoryException | IOException e) {
             throw new StudyImporterException("failed to import: " + properties, e);
