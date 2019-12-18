@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.eol.globi.data.StudyImporterForTSV.ASSOCIATED_TAXA;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
@@ -274,6 +275,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
                 assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
                 assertThat(properties.get(INTERACTION_TYPE_NAME), is(nullValue()));
                 assertThat(properties.get(TARGET_TAXON_NAME), is(nullValue()));
+                assertThat(properties.get(ASSOCIATED_TAXA), is(nullValue()));
             }
         });
         importStudy(importer);
