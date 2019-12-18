@@ -65,12 +65,7 @@ public class StudyImpl implements Study {
     public String getCitation() {
         return citation;
     }
-
-    @Override
-    public void appendLogMessage(String message, Level warning) {
-        // nothing to do ... yet
-    }
-
+    
     public String getSourceId() {
         return sourceId;
     }

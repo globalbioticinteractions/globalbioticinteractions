@@ -91,12 +91,6 @@ public class StudyNode extends NodeBacked implements Study {
         }
     }
 
-    @Deprecated
-    @Override
-    public void appendLogMessage(String message, Level warning) {
-
-    }
-
     @Override
     public String getSourceId() {
         return getProperty(StudyConstant.SOURCE_ID);

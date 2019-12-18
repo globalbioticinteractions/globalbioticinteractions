@@ -121,7 +121,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     private static StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
         StudyImporter importer = new StudyImporterTestFactory(factory).instantiateImporter(studyImporter);
-        importer.setLogger(new StudyImportLogger());
+        importer.setLogger(new NullImportLogger());
         return importer;
     }
 

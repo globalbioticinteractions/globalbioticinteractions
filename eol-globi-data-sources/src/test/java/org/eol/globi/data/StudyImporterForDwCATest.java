@@ -278,6 +278,14 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxaMultipleBlanks2() {
+        String associatedTaxa = "V. priceana, , V. papilionacea";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(2));
+    }
+
+    @Test
     public void associatedTaxaMultipleCommas() {
         String associatedTaxa = "Ceramium, Chaetomorpha linum, Enteromorpha intestinalis, Ulva angusta, Porphyra perforata, Sargassum muticum, Gigartina spp., Rhodoglossum affine, and Grateloupia sp.";
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);

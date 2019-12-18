@@ -229,7 +229,7 @@ public class Normalizer {
             DatasetRegistry finder = new DatasetRegistryLocal(cacheDir, cacheFactory);
             StudyImporter importer = new StudyImporterForRegistry(new ParserFactoryLocal(), factory, finder);
             importer.setDataset(new DatasetLocal(inStream -> inStream));
-            importer.setLogger(new StudyImportLogger());
+            importer.setLogger(new NullImportLogger());
             importer.importStudy();
         } catch (StudyImporterException e) {
             LOG.error("problem encountered while importing [" + StudyImporterForRegistry.class.getName() + "]", e);

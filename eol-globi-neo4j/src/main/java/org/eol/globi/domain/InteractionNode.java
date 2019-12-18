@@ -46,10 +46,5 @@ public class InteractionNode extends NodeBacked implements Interaction {
         }
     }
 
-    @Deprecated
-    @Override
-    public void appendLogMessage(String message, Level level) {
-        
-    }
 
 }
