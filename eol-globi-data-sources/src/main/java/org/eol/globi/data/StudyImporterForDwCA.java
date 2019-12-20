@@ -99,10 +99,14 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
-                    listener.newLink(new HashMap<String, String>(properties) {{
-                       put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
-                       put(DatasetConstant.CONTENT_HASH, getDataset().getOrDefault(DatasetConstant.CONTENT_HASH, ""));
-                    }});
+                    if (getDataset() == null) {
+                        listener.newLink(properties);
+                    } else if (getDataset().getArchiveURI() != null){
+                        listener.newLink(new HashMap<String, String>(properties) {{
+                            put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
+                            put(DatasetConstant.CONTENT_HASH, getDataset().getOrDefault(DatasetConstant.CONTENT_HASH, ""));
+                        }});
+                    }
                 }
             };
 
