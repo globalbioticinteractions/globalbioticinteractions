@@ -55,6 +55,13 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void importAssociatedTaxaFromDirIgnoredInteractionType() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        assertImportsSomething(archiveRoot, new AtomicInteger(0));
+    }
+
+    @Test
     public void importRecordsFromMCZ() throws StudyImporterException, URISyntaxException {
         StringBuilder actualMessage = new StringBuilder();
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mcz/meta.xml");

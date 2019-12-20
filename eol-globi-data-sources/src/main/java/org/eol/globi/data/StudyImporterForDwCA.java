@@ -147,6 +147,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
         List<Map<String, String>> interactions = interactionCandidates
                 .stream()
+                .filter(x -> !InteractUtil.ignoredInteractionTypeName(x.get(INTERACTION_TYPE_NAME)))
                 .map(x -> {
                     if (!x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME)) {
                         InteractType interactTypeForName = InteractUtil.getInteractTypeForName(x.get(INTERACTION_TYPE_NAME));
@@ -428,7 +429,12 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 String sourceId = record.value(DwcTerm.resourceID);
                 String relationship = record.value(DwcTerm.relationshipOfResource);
 
-                Optional<Term> relationshipOfResourceIDTerm = record.terms().stream().filter(x -> StringUtils.equals(x.simpleName(), "relationshipOfResourceID")).findFirst();
+                Optional<Term> relationshipOfResourceIDTerm = record
+                        .terms()
+                        .stream()
+                        .filter(x -> StringUtils.equals(x.simpleName(), "relationshipOfResourceID"))
+                        .findFirst();
+
                 String relationshipTypeIdValue = relationshipOfResourceIDTerm
                         .map(record::value)
                         .orElse(null);
