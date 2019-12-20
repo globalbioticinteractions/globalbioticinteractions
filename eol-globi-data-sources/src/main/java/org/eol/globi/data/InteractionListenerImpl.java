@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
-import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -79,7 +78,7 @@ class InteractionListenerImpl implements InteractionListener {
                     importValidLink(expandedProperties);
                 }
             }
-        } catch (NodeFactoryException | IOException e) {
+        } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import: " + properties, e);
         }
     }
@@ -88,12 +87,13 @@ class InteractionListenerImpl implements InteractionListener {
         return validLink(link, getLogger());
     }
 
-    public static boolean validLink(Map<String, String> link, ImportLogger logger) {
+    static boolean validLink(Map<String, String> link, ImportLogger logger) {
         Predicate<Map<String, String>> hasSourceTaxon = (Map<String, String> l) -> {
             String sourceTaxonName = l.get(SOURCE_TAXON_NAME);
             String sourceTaxonId = l.get(SOURCE_TAXON_ID);
             boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
             if (!isValid) {
+
                 logger.warn(LogUtil.contextFor(l), "no source taxon defined");
             }
             return isValid;
@@ -121,7 +121,7 @@ class InteractionListenerImpl implements InteractionListener {
                 .test(link);
     }
 
-    static Predicate<Map<String, String>> createReferencePredicate(ImportLogger logger) {
+    private static Predicate<Map<String, String>> createReferencePredicate(ImportLogger logger) {
         return (Map<String, String> l) -> {
             boolean isValid = StringUtils.isNotBlank(l.get(REFERENCE_ID));
             if (!isValid && logger != null) {
@@ -151,7 +151,7 @@ class InteractionListenerImpl implements InteractionListener {
         };
     }
 
-    private void importValidLink(Map<String, String> link) throws StudyImporterException, IOException {
+    private void importValidLink(Map<String, String> link) throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
 
         Specimen source = createSpecimen(link, study, SOURCE_TAXON_NAME, SOURCE_TAXON_ID, SOURCE_BODY_PART_NAME, SOURCE_BODY_PART_ID, SOURCE_LIFE_STAGE_NAME, SOURCE_LIFE_STAGE_ID);
@@ -163,7 +163,7 @@ class InteractionListenerImpl implements InteractionListener {
         String interactionTypeId = link.get(INTERACTION_TYPE_ID);
         InteractType type = InteractType.typeOf(interactionTypeId);
 
-        source.interactsWith(target, type, getOrCreateLocation(study, link));
+        source.interactsWith(target, type, getOrCreateLocation(link));
     }
 
     private void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
@@ -232,12 +232,12 @@ class InteractionListenerImpl implements InteractionListener {
                 final DateTime dateTime = DateUtil
                         .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
                 Date date = dateTime.toDate();
-                if (getLogger() != null && date != null && date.after(new Date())) {
-                    getLogger().warn(LogUtil.contextFor(link), "date [" + DateUtil.printDate(date) + "] is in the future");
+                if (date != null && date.after(new Date())) {
+                    logWarning(link, "date [" + DateUtil.printDate(date) + "] is in the future");
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
             } catch (IllegalArgumentException ex) {
-                getLogger().warn(LogUtil.contextFor(link), "invalid date string [" + eventDate + "]");
+                logWarning(link, "invalid date string [" + eventDate + "]");
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
             }
@@ -273,7 +273,7 @@ class InteractionListenerImpl implements InteractionListener {
         }
     }
 
-    private Location getOrCreateLocation(Study study, Map<String, String> link) throws IOException, NodeFactoryException {
+    private Location getOrCreateLocation(Map<String, String> link) throws NodeFactoryException {
         LatLng centroid = null;
         String[] latitudes = {DECIMAL_LATITUDE, StudyImporterForMetaTable.LATITUDE};
         String latitude = getFirstValueForTerms(link, latitudes);
@@ -285,7 +285,7 @@ class InteractionListenerImpl implements InteractionListener {
             try {
                 centroid = LocationUtil.parseLatLng(latitude, longitude);
             } catch (InvalidLocationException e) {
-                getLogger().warn(LogUtil.contextFor(link), "found invalid location: [" + e.getMessage() + "]");
+                logWarning(link, "found invalid location: [" + e.getMessage() + "]");
             }
         }
         String localityId = getFirstValueForTerms(link, LOCALITY_ID_TERMS);
@@ -295,9 +295,8 @@ class InteractionListenerImpl implements InteractionListener {
                 try {
                     centroid = getGeoNamesService().findLatLng(localityId);
                 } catch (IOException ex) {
-                    if (getLogger() != null) {
-                        getLogger().warn(LogUtil.contextFor(link), "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]");
-                    }
+                    String message = "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]";
+                    logWarning(link, message);
                 }
             }
         }
@@ -321,6 +320,16 @@ class InteractionListenerImpl implements InteractionListener {
             }
         }
         return location == null ? null : nodeFactory.getOrCreateLocation(location);
+    }
+
+    private void logWarning(Map<String, String> link, String message) {
+        logWarning(link, message, getLogger());
+    }
+
+    private static void logWarning(Map<String, String> link, String message, ImportLogger logger) {
+        if (logger != null) {
+            logger.warn(LogUtil.contextFor(link), message);
+        }
     }
 
     private String getFirstValueForTerms(Map<String, String> link, String[] latitudes) {
