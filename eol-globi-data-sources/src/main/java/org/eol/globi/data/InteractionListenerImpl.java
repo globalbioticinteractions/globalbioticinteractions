@@ -232,7 +232,7 @@ class InteractionListenerImpl implements InteractionListener {
                 final DateTime dateTime = DateUtil
                         .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
                 Date date = dateTime.toDate();
-                if (date != null && date.after(new Date())) {
+                if (getLogger() != null && date != null && date.after(new Date())) {
                     getLogger().warn(LogUtil.contextFor(link), "date [" + DateUtil.printDate(date) + "] is in the future");
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
