@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     public static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
 
     // ex. notation used to indicate host of a specimen.
-    public static final Pattern EX_NOTATION = Pattern.compile("^[eE][xX].+\\W.*");
+    public static final Pattern EX_NOTATION = Pattern.compile("^ex.+\\W.*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex.+\\W.*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
+    public static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
 
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -155,9 +159,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
                 .collect(Collectors.toList());
 
-        logUnsupportedInteractionTypes(interactionCandidates, getLogger());
-
-
         Map<String, String> interaction = new HashMap<>(rec.terms().size());
         for (Term term : rec.terms()) {
             interaction.put(term.qualifiedName(), rec.value(term));
@@ -212,17 +213,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    static void logUnsupportedInteractionTypes(List<Map<String, String>> interactionCandidates, final ImportLogger logger) {
-        interactionCandidates
-                .stream()
-                .filter(x -> !x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME))
-                .forEach(x -> {
-                    if (logger != null) {
-                        logger.warn(LogUtil.contextFor(x), "found unsupported interaction type [" + x.get(INTERACTION_TYPE_NAME) + "]");
-                    }
-                });
-    }
-
     public static void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, Term term) {
         String value = rec.value(term);
         mapIfAvailable(interactionProperties, key, value);
@@ -239,12 +229,30 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         String[] parts = StringUtils.split(s, "|;,");
         for (String part : parts) {
             String trimmedPart = StringUtils.trim(part);
-            String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
-            if (verbTaxon.length == 2) {
-                addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
+            Matcher matcher = PATTERN_ASSOCIATED_TAXA_IDEA.matcher(trimmedPart);
+            if (matcher.find()) {
+                String genus = StringUtils.trim(matcher.group(1));
+                String specificEpithet = StringUtils.trim(matcher.group(2));
+                addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet);
             } else {
-                addDefaultInteractionForAssociatedTaxon(properties, trimmedPart);
+                Matcher matcher1 = PATTERN_ASSOCIATED_TAXA_EAE.matcher(trimmedPart);
+                if (matcher1.find()) {
+                    String genus = StringUtils.trim(matcher1.group(2));
+                    String specificEpithet = StringUtils.trim(matcher1.group(3));
+                    addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet);
+                } else {
+                    String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
+                    if (verbTaxon.length == 2) {
+                        addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
+                    } else {
+                        addDefaultInteractionForAssociatedTaxon(properties, trimmedPart);
+                    }
+
+                }
+
             }
+
+
         }
         return properties;
     }
@@ -263,6 +271,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 properties.add(new HashMap<String, String>() {{
                     put(TARGET_TAXON_NAME, part);
                     put(INTERACTION_TYPE_NAME, "ex");
+                }});
+            } else if (REARED_EX_NOTATION.matcher(StringUtils.trim(part)).matches()) {
+                properties.add(new HashMap<String, String>() {{
+                    put(TARGET_TAXON_NAME, part);
+                    put(INTERACTION_TYPE_NAME, "reared ex");
                 }});
             } else {
                 properties.add(new HashMap<String, String>() {{
@@ -627,8 +640,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     }
 
     ;
-
-
 
 
 }

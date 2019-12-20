@@ -1,15 +1,10 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.LogMessage;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
-import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.logging.Level;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

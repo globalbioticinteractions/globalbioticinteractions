@@ -71,7 +71,7 @@ public class CSVTSVUtil {
     }
 
     public static String escapeTSV(String text) {
-        return StringUtils.replace(text, "\t", " ");
+        return StringUtils.replaceAll(text, "[\t\n\r]", " ");
     }
 
     public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName) {

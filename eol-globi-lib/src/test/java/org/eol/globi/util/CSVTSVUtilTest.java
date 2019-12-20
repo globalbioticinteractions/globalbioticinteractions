@@ -79,4 +79,9 @@ public class CSVTSVUtilTest {
         assertThat(CSVTSVUtil.splitTSV(withEmptyNoTrim).length, is(5));
     }
 
+    @Test
+    public void escapeTSV() {
+        assertThat(CSVTSVUtil.escapeTSV("\t\n\rone"), is("   one"));
+    }
+
 }

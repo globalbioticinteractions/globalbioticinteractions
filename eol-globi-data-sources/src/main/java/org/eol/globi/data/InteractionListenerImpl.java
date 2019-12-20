@@ -33,6 +33,7 @@ import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
 import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
@@ -135,11 +136,15 @@ class InteractionListenerImpl implements InteractionListener {
             String interactionTypeId = l.get(INTERACTION_TYPE_ID);
             boolean hasValidId = false;
             if (StringUtils.isBlank(interactionTypeId) && logger != null) {
-                logger.warn(LogUtil.contextFor(l), "missing [" + INTERACTION_TYPE_ID + "]");
+                if (StringUtils.isBlank(l.get(INTERACTION_TYPE_NAME))) {
+                    logger.warn(LogUtil.contextFor(l), "missing interaction type");
+                } else {
+                    logger.warn(LogUtil.contextFor(l), "found interaction type name [" + l.get(INTERACTION_TYPE_NAME) + "], but no interaction type id");
+                }
             } else {
                 hasValidId = InteractType.typeOf(interactionTypeId) != null;
                 if (!hasValidId && logger != null) {
-                    logger.warn(LogUtil.contextFor(l), "found unsupported interactionTypeId [" + interactionTypeId + "]");
+                    logger.warn(LogUtil.contextFor(l), "found unsupported interaction type id [" + interactionTypeId + "]");
                 }
             }
             return hasValidId;

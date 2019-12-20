@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.tool.NullImportLogger;
@@ -23,7 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.eol.globi.data.StudyImporterForDwCA.hasResourceRelationships;
 import static org.eol.globi.data.StudyImporterForDwCA.importAssociatedTaxaExtension;
 import static org.eol.globi.data.StudyImporterForDwCA.importResourceRelationExtension;
-import static org.eol.globi.data.StudyImporterForDwCA.logUnsupportedInteractionTypes;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedOccurrences;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedTaxa;
 import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicProperties;
@@ -36,7 +36,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class StudyImporterForDwCATest {
 
@@ -250,6 +249,38 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxaRearedEx() {
+        String associatedTaxa = "ReAred ex Homo sapiens";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("ReAred ex Homo sapiens"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("reared ex"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void associatedTaxonomicHierachy() {
+        String associatedTaxa = "Caesalpinaceae: Cercidium: praecox";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Cercidium praecox"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+    }
+
+    @Test
+    public void associatedTaxonomicHierachy2() {
+        String associatedTaxa = "Bucephala albeola: Anatidae";
+
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Bucephala albeola"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+    }
+
+    @Test
     public void associatedTaxaExPeriod() {
         String associatedTaxa = "ex. Homo sapiens";
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
@@ -339,48 +370,6 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
-    @Test
-    public void logUnsupported() {
-        String associatedTaxa = "eatz: Homo sapiens";
-        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
-
-        final AtomicBoolean loggedSomething = new AtomicBoolean(false);
-        logUnsupportedInteractionTypes(properties, new NullImportLogger() {
-            @Override
-            public void warn(LogContext ctx, String message) {
-
-                // claim 1: [eatz] is a description of a type of ecological interaction
-                // claim 1 is produced by a parsing activity started by a software agent X
-
-                // claim 2: interaction descriptions contain x, y, z
-                // claim 3: a container of non-interaction type descriptions
-                // claim 3: interaction descriptions derived from resource X
-                // claim 2 is produced by a mapping activity started by a software agent Y
-
-                // claim 2 is   inconsistent with claim 1
-
-                assertThat(ctx.toString(), is("{\"interactionTypeName\":\"eatz\",\"targetTaxonName\":\"Homo sapiens\"}"));
-                assertThat(message, is("found unsupported interaction type [eatz]"));
-                loggedSomething.set(true);
-            }
-
-        });
-        assertThat(loggedSomething.get(), is(true));
-    }
-
-    @Test
-    public void notLogSupported() {
-        String associatedTaxa = "eats: Homo sapiens";
-        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
-        properties.get(0).put(INTERACTION_TYPE_ID, "ro:something");
-
-        logUnsupportedInteractionTypes(properties, new NullImportLogger() {
-            @Override
-            public void warn(LogContext ctx, String message) {
-                fail("boom!");
-            }
-        });
-    }
 
     @Test
     public void dynamicProperties() {
