@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
@@ -21,6 +22,7 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -91,7 +93,7 @@ class InteractionListenerImpl implements InteractionListener {
             String sourceTaxonId = l.get(SOURCE_TAXON_ID);
             boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
             if (!isValid) {
-                logger.warn(null, "no source taxon info found in [" + l + "]");
+                logger.warn(LogUtil.contextFor(l), "no source taxon defined");
             }
             return isValid;
         };
@@ -102,7 +104,7 @@ class InteractionListenerImpl implements InteractionListener {
 
             boolean isValid = StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId);
             if (!isValid) {
-                logger.warn(null, "no target taxon info found in [" + l + "]");
+                logger.warn(LogUtil.contextFor(l), "no target taxon defined");
             }
             return isValid;
         };
@@ -122,7 +124,7 @@ class InteractionListenerImpl implements InteractionListener {
         return (Map<String, String> l) -> {
             boolean isValid = StringUtils.isNotBlank(l.get(REFERENCE_ID));
             if (!isValid && logger != null) {
-                logger.warn(null, "missing [" + REFERENCE_ID + "]");
+                logger.warn(LogUtil.contextFor(l), "missing [" + REFERENCE_ID + "]");
             }
             return isValid;
         };
@@ -133,11 +135,11 @@ class InteractionListenerImpl implements InteractionListener {
             String interactionTypeId = l.get(INTERACTION_TYPE_ID);
             boolean hasValidId = false;
             if (StringUtils.isBlank(interactionTypeId) && logger != null) {
-                logger.warn(null, "missing [" + INTERACTION_TYPE_ID + "]");
+                logger.warn(LogUtil.contextFor(l), "missing [" + INTERACTION_TYPE_ID + "]");
             } else {
                 hasValidId = InteractType.typeOf(interactionTypeId) != null;
                 if (!hasValidId && logger != null) {
-                    logger.warn(null, "found unsupported interactionTypeId [" + interactionTypeId + "]");
+                    logger.warn(LogUtil.contextFor(l), "found unsupported interactionTypeId [" + interactionTypeId + "]");
                 }
             }
             return hasValidId;
@@ -194,23 +196,23 @@ class InteractionListenerImpl implements InteractionListener {
         }
     }
 
-    private StudyImpl studyFromLink(Map<String, String> link) {
-        String referenceCitation = link.get(REFERENCE_CITATION);
+    private StudyImpl studyFromLink(Map<String, String> l) {
+        String referenceCitation = l.get(REFERENCE_CITATION);
         DOI doi = null;
-        String doiString = link.get(REFERENCE_DOI);
+        String doiString = l.get(REFERENCE_DOI);
         try {
             doi = StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
         } catch (MalformedDOIException e) {
             if (logger != null) {
-                logger.warn(null, "found malformed doi [" + doiString + "]");
+                logger.warn(LogUtil.contextFor(l), "found malformed doi [" + doiString + "]");
             }
         }
-        StudyImpl study1 = new StudyImpl(link.get(REFERENCE_ID),
-                link.get(STUDY_SOURCE_CITATION),
+        StudyImpl study1 = new StudyImpl(l.get(REFERENCE_ID),
+                l.get(STUDY_SOURCE_CITATION),
                 doi,
                 referenceCitation);
 
-        final String referenceUrl = link.get(REFERENCE_URL);
+        final String referenceUrl = l.get(REFERENCE_URL);
         if (StringUtils.isBlank(study1.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
             study1.setExternalId(referenceUrl);
         }
@@ -224,9 +226,13 @@ class InteractionListenerImpl implements InteractionListener {
             try {
                 final DateTime dateTime = DateUtil
                         .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
-                nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
+                Date date = dateTime.toDate();
+                if (date != null && date.after(new Date())) {
+                    getLogger().warn(LogUtil.contextFor(link), "date [" + DateUtil.printDate(date) + "] is in the future");
+                }
+                nodeFactory.setUnixEpochProperty(target, date);
             } catch (IllegalArgumentException ex) {
-                getLogger().warn(null, "invalid date string [" + eventDate + "]");
+                getLogger().warn(LogUtil.contextFor(link), "invalid date string [" + eventDate + "]");
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
             }
@@ -274,7 +280,7 @@ class InteractionListenerImpl implements InteractionListener {
             try {
                 centroid = LocationUtil.parseLatLng(latitude, longitude);
             } catch (InvalidLocationException e) {
-                getLogger().warn(study, "found invalid location: [" + e.getMessage() + "]");
+                getLogger().warn(LogUtil.contextFor(link), "found invalid location: [" + e.getMessage() + "]");
             }
         }
         String localityId = getFirstValueForTerms(link, LOCALITY_ID_TERMS);
@@ -285,7 +291,7 @@ class InteractionListenerImpl implements InteractionListener {
                     centroid = getGeoNamesService().findLatLng(localityId);
                 } catch (IOException ex) {
                     if (getLogger() != null) {
-                        getLogger().warn(study, "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]");
+                        getLogger().warn(LogUtil.contextFor(link), "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]");
                     }
                 }
             }

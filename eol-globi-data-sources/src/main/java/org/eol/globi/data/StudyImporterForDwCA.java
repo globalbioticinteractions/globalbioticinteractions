@@ -216,10 +216,9 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         interactionCandidates
                 .stream()
                 .filter(x -> !x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME))
-                .map(x -> x.get(INTERACTION_TYPE_NAME))
                 .forEach(x -> {
                     if (logger != null) {
-                        logger.warn(null, "found unsupported interaction type [" + x + "]");
+                        logger.warn(LogUtil.contextFor(x), "found unsupported interaction type [" + x.get(INTERACTION_TYPE_NAME) + "]");
                     }
                 });
     }

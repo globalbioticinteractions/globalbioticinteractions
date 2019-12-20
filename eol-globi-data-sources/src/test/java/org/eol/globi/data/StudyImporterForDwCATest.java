@@ -20,7 +20,13 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.eol.globi.data.StudyImporterForDwCA.*;
+import static org.eol.globi.data.StudyImporterForDwCA.hasResourceRelationships;
+import static org.eol.globi.data.StudyImporterForDwCA.importAssociatedTaxaExtension;
+import static org.eol.globi.data.StudyImporterForDwCA.importResourceRelationExtension;
+import static org.eol.globi.data.StudyImporterForDwCA.logUnsupportedInteractionTypes;
+import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedOccurrences;
+import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedTaxa;
+import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicProperties;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -342,6 +348,18 @@ public class StudyImporterForDwCATest {
         logUnsupportedInteractionTypes(properties, new NullImportLogger() {
             @Override
             public void warn(LogContext ctx, String message) {
+
+                // claim 1: [eatz] is a description of a type of ecological interaction
+                // claim 1 is produced by a parsing activity started by a software agent X
+
+                // claim 2: interaction descriptions contain x, y, z
+                // claim 3: a container of non-interaction type descriptions
+                // claim 3: interaction descriptions derived from resource X
+                // claim 2 is produced by a mapping activity started by a software agent Y
+
+                // claim 2 is   inconsistent with claim 1
+
+                assertThat(ctx.toString(), is("{\"interactionTypeName\":\"eatz\",\"targetTaxonName\":\"Homo sapiens\"}"));
                 assertThat(message, is("found unsupported interaction type [eatz]"));
                 loggedSomething.set(true);
             }
