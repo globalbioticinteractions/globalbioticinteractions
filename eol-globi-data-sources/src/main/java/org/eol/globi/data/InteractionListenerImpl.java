@@ -232,7 +232,12 @@ class InteractionListenerImpl implements InteractionListener {
                 final DateTime dateTime = DateUtil
                         .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
                 Date date = dateTime.toDate();
-                if (date != null && date.after(new Date())) {
+                if (dateTime.getYear() == 8888) {
+                    // 8888 is a magic number used by Arctos
+                    // see http://handbook.arctosdb.org/documentation/dates.html#restricted-data
+                    // https://github.com/ArctosDB/arctos/issues/2426
+                    logWarning(link, "date [" + DateUtil.printDate(date) + "] appears to be restricted, see http://handbook.arctosdb.org/documentation/dates.html#restricted-data");
+                } else if (date.after(new Date())) {
                     logWarning(link, "date [" + DateUtil.printDate(date) + "] is in the future");
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
