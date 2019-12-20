@@ -1,8 +1,10 @@
 package org.eol.globi.data;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
@@ -91,15 +93,26 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             tmpDwA = Files.createTempDirectory("dwca");
             Archive archive = DwCAUtil.archiveFor(resourceURI, tmpDwA.toString());
-            InteractionListener interactionListener = getInteractionListener();
+
+            InteractionListener listenerProxy = new InteractionListener() {
+                InteractionListener listener = getInteractionListener();
+
+                @Override
+                public void newLink(Map<String, String> properties) throws StudyImporterException {
+                    listener.newLink(new HashMap<String, String>(properties) {{
+                       put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
+                       put(DatasetConstant.CONTENT_HASH, getDataset().getOrDefault(DatasetConstant.CONTENT_HASH, ""));
+                    }});
+                }
+            };
 
             String sourceCitation = getDataset().getCitation();
 
-            importResourceRelationExtension(archive, interactionListener, sourceCitation);
+            importResourceRelationExtension(archive, listenerProxy, sourceCitation);
 
-            importAssociatedTaxaExtension(archive, interactionListener, sourceCitation);
+            importAssociatedTaxaExtension(archive, listenerProxy, sourceCitation);
 
-            importCore(archive, interactionListener, sourceCitation);
+            importCore(archive, listenerProxy, sourceCitation);
 
         } catch (IOException | IllegalStateException e) {
             // catching IllegalStateException to prevents RuntimeException from stopping all

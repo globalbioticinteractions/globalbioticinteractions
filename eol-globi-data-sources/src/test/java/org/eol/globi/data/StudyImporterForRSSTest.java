@@ -295,8 +295,7 @@ public class StudyImporterForRSSTest {
     }
 
     private DatasetImpl datasetFor(String configJson) throws IOException {
-        JsonNode config = new ObjectMapper().readTree(
-                configJson);
+        JsonNode config = new ObjectMapper().readTree(configJson);
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(config);
         return dataset;
