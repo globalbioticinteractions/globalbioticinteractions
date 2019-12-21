@@ -99,7 +99,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
-                    if (getDataset() == null) {
+                    if (getDataset() == null || getDataset().getArchiveURI() == null) {
                         listener.newLink(properties);
                     } else if (getDataset().getArchiveURI() != null){
                         listener.newLink(new HashMap<String, String>(properties) {{
