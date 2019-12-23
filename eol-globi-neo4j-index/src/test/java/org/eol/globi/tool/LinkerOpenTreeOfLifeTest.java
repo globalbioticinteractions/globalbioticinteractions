@@ -5,27 +5,23 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TermMatchListener;
 import org.eol.globi.taxon.TermMatcher;
-import org.eol.globi.util.TermUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.hasItem;
 
 public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
 
