@@ -16,6 +16,7 @@ import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.tool.TermRequestImpl;
 import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
@@ -197,16 +198,14 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     @Override
-    public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
+    public void match(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
         lazyInit();
         for (Term term : terms) {
             String nodeIdAndName = term.getName();
-            String[] split = CSVTSVUtil.splitPipes(nodeIdAndName);
-            String name = (split != null && split.length > 1) ? split[1] : nodeIdAndName;
-            Long nodeId = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
+            Long nodeId = term instanceof TermRequestImpl ? ((TermRequestImpl)term).getNodeId() : null;
             if (!resolveName(termMatchListener, term, term.getId(), nodeId)) {
-                if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, name, nodeId)) {
-                    termMatchListener.foundTaxonForTerm(nodeId, term, new TaxonImpl(name, term.getId()), NameType.NONE);
+                if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, term.getName(), nodeId)) {
+                    termMatchListener.foundTaxonForTerm(nodeId, term, new TaxonImpl(term.getId(), term.getName()), NameType.NONE);
                 }
             }
         }

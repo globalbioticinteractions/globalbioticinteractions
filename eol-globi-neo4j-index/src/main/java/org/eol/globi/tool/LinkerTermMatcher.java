@@ -6,11 +6,11 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.TermMatcher;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.TermUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -67,14 +67,14 @@ public class LinkerTermMatcher implements Linker {
         stopWatch.start();
         String msgPrefix = "batch #" + counter / BATCH_SIZE;
         LOG.info(msgPrefix + " preparing...");
-        List<String> nodeIdAndNames = new ArrayList<>();
+        List<Term> termRequests = new ArrayList<>();
         for (Map.Entry<Long, TaxonNode> entry : nodeMap.entrySet()) {
-            String name = entry.getKey() + "|" + entry.getValue().getName();
-            nodeIdAndNames.add(name);
+            Term e = new TermRequestImpl(entry.getValue().getId(), entry.getValue().getName(), entry.getKey());
+            termRequests.add(e);
         }
         try {
-            if (nodeIdAndNames.size() > 0) {
-                termMatcher.findTerms(TermUtil.toNamesToTerms(nodeIdAndNames), (nodeId, name, taxon, relType) -> {
+            if (termRequests.size() > 0) {
+                termMatcher.match(termRequests, (nodeId, name, taxon, relType) -> {
                     TaxonNode taxonNode = nodeMap.get(nodeId);
                     if (taxonNode != null
                             && NameType.NONE != relType

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TermMatcher {
 
-    void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException;
+    void match(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException;
 }
