@@ -12,13 +12,11 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.CacheService;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
-import org.eol.globi.util.TermUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -36,7 +34,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TaxonCacheService extends CacheService implements PropertyEnricher, TermMatcher {
     private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
@@ -209,7 +206,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             Long nodeId = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
             if (!resolveName(termMatchListener, term, term.getId(), nodeId)) {
                 if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, name, nodeId)) {
-                    termMatchListener.foundTaxonForName(nodeId, term, new TaxonImpl(name, term.getId()), NameType.NONE);
+                    termMatchListener.foundTaxonForTerm(nodeId, term, new TaxonImpl(name, term.getId()), NameType.NONE);
                 }
             }
         }
@@ -231,7 +228,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                     Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
-                        termMatchListener.foundTaxonForName(nodeId, term, resolvedTaxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForTerm(nodeId, term, resolvedTaxon, NameType.SAME_AS);
                         hasResolved = true;
                     }
                 }

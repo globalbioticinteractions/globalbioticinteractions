@@ -49,7 +49,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
                 @Override
                 public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
                     for (Term term : terms) {
-                        termMatchListener.foundTaxonForName(nodeID, term, taxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForTerm(nodeID, term, taxon, NameType.SAME_AS);
                     }
                 }
             }).link();
