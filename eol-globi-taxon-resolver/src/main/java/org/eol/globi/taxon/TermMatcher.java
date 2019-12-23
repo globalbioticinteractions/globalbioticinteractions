@@ -6,7 +6,6 @@ import org.eol.globi.service.PropertyEnricherException;
 import java.util.List;
 
 public interface TermMatcher {
-    void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException;
 
     void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException;
 }

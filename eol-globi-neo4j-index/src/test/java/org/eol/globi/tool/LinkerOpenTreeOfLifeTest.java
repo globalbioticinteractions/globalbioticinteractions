@@ -10,15 +10,18 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.TermMatchListener;
 import org.eol.globi.taxon.TermMatcher;
+import org.eol.globi.util.TermUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -46,17 +49,11 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
             long nodeID = ((NodeBacked) createdTaxon).getNodeID();
 
             new LinkerTermMatcher(getGraphDb(), new TermMatcher() {
-                @Override
-                public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
-                    for (String name : names) {
-                        termMatchListener.foundTaxonForName(nodeID, name, taxon, NameType.SAME_AS);
-                    }
-                }
 
                 @Override
                 public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
                     for (Term term : terms) {
-                        termMatchListener.foundTaxonForName(nodeID, term.getName(), taxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForName(nodeID, term, taxon, NameType.SAME_AS);
                     }
                 }
             }).link();

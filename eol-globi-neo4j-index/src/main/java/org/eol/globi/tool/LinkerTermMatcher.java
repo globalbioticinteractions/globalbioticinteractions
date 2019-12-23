@@ -12,6 +12,7 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.TermMatchListener;
 import org.eol.globi.taxon.TermMatcher;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.TermUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -75,7 +76,7 @@ public class LinkerTermMatcher implements Linker {
         }
         try {
             if (nodeIdAndNames.size() > 0) {
-                termMatcher.findTermsForNames(nodeIdAndNames, (nodeId, name, taxon, relType) -> {
+                termMatcher.findTerms(TermUtil.toNamesToTerms(nodeIdAndNames), (nodeId, name, taxon, relType) -> {
                     TaxonNode taxonNode = nodeMap.get(nodeId);
                     if (taxonNode != null
                             && NameType.NONE != relType

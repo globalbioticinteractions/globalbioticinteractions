@@ -18,6 +18,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
+import org.eol.globi.util.TermUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -199,13 +200,6 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     @Override
-    public void findTermsForNames(List<String> names, TermMatchListener termMatchListener) throws PropertyEnricherException {
-        Stream<Term> namesAndIds = names.stream()
-                .flatMap(name -> Stream.of(new TermImpl(null, name)));
-        findTerms(namesAndIds.collect(Collectors.toList()), termMatchListener);
-    }
-
-    @Override
     public void findTerms(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
         lazyInit();
         for (Term term : terms) {
@@ -213,15 +207,15 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             String[] split = CSVTSVUtil.splitPipes(nodeIdAndName);
             String name = (split != null && split.length > 1) ? split[1] : nodeIdAndName;
             Long nodeId = (split != null && split.length > 1 && NumberUtils.isDigits(split[0])) ? Long.parseLong(split[0]) : null;
-            if (!resolveName(termMatchListener, term.getId(), nodeId)) {
-                if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, name, nodeId)) {
-                    termMatchListener.foundTaxonForName(nodeId, name, new TaxonImpl(name, term.getId()), NameType.NONE);
+            if (!resolveName(termMatchListener, term, term.getId(), nodeId)) {
+                if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, name, nodeId)) {
+                    termMatchListener.foundTaxonForName(nodeId, term, new TaxonImpl(name, term.getId()), NameType.NONE);
                 }
             }
         }
     }
 
-    private boolean resolveName(TermMatchListener termMatchListener, String name, Long nodeId) throws PropertyEnricherException {
+    private boolean resolveName(TermMatchListener termMatchListener, Term term, String name, Long nodeId) throws PropertyEnricherException {
         boolean hasResolved = false;
         if (StringUtils.isNotBlank(name)) {
             Taxon[] ids = lookupTerm(name);
@@ -237,7 +231,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                     Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
-                        termMatchListener.foundTaxonForName(nodeId, name, resolvedTaxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForName(nodeId, term, resolvedTaxon, NameType.SAME_AS);
                         hasResolved = true;
                     }
                 }
