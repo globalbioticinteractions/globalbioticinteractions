@@ -94,7 +94,7 @@ class InteractionListenerImpl implements InteractionListener {
             boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
             if (!isValid) {
 
-                logger.warn(LogUtil.contextFor(l), "no source taxon defined");
+                logger.warn(LogUtil.contextFor(l), "source taxon name missing");
             }
             return isValid;
         };
@@ -105,7 +105,7 @@ class InteractionListenerImpl implements InteractionListener {
 
             boolean isValid = StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId);
             if (!isValid) {
-                logger.warn(LogUtil.contextFor(l), "no target taxon defined");
+                logger.warn(LogUtil.contextFor(l), "target taxon name missing");
             }
             return isValid;
         };
