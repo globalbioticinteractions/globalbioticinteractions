@@ -18,7 +18,6 @@ public class InteractUtil {
             = UnmodifiableSet.unmodifiableSet(new TreeSet<String>() {{
         add("(collected with)");
         add("collector number");
-        add("(in amplexus with)");
         add("(littermate or nestmate of)");
         add("(mate of)");
         add("mixed species flock");
@@ -51,6 +50,7 @@ public class InteractUtil {
                 put("(eaten by)", InteractType.EATEN_BY);
                 put("(parasite of)", InteractType.PARASITE_OF);
                 put("(host of)", InteractType.HOST_OF);
+                put("(in amplexus with)", InteractType.INTERACTS_WITH);
                 put("consumption", InteractType.ATE);
                 put("flower predator", InteractType.ATE);
                 put("flower visitor", InteractType.VISITS_FLOWERS_OF);
