@@ -16,6 +16,7 @@ import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
@@ -26,8 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
+import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
@@ -41,12 +44,18 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_PATH;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_PATH_NAMES;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.hamcrest.core.Is.is;
@@ -208,6 +217,84 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     }
 
     @Test
+    public void importWithSex() throws StudyImporterException {
+        final InteractionListenerImpl listener = getAssertingListener();
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(SOURCE_SEX_NAME, "female");
+        link.put(SOURCE_SEX_ID, "some:female");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(TARGET_SEX_NAME, "male");
+        link.put(TARGET_SEX_ID, "some:male");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_ID, "123");
+        link.put(REFERENCE_CITATION, "");
+        listener.newLink(link);
+
+        AtomicInteger foundSpecimen = new AtomicInteger(0);
+        NodeUtil.RelationshipListener someListener = relationship -> {
+            final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
+            assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
+            assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(NodeUtil.asNeo4j(InteractType.ATE)));
+
+            if (someSpecimen.getUnderlyingNode().hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE))) {
+                assertThat(someSpecimen.getSex().getName(), is("female"));
+                assertThat(someSpecimen.getSex().getId(), is("some:female"));
+            } else {
+                assertThat(someSpecimen.getSex().getName(), is("male"));
+                assertThat(someSpecimen.getSex().getId(), is("some:male"));
+            }
+            foundSpecimen.incrementAndGet();
+        };
+
+        handleRelations(someListener, RelTypes.COLLECTED);
+
+        assertThat(foundSpecimen.get(), is(2));
+    }
+
+    @Test
+    public void importWithTaxonHierarchy() throws StudyImporterException {
+        final InteractionListenerImpl listener = getAssertingListener();
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "Donald duck");
+        link.put(SOURCE_TAXON_PATH, "Aves | Donald | Donald duck");
+        link.put(SOURCE_TAXON_PATH_NAMES, "class | genus | species");
+        link.put(SOURCE_TAXON_SPECIFIC_EPITHET, "duck");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_ID, "123");
+        link.put(REFERENCE_CITATION, "");
+        listener.newLink(link);
+
+        AtomicInteger foundSpecimen = new AtomicInteger(0);
+        NodeUtil.RelationshipListener someListener = relationship -> {
+            final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
+            assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
+            assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS)));
+
+            Node taxonNode = someSpecimen
+                    .getUnderlyingNode()
+                    .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
+                    .getEndNode();
+
+            TaxonNode taxon = new TaxonNode(taxonNode);
+
+            if (someSpecimen.getUnderlyingNode().hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE))) {
+                assertThat(taxon.getPath(), is("Aves | Donald | Donald duck"));
+                assertThat(taxon.getPathNames(), is("class | genus | species"));
+                foundSpecimen.incrementAndGet();
+            }
+
+        };
+
+        handleRelations(someListener, RelTypes.COLLECTED);
+
+        assertThat(foundSpecimen.get(), is(1));
+    }
+
+    @Test
     public void importWithSymbiotaDateTimeYearOnly() throws StudyImporterException {
         assertSymbiotaDateString("2016-00-00", "2016-01-01T00:00:00Z");
     }
@@ -335,6 +422,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             fail("should not throw on failing geoname lookup");
         }
     }
+
     @Test
     public void malformedDOI() throws StudyImporterException {
         final List<String> msgs = new ArrayList<>();

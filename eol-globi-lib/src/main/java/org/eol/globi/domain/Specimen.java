@@ -55,4 +55,8 @@ public interface Specimen extends WithId {
     Term getBodyPart();
 
     void setProperty(String name, Object value);
+
+    void setSex(Term term);
+
+    Term getSex();
 }

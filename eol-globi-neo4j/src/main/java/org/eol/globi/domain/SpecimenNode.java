@@ -222,6 +222,19 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     @Override
+    public Term getSex() {
+        return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.SEX_ID), getPropertyStringValueOrNull(SpecimenConstant.SEX_LABEL));
+    }
+
+    @Override
+    public void setSex(Term term) {
+        if (term != null) {
+            setPropertyWithTx(SpecimenConstant.SEX_LABEL, term.getName());
+            setPropertyWithTx(SpecimenConstant.SEX_ID, term.getId());
+        }
+    }
+
+    @Override
     public void setProperty(String name, Object value) {
         setPropertyWithTx(name, value);
     }

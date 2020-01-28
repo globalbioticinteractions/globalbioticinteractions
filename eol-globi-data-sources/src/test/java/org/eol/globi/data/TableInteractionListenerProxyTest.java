@@ -60,4 +60,30 @@ public class TableInteractionListenerProxyTest {
         assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some ref"));
     }
 
+
+    @Test
+    public void withTaxonHierachy() throws IOException, StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
+        JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
+        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
+        dataset.setConfig(config);
+        final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                links.add(properties);
+            }
+        });
+        listener.newLink(new HashMap<String, String>() {
+            {
+                put(StudyImporterForMetaTable.TARGET_TAXON_GENUS, "Donald");
+                put(StudyImporterForMetaTable.TARGET_TAXON_SPECIFIC_EPITHET, "duck");
+            }
+        });
+
+        assertThat(links.size(), is(1));
+        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Donald duck"));
+        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_PATH_NAMES), is("genus | species"));
+        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_PATH), is("Donald | Donald duck"));
+    }
+
 }

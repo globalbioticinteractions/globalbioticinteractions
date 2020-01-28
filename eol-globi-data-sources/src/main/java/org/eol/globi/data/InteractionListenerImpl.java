@@ -44,6 +44,8 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_ID;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_PATH;
@@ -54,6 +56,8 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_PATH;
@@ -168,7 +172,9 @@ class InteractionListenerImpl implements InteractionListener {
                 SOURCE_LIFE_STAGE_NAME,
                 SOURCE_LIFE_STAGE_ID,
                 SOURCE_TAXON_PATH,
-                SOURCE_TAXON_PATH_NAMES);
+                SOURCE_TAXON_PATH_NAMES,
+                SOURCE_SEX_NAME,
+                SOURCE_SEX_ID);
         setExternalIdNotBlank(link, SOURCE_OCCURRENCE_ID, source);
 
         Specimen target = createSpecimen(
@@ -181,7 +187,9 @@ class InteractionListenerImpl implements InteractionListener {
                 TARGET_LIFE_STAGE_NAME,
                 TARGET_LIFE_STAGE_ID,
                 TARGET_TAXON_PATH,
-                TARGET_TAXON_PATH_NAMES);
+                TARGET_TAXON_PATH_NAMES,
+                TARGET_SEX_NAME,
+                TARGET_SEX_ID);
         setExternalIdNotBlank(link, TARGET_OCCURRENCE_ID, target);
 
 
@@ -198,7 +206,18 @@ class InteractionListenerImpl implements InteractionListener {
         }
     }
 
-    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabel, String bodyPartName, String bodyPartId, String lifeStageName, String lifeStageId, String taxonPathLabel, String taxonPathNamesLabel) throws StudyImporterException {
+    private Specimen createSpecimen(Map<String, String> link,
+                                    Study study,
+                                    String taxonNameLabel,
+                                    String taxonIdLabel,
+                                    String bodyPartName,
+                                    String bodyPartId,
+                                    String lifeStageName,
+                                    String lifeStageId,
+                                    String taxonPathLabel,
+                                    String taxonPathNamesLabel,
+                                    String sexLabel,
+                                    String sexId) throws StudyImporterException {
         String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
         RelTypes[] argumentType = refutes(argumentTypeId)
                 ? new RelTypes[]{RelTypes.REFUTES}
@@ -223,6 +242,7 @@ class InteractionListenerImpl implements InteractionListener {
         setDateTimeIfAvailable(link, source);
         setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
         setLifeStageIfAvailable(link, source, lifeStageName, lifeStageId);
+        setSexIfAvailable(link, source, sexLabel, sexId);
         return source;
     }
 
@@ -235,6 +255,14 @@ class InteractionListenerImpl implements InteractionListener {
         final String lifeStageId = link.get(id);
         if (StringUtils.isNotBlank(lifeStageName) || StringUtils.isNotBlank(lifeStageId)) {
             source.setLifeStage(new TermImpl(lifeStageId, lifeStageName));
+        }
+    }
+
+    private void setSexIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
+        final String sexName = link.get(name);
+        final String sexId = link.get(id);
+        if (StringUtils.isNotBlank(sexName) || StringUtils.isNotBlank(sexId)) {
+            source.setSex(new TermImpl(sexId, sexName));
         }
     }
 
