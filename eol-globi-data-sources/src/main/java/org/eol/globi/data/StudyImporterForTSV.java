@@ -50,6 +50,10 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String TARGET_SEX_NAME = "targetSexName";
     public static final String ASSOCIATED_TAXA = "associatedTaxa";
     public static final String ARGUMENT_TYPE_ID = "argumentTypeId";
+    public static final String SOURCE_TAXON_PATH = "sourceTaxonPath";
+    public static final String SOURCE_TAXON_PATH_NAMES = "sourceTaxonPathNames";
+    public static final String TARGET_TAXON_PATH = "targetTaxonPath";
+    public static final String TARGET_TAXON_PATH_NAMES = "targetTaxonPathNames";
 
     private static final String RESOURCE_LINE_NUMBER = "resourceLineNumber";
     private static final String RESOURCE_URI = "resourceURI";

@@ -32,8 +32,25 @@ public class TableInteractionListenerProxy implements InteractionListener {
                 if (!properties.containsKey(StudyImporterForTSV.SOURCE_TAXON_NAME)) {
                     put(StudyImporterForTSV.SOURCE_TAXON_NAME, StudyImporterForMetaTable.generateSourceTaxonName(properties));
                 }
+
+                if (!properties.containsKey(StudyImporterForTSV.SOURCE_TAXON_PATH)) {
+                    String path = StudyImporterForMetaTable.generateSourceTaxonPath(properties);
+                    if (StringUtils.isNotBlank(path)) {
+                        put(StudyImporterForTSV.SOURCE_TAXON_PATH, path);
+                        put(StudyImporterForTSV.SOURCE_TAXON_PATH_NAMES, StudyImporterForMetaTable.generateSourceTaxonPathNames(properties));
+                    }
+                }
+
                 if (!properties.containsKey(StudyImporterForTSV.TARGET_TAXON_NAME)) {
                     put(StudyImporterForTSV.TARGET_TAXON_NAME, StudyImporterForMetaTable.generateTargetTaxonName(properties));
+                }
+
+                if (!properties.containsKey(StudyImporterForTSV.TARGET_TAXON_PATH)) {
+                    String path = StudyImporterForMetaTable.generateTargetTaxonPath(properties);
+                    if (StringUtils.isNotBlank(path)) {
+                        put(StudyImporterForTSV.TARGET_TAXON_PATH, path);
+                        put(StudyImporterForTSV.TARGET_TAXON_PATH_NAMES, StudyImporterForMetaTable.generateTargetTaxonPathNames(properties));
+                    }
                 }
             }
 

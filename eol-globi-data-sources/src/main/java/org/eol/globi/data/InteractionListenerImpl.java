@@ -46,6 +46,8 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_PATH;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_PATH_NAMES;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
@@ -54,6 +56,8 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_PATH;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_PATH_NAMES;
 
 class InteractionListenerImpl implements InteractionListener {
     private static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
@@ -154,9 +158,30 @@ class InteractionListenerImpl implements InteractionListener {
     private void importValidLink(Map<String, String> link) throws StudyImporterException {
         Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
 
-        Specimen source = createSpecimen(link, study, SOURCE_TAXON_NAME, SOURCE_TAXON_ID, SOURCE_BODY_PART_NAME, SOURCE_BODY_PART_ID, SOURCE_LIFE_STAGE_NAME, SOURCE_LIFE_STAGE_ID);
+        Specimen source = createSpecimen(
+                link,
+                study,
+                SOURCE_TAXON_NAME,
+                SOURCE_TAXON_ID,
+                SOURCE_BODY_PART_NAME,
+                SOURCE_BODY_PART_ID,
+                SOURCE_LIFE_STAGE_NAME,
+                SOURCE_LIFE_STAGE_ID,
+                SOURCE_TAXON_PATH,
+                SOURCE_TAXON_PATH_NAMES);
         setExternalIdNotBlank(link, SOURCE_OCCURRENCE_ID, source);
-        Specimen target = createSpecimen(link, study, TARGET_TAXON_NAME, TARGET_TAXON_ID, TARGET_BODY_PART_NAME, TARGET_BODY_PART_ID, TARGET_LIFE_STAGE_NAME, TARGET_LIFE_STAGE_ID);
+
+        Specimen target = createSpecimen(
+                link,
+                study,
+                TARGET_TAXON_NAME,
+                TARGET_TAXON_ID,
+                TARGET_BODY_PART_NAME,
+                TARGET_BODY_PART_ID,
+                TARGET_LIFE_STAGE_NAME,
+                TARGET_LIFE_STAGE_ID,
+                TARGET_TAXON_PATH,
+                TARGET_TAXON_PATH_NAMES);
         setExternalIdNotBlank(link, TARGET_OCCURRENCE_ID, target);
 
 
@@ -173,15 +198,27 @@ class InteractionListenerImpl implements InteractionListener {
         }
     }
 
-    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabel, String bodyPartName, String bodyPartId, String lifeStageName, String lifeStageId) throws StudyImporterException {
-        String sourceTaxonName = link.get(taxonNameLabel);
-        String sourceTaxonId = link.get(taxonIdLabel);
+    private Specimen createSpecimen(Map<String, String> link, Study study, String taxonNameLabel, String taxonIdLabel, String bodyPartName, String bodyPartId, String lifeStageName, String lifeStageId, String taxonPathLabel, String taxonPathNamesLabel) throws StudyImporterException {
         String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
         RelTypes[] argumentType = refutes(argumentTypeId)
                 ? new RelTypes[]{RelTypes.REFUTES}
                 : new RelTypes[]{RelTypes.COLLECTED, RelTypes.SUPPORTS};
 
-        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, sourceTaxonId), argumentType);
+        String sourceTaxonName = link.get(taxonNameLabel);
+        String sourceTaxonId = link.get(taxonIdLabel);
+        TaxonImpl taxon = new TaxonImpl(sourceTaxonName, sourceTaxonId);
+
+        String taxonPath = link.get(taxonPathLabel);
+        if (StringUtils.isNotBlank(taxonPath)) {
+            taxon.setPath(taxonPath);
+        }
+
+        String taxonPathNames = link.get(taxonPathNamesLabel);
+        if (StringUtils.isNotBlank(taxonPathNames)) {
+            taxon.setPathNames(taxonPathNames);
+        }
+
+        Specimen source = nodeFactory.createSpecimen(study, taxon, argumentType);
         setBasisOfRecordIfAvailable(link, source);
         setDateTimeIfAvailable(link, source);
         setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
