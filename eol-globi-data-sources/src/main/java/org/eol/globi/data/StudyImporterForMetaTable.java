@@ -108,8 +108,6 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     }
 
 
-
-
     @Override
     public void importStudy() throws StudyImporterException {
         try {
@@ -322,11 +320,9 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     }
 
     public static String generateTaxonName(Map<String, String> properties, String genusKey, String speciesKey, String subSpeciesKey, List<String> higherOrderRankKeys) {
-        String taxonName = null;
-        String genusValue = properties.get(genusKey);
-        if (StringUtils.isNotBlank(genusValue)) {
-            taxonName = generateSpeciesName(properties, genusKey, speciesKey, subSpeciesKey);
-        } else {
+        String taxonName = generateSpeciesName(properties, genusKey, speciesKey, subSpeciesKey);
+
+        if (StringUtils.isBlank(taxonName)) {
             for (String rankName : higherOrderRankKeys) {
                 final String name = properties.get(rankName);
                 if (StringUtils.isNotBlank(name)) {
@@ -339,12 +335,15 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     }
 
     public static String generateSpeciesName(Map<String, String> properties, String genusKey, String speciesKey, String subSpeciesKey) {
-        String taxonName;
-        taxonName = StringUtils.trim(StringUtils.join(Arrays.asList(
-                properties.get(genusKey),
-                properties.get(speciesKey),
-                properties.get(subSpeciesKey)), " "));
-        return taxonName;
+        String speciesName = null;
+        if (properties.containsKey(genusKey) && properties.containsKey(speciesKey)) {
+            List<String> speciesNameParts = Arrays.asList(
+                    properties.get(genusKey),
+                    properties.get(speciesKey),
+                    properties.get(subSpeciesKey));
+            speciesName = StringUtils.trim(StringUtils.join(speciesNameParts, " "));
+        }
+        return speciesName;
     }
 
     public static InteractType generateInteractionType(Map<String, String> properties) {

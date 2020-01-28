@@ -140,6 +140,17 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
+    public void generateSpeciesName() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(StudyImporterForMetaTable.SOURCE_TAXON_GENUS, "aGenus");
+                put(StudyImporterForMetaTable.SOURCE_TAXON_CLASS, "aClass");
+            }
+        };
+        assertThat(StudyImporterForMetaTable.generateSpeciesName(properties, StudyImporterForMetaTable.SOURCE_TAXON_GENUS, StudyImporterForMetaTable.SOURCE_TAXON_SPECIFIC_EPITHET, StudyImporterForMetaTable.SOURCE_TAXON_SUBSPECIFIC_EPITHET), is(nullValue()));
+    }
+
+    @Test
     public void interactionTypeMapping() {
         assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("donald")), is(nullValue()));
         assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("pollinator")), is(InteractType.POLLINATES));
