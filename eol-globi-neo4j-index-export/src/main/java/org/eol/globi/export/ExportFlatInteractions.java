@@ -69,6 +69,8 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", sourceSpecimen." + SpecimenConstant.BODY_PART_LABEL + " as sourceBodyPartName" +
                 ", sourceSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + " as sourcePhysiologicalStateId" +
                 ", sourceSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + " as sourcePhysiologicalStateName" +
+                ", sourceSpecimen." + SpecimenConstant.SEX_ID + " as sourceSexId" +
+                ", sourceSpecimen." + SpecimenConstant.SEX_LABEL + " as sourceSexName" +
                 ", r.label as interactionTypeName" +
                 ", r.iri as interactionTypeId" +
                 ", targetTaxon.externalId as targetTaxonId" +
@@ -103,6 +105,8 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", targetSpecimen." + SpecimenConstant.BODY_PART_LABEL + " as targetBodyPartName" +
                 ", targetSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID + " as targetPhysiologicalStateId" +
                 ", targetSpecimen." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL + " as targetPhysiologicalStateName" +
+                ", targetSpecimen." + SpecimenConstant.SEX_ID + " as targetSexId" +
+                ", targetSpecimen." + SpecimenConstant.SEX_LABEL + " as targetSexName" +
                 ", loc.latitude as decimalLatitude" +
                 ", loc.longitude as decimalLongitude" +
                 ", loc.localityId as localityId" +

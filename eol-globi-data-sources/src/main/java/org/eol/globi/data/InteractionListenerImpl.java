@@ -304,6 +304,8 @@ class InteractionListenerImpl implements InteractionListener {
                     logWarning(link, "date [" + DateUtil.printDate(date) + "] appears to be restricted, see http://handbook.arctosdb.org/documentation/dates.html#restricted-data");
                 } else if (date.after(new Date())) {
                     logWarning(link, "date [" + DateUtil.printDate(date) + "] is in the future");
+                } else if (dateTime.getYear() < 100) {
+                    logWarning(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
             } catch (IllegalArgumentException ex) {
