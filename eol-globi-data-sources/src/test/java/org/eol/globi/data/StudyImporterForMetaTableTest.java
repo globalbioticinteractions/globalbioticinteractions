@@ -116,6 +116,30 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
+    public void generateTargetTaxonPath() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(StudyImporterForMetaTable.TARGET_TAXON_GENUS, "genusValue");
+                put(StudyImporterForMetaTable.TARGET_TAXON_CLASS, "classValue");
+            }
+        };
+        assertThat(StudyImporterForMetaTable.generateTargetTaxonPath(properties), is("classValue | genusValue"));
+        assertThat(StudyImporterForMetaTable.generateTargetTaxonPathNames(properties), is("class | genus"));
+    }
+
+    @Test
+    public void generateSourceTaxonPath() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(StudyImporterForMetaTable.SOURCE_TAXON_GENUS, "aGenus");
+                put(StudyImporterForMetaTable.SOURCE_TAXON_CLASS, "aClass");
+            }
+        };
+        assertThat(StudyImporterForMetaTable.generateSourceTaxonPath(properties), is("aClass | aGenus"));
+        assertThat(StudyImporterForMetaTable.generateSourceTaxonPathNames(properties), is("class | genus"));
+    }
+
+    @Test
     public void interactionTypeMapping() {
         assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("donald")), is(nullValue()));
         assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("pollinator")), is(InteractType.POLLINATES));
