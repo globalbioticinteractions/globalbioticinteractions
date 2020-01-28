@@ -206,8 +206,9 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
     public static String generateTaxonName(Map<String, String> properties, String genusKey, String speciesKey, String subSpeciesKey, List<String> higherOrderRankKeys) {
         String taxonName = null;
-        if (properties.containsKey(genusKey)) {
-            taxonName = StringUtils.trim(StringUtils.join(Arrays.asList(properties.get(genusKey),
+        String genusValue = properties.get(genusKey);
+        if (StringUtils.isNotBlank(genusValue)) {
+            taxonName = StringUtils.trim(StringUtils.join(Arrays.asList(genusValue,
                     properties.get(speciesKey),
                     properties.get(subSpeciesKey)), " "));
         } else {
