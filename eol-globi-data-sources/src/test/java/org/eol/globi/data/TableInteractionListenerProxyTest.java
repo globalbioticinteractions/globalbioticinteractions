@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -75,15 +76,15 @@ public class TableInteractionListenerProxyTest {
         });
         listener.newLink(new HashMap<String, String>() {
             {
-                put(StudyImporterForMetaTable.TARGET_TAXON_GENUS, "Donald");
-                put(StudyImporterForMetaTable.TARGET_TAXON_SPECIFIC_EPITHET, "duck");
+                put(TaxonUtil.TARGET_TAXON_GENUS, "Donald");
+                put(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET, "duck");
             }
         });
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Donald duck"));
-        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_PATH_NAMES), is("genus | species"));
-        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_PATH), is("Donald | Donald duck"));
+        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Donald duck"));
+        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_PATH_NAMES), is("genus | species"));
+        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_PATH), is("Donald | Donald duck"));
     }
 
 }

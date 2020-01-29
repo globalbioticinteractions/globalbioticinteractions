@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.service.TaxonUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
@@ -150,8 +151,8 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
     public static Map<String, String> parseInteraction(JsonNode singleInteraction, Map<String, Map<String, String>> nodeMap, Map<String, Map<String, String>> networkMap) throws StudyImporterException {
         Map<String, String> interaction = new TreeMap<>();
 
-        addNameLabel(nodeMap, singleInteraction, interaction, "node_from", StudyImporterForTSV.SOURCE_TAXON_NAME);
-        addNameLabel(nodeMap, singleInteraction, interaction, "node_to", StudyImporterForTSV.TARGET_TAXON_NAME);
+        addNameLabel(nodeMap, singleInteraction, interaction, "node_from", TaxonUtil.SOURCE_TAXON_NAME);
+        addNameLabel(nodeMap, singleInteraction, interaction, "node_to", TaxonUtil.TARGET_TAXON_NAME);
 
         if (hasNonEmptyValueFor(singleInteraction, "date")) {
             interaction.put(StudyImporterForMetaTable.EVENT_DATE, singleInteraction.get("date").asText());

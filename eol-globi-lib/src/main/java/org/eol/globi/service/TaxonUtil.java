@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.Version;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.Taxon;
@@ -12,16 +13,110 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+import static org.eol.globi.domain.PropertyAndValueDictionary.COMMON_NAMES;
+import static org.eol.globi.domain.PropertyAndValueDictionary.EXTERNAL_ID;
 import static org.eol.globi.domain.PropertyAndValueDictionary.EXTERNAL_URL;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NAME;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NAME_SOURCE;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NAME_SOURCE_ACCESSED_AT;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NAME_SOURCE_URL;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NO_MATCH;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NO_NAME;
+import static org.eol.globi.domain.PropertyAndValueDictionary.PATH;
+import static org.eol.globi.domain.PropertyAndValueDictionary.PATH_IDS;
+import static org.eol.globi.domain.PropertyAndValueDictionary.PATH_NAMES;
+import static org.eol.globi.domain.PropertyAndValueDictionary.RANK;
+import static org.eol.globi.domain.PropertyAndValueDictionary.STATUS_ID;
+import static org.eol.globi.domain.PropertyAndValueDictionary.STATUS_LABEL;
+import static org.eol.globi.domain.PropertyAndValueDictionary.THUMBNAIL_URL;
 
 public class TaxonUtil {
+    public static final String SOURCE_TAXON = "sourceTaxon";
+    public static final String SOURCE_TAXON_KINGDOM = SOURCE_TAXON + "Kingdom";
+    public static final String SOURCE_TAXON_PHYLUM = SOURCE_TAXON + "Phylum";
+    public static final String SOURCE_TAXON_CLASS = SOURCE_TAXON + "Class";
+    public static final String SOURCE_TAXON_SUBCLASS = SOURCE_TAXON + "Subclass";
+    public static final String SOURCE_TAXON_SUPERORDER = SOURCE_TAXON + "Superorder";
+    public static final String SOURCE_TAXON_ORDER = SOURCE_TAXON + "Order";
+    public static final String SOURCE_TAXON_SUBORDER = SOURCE_TAXON + "Suborder";
+    public static final String SOURCE_TAXON_INFRAORDER = SOURCE_TAXON + "Infraorder";
+    public static final String SOURCE_TAXON_PARVORDER = SOURCE_TAXON + "Parvorder";
+    public static final String SOURCE_TAXON_SUPERFAMILY = SOURCE_TAXON + "Superfamily";
+    public static final String SOURCE_TAXON_FAMILY = SOURCE_TAXON + "Family";
+    public static final String SOURCE_TAXON_SUBFAMILY = SOURCE_TAXON + "Subfamily";
+    public static final String SOURCE_TAXON_GENUS = SOURCE_TAXON + "Genus";
+    public static final String SOURCE_TAXON_SUBGENUS = SOURCE_TAXON + "Subgenus";
+    public static final String SOURCE_TAXON_SPECIFIC_EPITHET = SOURCE_TAXON + "SpecificEpithet";
+    public static final String SOURCE_TAXON_SUBSPECIFIC_EPITHET = SOURCE_TAXON + "SubspecificEpithet";
+    public static final List<String> SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
+            SOURCE_TAXON_SUBGENUS,
+            SOURCE_TAXON_GENUS,
+            SOURCE_TAXON_SUBFAMILY,
+            SOURCE_TAXON_FAMILY,
+            SOURCE_TAXON_SUPERFAMILY,
+            SOURCE_TAXON_PARVORDER,
+            SOURCE_TAXON_INFRAORDER,
+            SOURCE_TAXON_SUBORDER,
+            SOURCE_TAXON_ORDER,
+            SOURCE_TAXON_SUPERORDER,
+            SOURCE_TAXON_SUBCLASS,
+            SOURCE_TAXON_CLASS,
+            SOURCE_TAXON_PHYLUM,
+            SOURCE_TAXON_KINGDOM);
+
+    public static final String TARGET_TAXON = "targetTaxon";
+    public static final String TARGET_TAXON_KINGDOM = TARGET_TAXON + "Kingdom";
+    public static final String TARGET_TAXON_PHYLUM = TARGET_TAXON + "Phylum";
+    public static final String TARGET_TAXON_CLASS = TARGET_TAXON + "Class";
+    public static final String TARGET_TAXON_SUBCLASS = TARGET_TAXON + "Subclass";
+    public static final String TARGET_TAXON_SUPERORDER = TARGET_TAXON + "Superorder";
+    public static final String TARGET_TAXON_ORDER = TARGET_TAXON + "Order";
+    public static final String TARGET_TAXON_SUBORDER = TARGET_TAXON + "Suborder";
+    public static final String TARGET_TAXON_INFRAORDER = TARGET_TAXON + "Infraorder";
+    public static final String TARGET_TAXON_PARVORDER = TARGET_TAXON + "Parvorder";
+    public static final String TARGET_TAXON_SUPERFAMILY = TARGET_TAXON + "Superfamily";
+    public static final String TARGET_TAXON_FAMILY = TARGET_TAXON + "Family";
+    public static final String TARGET_TAXON_SUBFAMILY = TARGET_TAXON + "Subfamily";
+    public static final String TARGET_TAXON_GENUS = TARGET_TAXON + "Genus";
+    public static final String TARGET_TAXON_SUBGENUS = TARGET_TAXON + "Subgenus";
+    public static final String TARGET_TAXON_SPECIFIC_EPITHET = TARGET_TAXON + "SpecificEpithet";
+    public static final String TARGET_TAXON_SUBSPECIFIC_EPITHET = TARGET_TAXON + "SubspecificEpithet";
+
+    public static final List<String> TARGET_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
+            TARGET_TAXON_SUBGENUS,
+            TARGET_TAXON_GENUS,
+            TARGET_TAXON_SUBFAMILY,
+            TARGET_TAXON_FAMILY,
+            TARGET_TAXON_SUPERFAMILY,
+            TARGET_TAXON_PARVORDER,
+            TARGET_TAXON_INFRAORDER,
+            TARGET_TAXON_SUBORDER,
+            TARGET_TAXON_ORDER,
+            TARGET_TAXON_SUPERORDER,
+            TARGET_TAXON_SUBCLASS,
+            TARGET_TAXON_CLASS,
+            TARGET_TAXON_PHYLUM,
+            TARGET_TAXON_KINGDOM);
+    public static final String SOURCE_TAXON_NAME = "sourceTaxonName";
+    public static final String SOURCE_TAXON_ID = "sourceTaxonId";
+    public static final String SOURCE_TAXON_PATH = "sourceTaxonPath";
+    public static final String SOURCE_TAXON_PATH_NAMES = "sourceTaxonPathNames";
+    public static final String TARGET_TAXON_PATH = "targetTaxonPath";
+    public static final String TARGET_TAXON_PATH_NAMES = "targetTaxonPathNames";
+    public static final String TARGET_TAXON_ID = "targetTaxonId";
+    public static final String TARGET_TAXON_NAME = "targetTaxonName";
+
     public static Map<String, String> taxonToMap(Taxon taxon) {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, taxon.getName());
@@ -254,5 +349,140 @@ public class TaxonUtil {
             }
         };
         return enrichedProperties;
+    }
+
+    public static String generateTargetTaxonPath(Map<String, String> properties) {
+        return generateTaxonPath(properties, getAllTargetTaxonRanks(), TARGET_TAXON_GENUS, TARGET_TAXON_SPECIFIC_EPITHET, TARGET_TAXON_SUBSPECIFIC_EPITHET);
+    }
+
+    public static String generateTaxonPath(Map<String, String> properties,
+                                           List<String> allRanks,
+                                           String genusRank,
+                                           String specificEpithetRank,
+                                           String subspecificEpithetRank) {
+        Stream<String> rankValues = allRanks
+                .stream()
+                .map(properties::get)
+                .filter(StringUtils::isNotBlank);
+
+        String species = StringUtils.trim(generateSpeciesName(properties, genusRank, specificEpithetRank, subspecificEpithetRank));
+
+        Stream<String> ranksWithSpecies = StringUtils.isBlank(species) ? rankValues : Stream.concat(rankValues, Stream.of(species));
+        return ranksWithSpecies
+                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
+    }
+
+    public static String generateTaxonPathNames(Map<String, String> properties,
+                                                List<String> allRanks,
+                                                String keyPrefix,
+                                                String genusRank,
+                                                String specificEpithetRank,
+                                                String subspecificEpithetRank) {
+        Stream<String> rankLabels = allRanks
+                .stream()
+                .map(x -> Pair.of(x, properties.get(x)))
+                .filter(x -> StringUtils.isNotBlank(x.getValue()))
+                .map(x -> StringUtils.lowerCase(StringUtils.replace(x.getKey(), keyPrefix, "")));
+
+        String species = StringUtils.trim(generateSpeciesName(properties, genusRank, specificEpithetRank, subspecificEpithetRank));
+        Stream<String> ranksWithSpecies = StringUtils.isBlank(species)
+                ? rankLabels
+                : Stream.concat(rankLabels, Stream.of("species"));
+
+        return ranksWithSpecies
+                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
+    }
+
+    public final static List<String> getAllTargetTaxonRanks() {
+        ArrayList<String> allRanks = new ArrayList<>(TARGET_TAXON_HIGHER_ORDER_RANK_KEYS);
+        Collections.reverse(allRanks);
+        return allRanks;
+    }
+
+    public final static List<String> getAllSourceTaxonRanks() {
+        ArrayList<String> allRanks = new ArrayList<>(SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS);
+        Collections.reverse(allRanks);
+        return allRanks;
+    }
+
+    public static String generateTargetTaxonPathNames(Map<String, String> properties) {
+        return generateTaxonPathNames(properties, getAllTargetTaxonRanks(), "targetTaxon", TARGET_TAXON_GENUS, TARGET_TAXON_SPECIFIC_EPITHET, TARGET_TAXON_SUBSPECIFIC_EPITHET);
+    }
+
+    public static String generateSourceTaxonPath(Map<String, String> properties) {
+        return generateTaxonPath(properties, getAllSourceTaxonRanks(), SOURCE_TAXON_GENUS, SOURCE_TAXON_SPECIFIC_EPITHET, SOURCE_TAXON_SUBSPECIFIC_EPITHET);
+    }
+
+    public static String generateSourceTaxonPathNames(Map<String, String> properties) {
+        return generateTaxonPathNames(properties, getAllSourceTaxonRanks(), "sourceTaxon", SOURCE_TAXON_GENUS, SOURCE_TAXON_SPECIFIC_EPITHET, SOURCE_TAXON_SUBSPECIFIC_EPITHET);
+    }
+
+    public static String generateTaxonName(Map<String, String> properties, String genusKey, String speciesKey, String subSpeciesKey, List<String> higherOrderRankKeys) {
+        String taxonName = generateSpeciesName(properties, genusKey, speciesKey, subSpeciesKey);
+
+        if (StringUtils.isBlank(taxonName)) {
+            for (String rankName : higherOrderRankKeys) {
+                final String name = properties.get(rankName);
+                if (StringUtils.isNotBlank(name)) {
+                    taxonName = name;
+                    break;
+                }
+            }
+        }
+        return taxonName;
+    }
+
+    public static String generateSpeciesName(Map<String, String> properties, String genusKey, String speciesKey, String subSpeciesKey) {
+        String speciesName = null;
+        if (properties.containsKey(genusKey) && properties.containsKey(speciesKey)) {
+            List<String> speciesNameParts = Arrays.asList(
+                    properties.get(genusKey),
+                    properties.get(speciesKey),
+                    properties.get(subSpeciesKey));
+            speciesName = StringUtils.trim(StringUtils.join(speciesNameParts, " "));
+        }
+        return speciesName;
+    }
+
+    public static String generateSourceTaxonName(Map<String, String> properties) {
+        return generateTaxonName(properties,
+                SOURCE_TAXON_GENUS,
+                SOURCE_TAXON_SPECIFIC_EPITHET,
+                SOURCE_TAXON_SUBSPECIFIC_EPITHET,
+                SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS);
+    }
+
+    public static String generateTargetTaxonName(Map<String, String> properties) {
+        return generateTaxonName(properties,
+                TARGET_TAXON_GENUS,
+                TARGET_TAXON_SPECIFIC_EPITHET,
+                TARGET_TAXON_SUBSPECIFIC_EPITHET,
+                TARGET_TAXON_HIGHER_ORDER_RANK_KEYS);
+    }
+
+    public static void enrichTaxonNames(Map<String, String> properties) {
+        if (!properties.containsKey(SOURCE_TAXON_NAME)) {
+            properties.put(SOURCE_TAXON_NAME, generateSourceTaxonName(properties));
+        }
+
+        if (!properties.containsKey(SOURCE_TAXON_PATH)) {
+            String path = generateSourceTaxonPath(properties);
+            if (StringUtils.isNotBlank(path)) {
+                properties.put(SOURCE_TAXON_PATH, path);
+                properties.put(SOURCE_TAXON_PATH_NAMES, generateSourceTaxonPathNames(properties));
+            }
+        }
+
+        if (!properties.containsKey(TARGET_TAXON_NAME)) {
+            properties.put(TARGET_TAXON_NAME, generateTargetTaxonName(properties));
+        }
+
+        if (!properties.containsKey(TARGET_TAXON_PATH)) {
+            String path = generateTargetTaxonPath(properties);
+            if (StringUtils.isNotBlank(path)) {
+                properties.put(TARGET_TAXON_PATH, path);
+                properties.put(TARGET_TAXON_PATH_NAMES, generateTargetTaxonPathNames(properties));
+            }
+        }
     }
 }

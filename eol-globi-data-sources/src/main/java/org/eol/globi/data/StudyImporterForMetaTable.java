@@ -3,13 +3,13 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
@@ -21,86 +21,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 
 public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
-    public static final String SOURCE_TAXON = "sourceTaxon";
-    public static final String SOURCE_TAXON_SUBSPECIFIC_EPITHET = SOURCE_TAXON + "SubspecificEpithet";
-    public static final String SOURCE_TAXON_SPECIFIC_EPITHET = SOURCE_TAXON + "SpecificEpithet";
-    public static final String SOURCE_TAXON_SUBGENUS = SOURCE_TAXON + "Subgenus";
-    public static final String SOURCE_TAXON_GENUS = SOURCE_TAXON + "Genus";
-    public static final String SOURCE_TAXON_SUBFAMILY = SOURCE_TAXON + "Subfamily";
-    public static final String SOURCE_TAXON_FAMILY = SOURCE_TAXON + "Family";
-    public static final String SOURCE_TAXON_SUPERFAMILY = SOURCE_TAXON + "Superfamily";
-    public static final String SOURCE_TAXON_PARVORDER = SOURCE_TAXON + "Parvorder";
-    public static final String SOURCE_TAXON_INFRAORDER = SOURCE_TAXON + "Infraorder";
-    public static final String SOURCE_TAXON_SUBORDER = SOURCE_TAXON + "Suborder";
-    public static final String SOURCE_TAXON_ORDER = SOURCE_TAXON + "Order";
-    public static final String SOURCE_TAXON_SUPERORDER = SOURCE_TAXON + "Superorder";
-    public static final String SOURCE_TAXON_SUBCLASS = SOURCE_TAXON + "Subclass";
-    public static final String SOURCE_TAXON_CLASS = SOURCE_TAXON + "Class";
-    public static final String SOURCE_TAXON_PHYLUM = SOURCE_TAXON + "Phylum";
-    public static final String SOURCE_TAXON_KINGDOM = SOURCE_TAXON + "Kingdom";
-    public static final List<String> SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
-            StudyImporterForMetaTable.SOURCE_TAXON_SUBGENUS,
-            StudyImporterForMetaTable.SOURCE_TAXON_GENUS,
-            StudyImporterForMetaTable.SOURCE_TAXON_SUBFAMILY,
-            StudyImporterForMetaTable.SOURCE_TAXON_FAMILY,
-            StudyImporterForMetaTable.SOURCE_TAXON_SUPERFAMILY,
-            StudyImporterForMetaTable.SOURCE_TAXON_PARVORDER,
-            StudyImporterForMetaTable.SOURCE_TAXON_INFRAORDER,
-            StudyImporterForMetaTable.SOURCE_TAXON_SUBORDER,
-            StudyImporterForMetaTable.SOURCE_TAXON_ORDER,
-            StudyImporterForMetaTable.SOURCE_TAXON_SUPERORDER,
-            StudyImporterForMetaTable.SOURCE_TAXON_SUBCLASS,
-            StudyImporterForMetaTable.SOURCE_TAXON_CLASS,
-            StudyImporterForMetaTable.SOURCE_TAXON_PHYLUM,
-            StudyImporterForMetaTable.SOURCE_TAXON_KINGDOM);
-
-    public static final String TARGET_TAXON = "targetTaxon";
-    public static final String TARGET_TAXON_SUBSPECIFIC_EPITHET = TARGET_TAXON + "SubspecificEpithet";
-    public static final String TARGET_TAXON_SPECIFIC_EPITHET = TARGET_TAXON + "SpecificEpithet";
-    public static final String TARGET_TAXON_SUBGENUS = TARGET_TAXON + "Subgenus";
-    public static final String TARGET_TAXON_GENUS = TARGET_TAXON + "Genus";
-    public static final String TARGET_TAXON_SUBFAMILY = TARGET_TAXON + "Subfamily";
-    public static final String TARGET_TAXON_FAMILY = TARGET_TAXON + "Family";
-    public static final String TARGET_TAXON_SUPERFAMILY = TARGET_TAXON + "Superfamily";
-    public static final String TARGET_TAXON_PARVORDER = TARGET_TAXON + "Parvorder";
-    public static final String TARGET_TAXON_INFRAORDER = TARGET_TAXON + "Infraorder";
-    public static final String TARGET_TAXON_SUBORDER = TARGET_TAXON + "Suborder";
-    public static final String TARGET_TAXON_ORDER = TARGET_TAXON + "Order";
-    public static final String TARGET_TAXON_SUPERORDER = TARGET_TAXON + "Superorder";
-    public static final String TARGET_TAXON_SUBCLASS = TARGET_TAXON + "Subclass";
-    public static final String TARGET_TAXON_CLASS = TARGET_TAXON + "Class";
-    public static final String TARGET_TAXON_PHYLUM = TARGET_TAXON + "Phylum";
-    public static final String TARGET_TAXON_KINGDOM = TARGET_TAXON + "Kingdom";
-    public static final List<String> TARGET_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
-            StudyImporterForMetaTable.TARGET_TAXON_SUBGENUS,
-            StudyImporterForMetaTable.TARGET_TAXON_GENUS,
-            StudyImporterForMetaTable.TARGET_TAXON_SUBFAMILY,
-            StudyImporterForMetaTable.TARGET_TAXON_FAMILY,
-            StudyImporterForMetaTable.TARGET_TAXON_SUPERFAMILY,
-            StudyImporterForMetaTable.TARGET_TAXON_PARVORDER,
-            StudyImporterForMetaTable.TARGET_TAXON_INFRAORDER,
-            StudyImporterForMetaTable.TARGET_TAXON_SUBORDER,
-            StudyImporterForMetaTable.TARGET_TAXON_ORDER,
-            StudyImporterForMetaTable.TARGET_TAXON_SUPERORDER,
-            StudyImporterForMetaTable.TARGET_TAXON_SUBCLASS,
-            StudyImporterForMetaTable.TARGET_TAXON_CLASS,
-            StudyImporterForMetaTable.TARGET_TAXON_PHYLUM,
-            StudyImporterForMetaTable.TARGET_TAXON_KINGDOM);
     public static final String AUTHOR = "author";
     public static final String TITLE = "title";
     public static final String YEAR = "year";
@@ -248,115 +179,6 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         append(citation, value, continuation, "");
     }
 
-
-    public static String generateSourceTaxonName(Map<String, String> properties) {
-        return generateTaxonName(properties,
-                StudyImporterForMetaTable.SOURCE_TAXON_GENUS,
-                StudyImporterForMetaTable.SOURCE_TAXON_SPECIFIC_EPITHET,
-                StudyImporterForMetaTable.SOURCE_TAXON_SUBSPECIFIC_EPITHET,
-                SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS);
-    }
-
-    public static String generateTargetTaxonName(Map<String, String> properties) {
-        return generateTaxonName(properties,
-                StudyImporterForMetaTable.TARGET_TAXON_GENUS,
-                StudyImporterForMetaTable.TARGET_TAXON_SPECIFIC_EPITHET,
-                StudyImporterForMetaTable.TARGET_TAXON_SUBSPECIFIC_EPITHET,
-                TARGET_TAXON_HIGHER_ORDER_RANK_KEYS);
-    }
-
-    public static String generateTargetTaxonPath(Map<String, String> properties) {
-        return generateTaxonPath(properties, getAllTargetTaxonRanks(), TARGET_TAXON_GENUS, TARGET_TAXON_SPECIFIC_EPITHET, TARGET_TAXON_SUBSPECIFIC_EPITHET);
-    }
-
-    public static String generateTaxonPath(Map<String, String> properties,
-                                           List<String> allRanks,
-                                           String genusRank,
-                                           String specificEpithetRank,
-                                           String subspecificEpithetRank) {
-        Stream<String> rankValues = allRanks
-                .stream()
-                .map(properties::get)
-                .filter(StringUtils::isNotBlank);
-
-        String species = StringUtils.trim(generateSpeciesName(properties, genusRank, specificEpithetRank, subspecificEpithetRank));
-
-        Stream<String> ranksWithSpecies = StringUtils.isBlank(species) ? rankValues : Stream.concat(rankValues, Stream.of(species));
-        return ranksWithSpecies
-                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
-    }
-
-    public static String generateTaxonPathNames(Map<String, String> properties,
-                                                List<String> allRanks,
-                                                String keyPrefix,
-                                                String genusRank,
-                                                String specificEpithetRank,
-                                                String subspecificEpithetRank) {
-        Stream<String> rankLabels = allRanks
-                .stream()
-                .map(x -> Pair.of(x, properties.get(x)))
-                .filter(x -> StringUtils.isNotBlank(x.getValue()))
-                .map(x -> StringUtils.lowerCase(StringUtils.replace(x.getKey(), keyPrefix, "")));
-
-        String species = StringUtils.trim(generateSpeciesName(properties, genusRank, specificEpithetRank, subspecificEpithetRank));
-        Stream<String> ranksWithSpecies = StringUtils.isBlank(species)
-                ? rankLabels
-                : Stream.concat(rankLabels, Stream.of("species"));
-
-        return ranksWithSpecies
-                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
-    }
-
-    public final static List<String> getAllTargetTaxonRanks() {
-        ArrayList<String> allRanks = new ArrayList<>(TARGET_TAXON_HIGHER_ORDER_RANK_KEYS);
-        Collections.reverse(allRanks);
-        return allRanks;
-    }
-
-    public final static List<String> getAllSourceTaxonRanks() {
-        ArrayList<String> allRanks = new ArrayList<>(SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS);
-        Collections.reverse(allRanks);
-        return allRanks;
-    }
-
-    public static String generateTargetTaxonPathNames(Map<String, String> properties) {
-        return generateTaxonPathNames(properties, getAllTargetTaxonRanks(), "targetTaxon", TARGET_TAXON_GENUS, TARGET_TAXON_SPECIFIC_EPITHET, TARGET_TAXON_SUBSPECIFIC_EPITHET);
-    }
-
-    public static String generateSourceTaxonPath(Map<String, String> properties) {
-        return generateTaxonPath(properties, getAllSourceTaxonRanks(), SOURCE_TAXON_GENUS, SOURCE_TAXON_SPECIFIC_EPITHET, SOURCE_TAXON_SUBSPECIFIC_EPITHET);
-    }
-
-    public static String generateSourceTaxonPathNames(Map<String, String> properties) {
-        return generateTaxonPathNames(properties, getAllSourceTaxonRanks(), "sourceTaxon", SOURCE_TAXON_GENUS, SOURCE_TAXON_SPECIFIC_EPITHET, SOURCE_TAXON_SUBSPECIFIC_EPITHET);
-    }
-
-    public static String generateTaxonName(Map<String, String> properties, String genusKey, String speciesKey, String subSpeciesKey, List<String> higherOrderRankKeys) {
-        String taxonName = generateSpeciesName(properties, genusKey, speciesKey, subSpeciesKey);
-
-        if (StringUtils.isBlank(taxonName)) {
-            for (String rankName : higherOrderRankKeys) {
-                final String name = properties.get(rankName);
-                if (StringUtils.isNotBlank(name)) {
-                    taxonName = name;
-                    break;
-                }
-            }
-        }
-        return taxonName;
-    }
-
-    public static String generateSpeciesName(Map<String, String> properties, String genusKey, String speciesKey, String subSpeciesKey) {
-        String speciesName = null;
-        if (properties.containsKey(genusKey) && properties.containsKey(speciesKey)) {
-            List<String> speciesNameParts = Arrays.asList(
-                    properties.get(genusKey),
-                    properties.get(speciesKey),
-                    properties.get(subSpeciesKey));
-            speciesName = StringUtils.trim(StringUtils.join(speciesNameParts, " "));
-        }
-        return speciesName;
-    }
 
     public static InteractType generateInteractionType(Map<String, String> properties) {
         final String interactionTypeName = properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME);

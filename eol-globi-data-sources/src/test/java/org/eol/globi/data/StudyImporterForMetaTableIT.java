@@ -5,6 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
@@ -105,10 +106,10 @@ public class StudyImporterForMetaTableIT {
         final Map<String, String> firstLine = links.get(0);
         assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
-        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID), is(nullValue()));
-        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Rocks"));
-        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NODC:8791030401"));
-        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Pacific cod Gadus macrocephalus"));
+        assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_ID), is(nullValue()));
+        assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_NAME), is("Rocks"));
+        assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_ID), is("NODC:8791030401"));
+        assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_NAME), is("Pacific cod Gadus macrocephalus"));
         assertThat(firstLine.get(StudyImporterForMetaTable.EVENT_DATE), startsWith("1994-07-11"));
         assertThat(firstLine.get(StudyImporterForMetaTable.LATITUDE), is("51.43"));
         assertThat(firstLine.get(StudyImporterForMetaTable.LONGITUDE), is("178.81999999999999"));
@@ -141,10 +142,10 @@ public class StudyImporterForMetaTableIT {
         final Map<String, String> firstLine = links.get(0);
         assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002556"));
         assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("pathogenOf"));
-        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID), is("NCBITaxon:4081"));
-        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Solanum lycopersicum (related: tomato)"));
-        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NCBITaxon:5499"));
-        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Passalora fulva"));
+        assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_ID), is("NCBITaxon:4081"));
+        assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_NAME), is("Solanum lycopersicum (related: tomato)"));
+        assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_ID), is("NCBITaxon:5499"));
+        assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_NAME), is("Passalora fulva"));
         assertThat(firstLine.get(StudyImporterForTSV.REFERENCE_URL), is("https://www.ncbi.nlm.nih.gov/pubmed/1799694"));
 
         assertThat(links.get(3).get(StudyImporterForTSV.REFERENCE_DOI), is("10.1073/pnas.232568599"));
@@ -165,10 +166,10 @@ public class StudyImporterForMetaTableIT {
         final Map<String, String> firstLine = links.get(0);
         assertThat(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_ID), startsWith("http://purl.obolibrary.org/obo/RO_"));
         assertNotNull(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME));
-        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID), is("NCBITaxon:13547"));
-        assertNotNull(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME));
-        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NCBITaxon:1441629"));
-        assertNotNull(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME));
+        assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_ID), is("NCBITaxon:13547"));
+        assertNotNull(firstLine.get(TaxonUtil.TARGET_TAXON_NAME));
+        assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_ID), is("NCBITaxon:1441629"));
+        assertNotNull(firstLine.get(TaxonUtil.SOURCE_TAXON_NAME));
         assertNotNull(firstLine.get(StudyImporterForTSV.REFERENCE_URL));
         assertNotNull(firstLine.get(StudyImporterForTSV.REFERENCE_CITATION));
     }
@@ -188,8 +189,8 @@ public class StudyImporterForMetaTableIT {
         assertNotNull(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME));
         assertThat(firstLine.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
         assertThat(firstLine.get(StudyImporterForTSV.REFERENCE_DOI), is(not(nullValue())));
-        assertThat(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(not(nullValue())));
-        assertThat(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is(not(nullValue())));
+        assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
+        assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_NAME), is(not(nullValue())));
 
     }
 
@@ -215,10 +216,10 @@ public class StudyImporterForMetaTableIT {
 
         for (Map<String, String> firstLine : links) {
             assertNotNull(firstLine.get(StudyImporterForTSV.INTERACTION_TYPE_NAME));
-            assertNotNull(firstLine.get(StudyImporterForTSV.TARGET_TAXON_ID));
-            assertNotNull(firstLine.get(StudyImporterForTSV.TARGET_TAXON_NAME));
-            assertNotNull(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_ID));
-            assertNotNull(firstLine.get(StudyImporterForTSV.SOURCE_TAXON_NAME));
+            assertNotNull(firstLine.get(TaxonUtil.TARGET_TAXON_ID));
+            assertNotNull(firstLine.get(TaxonUtil.TARGET_TAXON_NAME));
+            assertNotNull(firstLine.get(TaxonUtil.SOURCE_TAXON_ID));
+            assertNotNull(firstLine.get(TaxonUtil.SOURCE_TAXON_NAME));
         }
     }
 

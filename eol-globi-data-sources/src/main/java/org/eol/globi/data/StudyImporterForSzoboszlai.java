@@ -37,11 +37,11 @@ import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
 public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
 

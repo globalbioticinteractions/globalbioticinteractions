@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.Dataset;
+import org.eol.globi.service.TaxonUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.util.HashMap;
@@ -28,36 +29,13 @@ public class TableInteractionListenerProxy implements InteractionListener {
                 final String referenceCitation = StringUtils.isBlank(properties.get(StudyImporterForTSV.REFERENCE_CITATION)) ? StudyImporterForMetaTable.generateReferenceCitation(properties) : properties.get(StudyImporterForTSV.REFERENCE_CITATION);
                 put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
                 put(StudyImporterForTSV.REFERENCE_CITATION, StringUtils.isBlank(referenceCitation) ? dataSourceCitation : referenceCitation);
-
-                if (!properties.containsKey(StudyImporterForTSV.SOURCE_TAXON_NAME)) {
-                    put(StudyImporterForTSV.SOURCE_TAXON_NAME, StudyImporterForMetaTable.generateSourceTaxonName(properties));
-                }
-
-                if (!properties.containsKey(StudyImporterForTSV.SOURCE_TAXON_PATH)) {
-                    String path = StudyImporterForMetaTable.generateSourceTaxonPath(properties);
-                    if (StringUtils.isNotBlank(path)) {
-                        put(StudyImporterForTSV.SOURCE_TAXON_PATH, path);
-                        put(StudyImporterForTSV.SOURCE_TAXON_PATH_NAMES, StudyImporterForMetaTable.generateSourceTaxonPathNames(properties));
-                    }
-                }
-
-                if (!properties.containsKey(StudyImporterForTSV.TARGET_TAXON_NAME)) {
-                    put(StudyImporterForTSV.TARGET_TAXON_NAME, StudyImporterForMetaTable.generateTargetTaxonName(properties));
-                }
-
-                if (!properties.containsKey(StudyImporterForTSV.TARGET_TAXON_PATH)) {
-                    String path = StudyImporterForMetaTable.generateTargetTaxonPath(properties);
-                    if (StringUtils.isNotBlank(path)) {
-                        put(StudyImporterForTSV.TARGET_TAXON_PATH, path);
-                        put(StudyImporterForTSV.TARGET_TAXON_PATH_NAMES, StudyImporterForMetaTable.generateTargetTaxonPathNames(properties));
-                    }
-                }
+                TaxonUtil.enrichTaxonNames(properties);
             }
-
         };
+
         InteractType type = StudyImporterForMetaTable.generateInteractionType(enrichedProperties);
         StudyImporterForMetaTable.setInteractionType(enrichedProperties, type);
-
         interactionListener.newLink(enrichedProperties);
     }
+
 }

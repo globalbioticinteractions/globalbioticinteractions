@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
@@ -76,8 +77,8 @@ public class StudyImporterForGlobalWebDb extends StudyImporterWithListener {
                         String targetTaxon = parser.getValueByLabel(headerColumns[0]);
                         if (NumberUtils.isDigits(value) && Integer.parseInt(value) > 0) {
                             listener.newLink(new TreeMap<String, String>(props) {{
-                                put(StudyImporterForTSV.SOURCE_TAXON_NAME, org.apache.commons.lang.StringUtils.trim(sourceTaxon));
-                                put(StudyImporterForTSV.TARGET_TAXON_NAME, org.apache.commons.lang.StringUtils.trim(targetTaxon));
+                                put(TaxonUtil.SOURCE_TAXON_NAME, org.apache.commons.lang.StringUtils.trim(sourceTaxon));
+                                put(TaxonUtil.TARGET_TAXON_NAME, org.apache.commons.lang.StringUtils.trim(targetTaxon));
                             }});
                         }
                     }

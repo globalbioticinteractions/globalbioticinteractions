@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -55,15 +56,15 @@ public class StudyImporterForWoodTest extends GraphDBTestCase {
         resolveNames();
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);
-        assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("ITIS:93294"));
-        assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Amphipoda"));
-        assertThat(firstLink.get(StudyImporterForTSV.TARGET_TAXON_ID), is("ITIS:10824"));
-        assertThat(firstLink.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Pilayella littoralis"));
+        assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_ID), is("ITIS:93294"));
+        assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_NAME), is("Amphipoda"));
+        assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_ID), is("ITIS:10824"));
+        assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_NAME), is("Pilayella littoralis"));
         assertStaticInfo(firstLink);
 
         Map<String, String> secondLink = maps.get(1);
-        assertThat(secondLink.get(StudyImporterForTSV.SOURCE_TAXON_ID), is(nullValue()));
-        assertThat(secondLink.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Phytoplankton complex"));
+        assertThat(secondLink.get(TaxonUtil.SOURCE_TAXON_ID), is(nullValue()));
+        assertThat(secondLink.get(TaxonUtil.SOURCE_TAXON_NAME), is("Phytoplankton complex"));
         assertStaticInfo(secondLink);
     }
 

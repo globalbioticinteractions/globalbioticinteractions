@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.service.DatasetUtil;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
@@ -41,9 +41,9 @@ public class StudyImporterForGray extends StudyImporterWithListener {
 
     private Map<String, String> importLink(LabeledCSVParser parser) {
         Map<String, String> link = new TreeMap<>();
-        link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("consumer"));
+        link.put(TaxonUtil.SOURCE_TAXON_NAME, parser.getValueByLabel("consumer"));
         link.put(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, nonNAValueOrNull(parser.getValueByLabel("consumer.lifestage")));
-        link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("resource"));
+        link.put(TaxonUtil.TARGET_TAXON_NAME, parser.getValueByLabel("resource"));
         link.put(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME, nonNAValueOrNull(parser.getValueByLabel("resource.lifestage")));
         link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
         link.put(StudyImporterForTSV.REFERENCE_CITATION, parser.getValueByLabel("full.source"));

@@ -17,6 +17,7 @@ import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
 import org.junit.Test;
 import org.mapdb.DBMaker;
@@ -248,8 +249,8 @@ public class StudyImporterForRSSTest {
                     put(StudyImporterForTSV.SOURCE_LIFE_STAGE_ID, "lifeStageId");
                     put(StudyImporterForTSV.SOURCE_BODY_PART_NAME, "bodyPartName");
                     put(StudyImporterForTSV.SOURCE_BODY_PART_ID, "bodyPartId");
-                    put(StudyImporterForTSV.SOURCE_TAXON_NAME, "taxonName");
-                    put(StudyImporterForTSV.SOURCE_TAXON_ID, "taxonId");
+                    put(TaxonUtil.SOURCE_TAXON_NAME, "taxonName");
+                    put(TaxonUtil.SOURCE_TAXON_ID, "taxonId");
                 }
             });
         }};
@@ -261,8 +262,8 @@ public class StudyImporterForRSSTest {
 
         assertThat(receivedLinks.size(), is(1));
         Map<String, String> received = receivedLinks.get(0);
-        assertThat(received.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("taxonName"));
-        assertThat(received.get(StudyImporterForTSV.TARGET_TAXON_ID), is("taxonId"));
+        assertThat(received.get(TaxonUtil.TARGET_TAXON_NAME), is("taxonName"));
+        assertThat(received.get(TaxonUtil.TARGET_TAXON_ID), is("taxonId"));
         assertThat(received.get(StudyImporterForTSV.TARGET_BODY_PART_NAME), is("bodyPartName"));
         assertThat(received.get(StudyImporterForTSV.TARGET_BODY_PART_ID), is("bodyPartId"));
         assertThat(received.get(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME), is("lifeStageName"));

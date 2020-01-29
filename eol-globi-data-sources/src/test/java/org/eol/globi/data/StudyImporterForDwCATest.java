@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
 import org.gbif.dwc.Archive;
 import org.globalbioticinteractions.dataset.DwCAUtil;
@@ -28,7 +29,7 @@ import static org.eol.globi.data.StudyImporterForDwCA.importResourceRelationExte
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedOccurrences;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedTaxa;
 import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicProperties;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_FAMILY;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -40,7 +41,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class StudyImporterForDwCATest {
-
 
     @Test
     public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
@@ -104,12 +104,12 @@ public class StudyImporterForDwCATest {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-resource-relation.zip");
         AtomicInteger recordCounter = new AtomicInteger(0);
         assertImportsSomething(resource.toURI(), recordCounter,
-                StudyImporterForTSV.SOURCE_TAXON_ID,
-                StudyImporterForTSV.SOURCE_TAXON_NAME,
+                TaxonUtil.SOURCE_TAXON_ID,
+                TaxonUtil.SOURCE_TAXON_NAME,
                 INTERACTION_TYPE_ID,
                 StudyImporterForTSV.INTERACTION_TYPE_NAME,
-                StudyImporterForTSV.TARGET_TAXON_ID,
-                StudyImporterForTSV.TARGET_TAXON_NAME);
+                TaxonUtil.TARGET_TAXON_ID,
+                TaxonUtil.TARGET_TAXON_NAME);
         assertThat(recordCounter.get(), is(677));
     }
 
@@ -171,8 +171,8 @@ public class StudyImporterForDwCATest {
                 String associatedTaxa = properties.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
                 String dynamicProperties = properties.get("http://rs.tdwg.org/dwc/terms/dynamicProperties");
                 assertThat(StringUtils.isNotBlank(associatedTaxa) || StringUtils.isNotBlank(dynamicProperties), is(true));
-                assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(not(nullValue())));
+                assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is(not(nullValue())));
+                assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is(not(nullValue())));
@@ -203,8 +203,8 @@ public class StudyImporterForDwCATest {
                 String associatedTaxa = properties.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
                 String dynamicProperties = properties.get("http://rs.tdwg.org/dwc/terms/dynamicProperties");
                 assertThat(StringUtils.isNotBlank(associatedTaxa) || StringUtils.isNotBlank(dynamicProperties), is(true));
-                assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(not(nullValue())));
+                assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is(not(nullValue())));
+                assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is(not(nullValue())));
                 assertThat(properties.get(INTERACTION_TYPE_ID), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(not(nullValue())));
@@ -242,7 +242,7 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(1));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
@@ -259,7 +259,7 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(1));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("ex Homo sapiens"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("ex Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("ex"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
@@ -270,7 +270,7 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(1));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("ReAred ex Homo sapiens"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("ReAred ex Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("reared ex"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
@@ -281,7 +281,7 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(1));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Cercidium praecox"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Cercidium praecox"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
     }
 
@@ -292,7 +292,7 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(1));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Bucephala albeola"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Bucephala albeola"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
     }
 
@@ -302,7 +302,7 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(1));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("ex. Homo sapiens"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("ex. Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("ex"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
@@ -313,10 +313,10 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(2));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
-        assertThat(properties.get(1).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Felis catus"));
+        assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Felis catus"));
         assertThat(properties.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(1).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
     }
@@ -335,10 +335,10 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(9));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Ceramium"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ceramium"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
-        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("and Grateloupia sp."));
+        assertThat(properties.get(8).get(TaxonUtil.TARGET_TAXON_NAME), is("and Grateloupia sp."));
         assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(8).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
     }
@@ -349,10 +349,10 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(9));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Ceramium"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ceramium"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
-        assertThat(properties.get(8).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("and Grateloupia sp."));
+        assertThat(properties.get(8).get(TaxonUtil.TARGET_TAXON_NAME), is("and Grateloupia sp."));
         assertThat(properties.get(8).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("interactsWith"));
         assertThat(properties.get(8).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
     }
@@ -367,10 +367,10 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(2));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
-        assertThat(properties.get(1).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Canis lupus"));
+        assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
         assertThat(properties.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(1).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
@@ -381,7 +381,7 @@ public class StudyImporterForDwCATest {
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
         assertThat(properties.size(), is(1));
-        assertThat(properties.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eatz"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
@@ -392,7 +392,7 @@ public class StudyImporterForDwCATest {
         String s = "targetTaxonName: Homo sapiens; targetTaxonId: https://www.gbif.org/species/2436436; interactionTypeName: eats; interactionTypeId: http://purl.obolibrary.org/obo/RO_0002470; targetBodyPartName: blood; targetBodyPartId: http://purl.obolibrary.org/obo/NCIT_C12434\",\"eats: Homo sapiens";
         Map<String, String> properties = parseDynamicProperties(s);
 
-        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
     }
@@ -402,7 +402,7 @@ public class StudyImporterForDwCATest {
         String s = "sourceLifeStageName=pupae ; sourceLifeStageID= ; experimentalConditionName=in nature ; experimentalConditionID=http://purl.obolibrary.org/obo/ENVO_01001226 ; interactionTypeName=inside ; interactionTypeId=http://purl.obolibrary.org/obo/RO_0001025 ; targetTaxonName=Mus ; targetTaxonId=https://www.gbif.org/species/2311167";
         Map<String, String> properties = parseDynamicProperties(s);
 
-        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Mus"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Mus"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("inside"));
         assertThat(properties.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME), is("pupae"));
         assertThat(properties.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_ID), is(nullValue()));
@@ -418,7 +418,7 @@ public class StudyImporterForDwCATest {
         assertThat(propertyList.size(), is(1));
 
         Map<String, String> properties = propertyList.get(0);
-        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
         assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("http://arctos.database.museum/guid/MVZ:Bird:183644"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("(eaten by)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
@@ -444,13 +444,13 @@ public class StudyImporterForDwCATest {
         assertThat(propertyList.size(), is(2));
 
         Map<String, String> properties = propertyList.get(0);
-        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
         assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("Denver Zoology Tissue Mammal 2822"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("(ate)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
 
         properties = propertyList.get(1);
-        assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
         assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("Denver Zoology Tissue Mammal 2823"));
         assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("(ate)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
@@ -485,10 +485,10 @@ public class StudyImporterForDwCATest {
 
             @Override
             public void newLink(Map<String, String> properties) throws StudyImporterException {
-                assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Andrena wilkella"));
+                assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Andrena wilkella"));
                 assertThat(properties.get(StudyImporterForTSV.SOURCE_SEX_NAME), is("Female"));
                 assertThat(properties.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME), is("Adult"));
-                assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Melilotus officinalis"));
+                assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Melilotus officinalis"));
                 assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("associated with"));
                 assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
                 assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("LabelObservation"));
@@ -524,33 +524,33 @@ public class StudyImporterForDwCATest {
             public void newLink(Map<String, String> properties) throws StudyImporterException {
                 numberOfFoundLinks.incrementAndGet();
                 if (1 == numberOfFoundLinks.get()) {
-                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
+                    assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Ectoparasite of"));
                     assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002632"));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
-                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+                    assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_CATALOG_NUMBER), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_COLLECTION_CODE), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_INSTITUTION_CODE), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
                 } else if (2 == numberOfFoundLinks.get()) {
-                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
+                    assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("7048675a-b110-4baf-91a3-2db138316709"));
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Host to"));
                     assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002453"));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
-                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is(nullValue()));
+                    assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("10d8d814-2afc-4cf2-9843-a2b719346179"));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("G. Heinrich"));
                 } else if (7 == numberOfFoundLinks.get()) {
-                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
+                    assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Stomach Contents"));
                     assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
-                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
+                    assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("C. M. Barber"));
                 }
@@ -577,14 +577,14 @@ public class StudyImporterForDwCATest {
             public void newLink(Map<String, String> properties) throws StudyImporterException {
                 numberOfFoundLinks.incrementAndGet();
                 if (1 == numberOfFoundLinks.get()) {
-                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_ID), is("http://www.inaturalist.org/taxa/465153"));
-                    assertThat(properties.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Gorgonocephalus eucnemis"));
+                    assertThat(properties.get(TaxonUtil.SOURCE_TAXON_ID), is("http://www.inaturalist.org/taxa/465153"));
+                    assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Gorgonocephalus eucnemis"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("http://www.inaturalist.org/observations/2309983"));
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Eaten by"));
                     assertThat(properties.get(INTERACTION_TYPE_ID), is("http://www.inaturalist.org/observation_fields/879"));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("HumanObservation"));
-                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_ID), is("http://www.inaturalist.org/taxa/133061"));
-                    assertThat(properties.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Enhydra lutris kenyoni"));
+                    assertThat(properties.get(TaxonUtil.TARGET_TAXON_ID), is("http://www.inaturalist.org/taxa/133061"));
+                    assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Enhydra lutris kenyoni"));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("https://www.inaturalist.org/users/dpom"));
                 }
                 assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));

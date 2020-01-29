@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.DatasetConstant;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
@@ -37,21 +38,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_CLASS;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_FAMILY;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_GENUS;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_KINGDOM;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_ORDER;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_PHYLUM;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_SPECIFIC_EPITHET;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_SUBGENUS;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_CLASS;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_FAMILY;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_GENUS;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_KINGDOM;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_ORDER;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_PHYLUM;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_SPECIFIC_EPITHET;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_CLASS;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_GENUS;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_KINGDOM;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ORDER;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PHYLUM;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBGENUS;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_CLASS;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_FAMILY;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_GENUS;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_KINGDOM;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ORDER;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PHYLUM;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
@@ -65,14 +66,14 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
 public class StudyImporterForDwCA extends StudyImporterWithListener {
     public static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
@@ -113,6 +114,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
+                    TaxonUtil.enrichTaxonNames(properties);
                     if (getDataset() == null || getDataset().getArchiveURI() == null) {
                         listener.newLink(properties);
                     } else if (getDataset().getArchiveURI() != null){
@@ -647,13 +649,13 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
         StudyImporterForDwCA.mapIfAvailable(
                 interaction,
-                StudyImporterForTSV.TARGET_TAXON_NAME,
+                TaxonUtil.TARGET_TAXON_NAME,
                 targetName
         );
 
         StudyImporterForDwCA.mapIfAvailable(
                 interaction,
-                StudyImporterForTSV.TARGET_TAXON_NAME,
+                TaxonUtil.TARGET_TAXON_NAME,
                 targetProperties.get("http://purl.org/NET/aec/associatedScientificName")
         );
 

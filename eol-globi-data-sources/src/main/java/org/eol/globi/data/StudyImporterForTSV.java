@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
@@ -16,10 +17,6 @@ import java.util.TreeMap;
 
 public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String INTERACTION_TYPE_ID = "interactionTypeId";
-    public static final String TARGET_TAXON_ID = "targetTaxonId";
-    public static final String TARGET_TAXON_NAME = "targetTaxonName";
-    public static final String SOURCE_TAXON_NAME = "sourceTaxonName";
-    public static final String SOURCE_TAXON_ID = "sourceTaxonId";
     public static final String STUDY_SOURCE_CITATION = "studySourceCitation";
     public static final String REFERENCE_ID = "studyTitle";
     public static final String REFERENCE_DOI = "referenceDoi";
@@ -50,10 +47,6 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String TARGET_SEX_NAME = "targetSexName";
     public static final String ASSOCIATED_TAXA = "associatedTaxa";
     public static final String ARGUMENT_TYPE_ID = "argumentTypeId";
-    public static final String SOURCE_TAXON_PATH = "sourceTaxonPath";
-    public static final String SOURCE_TAXON_PATH_NAMES = "sourceTaxonPathNames";
-    public static final String TARGET_TAXON_PATH = "targetTaxonPath";
-    public static final String TARGET_TAXON_PATH_NAMES = "targetTaxonPathNames";
 
     private static final String RESOURCE_LINE_NUMBER = "resourceLineNumber";
     private static final String RESOURCE_URI = "resourceURI";
@@ -121,10 +114,10 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
             putNotBlank(link, REFERENCE_URL, CSVTSVUtil.valueOrNull(parser, REFERENCE_URL));
             putNotBlank(link, STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
 
-            putNotBlank(link, SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(SOURCE_TAXON_ID)));
-            putNotBlank(link, SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_TAXON_NAME)));
-            putNotBlank(link, TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TARGET_TAXON_ID)));
-            putNotBlank(link, TARGET_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_TAXON_NAME)));
+            putNotBlank(link, TaxonUtil.SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_ID)));
+            putNotBlank(link, TaxonUtil.SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_NAME)));
+            putNotBlank(link, TaxonUtil.TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_ID)));
+            putNotBlank(link, TaxonUtil.TARGET_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_NAME)));
             putNotBlank(link, INTERACTION_TYPE_NAME, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_NAME)));
             putNotBlank(link, INTERACTION_TYPE_ID, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_ID)));
             putNotBlank(link, DECIMAL_LATITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LATITUDE)));

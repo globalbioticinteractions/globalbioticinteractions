@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.collections4.list.TreeList;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -65,8 +66,8 @@ public class StudyImporterForGlobalWebDbTest {
         assertThat(interactions.size(), is(6));
 
         Map<String, String> first = interactions.get(0);
-        assertThat(first.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Balanus balanoides"));
-        assertThat(first.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("detritus"));
+        assertThat(first.get(TaxonUtil.SOURCE_TAXON_NAME), is("Balanus balanoides"));
+        assertThat(first.get(TaxonUtil.TARGET_TAXON_NAME), is("detritus"));
         assertThat(first.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(first.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(first.get(StudyImporterForTSV.HABITAT_NAME), is("Exposed rocky shore"));
@@ -76,8 +77,8 @@ public class StudyImporterForGlobalWebDbTest {
         assertThat(first.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some source citation"));
 
         Map<String, String> last = interactions.get(5);
-        assertThat(last.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Thais lapillus"));
-        assertThat(last.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Mytilus edulis"));
+        assertThat(last.get(TaxonUtil.SOURCE_TAXON_NAME), is("Thais lapillus"));
+        assertThat(last.get(TaxonUtil.TARGET_TAXON_NAME), is("Mytilus edulis"));
         assertThat(last.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
         assertThat(last.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(last.get(StudyImporterForTSV.HABITAT_NAME), is("Exposed rocky shore"));

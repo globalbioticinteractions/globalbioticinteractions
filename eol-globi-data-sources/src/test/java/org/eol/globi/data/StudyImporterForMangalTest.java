@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.service.TaxonUtil;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -195,8 +196,8 @@ public class StudyImporterForMangalTest {
 
         Map<String, String> interaction = StudyImporterForMangal.parseInteraction(singleInteraction, nodeMap, networkMap);
 
-        assertThat(interaction.get(StudyImporterForTSV.SOURCE_TAXON_NAME), Is.is("donald duck"));
-        assertThat(interaction.get(StudyImporterForTSV.TARGET_TAXON_NAME), Is.is("mickey mouse"));
+        assertThat(interaction.get(TaxonUtil.SOURCE_TAXON_NAME), Is.is("donald duck"));
+        assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), Is.is("mickey mouse"));
 
     }
 

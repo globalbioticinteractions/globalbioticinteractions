@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
@@ -38,10 +39,10 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
 
     private Map<String, String> importLink(LabeledCSVParser parser) {
         Map<String, String> link = new TreeMap<String, String>();
-        addTSN(parser, link, "PredTSN", StudyImporterForTSV.SOURCE_TAXON_ID);
-        link.put(StudyImporterForTSV.SOURCE_TAXON_NAME, parser.getValueByLabel("PredName"));
-        addTSN(parser, link, "PreyTSN", StudyImporterForTSV.TARGET_TAXON_ID);
-        link.put(StudyImporterForTSV.TARGET_TAXON_NAME, parser.getValueByLabel("PreyName"));
+        addTSN(parser, link, "PredTSN", TaxonUtil.SOURCE_TAXON_ID);
+        link.put(TaxonUtil.SOURCE_TAXON_NAME, parser.getValueByLabel("PredName"));
+        addTSN(parser, link, "PreyTSN", TaxonUtil.TARGET_TAXON_ID);
+        link.put(TaxonUtil.TARGET_TAXON_NAME, parser.getValueByLabel("PreyName"));
         link.put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
         link.put(StudyImporterForTSV.REFERENCE_CITATION, getSourceCitation());
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI().toPrintableDOI());

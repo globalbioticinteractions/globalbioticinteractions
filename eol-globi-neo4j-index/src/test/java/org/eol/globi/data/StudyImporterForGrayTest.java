@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.service.DatasetImpl;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -56,17 +57,17 @@ public class StudyImporterForGrayTest extends GraphDBTestCase {
         resolveNames();
         assertThat(maps.size(), is(4));
         Map<String, String> firstLink = maps.get(0);
-        assertThat(firstLink.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Ancylus fluviatilis"));
+        assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_NAME), is("Ancylus fluviatilis"));
         assertThat(firstLink.get(StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME), is(nullValue()));
-        assertThat(firstLink.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("FPOM"));
+        assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_NAME), is("FPOM"));
         assertThat(firstLink.get(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME), is(nullValue()));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_CITATION), is("Ledger, M.E., Brown, L.E., Edwards, F., Milner, A.M. & Woodward, G. (2012) Drought alters the structure and functioning of complex food webs. Nature Climate Change."));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_ID), is("10.5281/zenodo.13751/source.id/50"));
         assertStaticInfo(firstLink);
 
         Map<String, String> secondLink = maps.get(1);
-        assertThat(secondLink.get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Ancylus fluviatilis"));
-        assertThat(secondLink.get(StudyImporterForTSV.TARGET_TAXON_NAME), is("CPOM"));
+        assertThat(secondLink.get(TaxonUtil.SOURCE_TAXON_NAME), is("Ancylus fluviatilis"));
+        assertThat(secondLink.get(TaxonUtil.TARGET_TAXON_NAME), is("CPOM"));
         assertThat(secondLink.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("observed"));
         assertStaticInfo(secondLink);
     }

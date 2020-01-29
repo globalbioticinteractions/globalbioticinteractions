@@ -14,6 +14,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.service.StudyImporterFactory;
+import org.eol.globi.service.TaxonUtil;
 import org.mapdb.DBMaker;
 
 import java.io.IOException;
@@ -256,8 +257,8 @@ public class StudyImporterForRSS extends BaseStudyImporter {
                 Map<String, String> targetProperties = interactionsWithUnresolvedOccurrenceIds.get(targetOccurrenceId);
                 if (targetProperties != null) {
                     TreeMap<String, String> enrichedMap = new TreeMap<>(properties);
-                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_TAXON_NAME, StudyImporterForTSV.TARGET_TAXON_NAME);
-                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_TAXON_ID, StudyImporterForTSV.TARGET_TAXON_ID);
+                    enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_NAME, TaxonUtil.TARGET_TAXON_NAME);
+                    enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_ID, TaxonUtil.TARGET_TAXON_ID);
                     enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, StudyImporterForTSV.TARGET_LIFE_STAGE_NAME);
                     enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_LIFE_STAGE_ID, StudyImporterForTSV.TARGET_LIFE_STAGE_ID);
                     enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_BODY_PART_NAME, StudyImporterForTSV.TARGET_BODY_PART_NAME);

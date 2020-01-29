@@ -5,6 +5,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -68,86 +69,86 @@ public class StudyImporterForMetaTableTest {
     public void generateSourceTaxon() throws IOException {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
-                put(StudyImporterForMetaTable.SOURCE_TAXON_CLASS, "class");
+                put(TaxonUtil.SOURCE_TAXON_CLASS, "class");
             }
         };
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonName(properties), is("class"));
-        properties.put(StudyImporterForMetaTable.SOURCE_TAXON_ORDER, "order");
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonName(properties), is("order"));
-        properties.put(StudyImporterForMetaTable.SOURCE_TAXON_FAMILY, "family");
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonName(properties), is("family"));
-        properties.put(StudyImporterForMetaTable.SOURCE_TAXON_GENUS, "genus");
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonName(properties), is("genus"));
-        properties.put(StudyImporterForMetaTable.SOURCE_TAXON_SPECIFIC_EPITHET, "species");
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonName(properties), is("genus species"));
-        properties.put(StudyImporterForMetaTable.SOURCE_TAXON_SUBSPECIFIC_EPITHET, "subspecies");
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonName(properties), is("genus species subspecies"));
+        assertThat(TaxonUtil.generateSourceTaxonName(properties), is("class"));
+        properties.put(TaxonUtil.SOURCE_TAXON_ORDER, "order");
+        assertThat(TaxonUtil.generateSourceTaxonName(properties), is("order"));
+        properties.put(TaxonUtil.SOURCE_TAXON_FAMILY, "family");
+        assertThat(TaxonUtil.generateSourceTaxonName(properties), is("family"));
+        properties.put(TaxonUtil.SOURCE_TAXON_GENUS, "genus");
+        assertThat(TaxonUtil.generateSourceTaxonName(properties), is("genus"));
+        properties.put(TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET, "species");
+        assertThat(TaxonUtil.generateSourceTaxonName(properties), is("genus species"));
+        properties.put(TaxonUtil.SOURCE_TAXON_SUBSPECIFIC_EPITHET, "subspecies");
+        assertThat(TaxonUtil.generateSourceTaxonName(properties), is("genus species subspecies"));
     }
 
     @Test
     public void generateTargetTaxon() {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
-                put(StudyImporterForMetaTable.TARGET_TAXON_CLASS, "class");
+                put(TaxonUtil.TARGET_TAXON_CLASS, "class");
             }
         };
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonName(properties), is("class"));
-        properties.put(StudyImporterForMetaTable.TARGET_TAXON_ORDER, "order");
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonName(properties), is("order"));
-        properties.put(StudyImporterForMetaTable.TARGET_TAXON_FAMILY, "family");
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonName(properties), is("family"));
-        properties.put(StudyImporterForMetaTable.TARGET_TAXON_GENUS, "genus");
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonName(properties), is("genus"));
-        properties.put(StudyImporterForMetaTable.TARGET_TAXON_SPECIFIC_EPITHET, "species");
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonName(properties), is("genus species"));
-        properties.put(StudyImporterForMetaTable.TARGET_TAXON_SUBSPECIFIC_EPITHET, "subspecies");
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonName(properties), is("genus species subspecies"));
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("class"));
+        properties.put(TaxonUtil.TARGET_TAXON_ORDER, "order");
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("order"));
+        properties.put(TaxonUtil.TARGET_TAXON_FAMILY, "family");
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("family"));
+        properties.put(TaxonUtil.TARGET_TAXON_GENUS, "genus");
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("genus"));
+        properties.put(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET, "species");
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("genus species"));
+        properties.put(TaxonUtil.TARGET_TAXON_SUBSPECIFIC_EPITHET, "subspecies");
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("genus species subspecies"));
     }
 
     @Test
     public void generateTargetTaxonIgnoreEmptyGenus() {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
-                put(StudyImporterForMetaTable.TARGET_TAXON_GENUS, "");
-                put(StudyImporterForMetaTable.TARGET_TAXON_CLASS, "class");
+                put(TaxonUtil.TARGET_TAXON_GENUS, "");
+                put(TaxonUtil.TARGET_TAXON_CLASS, "class");
             }
         };
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonName(properties), is("class"));
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("class"));
     }
 
     @Test
     public void generateTargetTaxonPath() {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
-                put(StudyImporterForMetaTable.TARGET_TAXON_GENUS, "genusValue");
-                put(StudyImporterForMetaTable.TARGET_TAXON_CLASS, "classValue");
+                put(TaxonUtil.TARGET_TAXON_GENUS, "genusValue");
+                put(TaxonUtil.TARGET_TAXON_CLASS, "classValue");
             }
         };
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonPath(properties), is("classValue | genusValue"));
-        assertThat(StudyImporterForMetaTable.generateTargetTaxonPathNames(properties), is("class | genus"));
+        assertThat(TaxonUtil.generateTargetTaxonPath(properties), is("classValue | genusValue"));
+        assertThat(TaxonUtil.generateTargetTaxonPathNames(properties), is("class | genus"));
     }
 
     @Test
     public void generateSourceTaxonPath() {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
-                put(StudyImporterForMetaTable.SOURCE_TAXON_GENUS, "aGenus");
-                put(StudyImporterForMetaTable.SOURCE_TAXON_CLASS, "aClass");
+                put(TaxonUtil.SOURCE_TAXON_GENUS, "aGenus");
+                put(TaxonUtil.SOURCE_TAXON_CLASS, "aClass");
             }
         };
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonPath(properties), is("aClass | aGenus"));
-        assertThat(StudyImporterForMetaTable.generateSourceTaxonPathNames(properties), is("class | genus"));
+        assertThat(TaxonUtil.generateSourceTaxonPath(properties), is("aClass | aGenus"));
+        assertThat(TaxonUtil.generateSourceTaxonPathNames(properties), is("class | genus"));
     }
 
     @Test
     public void generateSpeciesName() {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
-                put(StudyImporterForMetaTable.SOURCE_TAXON_GENUS, "aGenus");
-                put(StudyImporterForMetaTable.SOURCE_TAXON_CLASS, "aClass");
+                put(TaxonUtil.SOURCE_TAXON_GENUS, "aGenus");
+                put(TaxonUtil.SOURCE_TAXON_CLASS, "aClass");
             }
         };
-        assertThat(StudyImporterForMetaTable.generateSpeciesName(properties, StudyImporterForMetaTable.SOURCE_TAXON_GENUS, StudyImporterForMetaTable.SOURCE_TAXON_SPECIFIC_EPITHET, StudyImporterForMetaTable.SOURCE_TAXON_SUBSPECIFIC_EPITHET), is(nullValue()));
+        assertThat(TaxonUtil.generateSpeciesName(properties, TaxonUtil.SOURCE_TAXON_GENUS, TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET, TaxonUtil.SOURCE_TAXON_SUBSPECIFIC_EPITHET), is(nullValue()));
     }
 
     @Test
@@ -315,9 +316,9 @@ public class StudyImporterForMetaTableTest {
 
         assertThat(links.size(), is(9));
 
-        assertThat(links.get(1).get(StudyImporterForTSV.SOURCE_TAXON_ID), is("NCBITaxon:5499"));
+        assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_ID), is("NCBITaxon:5499"));
         assertThat(links.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002556"));
-        assertThat(links.get(1).get(StudyImporterForTSV.TARGET_TAXON_ID), is("NCBITaxon:4081"));
+        assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_ID), is("NCBITaxon:4081"));
     }
 
     @Test
@@ -363,15 +364,15 @@ public class StudyImporterForMetaTableTest {
 
         assertThat(links.size(), is(2));
 
-        assertThat(links.get(0).get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(0).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
         assertThat(links.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(links.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
-        assertThat(links.get(0).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Canis lupus"));
+        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
 
-        assertThat(links.get(1).get(StudyImporterForTSV.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
         assertThat(links.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(links.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
-        assertThat(links.get(1).get(StudyImporterForTSV.TARGET_TAXON_NAME), is("Catus felis"));
+        assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
     }
 
 

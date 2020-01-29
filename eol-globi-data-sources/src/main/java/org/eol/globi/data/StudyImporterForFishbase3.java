@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.service.TaxonUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -165,11 +166,11 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
 
         String predatorSpeciesCode = columnValueOrNull(record, "SpecCode");
         String sourceTaxonId = idForSpecies(namespace, predatorSpeciesCode);
-        props.put(StudyImporterForTSV.SOURCE_TAXON_ID, sourceTaxonId);
+        props.put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxonId);
         if (StringUtils.isNotBlank(predatorSpeciesCode)) {
             Map<String, String> predatorProps = speciesMap.get(sourceTaxonId);
             if (predatorProps != null) {
-                props.put(StudyImporterForTSV.SOURCE_TAXON_NAME, predatorProps.get("name"));
+                props.put(TaxonUtil.SOURCE_TAXON_NAME, predatorProps.get("name"));
             }
         }
         String predatorStage = columnValueOrNull(record, "PredatorStage");
@@ -177,7 +178,7 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
 
 
         String preyName = columnValueOrNull(record, foodItemName);
-        props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preyName);
+        props.put(TaxonUtil.TARGET_TAXON_NAME, preyName);
 
         lookupReference(references, namespace, record, props, "FoodsRefNo");
         lookupLocality(countries, namespace, record, props);
@@ -199,7 +200,7 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
             targetTaxonId = idForSpecies("SLB", preySpeciesCodeSLB);
         }
 
-        props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
+        props.put(TaxonUtil.TARGET_TAXON_ID, targetTaxonId);
 
         String preyLifestage = columnValueOrNull(record, "PreyStage");
         props.put(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME, preyLifestage);
@@ -223,11 +224,11 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
             String taxonIdPrefix = StringUtils.isBlank(speciesDB) ? defaultNamespace : speciesDB;
 
             String sourceTaxonId = idForSpecies(taxonIdPrefix, predatorSpeciesCode);
-            props.put(StudyImporterForTSV.SOURCE_TAXON_ID, sourceTaxonId);
+            props.put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxonId);
             if (StringUtils.isNotBlank(predatorSpeciesCode)) {
                 Map<String, String> predatorProps = speciesMap.get(sourceTaxonId);
                 if (predatorProps != null) {
-                    props.put(StudyImporterForTSV.SOURCE_TAXON_NAME, predatorProps.get("name"));
+                    props.put(TaxonUtil.SOURCE_TAXON_NAME, predatorProps.get("name"));
                 }
             }
             String predatorStage = columnValueOrNull(record, "Predatstage");
@@ -240,11 +241,11 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
                 targetTaxonId = idForSpecies(defaultNamespace, preySpeciesCode);
                 Map<String, String> preySpecies = speciesMap.get(targetTaxonId);
                 if (preySpecies != null) {
-                    props.put(StudyImporterForTSV.TARGET_TAXON_NAME, preySpecies.get("name"));
+                    props.put(TaxonUtil.TARGET_TAXON_NAME, preySpecies.get("name"));
                 }
             }
 
-            props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
+            props.put(TaxonUtil.TARGET_TAXON_ID, targetTaxonId);
 
 
             String preyLifestage = columnValueOrNull(record, "PreyStage");
@@ -291,7 +292,7 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
     protected static void importDietFoodII(InteractionListener listener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
         RecordListener listener1 = record -> {
             Map<String, String> props = importPredator(speciesMap, references, countries, namespace, record);
-            props.put(StudyImporterForTSV.TARGET_TAXON_NAME, columnValueOrNull(record, "FoodII"));
+            props.put(TaxonUtil.TARGET_TAXON_NAME, columnValueOrNull(record, "FoodII"));
             listener.newLink(props);
         };
 
@@ -306,11 +307,11 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
             targetTaxonId = idForSpecies(namespace, preySpeciesCode);
         }
 
-        props.put(StudyImporterForTSV.TARGET_TAXON_ID, targetTaxonId);
+        props.put(TaxonUtil.TARGET_TAXON_ID, targetTaxonId);
 
         Map<String, String> preySpecies = speciesMap.get(preySpeciesCode);
         String targetTaxonName = preySpecies == null ? columnValueOrNull(record, "ItemName") : preySpecies.get("name");
-        props.put(StudyImporterForTSV.TARGET_TAXON_NAME, targetTaxonName);
+        props.put(TaxonUtil.TARGET_TAXON_NAME, targetTaxonName);
 
         String preyLifestage = columnValueOrNull(record, "Stage");
         props.put(StudyImporterForTSV.TARGET_LIFE_STAGE_NAME, preyLifestage);
@@ -320,11 +321,11 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
         Map<String, String> props = new HashMap<>();
         String predatorSpeciesCode = columnValueOrNull(record, "Speccode");
         String sourceTaxonId = idForSpecies(namespace, predatorSpeciesCode);
-        props.put(StudyImporterForTSV.SOURCE_TAXON_ID, sourceTaxonId);
+        props.put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxonId);
         if (StringUtils.isNotBlank(predatorSpeciesCode)) {
             Map<String, String> predatorProps = speciesMap.get(sourceTaxonId);
             if (predatorProps != null) {
-                props.put(StudyImporterForTSV.SOURCE_TAXON_NAME, predatorProps.get("name"));
+                props.put(TaxonUtil.SOURCE_TAXON_NAME, predatorProps.get("name"));
             }
         }
         String predatorStage = columnValueOrNull(record, "SampleStage");
