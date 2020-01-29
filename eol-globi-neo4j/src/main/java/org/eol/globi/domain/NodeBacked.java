@@ -78,14 +78,14 @@ public class NodeBacked {
         }
     }
 
-    protected Object getPropertyValueOrNull(String propertyName) {
+    protected String getPropertyValueOrNull(String propertyName) {
         Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         try {
             Object value = getUnderlyingNode().hasProperty(propertyName)
                     ? getUnderlyingNode().getProperty(propertyName)
                     : null;
             tx.success();
-            return value;
+            return value == null ? null : value.toString();
         } finally {
             tx.close();
         }
@@ -106,7 +106,7 @@ public class NodeBacked {
         return propertyValueOrNull == null ? null : (String) propertyValueOrNull;
     }
 
-    protected void setProperty(String name, String value) {
+    protected void setPropertyIfNotNull(String name, String value) {
         if (value != null) {
             getUnderlyingNode().setProperty(name, value);
         }

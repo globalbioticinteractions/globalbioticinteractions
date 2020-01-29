@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.LogContext;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
@@ -41,6 +42,9 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_CATALOG_NUMBER;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_CODE;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_INSTITUTION_CODE;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
@@ -53,11 +57,18 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_PATH_NAMES;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_CATALOG_NUMBER;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_CODE;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_INSTITUTION_CODE;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
+import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
+import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_CODE;
+import static org.eol.globi.domain.PropertyAndValueDictionary.INSTITUTION_CODE;
+import static org.eol.globi.domain.PropertyAndValueDictionary.OCCURRENCE_ID;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -73,7 +84,13 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, null);
         final HashMap<String, String> link = new HashMap<String, String>();
         link.put(SOURCE_OCCURRENCE_ID, "123");
+        link.put(SOURCE_CATALOG_NUMBER, "catalogNumber123");
+        link.put(SOURCE_COLLECTION_CODE, "collectionCode123");
+        link.put(SOURCE_INSTITUTION_CODE, "institutionCode123");
         link.put(TARGET_OCCURRENCE_ID, "456");
+        link.put(TARGET_CATALOG_NUMBER, "targetCatalogNumber123");
+        link.put(TARGET_COLLECTION_CODE, "targetCollectionCode123");
+        link.put(TARGET_INSTITUTION_CODE, "targetInstitutionCode123");
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
         link.put(SOURCE_BODY_PART_ID, "bla:123");
@@ -114,6 +131,16 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
                 assertThat(predator.getLifeStage().getId(), is("some:stage"));
                 assertThat(predator.getLifeStage().getName(), is("stage"));
+
+                assertThat(predator.getProperty(OCCURRENCE_ID), is("123"));
+                assertThat(predator.getProperty(CATALOG_NUMBER), is("catalogNumber123"));
+                assertThat(predator.getProperty(COLLECTION_CODE), is("collectionCode123"));
+                assertThat(predator.getProperty(INSTITUTION_CODE), is("institutionCode123"));
+
+                assertThat(prey.getProperty(OCCURRENCE_ID), is("456"));
+                assertThat(prey.getProperty(CATALOG_NUMBER), is("targetCatalogNumber123"));
+                assertThat(prey.getProperty(COLLECTION_CODE), is("targetCollectionCode123"));
+                assertThat(prey.getProperty(INSTITUTION_CODE), is("targetInstitutionCode123"));
                 foundPair.set(true);
 
                 assertThat(relationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));

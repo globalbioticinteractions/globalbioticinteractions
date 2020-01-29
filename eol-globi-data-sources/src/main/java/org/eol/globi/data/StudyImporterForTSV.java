@@ -58,14 +58,14 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     private static final String RESOURCE_LINE_NUMBER = "resourceLineNumber";
     private static final String RESOURCE_URI = "resourceURI";
 
-    static final String SOURCE_COLLECTION_CODE = "sourceCollectionCode";
-    static final String TARGET_COLLECTION_CODE = "targetCollectionCode";
-    static final String SOURCE_COLLECTION_ID = "sourceCollectionId";
-    static final String TARGET_COLLECTION_ID = "targetCollectionId";
-    static final String SOURCE_INSTITUTION_CODE = "sourceInstitutionCode";
-    static final String TARGET_INSTITUTION_CODE = "targetInstitutionCode";
-    static final String SOURCE_CATALOG_NUMBER = "sourceCatalogNumber";
-    static final String TARGET_CATALOG_NUMBER = "targetCatalogNumber";
+    public static final String SOURCE_COLLECTION_CODE = "sourceCollectionCode";
+    public static final String TARGET_COLLECTION_CODE = "targetCollectionCode";
+    public static final String SOURCE_COLLECTION_ID = "sourceCollectionId";
+    public static final String TARGET_COLLECTION_ID = "targetCollectionId";
+    public static final String SOURCE_INSTITUTION_CODE = "sourceInstitutionCode";
+    public static final String TARGET_INSTITUTION_CODE = "targetInstitutionCode";
+    public static final String SOURCE_CATALOG_NUMBER = "sourceCatalogNumber";
+    public static final String TARGET_CATALOG_NUMBER = "targetCatalogNumber";
 
     public String getBaseUrl() {
         return getDataset().getArchiveURI().toString();

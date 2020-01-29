@@ -41,6 +41,9 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_CATALOG_NUMBER;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_CODE;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_INSTITUTION_CODE;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
@@ -53,6 +56,9 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_TAXON_PATH_NAMES;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_CATALOG_NUMBER;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_CODE;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_INSTITUTION_CODE;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
@@ -62,6 +68,10 @@ import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_PATH;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_TAXON_PATH_NAMES;
+import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
+import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_CODE;
+import static org.eol.globi.domain.PropertyAndValueDictionary.INSTITUTION_CODE;
+import static org.eol.globi.domain.PropertyAndValueDictionary.OCCURRENCE_ID;
 
 class InteractionListenerImpl implements InteractionListener {
     private static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
@@ -83,6 +93,9 @@ class InteractionListenerImpl implements InteractionListener {
             List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(properties);
             for (Map<String, String> expandedProperties : propertiesList) {
                 if (properties != null && validLink(expandedProperties)) {
+                    if (logger != null) {
+                        logger.info(LogUtil.contextFor(expandedProperties), "minimum requirements met");
+                    }
                     importValidLink(expandedProperties);
                 }
             }
@@ -175,7 +188,12 @@ class InteractionListenerImpl implements InteractionListener {
                 SOURCE_TAXON_PATH_NAMES,
                 SOURCE_SEX_NAME,
                 SOURCE_SEX_ID);
+
         setExternalIdNotBlank(link, SOURCE_OCCURRENCE_ID, source);
+        setPropertyIfAvailable(link, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
+        setPropertyIfAvailable(link, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
+        setPropertyIfAvailable(link, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
+        setPropertyIfAvailable(link, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
 
         Specimen target = createSpecimen(
                 link,
@@ -190,13 +208,25 @@ class InteractionListenerImpl implements InteractionListener {
                 TARGET_TAXON_PATH_NAMES,
                 TARGET_SEX_NAME,
                 TARGET_SEX_ID);
+
         setExternalIdNotBlank(link, TARGET_OCCURRENCE_ID, target);
+        setPropertyIfAvailable(link, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
+        setPropertyIfAvailable(link, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
+        setPropertyIfAvailable(link, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
+        setPropertyIfAvailable(link, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
 
 
         String interactionTypeId = link.get(INTERACTION_TYPE_ID);
         InteractType type = InteractType.typeOf(interactionTypeId);
 
         source.interactsWith(target, type, getOrCreateLocation(link));
+    }
+
+    private void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
+        String value = link.get(key);
+        if (StringUtils.isNotBlank(value)) {
+            source.setProperty(propertyKey, value);
+        }
     }
 
     private void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {

@@ -10,16 +10,14 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
-import java.util.logging.Level;
-
 public class StudyNode extends NodeBacked implements Study {
 
     private final static Log LOG = LogFactory.getLog(StudyNode.class);
 
     public StudyNode(Node node, String title) {
         this(node);
-        setProperty(StudyConstant.TITLE, title);
-        setProperty(PropertyAndValueDictionary.TYPE, StudyNode.class.getSimpleName());
+        setPropertyIfNotNull(StudyConstant.TITLE, title);
+        setPropertyIfNotNull(PropertyAndValueDictionary.TYPE, StudyNode.class.getSimpleName());
     }
 
     public StudyNode(Node node) {
@@ -50,12 +48,12 @@ public class StudyNode extends NodeBacked implements Study {
     }
 
     public void setSource(String source) {
-        setProperty(StudyConstant.SOURCE, source);
+        setPropertyIfNotNull(StudyConstant.SOURCE, source);
     }
 
     public void setDOI(DOI doi) {
         if (doi != null) {
-            setProperty(StudyConstant.DOI, doi.toString());
+            setPropertyIfNotNull(StudyConstant.DOI, doi.toString());
             if (StringUtils.isBlank(getExternalId())) {
                 setExternalId(doi.toPrintableDOI());
             }
@@ -76,7 +74,7 @@ public class StudyNode extends NodeBacked implements Study {
     }
 
     public void setCitation(String citation) {
-        setProperty(StudyConstant.CITATION, citation);
+        setPropertyIfNotNull(StudyConstant.CITATION, citation);
     }
 
     @Override

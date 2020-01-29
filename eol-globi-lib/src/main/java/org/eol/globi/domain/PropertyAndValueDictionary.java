@@ -15,6 +15,10 @@ public class PropertyAndValueDictionary {
     public static final String STATUS_ID = "statusId";
     public static final String STATUS_LABEL = "statusLabel";
     public static final String DCTERMS_BIBLIOGRAPHIC_CITATION = "dcterms:bibliographicCitation";
+    public static final String OCCURRENCE_ID = "occurrenceId";
+    public static final String CATALOG_NUMBER = "catalogNumber";
+    public static final String COLLECTION_CODE = "collectionCode";
+    public static final String INSTITUTION_CODE = "institutionCode";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";
     public static final String NO_NAME = "no name";

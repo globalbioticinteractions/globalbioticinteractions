@@ -234,9 +234,20 @@ public class SpecimenNode extends NodeBacked implements Specimen {
         }
     }
 
+
     @Override
-    public void setProperty(String name, Object value) {
+    public void setProperty(String name, String value) {
         setPropertyWithTx(name, value);
+    }
+
+    @Override
+    public void setProperty(String name, Double value) {
+        setPropertyWithTx(name, value);
+    }
+
+    @Override
+    public String getProperty(String name) {
+        return getPropertyValueOrNull(name);
     }
 
 }

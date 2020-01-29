@@ -47,12 +47,12 @@ public class LocationNode extends NodeBacked implements Location {
 
     @Override
     public String getLocality() {
-        return (String) getPropertyValueOrNull(LocationConstant.LOCALITY);
+        return getPropertyValueOrNull(LocationConstant.LOCALITY);
     }
 
     @Override
     public String getLocalityId() {
-        return (String) getPropertyValueOrNull(LocationConstant.LOCALITY_ID);
+        return getPropertyValueOrNull(LocationConstant.LOCALITY_ID);
     }
 
     @Override
