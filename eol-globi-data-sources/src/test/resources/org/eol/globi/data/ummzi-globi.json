@@ -1,0 +1,254 @@
+{
+  "@context": [
+    "http://www.w3.org/ns/csvw",
+    {
+      "@language": "en"
+    }
+  ],
+  "rdfs:comment": [
+    "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"
+  ],
+  "url": "ummzi-first-10-last-10.csv",
+  "delimiter": ",",
+  "dcterms:bibliographicCitation": "University of Michigan Museum of Zoology Insect Division. Full Database Export 2020-01-24 provided by Erika Tucker.",
+  "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002454",
+  "interactionTypeName": "hasHost",
+  "referenceUrl": "https://doi.org/10.15468/tmxd7n",
+  "doi": "10.15468/tmxd7n",
+  "headerRowCount": 1,
+  "null": [
+    ""
+  ],
+  "tableSchema": {
+    "columns": [
+      {
+        "name": "sourceCatalogNumber",
+        "titles": "1.collectionobject.catalogNumber",
+        "datatype": "string"
+      },
+      {
+        "name": "1,7.accession.accessionNumber",
+        "titles": "1,7.accession.accessionNumber",
+        "datatype": "string"
+      },
+      {
+        "name": "1.collectionobject.altCatalogNumber",
+        "titles": "1.collectionobject.altCatalogNumber",
+        "datatype": "string"
+      },
+      {
+        "name": "1.collectionobject.catalogedDate",
+        "titles": "1.collectionobject.catalogedDate",
+        "datatype": "string"
+      },
+      {
+        "name": "1,5-cataloger.collectionobject.cataloger",
+        "titles": "1,5-cataloger.collectionobject.cataloger",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonClass",
+        "titles": "1,9-determinations,4.taxon.Class",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonSubclass",
+        "titles": "1,9-determinations,4.taxon.Subclass",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonSuperorder",
+        "titles": "1,9-determinations,4.taxon.Superorder",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonOrder",
+        "titles": "1,9-determinations,4.taxon.Order",
+        "datatype": "string"
+      },
+      {
+        "name": "1,9-determinations,4.taxon.Suborder",
+        "titles": "sourceTaxonSuborder",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonInfraorder",
+        "titles": "1,9-determinations,4.taxon.Infraorder",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonParvorder",
+        "titles": "1,9-determinations,4.taxon.Parvorder",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonSuperfamily",
+        "titles": "1,9-determinations,4.taxon.Superfamily",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonFamily",
+        "titles": "1,9-determinations,4.taxon.Family",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonSubfamily",
+        "titles": "1,9-determinations,4.taxon.Subfamily",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonGenus",
+        "titles": "1,9-determinations,4.taxon.Genus",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonSubgenus",
+        "titles": "1,9-determinations,4.taxon.Subgenus",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonSpecificEpithet",
+        "titles": "1,9-determinations,4.taxon.Species",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceTaxonSubspecificEpithet",
+        "titles": "1,9-determinations,4.taxon.Subspecies",
+        "datatype": "string"
+      },
+      {
+        "name": "1,9-determinations,5-determiner.determination.determiner",
+        "titles": "1,9-determinations,5-determiner.determination.determiner",
+        "datatype": "string"
+      },
+      {
+        "name": "1,9-determinations.determination.determinedDate",
+        "titles": "1,9-determinations.determination.determinedDate",
+        "datatype": "string"
+      },
+      {
+        "name": "1,9-determinations.determination.typeStatusName",
+        "titles": "1,9-determinations.determination.typeStatusName",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceLifeStageName",
+        "titles": "1,93.collectionobjectattribute.text4",
+        "datatype": "string"
+      },
+      {
+        "name": "sourceSexName",
+        "titles": "1,93.collectionobjectattribute.text1",
+        "datatype": "string"
+      },
+      {
+        "name": "1,93.collectionobjectattribute.text8",
+        "titles": "1,93.collectionobjectattribute.text8",
+        "datatype": "string"
+      },
+      {
+        "name": "http://rs.tdwg.org/dwc/terms/eventDate",
+        "titles": "1,10.collectingevent.startDate",
+        "datatype": {
+          "base": "date",
+          "format": "MM/dd/YYYY"
+        }
+      },
+      {
+        "name": "1,10.collectingevent.endDate",
+        "titles": "1,10.collectingevent.endDate",
+        "datatype": "string"
+      },
+      {
+        "name": "1,10.collectingevent.verbatimDate",
+        "titles": "1,10.collectingevent.verbatimDate",
+        "datatype": "string"
+      },
+      {
+        "name": "localityName",
+        "titles": "1,10,2.collectingevent.locality",
+        "datatype": "string"
+      },
+      {
+        "name": "1,10.collectingevent.stationFieldNumber",
+        "titles": "1,10.collectingevent.stationFieldNumber",
+        "datatype": "string"
+      },
+      {
+        "name": "1,10.collectingevent.remarks",
+        "titles": "1,10.collectingevent.remarks",
+        "datatype": "string"
+      },
+      {
+        "name": "1,10.collectingevent.method",
+        "titles": "1,10.collectingevent.method",
+        "datatype": "string"
+      },
+      {
+        "name": "1,10,30-collectors.collectingevent.collectors",
+        "titles": "1,10,30-collectors.collectingevent.collectors",
+        "datatype": "string"
+      },
+      {
+        "name": "targetCatalogNumber",
+        "titles": "1,93.collectionobjectattribute.text10",
+        "datatype": "string"
+      },
+      {
+        "name": "targetTaxonClass",
+        "titles": "1,93.collectionobjectattribute.text11",
+        "datatype": "string"
+      },
+      {
+        "name": "targetTaxonOrder",
+        "titles": "1,93.collectionobjectattribute.text12",
+        "datatype": "string"
+      },
+      {
+        "name": "targetTaxonFamily",
+        "titles": "1,93.collectionobjectattribute.text13",
+        "datatype": "string"
+      },
+      {
+        "name": "targetTaxonGenus",
+        "titles": "1,93.collectionobjectattribute.text14",
+        "datatype": "string"
+      },
+      {
+        "name": "targetTaxonSpecificEpithet",
+        "titles": "1,93.collectionobjectattribute.text15",
+        "datatype": "string"
+      },
+      {
+        "name": "targetTaxonSubspecificEpithet",
+        "titles": "1,93.collectionobjectattribute.text16",
+        "datatype": "string"
+      },
+      {
+        "name": "1,93.collectionobjectattribute.text9",
+        "titles": "1,93.collectionobjectattribute.text9",
+        "datatype": "string"
+      },
+      {
+        "name": "targetSexName",
+        "titles": "1,93.collectionobjectattribute.text17",
+        "datatype": "string"
+      },
+      {
+        "name": "1,93.collectionobjectattribute.remarks",
+        "titles": "1,93.collectionobjectattribute.remarks",
+        "datatype": "string"
+      },
+      {
+        "name": "1,63-preparations,65.preparation.prepType",
+        "titles": "1,63-preparations,65.preparation.prepType",
+        "datatype": "string"
+      },
+      {
+        "name": "1,63-preparations.preparation.countAmt",
+        "titles": "1,63-preparations.preparation.countAmt",
+        "datatype": "string"
+      }
+    ]
+  }
+}

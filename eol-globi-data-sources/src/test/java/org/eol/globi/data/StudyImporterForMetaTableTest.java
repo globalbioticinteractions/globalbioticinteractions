@@ -320,6 +320,30 @@ public class StudyImporterForMetaTableTest {
         assertThat(links.get(1).get(StudyImporterForTSV.TARGET_TAXON_ID), is("NCBITaxon:4081"));
     }
 
+    @Test
+    public void explicitNullValueForCatalogNumberUMMZI() throws IOException, StudyImporterException {
+        StudyImporterForMetaTable importer = new StudyImporterForMetaTable(null, null);
+        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+
+        JsonNode ummziConfig = new ObjectMapper().readTree(getClass().getResourceAsStream("ummzi-globi.json"));
+
+        dataset.setConfig(ummziConfig);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.importStudy();
+
+        assertThat(links.size(), is(20));
+
+        assertThat(links.get(1).get(StudyImporterForTSV.SOURCE_CATALOG_NUMBER), is(nullValue()));
+        assertThat(links.get(1).get(StudyImporterForTSV.TARGET_CATALOG_NUMBER), is(nullValue()));
+
+        assertThat(links.get(19).get(StudyImporterForTSV.SOURCE_CATALOG_NUMBER), is("`UMMZI-180800"));
+        assertThat(links.get(19).get(StudyImporterForTSV.TARGET_CATALOG_NUMBER), is("OC 43283"));
+
+    }
+
 
     @Test
     public void associatedTaxa() throws IOException, StudyImporterException {
