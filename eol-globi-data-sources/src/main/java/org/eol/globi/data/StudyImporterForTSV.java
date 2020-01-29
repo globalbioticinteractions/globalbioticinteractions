@@ -118,29 +118,35 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
             putNotBlank(link, TaxonUtil.SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_ID)));
             putNotBlank(link, TaxonUtil.TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_ID)));
 
-            Stream.of(
-                    TaxonUtil.SOURCE_TAXON_NAME,
-                    TaxonUtil.SOURCE_TAXON_NAME,
-                    TaxonUtil.TARGET_TAXON_NAME,
-                    INTERACTION_TYPE_NAME,
-                    INTERACTION_TYPE_ID,
-                    DECIMAL_LATITUDE,
-                    DECIMAL_LONGITUDE,
-                    LOCALITY_ID,
-                    LOCALITY_NAME,
-                    SOURCE_BODY_PART_ID,
-                    SOURCE_BODY_PART_NAME,
-                    TARGET_BODY_PART_ID,
-                    TARGET_BODY_PART_NAME,
-                    SOURCE_LIFE_STAGE_ID,
-                    SOURCE_LIFE_STAGE_NAME,
-                    TARGET_LIFE_STAGE_ID,
-                    TARGET_LIFE_STAGE_NAME,
-                    SOURCE_SEX_ID,
-                    SOURCE_SEX_NAME,
-                    TARGET_SEX_ID,
-                    TARGET_SEX_NAME
-            )
+
+            Stream.concat(
+                    TaxonUtil.TAXON_RANK_PROPERTY_NAMES.stream(),
+                    Stream.of(
+                            TaxonUtil.SOURCE_TAXON_NAME,
+                            TaxonUtil.SOURCE_TAXON_PATH,
+                            TaxonUtil.SOURCE_TAXON_PATH_NAMES,
+                            TaxonUtil.TARGET_TAXON_NAME,
+                            TaxonUtil.TARGET_TAXON_PATH,
+                            TaxonUtil.TARGET_TAXON_PATH_NAMES,
+                            INTERACTION_TYPE_NAME,
+                            INTERACTION_TYPE_ID,
+                            DECIMAL_LATITUDE,
+                            DECIMAL_LONGITUDE,
+                            LOCALITY_ID,
+                            LOCALITY_NAME,
+                            SOURCE_BODY_PART_ID,
+                            SOURCE_BODY_PART_NAME,
+                            TARGET_BODY_PART_ID,
+                            TARGET_BODY_PART_NAME,
+                            SOURCE_LIFE_STAGE_ID,
+                            SOURCE_LIFE_STAGE_NAME,
+                            TARGET_LIFE_STAGE_ID,
+                            TARGET_LIFE_STAGE_NAME,
+                            SOURCE_SEX_ID,
+                            SOURCE_SEX_NAME,
+                            TARGET_SEX_ID,
+                            TARGET_SEX_NAME
+                    ))
                     .forEach(x -> doIdentifyMap(parser, link, x));
 
             String argumentTypeId = StringUtils.trim(parser.getValueByLabel(ARGUMENT_TYPE_ID));

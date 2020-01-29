@@ -166,6 +166,23 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         assertThat(ids, hasItem("http://www.ncbi.nlm.nih.gov/nuccore/100172732"));
     }
 
+
+    @Test
+    public void withGenus() throws StudyImporterException {
+        String firstFewLines = "sourceTaxonFamily\tsourceTaxonGenus\tinteractionTypeId\ttargetTaxonName\n" +
+                "Bacillaceae\tBacillus\tRO:0002454\tMorus alba\n";
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
+        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        importStudy(importer);
+        Taxon taxon = taxonIndex.findTaxonByName("Bacillus");
+        assertThat(taxon, is(notNullValue()));
+        assertThat(taxon.getName(), is("Bacillus"));
+        assertThat(taxon.getPath(), is("Bacillaceae | Bacillus"));
+        assertThat(taxon.getPathNames(), is("family | genus"));
+        final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+    }
+
     @Test
     public void seltmannRefutes() throws StudyImporterException {
         String firstFewLines = "InteractionID\tBasisOfRecord\tsourceTaxonId\tsourceTaxonName\tinteractionTypeId\targumentTypeId\tinteractionTypeName\ttargetBodyPartName\ttargetBodyPartId\texperimentalConditionName\texperimentalConditionId\tsexName\tsexID\ttargetTaxonId\ttargetTaxonName\ttargetCommonName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceCitation\n" +

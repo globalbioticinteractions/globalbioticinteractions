@@ -117,6 +117,15 @@ public class TaxonUtil {
     public static final String TARGET_TAXON_ID = "targetTaxonId";
     public static final String TARGET_TAXON_NAME = "targetTaxonName";
 
+    public static final List<String> TAXON_RANK_PROPERTY_NAMES = new ArrayList<String>() {{
+        addAll(SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS);
+        add(SOURCE_TAXON_SPECIFIC_EPITHET);
+        add(SOURCE_TAXON_SUBSPECIFIC_EPITHET);
+        addAll(TARGET_TAXON_HIGHER_ORDER_RANK_KEYS);
+        add(TARGET_TAXON_SPECIFIC_EPITHET);
+        add(TARGET_TAXON_SUBSPECIFIC_EPITHET);
+    }};
+
     public static Map<String, String> taxonToMap(Taxon taxon) {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(NAME, taxon.getName());
