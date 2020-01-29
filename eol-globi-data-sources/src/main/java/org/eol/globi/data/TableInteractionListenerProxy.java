@@ -29,10 +29,10 @@ public class TableInteractionListenerProxy implements InteractionListener {
                 final String referenceCitation = StringUtils.isBlank(properties.get(StudyImporterForTSV.REFERENCE_CITATION)) ? StudyImporterForMetaTable.generateReferenceCitation(properties) : properties.get(StudyImporterForTSV.REFERENCE_CITATION);
                 put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
                 put(StudyImporterForTSV.REFERENCE_CITATION, StringUtils.isBlank(referenceCitation) ? dataSourceCitation : referenceCitation);
-                TaxonUtil.enrichTaxonNames(properties);
             }
         };
 
+        TaxonUtil.enrichTaxonNames(enrichedProperties);
         InteractType type = StudyImporterForMetaTable.generateInteractionType(enrichedProperties);
         StudyImporterForMetaTable.setInteractionType(enrichedProperties, type);
         interactionListener.newLink(enrichedProperties);
