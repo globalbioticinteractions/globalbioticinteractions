@@ -50,6 +50,8 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     public static final String SOURCE_TAXON_SUPERORDER = SOURCE_TAXON + "Superorder";
     public static final String SOURCE_TAXON_SUBCLASS = SOURCE_TAXON + "Subclass";
     public static final String SOURCE_TAXON_CLASS = SOURCE_TAXON + "Class";
+    public static final String SOURCE_TAXON_PHYLUM = SOURCE_TAXON + "Phylum";
+    public static final String SOURCE_TAXON_KINGDOM = SOURCE_TAXON + "Kingdom";
     public static final List<String> SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
             StudyImporterForMetaTable.SOURCE_TAXON_GENUS,
             StudyImporterForMetaTable.SOURCE_TAXON_SUBFAMILY,
@@ -61,7 +63,9 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
             StudyImporterForMetaTable.SOURCE_TAXON_ORDER,
             StudyImporterForMetaTable.SOURCE_TAXON_SUPERORDER,
             StudyImporterForMetaTable.SOURCE_TAXON_SUBCLASS,
-            StudyImporterForMetaTable.SOURCE_TAXON_CLASS);
+            StudyImporterForMetaTable.SOURCE_TAXON_CLASS,
+            StudyImporterForMetaTable.SOURCE_TAXON_PHYLUM,
+            StudyImporterForMetaTable.SOURCE_TAXON_KINGDOM);
 
     public static final String TARGET_TAXON = "targetTaxon";
     public static final String TARGET_TAXON_SUBSPECIFIC_EPITHET = TARGET_TAXON + "SubspecificEpithet";
@@ -77,6 +81,8 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     public static final String TARGET_TAXON_SUPERORDER = TARGET_TAXON + "Superorder";
     public static final String TARGET_TAXON_SUBCLASS = TARGET_TAXON + "Subclass";
     public static final String TARGET_TAXON_CLASS = TARGET_TAXON + "Class";
+    public static final String TARGET_TAXON_PHYLUM = TARGET_TAXON + "Phylum";
+    public static final String TARGET_TAXON_KINGDOM = TARGET_TAXON + "Kingdom";
     public static final List<String> TARGET_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
             StudyImporterForMetaTable.TARGET_TAXON_GENUS,
             StudyImporterForMetaTable.TARGET_TAXON_SUBFAMILY,
@@ -88,7 +94,9 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
             StudyImporterForMetaTable.TARGET_TAXON_ORDER,
             StudyImporterForMetaTable.TARGET_TAXON_SUPERORDER,
             StudyImporterForMetaTable.TARGET_TAXON_SUBCLASS,
-            StudyImporterForMetaTable.TARGET_TAXON_CLASS);
+            StudyImporterForMetaTable.TARGET_TAXON_CLASS,
+            StudyImporterForMetaTable.TARGET_TAXON_PHYLUM,
+            StudyImporterForMetaTable.TARGET_TAXON_KINGDOM);
     public static final String AUTHOR = "author";
     public static final String TITLE = "title";
     public static final String YEAR = "year";
