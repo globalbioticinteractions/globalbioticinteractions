@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,6 +28,7 @@ import static org.eol.globi.data.StudyImporterForDwCA.importResourceRelationExte
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedOccurrences;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedTaxa;
 import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicProperties;
+import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -128,6 +130,8 @@ public class StudyImporterForDwCATest {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/arctos_mvz_bird_small.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI(), inStream -> inStream));
+
+        List<String> families = new ArrayList<>();
         AtomicBoolean someRecords = new AtomicBoolean(false);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
@@ -143,6 +147,11 @@ public class StudyImporterForDwCATest {
                         is("http://arctos.database.museum/guid/MVZ:Bird:183643"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:58093")
                 ));
+                assertThat(properties.get(SOURCE_TAXON_FAMILY), anyOf(
+                        is("Accipitridae"),
+                        is("Strigidae")
+                ));
+
                 someRecords.set(true);
             }
         });

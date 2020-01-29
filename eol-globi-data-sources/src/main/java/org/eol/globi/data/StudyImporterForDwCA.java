@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
@@ -45,8 +44,7 @@ import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_KINGDOM;
 import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_ORDER;
 import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_PHYLUM;
 import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_SPECIFIC_EPITHET;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_SUBCLASS;
-import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_SUBSPECIFIC_EPITHET;
+import static org.eol.globi.data.StudyImporterForMetaTable.SOURCE_TAXON_SUBGENUS;
 import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_CLASS;
 import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_FAMILY;
 import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_GENUS;
@@ -54,8 +52,6 @@ import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_KINGDOM;
 import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_ORDER;
 import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_PHYLUM;
 import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_SPECIFIC_EPITHET;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_SUBCLASS;
-import static org.eol.globi.data.StudyImporterForMetaTable.TARGET_TAXON_SUBSPECIFIC_EPITHET;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
@@ -230,6 +226,14 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         mapIfAvailable(rec, interactionProperties, StudyImporterForTSV.SOURCE_INSTITUTION_CODE, DwcTerm.institutionCode);
         mapIfAvailable(rec, interactionProperties, StudyImporterForTSV.SOURCE_CATALOG_NUMBER, DwcTerm.catalogNumber);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_SPECIFIC_EPITHET, DwcTerm.specificEpithet);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_GENUS, DwcTerm.genus);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_SUBGENUS, DwcTerm.subgenus);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_FAMILY, DwcTerm.family);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_ORDER, DwcTerm.order);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_CLASS, DwcTerm.class_);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_PHYLUM, DwcTerm.phylum);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_KINGDOM, DwcTerm.kingdom);
         mapIfAvailable(rec, interactionProperties, SOURCE_LIFE_STAGE_NAME, DwcTerm.lifeStage);
         mapIfAvailable(rec, interactionProperties, SOURCE_SEX_NAME, DwcTerm.sex);
     }

@@ -39,6 +39,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     public static final String SOURCE_TAXON = "sourceTaxon";
     public static final String SOURCE_TAXON_SUBSPECIFIC_EPITHET = SOURCE_TAXON + "SubspecificEpithet";
     public static final String SOURCE_TAXON_SPECIFIC_EPITHET = SOURCE_TAXON + "SpecificEpithet";
+    public static final String SOURCE_TAXON_SUBGENUS = SOURCE_TAXON + "Subgenus";
     public static final String SOURCE_TAXON_GENUS = SOURCE_TAXON + "Genus";
     public static final String SOURCE_TAXON_SUBFAMILY = SOURCE_TAXON + "Subfamily";
     public static final String SOURCE_TAXON_FAMILY = SOURCE_TAXON + "Family";
@@ -53,6 +54,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     public static final String SOURCE_TAXON_PHYLUM = SOURCE_TAXON + "Phylum";
     public static final String SOURCE_TAXON_KINGDOM = SOURCE_TAXON + "Kingdom";
     public static final List<String> SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
+            StudyImporterForMetaTable.SOURCE_TAXON_SUBGENUS,
             StudyImporterForMetaTable.SOURCE_TAXON_GENUS,
             StudyImporterForMetaTable.SOURCE_TAXON_SUBFAMILY,
             StudyImporterForMetaTable.SOURCE_TAXON_FAMILY,
@@ -70,6 +72,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     public static final String TARGET_TAXON = "targetTaxon";
     public static final String TARGET_TAXON_SUBSPECIFIC_EPITHET = TARGET_TAXON + "SubspecificEpithet";
     public static final String TARGET_TAXON_SPECIFIC_EPITHET = TARGET_TAXON + "SpecificEpithet";
+    public static final String TARGET_TAXON_SUBGENUS = TARGET_TAXON + "Subgenus";
     public static final String TARGET_TAXON_GENUS = TARGET_TAXON + "Genus";
     public static final String TARGET_TAXON_SUBFAMILY = TARGET_TAXON + "Subfamily";
     public static final String TARGET_TAXON_FAMILY = TARGET_TAXON + "Family";
@@ -84,6 +87,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     public static final String TARGET_TAXON_PHYLUM = TARGET_TAXON + "Phylum";
     public static final String TARGET_TAXON_KINGDOM = TARGET_TAXON + "Kingdom";
     public static final List<String> TARGET_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
+            StudyImporterForMetaTable.TARGET_TAXON_SUBGENUS,
             StudyImporterForMetaTable.TARGET_TAXON_GENUS,
             StudyImporterForMetaTable.TARGET_TAXON_SUBFAMILY,
             StudyImporterForMetaTable.TARGET_TAXON_FAMILY,
