@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String INTERACTION_TYPE_ID = "interactionTypeId";
@@ -115,30 +116,32 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
             putNotBlank(link, STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
 
             putNotBlank(link, TaxonUtil.SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_ID)));
-            putNotBlank(link, TaxonUtil.SOURCE_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_NAME)));
             putNotBlank(link, TaxonUtil.TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_ID)));
-            putNotBlank(link, TaxonUtil.TARGET_TAXON_NAME, StringUtils.trim(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_NAME)));
-            putNotBlank(link, INTERACTION_TYPE_NAME, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_NAME)));
-            putNotBlank(link, INTERACTION_TYPE_ID, StringUtils.trim(parser.getValueByLabel(INTERACTION_TYPE_ID)));
-            putNotBlank(link, DECIMAL_LATITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LATITUDE)));
-            putNotBlank(link, DECIMAL_LONGITUDE, StringUtils.trim(parser.getValueByLabel(DECIMAL_LONGITUDE)));
-            putNotBlank(link, LOCALITY_ID, StringUtils.trim(parser.getValueByLabel(LOCALITY_ID)));
-            putNotBlank(link, LOCALITY_NAME, StringUtils.trim(parser.getValueByLabel(LOCALITY_NAME)));
 
-            putNotBlank(link, SOURCE_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_ID)));
-            putNotBlank(link, SOURCE_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_BODY_PART_NAME)));
-            putNotBlank(link, TARGET_BODY_PART_ID, StringUtils.trim(parser.getValueByLabel(TARGET_BODY_PART_ID)));
-            putNotBlank(link, TARGET_BODY_PART_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_BODY_PART_NAME)));
-
-            putNotBlank(link, SOURCE_LIFE_STAGE_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_ID)));
-            putNotBlank(link, SOURCE_LIFE_STAGE_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_LIFE_STAGE_NAME)));
-            putNotBlank(link, TARGET_LIFE_STAGE_ID, StringUtils.trim(parser.getValueByLabel(TARGET_LIFE_STAGE_ID)));
-            putNotBlank(link, TARGET_LIFE_STAGE_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_LIFE_STAGE_NAME)));
-
-            putNotBlank(link, SOURCE_SEX_ID, StringUtils.trim(parser.getValueByLabel(SOURCE_SEX_ID)));
-            putNotBlank(link, SOURCE_SEX_NAME, StringUtils.trim(parser.getValueByLabel(SOURCE_SEX_NAME)));
-            putNotBlank(link, TARGET_SEX_ID, StringUtils.trim(parser.getValueByLabel(TARGET_SEX_ID)));
-            putNotBlank(link, TARGET_SEX_NAME, StringUtils.trim(parser.getValueByLabel(TARGET_SEX_NAME)));
+            Stream.of(
+                    TaxonUtil.SOURCE_TAXON_NAME,
+                    TaxonUtil.SOURCE_TAXON_NAME,
+                    TaxonUtil.TARGET_TAXON_NAME,
+                    INTERACTION_TYPE_NAME,
+                    INTERACTION_TYPE_ID,
+                    DECIMAL_LATITUDE,
+                    DECIMAL_LONGITUDE,
+                    LOCALITY_ID,
+                    LOCALITY_NAME,
+                    SOURCE_BODY_PART_ID,
+                    SOURCE_BODY_PART_NAME,
+                    TARGET_BODY_PART_ID,
+                    TARGET_BODY_PART_NAME,
+                    SOURCE_LIFE_STAGE_ID,
+                    SOURCE_LIFE_STAGE_NAME,
+                    TARGET_LIFE_STAGE_ID,
+                    TARGET_LIFE_STAGE_NAME,
+                    SOURCE_SEX_ID,
+                    SOURCE_SEX_NAME,
+                    TARGET_SEX_ID,
+                    TARGET_SEX_NAME
+            )
+                    .forEach(x -> doIdentifyMap(parser, link, x));
 
             String argumentTypeId = StringUtils.trim(parser.getValueByLabel(ARGUMENT_TYPE_ID));
             if (StringUtils.isBlank(argumentTypeId)) {
@@ -154,8 +157,13 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 
+            TaxonUtil.enrichTaxonNames(link);
             interactionListener.newLink(link);
         }
+    }
+
+    private void doIdentifyMap(LabeledCSVParser parser, Map<String, String> link, String propertyName) {
+        putNotBlank(link, propertyName, StringUtils.trim(parser.getValueByLabel(propertyName)));
     }
 
     private void attemptToGenerateReferencePropertiesIfMissing(String namespace, Map<String, String> link) {
