@@ -9,7 +9,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
@@ -237,6 +236,9 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
                     final Column column = columnNames.get(i);
                     try {
                         mappedLine.put(column.getName(), parseValue(valueOrDefault(value, column), column));
+                        if (StringUtils.isNotBlank(column.getOriginalName())) {
+                            mappedLine.put(column.getOriginalName(), value);
+                        }
                     } catch (IllegalArgumentException ex) {
                         if (importLogger != null) {
                             importLogger.warn(null, "failed to parse value [" + value + "] in column [" + column.getName() + "]");
@@ -355,18 +357,23 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         final JsonNode columns = tableSchema.get("columns");
         for (JsonNode column : columns) {
             final JsonNode columnName = column.get("name");
-            if (columnName != null) {
-                if (column.has("datatype")) {
-                    addTypedColumn(columnNames, column, columnName);
-                } else {
-                    columnNames.add(new Column(columnName.asText(), "string"));
+            if (StringUtils.isNotBlank(columnName.asText())) {
+                final Column col = column.has("datatype")
+                        ? createTypedColumn(column, columnName)
+                        : new Column(columnName.asText(), "string");
+                if (column.has("titles")) {
+                    String titlesText = column.get("titles").asText();
+                    if (StringUtils.isNotBlank(titlesText) && !StringUtils.equals(columnName.asText(), titlesText)) {
+                        col.setOriginalName(StringUtils.trim(titlesText));
+                    }
                 }
+                columnNames.add(col);
             }
         }
         return columnNames;
     }
 
-    private static void addTypedColumn(List<Column> columnNames, JsonNode column, JsonNode columnName) {
+    private static Column createTypedColumn(JsonNode column, JsonNode columnName) {
         String dataTypeId = null;
 
         final JsonNode dataType = column.get("datatype");
@@ -383,7 +390,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         col.setDataTypeBase(dataType.has("base") ? dataType.get("base").asText() : null);
         col.setValueUrl(dataType.has("valueUrl") ? dataType.get("valueUrl").asText() : null);
         col.setDefaultValue(column.has("default") ? column.get("default").asText() : null);
-        columnNames.add(col);
+        return col;
     }
 
     static class Column {
@@ -393,6 +400,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         private String dataTypeBase;
         private String defaultValue;
         private String valueUrl;
+        private String originalName;
 
         Column(String name, String dataTypeId) {
             this.name = name;
@@ -438,6 +446,14 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
         public String getValueUrl() {
             return valueUrl;
+        }
+
+        public void setOriginalName(String originalName) {
+            this.originalName = originalName;
+        }
+
+        public String getOriginalName() {
+            return originalName;
         }
     }
 
