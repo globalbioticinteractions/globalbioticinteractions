@@ -366,7 +366,7 @@ public class StudyImporterForMetaTableTest {
 
         assertThat(links.get(0).get("empty1"), is("Homo sapiens"));
         assertThat(links.get(0).get("empty3"), is("eats: Canis lupus | eats: Catus felis"));
-        
+
         assertThat(links.get(0).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
         assertThat(links.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
         assertThat(links.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));

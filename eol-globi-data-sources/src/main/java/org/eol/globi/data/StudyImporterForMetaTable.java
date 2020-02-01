@@ -357,10 +357,11 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         final JsonNode columns = tableSchema.get("columns");
         for (JsonNode column : columns) {
             final JsonNode columnName = column.get("name");
-            if (StringUtils.isNotBlank(columnName.asText())) {
+            if (columnName != null) {
                 final Column col = column.has("datatype")
                         ? createTypedColumn(column, columnName)
-                        : new Column(columnName.asText(), "string");
+                        : createStringColumn(columnName);
+
                 if (column.has("titles")) {
                     String titlesText = column.get("titles").asText();
                     if (StringUtils.isNotBlank(titlesText) && !StringUtils.equals(columnName.asText(), titlesText)) {
@@ -371,6 +372,10 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
             }
         }
         return columnNames;
+    }
+
+    public static Column createStringColumn(JsonNode columnName) {
+        return new Column(columnName.asText(), "string");
     }
 
     private static Column createTypedColumn(JsonNode column, JsonNode columnName) {
