@@ -11,6 +11,7 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,8 +32,19 @@ public class CitationUtil {
     }
 
     public static String sourceCitationLastAccessed(Dataset dataset, String sourceCitation) {
-        String resourceURI = dataset.getOrDefault("url", dataset.getArchiveURI().toString());
-        return StringUtils.trim(sourceCitation) + separatorFor(sourceCitation) + createLastAccessedString(resourceURI);
+        String archiveURIString = dataset.getArchiveURI().toString();
+        String resourceURIString = dataset.getOrDefault("url", archiveURIString);
+        URI resourceURI = null;
+        try {
+            resourceURI = new URI(resourceURIString);
+        } catch (URISyntaxException e) {
+            //
+        }
+        if (resourceURI == null || !resourceURI.isAbsolute()) {
+            resourceURI = dataset.getArchiveURI();
+        }
+
+        return StringUtils.trim(sourceCitation) + separatorFor(sourceCitation) + createLastAccessedString(resourceURI.toString());
     }
 
     public static String sourceCitationLastAccessed(Dataset dataset) {
@@ -89,7 +101,7 @@ public class CitationUtil {
 
         String primaryCitation = dataset
                 .getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION,
-                dataset.getOrDefault("citation", fallbackCitation));
+                        dataset.getOrDefault("citation", fallbackCitation));
 
         return StringUtils.trim(StringUtils.isBlank(primaryCitation)
                 ? secondaryCitationsJoin

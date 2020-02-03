@@ -19,7 +19,7 @@ public class ReferenceUtilTest {
 
     @Test
     public void sourceCitation() {
-        String s = CitationUtil.sourceCitationLastAccessed(new DatasetImpl("some/namespace", URI.create("http://example"), inStream -> inStream), "some source citation. ");
+        String s = CitationUtil.sourceCitationLastAccessed(new DatasetImpl("some/namespace", URI.create("http://example"), inStream -> inStream), "some source citation.");
         assertThat(s, startsWith("some source citation. Accessed at <http://example> on "));
         assertThat(s, endsWith("."));
     }
@@ -34,6 +34,15 @@ public class ReferenceUtilTest {
     public void sourceCitationDataset() throws IOException {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example"), inStream -> inStream);
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
+        dataset.setConfig(config);
+        String citation = CitationUtil.sourceCitationLastAccessed(dataset);
+        assertThat(citation, startsWith("<http://example>. Accessed at <http://example> on"));
+    }
+
+    @Test
+    public void sourceCitationDatasetLocalResource() throws IOException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example"), inStream -> inStream);
+        JsonNode config = new ObjectMapper().readTree("{ \"url\": \"interactions.tsv\" }");
         dataset.setConfig(config);
         String citation = CitationUtil.sourceCitationLastAccessed(dataset);
         assertThat(citation, startsWith("<http://example>. Accessed at <http://example> on"));
