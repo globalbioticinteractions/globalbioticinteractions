@@ -22,7 +22,7 @@ public class TableInteractionListenerProxyTest {
     @Test
     public void interactionListenerTest() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
-        JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
+        JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"https://example.org/someResource\" }");
         DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
@@ -34,14 +34,14 @@ public class TableInteractionListenerProxyTest {
         listener.newLink(new HashMap<>());
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <some resource url> on "));
-        assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some citation. Accessed at <some resource url> on "));
+        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
+        assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
     }
 
     @Test
     public void interactionListener2Test() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
-        JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
+        JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"https://example.org/someResource\" }");
         DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
@@ -57,7 +57,7 @@ public class TableInteractionListenerProxyTest {
         });
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <some resource url> on "));
+        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
         assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some ref"));
     }
 

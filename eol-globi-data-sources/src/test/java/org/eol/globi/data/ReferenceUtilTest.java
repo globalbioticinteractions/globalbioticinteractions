@@ -49,6 +49,24 @@ public class ReferenceUtilTest {
     }
 
     @Test
+    public void sourceCitationDatasetLocalResourceNonURI() throws IOException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example"), inStream -> inStream);
+        JsonNode config = new ObjectMapper().readTree("{ \"url\": \"foo bar\" }");
+        dataset.setConfig(config);
+        String citation = CitationUtil.sourceCitationLastAccessed(dataset);
+        assertThat(citation, startsWith("<http://example>. Accessed at <http://example> on"));
+    }
+
+    @Test
+    public void sourceCitationDatasetLocalResourceURI() throws IOException {
+        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example"), inStream -> inStream);
+        JsonNode config = new ObjectMapper().readTree("{ \"url\": \"https://example.org/foo.tsv\" }");
+        dataset.setConfig(config);
+        String citation = CitationUtil.sourceCitationLastAccessed(dataset);
+        assertThat(citation, startsWith("<http://example>. Accessed at <https://example.org/foo.tsv> on"));
+    }
+
+    @Test
     public void generateSourceCitation() throws IOException, StudyImporterException {
         final InputStream inputStream = getClass().getResourceAsStream("/org/eol/globi/data/test-meta-globi.json");
 
