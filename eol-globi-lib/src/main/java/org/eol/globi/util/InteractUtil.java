@@ -66,6 +66,10 @@ public class InteractUtil {
                 put("vector of", InteractType.VECTOR_OF);
                 put("found on", InteractType.INTERACTS_WITH);
                 put("visitsflowersof", InteractType.VISITS_FLOWERS_OF);
+                put("collected on", InteractType.INTERACTS_WITH);
+                put("reared from", InteractType.INTERACTS_WITH);
+                put("emerged from", InteractType.INTERACTS_WITH);
+                put("collected in", InteractType.INTERACTS_WITH);
             }});
 
     public static String allInteractionsCypherClause() {
