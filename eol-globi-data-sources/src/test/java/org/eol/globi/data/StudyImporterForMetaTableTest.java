@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
@@ -33,6 +34,58 @@ public class StudyImporterForMetaTableTest {
         assertThat(columnNames.size(), is(40));
         assertThat(columnNames.get(0).getDefaultValue(), is("some default interaction name"));
         assertThat(columnNames.get(1).getDefaultValue(), is(nullValue()));
+    }
+
+    @Test
+    public void parseColumnValues() {
+
+        HashMap<String, String> mappedLine = new HashMap<>();
+        mappedLine.put("some column", "some original malformed value");
+        final List<String> msgs = doParse(mappedLine, "some malformed value");
+
+        assertThat(mappedLine.get("some column"), is("some original malformed value"));
+
+        assertThat(msgs.size(), is(1));
+        assertThat(msgs.get(0), is("failed to parse value [some malformed value] in column [some column] with datatype: {\"base\":\"date\",\"format\":\"MM/dd/YYYY\",\"id\":\"some data type id\"}"));
+
+    }
+
+    @Test
+    public void parseColumnValuesWithValidDate() {
+
+        HashMap<String, String> mappedLine = new HashMap<>();
+        final List<String> msgs = doParse(mappedLine, "01/01/2019");
+
+        assertThat(mappedLine.get("some column"), is("2019-01-01T00:00:00.000Z"));
+
+        assertThat(msgs.size(), is(0));
+    }
+
+    public List<String> doParse(HashMap<String, String> mappedLine, String aValue) {
+        StudyImporterForMetaTable.Column column
+                = new StudyImporterForMetaTable.Column("some column", "some data type id");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("MM/dd/YYYY");
+        column.setOriginalName("original column name");
+
+        final List<String> msgs = new ArrayList<>();
+
+        StudyImporterForMetaTable.parseColumnValue(new ImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void info(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+            }
+        }, mappedLine, aValue, column);
+        return msgs;
     }
 
     @Test

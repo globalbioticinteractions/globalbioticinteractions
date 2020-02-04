@@ -160,12 +160,18 @@ class InteractionListenerImpl implements InteractionListener {
                 if (StringUtils.isBlank(l.get(INTERACTION_TYPE_NAME))) {
                     logger.warn(LogUtil.contextFor(l), "missing interaction type");
                 } else {
-                    logger.warn(LogUtil.contextFor(l), "found interaction type name [" + l.get(INTERACTION_TYPE_NAME) + "], but no interaction type id");
+                    logger.warn(LogUtil.contextFor(l), "found unsupported interaction type with name: [" + l.get(INTERACTION_TYPE_NAME) + "]");
                 }
             } else {
                 hasValidId = InteractType.typeOf(interactionTypeId) != null;
                 if (!hasValidId && logger != null) {
-                    logger.warn(LogUtil.contextFor(l), "found unsupported interaction type id [" + interactionTypeId + "]");
+                    StringBuilder msg = new StringBuilder("found unsupported interaction type with id: [" + interactionTypeId + "]");
+                    if (StringUtils.isNotBlank(l.get(INTERACTION_TYPE_NAME))) {
+                        msg.append(" and name: [")
+                                .append(l.get(INTERACTION_TYPE_NAME))
+                                .append("]");
+                    }
+                    logger.warn(LogUtil.contextFor(l), msg.toString());
                 }
             }
             return hasValidId;

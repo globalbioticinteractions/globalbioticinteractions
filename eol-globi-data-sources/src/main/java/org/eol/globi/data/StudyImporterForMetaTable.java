@@ -5,6 +5,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
@@ -25,6 +26,7 @@ import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
@@ -234,22 +236,46 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
                 for (int i = 0; i < columnNames.size() && i < line.length; i++) {
                     final String value = nullValueArray.contains(line[i]) ? null : line[i];
                     final Column column = columnNames.get(i);
-                    try {
-                        mappedLine.put(column.getName(), parseValue(valueOrDefault(value, column), column));
-                        if (StringUtils.isNotBlank(column.getOriginalName())) {
-                            mappedLine.put(column.getOriginalName(), value);
-                        }
-                    } catch (IllegalArgumentException ex) {
-                        if (importLogger != null) {
-                            importLogger.warn(null, "failed to parse value [" + value + "] in column [" + column.getName() + "]");
-                        }
-                    }
+                    parseColumnValue(importLogger, mappedLine, value, column);
                 }
 
                 AssociatedTaxaUtil.expandNewLinkIfNeeded(interactionListener, mappedLine);
             }
         } catch (IOException e) {
             throw new StudyImporterException(e);
+        }
+    }
+
+    public static void parseColumnValue(ImportLogger importLogger, Map<String, String> mappedLine, String value, Column column) {
+        try {
+            String parsedValue = parseValue(valueOrDefault(value, column), column);
+            mappedLine.put(column.getName(), parsedValue);
+            if (StringUtils.isNotBlank(column.getOriginalName())) {
+                mappedLine.put(column.getOriginalName(), value);
+            }
+        } catch (IllegalArgumentException ex) {
+            if (importLogger != null) {
+                StringBuilder msg = new StringBuilder("failed to parse value [" + value + "] in column [" + column.getName() + "]");
+
+                try {
+                    String typeDescription = new ObjectMapper().writeValueAsString(new TreeMap<String, String>() {{
+                        if (StringUtils.isNotBlank(column.getDataTypeId())) {
+                            put("id", column.getDataTypeId());
+                        }
+                        if (StringUtils.isNotBlank(column.getDataTypeBase())) {
+                            put("base", column.getDataTypeBase());
+                        }
+                        if (StringUtils.isNotBlank(column.getDataTypeFormat())) {
+                            put("format", column.getDataTypeFormat());
+                        }
+                    }});
+                    msg.append(" with datatype: ")
+                            .append(typeDescription);
+                } catch (IOException e) {
+                    //
+                }
+                importLogger.warn(null, msg.toString());
+            }
         }
     }
 
