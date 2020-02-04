@@ -94,9 +94,13 @@ class InteractionListenerImpl implements InteractionListener {
             for (Map<String, String> expandedProperties : propertiesList) {
                 if (properties != null && validLink(expandedProperties)) {
                     if (logger != null) {
-                        logger.info(LogUtil.contextFor(expandedProperties), "minimum requirements met");
+                        logger.info(LogUtil.contextFor(expandedProperties), "likely describes biotic interaction");
                     }
                     importValidLink(expandedProperties);
+                } else {
+                    if (logger != null) {
+                        logger.info(LogUtil.contextFor(expandedProperties), "no biotic interaction detected");
+                    }
                 }
             }
         } catch (NodeFactoryException e) {
