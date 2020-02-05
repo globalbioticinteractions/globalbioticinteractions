@@ -46,7 +46,11 @@ public class GitHubUtil {
         CloseableHttpClient build = httpClientBuilder.build();
 
         URI requestUrl = new URI("https", null, "api.github.com", -1, path, query, null);
-        HttpGet request = HttpUtil.withBasicAuthHeader(new HttpGet(requestUrl), id, secret);
+
+        HttpGet request = StringUtils.isNotBlank(id) && StringUtils.isNotBlank(secret)
+                    ? HttpUtil.withBasicAuthHeader(new HttpGet(requestUrl), id, secret)
+                    : new HttpGet(requestUrl);
+
         return HttpUtil.executeAndRelease(request, build);
     }
 
