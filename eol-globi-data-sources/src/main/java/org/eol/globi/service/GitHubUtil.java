@@ -4,7 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
@@ -26,8 +29,25 @@ public class GitHubUtil {
     public static final String GITHUB_CLIENT_ID_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_ID";
     public static final String GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_SECRET";
 
-    private static String httpGet(String path, String query) throws URISyntaxException, IOException {
-        return HttpUtil.getContent(new URI("https", null, "api.github.com", -1, path, appendAuth(query), null));
+    static String httpGet(String path, String query) throws URISyntaxException, IOException {
+        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        return doHttpGetWithBasicAuthIfCredentialsIfAvailable(
+                path,
+                query,
+                httpClientBuilder,
+                getGitHubClientId(),
+                getGitHubClientSecret());
+    }
+
+    static String doHttpGetWithBasicAuthIfCredentialsIfAvailable(String path,
+                                                                 String query,
+                                                                 HttpClientBuilder httpClientBuilder,
+                                                                 String id, String secret) throws URISyntaxException, IOException {
+        CloseableHttpClient build = httpClientBuilder.build();
+
+        URI requestUrl = new URI("https", null, "api.github.com", -1, path, query, null);
+        HttpGet request = HttpUtil.withBasicAuthHeader(new HttpGet(requestUrl), id, secret);
+        return HttpUtil.executeAndRelease(request, build);
     }
 
     private static boolean hasInteractionData(String repoName, String globiFilename) throws IOException {

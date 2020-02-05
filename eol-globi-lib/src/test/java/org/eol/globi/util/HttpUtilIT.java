@@ -1,10 +1,13 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -62,4 +65,20 @@ public class HttpUtilIT {
         HttpGet get = new HttpGet("http://eol.org");
         httpClient.execute(get, new BasicResponseHandler());
     }
+
+    @Test
+    public void withBasicAuthHeaders() throws IOException {
+        HttpClientBuilder builder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        CloseableHttpClient httpClient = builder.build();
+        String username = "aladdin";
+        String password = "opensesame";
+        HttpGet get = new HttpGet("http://httpbin.org/basic-auth/aladdin/opensesame");
+        HttpUtil.withBasicAuthHeader(get, username, password);
+
+        Header[] authorizations = get.getHeaders("Authorization");
+        // see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
+        assertThat(authorizations[0].getValue(), is("Basic YWxhZGRpbjpvcGVuc2VzYW1l"));
+        httpClient.execute(get, new BasicResponseHandler());
+    }
+
 }

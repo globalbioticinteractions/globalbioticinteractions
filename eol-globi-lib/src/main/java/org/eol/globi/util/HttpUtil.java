@@ -1,11 +1,17 @@
 package org.eol.globi.util;
 
+import com.Ostermiller.util.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -13,6 +19,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
@@ -83,6 +90,12 @@ public class HttpUtil {
     }
 
     protected static CloseableHttpClient createHttpClient(int soTimeoutMs) {
+        HttpClientBuilder httpClientBuilder = createHttpClientBuilder(soTimeoutMs);
+        return httpClientBuilder
+                .build();
+    }
+
+    public static HttpClientBuilder createHttpClientBuilder(int soTimeoutMs) {
         RequestConfig config = RequestConfig.custom()
                 .setSocketTimeout(soTimeoutMs)
                 .setConnectTimeout(soTimeoutMs)
@@ -92,7 +105,7 @@ public class HttpUtil {
                 .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
                 .setUserAgent("globalbioticinteractions/" + Version.getVersion() + " (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)")
                 .setServiceUnavailableRetryStrategy(new CustomServiceUnavailableStrategy())
-                .setDefaultRequestConfig(config).build();
+                .setDefaultRequestConfig(config);
     }
 
     public static HttpGet httpGetJson(URI uri) {
@@ -165,5 +178,11 @@ public class HttpUtil {
                 }
             }
         };
+    }
+
+    public static HttpGet withBasicAuthHeader(HttpGet request, String username, String password) {
+        String encode = Base64.encode(username + ":" + password);
+        request.addHeader("Authorization", "Basic " + encode);
+        return request;
     }
 }
