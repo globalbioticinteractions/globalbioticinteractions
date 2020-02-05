@@ -13,7 +13,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 public class GitHubUtilTest {
 
     @Test
-    public void isGloBIRepo() throws IOException, URISyntaxException {
+    public void isGloBIRepo() throws IOException {
         assertThat(GitHubUtil.isGloBIRepository(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV), is(true));
     }
 
@@ -23,7 +23,7 @@ public class GitHubUtilTest {
     }
 
 @Test
-    public void baseUrlMaster() throws IOException {
+    public void baseUrlMaster() {
         assertThat(GitHubUtil.getBaseUrlMaster("globalbioticinteractions/template-dataset"),
                 is("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/master"));
     }

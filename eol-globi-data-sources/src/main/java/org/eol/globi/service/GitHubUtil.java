@@ -21,6 +21,10 @@ import java.util.List;
 
 public class GitHubUtil {
     private static final Log LOG = LogFactory.getLog(GitHubUtil.class);
+    public static final String GITHUB_CLIENT_ID_JAVA_PROPERTY_NAME = "github.client.id";
+    public static final String GITHUB_CLIENT_SECRET_JAVA_PROPERTY_NAME = "github.client.secret";
+    public static final String GITHUB_CLIENT_ID_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_ID";
+    public static final String GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_SECRET";
 
     private static String httpGet(String path, String query) throws URISyntaxException, IOException {
         return HttpUtil.getContent(new URI("https", null, "api.github.com", -1, path, appendAuth(query), null));
@@ -90,20 +94,36 @@ public class GitHubUtil {
     }
 
     private static String appendAuth(String query) {
-        String propertyNameGitHubClientId = "github.client.id";
-        String propertyNameGitHubClientSecret = "github.client.secret";
-        String clientId = System.getProperty(propertyNameGitHubClientId);
-        String clientSecret = System.getProperty(propertyNameGitHubClientSecret);
+        String clientId = getGitHubClientId();
+        String clientSecret = getGitHubClientSecret();
 
-        if (StringUtils.isBlank(clientId)) {
-            LOG.warn("variable [" + propertyNameGitHubClientId + "] is not set: this lowers the rate limits");
-        } else  if (StringUtils.isBlank(clientSecret)) {
-            LOG.warn("variable [" + propertyNameGitHubClientSecret + "] is not set: this lowers the rate limits");
-        } else {
+        if (StringUtils.isNotBlank(clientId) && StringUtils.isNotBlank(clientSecret)) {
             String auth = "client_id=" + clientId + "&client_secret=" + clientSecret;
             query = StringUtils.isBlank(query) ? auth : query + "&" + auth;
         }
+
         return query;
+    }
+
+    private static String getGitHubClientSecret() {
+        return getPropertyOrEnvironmentVariable(
+                GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE,
+                GITHUB_CLIENT_SECRET_JAVA_PROPERTY_NAME);
+    }
+
+    private static String getPropertyOrEnvironmentVariable(String environmentVariableName, String javaPropertyName) {
+        String environmentVariable = System.getenv(environmentVariableName);
+        String property = System.getProperty(javaPropertyName, environmentVariable);
+        if (StringUtils.isBlank(property)) {
+            LOG.warn("Please set java property [" + javaPropertyName + "] or environment variable [" + environmentVariableName + "] to avoid GitHub API rate limits");
+        }
+        return property;
+    }
+
+    private static String getGitHubClientId() {
+        return getPropertyOrEnvironmentVariable(
+                GITHUB_CLIENT_ID_ENVIRONMENT_VARIABLE,
+                GITHUB_CLIENT_ID_JAVA_PROPERTY_NAME);
     }
 
     private static String getBaseUrl(String repo, String lastCommitSHA) {
