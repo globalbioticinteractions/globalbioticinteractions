@@ -254,7 +254,7 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(1));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Eschscholzia californica"));
-        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsflowersof"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsFlowersOf"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
@@ -265,7 +265,7 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(1));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Lupinus succulentus"));
-        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsflowersof"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsFlowersOf"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
@@ -276,7 +276,7 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(1));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Phallia"));
-        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsflowersof"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsFlowersOf"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 

@@ -21,4 +21,10 @@ public class InteractUtilTest {
                 , is("VECTOR_OF|DISPERSAL_VECTOR_OF"));
     }
 
+    @Test
+    public void mapNotCaseSensitive() {
+        assertThat(InteractUtil.getInteractTypeForName("hostOf"), is(InteractType.HOST_OF));
+        assertThat(InteractUtil.getInteractTypeForName("hostof"), is(InteractType.HOST_OF));
+    }
+
 }

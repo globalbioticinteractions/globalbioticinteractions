@@ -301,7 +301,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     private static void addSpecificInteractionForAssociatedTaxon(List<Map<String, String>> properties, String[] verbTaxon) {
         HashMap<String, String> e = new HashMap<>();
-        String interactionTypeName = StringUtils.lowerCase(StringUtils.trim(verbTaxon[0]));
+        String interactionTypeName = StringUtils.trim(verbTaxon[0]);
         e.put(INTERACTION_TYPE_NAME, interactionTypeName);
         e.put(TARGET_TAXON_NAME, StringUtils.trim(verbTaxon[1]));
         properties.add(e);
