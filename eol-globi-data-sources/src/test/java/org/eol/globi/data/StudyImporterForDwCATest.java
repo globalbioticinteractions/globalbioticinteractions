@@ -248,6 +248,39 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxa2() {
+        String associatedTaxa = " visitsFlowersOf:Eschscholzia californica";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Eschscholzia californica"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsflowersof"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void associatedTaxa3() {
+        String associatedTaxa = " visitsFlowersOf : Lupinus succulentus";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Lupinus succulentus"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsflowersof"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void associatedTaxa4() {
+        String associatedTaxa = "visitsFlowersOf: Phallia";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Phallia"));
+        assertThat(properties.get(0).get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("visitsflowersof"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
     public void associatedTaxaMultiple() {
         String associatedTaxa = "eats: Homo sapiens | eats: Canis lupus";
         assertTwoInteractions(associatedTaxa);

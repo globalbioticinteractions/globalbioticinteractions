@@ -162,11 +162,11 @@ public enum InteractType implements RelType {
         }
         InteractType[] values = values();
         for (InteractType interactType : values) {
-            if (StringUtils.equals(iri, interactType.getIRI())) {
+            if (StringUtils.equalsIgnoreCase(iri, interactType.getIRI())) {
                 return interactType;
-            } else if (StringUtils.equals(iri, interactType.name())) {
+            } else if (StringUtils.equalsIgnoreCase(iri, interactType.name())) {
                 return interactType;
-            } else if (StringUtils.equals(iri, interactType.getLabel())) {
+            } else if (StringUtils.equalsIgnoreCase(iri, interactType.getLabel())) {
                 return interactType;
             }
         }

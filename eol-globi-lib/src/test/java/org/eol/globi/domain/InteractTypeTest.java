@@ -68,6 +68,13 @@ public class InteractTypeTest {
     }
 
     @Test
+    public void nativeTypesNotCaseSensitive() {
+        assertThat(typeOf("interactsWith"), is(INTERACTS_WITH));
+        assertThat(typeOf("interactswith"), is(INTERACTS_WITH));
+    }
+
+
+    @Test
     public void hasTypes() {
         for (InteractType type : values()) {
             assertThat("found missing path for interaction [" + type + "]", InteractType.hasTypes(type), is(notNullValue()));
