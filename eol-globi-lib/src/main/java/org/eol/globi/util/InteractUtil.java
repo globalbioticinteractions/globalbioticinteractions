@@ -71,7 +71,10 @@ public class InteractUtil {
                 put("emerged from", InteractType.INTERACTS_WITH);
                 put("collected in", InteractType.INTERACTS_WITH);
                 put("hyperparasitoid of", InteractType.HYPERPARASITE_OF);
-                put("null", InteractType.INTERACTS_WITH);
+                put("on", InteractType.INTERACTS_WITH);
+                put("under", InteractType.INTERACTS_WITH);
+                put("inside", InteractType.INTERACTS_WITH);
+                put("in", InteractType.INTERACTS_WITH);
             }});
 
     public static String allInteractionsCypherClause() {
