@@ -22,6 +22,9 @@ import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EMLUtil {
 
@@ -35,13 +38,18 @@ public class EMLUtil {
             XPath xpath = xPathfactory.newXPath();
 
             String collectionName = StringUtils.trim(getFirstIfPresent(doc, xpath, "//collectionName"));
+            String datasetTitle = StringUtils.trim(getFirstIfPresent(doc, xpath, "//dataset/title"));
+            String name = StringUtils.isBlank(collectionName) ? datasetTitle : collectionName;
+
             String pubDate = StringUtils.trim(getFirstIfPresent(doc, xpath, "//pubDate"));
             String citation = StringUtils.trim(getFirstIfPresent(doc, xpath, "//citation"));
 
             ObjectNode objectNode = new ObjectMapper().createObjectNode();
-            String datasetCitation = StringUtils.join(Arrays.asList(collectionName, pubDate, citation), ". ") + ".";
+            String datasetCitation = Stream.of(name, pubDate,citation)
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.joining(". "));
 
-            objectNode.put("citation", datasetCitation);
+            objectNode.put("citation", datasetCitation + ".");
             objectNode.put("format", "application/dwca");
 
 

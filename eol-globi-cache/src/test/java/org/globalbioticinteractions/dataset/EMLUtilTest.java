@@ -29,4 +29,18 @@ public class EMLUtilTest {
         assertThat(proxy.getFormat(), is ("application/dwca"));
     }
 
+    @Test
+    public void withEMLofINHS() throws URISyntaxException, IOException {
+        Dataset origDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+
+
+        URI emlURI = getClass().getResource("inhs-eml.xml").toURI();
+        JsonNode config = EMLUtil.datasetWithEML(origDataset, emlURI);
+
+        DatasetProxy proxy = new DatasetProxy(origDataset);
+        proxy.setConfig(config);
+        assertThat(proxy.getFormat(), is ("application/dwca"));
+        assertThat(proxy.getCitation(), is ("Illinois Natural History Survey Insect Collection. 2018-02-28."));
+    }
+
 }
