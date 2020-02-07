@@ -46,7 +46,7 @@ public class StudyImporterForMetaTableTest {
         assertThat(mappedLine.get("some column"), is("some original malformed value"));
 
         assertThat(msgs.size(), is(1));
-        assertThat(msgs.get(0), is("failed to parse value [some malformed value] in column [some column] with datatype: {\"base\":\"date\",\"format\":\"MM/dd/YYYY\",\"id\":\"some data type id\"}"));
+        assertThat(msgs.get(0), is("failed to parse value [some malformed value] from column [original column name] into column [some column] with datatype: {\"base\":\"date\",\"format\":\"MM/dd/YYYY\",\"id\":\"some data type id\"}"));
 
     }
 
