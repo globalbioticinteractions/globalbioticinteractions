@@ -115,24 +115,30 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
                     TaxonUtil.enrichTaxonNames(properties);
-                    if (getDataset() == null || getDataset().getArchiveURI() == null) {
+                    if (getDataset() == null) {
                         listener.newLink(properties);
-                    } else if (getDataset().getArchiveURI() != null){
+                    } else {
                         listener.newLink(new HashMap<String, String>(properties) {{
-                            put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
+                            if (getDataset().getArchiveURI() != null) {
+                                put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
+                            }
                             put(DatasetConstant.CONTENT_HASH, getDataset().getOrDefault(DatasetConstant.CONTENT_HASH, ""));
+
+                            String sourceCitationTrimmed = StringUtils.trim(getDataset().getCitation());
+                            putIfAbsentAndNotBlank(this, STUDY_SOURCE_CITATION, sourceCitationTrimmed);
+                            putIfAbsentAndNotBlank(this, REFERENCE_CITATION, sourceCitationTrimmed);
+                            putIfAbsentAndNotBlank(this, REFERENCE_ID, sourceCitationTrimmed);
+
                         }});
                     }
                 }
             };
 
-            String sourceCitation = getDataset().getCitation();
+            importResourceRelationExtension(archive, listenerProxy);
 
-            importResourceRelationExtension(archive, listenerProxy, sourceCitation);
+            importAssociatedTaxaExtension(archive, listenerProxy);
 
-            importAssociatedTaxaExtension(archive, listenerProxy, sourceCitation);
-
-            importCore(archive, listenerProxy, sourceCitation);
+            importCore(archive, listenerProxy);
 
         } catch (IOException | IllegalStateException e) {
             // catching IllegalStateException to prevents RuntimeException from stopping all
@@ -145,7 +151,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    public void importCore(Archive archive, InteractionListener interactionListener, String sourceCitation) throws StudyImporterException {
+    public void importCore(Archive archive, InteractionListener interactionListener) throws StudyImporterException {
         ClosableIterator<Record> iterator = archive.getCore().iterator();
         while (true) {
             try {
@@ -153,14 +159,14 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     break;
                 }
                 Record rec = iterator.next();
-                handleRecord(interactionListener, sourceCitation, rec);
+                handleRecord(interactionListener, rec);
             } catch (IllegalStateException ex) {
                 LogUtil.logError(getLogger(), "failed to handle dwc record", ex);
             }
         }
     }
 
-    public void handleRecord(InteractionListener interactionListener, String sourceCitation, Record rec) throws StudyImporterException {
+    public void handleRecord(InteractionListener interactionListener, Record rec) throws StudyImporterException {
         List<Map<String, String>> interactionCandidates = new ArrayList<>();
 
 
@@ -202,24 +208,23 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         for (Map<String, String> interactionProperties : interactions) {
             interactionProperties.putAll(interaction);
             mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
-            mapCoreProperties(rec, interactionProperties, sourceCitation);
+            mapCoreProperties(rec, interactionProperties);
             interactionListener.newLink(interactionProperties);
         }
     }
 
-    public static void mapCoreProperties(Record rec, Map<String, String> interactionProperties, String sourceCitation) {
+    public static void mapCoreProperties(Record rec, Map<String, String> interactionProperties) {
         mapSourceProperties(rec, interactionProperties);
-        mapLocationAndReferenceInfo(rec, interactionProperties, sourceCitation);
+        mapLocationAndReferenceInfo(rec, interactionProperties);
     }
 
-    public static void mapLocationAndReferenceInfo(Record rec, Map<String, String> interactionProperties, String sourceCitation) {
+    public static void mapLocationAndReferenceInfo(Record rec, Map<String, String> interactionProperties) {
         mapIfAvailable(rec, interactionProperties, LOCALITY_NAME, DwcTerm.locality);
         mapIfAvailable(rec, interactionProperties, LOCALITY_ID, DwcTerm.locationID);
         mapIfAvailable(rec, interactionProperties, DECIMAL_LONGITUDE, DwcTerm.decimalLongitude);
         mapIfAvailable(rec, interactionProperties, DECIMAL_LATITUDE, DwcTerm.decimalLatitude);
         mapIfAvailable(rec, interactionProperties, StudyImporterForMetaTable.EVENT_DATE, DwcTerm.eventDate);
         mapReferenceInfo(rec, interactionProperties);
-        interactionProperties.put(STUDY_SOURCE_CITATION, sourceCitation);
     }
 
     public static void mapSourceProperties(Record rec, Map<String, String> interactionProperties) {
@@ -368,7 +373,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         return properties;
     }
 
-    static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener, String sourceCitation) {
+    static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener) {
         if (hasAssociatedTaxaExtension(archive)) {
             ArchiveFile extension = archive.getExtension(new ExtensionProperty(EXTENSION_ASSOCIATED_TAXA));
             ArchiveFile core = archive.getCore();
@@ -397,7 +402,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
                         mapAssociationProperties(targetProperties, interaction);
 
-                        mapCoreProperties(coreRecord, interaction, sourceCitation);
+                        mapCoreProperties(coreRecord, interaction);
 
                         interactionListener.newLink(interaction);
                     } catch (StudyImporterException e) {
@@ -408,7 +413,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    static void importResourceRelationExtension(Archive archive, InteractionListener interactionListener, String sourceCitation) {
+    static void importResourceRelationExtension(Archive archive, InteractionListener interactionListener) {
 
         ArchiveFile resourceExtension = findResourceRelationshipExtension(archive);
 
@@ -490,15 +495,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                         && StringUtils.isNotBlank(targetId)
                         && StringUtils.isNotBlank(relationshipTypeId)) {
 
-                    String sourceCitationTrimmed = StringUtils.trim(sourceCitation);
-                    props.put(STUDY_SOURCE_CITATION, sourceCitationTrimmed);
-
                     String relationshipAccordingTo = record.value(DwcTerm.relationshipAccordingTo);
-                    String referenceCitation = StringUtils.isBlank(relationshipAccordingTo)
-                            ? sourceCitationTrimmed
-                            : relationshipAccordingTo;
-                    props.putIfAbsent(REFERENCE_CITATION, referenceCitation);
-                    props.put(REFERENCE_ID, sourceCitationTrimmed);
+                    if (StringUtils.isNotBlank(relationshipAccordingTo)) {
+                        props.putIfAbsent(REFERENCE_CITATION, relationshipAccordingTo);
+                    }
 
                     props.put(INTERACTION_TYPE_NAME, relationship);
                     props.put(INTERACTION_TYPE_ID, relationshipTypeId);

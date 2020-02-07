@@ -196,6 +196,7 @@ public class StudyImporterForDwCATest {
                 "}");
         dataset.setConfig(jsonNode);
         studyImporterForDwCA.setDataset(dataset);
+        String expectedCitation = dataset.getCitation();
         AtomicBoolean someRecords = new AtomicBoolean(false);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
@@ -207,10 +208,10 @@ public class StudyImporterForDwCATest {
                 assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is(not(nullValue())));
                 assertThat(properties.get(INTERACTION_TYPE_ID), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(expectedCitation));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 someRecords.set(true);
             }
         });
@@ -535,11 +536,10 @@ public class StudyImporterForDwCATest {
                 assertThat(properties.get(StudyImporterForTSV.SOURCE_INSTITUTION_CODE), is("CUIC"));
                 assertThat(properties.get(StudyImporterForTSV.SOURCE_CATALOG_NUMBER), is("CUIC_ENT 00014070"));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("Digital Bee Collections Network, 2014 (and updates). Version: 2016-03-08. National Science Foundation grant DBI 0956388"));
-                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
                 foundLink.set(true);
 
             }
-        }, "some citation");
+        });
 
         assertTrue(foundLink.get());
     }
@@ -587,12 +587,9 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("C. M. Barber"));
                 }
-                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
-                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is("some citation"));
-
             }
-        }, "some citation");
+        });
 
         assertThat(numberOfFoundLinks.get(), is(5));
     }
@@ -620,12 +617,9 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Enhydra lutris kenyoni"));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("https://www.inaturalist.org/users/dpom"));
                 }
-                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is("some citation"));
-                assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
-                assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is("some citation"));
 
             }
-        }, "some citation");
+        });
 
         assertThat(numberOfFoundLinks.get(), is(1));
     }
