@@ -18,6 +18,7 @@ public class PropertyAndValueDictionary {
     public static final String OCCURRENCE_ID = "occurrenceId";
     public static final String CATALOG_NUMBER = "catalogNumber";
     public static final String COLLECTION_CODE = "collectionCode";
+    public static final String COLLECTION_ID = "collectionId";
     public static final String INSTITUTION_CODE = "institutionCode";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";

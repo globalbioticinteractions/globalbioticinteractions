@@ -30,6 +30,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_ID;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_ID;
+import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
@@ -85,10 +88,12 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(SOURCE_OCCURRENCE_ID, "123");
         link.put(SOURCE_CATALOG_NUMBER, "catalogNumber123");
         link.put(SOURCE_COLLECTION_CODE, "collectionCode123");
+        link.put(SOURCE_COLLECTION_ID, "collectionId123");
         link.put(SOURCE_INSTITUTION_CODE, "institutionCode123");
         link.put(TARGET_OCCURRENCE_ID, "456");
         link.put(TARGET_CATALOG_NUMBER, "targetCatalogNumber123");
         link.put(TARGET_COLLECTION_CODE, "targetCollectionCode123");
+        link.put(TARGET_COLLECTION_ID, "targetCollectionId123");
         link.put(TARGET_INSTITUTION_CODE, "targetInstitutionCode123");
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
@@ -134,11 +139,13 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 assertThat(predator.getProperty(OCCURRENCE_ID), is("123"));
                 assertThat(predator.getProperty(CATALOG_NUMBER), is("catalogNumber123"));
                 assertThat(predator.getProperty(COLLECTION_CODE), is("collectionCode123"));
+                assertThat(predator.getProperty(COLLECTION_ID), is("collectionId123"));
                 assertThat(predator.getProperty(INSTITUTION_CODE), is("institutionCode123"));
 
                 assertThat(prey.getProperty(OCCURRENCE_ID), is("456"));
                 assertThat(prey.getProperty(CATALOG_NUMBER), is("targetCatalogNumber123"));
                 assertThat(prey.getProperty(COLLECTION_CODE), is("targetCollectionCode123"));
+                assertThat(prey.getProperty(COLLECTION_ID), is("targetCollectionId123"));
                 assertThat(prey.getProperty(INSTITUTION_CODE), is("targetInstitutionCode123"));
                 foundPair.set(true);
 

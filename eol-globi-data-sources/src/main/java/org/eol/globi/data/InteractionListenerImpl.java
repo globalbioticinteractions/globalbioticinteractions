@@ -43,12 +43,15 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_CATALOG_NUMBER;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_CODE;
+import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_INSTITUTION_CODE;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_ID;
+import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
@@ -203,6 +206,7 @@ class InteractionListenerImpl implements InteractionListener {
         setPropertyIfAvailable(link, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
         setPropertyIfAvailable(link, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
         setPropertyIfAvailable(link, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
+        setPropertyIfAvailable(link, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
         setPropertyIfAvailable(link, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
 
         Specimen target = createSpecimen(
@@ -223,6 +227,7 @@ class InteractionListenerImpl implements InteractionListener {
         setPropertyIfAvailable(link, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
         setPropertyIfAvailable(link, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
         setPropertyIfAvailable(link, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
+        setPropertyIfAvailable(link, target, TARGET_COLLECTION_ID, COLLECTION_ID);
         setPropertyIfAvailable(link, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
 
 
