@@ -163,6 +163,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     public void handleRecord(InteractionListener interactionListener, String sourceCitation, Record rec) throws StudyImporterException {
         List<Map<String, String>> interactionCandidates = new ArrayList<>();
 
+
         String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
         if (StringUtils.isNotBlank(associatedTaxa)) {
             interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));

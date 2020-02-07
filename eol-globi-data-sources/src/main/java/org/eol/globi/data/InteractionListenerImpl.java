@@ -97,13 +97,9 @@ class InteractionListenerImpl implements InteractionListener {
             for (Map<String, String> expandedProperties : propertiesList) {
                 if (properties != null && validLink(expandedProperties)) {
                     if (logger != null) {
-                        logger.info(LogUtil.contextFor(expandedProperties), "likely describes biotic interaction");
+                        logger.info(LogUtil.contextFor(expandedProperties), "biotic interaction found");
                     }
                     importValidLink(expandedProperties);
-                } else {
-                    if (logger != null) {
-                        logger.info(LogUtil.contextFor(expandedProperties), "no biotic interaction detected");
-                    }
                 }
             }
         } catch (NodeFactoryException e) {
@@ -121,7 +117,6 @@ class InteractionListenerImpl implements InteractionListener {
             String sourceTaxonId = l.get(SOURCE_TAXON_ID);
             boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
             if (!isValid) {
-
                 logger.warn(LogUtil.contextFor(l), "source taxon name missing");
             }
             return isValid;
