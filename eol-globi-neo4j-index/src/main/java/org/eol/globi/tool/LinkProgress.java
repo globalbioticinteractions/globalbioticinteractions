@@ -11,10 +11,6 @@ public class LinkProgress {
     private StopWatch stopWatch = new StopWatch();
     private AtomicLong counter = new AtomicLong(0);
 
-    public LinkProgress(LinkProgressListener listener) {
-        this(listener, 100);
-    }
-
     public LinkProgress(LinkProgressListener listener, int reportInterval) {
         this.listener = listener;
         this.reportInterval = reportInterval;
