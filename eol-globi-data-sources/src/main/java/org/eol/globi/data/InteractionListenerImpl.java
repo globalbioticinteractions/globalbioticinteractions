@@ -96,14 +96,20 @@ class InteractionListenerImpl implements InteractionListener {
             List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(properties);
             for (Map<String, String> expandedProperties : propertiesList) {
                 if (properties != null && validLink(expandedProperties)) {
-                    if (logger != null) {
-                        logger.info(LogUtil.contextFor(expandedProperties), "biotic interaction found");
-                    }
+                    logIfPossible(expandedProperties, "biotic interaction found");
                     importValidLink(expandedProperties);
+                } else {
+                    logIfPossible(expandedProperties, "no biotic interaction found");
                 }
             }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import: " + properties, e);
+        }
+    }
+
+    public void logIfPossible(Map<String, String> expandedProperties, String msg) {
+        if (logger != null) {
+            logger.info(LogUtil.contextFor(expandedProperties), msg);
         }
     }
 

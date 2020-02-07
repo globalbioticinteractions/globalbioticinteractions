@@ -197,7 +197,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     }
                     return x;
                 })
-                .filter(x -> x.containsKey(INTERACTION_TYPE_ID) || x.containsKey(TARGET_TAXON_NAME) || x.containsKey(TARGET_OCCURRENCE_ID))
                 .collect(Collectors.toList());
 
         Map<String, String> interaction = new HashMap<>(rec.terms().size());

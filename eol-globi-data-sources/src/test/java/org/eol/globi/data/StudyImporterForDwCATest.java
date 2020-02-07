@@ -142,11 +142,13 @@ public class StudyImporterForDwCATest {
                         is("http://arctos.database.museum/guid/MVZ:Bird:183644?seid=158590"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:58090?seid=657121")
                 ));
-                assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), anyOf(
-                        is("http://arctos.database.museum/guid/MVZ:Herp:241200"),
-                        is("http://arctos.database.museum/guid/MVZ:Bird:183643"),
-                        is("http://arctos.database.museum/guid/MVZ:Bird:58093")
-                ));
+                if (properties.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)) {
+                    assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), anyOf(
+                            is("http://arctos.database.museum/guid/MVZ:Herp:241200"),
+                            is("http://arctos.database.museum/guid/MVZ:Bird:183643"),
+                            is("http://arctos.database.museum/guid/MVZ:Bird:58093")
+                    ));
+                }
                 assertThat(properties.get(SOURCE_TAXON_FAMILY), anyOf(
                         is("Accipitridae"),
                         is("Strigidae")
