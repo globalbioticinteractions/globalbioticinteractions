@@ -42,9 +42,14 @@ public class DatasetFactory implements DatasetFactoryInterface {
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         Dataset dataset = registry.datasetFor(namespace);
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
-        Pair<URI, JsonNode> jsonNode = configDataset(dataset);
-        datasetProxy.setConfig(jsonNode.getRight());
-        datasetProxy.setConfigURI(jsonNode.getLeft());
+        try {
+            Pair<URI, JsonNode> jsonNode = configDataset(dataset);
+            datasetProxy.setConfig(jsonNode.getRight());
+            datasetProxy.setConfigURI(jsonNode.getLeft());
+        } catch (Throwable ex) {
+            String msg = "failed to configure dataset in namespace [" + namespace + "]";
+            throw new DatasetFinderException(dataset == null ? msg : (msg + "with archiveURI[" + dataset.getArchiveURI() + "] and citation [" + dataset.getCitation() + "]"));
+        }
         return datasetProxy;
     }
 
@@ -69,11 +74,11 @@ public class DatasetFactory implements DatasetFactoryInterface {
         }
         try {
             if (configPair == null) {
-                throw new DatasetFinderException("failed to access find configuration");
+                throw new DatasetFinderException("failed to find configuration");
             }
             return Pair.of(configPair.getLeft(), configPair.getRight().configure(dataset, configPair.getLeft()));
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to access find configuration", e);
+            throw new DatasetFinderException("failed to find configuration", e);
 
         }
     }
