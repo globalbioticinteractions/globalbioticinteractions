@@ -74,7 +74,7 @@ public class GitHubUtil {
         List<String> globiRepos = new ArrayList<String>();
         do {
             LOG.info("searching for repositories that mention [globalbioticinteractions], page [" + page + "]...");
-            String repositoriesThatMentionGloBI = httpGet("/search/repositories", "q=globalbioticinteractions+in:readme+fork:true&page=" + page);
+            String repositoriesThatMentionGloBI = httpGet("/search/repositories", "q=globalbioticinteractions+in:readme+fork:true&per_page=100&page=" + page);
             JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);
             if (jsonNode.has("total_count")) {
                 totalAvailable = jsonNode.get("total_count").getIntValue();
@@ -115,18 +115,6 @@ public class GitHubUtil {
             }
         }
         return lastCommitSHA;
-    }
-
-    private static String appendAuth(String query) {
-        String clientId = getGitHubClientId();
-        String clientSecret = getGitHubClientSecret();
-
-        if (StringUtils.isNotBlank(clientId) && StringUtils.isNotBlank(clientSecret)) {
-            String auth = "client_id=" + clientId + "&client_secret=" + clientSecret;
-            query = StringUtils.isBlank(query) ? auth : query + "&" + auth;
-        }
-
-        return query;
     }
 
     private static String getGitHubClientSecret() {
