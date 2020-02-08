@@ -57,15 +57,19 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    public InputStream getFeedStream() throws DatasetFinderException {
-        if (StringUtils.isBlank(getCachedFeed())) {
-            setCachedFeed(getFeed(getInputStreamFactory()));
-        }
+    private InputStream getFeedStream() throws DatasetFinderException {
+        initFeedCacheIfNeeded();
 
         try {
             return IOUtils.toInputStream(getCachedFeed(), StandardCharsets.UTF_8.name());
         } catch (IOException e) {
             throw new DatasetFinderException("failed to get Zenodo registry feed", e);
+        }
+    }
+
+    public void initFeedCacheIfNeeded() throws DatasetFinderException {
+        if (StringUtils.isBlank(getCachedFeed())) {
+            setCachedFeed(getFeed(getInputStreamFactory()));
         }
     }
 
