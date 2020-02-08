@@ -17,7 +17,8 @@ public class DatasetRegistryGitHubRemote extends DatasetRegistryGitHub {
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
-            return new DatasetImpl(namespace, URI.create(GitHubUtil.getBaseUrlLastCommit(namespace)), getInputStreamFactory());
+            String baseUrlLastCommit = GitHubUtil.getBaseUrlLastCommit(namespace, getInputStreamFactory());
+            return new DatasetImpl(namespace, URI.create(baseUrlLastCommit), getInputStreamFactory());
         } catch (URISyntaxException | IOException | StudyImporterException e) {
             throw new DatasetFinderException(e);
         }

@@ -111,7 +111,7 @@ public class GitHubUtil {
     public static List<String> searchGitHubForCandidateRepositories(InputStreamFactory inputStreamFactory) throws URISyntaxException, IOException {
         int page = 1;
         int totalAvailable = 0;
-        List<String> globiRepos = new ArrayList<String>();
+        List<String> globiRepos = new ArrayList<>();
         do {
             LOG.info("searching for repositories that mention [globalbioticinteractions], page [" + page + "]...");
             String query = "q=globalbioticinteractions+in:readme+fork:true" +
@@ -120,13 +120,7 @@ public class GitHubUtil {
             String repositoriesThatMentionGloBI
                     = httpGet("/search/repositories",
                     query,
-                    new BasicResponseHandler() {
-                        @Override
-                        public String handleEntity(final HttpEntity entity) throws IOException {
-                            HttpEntityProxy httpEntityProxy = new HttpEntityProxy(entity, inputStreamFactory);
-                            return EntityUtils.toString(httpEntityProxy);
-                        }
-                    });
+                    new ResponseHandlerWithInputStreamFactory(inputStreamFactory));
             JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);
             if (jsonNode.has("total_count")) {
                 totalAvailable = jsonNode.get("total_count").getIntValue();
@@ -150,8 +144,13 @@ public class GitHubUtil {
     }
 
     static String lastCommitSHA(String repository) throws IOException, URISyntaxException {
+        return lastCommitSHA(repository, inputStream -> inputStream);
+    }
+
+    static String lastCommitSHA(String repository, InputStreamFactory inputStreamFactory) throws IOException, URISyntaxException {
         String lastCommitSHA = null;
-        String response = httpGet("/repos/" + repository + "/commits", null);
+        ResponseHandlerWithInputStreamFactory responseHandler = new ResponseHandlerWithInputStreamFactory(inputStreamFactory);
+        String response = httpGet("/repos/" + repository + "/commits", null, responseHandler);
         JsonNode commits = new ObjectMapper().readTree(response);
         if (commits.size() > 0) {
             JsonNode mostRecentCommit = commits.get(0);
@@ -188,7 +187,11 @@ public class GitHubUtil {
     }
 
     public static String getBaseUrlLastCommit(String repo) throws IOException, URISyntaxException, StudyImporterException {
-        String lastCommitSHA = lastCommitSHA(repo);
+        return getBaseUrlLastCommit(repo, inputstream -> inputstream);
+    }
+
+    public static String getBaseUrlLastCommit(String repo, InputStreamFactory is) throws IOException, URISyntaxException, StudyImporterException {
+        String lastCommitSHA = lastCommitSHA(repo, is);
         if (lastCommitSHA == null) {
             throw new StudyImporterException("failed to import github repo [" + repo + "]: no commits found.");
         }
@@ -262,6 +265,20 @@ public class GitHubUtil {
         @Override
         public void consumeContent() throws IOException {
             entity.consumeContent();
+        }
+    }
+
+    private static class ResponseHandlerWithInputStreamFactory extends BasicResponseHandler {
+        private final InputStreamFactory inputStreamFactory;
+
+        public ResponseHandlerWithInputStreamFactory(InputStreamFactory inputStreamFactory) {
+            this.inputStreamFactory = inputStreamFactory;
+        }
+
+        @Override
+        public String handleEntity(final HttpEntity entity) throws IOException {
+            HttpEntityProxy httpEntityProxy = new HttpEntityProxy(entity, inputStreamFactory);
+            return EntityUtils.toString(httpEntityProxy);
         }
     }
 }
