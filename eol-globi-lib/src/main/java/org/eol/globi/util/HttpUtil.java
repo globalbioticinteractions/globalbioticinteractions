@@ -137,8 +137,12 @@ public class HttpUtil {
     }
 
     public static String executeAndRelease(HttpGet get, HttpClient client) throws IOException {
+        return executeAndRelease(get, client, new BasicResponseHandler());
+    }
+
+    public static String executeAndRelease(HttpGet get, HttpClient client, ResponseHandler<String> responseHandler) throws IOException {
         try {
-            return client.execute(get, new BasicResponseHandler());
+            return client.execute(get, responseHandler);
         } catch (IOException ex) {
             throw new IOException("failed to get [" + get.getURI() + "]", ex);
         } finally {

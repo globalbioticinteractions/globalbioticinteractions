@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.startsWith;
@@ -15,8 +16,13 @@ public class DatasetRegistryGitHubIT {
 
     @Test
     public void discoverDatasetsInGitHub() throws DatasetFinderException {
-        Collection<String> urls = new DatasetRegistryGitHubArchive(inStream -> inStream).findNamespaces();
+        AtomicBoolean usedStreamFactory = new AtomicBoolean(false);
+        Collection<String> urls = new DatasetRegistryGitHubArchive(inStream -> {
+            usedStreamFactory.set(true);
+            return inStream;
+        }).findNamespaces();
         assertThat(urls.size(), is(not(0)));
+        assertThat(usedStreamFactory.get(), is(true));
     }
 
     @Test

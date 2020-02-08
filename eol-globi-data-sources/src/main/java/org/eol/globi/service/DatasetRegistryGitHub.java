@@ -17,13 +17,11 @@ public abstract class DatasetRegistryGitHub implements DatasetRegistry {
     @Override
     public Collection<String> findNamespaces() throws DatasetFinderException {
         try {
-            return GitHubUtil.find();
+            return GitHubUtil.find(getInputStreamFactory());
         } catch (URISyntaxException | IOException e) {
             throw new DatasetFinderException(e);
         }
-
     }
-
 
     protected InputStreamFactory getInputStreamFactory() {
         return inputStreamFactory;
