@@ -1,16 +1,14 @@
 package org.eol.globi.service;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
 
 public class DatasetRegistryZenodoIT {
 

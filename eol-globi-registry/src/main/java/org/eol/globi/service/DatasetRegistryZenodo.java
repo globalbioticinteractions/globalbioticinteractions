@@ -26,20 +26,12 @@ import java.util.HashSet;
 public class DatasetRegistryZenodo implements DatasetRegistry {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
     private static final String PREFIX_ZENODO = "oai:zenodo.org:";
-    private String cachedFeed;
+    private String cachedFeed = null;
 
     private final InputStreamFactory inputStreamFactory;
 
     public DatasetRegistryZenodo(InputStreamFactory inputStreamFactory) {
         this.inputStreamFactory = inputStreamFactory;
-    }
-
-    public void setCachedFeed(String cachedFeed) {
-        this.cachedFeed = cachedFeed;
-    }
-
-    public String getCachedFeed() {
-        return this.cachedFeed;
     }
 
     @Override
@@ -172,6 +164,15 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
 
     static Collection<String> getRelations(InputStream is) throws DatasetFinderException {
         return getRelations(getRelationsNodeList(is));
+    }
+
+
+    public void setCachedFeed(String cachedFeed) {
+        this.cachedFeed = cachedFeed;
+    }
+
+    public String getCachedFeed() {
+        return this.cachedFeed;
     }
 
 }
