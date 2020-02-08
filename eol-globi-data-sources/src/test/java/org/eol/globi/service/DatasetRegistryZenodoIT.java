@@ -16,7 +16,7 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void zenodoDataFeed() throws DatasetFinderException, IOException {
-        String feed = IOUtils.toString(DatasetRegistryZenodo.getFeed(), "UTF-8");
+        String feed = DatasetRegistryZenodo.getFeed();
         assertThat(feed, containsString("<?xml version"));
     }
 

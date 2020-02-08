@@ -12,7 +12,6 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.StudyImporterException;
@@ -96,7 +95,6 @@ public class GitHubUtil {
 
     public static List<String> find(InputStreamFactory inputStreamFactory) throws URISyntaxException, IOException {
         List<String> globiRepos = searchGitHubForCandidateRepositories(inputStreamFactory);
-
 
         List<String> reposWithData = new ArrayList<String>();
         for (String globiRepo : globiRepos) {
@@ -188,78 +186,10 @@ public class GitHubUtil {
     }
 
     public static Dataset getArchiveDataset(String namespace, String commitSha, InputStreamFactory inputStreamFactory) {
-        return new DatasetImpl(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"), inputStreamFactory);
+        return new DatasetImpl(
+                namespace,
+                URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"),
+                inputStreamFactory);
     }
 
-
-
-    private static class HttpEntityProxy implements HttpEntity {
-
-        private final HttpEntity entity;
-        private final InputStreamFactory inputStreamFactory;
-
-        public HttpEntityProxy(HttpEntity entity, InputStreamFactory inputStreamFactory) {
-            this.entity = entity;
-            this.inputStreamFactory = inputStreamFactory;
-        }
-
-        @Override
-        public boolean isRepeatable() {
-            return entity.isRepeatable();
-        }
-
-        @Override
-        public boolean isChunked() {
-            return entity.isChunked();
-        }
-
-        @Override
-        public long getContentLength() {
-            return entity.getContentLength();
-        }
-
-        @Override
-        public Header getContentType() {
-            return entity.getContentType();
-        }
-
-        @Override
-        public Header getContentEncoding() {
-            return entity.getContentEncoding();
-        }
-
-        @Override
-        public InputStream getContent() throws IOException, UnsupportedOperationException {
-            return inputStreamFactory.create(entity.getContent());
-        }
-
-        @Override
-        public void writeTo(OutputStream outputStream) throws IOException {
-            entity.writeTo(outputStream);
-        }
-
-        @Override
-        public boolean isStreaming() {
-            return entity.isStreaming();
-        }
-
-        @Override
-        public void consumeContent() throws IOException {
-            entity.consumeContent();
-        }
-    }
-
-    private static class ResponseHandlerWithInputStreamFactory extends BasicResponseHandler {
-        private final InputStreamFactory inputStreamFactory;
-
-        public ResponseHandlerWithInputStreamFactory(InputStreamFactory inputStreamFactory) {
-            this.inputStreamFactory = inputStreamFactory;
-        }
-
-        @Override
-        public String handleEntity(final HttpEntity entity) throws IOException {
-            HttpEntityProxy httpEntityProxy = new HttpEntityProxy(entity, inputStreamFactory);
-            return EntityUtils.toString(httpEntityProxy);
-        }
-    }
 }

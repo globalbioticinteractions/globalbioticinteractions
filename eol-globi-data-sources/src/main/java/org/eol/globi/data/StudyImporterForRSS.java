@@ -82,6 +82,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
                             ((StudyImporterWithListener) studyImporter)
                                     .setInteractionListener(indexingListener);
                         }
+                        studyImporter.setLogger(getLogger());
                     }, dataset);
                 } catch (StudyImporterException | IllegalStateException ex) {
                     LogUtil.logError(getLogger(), ex);
@@ -286,6 +287,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
 
         @Override
         public void newLink(Map<String, String> properties) throws StudyImporterException {
+
             if (properties.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)
                     && properties.containsKey(StudyImporterForTSV.SOURCE_OCCURRENCE_ID)) {
                 String value = properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID);

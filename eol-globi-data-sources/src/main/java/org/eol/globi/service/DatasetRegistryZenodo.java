@@ -3,6 +3,8 @@ package org.eol.globi.service;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.taxon.XmlUtil;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InputStreamFactory;
@@ -24,6 +26,7 @@ import java.util.HashSet;
 public class DatasetRegistryZenodo implements DatasetRegistry {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
     private static final String PREFIX_ZENODO = "oai:zenodo.org:";
+    private String cachedFeed;
 
     private final InputStreamFactory inputStreamFactory;
 
@@ -31,18 +34,43 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         this.inputStreamFactory = inputStreamFactory;
     }
 
+    public void setCachedFeed(String cachedFeed) {
+        this.cachedFeed = cachedFeed;
+    }
+
+    public String getCachedFeed() {
+        return this.cachedFeed;
+    }
+
     @Override
     public Collection<String> findNamespaces() throws DatasetFinderException {
-        return find(getFeed());
+        return find(getFeedStream());
     }
 
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
-            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRecordNodeList(getFeed()), namespace), inputStreamFactory);
-        } catch (XPathExpressionException | MalformedURLException e) {
+            InputStream feedStream = getFeedStream();
+            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRecordNodeList(feedStream), namespace), getInputStreamFactory());
+        } catch (XPathExpressionException | IOException e) {
             throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
         }
+    }
+
+    public InputStream getFeedStream() throws DatasetFinderException {
+        if (StringUtils.isBlank(getCachedFeed())) {
+            setCachedFeed(getFeed(getInputStreamFactory()));
+        }
+
+        try {
+            return IOUtils.toInputStream(getCachedFeed(), StandardCharsets.UTF_8.name());
+        } catch (IOException e) {
+            throw new DatasetFinderException("failed to get Zenodo registry feed", e);
+        }
+    }
+
+    public InputStreamFactory getInputStreamFactory() {
+        return inputStreamFactory;
     }
 
     static URI findZenodoGitHubArchives(NodeList records, String requestedRepo) throws XPathExpressionException, MalformedURLException {
@@ -115,10 +143,19 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    static InputStream getFeed() throws DatasetFinderException {
+    static String getFeed() throws DatasetFinderException {
+        return getFeed(inStream -> inStream);
+    }
+
+    static String getFeed(InputStreamFactory factory) throws DatasetFinderException {
         try {
-            String feedString = HttpUtil.getContent("https://zenodo.org/oai2d?verb=ListRecords&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3");
-            return IOUtils.toInputStream(feedString, StandardCharsets.UTF_8);
+            HttpClient httpClient = HttpUtil.getHttpClient();
+            String requestUrl = "https://zenodo.org/oai2d?verb=ListRecords&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3";
+
+            return HttpUtil.executeAndRelease(
+                    new HttpGet(requestUrl),
+                    httpClient,
+                    new ResponseHandlerWithInputStreamFactory(factory));
         } catch (IOException e) {
             throw new DatasetFinderException("failed to find published github repos in zenodo", e);
         }
