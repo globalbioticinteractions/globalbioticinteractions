@@ -14,7 +14,7 @@ public class DatasetRegistryGitHubArchive extends DatasetRegistryGitHub {
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
-            String commitSha = GitHubUtil.lastCommitSHA(namespace);
+            String commitSha = GitHubUtil.lastCommitSHA(namespace, getInputStreamFactory());
             return GitHubUtil.getArchiveDataset(namespace, commitSha, getInputStreamFactory());
         } catch (URISyntaxException | IOException e) {
             throw new DatasetFinderException(e);

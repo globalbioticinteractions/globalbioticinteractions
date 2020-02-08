@@ -15,11 +15,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InputStreamFactory;
+import org.globalbioticinteractions.util.GitClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -148,17 +147,7 @@ public class GitHubUtil {
     }
 
     static String lastCommitSHA(String repository, InputStreamFactory inputStreamFactory) throws IOException, URISyntaxException {
-        String lastCommitSHA = null;
-        ResponseHandlerWithInputStreamFactory responseHandler = new ResponseHandlerWithInputStreamFactory(inputStreamFactory);
-        String response = httpGet("/repos/" + repository + "/commits", null, responseHandler);
-        JsonNode commits = new ObjectMapper().readTree(response);
-        if (commits.size() > 0) {
-            JsonNode mostRecentCommit = commits.get(0);
-            if (mostRecentCommit.has("sha")) {
-                lastCommitSHA = mostRecentCommit.get("sha").asText();
-            }
-        }
-        return lastCommitSHA;
+        return GitClient.getLastCommitSHA1("https://github.com/" + repository, new ResponseHandlerWithInputStreamFactory(inputStreamFactory));
     }
 
     private static String getGitHubClientSecret() {
@@ -202,15 +191,7 @@ public class GitHubUtil {
         return new DatasetImpl(namespace, URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"), inputStreamFactory);
     }
 
-    public static void configureStudyWithNamespace(StudyImpl study, boolean shouldResolveReferences, String namespace) {
-        study.setSourceId("globi:" + namespace);
 
-        DatasetImpl originatingDataset = new DatasetImpl(namespace, URI.create(getBaseUrlMaster(namespace)), inStream -> inStream);
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, shouldResolveReferences);
-        originatingDataset.setConfig(objectNode);
-        study.setOriginatingDataset(originatingDataset);
-    }
 
     private static class HttpEntityProxy implements HttpEntity {
 

@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.http.HttpException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.eol.globi.util.HttpUtil;
