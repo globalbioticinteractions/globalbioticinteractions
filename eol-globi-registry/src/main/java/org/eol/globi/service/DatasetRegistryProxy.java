@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -15,48 +14,77 @@ public class DatasetRegistryProxy implements DatasetRegistry {
 
     private final static Log LOG = LogFactory.getLog(DatasetRegistryProxy.class);
 
-    private final ArrayList<DatasetRegistry> finders;
-    private Map<String, DatasetRegistry> finderForNamespace = null;
-    private Collection<String> namespacesAll;
+    private final ArrayList<DatasetRegistry> registries;
+    private Map<String, DatasetRegistry> registryForNamespace = null;
+    ;
 
-    public DatasetRegistryProxy(List<DatasetRegistry> finders) {
-        this.finders = new ArrayList<DatasetRegistry>() {{
-            addAll(finders);
+    public DatasetRegistryProxy(List<DatasetRegistry> registries) {
+        this.registries = new ArrayList<DatasetRegistry>() {{
+            addAll(registries);
         }};
     }
 
     @Override
     public Collection<String> findNamespaces() throws DatasetFinderException {
-        lazyInit();
+        Collection<String> namespacesAll = new ArrayList<>();
+        for (DatasetRegistry registry : registries) {
+            Collection<String> namespaces = registry.findNamespaces();
+            Collection<String> newNamespaces = CollectionUtils.subtract(namespaces, namespacesAll);
+            for (String newNamespace : newNamespaces) {
+                String msg = "associating [" + newNamespace + "] with [" + registry.getClass().getSimpleName() + "]";
+                LOG.info(msg);
+                associateNamespaceWithRegistry(registry, newNamespace);
+            }
+            namespacesAll.addAll(newNamespaces);
+        }
+
         return namespacesAll;
+    }
+
+    public void associateNamespaceWithRegistry(DatasetRegistry registry, String newNamespace) {
+        if (registryForNamespace == null) {
+            registryForNamespace = new HashMap<>();
+        }
+        registryForNamespace.put(newNamespace, registry);
     }
 
 
     @Override
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
-        lazyInit();
-        DatasetRegistry finder = finderForNamespace.get(namespace);
-        if (finder == null) {
-            throw new DatasetFinderException("unknown namespace [" + namespace + "]");
+        DatasetRegistry registry = registryForNamespace == null
+                ? null
+                : registryForNamespace.get(namespace);
+
+        Dataset dataset = registry == null
+                ? queryForDataset(namespace)
+                : registry.datasetFor(namespace);
+
+        if (dataset == null) {
+            throw new DatasetFinderException("failed to find dataset for [" + namespace + "]");
         }
-        return finder.datasetFor(namespace);
+
+        return dataset;
     }
 
-    private void lazyInit() throws DatasetFinderException {
-        if (namespacesAll == null || finderForNamespace == null) {
-            namespacesAll = new HashSet<>();
-            finderForNamespace = new HashMap<>();
-            for (DatasetRegistry finder : finders) {
-                Collection<String> namespaces = finder.findNamespaces();
-                Collection<String> newNamespaces = CollectionUtils.subtract(namespaces, namespacesAll);
-                for (String newNamespace : newNamespaces) {
-                    String msg = "associating [" + newNamespace + "] with [" + finder.getClass().getSimpleName() + "]";
-                    LOG.info(msg);
-                    finderForNamespace.put(newNamespace, finder);
+    private Dataset queryForDataset(String namespace) throws DatasetFinderException {
+        Dataset dataset = null;
+        DatasetFinderException lastException = null;
+        for (DatasetRegistry datasetRegistry : registries) {
+            try {
+                dataset = datasetRegistry.datasetFor(namespace);
+                if (dataset != null) {
+                    associateNamespaceWithRegistry(datasetRegistry, namespace);
+                    break;
                 }
-                namespacesAll.addAll(namespaces);
+            } catch (DatasetFinderException ex) {
+                lastException = ex;
             }
+
         }
+        if (dataset == null && lastException != null) {
+            throw new DatasetFinderException("failed to find dataset for [" + namespace + "] possibly due to unexpected error", lastException);
+        }
+        return dataset;
     }
 
 }

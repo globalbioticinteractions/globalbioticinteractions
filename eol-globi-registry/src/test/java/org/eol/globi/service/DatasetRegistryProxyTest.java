@@ -18,31 +18,31 @@ public class DatasetRegistryProxyTest {
 
     @Test
     public void twoFinders() throws DatasetFinderException {
-        DatasetRegistry finder = new DatasetRegistryProxy(Arrays.asList(
+        DatasetRegistry registry = new DatasetRegistryProxy(Arrays.asList(
                 new DatasetRegistryMock(Arrays.asList("one")),
                 new DatasetRegistryMock(Arrays.asList("one", "two"))
         )
         );
 
-        assertThat(finder.findNamespaces().size(), is(2));
-        assertThat(finder.findNamespaces(), CoreMatchers.hasItem("one"));
-        assertThat(finder.findNamespaces(), CoreMatchers.hasItem("two"));
+        assertThat(registry.findNamespaces().size(), is(2));
+        assertThat(registry.findNamespaces(), CoreMatchers.hasItem("one"));
+        assertThat(registry.findNamespaces(), CoreMatchers.hasItem("two"));
 
-        assertThat(finder.datasetFor("one").getNamespace(), is("one"));
-        assertThat(finder.datasetFor("two").getNamespace(), is("one|two"));
+        assertThat(registry.datasetFor("one").getNamespace(), is("one"));
+        assertThat(registry.datasetFor("two").getNamespace(), is("one|two"));
     }
 
     @Test(expected = DatasetFinderException.class)
     public void oneFinderNoMatch() throws DatasetFinderException {
-        DatasetRegistry finder = new DatasetRegistryProxy(Collections.singletonList(
+        DatasetRegistry registry = new DatasetRegistryProxy(Collections.singletonList(
                 new DatasetRegistryMock(Collections.singletonList("one"))
         )
         );
 
-        assertThat(finder.findNamespaces().size(), is(1));
-        assertThat(finder.findNamespaces(), CoreMatchers.hasItem("one"));
+        assertThat(registry.findNamespaces().size(), is(1));
+        assertThat(registry.findNamespaces(), CoreMatchers.hasItem("one"));
 
-        finder.datasetFor("foo");
+        registry.datasetFor("foo");
     }
 
 
@@ -62,6 +62,9 @@ public class DatasetRegistryProxyTest {
 
         @Override
         public Dataset datasetFor(String namespace) throws DatasetFinderException {
+            if (!namespaces.contains(namespace)) {
+                throw new DatasetFinderException("no dataset for [" + namespace +"]");
+            }
             return new DatasetImpl(StringUtils.join(findNamespaces(), "|"), URI.create("http://example.com/" + findNamespaces().size()), inStream -> inStream);
         }
     }
