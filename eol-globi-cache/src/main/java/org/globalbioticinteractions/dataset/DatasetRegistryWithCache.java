@@ -4,34 +4,33 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetRegistry;
 import org.eol.globi.service.DatasetFinderException;
 import org.globalbioticinteractions.cache.CacheFactory;
-import org.globalbioticinteractions.cache.CacheUtil;
 
 import java.util.Collection;
 
 public class DatasetRegistryWithCache implements DatasetRegistry {
-    private final DatasetRegistry finder;
+    private final DatasetRegistry registry;
 
     private final CacheFactory cacheFactory;
 
-    public DatasetRegistryWithCache(DatasetRegistry finder, CacheFactory factory) {
-        this.finder = finder;
+    public DatasetRegistryWithCache(DatasetRegistry registry, CacheFactory factory) {
+        this.registry = registry;
         this.cacheFactory = factory;
     }
 
     public Collection<String> findNamespaces() throws DatasetFinderException {
-        return getFinder().findNamespaces();
+        return getRegistry().findNamespaces();
     }
 
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
-        Dataset dataset = getFinder().datasetFor(namespace);
+        Dataset dataset = getRegistry().datasetFor(namespace);
         return new DatasetWithCache(dataset, getCacheFactory().cacheFor(dataset));
     }
 
-    DatasetRegistry getFinder() {
-        return this.finder;
+    private DatasetRegistry getRegistry() {
+        return this.registry;
     }
 
-    CacheFactory getCacheFactory() {
+    private CacheFactory getCacheFactory() {
         return cacheFactory;
     }
 

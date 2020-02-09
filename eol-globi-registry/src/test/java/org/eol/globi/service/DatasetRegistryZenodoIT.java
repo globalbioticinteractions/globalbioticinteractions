@@ -8,6 +8,8 @@ import java.net.URI;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class DatasetRegistryZenodoIT {
@@ -16,6 +18,13 @@ public class DatasetRegistryZenodoIT {
     public void zenodoDataFeed() throws DatasetFinderException, IOException {
         String feed = DatasetRegistryZenodo.getFeed();
         assertThat(feed, containsString("<?xml version"));
+    }
+
+    @Test
+    public void unlikelyMatch() throws DatasetFinderException, IOException {
+        DatasetRegistryZenodo datasetRegistryZenodo = new DatasetRegistryZenodo(in -> in);
+        Dataset thisshouldnotexist = datasetRegistryZenodo.datasetFor("thisshouldnotexist");
+        assertNull(thisshouldnotexist);
     }
 
     @Test

@@ -43,4 +43,14 @@ public class DatasetRegistryZenodoTest {
         assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
     }
 
+    @Test
+    public void noMatchingGithub() throws IOException, XPathExpressionException, DatasetFinderException {
+        InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
+        NodeList records = DatasetRegistryZenodo.getRecordNodeList(resourceAsStream);
+        URI uri = DatasetRegistryZenodo.findZenodoGitHubArchives(records, "jhammock/Layman-and-Allgeier-Lionfish");
+        assertThat(uri.toString(), is("https://zenodo.org/record/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
+        uri = DatasetRegistryZenodo.findZenodoGitHubArchives(records, "globalbioticinteractions/template-dataset");
+        assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
+    }
+
 }

@@ -43,7 +43,8 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     public Dataset datasetFor(String namespace) throws DatasetFinderException {
         try {
             InputStream feedStream = getFeedStream();
-            return new DatasetZenodo(namespace, findZenodoGitHubArchives(getRecordNodeList(feedStream), namespace), getInputStreamFactory());
+            URI zenodoGitHubArchives = findZenodoGitHubArchives(getRecordNodeList(feedStream), namespace);
+            return zenodoGitHubArchives == null ? null : new DatasetZenodo(namespace, zenodoGitHubArchives, getInputStreamFactory());
         } catch (XPathExpressionException | IOException e) {
             throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
         }
