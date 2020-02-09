@@ -477,6 +477,10 @@
 
     <repositories>
         <repository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>public-globi-snapshot</id>
             <name>GloBI snaphots</name>
             <url>https://depot.globalbioticinteractions.org/snapshot</url>

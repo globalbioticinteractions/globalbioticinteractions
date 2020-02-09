@@ -88,16 +88,8 @@
 
     <repositories>
         <repository>
-            <id>opengeo-mirror</id>
-            <name>opengeo-mirror</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <layout>default</layout>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
             <id>globi-datasets</id>
@@ -109,6 +101,18 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>opengeo-mirror</id>
+            <name>opengeo-mirror</name>
+            <url>http://download.osgeo.org/webdav/geotools/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <layout>default</layout>
         </repository>
     </repositories>
 

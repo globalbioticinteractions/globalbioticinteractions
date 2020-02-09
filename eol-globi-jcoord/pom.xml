@@ -26,6 +26,10 @@
 
     <repositories>
         <repository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>globi-thirdparty-libs</id>
             <name>GloBI Thirdparty Libraries</name>
             <url>https://depot.globalbioticinteractions.org/release</url>
