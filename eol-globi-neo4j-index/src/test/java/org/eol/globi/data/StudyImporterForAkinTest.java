@@ -36,18 +36,6 @@ import static org.junit.Assert.assertTrue;
 public class StudyImporterForAkinTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException {
-        StudyImporter importer = new StudyImporterTestFactory(nodeFactory)
-                .instantiateImporter(StudyImporterForAkin.class);
-        importStudy(importer);
-
-        assertNotNull(taxonIndex.findTaxonByName("Sciaenops ocellatus"));
-        assertNotNull(taxonIndex.findTaxonByName("Paralichthys lethostigma"));
-        assertNotNull(taxonIndex.findTaxonByName("Adinia xenica"));
-        assertNotNull(taxonIndex.findTaxonByName("Citharichthys spilopterus"));
-    }
-
-    @Test
     public void parseLifeStage() throws TermLookupServiceException {
         UberonLookupService service = new UberonLookupService();
         assertThat(StudyImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("UBERON:0007379"));

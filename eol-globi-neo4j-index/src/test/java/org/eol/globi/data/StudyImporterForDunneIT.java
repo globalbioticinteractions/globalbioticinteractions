@@ -14,7 +14,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class StudyImporterForDunneTest extends GraphDBTestCase {
+public class StudyImporterForDunneIT extends GraphDBTestCase {
 
     @Test
     public void importStudy() throws StudyImporterException, IOException {

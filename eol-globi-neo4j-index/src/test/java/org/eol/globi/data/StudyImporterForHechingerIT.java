@@ -22,9 +22,9 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class StudyImporterForHechingerTest extends GraphDBTestCase {
+public class StudyImporterForHechingerIT extends GraphDBTestCase {
 
-    private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerTest.class);
+    private static final Log LOG = LogFactory.getLog(StudyImporterForHechingerIT.class);
 
     @Test
     public void importStudy() throws StudyImporterException, IOException {
