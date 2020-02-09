@@ -8,8 +8,8 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinderException;
+import org.eol.globi.service.DatasetImpl;
 import org.eol.globi.service.DatasetRegistry;
-import org.eol.globi.service.DatasetRegistryGitHubArchiveMaster;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
@@ -24,8 +24,10 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -60,7 +62,21 @@ public abstract class GraphDBTestCase {
     }
 
     public static Dataset datasetFor(String namespace) throws DatasetFinderException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchiveMaster(), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets", inStream -> inStream));
+        DatasetRegistry finder = new DatasetRegistryWithCache(
+                new DatasetRegistry() {
+                    @Override
+                    public Collection<String> findNamespaces() throws DatasetFinderException {
+                        return Collections.emptyList();
+                    }
+
+                    @Override
+                    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+                        return new DatasetImpl(namespace, URI.create("some:uri"), in -> in);
+                    }
+                },
+                dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
+                        "target/datasets",
+                        inStream -> inStream));
         return finder.datasetFor(namespace);
     }
 

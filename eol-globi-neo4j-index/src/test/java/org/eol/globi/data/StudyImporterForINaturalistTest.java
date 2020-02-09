@@ -15,6 +15,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -44,28 +45,6 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         importer = new StudyImporterForINaturalist(parserFactory, nodeFactory);
         importer.setDataset(dataset);
-    }
-
-
-    @Test
-    public void loadInteractionMap() throws IOException {
-        URI resourceName = StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT;
-        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(resourceName, CharsetConstant.UTF8);
-        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(resourceName, labeledCSVParser);
-
-        assertThat(typeMap.get(13), is(InteractType.ATE));
-        assertThat(typeMap.get(1685), is(InteractType.ATE));
-        assertThat(typeMap.get(839), is(InteractType.PREYS_UPON));
-
-    }
-
-    @Test
-    public void loadIgnoredInteractions() throws IOException {
-        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(StudyImporterForINaturalist.TYPE_IGNORED_URI_DEFAULT, CharsetConstant.UTF8);
-        List<Integer> typeMap1 = StudyImporterForINaturalist.buildTypesIgnored(labeledCSVParser);
-
-        assertThat(typeMap1.contains(13), is(false));
-        assertThat(typeMap1.contains(1378), is(true));
     }
 
     @Test
@@ -177,5 +156,29 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonById("INAT_TAXON:406089"), is(notNullValue()));
         assertThat(taxonIndex.findTaxonById("INAT_TAXON:480390"), is(notNullValue()));
     }
+
+    @Ignore
+    @Test
+    public void loadIgnoredInteractions() throws IOException {
+        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(StudyImporterForINaturalist.TYPE_IGNORED_URI_DEFAULT, CharsetConstant.UTF8);
+        List<Integer> typeMap1 = StudyImporterForINaturalist.buildTypesIgnored(labeledCSVParser);
+
+        assertThat(typeMap1.contains(13), is(false));
+        assertThat(typeMap1.contains(1378), is(true));
+    }
+
+    @Ignore
+    @Test
+    public void loadInteractionMap() throws IOException {
+        URI resourceName = StudyImporterForINaturalist.TYPE_MAP_URI_DEFAULT;
+        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(resourceName, CharsetConstant.UTF8);
+        Map<Integer, InteractType> typeMap = StudyImporterForINaturalist.buildTypeMap(resourceName, labeledCSVParser);
+
+        assertThat(typeMap.get(13), is(InteractType.ATE));
+        assertThat(typeMap.get(1685), is(InteractType.ATE));
+        assertThat(typeMap.get(839), is(InteractType.PREYS_UPON));
+
+    }
+
 
 }
