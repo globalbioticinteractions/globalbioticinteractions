@@ -93,11 +93,11 @@
     <repositories>
         <repository>
             <id>central</id>
-            <url>http://repo1.maven.org/maven2/</url>
+            <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
             <id>gbif-repository</id>
-            <url>http://repository.gbif.org/content/groups/gbif</url>
+            <url>https://repository.gbif.org/content/groups/gbif</url>
         </repository>
     </repositories>
 </project>
