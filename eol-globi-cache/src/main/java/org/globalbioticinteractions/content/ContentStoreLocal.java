@@ -2,7 +2,6 @@ package org.globalbioticinteractions.content;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.InputStreamFactory;
-import org.globalbioticinteractions.cache.CachePullThrough;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
 
@@ -40,7 +39,7 @@ public class ContentStoreLocal implements ContentStore {
     public ContentProvenance provideAndRegister(InputStream is) throws IOException {
         URI generatedContentURI = URI.create(UUID.randomUUID().toString());
         File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
-        ContentProvenance localProvenance = CachePullThrough.cacheStream(is, cacheDirForNamespace);
+        ContentProvenance localProvenance = CacheUtil.cacheStream(is, cacheDirForNamespace);
         ContentProvenance provenanceInNamespace = new ContentProvenance(namespace, generatedContentURI, localProvenance.getLocalURI(), localProvenance.getSha256(), localProvenance.getSha256());
         return contentRegistry.register(provenanceInNamespace);
     }
@@ -48,7 +47,7 @@ public class ContentStoreLocal implements ContentStore {
     @Override
     public ContentProvenance provideAndRegister(URI contentLocationURI) throws IOException {
         File cacheDir = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
-        ContentProvenance localResourceLocation = CachePullThrough.cache(contentLocationURI, cacheDir, getInputStreamFactory());
+        ContentProvenance localResourceLocation = CacheUtil.cache(contentLocationURI, cacheDir, getInputStreamFactory());
         ContentProvenance contentProvenanceWithNamespace = new ContentProvenance(namespace, contentLocationURI, localResourceLocation.getLocalURI(), localResourceLocation.getSha256(), localResourceLocation.getAccessedAt());
         return contentRegistry.register(contentProvenanceWithNamespace);
     }

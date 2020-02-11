@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.content;
 
 import org.eol.globi.util.InputStreamFactory;
-import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
@@ -12,7 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.stream.Stream;
 
-public class ContentRegistryLocal implements ContentRegistry {
+public class ContentRegistryLocal implements ContentRegistry, ContentResolver {
 
     private final String namespace;
     private final File storeDir;
