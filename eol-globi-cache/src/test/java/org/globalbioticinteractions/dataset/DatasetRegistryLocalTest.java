@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFinderException;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.junit.Before;
 import org.junit.Test;

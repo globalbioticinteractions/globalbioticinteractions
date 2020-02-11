@@ -12,7 +12,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Before;
 import org.junit.Ignore;

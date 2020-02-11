@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFactory;
-import org.eol.globi.service.DatasetRegistry;
-import org.eol.globi.service.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetFactory;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
+import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.eol.globi.service.StudyImporterFactory;
 
 import java.util.ArrayList;

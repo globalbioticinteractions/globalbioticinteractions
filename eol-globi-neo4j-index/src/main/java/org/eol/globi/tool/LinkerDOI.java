@@ -11,7 +11,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetUtil;
+import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;

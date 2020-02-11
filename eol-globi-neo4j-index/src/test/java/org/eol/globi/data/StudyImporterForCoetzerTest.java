@@ -4,7 +4,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
-import org.eol.globi.service.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;

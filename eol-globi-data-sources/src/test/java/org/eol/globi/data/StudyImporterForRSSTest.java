@@ -16,7 +16,7 @@ import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
-import org.eol.globi.service.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
 import org.junit.Test;

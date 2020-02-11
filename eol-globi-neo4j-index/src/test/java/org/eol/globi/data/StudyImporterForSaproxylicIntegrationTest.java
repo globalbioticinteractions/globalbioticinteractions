@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import org.eol.globi.service.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 
 import java.net.URI;

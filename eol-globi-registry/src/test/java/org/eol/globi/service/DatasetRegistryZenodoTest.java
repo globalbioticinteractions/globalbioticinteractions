@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.junit.Test;
 import org.w3c.dom.NodeList;
 

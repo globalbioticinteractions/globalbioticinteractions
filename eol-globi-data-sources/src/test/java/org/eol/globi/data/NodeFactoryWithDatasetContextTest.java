@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

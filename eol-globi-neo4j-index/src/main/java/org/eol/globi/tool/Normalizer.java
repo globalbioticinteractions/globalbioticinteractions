@@ -24,7 +24,7 @@ import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
-import org.eol.globi.service.DatasetRegistry;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;

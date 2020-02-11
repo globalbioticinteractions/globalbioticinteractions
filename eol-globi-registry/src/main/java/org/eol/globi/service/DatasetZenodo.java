@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.net.URI;

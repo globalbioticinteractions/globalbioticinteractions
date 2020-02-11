@@ -1,10 +1,10 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
-import org.globalbioticinteractions.dataset.CitationUtil;
+import org.eol.globi.service.Dataset;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 

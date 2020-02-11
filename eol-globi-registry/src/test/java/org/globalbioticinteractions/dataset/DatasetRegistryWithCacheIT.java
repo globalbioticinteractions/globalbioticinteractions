@@ -2,9 +2,6 @@ package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetFactory;
-import org.eol.globi.service.DatasetRegistry;
-import org.eol.globi.service.DatasetFinderException;
 import org.eol.globi.service.DatasetRegistryGitHubArchive;
 import org.eol.globi.service.DatasetRegistryZenodo;
 import org.globalbioticinteractions.cache.CacheUtil;

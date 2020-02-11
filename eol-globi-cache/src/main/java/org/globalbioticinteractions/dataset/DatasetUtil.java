@@ -1,4 +1,4 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;

@@ -1,6 +1,9 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 

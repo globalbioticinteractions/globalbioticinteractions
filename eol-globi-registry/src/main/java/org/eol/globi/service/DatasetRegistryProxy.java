@@ -3,6 +3,8 @@ package org.eol.globi.service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 

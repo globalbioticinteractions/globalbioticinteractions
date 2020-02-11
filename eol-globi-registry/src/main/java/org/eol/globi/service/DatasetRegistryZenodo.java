@@ -8,6 +8,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.taxon.XmlUtil;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InputStreamFactory;
+import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;

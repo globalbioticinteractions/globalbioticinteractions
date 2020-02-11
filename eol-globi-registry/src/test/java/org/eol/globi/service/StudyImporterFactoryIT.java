@@ -16,6 +16,9 @@ import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.dataset.DatasetFactory;
+import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.junit.Test;
 
@@ -34,7 +37,7 @@ import static org.hamcrest.Matchers.containsString;
 public class StudyImporterFactoryIT {
 
     @Test
-    public void createGoMexSI() throws StudyImporterException, DatasetFinderException  {
+    public void createGoMexSI() throws StudyImporterException, DatasetFinderException {
         final DatasetRegistryGitHubRemote datasetFinderGitHubRemote = new DatasetRegistryGitHubRemote(inStream -> inStream);
         StudyImporter importer = importerFor(datasetFinderGitHubRemote, "gomexsi/interaction-data");
         assertThat(importer, is(notNullValue()));

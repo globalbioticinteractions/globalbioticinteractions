@@ -1,4 +1,4 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 public class DatasetFinderException extends Exception {
     public DatasetFinderException(Throwable e) {

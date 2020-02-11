@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 
 import java.io.IOException;

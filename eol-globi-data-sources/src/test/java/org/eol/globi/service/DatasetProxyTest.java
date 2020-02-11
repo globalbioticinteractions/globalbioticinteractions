@@ -3,6 +3,8 @@ package org.eol.globi.service;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 

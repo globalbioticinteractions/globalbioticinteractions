@@ -12,7 +12,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;

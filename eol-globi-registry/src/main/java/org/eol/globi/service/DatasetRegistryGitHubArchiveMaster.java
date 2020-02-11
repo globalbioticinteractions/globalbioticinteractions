@@ -1,5 +1,8 @@
 package org.eol.globi.service;
 
+import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
+
 import java.util.Collection;
 import java.util.Collections;
 
