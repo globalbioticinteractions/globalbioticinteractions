@@ -72,7 +72,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private URI getResourcePath(URI resourceName) throws StudyImporterException {
         try {
-            return getDataset().getResourceURI(resourceName);
+            return getDataset().getLocalURI(resourceName);
         } catch (IOException e) {
             throw new StudyImporterException("failed to resolve [" + resourceName + "]", e);
         }

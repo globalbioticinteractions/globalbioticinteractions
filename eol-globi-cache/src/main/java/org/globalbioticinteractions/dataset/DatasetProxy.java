@@ -28,8 +28,8 @@ public class DatasetProxy implements Dataset {
     }
 
     @Override
-    public URI getResourceURI(URI resourcePath) throws IOException {
-        return datasetProxied.getResourceURI(DatasetUtil.getNamedResourceURI(this, resourcePath));
+    public URI getLocalURI(URI resourcePath) throws IOException {
+        return datasetProxied.getLocalURI(DatasetUtil.getNamedResourceURI(this, resourcePath));
     }
 
     @Override

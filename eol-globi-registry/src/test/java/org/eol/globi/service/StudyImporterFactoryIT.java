@@ -53,7 +53,7 @@ public class StudyImporterFactoryIT {
         StudyImporter importer = new StudyImporterFactory().createImporter(dataset, null);
         assertThat(importer, is(notNullValue()));
         StudyImporterForHafner gomexsiImporter = (StudyImporterForHafner) importer;
-        assertThat(gomexsiImporter.getDataset().getResourceURI(URI.create("hafner/gopher_lice_int.csv")), is("gopher_lice_int.csv"));
+        assertThat(gomexsiImporter.getDataset().getLocalURI(URI.create("hafner/gopher_lice_int.csv")), is("gopher_lice_int.csv"));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class StudyImporterFactoryIT {
         assertThat(importer, is(instanceOf(StudyImporterForWood.class)));
         StudyImporterForWood importerz = (StudyImporterForWood) importer;
         assertThat(importerz.getSourceCitation(), containsString("Wood"));
-        assertThat(importerz.getDataset().getResourceURI(importerz.getLinksResourceName()).toString(), endsWith(".csv"));
+        assertThat(importerz.getDataset().getLocalURI(importerz.getLinksResourceName()).toString(), endsWith(".csv"));
     }
 
     @Test
@@ -133,7 +133,7 @@ public class StudyImporterFactoryIT {
         StudyImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
         StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
         assertThat(importerTSV.getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
-        String actual = importerTSV.getDataset().getResourceURI(URI.create("this/is/relative")).toString();
+        String actual = importerTSV.getDataset().getLocalURI(URI.create("this/is/relative")).toString();
         assertThat(actual, startsWith("jar:file:"));
         assertThat(actual, endsWith("this/is/relative"));
     }
@@ -160,7 +160,7 @@ public class StudyImporterFactoryIT {
         final DatasetRegistry datasetRegistry = new DatasetRegistryGitHubRemote(inStream -> inStream);
         StudyImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
         assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
-        String actual = ((StudyImporterForTSV) importer).getDataset().getResourceURI(URI.create("this/is/relative")).toString();
+        String actual = ((StudyImporterForTSV) importer).getDataset().getLocalURI(URI.create("this/is/relative")).toString();
         assertThat(actual, startsWith("https:/"));
         assertThat(actual, endsWith("this/is/relative"));
     }

@@ -30,7 +30,7 @@ public class ContentRegistryLocal implements ContentRegistry {
 
     @Override
     public URI register(URI contentLocationURI) throws IOException {
-        cache.getResourceURI(contentLocationURI);
+        cache.getLocalURI(contentLocationURI);
         ContentProvenance contentProvenance = readOnlyLocalCache.provenanceOf(contentLocationURI);
         if (contentProvenance == null || StringUtils.isBlank(contentProvenance.getSha256())) {
             throw new IOException("failed to register [" + contentLocationURI + "]");

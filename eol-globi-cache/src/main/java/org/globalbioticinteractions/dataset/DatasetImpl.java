@@ -36,8 +36,8 @@ public class DatasetImpl implements Dataset {
     }
 
     @Override
-    public URI getResourceURI(URI resourceName) throws IOException {
-        return resourceService.getResourceURI(resourceName);
+    public URI getLocalURI(URI resourceName) throws IOException {
+        return resourceService.getLocalURI(resourceName);
     }
 
     @Override
@@ -108,11 +108,11 @@ public class DatasetImpl implements Dataset {
         @Override
         public InputStream retrieve(URI resourceName) throws IOException {
             URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
-            return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), factory);
+            return ResourceUtil.asInputStream(getLocalURI(mappedResource).toString(), factory);
         }
 
         @Override
-        public URI getResourceURI(URI resourceName) throws IOException {
+        public URI getLocalURI(URI resourceName) throws IOException {
             URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
             return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
         }

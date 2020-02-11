@@ -62,7 +62,7 @@ public class CMECSService implements TermLookupService {
         URI uri = URI.create("https://cmecscatalog.org/cmecs/documents/cmecs4.accdb");
         LOG.info("CMECS data [" + uri + "] downloading ...");
 
-        URI resourceURI = service.getResourceURI(uri);
+        URI resourceURI = service.getLocalURI(uri);
 
         if (resourceURI == null) {
             throw new IOException("failed to access [" + uri + "]");
@@ -105,7 +105,7 @@ public class CMECSService implements TermLookupService {
         }
 
         @Override
-        public URI getResourceURI(URI resourceName) {
+        public URI getLocalURI(URI resourceName) {
             URI resourceURI = null;
             HttpGet get = new HttpGet(resourceName);
             try {

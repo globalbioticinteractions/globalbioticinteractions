@@ -31,7 +31,7 @@ public class DatasetNode extends NodeBacked implements Dataset {
     }
 
     @Override
-    public URI getResourceURI(URI resourceName) {
+    public URI getLocalURI(URI resourceName) {
         return null;
     }
 

@@ -8,6 +8,6 @@ public interface ResourceService<T> {
 
     InputStream retrieve(T resourceName) throws IOException;
 
-    URI getResourceURI(T resourceName) throws IOException;
+    URI getLocalURI(T resourceName) throws IOException;
 
 }

@@ -64,7 +64,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
         Pair<URI, DatasetConfigurer> configPair = null;
         for (URI configResource : datasetHandlers.keySet()) {
             try {
-                URI configURI = dataset.getResourceURI(configResource);
+                URI configURI = dataset.getLocalURI(configResource);
                 if (ResourceUtil.resourceExists(configURI, getInputStreamFactory())) {
                     configPair = Pair.of(configURI, datasetHandlers.get(configResource));
                     break;

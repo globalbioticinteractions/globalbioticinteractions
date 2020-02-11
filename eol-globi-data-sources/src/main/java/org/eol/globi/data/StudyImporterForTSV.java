@@ -89,7 +89,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     }
 
     private void importResource(String namespace, String sourceCitation, String resourceName, char newDelim, List<IOException> parserExceptions) throws IOException, StudyImporterException {
-        URI resourceURI = getDataset().getResourceURI(URI.create(resourceName));
+        URI resourceURI = getDataset().getLocalURI(URI.create(resourceName));
         if (resourceURI == null) {
             parserExceptions.add(new IOException("failed to access [" + resourceName + "] as individual resource (e.g. local/remote data/file)."));
         } else {

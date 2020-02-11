@@ -47,7 +47,7 @@ public class DatasetRegistryWithCacheIT {
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
         assertThat(dataset.getArchiveURI().toString(), containsString(expectedURIFragment));
-        assertThat(dataset.getResourceURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
+        assertThat(dataset.getLocalURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
         assertThat(dataset.getCitation(), startsWith(expectedCitation));
     }
 
@@ -59,7 +59,7 @@ public class DatasetRegistryWithCacheIT {
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
-        assertThat(dataset.getResourceURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
+        assertThat(dataset.getLocalURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
         assertThat(dataset.getCitation(), startsWith("Shan Kothari, Pers. Comm. 2014."));
 
     }

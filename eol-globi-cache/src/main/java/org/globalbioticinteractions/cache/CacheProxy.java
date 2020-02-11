@@ -14,11 +14,11 @@ public class CacheProxy implements Cache {
     }
 
     @Override
-    public URI getResourceURI(URI resourceName) throws IOException {
+    public URI getLocalURI(URI resourceName) throws IOException {
         URI uri = null;
         for (Cache cache : caches) {
                 uri = uri == null
-                        ? cache.getResourceURI(resourceName)
+                        ? cache.getLocalURI(resourceName)
                         : uri;
         }
         return uri;

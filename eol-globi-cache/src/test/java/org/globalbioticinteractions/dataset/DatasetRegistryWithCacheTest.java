@@ -40,7 +40,7 @@ public class DatasetRegistryWithCacheTest {
         Dataset datasetCached = datasetCached();
 
         assertNotNull(datasetCached.getArchiveURI());
-        URI uri = datasetCached.getResourceURI(URI.create("globi.json"));
+        URI uri = datasetCached.getLocalURI(URI.create("globi.json"));
         assertThat(uri.isAbsolute(), is(true));
         assertThat(uri.toString(), startsWith("jar:file:"));
 

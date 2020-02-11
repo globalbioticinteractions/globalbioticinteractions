@@ -64,7 +64,7 @@ public class StudyImporterForMangalTest {
             }
 
             @Override
-            public URI getResourceURI(URI resourceName) {
+            public URI getLocalURI(URI resourceName) {
                 return null;
             }
         };

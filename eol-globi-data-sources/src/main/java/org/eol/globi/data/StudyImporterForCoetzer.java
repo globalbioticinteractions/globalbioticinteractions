@@ -155,7 +155,7 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
 
     public URI getResourceArchiveURI() throws StudyImporterException {
         try {
-            return getDataset().getResourceURI(URI.create("archive"));
+            return getDataset().getLocalURI(URI.create("archive"));
         } catch (IOException e) {
             throw new StudyImporterException("failed to resolve archive resource in [" + getDataset().getNamespace() + "]", e);
         }

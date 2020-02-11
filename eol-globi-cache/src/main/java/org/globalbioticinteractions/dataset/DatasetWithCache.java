@@ -46,7 +46,7 @@ public class DatasetWithCache implements Dataset {
             }
 
             @Override
-            public URI getResourceURI(URI resourceName) {
+            public URI getLocalURI(URI resourceName) {
                 URI uri = null;
                 try {
                     uri = getResourceURI2(resourceName);
@@ -64,7 +64,7 @@ public class DatasetWithCache implements Dataset {
                     if (isLocalDir(mappedResourceName)) {
                         uri = mappedResourceName;
                     } else {
-                        uri = cache.getResourceURI(mappedResourceName);
+                        uri = cache.getLocalURI(mappedResourceName);
                     }
                 } else {
                     URI archiveURI = getArchiveURI();
@@ -76,14 +76,14 @@ public class DatasetWithCache implements Dataset {
             }
 
             private URI cacheRemoteArchive(URI mappedResourceName, URI archiveURI) throws IOException {
-                URI localArchiveURI = cache.getResourceURI(archiveURI);
+                URI localArchiveURI = cache.getLocalURI(archiveURI);
                 URI localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
                 return ResourceUtil.getAbsoluteResourceURI(localDatasetRoot, mappedResourceName);
             }
 
             private URI cacheFileInLocalDirectory(URI mappedResourceName, URI archiveURI) throws IOException {
                 URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-                return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.getResourceURI(absoluteResourceURI);
+                return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.getLocalURI(absoluteResourceURI);
             }
 
 
@@ -98,10 +98,10 @@ public class DatasetWithCache implements Dataset {
     }
 
     @Override
-    public URI getResourceURI(URI resourceName) {
+    public URI getLocalURI(URI resourceName) {
         URI uri = null;
         try {
-            uri = cache.getResourceURI(resourceName);
+            uri = cache.getLocalURI(resourceName);
         } catch (IOException e) {
             LOG.warn("failed to get resource [" + resourceName + "]", e);
         }

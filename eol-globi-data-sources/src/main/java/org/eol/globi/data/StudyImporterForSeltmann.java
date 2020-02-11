@@ -53,7 +53,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         final URI archiveURI;
 
         try {
-            archiveURI = getDataset().getResourceURI(URI.create("archive"));
+            archiveURI = getDataset().getLocalURI(URI.create("archive"));
         } catch (IOException e) {
             throw new StudyImporterException("failed to resolve archive", e);
         }
