@@ -20,7 +20,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
     @Test
     public void registerContent() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace", in -> in);
         String accessDate = DateUtil.nowDateString();
         ContentProvenance contentProvenance = getTestProvenance(accessDate);
         ContentProvenance registered = registry.register(contentProvenance);
@@ -42,7 +42,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
     @Test
     public void resolveByKnownContentHash() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace", in -> in);
 
         registry.register(getTestProvenance(DateUtil.nowDateString()));
 
@@ -63,7 +63,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
     @Test
     public void resolveKnownContentLocation() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace", in -> in);
 
         String accessDate = DateUtil.nowDateString();
         ContentProvenance testProvenance = getTestProvenance(accessDate);
@@ -85,7 +85,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
     @Test
     public void resolveUnknownURI() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace", in -> in);
 
         registry.register(getTestProvenance(DateUtil.nowDateString()));
 
@@ -95,8 +95,8 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
     }
 
     @Test
-    public void resolveUnknownURIEmptyRegistry() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
+    public void resolveUnknownURIEmptyRegistry() {
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace", in -> in);
 
         Stream<ContentProvenance> locations = registry.resolve(URI.create(UUID.randomUUID().toString()));
 

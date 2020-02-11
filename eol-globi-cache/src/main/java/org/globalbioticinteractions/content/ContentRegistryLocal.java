@@ -3,7 +3,6 @@ package org.globalbioticinteractions.content;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
-import org.globalbioticinteractions.cache.CachePullThrough;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
 import org.globalbioticinteractions.cache.ProvenanceLog;
@@ -15,19 +14,14 @@ import java.util.stream.Stream;
 
 public class ContentRegistryLocal implements ContentRegistry {
 
-    private final Cache readOnlyLocalCache;
-    private final InputStreamFactory inputStreamFactory;
     private final String namespace;
     private final File storeDir;
 
-    public ContentRegistryLocal(File storeDir, String namespace) {
-        this.inputStreamFactory = in -> in;
+    public ContentRegistryLocal(File storeDir,
+                                String namespace,
+                                InputStreamFactory inputStreamFactory) {
         this.namespace = namespace;
         this.storeDir = storeDir;
-        readOnlyLocalCache = new CacheLocalReadonly(
-                this.namespace,
-                storeDir.getAbsolutePath(),
-                inputStreamFactory);
     }
 
 
@@ -40,7 +34,10 @@ public class ContentRegistryLocal implements ContentRegistry {
 
     @Override
     public Stream<ContentProvenance> resolve(URI knownContentIdentifier) {
-        ContentProvenance contentProvenance = readOnlyLocalCache.provenanceOf(knownContentIdentifier);
+        ContentProvenance contentProvenance = CacheLocalReadonly
+                .getContentProvenance(knownContentIdentifier,
+                        storeDir.getAbsolutePath(),
+                        namespace);
         return contentProvenance == null
                 ? Stream.empty()
                 : Stream.of(contentProvenance);

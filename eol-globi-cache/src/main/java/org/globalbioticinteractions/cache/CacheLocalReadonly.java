@@ -18,7 +18,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 public class CacheLocalReadonly implements Cache {
-    private final Log LOG = LogFactory.getLog(CacheLocalReadonly.class);
+    private final static Log LOG = LogFactory.getLog(CacheLocalReadonly.class);
 
     private final String namespace;
     private final String cachePath;
@@ -51,6 +51,10 @@ public class CacheLocalReadonly implements Cache {
 
     @Override
     public ContentProvenance provenanceOf(URI resourceURI) {
+        return getContentProvenance(resourceURI, this.cachePath, this.namespace);
+    }
+
+    public static ContentProvenance getContentProvenance(URI resourceURI, String cachePath, String namespace) {
         ContentProvenance meta = null;
         File accessFile;
         try {
@@ -74,7 +78,7 @@ public class CacheLocalReadonly implements Cache {
                                     provenance = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
                                 }
                             } else {
-                                provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace);
+                                provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace, namespace);
                             }
                             meta = provenance == null ? meta : provenance;
                         }
@@ -85,10 +89,9 @@ public class CacheLocalReadonly implements Cache {
             LOG.error("unexpected exception on getting meta for [" + resourceURI + "]", e);
         }
         return meta;
-
     }
 
-    public ContentProvenance getProvenance(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir) {
+    public static ContentProvenance getProvenance(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir, String namespace) {
         ContentProvenance meta = null;
         if (inCachedArchive(localArchiveSha256, sha256)) {
             meta = new ContentProvenance(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);
@@ -100,7 +103,7 @@ public class CacheLocalReadonly implements Cache {
         return meta;
     }
 
-    public boolean inCachedArchive(String localArchiveSha256, String sha256) {
+    public static boolean inCachedArchive(String localArchiveSha256, String sha256) {
         return StringUtils.isNotBlank(localArchiveSha256) && StringUtils.equals(localArchiveSha256, sha256);
     }
 
