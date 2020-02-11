@@ -89,7 +89,7 @@
     <repositories>
         <repository>
             <id>central</id>
-            <url>http://repo1.maven.org/maven2/</url>
+            <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
             <id>globi-datasets</id>
@@ -105,7 +105,7 @@
         <repository>
             <id>opengeo-mirror</id>
             <name>opengeo-mirror</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
+            <url>https://download.osgeo.org/webdav/geotools/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
