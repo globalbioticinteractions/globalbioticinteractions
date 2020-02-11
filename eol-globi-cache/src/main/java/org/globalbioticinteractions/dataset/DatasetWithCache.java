@@ -6,9 +6,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
-import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
-import org.globalbioticinteractions.cache.CacheProxy;
+import org.globalbioticinteractions.cache.CacheProxyForDataset;
 import org.globalbioticinteractions.cache.ContentProvenance;
 import org.globalbioticinteractions.doi.DOI;
 
@@ -16,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -27,68 +25,11 @@ public class DatasetWithCache implements Dataset {
 
     private final Cache cache;
     private final Dataset datasetCached;
-    private ContentProvenance contentProvenance;
+    private ContentProvenance datasetProvenance;
 
     public DatasetWithCache(Dataset dataset, final Cache cache) {
         this.datasetCached = dataset;
-        this.cache = new CacheProxy(Collections.singletonList(cache)) {
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                URI resourceURI2 = getResourceURI2(resourceName);
-                if (null == resourceURI2) {
-                    throw new IOException("resource [" + resourceName + "] not found");
-                }
-                InputStream inputStream = cache.retrieve(resourceURI2);
-                if (null == inputStream) {
-                    throw new IOException("resource [" + resourceName + "] not found");
-                }
-                return inputStream;
-            }
-
-            @Override
-            public URI getLocalURI(URI resourceName) {
-                URI uri = null;
-                try {
-                    uri = getResourceURI2(resourceName);
-                } catch (IOException e) {
-                    LOG.warn("failed to get resource [" + resourceName + "]", e);
-                }
-                return uri;
-            }
-
-            private URI getResourceURI2(URI resourceName1) throws IOException {
-                URI mappedResourceName = DatasetUtil.getNamedResourceURI(getDatasetCached(), resourceName1);
-
-                URI uri;
-                if (mappedResourceName.isAbsolute()) {
-                    if (isLocalDir(mappedResourceName)) {
-                        uri = mappedResourceName;
-                    } else {
-                        uri = cache.getLocalURI(mappedResourceName);
-                    }
-                } else {
-                    URI archiveURI = getArchiveURI();
-                    uri = isLocalDir(archiveURI)
-                            ? cacheFileInLocalDirectory(mappedResourceName, archiveURI)
-                            : cacheRemoteArchive(mappedResourceName, archiveURI);
-                }
-                return uri;
-            }
-
-            private URI cacheRemoteArchive(URI mappedResourceName, URI archiveURI) throws IOException {
-                URI localArchiveURI = cache.getLocalURI(archiveURI);
-                URI localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
-                return ResourceUtil.getAbsoluteResourceURI(localDatasetRoot, mappedResourceName);
-            }
-
-            private URI cacheFileInLocalDirectory(URI mappedResourceName, URI archiveURI) throws IOException {
-                URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-                return isLocalDir(absoluteResourceURI) ? absoluteResourceURI : cache.getLocalURI(absoluteResourceURI);
-            }
-
-
-
-        };
+        this.cache = new CacheProxyForDataset(cache, dataset);
 
     }
 
@@ -117,18 +58,18 @@ public class DatasetWithCache implements Dataset {
     }
 
     private String getAccessedAt() {
-        return getCachedURI() == null ? null : getCachedURI().getAccessedAt();
+        return getDatasetProvenance() == null ? null : getDatasetProvenance().getAccessedAt();
     }
 
-    private ContentProvenance getCachedURI() {
-        if (this.contentProvenance == null) {
-            this.contentProvenance = cache.provenanceOf(getDatasetCached().getArchiveURI());
+    private ContentProvenance getDatasetProvenance() {
+        if (this.datasetProvenance == null) {
+            this.datasetProvenance = cache.provenanceOf(getDatasetCached().getArchiveURI());
         }
-        return this.contentProvenance;
+        return this.datasetProvenance;
     }
 
     private String getHash() {
-        return getCachedURI() == null ? null : getCachedURI().getSha256();
+        return getDatasetProvenance() == null ? null : getDatasetProvenance().getSha256();
     }
 
     public URI getArchiveURI() {
@@ -143,7 +84,7 @@ public class DatasetWithCache implements Dataset {
         } else if (equalsIgnoreCase(DatasetConstant.CONTENT_HASH, key)) {
             return getHash();
         } else {
-            return datasetCached.getOrDefault(key, defaultValue);
+            return getDatasetCached().getOrDefault(key, defaultValue);
         }
     }
 
@@ -214,4 +155,5 @@ public class DatasetWithCache implements Dataset {
     private Dataset getDatasetCached() {
         return datasetCached;
     }
+
 }

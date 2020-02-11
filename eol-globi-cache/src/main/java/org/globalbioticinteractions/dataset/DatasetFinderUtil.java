@@ -9,7 +9,7 @@ import java.util.zip.ZipFile;
 
 public class DatasetFinderUtil {
 
-    static URI getLocalDatasetURIRoot(File localDatasetURI) throws IOException {
+    public static URI getLocalDatasetURIRoot(File localDatasetURI) throws IOException {
         try (ZipFile zipFile = new ZipFile(localDatasetURI)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
