@@ -15,9 +15,10 @@ public class CachePullThroughTest {
     @Test
     public void cache() throws IOException {
         File cacheDir = CacheUtil.getCacheDirForNamespace("target/cache/datasets", "some/namespace");
-        File archiveCache = CachePullThrough.cache(URI.create("https://github.com/globalbioticinteractions/template-dataset/archive/master.zip"), cacheDir);
-        assertThat(archiveCache.exists(), CoreMatchers.is(true));
-        assertThat(archiveCache.toURI().toString(), startsWith("file:/"));
+        ContentProvenance contentProvenance = CachePullThrough.cache(URI.create("https://github.com/globalbioticinteractions/template-dataset/archive/master.zip"), cacheDir);
+        File cachedFile = new File(contentProvenance.getLocalURI());
+        assertThat(cachedFile.exists(), CoreMatchers.is(true));
+        assertThat(cachedFile.toURI().toString(), startsWith("file:/"));
     }
 
 

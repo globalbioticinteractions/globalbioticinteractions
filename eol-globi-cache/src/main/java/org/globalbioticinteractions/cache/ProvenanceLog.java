@@ -13,19 +13,23 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class CacheLog {
+public class ProvenanceLog {
 
     public final static String ACCESS_LOG_FILENAME = "access.tsv";
 
-    public static void appendCacheLog(String namespace, URI resourceURI, File cacheDir, URI localResourceCacheURI) throws IOException {
+    public static void appendProvenanceLog(String namespace, URI resourceURI, File cacheDir, URI localResourceCacheURI) throws IOException {
         String accessedAt = ISODateTimeFormat.dateTime().withZoneUTC().print(new Date().getTime());
         String sha256 = new File(localResourceCacheURI).getName();
-        ContentProvenance meta = new ContentProvenance(namespace, resourceURI, localResourceCacheURI, sha256, accessedAt);
-        appendAccessLog(meta, getAccessFile(cacheDir));
+        ContentProvenance contentProvenance = new ContentProvenance(namespace, resourceURI, localResourceCacheURI, sha256, accessedAt);
+        appendProvenanceLog(cacheDir, contentProvenance);
     }
 
-    public static void appendAccessLog(ContentProvenance meta, File accessLog) throws IOException {
-        List<String> accessLogEntry = compileLogEntries(meta);
+    public static void appendProvenanceLog(File cacheDir, ContentProvenance contentProvenance) throws IOException {
+        appendProvenanceLog(contentProvenance, getAccessFile(cacheDir));
+    }
+
+    private static void appendProvenanceLog(ContentProvenance contentProvenance, File accessLog) throws IOException {
+        List<String> accessLogEntry = compileLogEntries(contentProvenance);
         String prefix = accessLog.exists() ? "\n" : "";
         String accessLogLine = StringUtils.join(accessLogEntry, '\t');
         FileUtils.writeStringToFile(accessLog, prefix + accessLogLine, StandardCharsets.UTF_8, true);

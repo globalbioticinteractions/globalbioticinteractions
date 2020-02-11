@@ -12,19 +12,19 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertThat;
 
-public class CacheLogTest {
+public class ProvenanceLogTest {
 
     @Test
     public void accessLogEntry() throws IOException, URISyntaxException {
         ContentProvenance meta = new ContentProvenance("some/namespace", URI.create("http://example.com"), URI.create("cached:file.zip"), "1234", "1970-01-01T00:00:00Z");
-        List<String> strings = CacheLog.compileLogEntries(meta);
+        List<String> strings = ProvenanceLog.compileLogEntries(meta);
         assertThat(strings, is(Arrays.asList("some/namespace", "http://example.com", "1234", "1970-01-01T00:00:00Z", null)));
     }
 
     @Test
     public void accessLogJarEntry() throws IOException, URISyntaxException {
         ContentProvenance meta = new ContentProvenance("some/namespace", URI.create("http://example.com"), URI.create("jar:file://file.zip!/something"), "1234", "1970-01-01");
-        List<String> strings = CacheLog.compileLogEntries(meta);
+        List<String> strings = ProvenanceLog.compileLogEntries(meta);
         assertThat(strings, is(empty()));
     }
 

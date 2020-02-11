@@ -57,7 +57,7 @@ public class CacheLocalReadonly implements Cache {
             File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(cachePath, namespace);
 
             String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
-            accessFile = CacheLog.getAccessFile(cacheDirForNamespace);
+            accessFile = ProvenanceLog.getAccessFile(cacheDirForNamespace);
             if (accessFile.exists()) {
                 String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
                 for (String row : rows) {
@@ -67,16 +67,16 @@ public class CacheLocalReadonly implements Cache {
                         String sha256 = split[2];
                         String accessedAt = StringUtils.trim(split[3]);
                         if (StringUtils.isNotBlank(sha256)) {
-                            ContentProvenance metaURI = null;
+                            ContentProvenance provenance = null;
                             if (resourceURI.toString().startsWith("hash://sha256/")) {
                                 if (StringUtils.equals("hash://sha256/" + sha256, resourceURI.toString())) {
                                     URI localResourceURI = new File(cacheDirForNamespace, sha256).toURI();
-                                    metaURI = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
+                                    provenance = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
                                 }
                             } else {
-                                metaURI = getMetaURI(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace);
+                                provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace);
                             }
-                            meta = metaURI == null ? meta : metaURI;
+                            meta = provenance == null ? meta : provenance;
                         }
                     }
                 }
@@ -88,7 +88,7 @@ public class CacheLocalReadonly implements Cache {
 
     }
 
-    public ContentProvenance getMetaURI(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir) {
+    public ContentProvenance getProvenance(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir) {
         ContentProvenance meta = null;
         if (inCachedArchive(localArchiveSha256, sha256)) {
             meta = new ContentProvenance(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);

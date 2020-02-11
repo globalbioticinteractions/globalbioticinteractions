@@ -11,7 +11,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.CacheFactory;
-import org.globalbioticinteractions.cache.CacheLog;
+import org.globalbioticinteractions.cache.ProvenanceLog;
 import org.globalbioticinteractions.cache.CacheUtil;
 
 import java.io.BufferedReader;
@@ -62,7 +62,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         Collection<File> accessFiles = FileUtils.listFiles(directory, new FileFileFilter() {
             @Override
             public boolean accept(File file) {
-                return CacheLog.ACCESS_LOG_FILENAME.endsWith(file.getName());
+                return ProvenanceLog.ACCESS_LOG_FILENAME.endsWith(file.getName());
             }
         }, TrueFileFilter.INSTANCE);
 
@@ -102,7 +102,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             }
 
         };
-        File accessFile = CacheLog.getAccessFile(namespace, cacheDir);
+        File accessFile = ProvenanceLog.getAccessFile(namespace, cacheDir);
         if (accessFile.exists()) {
             scanAccessFile(accessFile, accessFileLineListener);
         }

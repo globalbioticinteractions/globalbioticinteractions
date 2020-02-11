@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.cache;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.URI;
 import java.util.Date;
 
@@ -42,6 +44,17 @@ public class ContentProvenance {
 
     public String getSha256() {
         return sha256;
+    }
+
+    /**
+     *
+     * @return content hash of accessed source content
+     */
+
+    public URI getContentHash() {
+        return StringUtils.isBlank(getSha256())
+                ? null :
+                URI.create("hash://sha256/" + getSha256());
     }
 
     /**

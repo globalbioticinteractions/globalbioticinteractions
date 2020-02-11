@@ -1,10 +1,13 @@
 package org.globalbioticinteractions.content;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CachePullThrough;
+import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
+import org.globalbioticinteractions.cache.ProvenanceLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,27 +18,30 @@ public class ContentRegistryLocal implements ContentRegistry {
 
     private final Cache cache;
     private final Cache readOnlyLocalCache;
+    private final InputStreamFactory inputStreamFactory;
+    private final String namespace;
+    private final File storeDir;
 
-    public ContentRegistryLocal(File storeDir) {
+    public ContentRegistryLocal(File storeDir, String namespace) {
+        this.inputStreamFactory = in -> in;
+        this.namespace = namespace;
+        this.storeDir = storeDir;
         cache = new CachePullThrough(
-                "some/namespace",
+                this.namespace,
                 storeDir.getAbsolutePath(),
-                in -> in);
+                inputStreamFactory);
         readOnlyLocalCache = new CacheLocalReadonly(
-                "some/namespace",
+                this.namespace,
                 storeDir.getAbsolutePath(),
-                in -> in);
+                inputStreamFactory);
     }
 
 
     @Override
-    public URI register(URI contentLocationURI) throws IOException {
-        cache.getLocalURI(contentLocationURI);
-        ContentProvenance contentProvenance = readOnlyLocalCache.provenanceOf(contentLocationURI);
-        if (contentProvenance == null || StringUtils.isBlank(contentProvenance.getSha256())) {
-            throw new IOException("failed to register [" + contentLocationURI + "]");
-        }
-        return URI.create("hash://sha256/" + contentProvenance.getSha256());
+    public ContentProvenance register(ContentProvenance contentProvenance) throws IOException {
+        File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(getStoreDir().getAbsolutePath(), getNamespace());
+        ProvenanceLog.appendProvenanceLog(cacheDirForNamespace, contentProvenance);
+        return contentProvenance;
     }
 
     @Override
@@ -44,5 +50,13 @@ public class ContentRegistryLocal implements ContentRegistry {
         return contentProvenance == null
                 ? Stream.empty()
                 : Stream.of(contentProvenance);
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public File getStoreDir() {
+        return storeDir;
     }
 }

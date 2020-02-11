@@ -1,13 +1,14 @@
 package org.globalbioticinteractions.content;
 
+import org.eol.globi.util.DateUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,24 +20,31 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
     @Test
     public void registerContent() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir());
-        URI save = registry.register(getTestURI());
-        assertThat(save.toString(), is("hash://sha256/b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"));
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
+        String accessDate = DateUtil.nowDateString();
+        ContentProvenance contentProvenance = getTestProvenance(accessDate);
+        ContentProvenance registered = registry.register(contentProvenance);
+        URI expectedContentHash = URI.create("hash://sha256/b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9");
+        assertThat(registered.getContentHash(), is(expectedContentHash));
+
+        Stream<ContentProvenance> resolvedContentProvenance = registry.resolve(registered.getContentHash());
+        assertThat(resolvedContentProvenance.findFirst().get().getContentHash(), is(expectedContentHash));
     }
 
-    public URI getTestURI() {
-        try {
-            return getClass().getResource("hello.txt").toURI();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("missing test resource");
-        }
+    public ContentProvenance getTestProvenance(String accessDate) {
+        return new ContentProvenance(
+                "some/namespace",
+                URI.create("source:uri"),
+                URI.create("local:uri"),
+                "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+                accessDate);
     }
 
     @Test
-    public void resolveKnownContentHash() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir());
+    public void resolveByKnownContentHash() throws IOException {
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
 
-        registry.register(getTestURI());
+        registry.register(getTestProvenance(DateUtil.nowDateString()));
 
         String sha256hash = "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
 
@@ -46,41 +54,51 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
                 .flatMap(x -> Stream.of(x.getLocalURI(), x.getSourceURI()))
                 .collect(Collectors.toList());
 
-        assertThat(locationList, hasItem(getTestURI()));
+        assertThat(locationList.size(), is(2));
+
+        assertThat(locationList, hasItem(URI.create("source:uri")));
         assertThat(locationList, hasItem(new File(getCacheDir(), "some/namespace/" + sha256hash).toURI()));
 
-        assertThat(locationList.size(), is(2));
     }
 
     @Test
     public void resolveKnownContentLocation() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir());
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
 
-        registry.register(getTestURI());
+        String accessDate = DateUtil.nowDateString();
+        ContentProvenance testProvenance = getTestProvenance(accessDate);
+        registry.register(testProvenance);
 
         String sha256hash = "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
 
-        Stream<ContentProvenance> provenance = registry.resolve(getTestURI());
+        Stream<ContentProvenance> provenance = registry.resolve(testProvenance.getSourceURI());
 
         List<URI> locationList = provenance
                 .flatMap(x -> Stream.of(x.getLocalURI(), x.getSourceURI()))
                 .collect(Collectors.toList());
 
-        assertThat(locationList, hasItem(getTestURI()));
+        assertThat(locationList, hasItem(URI.create("source:uri")));
         assertThat(locationList, hasItem(new File(getCacheDir(), "some/namespace/" + sha256hash).toURI()));
 
         assertThat(locationList.size(), is(2));
     }
 
     @Test
-    public void resolveUnknownContentHash() throws IOException {
-        ContentRegistry registry = new ContentRegistryLocal(getCacheDir());
+    public void resolveUnknownURI() throws IOException {
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
 
-        registry.register(getTestURI());
+        registry.register(getTestProvenance(DateUtil.nowDateString()));
 
-        String unknownHash = "fffd27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
+        Stream<ContentProvenance> locations = registry.resolve(URI.create(UUID.randomUUID().toString()));
 
-        Stream<ContentProvenance> locations = registry.resolve(URI.create("hash://sha256/" + unknownHash));
+        assertThat(locations.count(), is(0L));
+    }
+
+    @Test
+    public void resolveUnknownURIEmptyRegistry() throws IOException {
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir(), "some/namespace");
+
+        Stream<ContentProvenance> locations = registry.resolve(URI.create(UUID.randomUUID().toString()));
 
         assertThat(locations.count(), is(0L));
     }

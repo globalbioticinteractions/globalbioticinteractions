@@ -1,19 +1,28 @@
 package org.globalbioticinteractions.content;
 
+import org.globalbioticinteractions.cache.ContentProvenance;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Optional;
 
+/**
+ *  Inspired by Document Store actor in https://wiki.ihe.net/index.php/Cross-Enterprise_Document_Sharing .
+ */
+
 public interface ContentStore {
 
     /**
+     *  Stores provided content, records the provenance and registers it.
      *
-     * @param is stream of content to be stored
+     * @param is stream of content to be stored and registered.
      * @return hash of stored content
      */
 
-    public URI save(InputStream is) throws IOException;
+    ContentProvenance provideAndRegister(InputStream is) throws IOException;
+
+    ContentProvenance provideAndRegister(URI contentLocationURI) throws IOException;
 
     /**
      *
@@ -21,6 +30,6 @@ public interface ContentStore {
      * @return stream of content with provided hash
      */
 
-    public Optional<InputStream> retrieve(URI contentHash) throws IOException;
+    Optional<InputStream> retrieve(URI contentHash) throws IOException;
 
 }

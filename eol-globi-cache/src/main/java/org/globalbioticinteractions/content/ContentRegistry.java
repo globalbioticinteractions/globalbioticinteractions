@@ -6,15 +6,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.stream.Stream;
 
+/**
+ * Inspired by Document Registry actor in https://wiki.ihe.net/index.php/Cross-Enterprise_Document_Sharing .
+ */
+
 public interface ContentRegistry {
 
     /**
+     * Register content of known provenance.
      *
-     * @param contentLocationURI location of content to be registered
-     * @return hash of content produced by the provided URI
+     * @param contentProvenance provenance of content to be registered
+     * @return provenance of content registered
      */
 
-    public URI register(URI contentLocationURI) throws IOException;
+    ContentProvenance register(ContentProvenance contentProvenance) throws IOException;
 
     /**
      * Resolves to the provenance of registered content
@@ -29,6 +34,6 @@ public interface ContentRegistry {
      * @param knownContentIdentifier content identifier to be resolved
      * @return known locations and their provenance (e.g, source location, time accessed) that produced content with provided content hash
      */
-    public Stream<ContentProvenance> resolve(URI knownContentIdentifier);
+    Stream<ContentProvenance> resolve(URI knownContentIdentifier);
 
 }

@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
-import org.globalbioticinteractions.cache.CacheLog;
 import org.globalbioticinteractions.cache.CachePullThrough;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
@@ -14,17 +13,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ContentStoreLocal implements ContentStore {
 
-    private final Cache cache;
     private final Cache readOnlyLocalCache;
+    private final Cache cache;
     private final File storeDir;
     private final String namespace;
+    private final ContentRegistry contentRegistry;
 
     public ContentStoreLocal(File storeDir, String namespace) {
         this.storeDir = storeDir;
         this.namespace = namespace;
+        contentRegistry = new ContentRegistryLocal(storeDir, namespace);
         cache = new CachePullThrough(
                 this.namespace,
                 storeDir.getAbsolutePath(),
@@ -35,23 +37,34 @@ public class ContentStoreLocal implements ContentStore {
                 in -> in);
     }
 
+    /**
+     *
+     * @param is stream of content to be stored
+     * @return provenance of the provided and registered content
+     * @throws IOException
+     */
 
     @Override
-    public URI save(InputStream is) throws IOException {
+    public ContentProvenance provideAndRegister(InputStream is) throws IOException {
+        URI generatedContentURI = URI.create(UUID.randomUUID().toString());
         File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
-        File file = CachePullThrough.cacheStream(is, cacheDirForNamespace);
-        URI contentHash = null;
-        if (file != null) {
-            CacheLog.appendCacheLog(namespace, URI.create("/dev/stdin"), cacheDirForNamespace, file.toURI());
-            contentHash = URI.create(StringUtils.replace(file.getAbsolutePath(), cacheDirForNamespace.getAbsolutePath(), "hash://sha256"));
-        }
+        ContentProvenance localProvenance = CachePullThrough.cacheStream(is, cacheDirForNamespace);
+        ContentProvenance provenanceInNamespace = new ContentProvenance(namespace, generatedContentURI, localProvenance.getLocalURI(), localProvenance.getSha256(), localProvenance.getSha256());
+        return contentRegistry.register(provenanceInNamespace);
+    }
 
-        return contentHash;
+    @Override
+    public ContentProvenance provideAndRegister(URI contentLocationURI) throws IOException {
+        cache.getLocalURI(contentLocationURI);
+        ContentProvenance contentProvenance = readOnlyLocalCache.provenanceOf(contentLocationURI);
+        if (contentProvenance == null || StringUtils.isBlank(contentProvenance.getSha256())) {
+            throw new IOException("failed to store [" + contentLocationURI + "]");
+        }
+        return contentRegistry.register(contentProvenance);
     }
 
     @Override
     public Optional<InputStream> retrieve(URI contentHash) throws IOException {
-
         ContentProvenance contentProvenance = readOnlyLocalCache.provenanceOf(contentHash);
         return contentProvenance == null || contentProvenance.getLocalURI() == null
                 ? Optional.empty()

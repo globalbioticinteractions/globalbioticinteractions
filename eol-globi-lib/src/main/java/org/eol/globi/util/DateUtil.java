@@ -39,4 +39,8 @@ public final class DateUtil {
     public static String splitPossibleRange(String eventDate) {
         return StringUtils.split(eventDate, "/")[0];
     }
+
+    public static String nowDateString() {
+        return ISODateTimeFormat.dateTime().withZoneUTC().print(new Date().getTime());
+    }
 }
