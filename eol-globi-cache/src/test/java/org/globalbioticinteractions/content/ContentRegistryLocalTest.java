@@ -53,6 +53,26 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
     }
 
     @Test
+    public void resolveKnownContentLocation() throws IOException {
+        ContentRegistry registry = new ContentRegistryLocal(getCacheDir());
+
+        registry.register(getTestURI());
+
+        String sha256hash = "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
+
+        Stream<ContentProvenance> provenance = registry.resolve(getTestURI());
+
+        List<URI> locationList = provenance
+                .flatMap(x -> Stream.of(x.getLocalURI(), x.getSourceURI()))
+                .collect(Collectors.toList());
+
+        assertThat(locationList, hasItem(getTestURI()));
+        assertThat(locationList, hasItem(new File(getCacheDir(), "some/namespace/" + sha256hash).toURI()));
+
+        assertThat(locationList.size(), is(2));
+    }
+
+    @Test
     public void resolveUnknownContentHash() throws IOException {
         ContentRegistry registry = new ContentRegistryLocal(getCacheDir());
 

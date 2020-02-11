@@ -39,8 +39,8 @@ public class ContentRegistryLocal implements ContentRegistry {
     }
 
     @Override
-    public Stream<ContentProvenance> resolve(URI contentHash) {
-        ContentProvenance contentProvenance = readOnlyLocalCache.provenanceOf(contentHash);
+    public Stream<ContentProvenance> resolve(URI knownContentIdentifier) {
+        ContentProvenance contentProvenance = readOnlyLocalCache.provenanceOf(knownContentIdentifier);
         return contentProvenance == null
                 ? Stream.empty()
                 : Stream.of(contentProvenance);
