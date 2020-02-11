@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.content;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
@@ -16,7 +15,6 @@ import java.util.stream.Stream;
 
 public class ContentRegistryLocal implements ContentRegistry {
 
-    private final Cache cache;
     private final Cache readOnlyLocalCache;
     private final InputStreamFactory inputStreamFactory;
     private final String namespace;
@@ -26,10 +24,6 @@ public class ContentRegistryLocal implements ContentRegistry {
         this.inputStreamFactory = in -> in;
         this.namespace = namespace;
         this.storeDir = storeDir;
-        cache = new CachePullThrough(
-                this.namespace,
-                storeDir.getAbsolutePath(),
-                inputStreamFactory);
         readOnlyLocalCache = new CacheLocalReadonly(
                 this.namespace,
                 storeDir.getAbsolutePath(),
