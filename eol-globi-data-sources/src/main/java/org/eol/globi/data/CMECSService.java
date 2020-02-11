@@ -100,7 +100,7 @@ public class CMECSService implements TermLookupService {
     private static class ResourceServiceDefault implements ResourceService<URI> {
 
         @Override
-        public InputStream getResource(URI resourceName) throws IOException {
+        public InputStream retrieve(URI resourceName) throws IOException {
             throw new NotImplementedException();
         }
 

@@ -10,7 +10,7 @@ import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheProxy;
-import org.globalbioticinteractions.cache.CachedURI;
+import org.globalbioticinteractions.cache.ContentProvenance;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.File;
@@ -28,18 +28,18 @@ public class DatasetWithCache implements Dataset {
 
     private final Cache cache;
     private final Dataset datasetCached;
-    private CachedURI cachedUri;
+    private ContentProvenance contentProvenance;
 
     public DatasetWithCache(Dataset dataset, final Cache cache) {
         this.datasetCached = dataset;
         this.cache = new CacheProxy(Collections.singletonList(cache)) {
             @Override
-            public InputStream getResource(URI resourceName) throws IOException {
+            public InputStream retrieve(URI resourceName) throws IOException {
                 URI resourceURI2 = getResourceURI2(resourceName);
                 if (null == resourceURI2) {
                     throw new IOException("resource [" + resourceName + "] not found");
                 }
-                InputStream inputStream = cache.getResource(resourceURI2);
+                InputStream inputStream = cache.retrieve(resourceURI2);
                 if (null == inputStream) {
                     throw new IOException("resource [" + resourceName + "] not found");
                 }
@@ -94,8 +94,8 @@ public class DatasetWithCache implements Dataset {
     }
 
     @Override
-    public InputStream getResource(URI resourceName) throws IOException {
-        return cache.getResource(resourceName);
+    public InputStream retrieve(URI resourceName) throws IOException {
+        return cache.retrieve(resourceName);
     }
 
     @Override
@@ -121,11 +121,11 @@ public class DatasetWithCache implements Dataset {
         return getCachedURI() == null ? null : getCachedURI().getAccessedAt();
     }
 
-    private CachedURI getCachedURI() {
-        if (this.cachedUri == null) {
-            this.cachedUri = cache.asMeta(getDatasetCached().getArchiveURI());
+    private ContentProvenance getCachedURI() {
+        if (this.contentProvenance == null) {
+            this.contentProvenance = cache.provenanceOf(getDatasetCached().getArchiveURI());
         }
-        return this.cachedUri;
+        return this.contentProvenance;
     }
 
     private String getHash() {

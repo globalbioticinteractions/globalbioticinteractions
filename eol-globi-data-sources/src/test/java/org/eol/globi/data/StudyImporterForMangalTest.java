@@ -52,7 +52,7 @@ public class StudyImporterForMangalTest {
         ResourceService<URI> resourceService = new ResourceService<URI>() {
 
             @Override
-            public InputStream getResource(URI resourceName) throws IOException {
+            public InputStream retrieve(URI resourceName) throws IOException {
                 int pageNumber = counter.getAndIncrement();
                 if (pageNumber == 0) {
                     return getClass().getResourceAsStream("mangal-dataset.json");

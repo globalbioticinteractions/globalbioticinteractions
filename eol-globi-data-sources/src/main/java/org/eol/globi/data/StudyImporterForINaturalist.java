@@ -151,7 +151,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         do {
             URI uri = URI.create(INATURALIST_URL + "/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research");
 
-            try (InputStream resource = getDataset().getResource(uri)) {
+            try (InputStream resource = getDataset().retrieve(uri)) {
                 previousResultCount = parseJSON(resource,
                         typesIgnored,
                         typeMap);

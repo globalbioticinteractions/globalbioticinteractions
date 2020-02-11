@@ -6,7 +6,7 @@ import java.net.URI;
 
 public interface ResourceService<T> {
 
-    InputStream getResource(T resourceName) throws IOException;
+    InputStream retrieve(T resourceName) throws IOException;
 
     URI getResourceURI(T resourceName) throws IOException;
 

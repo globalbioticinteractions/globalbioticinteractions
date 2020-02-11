@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.InputStreamFactory;
@@ -9,6 +10,7 @@ import org.eol.globi.util.ResourceUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -34,30 +36,31 @@ public class CachePullThrough implements Cache {
         return cache(sourceURI, cacheDir, inStream -> inStream);
     }
 
-    static File cache(URI sourceURI, File cacheDir, InputStreamFactory factory) throws IOException {
+    public static File cache(URI sourceURI, File cacheDir, InputStreamFactory factory) throws IOException {
+        String msg = "caching [" + sourceURI + "]";
+        LOG.info(msg + " started...");
+        InputStream inputStream = ResourceUtil.asInputStream(sourceURI.toString(), factory);
+        File file = cacheStream(inputStream, cacheDir);
+        LOG.info(msg + " cached at [" + file.toURI().toString() + "]...");
+        LOG.info(msg + " complete.");
+        return file;
+    }
+
+    public static File cacheStream(InputStream inputStream, File cacheDir) throws IOException {
         File destinationFile = null;
-        try (InputStream sourceStream = ResourceUtil.asInputStream(sourceURI.toString(), factory)) {
+
+        try (InputStream sourceStream = inputStream) {
             destinationFile = File.createTempFile("archive", "tmp", cacheDir);
-            String msg = "caching [" + sourceURI + "]";
-            LOG.info(msg + " started...");
             try {
-                MessageDigest md = MessageDigest.getInstance("SHA-256");
-                try (DigestInputStream digestInputStream = new DigestInputStream(sourceStream, md)) {
-                    FileUtils.copyInputStreamToFile(digestInputStream, destinationFile);
-                }
-                String sha256 = String.format("%064x", new java.math.BigInteger(1, md.digest()));
+                OutputStream os = FileUtils.openOutputStream(destinationFile);
+                String sha256 = calculateContentHash(sourceStream, os);
                 File destFile = new File(cacheDir, sha256);
-                if (destFile.exists()) {
-                    LOG.info(msg + " nothing to do, [" + destFile.toURI().toString() + "] already cached...");
-                } else {
+                if (!destFile.exists()) {
                     FileUtils.moveFile(destinationFile, destFile);
-                    LOG.info(msg + " cached at [" + destFile.toURI().toString() + "]...");
                 }
-                LOG.info(msg + " complete.");
                 return destFile;
             } catch (NoSuchAlgorithmException e) {
-                LOG.error("failed to access hash/digest algorithm", e);
-                throw new IOException("failed to cache dataset [" + sourceURI.toString() + "]");
+                throw new IOException("failed to access hash/digest algorithm", e);
             }
         } finally {
             if (destinationFile != null && destinationFile.exists()) {
@@ -66,21 +69,29 @@ public class CachePullThrough implements Cache {
         }
     }
 
-    @Override
-    public URI getResourceURI(URI resourceName) throws IOException {
-        File cacheDir = CacheUtil.getCacheDirForNamespace(cachePath, namespace);
-        File resourceCached = cache(resourceName, cacheDir, getInputStreamFactory());
-        CacheLog.appendCacheLog(namespace, resourceName, cacheDir, resourceCached.toURI());
-        return resourceCached.toURI();
+    public static String calculateContentHash(InputStream sourceStream, OutputStream os) throws NoSuchAlgorithmException, IOException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        try (DigestInputStream digestInputStream = new DigestInputStream(sourceStream, md)) {
+            IOUtils.copy(digestInputStream, os);
+        }
+        return String.format("%064x", new java.math.BigInteger(1, md.digest()));
     }
 
     @Override
-    public CachedURI asMeta(URI resourceURI) {
+    public URI getResourceURI(URI resourceName) throws IOException {
+        File cacheDir = CacheUtil.getCacheDirForNamespace(cachePath, namespace);
+        File localResourceLocation = cache(resourceName, cacheDir, getInputStreamFactory());
+        CacheLog.appendCacheLog(namespace, resourceName, cacheDir, localResourceLocation.toURI());
+        return localResourceLocation.toURI();
+    }
+
+    @Override
+    public ContentProvenance provenanceOf(URI resourceURI) {
         return null;
     }
 
     @Override
-    public InputStream getResource(URI resourceURI) throws IOException {
+    public InputStream retrieve(URI resourceURI) throws IOException {
         URI resourceURI1 = getResourceURI(resourceURI);
         return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString(), getInputStreamFactory());
     }

@@ -17,25 +17,31 @@ public class CacheProxy implements Cache {
     public URI getResourceURI(URI resourceName) throws IOException {
         URI uri = null;
         for (Cache cache : caches) {
-                uri = uri == null ? cache.getResourceURI(resourceName) : uri;
+                uri = uri == null
+                        ? cache.getResourceURI(resourceName)
+                        : uri;
         }
         return uri;
     }
 
     @Override
-    public CachedURI asMeta(URI resourceURI) {
-        CachedURI meta = null;
+    public ContentProvenance provenanceOf(URI resourceURI) {
+        ContentProvenance provenance = null;
         for (Cache cache : caches) {
-            meta = meta == null ? cache.asMeta(resourceURI) : meta;
+            provenance = provenance == null
+                    ? cache.provenanceOf(resourceURI)
+                    : provenance;
         }
-        return meta;
+        return provenance;
     }
 
     @Override
-    public InputStream getResource(URI resourceURI) throws IOException {
+    public InputStream retrieve(URI resourceURI) throws IOException {
         InputStream is = null;
         for (Cache cache : caches) {
-            is = is == null ? cache.getResource(resourceURI) : is;
+            is = is == null
+                    ? cache.retrieve(resourceURI)
+                    : is;
         }
         return is;
     }

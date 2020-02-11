@@ -52,9 +52,9 @@ public class CacheLocalReadonlyTest {
         URL archive = getClass().getResource(namespaceCacheDir + "631d3777cf83e1abea848b59a6589c470cf0c7d0fd99682c4c104481ad9a543f");
         String cacheDir = new File(resource.toURI()).getParentFile().getParentFile().getParent();
         CacheLocalReadonly cacheLocalReadonly = new CacheLocalReadonly("globalbioticinteractions/template-dataset", cacheDir);
-        CachedURI cachedURI = cacheLocalReadonly.asMeta(URI.create("jar:" + archive.toString() + "!/globi.json"));
-        assertThat(cachedURI.getSourceURI().toString(), is("jar:https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip!/globi.json"));
-        assertThat(cachedURI.getAccessedAt(), is("2017-09-14T16:39:33Z"));
+        ContentProvenance contentProvenance = cacheLocalReadonly.provenanceOf(URI.create("jar:" + archive.toString() + "!/globi.json"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("jar:https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip!/globi.json"));
+        assertThat(contentProvenance.getAccessedAt(), is("2017-09-14T16:39:33Z"));
     }
 
     @Test
@@ -64,10 +64,10 @@ public class CacheLocalReadonlyTest {
         URL archiveURL = getClass().getResource(namespaceCacheDir + "631d3777cf83e1abea848b59a6589c470cf0c7d0fd99682c4c104481ad9a543f");
         String cacheDir = new File(resource.toURI()).getParentFile().getParentFile().getParent();
         CacheLocalReadonly cacheLocalReadonly = new CacheLocalReadonly("globalbioticinteractions/template-dataset", cacheDir);
-        CachedURI cachedURI = cacheLocalReadonly.asMeta(URI.create("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
-        assertThat(cachedURI.getSourceURI().toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
-        assertThat(cachedURI.getAccessedAt(), is("2017-09-14T16:39:33Z"));
-        assertThat(cachedURI.getCachedURI(), is(archiveURL.toURI()));
+        ContentProvenance contentProvenance = cacheLocalReadonly.provenanceOf(URI.create("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
+        assertThat(contentProvenance.getAccessedAt(), is("2017-09-14T16:39:33Z"));
+        assertThat(contentProvenance.getLocalURI(), is(archiveURL.toURI()));
     }
 
 }

@@ -45,13 +45,13 @@ public class CacheLocalReadonly implements Cache {
 
     @Override
     public URI getResourceURI(URI resourceName) {
-        CachedURI cachedUri = asMeta(resourceName);
-        return cachedUri == null ? null : cachedUri.getCachedURI();
+        ContentProvenance contentProvenance = provenanceOf(resourceName);
+        return contentProvenance == null ? null : contentProvenance.getLocalURI();
     }
 
     @Override
-    public CachedURI asMeta(URI resourceURI) {
-        CachedURI meta = null;
+    public ContentProvenance provenanceOf(URI resourceURI) {
+        ContentProvenance meta = null;
         File accessFile;
         try {
             File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(cachePath, namespace);
@@ -67,7 +67,15 @@ public class CacheLocalReadonly implements Cache {
                         String sha256 = split[2];
                         String accessedAt = StringUtils.trim(split[3]);
                         if (StringUtils.isNotBlank(sha256)) {
-                            CachedURI metaURI = getMetaURI(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace);
+                            ContentProvenance metaURI = null;
+                            if (resourceURI.toString().startsWith("hash://sha256/")) {
+                                if (StringUtils.equals("hash://sha256/" + sha256, resourceURI.toString())) {
+                                    URI localResourceURI = new File(cacheDirForNamespace, sha256).toURI();
+                                    metaURI = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
+                                }
+                            } else {
+                                metaURI = getMetaURI(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace);
+                            }
                             meta = metaURI == null ? meta : metaURI;
                         }
                     }
@@ -80,14 +88,14 @@ public class CacheLocalReadonly implements Cache {
 
     }
 
-    public CachedURI getMetaURI(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir) {
-        CachedURI meta = null;
+    public ContentProvenance getMetaURI(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir) {
+        ContentProvenance meta = null;
         if (inCachedArchive(localArchiveSha256, sha256)) {
-            meta = new CachedURI(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);
+            meta = new ContentProvenance(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);
         } else if ((StringUtils.equals(resourceURI.toString(), sourceURI.toString())
                 && !inCachedArchive(localArchiveSha256, sha256))) {
             URI localResourceURI = new File(cacheDir, sha256).toURI();
-            meta = new CachedURI(namespace, sourceURI, localResourceURI, sha256, accessedAt);
+            meta = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
         }
         return meta;
     }
@@ -103,6 +111,9 @@ public class CacheLocalReadonly implements Cache {
 
         if (candidateURI != null && StringUtils.startsWith(candidateURI.toString(), cacheDir.toString())) {
             hashCandidate = StringUtils.replace(candidateURI.toString(), cacheDir.toString(), "");
+        }
+        if (candidateURI != null && StringUtils.startsWith(candidateURI.toString(), "hash://sha256/")) {
+            hashCandidate = StringUtils.replace(candidateURI.toString(), "hash://sha256/", "");
         }
         return hashCandidate;
     }
@@ -136,7 +147,7 @@ public class CacheLocalReadonly implements Cache {
     }
 
     @Override
-    public InputStream getResource(URI resourceURI) throws IOException {
+    public InputStream retrieve(URI resourceURI) throws IOException {
         URI resourceURI1 = getResourceURI(resourceURI);
         return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString(), getInputStreamFactory());
     }

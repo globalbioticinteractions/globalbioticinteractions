@@ -63,7 +63,7 @@ public class StudyImporterForHurlbertTest extends GraphDBTestCase {
         StudyImporter importer = new StudyImporterForHurlbert(null, nodeFactory);
         Dataset dataset = new DatasetImpl(namespace, URI.create("some:uri"), inStream -> inStream) {
             @Override
-            public InputStream getResource(URI name){
+            public InputStream retrieve(URI name){
                 return StudyImporterForHurlbertTest.getResource();
             }
 

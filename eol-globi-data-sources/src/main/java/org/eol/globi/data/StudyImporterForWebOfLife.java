@@ -69,7 +69,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
     }
 
     public void importNetworks(URI archiveURL, String sourceCitation) throws StudyImporterException {
-        try (InputStream inputStream = getDataset().getResource(archiveURL);
+        try (InputStream inputStream = getDataset().retrieve(archiveURL);
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             File referencesTempFile = null;
@@ -179,7 +179,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
     }
 
     public static List<URI> getNetworkNames(Dataset dataset) throws IOException {
-        try (InputStream resource = dataset.getResource(URI.create(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"))) {
+        try (InputStream resource = dataset.retrieve(URI.create(WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"))) {
             return getNetworkNames(resource);
         }
     }

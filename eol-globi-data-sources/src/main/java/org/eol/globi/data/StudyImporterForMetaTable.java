@@ -3,16 +3,13 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetProxy;
-import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
@@ -91,7 +88,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     public static void generateTablesForNHMResources(List<JsonNode> tableList, Dataset dataset) throws StudyImporterException {
         JsonNode config = dataset.getConfig();
         String nhmUrl = config.get("url").asText();
-        try (InputStream resource1 = dataset.getResource(URI.create(nhmUrl))) {
+        try (InputStream resource1 = dataset.retrieve(URI.create(nhmUrl))) {
             final JsonNode nhmResourceSchema = new ObjectMapper().readTree(resource1);
             final JsonNode result = nhmResourceSchema.get("result");
             String title = result.get("title").asText();
@@ -136,7 +133,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
     static public List<Column> columnsFromExternalSchema(JsonNode tableSchema, Dataset dataset) throws IOException {
         String tableSchemaLocation = tableSchema.asText();
-        try (InputStream resource = dataset.getResource(URI.create(tableSchemaLocation))) {
+        try (InputStream resource = dataset.retrieve(URI.create(tableSchemaLocation))) {
             final JsonNode schema = new ObjectMapper().readTree(resource);
             return columnNamesForSchema(schema);
         }
@@ -389,7 +386,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
             final JsonNode dataUrl = config.get("url");
             int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
 
-            InputStream resource = dataset.getResource(URI.create(dataUrl.asText()));
+            InputStream resource = dataset.retrieve(URI.create(dataUrl.asText()));
             final CSVParse csvParse = CSVTSVUtil.createExcelCSVParse(resource);
             csvParse.changeDelimiter(delimiterChar);
             for (int i = 0; i < headerCount; i++) {

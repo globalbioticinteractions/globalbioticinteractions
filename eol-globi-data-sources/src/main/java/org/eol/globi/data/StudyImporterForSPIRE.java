@@ -216,7 +216,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private Model buildModel() throws IOException {
         Model model = ModelFactory.createDefaultModel();
-        try (InputStream resource = getDataset().getResource(URI.create("spire/allFoodWebStudies.owl"))) {
+        try (InputStream resource = getDataset().retrieve(URI.create("spire/allFoodWebStudies.owl"))) {
             BufferedReader bufferedReader = FileUtils.getUncompressedBufferedReader(resource, CharsetConstant.UTF8);
             model.read(bufferedReader, null);
             return model;

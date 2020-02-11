@@ -132,7 +132,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         SyndFeed feed;
         String rss = getRSSEndpoint(datasetOrig);
         try {
-            feed = input.build(new XmlReader(datasetOrig.getResource(URI.create(rss))));
+            feed = input.build(new XmlReader(datasetOrig.retrieve(URI.create(rss))));
         } catch (FeedException | IOException e) {
             throw new StudyImporterException("failed to read rss feed [" + rss + "]", e);
         }

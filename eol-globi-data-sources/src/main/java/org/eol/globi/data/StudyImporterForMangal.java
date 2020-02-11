@@ -47,7 +47,7 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
         do {
             pageUrl = getPagedUrl(urlEndpoint, pageNumber, pageSize);
             pageNumber++;
-        } while (handlePagedResults(listener, resourceService.getResource(pageUrl), pageSize));
+        } while (handlePagedResults(listener, resourceService.retrieve(pageUrl), pageSize));
     }
 
     public static boolean handlePagedResults(NodeListener listener, InputStream resource, int limit) throws StudyImporterException {

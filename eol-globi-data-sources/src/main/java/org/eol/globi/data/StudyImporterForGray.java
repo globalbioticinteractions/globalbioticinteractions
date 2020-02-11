@@ -20,7 +20,7 @@ public class StudyImporterForGray extends StudyImporterWithListener {
     @Override
     public void importStudy() throws StudyImporterException {
         String resourceName = "links";
-        try (InputStream links = getDataset().getResource(URI.create(resourceName))) {
+        try (InputStream links = getDataset().retrieve(URI.create(resourceName))) {
             importLinks(links, getInteractionListener(), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException("failed to find: [" + resourceName + "]", e);

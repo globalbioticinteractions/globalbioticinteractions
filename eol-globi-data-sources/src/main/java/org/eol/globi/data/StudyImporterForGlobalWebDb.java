@@ -88,7 +88,7 @@ public class StudyImporterForGlobalWebDb extends StudyImporterWithListener {
     }
 
     void importDietMatrices(URI archiveURL, DietMatrixListener matrix) throws StudyImporterException {
-        try (InputStream inputStream = getDataset().getResource(archiveURL);
+        try (InputStream inputStream = getDataset().retrieve(archiveURL);
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             while ((entry = zipInputStream.getNextEntry()) != null) {

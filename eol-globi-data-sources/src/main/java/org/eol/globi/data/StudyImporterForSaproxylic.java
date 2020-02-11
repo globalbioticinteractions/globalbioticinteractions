@@ -7,21 +7,17 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.impl.SelectorImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.DBMaker;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -77,13 +73,13 @@ public class StudyImporterForSaproxylic extends StudyImporterWithListener {
                     model.add(resource, property, obj);
                 }
             };
-            parseReferences(add, getDataset().getResource(URI.create("sx_txt/Reference.txt")));
-            parseLocalities(add, getDataset().getResource(URI.create("sx_txt/Locality.txt")));
-            parseTaxa(add, getDataset().getResource(URI.create("sx_txt/Taxon.txt")));
-            parseTaxonRanks(add, getDataset().getResource(URI.create("sx_txt/TaxonRank.txt")));
-            parseOccurrences(add, getDataset().getResource(URI.create("sx_txt/Occurrence.txt")));
-            parseAssociations(add, getDataset().getResource(URI.create("sx_txt/SX_Association.txt")));
-            parseInteractionTypeMap(add, getDataset().getResource(URI.create("interaction_type_map.tsv")));
+            parseReferences(add, getDataset().retrieve(URI.create("sx_txt/Reference.txt")));
+            parseLocalities(add, getDataset().retrieve(URI.create("sx_txt/Locality.txt")));
+            parseTaxa(add, getDataset().retrieve(URI.create("sx_txt/Taxon.txt")));
+            parseTaxonRanks(add, getDataset().retrieve(URI.create("sx_txt/TaxonRank.txt")));
+            parseOccurrences(add, getDataset().retrieve(URI.create("sx_txt/Occurrence.txt")));
+            parseAssociations(add, getDataset().retrieve(URI.create("sx_txt/SX_Association.txt")));
+            parseInteractionTypeMap(add, getDataset().retrieve(URI.create("interaction_type_map.tsv")));
 
             // associations -> occurrences, taxa, reference
             String queryString =

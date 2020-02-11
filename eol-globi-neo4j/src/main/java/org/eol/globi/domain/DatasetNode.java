@@ -26,7 +26,7 @@ public class DatasetNode extends NodeBacked implements Dataset {
 
 
     @Override
-    public InputStream getResource(URI resourceName) throws IOException {
+    public InputStream retrieve(URI resourceName) throws IOException {
         return null;
     }
 

@@ -74,7 +74,7 @@ public class DatasetRegistryWithCacheIT {
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
 
-        try (InputStream resource = dataset.getResource(URI.create("hafner/gopher_lice_int.csv"))) {
+        try (InputStream resource = dataset.retrieve(URI.create("hafner/gopher_lice_int.csv"))) {
             assertNotNull(resource);
         }
 

@@ -13,7 +13,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.DatasetUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.format.DateTimeFormat;
@@ -56,7 +55,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         try {
             archiveURI = getDataset().getResourceURI(URI.create("archive"));
         } catch (IOException e) {
-            throw new StudyImporterException("failed to locate archive", e);
+            throw new StudyImporterException("failed to resolve archive", e);
         }
 
         if (archiveURI == null) {
@@ -72,7 +71,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
                 .createHashMap("assocMap")
                 .make();
 
-        try (InputStream inputStream = getDataset().getResource(URI.create("archive"));
+        try (InputStream inputStream = getDataset().retrieve(URI.create("archive"));
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
             File assocTempFile = null;

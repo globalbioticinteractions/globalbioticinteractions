@@ -261,7 +261,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
             point = getCentroidForLocale(geoNameTermOrLocale);
         }
         if (point == null) {
-            LOG.warn("failed to locate (lat,lng) for term [" + geoNameTermOrLocale + "]");
+            LOG.warn("failed to resolve (lat,lng) for term [" + geoNameTermOrLocale + "]");
         } else {
             pointCache.put(geoNameTermOrLocale, point);
         }

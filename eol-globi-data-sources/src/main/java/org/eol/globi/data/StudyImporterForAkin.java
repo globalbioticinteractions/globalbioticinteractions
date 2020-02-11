@@ -72,7 +72,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private String[][] loadSampleSiteLocations() throws IOException {
-        CSVParse csvParser = CSVTSVUtil.createCSVParser(getDataset().getResource(URI.create("akin/Akin2002Locations.csv")));
+        CSVParse csvParser = CSVTSVUtil.createCSVParser(getDataset().retrieve(URI.create("akin/Akin2002Locations.csv")));
         return csvParser.getAllValues();
     }
 

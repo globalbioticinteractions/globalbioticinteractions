@@ -30,8 +30,8 @@ public class DatasetImpl implements Dataset {
     }
 
     @Override
-    public InputStream getResource(URI resourceName) throws IOException {
-        return resourceService.getResource(resourceName);
+    public InputStream retrieve(URI resourceName) throws IOException {
+        return resourceService.retrieve(resourceName);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class DatasetImpl implements Dataset {
         }
 
         @Override
-        public InputStream getResource(URI resourceName) throws IOException {
+        public InputStream retrieve(URI resourceName) throws IOException {
             URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
             return ResourceUtil.asInputStream(getResourceURI(mappedResource).toString(), factory);
         }

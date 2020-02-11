@@ -5,7 +5,7 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.eol.globi.service.DatasetImpl;
 import org.globalbioticinteractions.cache.Cache;
-import org.globalbioticinteractions.cache.CachedURI;
+import org.globalbioticinteractions.cache.ContentProvenance;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,9 +27,9 @@ public class DatasetWithCacheTest {
     @Test
     public void citationWithCitationWithLastAccessed() throws IOException {
         Cache cache = Mockito.mock(Cache.class);
-        CachedURI cacheURI = Mockito.mock(CachedURI.class);
+        ContentProvenance cacheURI = Mockito.mock(ContentProvenance.class);
         when(cacheURI.getAccessedAt()).thenReturn("1970-01-01");
-        when(cache.asMeta(any(URI.class))).thenReturn(cacheURI);
+        when(cache.provenanceOf(any(URI.class))).thenReturn(cacheURI);
         Dataset datasetUncached = Mockito.mock(Dataset.class);
         when(datasetUncached.getNamespace()).thenReturn("some/namespace");
         when(datasetUncached.getOrDefault("citation", "")).thenReturn("some citation");
@@ -114,9 +114,9 @@ public class DatasetWithCacheTest {
 
     private DatasetWithCache datasetLastAccessedAt(String lastAccessed) {
         Cache cache = Mockito.mock(Cache.class);
-        CachedURI cacheURI = Mockito.mock(CachedURI.class);
+        ContentProvenance cacheURI = Mockito.mock(ContentProvenance.class);
         when(cacheURI.getAccessedAt()).thenReturn(lastAccessed);
-        when(cache.asMeta(any(URI.class))).thenReturn(cacheURI);
+        when(cache.provenanceOf(any(URI.class))).thenReturn(cacheURI);
         Dataset datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"), inStream -> inStream);
         return new DatasetWithCache(datasetUncached, cache);
     }
@@ -143,25 +143,25 @@ public class DatasetWithCacheTest {
 
     private Cache createCacheMockLastSeen() {
         Cache cache = Mockito.mock(Cache.class);
-        CachedURI firstCachedURI = Mockito.mock(CachedURI.class);
-        when(firstCachedURI.getAccessedAt()).thenReturn("first");
-        CachedURI secondCachedURI = Mockito.mock(CachedURI.class);
-        when(secondCachedURI.getAccessedAt()).thenReturn("second");
-        when(cache.asMeta(URI.create("some:bla")))
-                .thenReturn(firstCachedURI)
-                .thenReturn(secondCachedURI);
+        ContentProvenance firstContentProvenance = Mockito.mock(ContentProvenance.class);
+        when(firstContentProvenance.getAccessedAt()).thenReturn("first");
+        ContentProvenance secondContentProvenance = Mockito.mock(ContentProvenance.class);
+        when(secondContentProvenance.getAccessedAt()).thenReturn("second");
+        when(cache.provenanceOf(URI.create("some:bla")))
+                .thenReturn(firstContentProvenance)
+                .thenReturn(secondContentProvenance);
         return cache;
     }
 
     private Cache createCacheMockContentHash() {
         Cache cache = Mockito.mock(Cache.class);
-        CachedURI firstCachedURI = Mockito.mock(CachedURI.class);
-        when(firstCachedURI.getSha256()).thenReturn("first");
-        CachedURI secondCachedURI = Mockito.mock(CachedURI.class);
-        when(secondCachedURI.getSha256()).thenReturn("second");
-        when(cache.asMeta(URI.create("some:bla")))
-                .thenReturn(firstCachedURI)
-                .thenReturn(secondCachedURI);
+        ContentProvenance firstContentProvenance = Mockito.mock(ContentProvenance.class);
+        when(firstContentProvenance.getSha256()).thenReturn("first");
+        ContentProvenance secondContentProvenance = Mockito.mock(ContentProvenance.class);
+        when(secondContentProvenance.getSha256()).thenReturn("second");
+        when(cache.provenanceOf(URI.create("some:bla")))
+                .thenReturn(firstContentProvenance)
+                .thenReturn(secondContentProvenance);
         return cache;
     }
 

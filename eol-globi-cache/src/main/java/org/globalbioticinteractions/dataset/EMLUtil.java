@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetProxy;
 import org.eol.globi.service.ResourceService;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -21,8 +19,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,7 +29,7 @@ public class EMLUtil {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(origDataset.getResource(emlURI));
+            Document doc = builder.parse(origDataset.retrieve(emlURI));
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
 

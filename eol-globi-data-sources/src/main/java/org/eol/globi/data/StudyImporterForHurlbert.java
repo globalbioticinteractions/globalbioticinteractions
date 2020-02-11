@@ -51,7 +51,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
 
         ;
-        try (InputStream resource = getDataset().getResource(RESOURCE)) {
+        try (InputStream resource = getDataset().retrieve(RESOURCE)) {
             setCurrentResource(RESOURCE);
 
             Set<String> regions = new HashSet<String>();

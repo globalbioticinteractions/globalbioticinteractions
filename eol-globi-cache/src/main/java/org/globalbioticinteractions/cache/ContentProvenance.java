@@ -3,7 +3,7 @@ package org.globalbioticinteractions.cache;
 import java.net.URI;
 import java.util.Date;
 
-public class CachedURI {
+public class ContentProvenance {
 
     private final URI sourceURI;
     private final URI cachedURI;
@@ -12,7 +12,7 @@ public class CachedURI {
     private final String namespace;
     private String type;
 
-    public CachedURI(String namespace, URI sourceURI, URI cachedURI, String sha256, String accessedAt) {
+    public ContentProvenance(String namespace, URI sourceURI, URI cachedURI, String sha256, String accessedAt) {
         this.namespace = namespace;
         this.sourceURI = sourceURI;
         this.cachedURI = cachedURI;
@@ -20,25 +20,52 @@ public class CachedURI {
         this.accessedAt = accessedAt;
     }
 
+    /**
+     * @return location at which content was originally retrieved
+     */
     public URI getSourceURI() {
         return sourceURI;
     }
 
-    public URI getCachedURI() {
+    /**
+     *
+     * @return location at which content was (locally) cached
+     */
+    public URI getLocalURI() {
         return cachedURI;
     }
+
+    /**
+     *
+     * @return SHA-256 content hash of accessed source content
+     */
 
     public String getSha256() {
         return sha256;
     }
 
+    /**
+     *
+     * @return time at which content at source location was accessed
+     */
+
     public String getAccessedAt() {
         return accessedAt;
     }
 
+    /**
+     *
+     * @return namespace in which this content lives, usually associated with a dataset
+     */
+
     public String getNamespace() {
         return namespace;
     }
+
+    /**
+     *
+     * @return content type (e.g., "application/dwca")
+     */
 
     public String getType() {
         return type;

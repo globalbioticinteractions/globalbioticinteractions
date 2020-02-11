@@ -53,7 +53,7 @@ public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
     public void importStudy() throws StudyImporterException {
         try {
             Map<Integer, LatLng> localeMap = importShapes();
-            try (InputStream inputStream = getDataset().getResource(URI.create("links"))) {
+            try (InputStream inputStream = getDataset().retrieve(URI.create("links"))) {
                 importLinks(inputStream
                         , getInteractionListener()
                         , localeMap);
@@ -138,7 +138,7 @@ public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
     protected Map<Integer, LatLng> importShapes() throws StudyImporterException {
         Map<Integer, LatLng> localityMap = new TreeMap<>();
         FileDataStore dataStore = null;
-        try (InputStream shapeZipArchive = getDataset().getResource(URI.create("shapes"))) {
+        try (InputStream shapeZipArchive = getDataset().retrieve(URI.create("shapes"))) {
             File tmpFolder = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
             tmpFolder.deleteOnExit();
             unpackZip(shapeZipArchive, tmpFolder);

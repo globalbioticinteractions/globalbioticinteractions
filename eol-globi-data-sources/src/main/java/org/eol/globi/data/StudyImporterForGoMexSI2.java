@@ -74,7 +74,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         try {
             return getDataset().getResourceURI(resourceName);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to locate [" + resourceName + "]", e);
+            throw new StudyImporterException("failed to resolve [" + resourceName + "]", e);
         }
     }
 

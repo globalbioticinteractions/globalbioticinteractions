@@ -17,23 +17,23 @@ public class CacheLog {
 
     public final static String ACCESS_LOG_FILENAME = "access.tsv";
 
-    static void appendCacheLog(String namespace, URI resourceURI, File cacheDir, URI localResourceCacheURI) throws IOException {
+    public static void appendCacheLog(String namespace, URI resourceURI, File cacheDir, URI localResourceCacheURI) throws IOException {
         String accessedAt = ISODateTimeFormat.dateTime().withZoneUTC().print(new Date().getTime());
         String sha256 = new File(localResourceCacheURI).getName();
-        CachedURI meta = new CachedURI(namespace, resourceURI, localResourceCacheURI, sha256, accessedAt);
+        ContentProvenance meta = new ContentProvenance(namespace, resourceURI, localResourceCacheURI, sha256, accessedAt);
         appendAccessLog(meta, getAccessFile(cacheDir));
     }
 
-    public static void appendAccessLog(CachedURI meta, File accessLog) throws IOException {
+    public static void appendAccessLog(ContentProvenance meta, File accessLog) throws IOException {
         List<String> accessLogEntry = compileLogEntries(meta);
         String prefix = accessLog.exists() ? "\n" : "";
         String accessLogLine = StringUtils.join(accessLogEntry, '\t');
         FileUtils.writeStringToFile(accessLog, prefix + accessLogLine, StandardCharsets.UTF_8, true);
     }
 
-    static List<String> compileLogEntries(CachedURI meta) {
+    static List<String> compileLogEntries(ContentProvenance meta) {
         List<String> logEntries;
-        if (CacheLocalReadonly.isJarResource(meta.getCachedURI())) {
+        if (CacheLocalReadonly.isJarResource(meta.getLocalURI())) {
             logEntries = Collections.emptyList();
         } else {
             logEntries = Arrays.asList(meta.getNamespace()
