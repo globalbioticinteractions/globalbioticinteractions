@@ -1,5 +1,6 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.service.GitHubUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.globalbioticinteractions.dataset.DatasetRegistry;

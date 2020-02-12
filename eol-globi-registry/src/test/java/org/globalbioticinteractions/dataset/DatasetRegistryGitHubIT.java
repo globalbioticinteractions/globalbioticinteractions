@@ -1,6 +1,7 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistryGitHubArchive;
 import org.junit.Test;
 
 import java.net.URI;
@@ -13,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
-public class DatasetRegistryGitHubIT {
+publitasetRegistryGitHubIT {
 
     @Test
     public void discoverDatasetsInGitHub() throws DatasetFinderException {

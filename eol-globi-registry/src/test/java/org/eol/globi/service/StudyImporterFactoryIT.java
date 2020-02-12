@@ -21,7 +21,10 @@ import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetFactory;
 import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
+import org.globalbioticinteractions.dataset.DatasetRegistryGitHubArchive;
+import org.globalbioticinteractions.dataset.DatasetRegistryGitHubRemote;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
+import org.globalbioticinteractions.dataset.DatasetRegistryZenodo;
 import org.junit.Test;
 
 import java.io.IOException;

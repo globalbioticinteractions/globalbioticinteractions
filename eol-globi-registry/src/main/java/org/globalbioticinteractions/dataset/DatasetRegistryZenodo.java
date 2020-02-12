@@ -1,10 +1,12 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.eol.globi.service.DatasetZenodo;
+import org.eol.globi.service.ResponseHandlerWithInputStreamFactory;
 import org.eol.globi.taxon.XmlUtil;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InputStreamFactory;

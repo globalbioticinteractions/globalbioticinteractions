@@ -1,10 +1,12 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetRegistryGitHub;
 
 import java.io.IOException;
 import java.net.URI;

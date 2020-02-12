@@ -1,11 +1,8 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -142,7 +142,7 @@ public class GitHubUtil {
         return lastCommitSHA(repository, inputStream -> inputStream);
     }
 
-    static String lastCommitSHA(String repository, InputStreamFactory inputStreamFactory) throws IOException, URISyntaxException {
+    public static String lastCommitSHA(String repository, InputStreamFactory inputStreamFactory) throws IOException, URISyntaxException {
         return GitClient.getLastCommitSHA1("https://github.com/" + repository, new ResponseHandlerWithInputStreamFactory(inputStreamFactory));
     }
 

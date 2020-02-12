@@ -61,7 +61,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         Collection<File> accessFiles = FileUtils.listFiles(directory, new FileFileFilter() {
             @Override
             public boolean accept(File file) {
-                return ProvenanceLog.ACCESS_LOG_FILENAME.endsWith(file.getName());
+                return ProvenanceLog.PROVENANCE_LOG_FILENAME.endsWith(file.getName());
             }
         }, TrueFileFilter.INSTANCE);
 
@@ -101,7 +101,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             }
 
         };
-        File accessFile = ProvenanceLog.getAccessFile(namespace, cacheDir);
+        File accessFile = ProvenanceLog.getProvenanceLogFile(namespace, cacheDir);
         if (accessFile.exists()) {
             scanAccessFile(accessFile, accessFileLineListener);
         }

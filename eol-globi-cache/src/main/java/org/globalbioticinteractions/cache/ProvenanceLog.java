@@ -15,7 +15,7 @@ import java.util.List;
 
 public class ProvenanceLog {
 
-    public final static String ACCESS_LOG_FILENAME = "access.tsv";
+    public final static String PROVENANCE_LOG_FILENAME = "access.tsv";
 
     public static void appendProvenanceLog(String namespace, URI resourceURI, File cacheDir, URI localResourceCacheURI) throws IOException {
         String accessedAt = ISODateTimeFormat.dateTime().withZoneUTC().print(new Date().getTime());
@@ -25,7 +25,7 @@ public class ProvenanceLog {
     }
 
     public static void appendProvenanceLog(File cacheDir, ContentProvenance contentProvenance) throws IOException {
-        appendProvenanceLog(contentProvenance, getAccessFile(cacheDir));
+        appendProvenanceLog(contentProvenance, getProvenanceLogFile(cacheDir));
     }
 
     private static void appendProvenanceLog(ContentProvenance contentProvenance, File accessLog) throws IOException {
@@ -49,11 +49,11 @@ public class ProvenanceLog {
         return logEntries;
     }
 
-    public static File getAccessFile(String namespace, String cacheDir) {
-        return getAccessFile(new File(cacheDir + "/" + namespace));
+    public static File getProvenanceLogFile(String namespace, String cacheDir) {
+        return getProvenanceLogFile(new File(cacheDir + "/" + namespace));
     }
 
-    public static File getAccessFile(File dir) {
-        return new File(dir, ACCESS_LOG_FILENAME);
+    public static File getProvenanceLogFile(File dir) {
+        return new File(dir, PROVENANCE_LOG_FILENAME);
     }
 }
