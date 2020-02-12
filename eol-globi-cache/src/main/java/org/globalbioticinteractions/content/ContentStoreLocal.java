@@ -21,11 +21,11 @@ public class ContentStoreLocal implements ContentStore {
     private final ContentRegistry contentRegistry;
     private final InputStreamFactory inputStreamFactory;
 
-    public ContentStoreLocal(File storeDir, String namespace, InputStreamFactory inputStreamFactory, ContentRegistry contentRegistry) {
+    public ContentStoreLocal(File storeDir, String namespace, InputStreamFactory inputStreamFactory) {
         this.storeDir = storeDir;
         this.namespace = namespace;
-        this.contentRegistry = contentRegistry;
         this.inputStreamFactory = inputStreamFactory;
+        this.contentRegistry = new ContentRegistryLocal(storeDir, namespace, inputStreamFactory);
     }
 
     /**

@@ -21,7 +21,11 @@ public class ContentPinStaticTest {
     @Test
     public void knownPin() throws IOException {
         ContentResolver resolver = Mockito.mock(ContentResolver.class);
-        ContentProvenance prov = new ContentProvenance("namespace", URI.create("uri:source"), URI.create("uri:local"), "someSha", "someDate");
+        ContentProvenance prov = new ContentProvenance("namespace",
+                URI.create("uri:source"),
+                URI.create("uri:local"),
+                "someSha",
+                "someDate");
         when(resolver.resolve(any())).thenReturn(Stream.of(prov));
 
         ContentStore store = Mockito.mock(ContentStore.class);
@@ -32,7 +36,7 @@ public class ContentPinStaticTest {
         ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store);
 
         URI pin = contentPinStatic.pin(URI.create("some:uri"));
-        assertThat(pin, is(URI.create("hash://sha256/someSha")));
+        assertThat(pin, is(URI.create("uri:local")));
     }
 
     @Test(expected = IOException.class)
@@ -55,7 +59,13 @@ public class ContentPinStaticTest {
     @Test(expected = IOException.class)
     public void uriKnownInRegistryButUnknownInStore() throws IOException {
         ContentResolver resolver = Mockito.mock(ContentResolver.class);
-        ContentProvenance prov = new ContentProvenance("namespace", URI.create("uri:source"), URI.create("uri:local"), "someSha", "someDate");
+        ContentProvenance prov = new ContentProvenance(
+                "namespace",
+                URI.create("uri:source"),
+                URI.create("uri:local"),
+                "someSha",
+                "someDate");
+
         when(resolver.resolve(any())).thenReturn(Stream.of(prov));
 
         ContentStore store = Mockito.mock(ContentStore.class);
@@ -66,7 +76,7 @@ public class ContentPinStaticTest {
         try {
             contentPinStatic.pin(URI.create("unknown:uri"));
         } catch(IOException ex) {
-            assertThat(ex.getMessage(), is("failed to pin [unknown:uri]"));
+            assertThat(ex.getMessage(), is("failed to pin [unknown:uri]: failed to locate last known content uri [hash://sha256/someSha]"));
             throw ex;
         }
     }

@@ -33,7 +33,7 @@ public class ContentPinDynamicTest {
         ContentPin contentPin = new ContentPinDynamic(resolver, store);
 
         URI pin = contentPin.pin(URI.create("some:uri"));
-        assertThat(pin, is(URI.create("hash://sha256/someSha")));
+        assertThat(pin, is(URI.create("uri:local")));
     }
 
     public ContentProvenance getProv() {
@@ -54,7 +54,7 @@ public class ContentPinDynamicTest {
 
         ContentPin contentPin = new ContentPinDynamic(resolver, store);
         URI pin = contentPin.pin(URI.create("unknown:uri"));
-        assertThat(pin, is(URI.create("hash://sha256/someSha")));
+        assertThat(pin, is(URI.create("uri:local")));
     }
 
     @Test(expected = IOException.class)

@@ -34,14 +34,14 @@ public class ContentPinStatic implements ContentPin {
         Optional<InputStream> retrieve = getStore().retrieve(prov.getContentHash());
         Optional<URI> uri = retrieve.flatMap(x -> {
             try (InputStream is = x) {
-                return Optional.ofNullable(prov.getContentHash());
+                return Optional.ofNullable(prov.getLocalURI());
             } catch (IOException ex) {
                 return Optional.empty();
             }
         });
 
         return uri
-                .orElseThrow(getIoExceptionSupplier(knownContentIdentifier));
+                .orElseThrow(getIoExceptionSupplier(knownContentIdentifier, "failed to locate last known content uri [" + prov.getContentHash() + "]"));
 
     }
 
@@ -53,6 +53,10 @@ public class ContentPinStatic implements ContentPin {
 
     private Supplier<IOException> getIoExceptionSupplier(URI knownContentIdentifier) {
         return () -> new IOException("failed to pin [" +  knownContentIdentifier + "]");
+    }
+
+    private Supplier<IOException> getIoExceptionSupplier(URI knownContentIdentifier, String reason) {
+        return () -> new IOException("failed to pin [" +  knownContentIdentifier + "]: " + reason);
     }
 
     protected Stream<ContentProvenance> doResolve(URI knownContentIdentifier) throws IOException {
