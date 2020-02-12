@@ -2,6 +2,7 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.DateUtil;
@@ -76,5 +77,12 @@ public final class CacheUtil {
         LOG.info(msg + " cached at [" + contentProvenance.getLocalURI().toString() + "]...");
         LOG.info(msg + " complete.");
         return contentProvenance;
+    }
+
+    public static boolean isLocalDir(URI archiveURI) {
+        return archiveURI != null
+                && StringUtils.equals("file", archiveURI.getScheme())
+                && new File(archiveURI).exists()
+                && new File(archiveURI).isDirectory();
     }
 }

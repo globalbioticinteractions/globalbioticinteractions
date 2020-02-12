@@ -11,7 +11,6 @@ import org.globalbioticinteractions.cache.CacheProxyForDataset;
 import org.globalbioticinteractions.cache.ContentProvenance;
 import org.globalbioticinteractions.doi.DOI;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -49,13 +48,6 @@ public class DatasetWithCache implements Dataset {
         return uri;
     }
 
-
-    public static boolean isLocalDir(URI archiveURI) {
-        return archiveURI != null
-                && StringUtils.equals("file", archiveURI.getScheme())
-                && new File(archiveURI).exists()
-                && new File(archiveURI).isDirectory();
-    }
 
     private String getAccessedAt() {
         return getDatasetProvenance() == null ? null : getDatasetProvenance().getAccessedAt();

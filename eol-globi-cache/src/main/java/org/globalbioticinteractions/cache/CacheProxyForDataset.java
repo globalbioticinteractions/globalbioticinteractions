@@ -6,7 +6,6 @@ import org.eol.globi.service.Dataset;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.DatasetFinderUtil;
 import org.globalbioticinteractions.dataset.DatasetUtil;
-import org.globalbioticinteractions.dataset.DatasetWithCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,14 +52,14 @@ public class CacheProxyForDataset extends CacheProxy {
 
         URI uri;
         if (mappedResourceName.isAbsolute()) {
-            if (DatasetWithCache.isLocalDir(mappedResourceName)) {
+            if (CacheUtil.isLocalDir(mappedResourceName)) {
                 uri = mappedResourceName;
             } else {
                 uri = super.getLocalURI(mappedResourceName);
             }
         } else {
             URI archiveURI = dataset.getArchiveURI();
-            uri = DatasetWithCache.isLocalDir(archiveURI)
+            uri = CacheUtil.isLocalDir(archiveURI)
                     ? cacheFileInLocalDirectory(mappedResourceName, archiveURI)
                     : cacheRemoteArchive(mappedResourceName, archiveURI);
         }
@@ -75,7 +74,9 @@ public class CacheProxyForDataset extends CacheProxy {
 
     private URI cacheFileInLocalDirectory(URI mappedResourceName, URI archiveURI) throws IOException {
         URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-        return DatasetWithCache.isLocalDir(absoluteResourceURI) ? absoluteResourceURI : super.getLocalURI(absoluteResourceURI);
+        return CacheUtil.isLocalDir(absoluteResourceURI)
+                ? absoluteResourceURI
+                : super.getLocalURI(absoluteResourceURI);
     }
 
 

@@ -4,6 +4,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.Dataset;
 import org.eol.globi.service.DatasetConstant;
 import org.globalbioticinteractions.cache.Cache;
+import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -70,7 +71,7 @@ public class DatasetWithCacheTest {
         Cache cache = Mockito.mock(Cache.class);
         URI localFileURI = getClass().getResource("archive.zip").toURI();
         URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
-        assertTrue(DatasetWithCache.isLocalDir(cachedLocalURI));
+        assertTrue(CacheUtil.isLocalDir(cachedLocalURI));
         when(cache.getLocalURI(any(URI.class))).thenReturn(localFileURI);
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI, inStream -> inStream);
 
@@ -85,7 +86,7 @@ public class DatasetWithCacheTest {
         Cache cache = Mockito.mock(Cache.class);
         URI localFileURI = getClass().getResource("archive.zip").toURI();
         URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
-        assertTrue(DatasetWithCache.isLocalDir(cachedLocalURI));
+        assertTrue(CacheUtil.isLocalDir(cachedLocalURI));
         when(cache.getLocalURI(any(URI.class))).thenReturn(localFileURI);
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI, inStream -> inStream);
 
