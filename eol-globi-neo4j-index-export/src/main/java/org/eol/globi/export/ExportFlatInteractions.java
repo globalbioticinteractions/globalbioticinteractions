@@ -4,7 +4,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
-import org.eol.globi.service.DatasetConstant;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 

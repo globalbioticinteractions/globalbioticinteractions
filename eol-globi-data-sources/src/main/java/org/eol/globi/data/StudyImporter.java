@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.GeoNamesService;
 
 public interface StudyImporter {

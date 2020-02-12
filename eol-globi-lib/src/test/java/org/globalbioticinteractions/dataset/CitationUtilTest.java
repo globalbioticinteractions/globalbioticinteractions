@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.service.Dataset;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.Mockito;

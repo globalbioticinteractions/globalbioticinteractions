@@ -1,6 +1,6 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.doi.DOI;
 
 public interface Study extends Named, LogContext {

@@ -1,7 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import org.eol.globi.service.Dataset;
-
 import java.util.Collection;
 
 public interface DatasetRegistry {

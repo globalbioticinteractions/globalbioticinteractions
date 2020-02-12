@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.service.DatasetConstant;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;

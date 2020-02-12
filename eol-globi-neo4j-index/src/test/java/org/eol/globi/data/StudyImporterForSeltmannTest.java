@@ -5,7 +5,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;

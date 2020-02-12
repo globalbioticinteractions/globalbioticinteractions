@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.service.Dataset;
 import org.junit.Test;
 
 import java.io.IOException;

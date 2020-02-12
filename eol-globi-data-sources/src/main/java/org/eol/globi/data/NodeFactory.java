@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.*;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
-import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.TermLookupService;
 
 import java.util.Date;

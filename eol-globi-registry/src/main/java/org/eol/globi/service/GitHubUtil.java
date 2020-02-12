@@ -15,6 +15,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InputStreamFactory;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.util.GitClient;
 

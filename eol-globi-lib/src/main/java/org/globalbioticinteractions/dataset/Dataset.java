@@ -1,6 +1,7 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.dataset;
 
 import org.codehaus.jackson.JsonNode;
+import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.io.IOException;

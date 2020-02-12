@@ -53,6 +53,7 @@ import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWebOfLife;
 import org.eol.globi.data.StudyImporterForWood;
 import org.eol.globi.data.StudyImporterForWrast;
+import org.globalbioticinteractions.dataset.Dataset;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

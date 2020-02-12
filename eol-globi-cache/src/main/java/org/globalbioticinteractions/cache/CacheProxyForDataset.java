@@ -2,7 +2,7 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.DatasetFinderUtil;
 import org.globalbioticinteractions.dataset.DatasetUtil;

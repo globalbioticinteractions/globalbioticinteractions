@@ -16,6 +16,8 @@ import org.eol.globi.data.StudyImporterForSzoboszlai;
 import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWood;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.dataset.Dataset;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetFactory;
 import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.globalbioticinteractions.dataset.DatasetRegistry;

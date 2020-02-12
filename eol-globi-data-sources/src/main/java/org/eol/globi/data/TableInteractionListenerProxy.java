@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.TaxonUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 

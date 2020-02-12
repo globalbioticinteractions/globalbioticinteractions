@@ -1,8 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetConstant;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;

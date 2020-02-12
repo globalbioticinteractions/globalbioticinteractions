@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.InputStreamFactory;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 

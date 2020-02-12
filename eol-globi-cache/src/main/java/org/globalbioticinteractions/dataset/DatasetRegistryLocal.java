@@ -7,7 +7,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.service.Dataset;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.CacheFactory;

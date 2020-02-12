@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import org.eol.globi.service.Dataset;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.junit.Before;
 import org.junit.Test;

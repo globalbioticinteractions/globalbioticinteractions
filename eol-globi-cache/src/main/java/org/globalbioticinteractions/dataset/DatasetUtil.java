@@ -2,8 +2,6 @@ package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
-import org.eol.globi.service.Dataset;
-import org.eol.globi.service.DatasetConstant;
 
 import java.io.IOException;
 import java.net.URI;

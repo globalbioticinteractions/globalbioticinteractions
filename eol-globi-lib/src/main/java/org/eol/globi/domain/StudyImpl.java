@@ -1,9 +1,7 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.service.Dataset;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.doi.DOI;
-
-import java.util.logging.Level;
 
 public class StudyImpl implements Study {
 
@@ -74,7 +72,7 @@ public class StudyImpl implements Study {
         this.sourceId = sourceId;
     }
 
-    public void setOriginatingDataset(org.eol.globi.service.Dataset originatingDataset) {
+    public void setOriginatingDataset(Dataset originatingDataset) {
         this.originatingDataset = originatingDataset;
     }
 
