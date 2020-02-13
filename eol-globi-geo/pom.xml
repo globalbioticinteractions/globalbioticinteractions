@@ -103,16 +103,15 @@
             </releases>
         </repository>
         <repository>
-            <id>opengeo-mirror</id>
-            <name>opengeo-mirror</name>
-            <url>https://download.osgeo.org/webdav/geotools/</url>
+            <id>globi-thirdparty-libraries</id>
+            <name>GloBI Thirdparty Libraries</name>
+            <url>https://depot.globalbioticinteractions.org/thirdparty</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
             <releases>
                 <enabled>true</enabled>
             </releases>
-            <layout>default</layout>
         </repository>
     </repositories>
 
