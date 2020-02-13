@@ -32,6 +32,10 @@ public final class CacheUtil {
 
     public static File getCacheDirForNamespace(String cachePath, String namespace) throws IOException {
         File cacheDir = new File(cachePath);
+        return getCacheDirForNamespace(cacheDir, namespace);
+    }
+
+    public static File getCacheDirForNamespace(File cacheDir, String namespace) throws IOException {
         FileUtils.forceMkdir(cacheDir);
         File directory = new File(cacheDir, namespace);
         FileUtils.forceMkdir(directory);

@@ -17,22 +17,20 @@ public class ProvenanceLog {
 
     public final static String PROVENANCE_LOG_FILENAME = "access.tsv";
 
-    public static void appendProvenanceLog(String namespace, URI resourceURI, File cacheDir, URI localResourceCacheURI) throws IOException {
-        String accessedAt = ISODateTimeFormat.dateTime().withZoneUTC().print(new Date().getTime());
-        String sha256 = new File(localResourceCacheURI).getName();
-        ContentProvenance contentProvenance = new ContentProvenance(namespace, resourceURI, localResourceCacheURI, sha256, accessedAt);
-        appendProvenanceLog(cacheDir, contentProvenance);
-    }
-
     public static void appendProvenanceLog(File cacheDir, ContentProvenance contentProvenance) throws IOException {
-        appendProvenanceLog(contentProvenance, getProvenanceLogFile(cacheDir));
+        appendProvenanceLog(contentProvenance, cacheDir);
     }
 
-    private static void appendProvenanceLog(ContentProvenance contentProvenance, File accessLog) throws IOException {
+    private static void appendProvenanceLog(ContentProvenance contentProvenance, File cacheDir) throws IOException {
         List<String> accessLogEntry = compileLogEntries(contentProvenance);
+        File accessLog = getProvenanceLogFile(contentProvenance.getNamespace(), cacheDir.getAbsolutePath());
         String prefix = accessLog.exists() ? "\n" : "";
         String accessLogLine = StringUtils.join(accessLogEntry, '\t');
-        FileUtils.writeStringToFile(accessLog, prefix + accessLogLine, StandardCharsets.UTF_8, true);
+        try {
+            FileUtils.writeStringToFile(accessLog, prefix + accessLogLine, StandardCharsets.UTF_8, true);
+        } catch (IOException ex) {
+            throw new IOException("failed to write to [" + accessLog.getAbsolutePath() + "]");
+        }
     }
 
     static List<String> compileLogEntries(ContentProvenance meta) {
@@ -49,11 +47,12 @@ public class ProvenanceLog {
         return logEntries;
     }
 
-    public static File getProvenanceLogFile(String namespace, String cacheDir) {
-        return getProvenanceLogFile(new File(cacheDir + "/" + namespace));
+    public static File getProvenanceLogFile(String namespace, String cacheDir) throws IOException {
+        File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(cacheDir, namespace);
+        return getProvenanceLogFile(cacheDirForNamespace);
     }
 
-    public static File getProvenanceLogFile(File dir) {
+    private static File getProvenanceLogFile(File dir) {
         return new File(dir, PROVENANCE_LOG_FILENAME);
     }
 }

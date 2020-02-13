@@ -26,8 +26,7 @@ public class ContentRegistryLocal implements ContentRegistry, ContentResolver {
 
     @Override
     public ContentProvenance register(ContentProvenance contentProvenance) throws IOException {
-        File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(getStoreDir().getAbsolutePath(), getNamespace());
-        ProvenanceLog.appendProvenanceLog(cacheDirForNamespace, contentProvenance);
+        ProvenanceLog.appendProvenanceLog(getStoreDir(), contentProvenance);
         return contentProvenance;
     }
 
