@@ -36,7 +36,7 @@ public class ContentPinStaticTest {
         when(store.retrieve(URI.create("hash://sha256/someSha")))
                 .thenReturn(source);
 
-        ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store);
+        ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store, in -> in);
 
         URI pin = contentPinStatic.pin(URI.create("some:uri"));
         assertThat(pin, is(URI.create("uri:local")));
@@ -50,7 +50,7 @@ public class ContentPinStaticTest {
         ContentStore store = Mockito.mock(ContentStore.class);
         when(store.retrieve(any())).thenThrow(new IOException("kaboom!"));
 
-        ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store);
+        ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store, in -> in);
         try {
             contentPinStatic.pin(URI.create("unknown:uri"));
         } catch (IOException ex) {
@@ -78,7 +78,7 @@ public class ContentPinStaticTest {
         when(store.retrieve(URI.create("hash://sha256/someSha")))
                 .thenReturn(source);
 
-        ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store);
+        ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store, in -> in);
         try {
             contentPinStatic.pin(URI.create("unknown:uri"));
         } catch (IOException ex) {

@@ -30,33 +30,26 @@ public class ContentStoreLocal implements ContentStore {
 
     /**
      *
-     * @param is stream of content to be stored
+     * @param source content to be stored
      * @return provenance of the provided and registered content
      * @throws IOException
      */
 
     @Override
-    public ContentProvenance store(InputStream is) throws IOException {
+    public ContentProvenance store(ContentSource source) throws IOException {
         URI generatedContentURI = URI.create(UUID.randomUUID().toString());
         File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
+        InputStream is = getInputStreamFactory().create(source.getContent().orElseThrow(() -> new IOException("failed to access content source")));
         ContentProvenance localProvenance = CacheUtil.cacheStream(is, cacheDirForNamespace);
         ContentProvenance provenanceInNamespace = new ContentProvenance(namespace, generatedContentURI, localProvenance.getLocalURI(), localProvenance.getSha256(), localProvenance.getSha256());
         return contentRegistry.register(provenanceInNamespace);
-    }
-
-    @Override
-    public ContentProvenance store(URI contentLocationURI) throws IOException {
-        File cacheDir = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
-        ContentProvenance localResourceLocation = CacheUtil.cache(contentLocationURI, cacheDir, getInputStreamFactory());
-        ContentProvenance contentProvenanceWithNamespace = new ContentProvenance(namespace, contentLocationURI, localResourceLocation.getLocalURI(), localResourceLocation.getSha256(), localResourceLocation.getAccessedAt());
-        return contentRegistry.register(contentProvenanceWithNamespace);
     }
 
     private InputStreamFactory getInputStreamFactory() {
         return inputStreamFactory;
     }
 
-    public Optional<InputStream> retrieveNow(URI contentHash) throws IOException {
+    private Optional<InputStream> retrieveNow(URI contentHash) throws IOException {
         File cacheDir = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
         File localFile = null;
         if (StringUtils.startsWith(contentHash.toString(), HASH_SHA256_PREFIX)) {
@@ -69,13 +62,7 @@ public class ContentStoreLocal implements ContentStore {
     }
 
     @Override
-    public ContentSource retrieve(URI contentHash) throws IOException {
-        return new ContentSource() {
-
-            @Override
-            public Optional<InputStream> getContent() throws IOException {
-                return ContentStoreLocal.this.retrieveNow(contentHash);
-            }
-        };
+    public ContentSource retrieve(URI contentHash) {
+        return () -> ContentStoreLocal.this.retrieveNow(contentHash);
     }
 }

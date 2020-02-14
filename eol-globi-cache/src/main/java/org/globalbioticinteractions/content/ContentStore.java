@@ -16,20 +16,18 @@ public interface ContentStore {
     /**
      *  Stores provided content, records the provenance and registers it.
      *
-     * @param is stream of content to be stored and registered.
+     * @param source stream of content to be stored and registered.
      * @return hash of stored content
      */
 
-    ContentProvenance store(InputStream is) throws IOException;
-
-    ContentProvenance store(URI contentLocationURI) throws IOException;
+    ContentProvenance store(ContentSource source) throws IOException;
 
     /**
      *
-     * @param contentHash hash of requested content
-     * @return stream of content with provided hash
+     * @param contentLocator location of requested content
+     * @return content source associated with  with provided hash
      */
 
-    ContentSource retrieve(URI contentHash) throws IOException;
+    ContentSource retrieve(URI contentLocator) throws IOException;
 
 }

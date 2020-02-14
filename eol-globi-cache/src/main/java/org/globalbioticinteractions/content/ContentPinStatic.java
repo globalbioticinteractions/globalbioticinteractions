@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.content;
 
+import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.ContentProvenance;
 
 import java.io.IOException;
@@ -18,10 +19,14 @@ public class ContentPinStatic implements ContentPin {
 
     private final ContentResolver resolver;
     private final ContentStore store;
+    private final InputStreamFactory inputStreamFactory;
 
-    ContentPinStatic(ContentResolver resolver, ContentStore store) {
+    ContentPinStatic(ContentResolver resolver,
+                     ContentStore store,
+                     InputStreamFactory factory) {
         this.resolver = resolver;
         this.store = store;
+        this.inputStreamFactory = factory;
     }
 
     ContentStore getStore() {
@@ -48,7 +53,7 @@ public class ContentPinStatic implements ContentPin {
     }
 
     private ContentProvenance findFirstContentProvenanceFor(URI knownContentIdentifier) throws IOException {
-        return doResolve(knownContentIdentifier)
+        return doQuery(knownContentIdentifier)
                 .findFirst()
                 .orElseThrow(getIoExceptionSupplier(knownContentIdentifier));
     }
@@ -61,8 +66,12 @@ public class ContentPinStatic implements ContentPin {
         return () -> new IOException("failed to pin [" +  knownContentIdentifier + "]: " + reason);
     }
 
-    protected Stream<ContentProvenance> doResolve(URI knownContentIdentifier) throws IOException {
+    protected Stream<ContentProvenance> doQuery(URI knownContentIdentifier) throws IOException {
         return resolver
                     .query(knownContentIdentifier);
+    }
+
+    public InputStreamFactory getInputStreamFactory() {
+        return inputStreamFactory;
     }
 }

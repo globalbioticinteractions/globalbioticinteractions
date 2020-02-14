@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ContentPinDynamicTest {
@@ -34,7 +36,7 @@ public class ContentPinDynamicTest {
         when(store.retrieve(URI.create("hash://sha256/someSha")))
                 .thenReturn(source);
 
-        ContentPin contentPin = new ContentPinDynamic(resolver, store);
+        ContentPin contentPin = new ContentPinDynamic(resolver, store, in -> in);
 
         URI pin = contentPin.pin(URI.create("some:uri"));
         assertThat(pin, is(URI.create("uri:local")));
@@ -50,7 +52,7 @@ public class ContentPinDynamicTest {
         when(resolver.query(any())).thenReturn(Stream.empty());
 
         ContentStore store = Mockito.mock(ContentStore.class);
-        when(store.store(URI.create("unknown:uri")))
+        when(store.store(any()))
                 .thenReturn(getProv());
 
         ContentSource source = Mockito.mock(ContentSource.class);
@@ -61,7 +63,7 @@ public class ContentPinDynamicTest {
         when(store.retrieve(URI.create("hash://sha256/someSha")))
                 .thenReturn(source);
 
-        ContentPin contentPin = new ContentPinDynamic(resolver, store);
+        ContentPin contentPin = new ContentPinDynamic(resolver, store, in -> in);
         URI pin = contentPin.pin(URI.create("unknown:uri"));
         assertThat(pin, is(URI.create("uri:local")));
     }
@@ -71,24 +73,21 @@ public class ContentPinDynamicTest {
         ContentResolver resolver = Mockito.mock(ContentResolver.class);
         when(resolver.query(any())).thenReturn(Stream.empty());
 
-        ContentStore store = Mockito.mock(ContentStore.class);
-        when(store.store(URI.create("unknown:uri")))
-                .thenThrow(new IOException("kaboom!"));
-
         ContentSource source = Mockito.mock(ContentSource.class);
-        when(source.getContent())
-                .thenReturn(Optional.of(new ByteArrayInputStream("0".getBytes())));
+        verify(source, never()).getContent();
+
+        ContentStore store = Mockito.mock(ContentStore.class);
+        when(store.store(source)).thenThrow(new IOException("kaboom!"));
 
 
         when(store.retrieve(URI.create("hash://sha256/someSha")))
                 .thenReturn(source);
 
 
-
-        ContentPin contentPin = new ContentPinDynamic(resolver, store);
+        ContentPin contentPin = new ContentPinDynamic(resolver, store, in -> in);
         try {
             contentPin.pin(URI.create("unknown:uri"));
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             assertThat(ex.getMessage(), is("kaboom!"));
             throw ex;
         }
