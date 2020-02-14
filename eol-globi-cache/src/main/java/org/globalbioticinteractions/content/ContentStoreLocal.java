@@ -56,8 +56,7 @@ public class ContentStoreLocal implements ContentStore {
         return inputStreamFactory;
     }
 
-    @Override
-    public Optional<InputStream> retrieve(URI contentHash) throws IOException {
+    public Optional<InputStream> retrieveNow(URI contentHash) throws IOException {
         File cacheDir = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
         File localFile = null;
         if (StringUtils.startsWith(contentHash.toString(), HASH_SHA256_PREFIX)) {
@@ -67,5 +66,16 @@ public class ContentStoreLocal implements ContentStore {
         return localFile == null || !localFile.exists()
                 ? Optional.empty()
                 : Optional.of(new FileInputStream(localFile));
+    }
+
+    @Override
+    public ContentSource retrieve(URI contentHash) throws IOException {
+        return new ContentSource() {
+
+            @Override
+            public Optional<InputStream> getContent() throws IOException {
+                return ContentStoreLocal.this.retrieveNow(contentHash);
+            }
+        };
     }
 }

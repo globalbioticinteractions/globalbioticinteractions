@@ -25,10 +25,14 @@ public class ContentPinDynamicTest {
         ContentProvenance prov = getProv();
         when(resolver.query(any())).thenReturn(Stream.of(prov));
 
-        ContentStore store = Mockito.mock(ContentStore.class);
 
-        when(store.retrieve(URI.create("hash://sha256/someSha")))
+        ContentSource source = Mockito.mock(ContentSource.class);
+        when(source.getContent())
                 .thenReturn(Optional.of(IOUtils.toInputStream("hallo", StandardCharsets.UTF_8)));
+
+        ContentStore store = Mockito.mock(ContentStore.class);
+        when(store.retrieve(URI.create("hash://sha256/someSha")))
+                .thenReturn(source);
 
         ContentPin contentPin = new ContentPinDynamic(resolver, store);
 
@@ -49,8 +53,13 @@ public class ContentPinDynamicTest {
         when(store.store(URI.create("unknown:uri")))
                 .thenReturn(getProv());
 
-        when(store.retrieve(URI.create("hash://sha256/someSha")))
+        ContentSource source = Mockito.mock(ContentSource.class);
+        when(source.getContent())
                 .thenReturn(Optional.of(new ByteArrayInputStream("0".getBytes())));
+
+
+        when(store.retrieve(URI.create("hash://sha256/someSha")))
+                .thenReturn(source);
 
         ContentPin contentPin = new ContentPinDynamic(resolver, store);
         URI pin = contentPin.pin(URI.create("unknown:uri"));
@@ -66,8 +75,15 @@ public class ContentPinDynamicTest {
         when(store.store(URI.create("unknown:uri")))
                 .thenThrow(new IOException("kaboom!"));
 
-        when(store.retrieve(URI.create("hash://sha256/someSha")))
+        ContentSource source = Mockito.mock(ContentSource.class);
+        when(source.getContent())
                 .thenReturn(Optional.of(new ByteArrayInputStream("0".getBytes())));
+
+
+        when(store.retrieve(URI.create("hash://sha256/someSha")))
+                .thenReturn(source);
+
+
 
         ContentPin contentPin = new ContentPinDynamic(resolver, store);
         try {

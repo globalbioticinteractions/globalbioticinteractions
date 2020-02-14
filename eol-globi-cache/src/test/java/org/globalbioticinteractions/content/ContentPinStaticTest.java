@@ -28,10 +28,13 @@ public class ContentPinStaticTest {
                 "someDate");
         when(resolver.query(any())).thenReturn(Stream.of(prov));
 
-        ContentStore store = Mockito.mock(ContentStore.class);
-
-        when(store.retrieve(URI.create("hash://sha256/someSha")))
+        ContentSource source = Mockito.mock(ContentSource.class);
+        when(source.getContent())
                 .thenReturn(Optional.of(IOUtils.toInputStream("hallo", StandardCharsets.UTF_8)));
+
+        ContentStore store = Mockito.mock(ContentStore.class);
+        when(store.retrieve(URI.create("hash://sha256/someSha")))
+                .thenReturn(source);
 
         ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store);
 
@@ -50,7 +53,7 @@ public class ContentPinStaticTest {
         ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store);
         try {
             contentPinStatic.pin(URI.create("unknown:uri"));
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             assertThat(ex.getMessage(), is("failed to pin [unknown:uri]"));
             throw ex;
         }
@@ -68,14 +71,17 @@ public class ContentPinStaticTest {
 
         when(resolver.query(any())).thenReturn(Stream.of(prov));
 
+        ContentSource source = Mockito.mock(ContentSource.class);
+        when(source.getContent()).thenReturn(Optional.empty());
+
         ContentStore store = Mockito.mock(ContentStore.class);
         when(store.retrieve(URI.create("hash://sha256/someSha")))
-                .thenReturn(Optional.empty());
+                .thenReturn(source);
 
         ContentPinStatic contentPinStatic = new ContentPinStatic(resolver, store);
         try {
             contentPinStatic.pin(URI.create("unknown:uri"));
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             assertThat(ex.getMessage(), is("failed to pin [unknown:uri]: failed to locate last known content uri [hash://sha256/someSha]"));
             throw ex;
         }

@@ -31,8 +31,10 @@ public class ContentPinStatic implements ContentPin {
     @Override
     public URI pin(URI knownContentIdentifier) throws IOException {
         ContentProvenance prov = findFirstContentProvenanceFor(knownContentIdentifier);
-        Optional<InputStream> retrieve = getStore().retrieve(prov.getContentHash());
-        Optional<URI> uri = retrieve.flatMap(x -> {
+        ContentSource retrieve = getStore().retrieve(prov.getContentHash());
+        Optional<URI> uri = retrieve
+                .getContent()
+                .flatMap(x -> {
             try (InputStream is = x) {
                 return Optional.ofNullable(prov.getLocalURI());
             } catch (IOException ex) {

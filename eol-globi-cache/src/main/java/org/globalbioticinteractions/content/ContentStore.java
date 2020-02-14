@@ -30,6 +30,6 @@ public interface ContentStore {
      * @return stream of content with provided hash
      */
 
-    Optional<InputStream> retrieve(URI contentHash) throws IOException;
+    ContentSource retrieve(URI contentHash) throws IOException;
 
 }
