@@ -51,7 +51,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
             URI zenodoGitHubArchives = findZenodoGitHubArchives(getRecordNodeList(feedStream), namespace);
             return zenodoGitHubArchives == null ? null : new DatasetZenodo(namespace, zenodoGitHubArchives, getInputStreamFactory());
         } catch (XPathExpressionException | IOException e) {
-            throw new DatasetFinderException("failed to resolve archive url for [" + namespace + "]", e);
+            throw new DatasetFinderException("failed to query archive url for [" + namespace + "]", e);
         }
     }
 

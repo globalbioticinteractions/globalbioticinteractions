@@ -23,7 +23,7 @@ public class ContentPinDynamicTest {
     public void knownPin() throws IOException {
         ContentResolver resolver = Mockito.mock(ContentResolver.class);
         ContentProvenance prov = getProv();
-        when(resolver.resolve(any())).thenReturn(Stream.of(prov));
+        when(resolver.query(any())).thenReturn(Stream.of(prov));
 
         ContentStore store = Mockito.mock(ContentStore.class);
 
@@ -43,10 +43,10 @@ public class ContentPinDynamicTest {
     @Test
     public void unknownPin() throws IOException {
         ContentResolver resolver = Mockito.mock(ContentResolver.class);
-        when(resolver.resolve(any())).thenReturn(Stream.empty());
+        when(resolver.query(any())).thenReturn(Stream.empty());
 
         ContentStore store = Mockito.mock(ContentStore.class);
-        when(store.provideAndRegister(URI.create("unknown:uri")))
+        when(store.store(URI.create("unknown:uri")))
                 .thenReturn(getProv());
 
         when(store.retrieve(URI.create("hash://sha256/someSha")))
@@ -60,10 +60,10 @@ public class ContentPinDynamicTest {
     @Test(expected = IOException.class)
     public void unknownPinFailedProvideAndRegister() throws IOException {
         ContentResolver resolver = Mockito.mock(ContentResolver.class);
-        when(resolver.resolve(any())).thenReturn(Stream.empty());
+        when(resolver.query(any())).thenReturn(Stream.empty());
 
         ContentStore store = Mockito.mock(ContentStore.class);
-        when(store.provideAndRegister(URI.create("unknown:uri")))
+        when(store.store(URI.create("unknown:uri")))
                 .thenThrow(new IOException("kaboom!"));
 
         when(store.retrieve(URI.create("hash://sha256/someSha")))

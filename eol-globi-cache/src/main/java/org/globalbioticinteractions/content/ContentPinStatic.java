@@ -61,6 +61,6 @@ public class ContentPinStatic implements ContentPin {
 
     protected Stream<ContentProvenance> doResolve(URI knownContentIdentifier) throws IOException {
         return resolver
-                    .resolve(knownContentIdentifier);
+                    .query(knownContentIdentifier);
     }
 }

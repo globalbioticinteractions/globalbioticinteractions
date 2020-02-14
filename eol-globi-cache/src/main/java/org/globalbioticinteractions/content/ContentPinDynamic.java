@@ -20,6 +20,6 @@ public class ContentPinDynamic extends ContentPinStatic {
     public Stream<ContentProvenance> doResolve(URI knownContentIdentifier) throws IOException {
         Stream<ContentProvenance> resolve = super.doResolve(knownContentIdentifier);
         return Stream.concat(resolve,
-                Stream.of(getStore().provideAndRegister(knownContentIdentifier)));
+                Stream.of(getStore().store(knownContentIdentifier)));
     }
 }

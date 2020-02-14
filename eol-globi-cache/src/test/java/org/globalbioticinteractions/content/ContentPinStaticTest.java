@@ -26,7 +26,7 @@ public class ContentPinStaticTest {
                 URI.create("uri:local"),
                 "someSha",
                 "someDate");
-        when(resolver.resolve(any())).thenReturn(Stream.of(prov));
+        when(resolver.query(any())).thenReturn(Stream.of(prov));
 
         ContentStore store = Mockito.mock(ContentStore.class);
 
@@ -42,7 +42,7 @@ public class ContentPinStaticTest {
     @Test(expected = IOException.class)
     public void unknownPin() throws IOException {
         ContentResolver resolver = Mockito.mock(ContentResolver.class);
-        when(resolver.resolve(any())).thenReturn(Stream.empty());
+        when(resolver.query(any())).thenReturn(Stream.empty());
 
         ContentStore store = Mockito.mock(ContentStore.class);
         when(store.retrieve(any())).thenThrow(new IOException("kaboom!"));
@@ -66,7 +66,7 @@ public class ContentPinStaticTest {
                 "someSha",
                 "someDate");
 
-        when(resolver.resolve(any())).thenReturn(Stream.of(prov));
+        when(resolver.query(any())).thenReturn(Stream.of(prov));
 
         ContentStore store = Mockito.mock(ContentStore.class);
         when(store.retrieve(URI.create("hash://sha256/someSha")))

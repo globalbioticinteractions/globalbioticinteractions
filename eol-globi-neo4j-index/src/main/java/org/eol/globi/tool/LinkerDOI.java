@@ -90,7 +90,7 @@ public class LinkerDOI implements Linker {
         try {
             resolve(doiResolver, batch, batch.keySet());
         } catch (IOException e) {
-            LOG.info("failed to request DOIs by batch of [" + BATCH_SIZE + "], attempting to resolve one by one", e);
+            LOG.info("failed to request DOIs by batch of [" + BATCH_SIZE + "], attempting to query one by one", e);
             Map<String, Exception> errMap = new HashMap<>();
             for (String citation : batch.keySet()) {
                 try {

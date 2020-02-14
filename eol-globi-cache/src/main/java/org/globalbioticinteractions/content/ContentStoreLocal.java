@@ -36,7 +36,7 @@ public class ContentStoreLocal implements ContentStore {
      */
 
     @Override
-    public ContentProvenance provideAndRegister(InputStream is) throws IOException {
+    public ContentProvenance store(InputStream is) throws IOException {
         URI generatedContentURI = URI.create(UUID.randomUUID().toString());
         File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
         ContentProvenance localProvenance = CacheUtil.cacheStream(is, cacheDirForNamespace);
@@ -45,7 +45,7 @@ public class ContentStoreLocal implements ContentStore {
     }
 
     @Override
-    public ContentProvenance provideAndRegister(URI contentLocationURI) throws IOException {
+    public ContentProvenance store(URI contentLocationURI) throws IOException {
         File cacheDir = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
         ContentProvenance localResourceLocation = CacheUtil.cache(contentLocationURI, cacheDir, getInputStreamFactory());
         ContentProvenance contentProvenanceWithNamespace = new ContentProvenance(namespace, contentLocationURI, localResourceLocation.getLocalURI(), localResourceLocation.getSha256(), localResourceLocation.getAccessedAt());

@@ -31,7 +31,7 @@ public class ContentRegistryLocal implements ContentRegistry, ContentResolver {
     }
 
     @Override
-    public Stream<ContentProvenance> resolve(URI knownContentIdentifier) {
+    public Stream<ContentProvenance> query(URI knownContentIdentifier) {
         ContentProvenance contentProvenance = CacheLocalReadonly
                 .getContentProvenance(knownContentIdentifier,
                         storeDir.getAbsolutePath(),

@@ -27,7 +27,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
         URI expectedContentHash = URI.create("hash://sha256/b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9");
         assertThat(registered.getContentHash(), is(expectedContentHash));
 
-        Stream<ContentProvenance> resolvedContentProvenance = registry.resolve(registered.getContentHash());
+        Stream<ContentProvenance> resolvedContentProvenance = registry.query(registered.getContentHash());
         assertThat(resolvedContentProvenance.findFirst().get().getContentHash(), is(expectedContentHash));
     }
 
@@ -48,7 +48,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
         String sha256hash = "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
 
-        Stream<ContentProvenance> locations = registry.resolve(URI.create("hash://sha256/" + sha256hash));
+        Stream<ContentProvenance> locations = registry.query(URI.create("hash://sha256/" + sha256hash));
 
         List<URI> locationList = locations
                 .flatMap(x -> Stream.of(x.getLocalURI(), x.getSourceURI()))
@@ -71,7 +71,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
         String sha256hash = "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
 
-        Stream<ContentProvenance> provenance = registry.resolve(testProvenance.getSourceURI());
+        Stream<ContentProvenance> provenance = registry.query(testProvenance.getSourceURI());
 
         List<URI> locationList = provenance
                 .flatMap(x -> Stream.of(x.getLocalURI(), x.getSourceURI()))
@@ -89,7 +89,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
 
         registry.register(getTestProvenance(DateUtil.nowDateString()));
 
-        Stream<ContentProvenance> locations = registry.resolve(URI.create(UUID.randomUUID().toString()));
+        Stream<ContentProvenance> locations = registry.query(URI.create(UUID.randomUUID().toString()));
 
         assertThat(locations.count(), is(0L));
     }
@@ -98,7 +98,7 @@ public class ContentRegistryLocalTest extends ContentTestUtil {
     public void resolveUnknownURIEmptyRegistry() {
         ContentRegistryLocal registry = new ContentRegistryLocal(getCacheDir(), "some/namespace", in -> in);
 
-        Stream<ContentProvenance> locations = registry.resolve(URI.create(UUID.randomUUID().toString()));
+        Stream<ContentProvenance> locations = registry.query(URI.create(UUID.randomUUID().toString()));
 
         assertThat(locations.count(), is(0L));
     }

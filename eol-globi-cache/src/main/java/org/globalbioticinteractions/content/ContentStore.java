@@ -20,9 +20,9 @@ public interface ContentStore {
      * @return hash of stored content
      */
 
-    ContentProvenance provideAndRegister(InputStream is) throws IOException;
+    ContentProvenance store(InputStream is) throws IOException;
 
-    ContentProvenance provideAndRegister(URI contentLocationURI) throws IOException;
+    ContentProvenance store(URI contentLocationURI) throws IOException;
 
     /**
      *

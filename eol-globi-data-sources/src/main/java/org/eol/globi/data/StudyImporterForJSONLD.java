@@ -68,7 +68,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 try {
                     author = nodeFactory.getAuthorResolver().findFullName(authorURI);
                 } catch (IOException e) {
-                    throw new StudyImporterException("failed to resolve author URI [" + authorURI + "]");
+                    throw new StudyImporterException("failed to query author URI [" + authorURI + "]");
                 }
                 final String source1 = author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + CitationUtil.createLastAccessedString(getResourceURI().toString());
                 Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getResourceURI() + subj, source1, null, subj));

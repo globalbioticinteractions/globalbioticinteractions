@@ -80,7 +80,7 @@ public class Normalizer {
         options.addOption(OPTION_SKIP_IMPORT, false, "skip the import of all GloBI datasets");
         options.addOption(OPTION_SKIP_EXPORT, false, "skip the export for GloBI datasets to aggregated archives.");
         options.addOption(OPTION_SKIP_TAXON_CACHE, false, "skip usage of taxon cache");
-        options.addOption(OPTION_SKIP_RESOLVE, false, "skip taxon name resolve to external taxonomies");
+        options.addOption(OPTION_SKIP_RESOLVE, false, "skip taxon name query to external taxonomies");
         options.addOption(OPTION_SKIP_LINK_THUMBNAILS, false, "skip linking of names to thumbnails");
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
         options.addOption(OPTION_SKIP_REPORT, false, "skip report generation step");

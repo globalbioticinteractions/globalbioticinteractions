@@ -25,6 +25,6 @@ public interface ContentResolver {
      * @param knownContentIdentifier content identifier to be resolved
      * @return known locations and their provenance (e.g, source location, time accessed) that produced content with provided content hash
      */
-    Stream<ContentProvenance> resolve(URI knownContentIdentifier);
+    Stream<ContentProvenance> query(URI knownContentIdentifier);
 
 }

@@ -181,7 +181,7 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
         Map<String, String> nodeProperties = nodeMap.get(sourceId);
 
         if (nodeProperties == null) {
-            throw new StudyImporterException("unable to resolve [" + nodeLabel + "] id [" + sourceId + "]");
+            throw new StudyImporterException("unable to query [" + nodeLabel + "] id [" + sourceId + "]");
         }
 
         interaction.put(nameLabel, nodeProperties.get("original_name"));
