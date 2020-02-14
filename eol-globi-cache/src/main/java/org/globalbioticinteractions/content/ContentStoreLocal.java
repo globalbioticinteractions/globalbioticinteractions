@@ -15,7 +15,6 @@ import java.util.UUID;
 
 public class ContentStoreLocal implements ContentStore {
 
-    public static final String HASH_SHA256_PREFIX = "hash://sha256/";
     private final File storeDir;
     private final String namespace;
     private final ContentRegistry contentRegistry;
@@ -49,14 +48,9 @@ public class ContentStoreLocal implements ContentStore {
         return inputStreamFactory;
     }
 
-    private Optional<InputStream> retrieveNow(URI contentHash) throws IOException {
-        File cacheDir = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
-        File localFile = null;
-        if (StringUtils.startsWith(contentHash.toString(), HASH_SHA256_PREFIX)) {
-            URI localResourceURI = new File(cacheDir, StringUtils.substring(contentHash.toString(), HASH_SHA256_PREFIX.length())).toURI();
-            localFile = new File(localResourceURI);
-        }
-        return localFile == null || !localFile.exists()
+    private Optional<InputStream> retrieveNow(URI localResourceURI) throws IOException {
+        File localFile = new File(localResourceURI);
+        return !localFile.exists()
                 ? Optional.empty()
                 : Optional.of(new FileInputStream(localFile));
     }

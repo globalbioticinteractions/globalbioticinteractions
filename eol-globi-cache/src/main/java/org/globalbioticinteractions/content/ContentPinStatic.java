@@ -53,7 +53,8 @@ public class ContentPinStatic implements ContentPin {
     }
 
     private ContentProvenance findFirstContentProvenanceFor(URI knownContentIdentifier) throws IOException {
-        return doQuery(knownContentIdentifier)
+        Stream<ContentProvenance> contentProvenanceStream = doQuery(knownContentIdentifier);
+        return contentProvenanceStream
                 .findFirst()
                 .orElseThrow(getIoExceptionSupplier(knownContentIdentifier));
     }
