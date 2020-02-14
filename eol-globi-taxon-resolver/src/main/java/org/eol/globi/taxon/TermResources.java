@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.TaxonUtil;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -25,8 +26,14 @@ public class TermResources {
 
             @Override
             public Predicate<String> getValidator() {
-                return Objects::nonNull;
+                return ((Predicate<String>) Objects::nonNull)
+                        .and(line1 -> {
+                            final Triple<Taxon, NameType, Taxon> triple = getParser().apply(line1);
+                            return TaxonUtil.nonBlankNodeOrNonBlankId(triple.getLeft())
+                                    && TaxonUtil.nonBlankNodeOrNonBlankId(triple.getRight());
+                        });
             }
+
         };
     }
 
@@ -48,7 +55,8 @@ public class TermResources {
                 return ((Predicate<String>) Objects::nonNull)
                         .and(line1 -> {
                             final Taxon taxon = getParser().apply(line1);
-                            return !StringUtils.isBlank(taxon.getPath());
+                            return taxon != null
+                                    && StringUtils.isNotBlank(taxon.getPath());
                         });
             }
         };

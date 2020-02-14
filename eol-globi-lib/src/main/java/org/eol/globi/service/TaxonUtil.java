@@ -494,4 +494,9 @@ public class TaxonUtil {
             }
         }
     }
+
+    public static boolean nonBlankNodeOrNonBlankId(Taxon taxon) {
+        return taxon != null
+                && (StringUtils.isNotBlank(taxon.getName()) || StringUtils.isNotBlank(taxon.getId()));
+    }
 }
