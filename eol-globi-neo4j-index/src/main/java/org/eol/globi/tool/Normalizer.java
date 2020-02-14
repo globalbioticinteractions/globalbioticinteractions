@@ -123,8 +123,10 @@ public class Normalizer {
 
     private void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            String defaultValue = "target/datasets";
-            String cacheDir = cmdLine == null ? defaultValue : cmdLine.getOptionValue(OPTION_DATASET_DIR, defaultValue);
+            String cacheDir = cmdLine == null
+                    ? "target/datasets"
+                    : cmdLine.getOptionValue(OPTION_DATASET_DIR, "target/datasets");
+
             importData(graphService, cacheDir);
         } else {
             LOG.info("skipping data import...");
@@ -226,8 +228,8 @@ public class Normalizer {
         factory.setDoiResolver(new DOIResolverImpl());
         try {
             CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
-            DatasetRegistry finder = new DatasetRegistryLocal(cacheDir, cacheFactory);
-            StudyImporter importer = new StudyImporterForRegistry(new ParserFactoryLocal(), factory, finder);
+            DatasetRegistry registry = new DatasetRegistryLocal(cacheDir, cacheFactory);
+            StudyImporter importer = new StudyImporterForRegistry(new ParserFactoryLocal(), factory, registry);
             importer.setDataset(new DatasetLocal(inStream -> inStream));
             importer.setLogger(new NullImportLogger());
             importer.importStudy();
