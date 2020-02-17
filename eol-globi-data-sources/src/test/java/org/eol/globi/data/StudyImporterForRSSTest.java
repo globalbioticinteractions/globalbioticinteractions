@@ -19,7 +19,6 @@ import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mapdb.DBMaker;
 
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -61,9 +59,9 @@ public class StudyImporterForRSSTest {
                 "\"exclude\": \".*GGBN.*\", " +
                 "\"hasDependencies\": true }";
         final Dataset dataset = datasetFor(configJson);
-        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos) GGBN", dataset));
-        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos)", dataset));
-        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla", dataset));
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla (Arctos) GGBN", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla (Arctos)", dataset));
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla", dataset));
     }
 
     @Test
@@ -72,9 +70,9 @@ public class StudyImporterForRSSTest {
                 "\"exclude\": \".*GGBN.*\", " +
                 "\"hasDependencies\": true }";
         final Dataset dataset = datasetFor(configJson);
-        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos) GGBN", dataset));
-        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos)", dataset));
-        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla", dataset));
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla (Arctos) GGBN", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla (Arctos)", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla", dataset));
     }
 
     @Test
@@ -83,9 +81,9 @@ public class StudyImporterForRSSTest {
                 "\"include\": \".*(Arctos).*\", " +
                 "\"hasDependencies\": true }";
         final Dataset dataset = datasetFor(configJson);
-        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos) GGBN", dataset));
-        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos)", dataset));
-        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla (Arctos) GGBN", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla (Arctos)", dataset));
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDatasetCollection("bla", dataset));
     }
 
     @Test
@@ -118,11 +116,8 @@ public class StudyImporterForRSSTest {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_fieldmuseum.xml\" }";
         final Dataset dataset = datasetFor(configJson);
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
-        assertThat(datasets.size(), greaterThan(0));
-        for (Dataset dataset1 : datasets) {
-            assertThat(dataset1.getCitation(), is(notNullValue()));
-        }
-        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("true"));
+        assertThat(datasets.size(), is(14));
+        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
     }
 
     @Test

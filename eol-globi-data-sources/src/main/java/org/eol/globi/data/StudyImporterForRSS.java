@@ -143,13 +143,15 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         final List entries = feed.getEntries();
         for (Object entry : entries) {
             if (entry instanceof SyndEntry) {
-                Dataset e = datasetFor(datasetOrig, (SyndEntry) entry);
                 String title = StringUtils.trim(((SyndEntry) entry).getTitle());
 
-
-                if (shouldIncludeTitleInDataset(title, datasetOrig)) {
+                if (shouldIncludeTitleInDatasetCollection(title, datasetOrig)) {
+                    Dataset e = datasetFor(datasetOrig, (SyndEntry) entry);
                     LOG.info("including [" + title + "].");
-                    datasets.add(e);
+                    if (e != null) {
+                        datasets.add(e);
+                    }
+                    ;
                 } else {
                     LOG.info("skipping [" + title + "] : was not included or excluded.");
                 }
@@ -158,7 +160,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         return datasets;
     }
 
-    protected static boolean shouldIncludeTitleInDataset(String title, Dataset dataset) {
+    protected static boolean shouldIncludeTitleInDatasetCollection(String title, Dataset dataset) {
         Predicate<String> includes = new Predicate<String>() {
             private String includePatternString = dataset.getOrDefault("include", null);
             private Pattern includePattern
@@ -191,7 +193,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
 
     public static Dataset datasetFor(Dataset datasetOrig, SyndEntry entry) {
         return isLikelyIPTEntry(entry)
-                ? attemptActosIPT(datasetOrig, entry)
+                ? datasetForIPT(datasetOrig, entry)
                 : attemptEasyArthropodCapture(datasetOrig, entry);
 
     }
@@ -213,27 +215,25 @@ public class StudyImporterForRSS extends BaseStudyImporter {
 
     }
 
-    private static Dataset attemptActosIPT(Dataset datasetOrig, SyndEntry entry) {
+    private static Dataset datasetForIPT(Dataset datasetOrig, SyndEntry entry) {
         Dataset dataset = null;
         Map<String, String> foreignEntries = parseForeignEntries(entry);
-        String title = entry.getTitle();
-
-        // for now, only include Arctos, see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/134
-        if (foreignEntries.containsKey("dwca")
-                && StringUtils.contains(title, "(Arctos)")
-                && !StringUtils.contains(title, "GGBN")
-        ) {
-            String citation = StringUtils.trim(title);
-
-            String hasDependencies = datasetOrig.getOrDefault("hasDependencies", "false");
-
-            dataset = embeddedDatasetFor(datasetOrig,
-                    citation,
-                    URI.create(foreignEntries.get("dwca")),
-                    StringUtils.equalsIgnoreCase("true", hasDependencies)
-            );
+        if (foreignEntries.containsKey("dwca")) {
+            dataset = datasetFor(datasetOrig, entry, foreignEntries);
         }
+        return dataset;
+    }
 
+    private static Dataset datasetFor(Dataset datasetOrig, SyndEntry entry, Map<String, String> foreignEntries) {
+        Dataset dataset;
+        String title = entry.getTitle();
+        String citation = StringUtils.trim(title);
+        String hasDependencies = datasetOrig.getOrDefault("hasDependencies", "false");
+        dataset = embeddedDatasetFor(datasetOrig,
+                citation,
+                URI.create(foreignEntries.get("dwca")),
+                StringUtils.equalsIgnoreCase("true", hasDependencies)
+        );
         return dataset;
     }
 
