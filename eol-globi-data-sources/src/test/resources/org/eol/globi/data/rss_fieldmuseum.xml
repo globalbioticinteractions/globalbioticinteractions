@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<rss version="2.0"
+	xmlns:ipt="http://ipt.gbif.org/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+  <channel>
+    <title>Field Museum of Natural History IPT</title>
+    <link>https://fmipt.fieldmuseum.org/ipt</link>
+    <atom:link href="https://fmipt.fieldmuseum.org/ipt/rss.do" rel="self" type="application/rss+xml" />
+    <description>Resource metadata of Field Museum of Natural History IPT</description>
+    <language>en-us</language>
+      <!-- RFC-822 date-time / Wed, 02 Oct 2010 13:00:00 GMT -->
+      <pubDate>Wed, 18 Apr 2012 09:54:10 -0500</pubDate>
+      <lastBuildDate>Mon, 10 Feb 2020 12:56:55 -0600</lastBuildDate>
+      <!-- UUID of the IPT making RSS feed available -->
+      <ipt:identifier>3b84ff5b-79ce-427c-acb7-b4004e160f66</ipt:identifier>
+    <generator>GBIF IPT 2.3.6-r3985b6a</generator>
+      <webMaster>sgrant@fieldmuseum.org (Sharon Grant)</webMaster>
+    <docs>http://cyber.law.harvard.edu/rss/rss.html</docs>
+    <ttl>15</ttl>
+      <geo:Point>
+        <geo:lat>41.8662</geo:lat>
+        <geo:long>-87.617</geo:long>
+      </geo:Point>
+      <item>
+        <title>Field Museum of Natural History (Zoology) Mammal Collection - Version 9.10</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_mammals</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Updated resource metadata</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_mammals</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_mammals</ipt:dwca>
+        <pubDate>Mon, 10 Feb 2020 12:57:19 -0600</pubDate>
+        <guid isPermaLink="false">41fc5c40-5e81-496f-9733-6b5681b3b7a5/v9.10</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Zoology) Insect, Arachnid and Myriapod Collection - Version 12.21</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_insects</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Minor data updates to Audubon</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_insects</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_insects</ipt:dwca>
+        <pubDate>Mon, 10 Feb 2020 10:54:42 -0600</pubDate>
+        <guid isPermaLink="false">7931dcab-94f1-46ce-8092-56e4335423de/v12.21</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Zoology) Invertebrate Collection - Version 18.18</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_invertebrates</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Additional specimens and new collection contact information</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_invertebrates</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_invertebrates</ipt:dwca>
+        <pubDate>Wed, 05 Feb 2020 14:49:54 -0600</pubDate>
+        <guid isPermaLink="false">005eb8d8-ed94-41be-89cf-e3115a9058e4/v18.18</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Geology) Paleobotany Collection - Version 1.13</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh-paleobotany</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Updated multimedia</description>
+        <author>kwebbink@fieldmuseum.org (Kate Webbink)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh-paleobotany</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh-paleobotany</ipt:dwca>
+        <pubDate>Mon, 16 Dec 2019 13:49:32 -0600</pubDate>
+        <guid isPermaLink="false">6fd297bb-888a-46a7-a870-1f5af1ab1616/v1.13</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Zoology) Bird Collection - Version 14.16</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fm_birds</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>updated occurrence metadata</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fm_birds</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fm_birds</ipt:dwca>
+        <pubDate>Wed, 20 Nov 2019 17:01:28 -0600</pubDate>
+        <guid isPermaLink="false">36f15a36-6b45-442e-9c31-cd633423aee0/v14.16</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Botany) Fungi Collection - Version 4.9</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_fungi</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Additional specimens and updated Audubon Core</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_fungi</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_fungi</ipt:dwca>
+        <pubDate>Tue, 05 Nov 2019 10:22:44 -0600</pubDate>
+        <guid isPermaLink="false">81e6cff2-b409-417e-8c72-e1bbafb7c61f/v4.9</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Geology) Fossil Vertebrates Collection - Version 1.0</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh-fossil-verts</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Metadata only fossil vertebrates collection description.</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh-fossil-verts</ipt:eml>
+        <pubDate>Thu, 12 Dec 2019 13:11:18 -0600</pubDate>
+        <guid isPermaLink="false">https://fmipt.fieldmuseum.org/ipt/resource?id=fmnh-fossil-verts/v1.0</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Geology) Fossil Invertebrates Collection - Version 1.7</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh-fossil-inverts</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Updated locality information and media</description>
+        <author>kwebbink@fieldmuseum.org (Kate Webbink)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh-fossil-inverts</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh-fossil-inverts</ipt:dwca>
+        <pubDate>Wed, 20 Nov 2019 15:40:20 -0600</pubDate>
+        <guid isPermaLink="false">6595e04b-13d2-4eac-933f-73786627b5a2/v1.7</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Botany) Lichen Collection - Version 2.9</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_lichens</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Additional specimens and updated Audubon Core</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_lichens</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_lichens</ipt:dwca>
+        <pubDate>Tue, 05 Nov 2019 10:24:16 -0600</pubDate>
+        <guid isPermaLink="false">aec6d756-3aa8-465e-83fd-4f6ee83e693e/v2.9</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Zoology) Fish Collection - Version 13.11</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_fishes</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>Additional specimens</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_fishes</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_fishes</ipt:dwca>
+        <pubDate>Tue, 20 Aug 2019 10:39:03 -0500</pubDate>
+        <guid isPermaLink="false">afc30a94-6107-488a-b9c0-ba9c4fa68b7c/v13.11</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Botany) Pteridophyte Collection - Version 2.7</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_pteridophytes</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>URL update</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_pteridophytes</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_pteridophytes</ipt:dwca>
+        <pubDate>Mon, 22 Jul 2019 13:03:49 -0500</pubDate>
+        <guid isPermaLink="false">9f747cff-839f-4485-83a1-f10317a92a82/v2.7</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Botany) Bryophyte Collection - Version 11.4</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_bryophyte</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>URL update</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_bryophyte</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_bryophyte</ipt:dwca>
+        <pubDate>Mon, 22 Jul 2019 13:03:19 -0500</pubDate>
+        <guid isPermaLink="false">8a43c2b7-5976-457d-9f35-a232655efdcc/v11.4</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Zoology) Amphibian and Reptile Collection - Version 12.7</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_herps</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>URL update</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_herps</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_herps</ipt:dwca>
+        <pubDate>Mon, 22 Jul 2019 12:59:38 -0500</pubDate>
+        <guid isPermaLink="false">e48d6c49-34a3-4df6-8206-121c061f190d/v12.7</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Zoology) Bird Egg Collection - Version 2.6</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fm_birds_eggs</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>URL update</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fm_birds_eggs</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fm_birds_eggs</ipt:dwca>
+        <pubDate>Mon, 22 Jul 2019 12:57:54 -0500</pubDate>
+        <guid isPermaLink="false">43e0bba3-9edb-4b00-b490-84924e55a222/v2.6</guid>
+      </item>
+      <item>
+        <title>Field Museum of Natural History (Botany)  Seed Plant Collection - Version 11.11</title>
+        <link>https://fmipt.fieldmuseum.org/ipt/resource?r=fmnh_seedplants</link>
+        <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+        <description>URL update</description>
+        <author>sgrant@fieldmuseum.org (Sharon Grant)</author>
+        <ipt:eml>https://fmipt.fieldmuseum.org/ipt/eml.do?r=fmnh_seedplants</ipt:eml>
+        <ipt:dwca>https://fmipt.fieldmuseum.org/ipt/archive.do?r=fmnh_seedplants</ipt:dwca>
+        <pubDate>Mon, 22 Jul 2019 12:55:14 -0500</pubDate>
+        <guid isPermaLink="false">90c853e6-56bd-480b-8e8f-6285c3f8d42b/v11.11</guid>
+      </item>
+  </channel>
+</rss>

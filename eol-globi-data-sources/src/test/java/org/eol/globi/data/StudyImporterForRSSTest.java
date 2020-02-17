@@ -19,6 +19,7 @@ import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mapdb.DBMaker;
 
@@ -31,7 +32,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -41,6 +45,8 @@ public class StudyImporterForRSSTest {
     @Test
     public void readRSS() throws StudyImporterException, IOException {
         final Dataset dataset = getDatasetGroup();
+
+
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
         assertThat(datasets.size(), is(3));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
@@ -48,13 +54,43 @@ public class StudyImporterForRSSTest {
 
     @Test
     public void readRSSVertnet() throws StudyImporterException, IOException {
-        final Dataset dataset = getDatasetVertnet();
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\", " +
+                "\"includes\": [ \".*(Arctos).*\"], " +
+                "\"excludes\": [ \".*GGBN.*\" ], " +
+                "\"hasDependencies\": true }";
+        final Dataset dataset = datasetFor(configJson);
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
         for (Dataset dataset1 : datasets) {
             assertThat(dataset1.getCitation(), containsString("(Arctos)"));
             assertThat(dataset1.getCitation(), not(containsString("GGBN")));
         }
         assertThat(datasets.size() > 0, is(true));
+        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("true"));
+    }
+
+    @Ignore
+    @Test
+    public void readRSSVertnetWithoutConfig() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\" }";
+        final Dataset dataset = datasetFor(configJson);
+        List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
+        for (Dataset dataset1 : datasets) {
+            assertThat(dataset1.getCitation(), is(notNullValue()));
+        }
+        assertThat(datasets.size() > 0, is(true));
+        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is(nullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void readFieldMuseum() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_fieldmuseum.xml\" }";
+        final Dataset dataset = datasetFor(configJson);
+        List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
+        assertThat(datasets.size(), greaterThan(0));
+        for (Dataset dataset1 : datasets) {
+            assertThat(dataset1.getCitation(), is(notNullValue()));
+        }
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("true"));
     }
 
@@ -78,7 +114,8 @@ public class StudyImporterForRSSTest {
     public void indexingInteractionListener() throws StudyImporterException {
 
         TreeMap<String, Map<String, String>> index = new TreeMap<>();
-        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener = new StudyImporterForRSS.IndexingInteractionListener(index);
+        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener
+                = new StudyImporterForRSS.IndexingInteractionListener(index);
 
         indexingInteractionListener.newLink(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
@@ -94,7 +131,8 @@ public class StudyImporterForRSSTest {
         final Map<String, Map<String, String>> index = DBMaker.newTempTreeMap();
 
 
-        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener = new StudyImporterForRSS.IndexingInteractionListener(index);
+        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener
+                = new StudyImporterForRSS.IndexingInteractionListener(index);
 
         indexingInteractionListener.newLink(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
@@ -273,12 +311,7 @@ public class StudyImporterForRSSTest {
     }
 
     private DatasetImpl getDatasetGroup() throws IOException {
-        String configJson = "{ \"resources\": { \"rss\": \"http://amnh.begoniasociety.org/dwc/rss.xml\" } }";
-        return datasetFor(configJson);
-    }
-
-    private DatasetImpl getDatasetVertnet() throws IOException {
-        String configJson = "{ \"resources\": { \"rss\": \"http://ipt.vertnet.org:8080/ipt/rss.do\" } }";
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_amnh.xml\" }";
         return datasetFor(configJson);
     }
 

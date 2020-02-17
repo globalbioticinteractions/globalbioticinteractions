@@ -1,0 +1,68 @@
+<rss version="2.0">
+	<channel>
+		<title>Arthropod Easy Capture (AMNH)</title>
+		<link>http://research.amnh.org/pbi/locality/</link>
+		<description>Arthropod Easy Capture rss feed</description>
+		<language>en-us</language>
+		<item ProjUID="2">
+			<title>
+				Plants, herbivores, and parasitoids: A model system for the study of tri-trophic associations project
+			</title>
+			<description>
+				Tri-Trophic Thematic Collection Network, 2014 (and updates). Version: 08 Mar 2016. http://tcn.amnh.org/. National Science Foundation grant(s) EF#1115081, EF#1115103, EF#1115080, EF#1115144, EF#1115191, EF#1115104, EF#1115115
+			</description>
+			<guid>
+				urn:uuid:f0cec69a-853c-11e4-8259-0026552be7ea
+			</guid>
+			<emllink>
+				http://amnh.begoniasociety.org/dwc/AEC-TTD-TCN_DwC-A20160308.eml
+			</emllink>
+			<type>DWCA</type>
+			<recordType>DWCA</recordType>
+			<link>
+				http://amnh.begoniasociety.org/dwc/AEC-TTD-TCN_DwC-A20160308.zip
+			</link>
+			<pubDate>Tue, 08 Mar 2016 13:49:08</pubDate>
+		</item>
+		<item ProjUID="3">
+			<title>
+				Collaborative databasing of North American bee collections within a global informatics network project
+			</title>
+			<description>
+				Digital Bee Collections Network, 2014 (and updates). Version: 08 Mar 2016. National Science Foundation grant DBI 0956388
+			</description>
+			<guid>
+				urn:uuid:13674fa4-8611-11e4-8259-0026552be7ea
+			</guid>
+			<emllink>
+				http://amnh.begoniasociety.org/dwc/AEC-DBCNet_DwC-A20160308.eml
+			</emllink>
+			<type>DWCA</type>
+			<recordType>DWCA</recordType>
+			<link>
+				http://amnh.begoniasociety.org/dwc/AEC-DBCNet_DwC-A20160308.zip
+			</link>
+			<pubDate>Tue, 08 Mar 2016 13:54:25</pubDate>
+		</item>
+		<item ProjUID="9">
+			<title>
+				Plant Bug Planetary Biodiversity Inventory Project PBI: Phytophagous Insects as a Model Group for Documenting Planetary Biodiversity (Insecta: Heteroptera: Miridae: Orthotylinae, Phylinae)
+			</title>
+			<description>
+				PBI: Phytophagous Insects as a Model Group for Documenting Planetary Biodiversity (Insecta: Heteroptera: Miridae: Orthotylinae, Phylinae). Version: 08 Mar 2016. National Science Foundation grant DBI#0316495
+			</description>
+			<guid>
+				urn:uuid:0b117bea-3601-11e5-8bb3-0026552be7ea
+			</guid>
+			<emllink>
+				http://amnh.begoniasociety.org/dwc/AEC-NA_PlantBugPBI_DwC-A20160308.eml
+			</emllink>
+			<type>DWCA</type>
+			<recordType>DWCA</recordType>
+			<link>
+				http://amnh.begoniasociety.org/dwc/AEC-NA_PlantBugPBI_DwC-A20160308.zip
+			</link>
+			<pubDate>Tue, 08 Mar 2016 13:55:43</pubDate>
+		</item>
+	</channel>
+</rss>
