@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class StudyImporterForRSS extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForRSS.class);
@@ -143,15 +145,48 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             if (entry instanceof SyndEntry) {
                 Dataset e = datasetFor(datasetOrig, (SyndEntry) entry);
                 String title = StringUtils.trim(((SyndEntry) entry).getTitle());
-                if (e == null) {
-                    LOG.info("skipping [" + title + "] : not supported (yet).");
-                } else {
+
+
+                if (shouldIncludeTitleInDataset(title, datasetOrig)) {
                     LOG.info("including [" + title + "].");
                     datasets.add(e);
+                } else {
+                    LOG.info("skipping [" + title + "] : was not included or excluded.");
                 }
             }
         }
         return datasets;
+    }
+
+    protected static boolean shouldIncludeTitleInDataset(String title, Dataset dataset) {
+        Predicate<String> includes = new Predicate<String>() {
+            private String includePatternString = dataset.getOrDefault("include", null);
+            private Pattern includePattern
+                    = StringUtils.isBlank(includePatternString)
+                    ? null
+                    : Pattern.compile(includePatternString);
+
+            @Override
+            public boolean test(String s) {
+                return includePattern == null || includePattern.matcher(title).matches();
+            }
+        };
+
+        Predicate<String> excludes = new Predicate<String>() {
+            private String excludePatternString = dataset.getOrDefault("exclude", null);
+            private Pattern excludePattern
+                    = StringUtils.isBlank(excludePatternString)
+                    ? null
+                    : Pattern.compile(excludePatternString);
+
+            @Override
+            public boolean test(String s) {
+                return excludePattern != null && excludePattern.matcher(title).matches();
+            }
+        };
+
+
+        return includes.and(excludes.negate()).test(title);
     }
 
     public static Dataset datasetFor(Dataset datasetOrig, SyndEntry entry) {
@@ -190,10 +225,12 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         ) {
             String citation = StringUtils.trim(title);
 
+            String hasDependencies = datasetOrig.getOrDefault("hasDependencies", "false");
+
             dataset = embeddedDatasetFor(datasetOrig,
                     citation,
                     URI.create(foreignEntries.get("dwca")),
-                    true
+                    StringUtils.equalsIgnoreCase("true", hasDependencies)
             );
         }
 

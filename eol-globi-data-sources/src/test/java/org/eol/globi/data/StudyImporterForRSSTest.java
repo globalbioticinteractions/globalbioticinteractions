@@ -37,6 +37,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -52,11 +53,46 @@ public class StudyImporterForRSSTest {
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
     }
 
+
+    @Test
+    public void titleIncludeExcludePattern() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\", " +
+                "\"include\": \".*(Arctos).*\", " +
+                "\"exclude\": \".*GGBN.*\", " +
+                "\"hasDependencies\": true }";
+        final Dataset dataset = datasetFor(configJson);
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos) GGBN", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos)", dataset));
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla", dataset));
+    }
+
+    @Test
+    public void titleExcludePatternOnly() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\", " +
+                "\"exclude\": \".*GGBN.*\", " +
+                "\"hasDependencies\": true }";
+        final Dataset dataset = datasetFor(configJson);
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos) GGBN", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos)", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla", dataset));
+    }
+
+    @Test
+    public void titleIncludePatternOnly() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\", " +
+                "\"include\": \".*(Arctos).*\", " +
+                "\"hasDependencies\": true }";
+        final Dataset dataset = datasetFor(configJson);
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos) GGBN", dataset));
+        assertTrue(StudyImporterForRSS.shouldIncludeTitleInDataset("bla (Arctos)", dataset));
+        assertFalse(StudyImporterForRSS.shouldIncludeTitleInDataset("bla", dataset));
+    }
+
     @Test
     public void readRSSVertnet() throws StudyImporterException, IOException {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\", " +
-                "\"includes\": [ \".*(Arctos).*\"], " +
-                "\"excludes\": [ \".*GGBN.*\" ], " +
+                "\"include\": \".*(Arctos).*\", " +
+                "\"exclude\": \".*GGBN.*\", " +
                 "\"hasDependencies\": true }";
         final Dataset dataset = datasetFor(configJson);
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
@@ -64,24 +100,19 @@ public class StudyImporterForRSSTest {
             assertThat(dataset1.getCitation(), containsString("(Arctos)"));
             assertThat(dataset1.getCitation(), not(containsString("GGBN")));
         }
-        assertThat(datasets.size() > 0, is(true));
+        assertThat(datasets.size(), is(84));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("true"));
     }
 
-    @Ignore
     @Test
     public void readRSSVertnetWithoutConfig() throws StudyImporterException, IOException {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\" }";
         final Dataset dataset = datasetFor(configJson);
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
-        for (Dataset dataset1 : datasets) {
-            assertThat(dataset1.getCitation(), is(notNullValue()));
-        }
-        assertThat(datasets.size() > 0, is(true));
-        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is(nullValue()));
+        assertThat(datasets.size(), is(265));
+        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
     }
 
-    @Ignore
     @Test
     public void readFieldMuseum() throws StudyImporterException, IOException {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_fieldmuseum.xml\" }";
