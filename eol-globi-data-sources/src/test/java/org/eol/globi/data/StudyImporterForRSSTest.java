@@ -107,7 +107,7 @@ public class StudyImporterForRSSTest {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\" }";
         final Dataset dataset = datasetFor(configJson);
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
-        assertThat(datasets.size(), is(265));
+        assertThat(datasets.size(), is(263));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
     }
 
