@@ -494,6 +494,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                         && StringUtils.isNotBlank(targetId)
                         && StringUtils.isNotBlank(relationshipTypeId)) {
 
+                    appendVerbatimResourceRelationsValues(record, props);
+
                     String relationshipAccordingTo = record.value(DwcTerm.relationshipAccordingTo);
                     if (StringUtils.isNotBlank(relationshipAccordingTo)) {
                         props.putIfAbsent(REFERENCE_CITATION, relationshipAccordingTo);
@@ -502,6 +504,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     props.put(INTERACTION_TYPE_NAME, relationship);
                     props.put(INTERACTION_TYPE_ID, relationshipTypeId);
                     props.putIfAbsent(StudyImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
+
+
 
                     for (DwcTerm idTerm : idTerms) {
                         if (termIdPropMap.containsKey(idTerm.qualifiedName())) {
@@ -531,6 +535,13 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     }
                 }
             }
+        }
+    }
+
+    private static void appendVerbatimResourceRelationsValues(Record record, Map<String, String> props) {
+        Set<Term> terms = record.terms();
+        for (Term term : terms) {
+            props.putIfAbsent(term.qualifiedName(), record.value(term));
         }
     }
 
