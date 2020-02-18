@@ -22,10 +22,10 @@ public class FileUtils {
     public static File saveToTmpFile(ZipInputStream zipInputStream, ZipEntry entry) throws IOException {
         File tempFile = File.createTempFile(entry.getName(), "tmp");
         tempFile.deleteOnExit();
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        IOUtils.copy(zipInputStream, fos);
-        fos.flush();
-        IOUtils.closeQuietly(fos);
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            IOUtils.copy(zipInputStream, fos);
+            fos.flush();
+        }
         return tempFile;
     }
 }
