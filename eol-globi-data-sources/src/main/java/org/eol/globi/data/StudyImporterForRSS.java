@@ -266,6 +266,7 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         ObjectNode config = new ObjectMapper().createObjectNode();
         config.put("citation", embeddedCitation);
         config.put("format", "application/dwca");
+        config.put("url", embeddedArchiveURI.toString());
         config.put(HAS_DEPENDENCIES, hasDependencies);
 
         DatasetProxy dataset = new DatasetProxy(datasetOrig) {

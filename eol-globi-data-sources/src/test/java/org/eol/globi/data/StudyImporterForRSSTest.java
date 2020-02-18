@@ -109,6 +109,8 @@ public class StudyImporterForRSSTest {
         List<Dataset> datasets = StudyImporterForRSS.getDatasetsForFeed(dataset);
         assertThat(datasets.size(), is(263));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
+        assertThat(datasets.get(0).getOrDefault("url", null), is("http://ipt.vertnet.org:8080/ipt/archive.do?r=utep_mamm"));
+        assertThat(datasets.get(0).getArchiveURI(), is(URI.create("http://ipt.vertnet.org:8080/ipt/archive.do?r=utep_mamm")));
     }
 
     @Test
