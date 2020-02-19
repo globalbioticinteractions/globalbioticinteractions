@@ -1,19 +1,36 @@
 package org.eol.globi.util;
 
+import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.collections4.map.UnmodifiableMap;
 import org.apache.commons.collections4.set.UnmodifiableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.FileUtils;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
+import org.eol.globi.service.ResourceService;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class InteractUtil {
 
+    public static final URI TYPE_IGNORED_URI_DEFAULT = URI.create("interaction_types_ignored.csv");
+    public static final URI TYPE_MAP_URI_DEFAULT = URI.create("interaction_types.csv");
     private static final Set<String> UNLIKELY_INTERACTION_TYPE_NAMES
             = UnmodifiableSet.unmodifiableSet(new TreeSet<String>() {{
         add("(collected with)");
@@ -106,5 +123,78 @@ public class InteractUtil {
         return interactType != null
                 ? interactType
                 : INTERACTION_TYPE_NAME_MAP.get(interactionName);
+    }
+
+    public static Map<String, InteractType> buildTypeMap(LabeledCSVParser labeledCSVParser) throws IOException {
+        Map<String, InteractType> typeMap = new TreeMap<>();
+        while (labeledCSVParser.getLine() != null) {
+            String inatIdString = labeledCSVParser.getValueByLabel("observation_field_id");
+            String inatId = StringUtils.trim(inatIdString);
+
+            if (StringUtils.isBlank(inatId)) {
+                throw new IOException("failed to map interaction type [" + inatIdString + "] on line [" + labeledCSVParser.lastLineNumber() + "]");
+            } else {
+                String interactionTypeId = labeledCSVParser.getValueByLabel("interaction_type_id");
+                InteractType interactType = InteractType.typeOf(interactionTypeId);
+                if (interactType == null) {
+                    throw new IOException("failed to map interaction type [" + interactionTypeId + "] on line [" + labeledCSVParser.lastLineNumber() + "]");
+                } else {
+                    typeMap.put(inatId, interactType);
+                }
+            }
+        }
+        return typeMap;
+    }
+
+    public static List<String> buildTypesIgnored(LabeledCSVParser labeledCSVParser) throws IOException {
+        List<String> typeMap1 = new ArrayList<>();
+        while (labeledCSVParser.getLine() != null) {
+            String inatIdString = labeledCSVParser.getValueByLabel("observation_field_id");
+            typeMap1.add(StringUtils.trim(inatIdString));
+        }
+        return typeMap1;
+    }
+
+    public static TermLookupService getTermLookupService(ResourceService<URI> dataset) throws StudyImporterException {
+        List<String> typesIgnored;
+        try {
+            LabeledCSVParser labeledCSVParser = parserFor(TYPE_IGNORED_URI_DEFAULT, dataset);
+            typesIgnored = buildTypesIgnored(labeledCSVParser);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to load ignored interaction types from [" + TYPE_IGNORED_URI_DEFAULT + "]");
+        }
+        Map<String, InteractType> typeMap;
+        try {
+            LabeledCSVParser labeledCSVParser = parserFor(TYPE_MAP_URI_DEFAULT, dataset);
+            typeMap = buildTypeMap(labeledCSVParser);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to load interaction mapping from [" + TYPE_MAP_URI_DEFAULT + "]", e);
+        }
+        return getTermLookupService(typesIgnored, typeMap);
+    }
+
+    public static LabeledCSVParser parserFor(URI typeIgnoredURI, ResourceService<URI> resourceService) throws IOException {
+        InputStream is = resourceService.retrieve(typeIgnoredURI);
+        return CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8));
+    }
+
+    public static TermLookupService getTermLookupService(List<String> typesIgnored, Map<String, InteractType> typeMap) {
+        return new TermLookupService() {
+
+
+            @Override
+            public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+                List<Term> matchingTerms = Collections.emptyList();
+                if (!typesIgnored.contains(name)) {
+                    InteractType interactType = typeMap.get(name);
+                    if (interactType != null) {
+                        matchingTerms = new ArrayList<Term>() {{
+                           add(new TermImpl(interactType.getIRI(), interactType.getLabel()));
+                        }};
+                    }
+                }
+                return matchingTerms;
+            }
+        };
     }
 }

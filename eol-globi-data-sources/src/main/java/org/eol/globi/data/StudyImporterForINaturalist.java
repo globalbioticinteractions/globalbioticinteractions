@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,8 +14,13 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
+import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -24,7 +28,6 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,59 +35,15 @@ import java.util.TreeMap;
 
 public class StudyImporterForINaturalist extends BaseStudyImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
-    public static final URI TYPE_IGNORED_URI_DEFAULT = URI.create("interaction_types_ignored.csv");
-    public static final URI TYPE_MAP_URI_DEFAULT = URI.create("interaction_types.csv");
 
     public static final String INATURALIST_URL = "https://www.inaturalist.org";
 
 
     private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<Long, String>();
-    private URI typeIgnoredURI;
-    private URI typeMapURI;
     public static final String PREFIX_OBSERVATION_FIELD = INATURALIST_URL + "/observation_fields/";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
-        setTypeMapURI(TYPE_MAP_URI_DEFAULT);
-        setTypeIgnoredURI(TYPE_IGNORED_URI_DEFAULT);
-    }
-
-    public static Map<Integer, InteractType> buildTypeMap(URI resource, LabeledCSVParser labeledCSVParser) throws IOException {
-        LabeledCSVParser parser = labeledCSVParser;
-        Map<Integer, InteractType> typeMap = new TreeMap<Integer, InteractType>();
-        while (parser.getLine() != null) {
-            String inatIdString = parser.getValueByLabel("observation_field_id");
-            Integer inatId = null;
-            String prefix = PREFIX_OBSERVATION_FIELD;
-            if (StringUtils.startsWith(inatIdString, prefix)) {
-                inatId = Integer.parseInt(inatIdString.replace(prefix, ""));
-            }
-
-            if (inatId == null) {
-                LOG.warn("failed to map observation field id [" + inatIdString + "] in line [" + resource + ":" + parser.lastLineNumber() + "]");
-            } else {
-                String interactionTypeId = parser.getValueByLabel("interaction_type_id");
-                InteractType interactType = InteractType.typeOf(interactionTypeId);
-                if (interactType == null) {
-                    LOG.warn("failed to map interaction type [" + interactionTypeId + "] in line [" + resource + ":" + parser.lastLineNumber() + "]");
-                } else {
-                    typeMap.put(inatId, interactType);
-                }
-            }
-        }
-        return typeMap;
-    }
-
-    public static List<Integer> buildTypesIgnored(LabeledCSVParser labeledCSVParser) throws IOException {
-        LabeledCSVParser parser = labeledCSVParser;
-        List<Integer> typeMap1 = new ArrayList<Integer>();
-        while (parser.getLine() != null) {
-            String inatIdString = parser.getValueByLabel("observation_field_id");
-            if (StringUtils.startsWith(inatIdString, PREFIX_OBSERVATION_FIELD)) {
-                typeMap1.add(Integer.parseInt(inatIdString.replace(PREFIX_OBSERVATION_FIELD, "")));
-            }
-        }
-        return typeMap1;
     }
 
     static Taxon parseTaxon(JsonNode taxonNode) {
@@ -131,19 +90,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     private int retrieveDataParseResults() throws StudyImporterException {
-        List<Integer> typesIgnored;
-        try {
-            typesIgnored = buildTypesIgnored(parserFactory.createParser(getTypeIgnoredURI(), CharsetConstant.UTF8));
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to load ignored interaction types from [" + getTypeIgnoredURI() + "]");
-        }
-        Map<Integer, InteractType> typeMap;
-        try {
-            LabeledCSVParser labeledCSVParser = parserFactory.createParser(getTypeMapURI(), CharsetConstant.UTF8);
-            typeMap = buildTypeMap(getTypeMapURI(), labeledCSVParser);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to load interaction mapping from [" + getTypeMapURI() + "]");
-        }
+        TermLookupService termLookupService = InteractUtil.getTermLookupService(getDataset());
 
         int totalInteractions = 0;
         int previousResultCount = 0;
@@ -153,8 +100,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
             try (InputStream resource = getDataset().retrieve(uri)) {
                 previousResultCount = parseJSON(resource,
-                        typesIgnored,
-                        typeMap);
+                        termLookupService);
                 pageNumber++;
                 totalInteractions += previousResultCount;
             } catch (IOException | StudyImporterException e) {
@@ -165,7 +111,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return totalInteractions;
     }
 
-    protected int parseJSON(InputStream retargetAsStream, List<Integer> typesIgnored, Map<Integer, InteractType> typeMap) throws StudyImporterException {
+    protected int parseJSON(InputStream retargetAsStream, TermLookupService termLookupService) throws StudyImporterException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array;
         try {
@@ -178,7 +124,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         }
         for (int i = 0; i < array.size(); i++) {
             try {
-                parseSingleInteractions(array.get(i), typesIgnored, typeMap);
+                parseSingleInteractions(array.get(i), termLookupService);
             } catch (NodeFactoryException | IOException e) {
                 throw new StudyImporterException("failed to parse inaturalist interactions", e);
             }
@@ -191,7 +137,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
 
     }
 
-    private void parseSingleInteractions(JsonNode jsonNode, List<Integer> typesIgnored, Map<Integer, InteractType> typeMap) throws NodeFactoryException, StudyImporterException, IOException {
+    private void parseSingleInteractions(JsonNode jsonNode, TermLookupService termLookupService) throws StudyImporterException, IOException {
 
         Taxon targetTaxon = null;
         Taxon sourceTaxon = null;
@@ -211,20 +157,35 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
             JsonNode observationField = jsonNode.get("observation_field");
             String interactionDataType = observationField.get("datatype").getTextValue();
             String interactionTypeName = observationField.get("name").getTextValue();
-            Integer interactionTypeId = observationField.get("id").getIntValue();
-            if (typesIgnored.contains(interactionTypeId)) {
+            int interactionTypeId = observationField.get("id").getIntValue();
+            String interactionTypeIdURI = "https://www.inaturalist.org/observation_fields/" + interactionTypeId;
+
+            List<Term> mappedTerms = null;
+            try {
+                mappedTerms = mapInteractionType(new TermImpl(interactionTypeIdURI, interactionTypeName), termLookupService);
+            } catch (TermLookupServiceException e) {
+                throw new StudyImporterException("failed to map [" + interactionTypeIdURI + "] with label [" + interactionTypeName + "]");
+            }
+
+            if (mappedTerms == null || mappedTerms.isEmpty()) {
                 LOG.debug("ignoring taxon observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
             } else {
-                InteractType interactType = typeMap.get(interactionTypeId);
-                if (interactType == null) {
-                    unsupportedInteractionTypes.put(observationId, interactionTypeName + ",https://www.inaturalist.org/observation_fields/" + interactionTypeId);
-                    LOG.debug("no interaction type associated with observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
-                } else {
-                    handleObservation(jsonNode, targetTaxon, observationId, interactionDataType, interactType, interactionTypeName, sourceTaxon);
+                for (Term mappedTerm : mappedTerms) {
+                    InteractType interactType = InteractType.typeOf(mappedTerm.getId());
+                    if (interactType == null) {
+                        unsupportedInteractionTypes.put(observationId, interactionTypeName + "," + interactionTypeIdURI);
+                        LOG.debug("no interaction type associated with observation field type [" + interactionTypeName + "] with id [" + interactionTypeId + "] for observation with id [" + observationId + "]");
+                    } else {
+                        handleObservation(jsonNode, targetTaxon, observationId, interactionDataType, interactType, interactionTypeName, sourceTaxon);
+                    }
                 }
             }
         }
 
+    }
+
+    private List<Term> mapInteractionType(TermImpl term, TermLookupService termLookupService) throws TermLookupServiceException {
+        return termLookupService.lookupTermByName(term.getId());
     }
 
     private void handleObservation(JsonNode jsonNode, Taxon targetTaxon, long observationId, String interactionDataType, InteractType interactionTypeId, String interactionTypeName, Taxon sourceTaxon) throws StudyImporterException, NodeFactoryException {
@@ -331,19 +292,4 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(timeObservedAtUtc);
     }
 
-    public void setTypeIgnoredURI(URI typeIgnoredURI) {
-        this.typeIgnoredURI = typeIgnoredURI;
-    }
-
-    public URI getTypeIgnoredURI() {
-        return typeIgnoredURI;
-    }
-
-    public void setTypeMapURI(URI typeMapURI) {
-        this.typeMapURI = typeMapURI;
-    }
-
-    public URI getTypeMapURI() {
-        return typeMapURI;
-    }
 }
