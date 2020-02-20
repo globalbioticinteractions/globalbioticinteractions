@@ -8,6 +8,7 @@ import org.eol.globi.util.InteractTypeMapperFactory;
 import org.eol.globi.util.InteractTypeMapperFactoryForRO;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
 import org.eol.globi.util.InteractTypeMapperFactoryWithFallback;
+import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 
@@ -29,11 +30,7 @@ public class TableInteractionListenerProxy implements InteractionListener {
 
     private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws TermLookupServiceException {
         if (interactTypeMapper == null) {
-            InteractTypeMapperFactory interactTypeMapperFactoryWithFallback =
-                    new InteractTypeMapperFactoryWithFallback(
-                                    new InteractTypeMapperFactoryImpl(dataset),
-                                    new InteractTypeMapperFactoryImpl());
-            interactTypeMapper = interactTypeMapperFactoryWithFallback.create();
+            interactTypeMapper = InteractUtil.createInteractionTypeMapper(dataset);
         }
         return interactTypeMapper;
     }

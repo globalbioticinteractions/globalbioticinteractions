@@ -32,4 +32,10 @@ public class InteractUtil {
         return joinInteractTypes(types);
     }
 
+    public static InteractTypeMapperFactory.InteractTypeMapper createInteractionTypeMapper(ResourceService resourceService) throws TermLookupServiceException {
+        return new InteractTypeMapperFactoryWithFallback(
+                        new InteractTypeMapperFactoryImpl(resourceService),
+                        new InteractTypeMapperFactoryImpl())
+                .create();
+    }
 }

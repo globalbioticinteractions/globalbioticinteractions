@@ -3,11 +3,11 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractTypeMapperFactory;
-import org.eol.globi.util.InteractTypeMapperFactoryImpl;
-import org.eol.globi.util.InteractTypeMapperFactoryWithFallback;
+import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
 import org.gbif.dwc.extensions.ExtensionProperty;
@@ -98,10 +98,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws StudyImporterException {
         if (interactionTypeMapper == null) {
             try {
-                interactionTypeMapper = new InteractTypeMapperFactoryWithFallback(
-                                new InteractTypeMapperFactoryImpl(getDataset()),
-                                new InteractTypeMapperFactoryImpl())
-                        .create();
+                ResourceService resourceService = getDataset();
+                interactionTypeMapper = InteractUtil.createInteractionTypeMapper(resourceService);
             } catch (TermLookupServiceException e) {
                 throw new StudyImporterException("failed to create interaction type mapper", e);
             }
