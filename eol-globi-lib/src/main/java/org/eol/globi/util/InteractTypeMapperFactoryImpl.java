@@ -140,10 +140,15 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
                 }
 
                 if (StringUtils.isNotBlank(providedInteractionName)) {
-                    if (typeMap.containsKey(providedInteractionName)) {
-                        throw new TermLookupServiceException("provided name [" + providedInteractionName + "] already mapped");
+                    InteractType interactType1 = typeMap.get(providedInteractionName);
+                    if (interactType1 == null) {
+                        typeMap.put(providedInteractionName, interactType);
+                    } else {
+                        if (StringUtils.isBlank(providedInteractionId)) {
+                            throw new TermLookupServiceException("provided name [" + providedInteractionName + "] already mapped: please provide unique interaction type name/id");
+                        }
                     }
-                    typeMap.put(providedInteractionName, interactType);
+
                 }
             }
         }

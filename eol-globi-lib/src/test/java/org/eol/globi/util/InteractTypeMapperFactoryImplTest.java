@@ -12,6 +12,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +31,27 @@ public class InteractTypeMapperFactoryImplTest {
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
         assertTrue(interactTypeMapper.shouldIgnoreInteractionType("shouldBeIgnored"));
+
+    }
+
+    @Test
+    public void duplicateProvidedLabelButSeparateProvidedIds() throws TermLookupServiceException, IOException {
+
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8))
+                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8));
+        when(resourceService.retrieve(URI.create("interaction_types.csv")))
+                .thenReturn(IOUtils.toInputStream("observation_field_name,observation_field_id,interaction_type_label,interaction_type_id" +
+                        "\nshouldBeMapped,id1,interactsWith, http://purl.obolibrary.org/obo/RO_0002437\n" +
+                        "\nshouldBeMapped,id2," + InteractType.ATE.getLabel() + "," + InteractType.ATE.getIRI()
+                        , StandardCharsets.UTF_8));
+
+        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertThat(interactTypeMapper.getInteractType("id1"), is(InteractType.INTERACTS_WITH));
+        assertThat(interactTypeMapper.getInteractType("id2"), is(InteractType.ATE));
+        assertThat(interactTypeMapper.getInteractType("shouldBeMapped"), is(InteractType.INTERACTS_WITH));
 
     }
 
