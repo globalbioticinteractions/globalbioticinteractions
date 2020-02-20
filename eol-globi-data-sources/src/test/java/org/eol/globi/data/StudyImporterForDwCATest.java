@@ -7,7 +7,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
-import org.eol.globi.util.InteractTypeMapperFactory;
 import org.gbif.dwc.Archive;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DwCAUtil;
@@ -36,6 +35,7 @@ import static org.gbif.dwc.terms.DwcTerm.relatedResourceID;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -108,7 +108,6 @@ public class StudyImporterForDwCATest {
         assertImportsSomething(resource.toURI(), recordCounter,
                 TaxonUtil.SOURCE_TAXON_ID,
                 TaxonUtil.SOURCE_TAXON_NAME,
-                INTERACTION_TYPE_ID,
                 StudyImporterForTSV.INTERACTION_TYPE_NAME,
                 TaxonUtil.TARGET_TAXON_ID,
                 TaxonUtil.TARGET_TAXON_NAME);
@@ -239,7 +238,7 @@ public class StudyImporterForDwCATest {
             }
         });
         studyImporterForDwCA.importStudy();
-        assertThat(recordCounter.get(), is(not(0)));
+        assertThat(recordCounter.get(), greaterThan(0));
     }
 
     @Test
@@ -566,7 +565,7 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Ectoparasite of"));
-                    assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002632"));
+                    assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
@@ -578,15 +577,15 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("7048675a-b110-4baf-91a3-2db138316709"));
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Host to"));
-                    assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002453"));
+                    assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("10d8d814-2afc-4cf2-9843-a2b719346179"));
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("G. Heinrich"));
-                } else if (7 == numberOfFoundLinks.get()) {
+                } else if (9 == numberOfFoundLinks.get()) {
                     assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
                     assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Stomach Contents"));
-                    assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+                    assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
                     assertThat(properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
                     assertThat(properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
                     assertThat(properties.get(StudyImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
@@ -595,33 +594,9 @@ public class StudyImporterForDwCATest {
                 }
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
             }
-        }, new InteractTypeMapperFactory.InteractTypeMapper() {
-            @Override
-            public boolean shouldIgnoreInteractionType(String nameOrId) {
-                return false;
-            }
-
-            @Override
-            public InteractType getInteractType(String nameOrId) {
-                if (StringUtils.contains(nameOrId, "ectoparasite")) {
-                    return InteractType.ECTOPARASITE_OF;
-                } else if (StringUtils.contains(nameOrId, "host")) {
-                    return InteractType.HOST_OF;
-                } else if (StringUtils.equalsIgnoreCase(nameOrId, "stomach contents of")){
-                    return InteractType.EATEN_BY;
-                } else if (StringUtils.equalsIgnoreCase(nameOrId, "stomach contents")){
-                    return InteractType.ATE;
-                } else if (StringUtils.equalsIgnoreCase(nameOrId, "has stomach contents")){
-                    // this term was not mapped in original test case
-                    return null;
-                } else {
-                    throw new IllegalStateException("unsupported [" + nameOrId + "]");
-                }
-
-            }
         });
 
-        assertThat(numberOfFoundLinks.get(), is(5));
+        assertThat(numberOfFoundLinks.get(), is(8));
     }
 
     @Test
@@ -648,16 +623,6 @@ public class StudyImporterForDwCATest {
                     assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is("https://www.inaturalist.org/users/dpom"));
                 }
 
-            }
-        }, new InteractTypeMapperFactory.InteractTypeMapper() {
-            @Override
-            public boolean shouldIgnoreInteractionType(String nameOrId) {
-                return false;
-            }
-
-            @Override
-            public InteractType getInteractType(String nameOrId) {
-                return null;
             }
         });
 
