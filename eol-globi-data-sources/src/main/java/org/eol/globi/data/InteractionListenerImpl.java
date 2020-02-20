@@ -98,8 +98,6 @@ class InteractionListenerImpl implements InteractionListener {
                 if (properties != null && validLink(expandedProperties)) {
                     logIfPossible(expandedProperties, "biotic interaction found");
                     importValidLink(expandedProperties);
-                } else {
-                    logIfPossible(expandedProperties, "no biotic interaction found");
                 }
             }
         } catch (NodeFactoryException e) {
