@@ -79,7 +79,7 @@ public class InteractTypeMapperFactoryImplTest {
         when(resourceService.retrieve(URI.create("interaction_types.csv"))).thenThrow(new IOException("kaboom!"));
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
         try {
-            InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+            interactTypeMapperFactory.create();
         } catch (TermLookupServiceException ex) {
             assertThat(ex.getMessage(), is("failed to load ignored interaction types from [interaction_types_ignored.csv]"));
             throw ex;

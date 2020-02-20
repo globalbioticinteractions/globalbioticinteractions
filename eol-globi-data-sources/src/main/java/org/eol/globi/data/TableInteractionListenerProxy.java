@@ -6,9 +6,11 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractTypeMapperFactory;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
+import org.eol.globi.util.InteractTypeMapperFactoryWithFallback;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +28,10 @@ public class TableInteractionListenerProxy implements InteractionListener {
 
     private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws TermLookupServiceException {
         if (interactTypeMapper == null) {
-            interactTypeMapper = new InteractTypeMapperFactoryImpl(dataset).create();
+            InteractTypeMapperFactory factoryOverride = new InteractTypeMapperFactoryImpl(dataset);
+            InteractTypeMapperFactoryImpl factoryDefault = new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping());
+            InteractTypeMapperFactoryWithFallback interactTypeMapperFactoryWithFallback = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factoryOverride, factoryDefault));
+            interactTypeMapper = interactTypeMapperFactoryWithFallback.create();
         }
         return interactTypeMapper;
     }

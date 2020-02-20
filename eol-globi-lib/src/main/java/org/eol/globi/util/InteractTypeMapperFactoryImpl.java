@@ -35,7 +35,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         this.resourceService = resourceService;
     }
 
-    private static ResourceService getResourceServiceForDefaultInteractionTypeMapping() {
+    public static ResourceService getResourceServiceForDefaultInteractionTypeMapping() {
         return new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
@@ -76,10 +76,10 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     public InteractTypeMapper create() throws TermLookupServiceException {
 
         final TermLookupService termMappingService
-                = getTermLookupServiceOverrideOrDefault();
+                = getTermLookupService(resourceService);
 
         final TermLookupService ignoredTermLookupService
-                = getIgnoredTermServiceOverrideOrDefault();
+                = getIgnoredTermService(resourceService);
 
         return new InteractTypeMapper() {
 
@@ -116,26 +116,6 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
 
             }
         };
-    }
-
-    public TermLookupService getIgnoredTermServiceOverrideOrDefault() throws TermLookupServiceException {
-        TermLookupService ignoredTermService;
-        try {
-            ignoredTermService = getIgnoredTermService(resourceService);
-        } catch (TermLookupServiceException ex) {
-            ignoredTermService = getIgnoredTermService(getResourceServiceForDefaultInteractionTypeMapping());
-        }
-        return ignoredTermService;
-    }
-
-    public TermLookupService getTermLookupServiceOverrideOrDefault() throws TermLookupServiceException {
-        TermLookupService termLookupServiceDefault1;
-        try {
-            termLookupServiceDefault1 = getTermLookupService(resourceService);
-        } catch (TermLookupServiceException ex) {
-            termLookupServiceDefault1 = getTermLookupService(getResourceServiceForDefaultInteractionTypeMapping());
-        }
-        return termLookupServiceDefault1;
     }
 
     public static Map<String, InteractType> buildTypeMap(LabeledCSVParser labeledCSVParser) throws TermLookupServiceException, IOException {
