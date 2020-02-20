@@ -19,6 +19,9 @@ public class InteractTypeMapperFactoryWithFallback implements InteractTypeMapper
         for (InteractTypeMapperFactory factory : factoryAlternatives) {
             try {
                 mapper = factory.create();
+                if (mapper != null) {
+                    break;
+                }
             } catch (TermLookupServiceException ex) {
                 lastException = ex;
             }

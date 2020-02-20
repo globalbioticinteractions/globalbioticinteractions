@@ -196,8 +196,8 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return typesIgnored;
     }
 
-    public static LabeledCSVParser parserFor(URI typeIgnoredURI, ResourceService resourceService) throws IOException {
-        InputStream is = resourceService.retrieve(typeIgnoredURI);
+    public static LabeledCSVParser parserFor(URI resourceURI, ResourceService resourceService) throws IOException {
+        InputStream is = resourceService.retrieve(resourceURI);
         return CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8));
     }
 

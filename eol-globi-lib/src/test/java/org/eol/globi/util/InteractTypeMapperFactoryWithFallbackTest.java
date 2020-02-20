@@ -40,7 +40,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
     }
 
     @Test
-    public void createAndIgnoreTermSingleMapper() throws TermLookupServiceException, IOException {
+    public void createAndIgnoreTermSingleMapper() throws TermLookupServiceException {
 
         InteractTypeMapperFactory factory1 = Mockito.mock(InteractTypeMapperFactory.class);
         InteractTypeMapperFactory.InteractTypeMapper mapper = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
@@ -51,6 +51,24 @@ public class InteractTypeMapperFactoryWithFallbackTest {
                 = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factory1)).create();
 
         assertNotNull(interactTypeMapper);
+
+    }
+
+    @Test
+    public void chooseFirstWorkingMapper() throws TermLookupServiceException {
+
+        InteractTypeMapperFactory factory1 = Mockito.mock(InteractTypeMapperFactory.class);
+        InteractTypeMapperFactory.InteractTypeMapper mapper1 = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
+        when(factory1.create()).thenReturn(mapper1);
+        InteractTypeMapperFactory factory2 = Mockito.mock(InteractTypeMapperFactory.class);
+        InteractTypeMapperFactory.InteractTypeMapper mapper2 = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
+        when(factory2.create()).thenReturn(mapper2);
+
+
+        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factory1, factory2)).create();
+
+        assertThat(interactTypeMapper, is(mapper1));
 
     }
 
