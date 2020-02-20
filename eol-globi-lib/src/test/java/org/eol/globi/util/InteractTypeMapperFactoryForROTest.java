@@ -1,6 +1,5 @@
 package org.eol.globi.util;
 
-import javafx.beans.property.Property;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
