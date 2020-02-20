@@ -2,7 +2,9 @@ package org.eol.globi.util;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,10 +12,14 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class InteractTypeMapperFactoryImplTest {
@@ -21,6 +27,12 @@ public class InteractTypeMapperFactoryImplTest {
     @Test
     public void createAndIgnoreTerm() throws TermLookupServiceException, IOException {
 
+        InteractTypeMapperImpl interactTypeMapper = createIgnoreServiceMock();
+        assertTrue(interactTypeMapper.shouldIgnoreInteractionType("shouldBeIgnored"));
+
+    }
+
+    public InteractTypeMapperImpl createIgnoreServiceMock() throws IOException, TermLookupServiceException {
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
                 .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8))
@@ -28,10 +40,15 @@ public class InteractTypeMapperFactoryImplTest {
         when(resourceService.retrieve(URI.create("interaction_types.csv")))
                 .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
 
-        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
-        assertTrue(interactTypeMapper.shouldIgnoreInteractionType("shouldBeIgnored"));
+        TermLookupService ignoreTermService = InteractTypeMapperFactoryImpl.getIgnoredTermService(
+                resourceService,
+                "observation_field_id",
+                URI.create("interaction_types_ignored.csv"));
 
+        TermLookupService termMapper = Mockito.mock(TermLookupService.class);
+        verify(termMapper, never()).lookupTermByName(anyString());
+
+        return new InteractTypeMapperImpl(ignoreTermService, termMapper);
     }
 
     @Test
@@ -57,15 +74,7 @@ public class InteractTypeMapperFactoryImplTest {
 
     @Test
     public void createAndIgnoreBlankTerm() throws TermLookupServiceException, IOException {
-
-        ResourceService resourceService = Mockito.mock(ResourceService.class);
-        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
-                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8));
-        when(resourceService.retrieve(URI.create("interaction_types.csv")))
-                .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
-
-        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = createIgnoreServiceMock();
         assertTrue(interactTypeMapper.shouldIgnoreInteractionType(""));
 
     }
