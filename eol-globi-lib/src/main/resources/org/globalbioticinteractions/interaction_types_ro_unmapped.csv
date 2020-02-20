@@ -24,3 +24,5 @@ farmedBy
 farms
 damagedBy
 damages
+dispersalVectorOf
+hasDispersalVector

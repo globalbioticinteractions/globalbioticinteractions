@@ -43,3 +43,13 @@ in,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 dispersalVector,http://eol.org/schema/terms/DispersalVector,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 hasDispersalVector,http://eol.org/schema/terms/HasDispersalVector,hasVector,http://purl.obolibrary.org/obo/RO_0002460
 dispersalVectorOf,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+perchingOn,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+perchedOnBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+endoparasitoidOf,,endoparasiteOf,http://purl.obolibrary.org/obo/RO_0002634
+hasEndoparasitoid,,hasEndoparasite,http://purl.obolibrary.org/obo/RO_0002635
+hasEctoparasitoid,,hasEctoparasite,http://purl.obolibrary.org/obo/RO_0002633
+ectoParasitoid,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
+farmedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+farms,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+damagedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+damages,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
