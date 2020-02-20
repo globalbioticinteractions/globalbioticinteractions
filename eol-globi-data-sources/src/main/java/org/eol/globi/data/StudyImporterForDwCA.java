@@ -3,11 +3,11 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractTypeMapperFactory;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
-import org.globalbioticinteractions.dataset.DatasetConstant;
-import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.InteractTypeMapperFactoryWithFallback;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
 import org.gbif.dwc.extensions.ExtensionProperty;
@@ -16,6 +16,7 @@ import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.ClosableIterator;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -40,21 +41,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_CLASS;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_GENUS;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_KINGDOM;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ORDER;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PHYLUM;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBGENUS;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_CLASS;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_FAMILY;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_GENUS;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_KINGDOM;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ORDER;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PHYLUM;
-import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
@@ -68,14 +54,29 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_CLASS;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_GENUS;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_KINGDOM;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ORDER;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PHYLUM;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBGENUS;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_CLASS;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_FAMILY;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_GENUS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_KINGDOM;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ORDER;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PHYLUM;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET;
 
 public class StudyImporterForDwCA extends StudyImporterWithListener {
     public static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
@@ -97,15 +98,12 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws StudyImporterException {
         if (interactionTypeMapper == null) {
             try {
-                interactionTypeMapper =  new InteractTypeMapperFactoryImpl(getDataset()).create();
+                InteractTypeMapperFactoryImpl factoryOverride = new InteractTypeMapperFactoryImpl(getDataset());
+                InteractTypeMapperFactory factoryDefaults = new InteractTypeMapperFactoryImpl();
+                new InteractTypeMapperFactoryWithFallback(Arrays.asList(factoryOverride, factoryDefaults)).create();
             } catch (TermLookupServiceException e) {
-                try {
-                    interactionTypeMapper = new InteractTypeMapperFactoryImpl().create();
-                } catch (TermLookupServiceException e1) {
-                    throw new StudyImporterException("failed to create interaction type mapper", e);
-                }
+                throw new StudyImporterException("failed to create interaction type mapper", e);
             }
-
         }
         return interactionTypeMapper;
     }
@@ -525,7 +523,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     props.put(INTERACTION_TYPE_NAME, relationship);
                     props.put(INTERACTION_TYPE_ID, relationshipTypeId);
                     props.putIfAbsent(StudyImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
-
 
 
                     for (DwcTerm idTerm : idTerms) {

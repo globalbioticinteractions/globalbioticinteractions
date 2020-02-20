@@ -35,7 +35,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         this.resourceService = resourceService;
     }
 
-    public static ResourceService getResourceServiceForDefaultInteractionTypeMapping() {
+    private static ResourceService getResourceServiceForDefaultInteractionTypeMapping() {
         return new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {

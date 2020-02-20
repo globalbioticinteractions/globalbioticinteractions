@@ -29,8 +29,9 @@ public class TableInteractionListenerProxy implements InteractionListener {
     private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws TermLookupServiceException {
         if (interactTypeMapper == null) {
             InteractTypeMapperFactory factoryOverride = new InteractTypeMapperFactoryImpl(dataset);
-            InteractTypeMapperFactoryImpl factoryDefault = new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping());
-            InteractTypeMapperFactoryWithFallback interactTypeMapperFactoryWithFallback = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factoryOverride, factoryDefault));
+            InteractTypeMapperFactory factoryDefault = new InteractTypeMapperFactoryImpl();
+            InteractTypeMapperFactory interactTypeMapperFactoryWithFallback =
+                    new InteractTypeMapperFactoryWithFallback(Arrays.asList(factoryOverride, factoryDefault));
             interactTypeMapper = interactTypeMapperFactoryWithFallback.create();
         }
         return interactTypeMapper;
