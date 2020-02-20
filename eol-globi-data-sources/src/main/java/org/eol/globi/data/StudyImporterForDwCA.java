@@ -98,9 +98,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws StudyImporterException {
         if (interactionTypeMapper == null) {
             try {
-                InteractTypeMapperFactoryImpl factoryOverride = new InteractTypeMapperFactoryImpl(getDataset());
-                InteractTypeMapperFactory factoryDefaults = new InteractTypeMapperFactoryImpl();
-                interactionTypeMapper = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factoryOverride, factoryDefaults)).create();
+                interactionTypeMapper = new InteractTypeMapperFactoryWithFallback(
+                                new InteractTypeMapperFactoryImpl(getDataset()),
+                                new InteractTypeMapperFactoryImpl())
+                        .create();
             } catch (TermLookupServiceException e) {
                 throw new StudyImporterException("failed to create interaction type mapper", e);
             }

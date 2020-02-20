@@ -96,8 +96,8 @@ public enum InteractType implements RelType {
     DAMAGED_BY(PropertyAndValueDictionary.NO_MATCH, "damagedBy"),
     DAMAGES(PropertyAndValueDictionary.NO_MATCH, "damages"),
 
-    DISPERSAL_VECTOR_OF("http://eol.org/schema/terms/DispersalVector", "dispersalVectorOf"),
-    HAS_DISPERAL_VECTOR("http://eol.org/schema/terms/HasDispersalVector", "hasDispersalVector"),
+    DISPERSAL_VECTOR_OF(PropertyAndValueDictionary.NO_MATCH, "dispersalVectorOf"),
+    HAS_DISPERAL_VECTOR(PropertyAndValueDictionary.NO_MATCH, "hasDispersalVector"),
 
     KILLED_BY("http://purl.obolibrary.org/obo/RO_0002627", "killedBy", OBJECT, SUBJECT),
     KILLS("http://purl.obolibrary.org/obo/RO_0002626", "kills", SUBJECT, OBJECT),

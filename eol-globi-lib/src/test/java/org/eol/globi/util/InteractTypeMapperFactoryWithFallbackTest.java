@@ -2,7 +2,6 @@ package org.eol.globi.util;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -11,13 +10,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class InteractTypeMapperFactoryWithFallbackTest {
@@ -33,7 +30,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
                 .thenReturn(IOUtils.toInputStream("", StandardCharsets.UTF_8));
 
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryWithFallback(Collections.emptyList()).create();
+                = new InteractTypeMapperFactoryWithFallback().create();
 
         assertNull(interactTypeMapper);
 
@@ -48,7 +45,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
         when(factory1.create()).thenReturn(mapper);
 
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factory1)).create();
+                = new InteractTypeMapperFactoryWithFallback(factory1).create();
 
         assertNotNull(interactTypeMapper);
 
@@ -66,7 +63,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
 
 
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factory1, factory2)).create();
+                = new InteractTypeMapperFactoryWithFallback(factory1, factory2).create();
 
         assertThat(interactTypeMapper, is(mapper1));
 
@@ -83,7 +80,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
         when(factory2.create()).thenReturn(mapper);
 
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factory1, factory2)).create();
+                = new InteractTypeMapperFactoryWithFallback(factory1, factory2).create();
 
         assertThat(interactTypeMapper, is(mapper));
 
@@ -100,7 +97,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
         when(factory2.create()).thenThrow(new TermLookupServiceException("kaboom!"));
 
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factory1, factory2)).create();
+                = new InteractTypeMapperFactoryWithFallback(factory1, factory2).create();
 
         assertThat(interactTypeMapper, is(mapper));
 
@@ -114,7 +111,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
 
 
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryWithFallback(Arrays.asList(factory1)).create();
+                = new InteractTypeMapperFactoryWithFallback(factory1).create();
 
     }
 

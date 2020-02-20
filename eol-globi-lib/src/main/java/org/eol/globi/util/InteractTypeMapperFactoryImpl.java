@@ -82,48 +82,18 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
                 "observation_field_id",
                 "observation_field_id",
                 "observation_field_name",
-                "interaction_type_id", TYPE_IGNORED_URI_DEFAULT, TYPE_MAP_URI_DEFAULT);
+                "interaction_type_id",
+                TYPE_IGNORED_URI_DEFAULT,
+                TYPE_MAP_URI_DEFAULT);
 
         final TermLookupService ignoredTermLookupService
                 = getIgnoredTermService(resourceService,
                 "observation_field_id",
                 TYPE_IGNORED_URI_DEFAULT);
 
-        return new InteractTypeMapper() {
-
-            @Override
-            public boolean shouldIgnoreInteractionType(String interactionTypeNameOrId) {
-                boolean shouldIgnore = false;
-                try {
-                    if (StringUtils.isBlank(interactionTypeNameOrId)) {
-                        shouldIgnore = true;
-                    } else {
-                        List<Term> terms = ignoredTermLookupService.lookupTermByName(interactionTypeNameOrId);
-                        shouldIgnore = terms != null && !terms.isEmpty();
-                    }
-                } catch (TermLookupServiceException e) {
-
-                }
-                return shouldIgnore;
-            }
-
-            @Override
-            public InteractType getInteractType(String interactionTypeNameOrId) {
-                InteractType firstMatchingType = InteractType.typeOf(interactionTypeNameOrId);
-                if (firstMatchingType == null) {
-                    try {
-                        List<Term> terms = termMappingService.lookupTermByName(interactionTypeNameOrId);
-                        if (terms != null && terms.size() > 0) {
-                            firstMatchingType = InteractType.typeOf(terms.get(0).getId());
-                        }
-                    } catch (TermLookupServiceException e) {
-                        //
-                    }
-                }
-                return firstMatchingType;
-
-            }
-        };
+        return new InteractTypeMapperWithFallbackImpl(
+                new InteractTypeMapperImpl(ignoredTermLookupService, termMappingService),
+                new InteractTypeMapperFactoryForRO().create());
     }
 
     public static Map<String, InteractType> buildTypeMap(LabeledCSVParser labeledCSVParser,
@@ -246,4 +216,5 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
             }
         };
     }
+
 }

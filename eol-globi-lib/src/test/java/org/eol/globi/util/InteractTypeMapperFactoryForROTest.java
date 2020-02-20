@@ -1,0 +1,61 @@
+package org.eol.globi.util;
+
+import javafx.beans.property.Property;
+import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.service.TermLookupServiceException;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+public class InteractTypeMapperFactoryForROTest {
+
+    @Test
+    public void defaultMapping() throws TermLookupServiceException, IOException {
+
+        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryForRO().create();
+
+        assertNotNull(interactTypeMapper);
+
+        InteractType interactsWithByName = interactTypeMapper.getInteractType("interactsWith");
+        assertThat(interactsWithByName, is(InteractType.INTERACTS_WITH));
+
+        InteractType interactsWithById = interactTypeMapper.getInteractType("http://purl.obolibrary.org/obo/RO_0002437");
+        assertThat(interactsWithById, is(InteractType.INTERACTS_WITH));
+
+    }
+
+
+    @Test
+    public void ensureAllInteractTypesAreSupported() throws TermLookupServiceException {
+        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryForRO().create();
+
+        InteractType[] interactionTypes = InteractType.values();
+        for (InteractType value : interactionTypes) {
+            if (StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, value.getIRI())) {
+                assertTrue("[" + value.getLabel() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
+                assertTrue("[" + value.getIRI() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
+            } else {
+                InteractType interactTypeByName = interactTypeMapper.getInteractType(value.getLabel());
+                InteractType interactTypeById = interactTypeMapper.getInteractType(value.getIRI());
+                //System.out.println(value.getLabel() + "," + value.getIRI());
+                InteractType expectedType = InteractType.typeOf(value.getIRI());
+                assertThat(interactTypeById, is(expectedType));
+                assertThat(interactTypeByName, is(expectedType));
+                assertFalse("[" + value.getLabel() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
+                assertFalse("[" + value.getIRI() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
+            }
+        }
+
+    }
+
+}

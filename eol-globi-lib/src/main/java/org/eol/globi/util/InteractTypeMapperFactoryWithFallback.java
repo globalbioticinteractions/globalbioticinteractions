@@ -2,14 +2,15 @@ package org.eol.globi.util;
 
 import org.eol.globi.service.TermLookupServiceException;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class InteractTypeMapperFactoryWithFallback implements InteractTypeMapperFactory {
 
     private final List<InteractTypeMapperFactory> factoryAlternatives;
 
-    public InteractTypeMapperFactoryWithFallback(List<InteractTypeMapperFactory> factories) {
-        this.factoryAlternatives = factories;
+    public InteractTypeMapperFactoryWithFallback(InteractTypeMapperFactory... factory) {
+        this.factoryAlternatives = Arrays.asList(factory);
     }
 
     @Override

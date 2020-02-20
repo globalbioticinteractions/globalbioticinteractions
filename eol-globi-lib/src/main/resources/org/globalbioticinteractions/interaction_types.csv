@@ -26,7 +26,7 @@ folivory,,eats,http://purl.obolibrary.org/obo/RO_0002470
 fruit thief,,eats,http://purl.obolibrary.org/obo/RO_0002470
 ingestion,,eats,http://purl.obolibrary.org/obo/RO_0002470
 pollinator,,pollinates,http://purl.obolibrary.org/obo/RO_0002455
-seed disperser,,dispersalVectorOf,http://eol.org/schema/terms/DispersalVector
+seed disperser,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 seed predator,,eats,http://purl.obolibrary.org/obo/RO_0002470
 vector of,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 found on,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
@@ -40,3 +40,6 @@ on,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 under,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 inside,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 in,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+dispersalVector,http://eol.org/schema/terms/DispersalVector,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+hasDispersalVector,http://eol.org/schema/terms/HasDispersalVector,hasVector,http://purl.obolibrary.org/obo/RO_0002460
+dispersalVectorOf,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
