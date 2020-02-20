@@ -149,7 +149,7 @@ public class InteractUtilTest {
                 fail("not [" + resourceName + "]");
                 return null;
             }
-        }, "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id");
+        }, "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id", InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
 
         List<Term> someProvidedId = termLookupService.lookupTermByName("someProvidedId");
         assertThat(someProvidedId.size(), is(1));
@@ -179,7 +179,7 @@ public class InteractUtilTest {
                 fail("not [" + resourceName + "]");
                 return null;
             }
-        }, "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id");
+        }, "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id", InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
 
         List<Term> someProvidedId = termLookupService.lookupTermByName("someProvidedId");
         assertThat(someProvidedId.size(), is(1));
