@@ -1,20 +1,17 @@
 package org.eol.globi.util;
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
-
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 public class InteractTypeMapperWithFallbackImplTest {
 
     @Test
-    public void firstMapperGetToMap() throws TermLookupServiceException {
+    public void firstMapperGetToMap() {
 
         InteractTypeMapperFactory.InteractTypeMapper mapper1 = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
         when(mapper1.getInteractType("eats")).thenReturn(InteractType.ATE);
@@ -52,7 +49,7 @@ public class InteractTypeMapperWithFallbackImplTest {
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapperWithFallback
                 = new InteractTypeMapperWithFallbackImpl(mapper1, mapper2);
 
-        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(true));
+        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(false));
     }
 
     @Test
@@ -65,7 +62,7 @@ public class InteractTypeMapperWithFallbackImplTest {
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapperWithFallback
                 = new InteractTypeMapperWithFallbackImpl(mapper1, mapper2);
 
-        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(true));
+        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(false));
     }
 
     @Test

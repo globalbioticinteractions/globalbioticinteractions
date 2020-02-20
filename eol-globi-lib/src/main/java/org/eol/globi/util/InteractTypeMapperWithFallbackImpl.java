@@ -22,11 +22,8 @@ public class InteractTypeMapperWithFallbackImpl implements InteractTypeMapperFac
 
     @Override
     public boolean shouldIgnoreInteractionType(String interactionTypeNameOrId) {
-        Optional<InteractTypeMapperFactory.InteractTypeMapper> first = mappers
-                .stream().
-                        filter(x -> x.shouldIgnoreInteractionType(interactionTypeNameOrId))
-                .findFirst();
-        return first.isPresent();
+        // be optimistic and allow mappers to attempt
+        return false;
     }
 
     @Override
