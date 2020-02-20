@@ -2,7 +2,6 @@ package org.eol.globi.util;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Term;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
@@ -12,7 +11,6 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

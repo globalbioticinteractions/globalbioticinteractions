@@ -49,7 +49,7 @@ public class InteractTypeMapperWithFallbackImplTest {
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapperWithFallback
                 = new InteractTypeMapperWithFallbackImpl(mapper1, mapper2);
 
-        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(false));
+        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(true));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class InteractTypeMapperWithFallbackImplTest {
         InteractTypeMapperFactory.InteractTypeMapper interactTypeMapperWithFallback
                 = new InteractTypeMapperWithFallbackImpl(mapper1, mapper2);
 
-        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(false));
+        assertThat(interactTypeMapperWithFallback.shouldIgnoreInteractionType("eats"), is(true));
     }
 
     @Test
