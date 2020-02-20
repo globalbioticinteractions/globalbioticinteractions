@@ -72,7 +72,7 @@ public class InteractUtilTest {
                 put("fruit thief", InteractType.ATE);
                 put("ingestion", InteractType.ATE);
                 put("pollinator", InteractType.POLLINATES);
-                put("seed disperser", InteractType.DISPERSAL_VECTOR_OF);
+                put("seed disperser", InteractType.VECTOR_OF);
                 put("seed predator", InteractType.ATE);
                 put("vector of", InteractType.VECTOR_OF);
                 put("found on", InteractType.INTERACTS_WITH);
