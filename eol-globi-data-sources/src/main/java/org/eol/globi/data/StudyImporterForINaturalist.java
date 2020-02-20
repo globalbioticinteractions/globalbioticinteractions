@@ -92,7 +92,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private int retrieveDataParseResults() throws StudyImporterException {
         TermLookupService termLookupService;
         try {
-            termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(getDataset());
+            termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(getDataset(), "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id");
         } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed to find interaction term mapping", e);
         }
