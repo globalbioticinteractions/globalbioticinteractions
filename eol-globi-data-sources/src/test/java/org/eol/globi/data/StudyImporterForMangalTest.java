@@ -49,7 +49,7 @@ public class StudyImporterForMangalTest {
     @Test
     public void pageThroughEndpoint() throws IOException, StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);
-        ResourceService<URI> resourceService = new ResourceService<URI>() {
+        ResourceService resourceService = new ResourceService() {
 
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {

@@ -1,5 +1,7 @@
 package org.eol.globi.util;
 
+import org.apache.commons.collections4.map.UnmodifiableMap;
+import org.apache.commons.collections4.set.UnmodifiableSet;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
@@ -13,12 +15,78 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.*;
 
 public class InteractUtilTest {
+
+    private static final Set<String> UNLIKELY_INTERACTION_TYPE_NAMES
+            = UnmodifiableSet.unmodifiableSet(new TreeSet<String>() {{
+        add("(collected with)");
+        add("collector number");
+        add("(littermate or nestmate of)");
+        add("(mate of)");
+        add("mixed species flock");
+        add("mosses");
+        add("(offspring of)");
+        add("(parent of)");
+        add("(same individual as)");
+        add("same litter");
+        add("(same lot as)");
+        add("(sibling of)");
+    }});
+
+    private static final Map<String, InteractType> INTERACTION_TYPE_NAME_MAP =
+            UnmodifiableMap.unmodifiableMap(new HashMap<String, InteractType>() {{
+                put("associated with", InteractType.INTERACTS_WITH);
+                put("ex", InteractType.HAS_HOST);
+                put("ex.", InteractType.HAS_HOST);
+                put("reared ex", InteractType.HAS_HOST);
+                put("reared ex.", InteractType.HAS_HOST);
+                put("host to", InteractType.HOST_OF);
+                put("host", InteractType.HAS_HOST);
+                put("h", InteractType.HAS_HOST);
+                put("larval foodplant", InteractType.ATE);
+                put("ectoparasite of", InteractType.ECTOPARASITE_OF);
+                put("parasite of", InteractType.PARASITE_OF);
+                put("stomach contents of", InteractType.EATEN_BY);
+                put("stomach contents", InteractType.ATE);
+                put("eaten by", InteractType.EATEN_BY);
+                put("(ate)", InteractType.ATE);
+                put("(eaten by)", InteractType.EATEN_BY);
+                put("(parasite of)", InteractType.PARASITE_OF);
+                put("(host of)", InteractType.HOST_OF);
+                put("(in amplexus with)", InteractType.INTERACTS_WITH);
+                put("consumption", InteractType.ATE);
+                put("flower predator", InteractType.ATE);
+                put("flower visitor", InteractType.VISITS_FLOWERS_OF);
+                put("folivory", InteractType.ATE);
+                put("fruit thief", InteractType.ATE);
+                put("ingestion", InteractType.ATE);
+                put("pollinator", InteractType.POLLINATES);
+                put("seed disperser", InteractType.DISPERSAL_VECTOR_OF);
+                put("seed predator", InteractType.ATE);
+                put("vector of", InteractType.VECTOR_OF);
+                put("found on", InteractType.INTERACTS_WITH);
+                put("visitsflowersof", InteractType.VISITS_FLOWERS_OF);
+                put("collected on", InteractType.INTERACTS_WITH);
+                put("reared from", InteractType.INTERACTS_WITH);
+                put("emerged from", InteractType.INTERACTS_WITH);
+                put("collected in", InteractType.INTERACTS_WITH);
+                put("hyperparasitoid of", InteractType.HYPERPARASITE_OF);
+                put("on", InteractType.INTERACTS_WITH);
+                put("under", InteractType.INTERACTS_WITH);
+                put("inside", InteractType.INTERACTS_WITH);
+                put("in", InteractType.INTERACTS_WITH);
+            }});
 
     @Test
     public void interactionCypherClause() {
@@ -34,19 +102,46 @@ public class InteractUtilTest {
     }
 
     @Test
-    public void mapNotCaseSensitive() {
-        assertThat(InteractUtil.getInteractTypeForName("hostOf"), is(InteractType.HOST_OF));
-        assertThat(InteractUtil.getInteractTypeForName("hostof"), is(InteractType.HOST_OF));
+    public void mapNotCaseSensitive() throws TermLookupServiceException {
+        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostOf"), is(InteractType.HOST_OF));
+        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostof"), is(InteractType.HOST_OF));
     }
 
-    @Test(expected = StudyImporterException.class)
-    public void createInteractionTermMapper() throws StudyImporterException, TermLookupServiceException {
-        TermLookupService termLookupService = InteractUtil.getTermLookupService(new ResourceService<URI>() {
+    @Test
+    public void mapKnownNonROTerms() throws TermLookupServiceException {
+        Set<Map.Entry<String, InteractType>> entries = INTERACTION_TYPE_NAME_MAP.entrySet();
+        assertThat(entries.size(), greaterThan(0));
+        for (Map.Entry<String, InteractType> entry : entries) {
+            InteractType interactTypeForName = new InteractTypeMapperFactoryImpl().create().getInteractType(entry.getKey());
+            assertThat("failed to map [" + entry.getKey() + "]", interactTypeForName, is(entry.getValue()));
+        }
+    }
+
+    @Test
+    public void mapUnknownNonROTerms() throws TermLookupServiceException {
+        InteractType interactTypeForName = new InteractTypeMapperFactoryImpl().create().getInteractType("donaldduck");
+        assertThat(interactTypeForName, is(nullValue()));
+    }
+
+    @Test
+    public void ensureIgnoredTermMappings() throws TermLookupServiceException {
+        Set<String> unlikelyInteractionTypeNames = UNLIKELY_INTERACTION_TYPE_NAMES;
+        assertThat(unlikelyInteractionTypeNames.size(), greaterThan(0));
+        for (String unlikelyInteractionType : unlikelyInteractionTypeNames) {
+            boolean condition = new InteractTypeMapperFactoryImpl().create()
+                    .shouldIgnoreInteractionType(unlikelyInteractionType);
+            assertTrue("failed to ignore [" + unlikelyInteractionType + "]", condition);
+        }
+    }
+
+    @Test(expected = TermLookupServiceException.class)
+    public void createInteractionTermMapperUnknownResolvedId() throws StudyImporterException, TermLookupServiceException {
+        TermLookupService termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 return IOUtils.toInputStream(
                         "observation_field_id,providedName,interaction_type_id,resolvedName\n" +
-                        "someProvidedId,someProvidedName,someResolvedId,someResolvedName", StandardCharsets.UTF_8);
+                                "someProvidedId,someProvidedName,someResolvedId,someResolvedName", StandardCharsets.UTF_8);
             }
 
             @Override
@@ -64,10 +159,10 @@ public class InteractUtilTest {
 
     @Test
     public void createInteractionTermMapperValidTerm() throws StudyImporterException, TermLookupServiceException {
-        TermLookupService termLookupService = InteractUtil.getTermLookupService(new ResourceService<URI>() {
+        TermLookupService termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
-                if (resourceName.equals(InteractUtil.TYPE_MAP_URI_DEFAULT)) {
+                if (resourceName.equals(InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT)) {
                     return IOUtils.toInputStream(
                             "observation_field_id,providedName,interaction_type_id,resolvedName\n" +
                                     "someProvidedId,someProvidedName,http://purl.obolibrary.org/obo/RO_0002440,someResolvedName", StandardCharsets.UTF_8);

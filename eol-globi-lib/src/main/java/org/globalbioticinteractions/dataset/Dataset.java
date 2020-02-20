@@ -4,11 +4,9 @@ import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.doi.DOI;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
-public interface Dataset extends ResourceService<URI> {
+public interface Dataset extends ResourceService {
 
     URI getArchiveURI();
 

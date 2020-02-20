@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 public class EMLUtil {
 
-    public static JsonNode datasetWithEML(ResourceService<URI> origDataset, URI emlURI) throws IOException {
+    public static JsonNode datasetWithEML(ResourceService origDataset, URI emlURI) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);

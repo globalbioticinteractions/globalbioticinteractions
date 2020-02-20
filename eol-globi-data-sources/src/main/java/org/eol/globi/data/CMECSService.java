@@ -34,13 +34,13 @@ public class CMECSService implements TermLookupService {
 
     private Map<String, Term> termMap = null;
 
-    private final ResourceService<URI> service;
+    private final ResourceService service;
 
     public CMECSService() {
         this(new ResourceServiceDefault());
     }
 
-    public CMECSService(ResourceService<URI> resourceServiceDefault) {
+    public CMECSService(ResourceService resourceServiceDefault) {
         this.service = resourceServiceDefault;
     }
 
@@ -57,7 +57,7 @@ public class CMECSService implements TermLookupService {
         return term == null ? Collections.emptyList() : Collections.singletonList(term);
     }
 
-    private static Map<String, Term> buildTermMap(ResourceService<URI> service) throws IOException {
+    private static Map<String, Term> buildTermMap(ResourceService service) throws IOException {
         LOG.info(CMECSService.class.getSimpleName() + " instantiating...");
         URI uri = URI.create("https://cmecscatalog.org/cmecs/documents/cmecs4.accdb");
         LOG.info("CMECS data [" + uri + "] downloading ...");
@@ -93,11 +93,11 @@ public class CMECSService implements TermLookupService {
         return aquaticSettingsTerms;
     }
 
-    public ResourceService<URI> getService() {
+    public ResourceService getService() {
         return service;
     }
 
-    private static class ResourceServiceDefault implements ResourceService<URI> {
+    private static class ResourceServiceDefault implements ResourceService {
 
         @Override
         public InputStream retrieve(URI resourceName) throws IOException {

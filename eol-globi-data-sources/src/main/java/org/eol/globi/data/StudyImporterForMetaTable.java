@@ -8,6 +8,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.InteractTypeMapperFactory;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.eol.globi.util.CSVTSVUtil;
@@ -181,10 +182,10 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     }
 
 
-    public static InteractType generateInteractionType(Map<String, String> properties) {
+    public static InteractType generateInteractionType(Map<String, String> properties, InteractTypeMapperFactory.InteractTypeMapper mapper) {
         final String interactionTypeName = properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME);
         return StringUtils.isNotBlank(interactionTypeName)
-                ? InteractUtil.getInteractTypeForName(interactionTypeName)
+                ? mapper.getInteractType(interactionTypeName)
                 : null;
     }
 

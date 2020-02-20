@@ -1,18 +1,22 @@
 package org.eol.globi.data;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.InteractTypeMapperFactory;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -206,8 +210,35 @@ public class StudyImporterForMetaTableTest {
 
     @Test
     public void interactionTypeMapping() {
-        assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("donald")), is(nullValue()));
-        assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("pollinator")), is(InteractType.POLLINATES));
+        InteractTypeMapperFactory.InteractTypeMapper mapper = new InteractTypeMapperFactory.InteractTypeMapper() {
+            @Override
+            public boolean shouldIgnoreInteractionType(String nameOrId) {
+                return false;
+            }
+
+            @Override
+            public InteractType getInteractType(String nameOrId) {
+                return null;
+            }
+        };
+        assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("donald"), mapper), is(nullValue()));
+    }
+
+    @Test
+    public void interactionTypeMappingValid() {
+        InteractTypeMapperFactory.InteractTypeMapper mapper = new InteractTypeMapperFactory.InteractTypeMapper() {
+            @Override
+            public boolean shouldIgnoreInteractionType(String nameOrId) {
+                return false;
+            }
+
+            @Override
+            public InteractType getInteractType(String nameOrId) {
+                return InteractType.POLLINATES;
+            }
+        };
+        assertThat(StudyImporterForMetaTable.generateInteractionType(interactMap("pollinator"), mapper), is(InteractType.POLLINATES));
+
     }
 
     @Test
@@ -377,7 +408,22 @@ public class StudyImporterForMetaTableTest {
     @Test
     public void explicitNullValueForCatalogNumberUMMZI() throws IOException, StudyImporterException {
         StudyImporterForMetaTable importer = new StudyImporterForMetaTable(null, null);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+        DatasetLocal dataset = new DatasetLocal(inStream -> inStream) {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                Map<URI, String> resourceMap = new HashMap<URI, String>() {{
+                   put(URI.create("interaction_types_ignored.csv"), "field_observation_id\nshouldBeIgnored");
+                   put(URI.create("interaction_types.csv"), "observation_field_name,observation_field_id,interaction_type_label,interaction_type_id\n" +
+                           "associated with,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437");
+                }};
+
+                String input = resourceMap.get(resourceName);
+                return StringUtils.isBlank(input)
+                        ? super.retrieve(resourceName)
+                        : IOUtils.toInputStream(input, StandardCharsets.UTF_8);
+            }
+
+        };
 
         JsonNode ummziConfig = new ObjectMapper().readTree(getClass().getResourceAsStream("ummzi-globi.json"));
 

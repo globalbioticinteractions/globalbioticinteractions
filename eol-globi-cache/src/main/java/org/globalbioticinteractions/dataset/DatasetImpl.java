@@ -19,7 +19,7 @@ public class DatasetImpl implements Dataset {
 
     private final String namespace;
     private final URI archiveURI;
-    private final ResourceService<URI> resourceService;
+    private final ResourceService resourceService;
     private JsonNode config;
     private URI configURI;
 
@@ -95,7 +95,7 @@ public class DatasetImpl implements Dataset {
         return configURI;
     }
 
-    private class ResourceServiceWithMapping implements ResourceService<URI> {
+    private class ResourceServiceWithMapping implements ResourceService {
         private final InputStreamFactory factory;
         private final Dataset dataset;
 

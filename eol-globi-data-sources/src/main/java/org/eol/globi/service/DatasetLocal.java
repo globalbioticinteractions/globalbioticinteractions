@@ -5,7 +5,7 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 
 import java.net.URI;
 
-public final class DatasetLocal extends DatasetImpl {
+public class DatasetLocal extends DatasetImpl {
 
     public DatasetLocal(InputStreamFactory inputStreamFactory) {
         super("jhpoelen/eol-globidata", URI.create("classpath:/org/eol/globi/data"), inputStreamFactory);

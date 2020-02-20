@@ -11,7 +11,8 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.eol.globi.util.InteractUtil;
+import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.InteractTypeMapperFactoryImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.eol.globi.util.NodeUtil;
@@ -56,7 +57,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         final ArrayList<String> typesIgnored = new ArrayList<>();
         final HashMap<String, InteractType> typeMap = new HashMap<>();
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
-                InteractUtil.getTermLookupService(typesIgnored, typeMap));
+                InteractTypeMapperFactoryImpl.getTermLookupService(typesIgnored, typeMap));
         resolveNames();
         Study study = nodeFactory.findStudy("INAT:45209");
         assertThat(study, is(nullValue()));
@@ -73,7 +74,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
             }
         };
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"),
-                InteractUtil.getTermLookupService(typesIgnored, typeMap));
+                InteractTypeMapperFactoryImpl.getTermLookupService(typesIgnored, typeMap));
         resolveNames();
 
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(22));
@@ -150,7 +151,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
             }
         };
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_taxon_ids.json"),
-                InteractUtil.getTermLookupService(typesIgnored, typeMap));
+                InteractTypeMapperFactoryImpl.getTermLookupService(typesIgnored, typeMap));
         resolveNames();
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(10));
 
@@ -167,8 +168,8 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Ignore
     @Test
     public void loadIgnoredInteractions() throws IOException {
-        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(InteractUtil.TYPE_IGNORED_URI_DEFAULT, CharsetConstant.UTF8);
-        List<String> typeMap1 = InteractUtil.buildTypesIgnored(labeledCSVParser);
+        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, CharsetConstant.UTF8);
+        List<String> typeMap1 = InteractTypeMapperFactoryImpl.buildTypesIgnored(labeledCSVParser);
 
         assertThat(typeMap1.contains(PREFIX_OBSERVATION_FIELD + 13), is(false));
         assertThat(typeMap1.contains(PREFIX_OBSERVATION_FIELD + 1378), is(true));
@@ -176,10 +177,10 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
 
     @Ignore
     @Test
-    public void loadInteractionMap() throws IOException {
-        URI resourceName = InteractUtil.TYPE_MAP_URI_DEFAULT;
+    public void loadInteractionMap() throws IOException, TermLookupServiceException {
+        URI resourceName = InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT;
         LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(resourceName, CharsetConstant.UTF8);
-        Map<String, InteractType> typeMap = InteractUtil.buildTypeMap(labeledCSVParser);
+        Map<String, InteractType> typeMap = InteractTypeMapperFactoryImpl.buildTypeMap(labeledCSVParser);
 
         assertThat(typeMap.get(PREFIX_OBSERVATION_FIELD + 13), is(InteractType.ATE));
         assertThat(typeMap.get(PREFIX_OBSERVATION_FIELD + 1685), is(InteractType.ATE));

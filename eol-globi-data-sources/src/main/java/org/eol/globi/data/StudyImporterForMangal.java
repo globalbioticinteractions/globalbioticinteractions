@@ -42,7 +42,7 @@ public class StudyImporterForMangal extends StudyImporterWithListener {
         return URI.create(String.format("%s?page=%d&count=%d", urlEndpoint, page, limit));
     }
 
-    public static void retrievePagedResource(ResourceService<URI> resourceService, NodeListener listener, int pageSize, int pageNumber, String urlEndpoint) throws StudyImporterException, IOException {
+    public static void retrievePagedResource(ResourceService resourceService, NodeListener listener, int pageSize, int pageNumber, String urlEndpoint) throws StudyImporterException, IOException {
         URI pageUrl;
         do {
             pageUrl = getPagedUrl(urlEndpoint, pageNumber, pageSize);

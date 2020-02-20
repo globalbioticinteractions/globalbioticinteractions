@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 interface DatasetConfigurer {
-    JsonNode configure(ResourceService<URI> dataset, URI configURI) throws IOException;
+    JsonNode configure(ResourceService dataset, URI configURI) throws IOException;
 }
 
 interface DatasetFactoryInterface {
@@ -53,7 +53,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
         return datasetProxy;
     }
 
-    private Pair<URI, JsonNode> configDataset(ResourceService<URI> dataset) throws DatasetFinderException {
+    private Pair<URI, JsonNode> configDataset(ResourceService dataset) throws DatasetFinderException {
         Map<URI, DatasetConfigurer> datasetHandlers = new TreeMap<URI, DatasetConfigurer>() {{
             put(URI.create("/globi.json"), new JSONConfigurer());
             put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
@@ -90,12 +90,12 @@ public class DatasetFactory implements DatasetFactoryInterface {
     private static class JSONConfigurer implements DatasetConfigurer {
 
         @Override
-        public JsonNode configure(ResourceService<URI> dataset, URI configURI) throws IOException {
+        public JsonNode configure(ResourceService dataset, URI configURI) throws IOException {
             return configureDataset(dataset, configURI);
         }
     }
 
-    private static JsonNode configureDataset(ResourceService<URI> dataset, URI configURI) throws IOException {
+    private static JsonNode configureDataset(ResourceService dataset, URI configURI) throws IOException {
         try (InputStream inputStream = dataset.retrieve(configURI)) {
             if (inputStream == null) {
                 throw new IOException("failed to access resource [" + configURI.toString() + "]");

@@ -1,0 +1,42 @@
+observation_field_name,observation_field_id,interaction_type_label,interaction_type_id
+associated with,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+ex,,hasHost, http://purl.obolibrary.org/obo/RO_0002454
+ex.,,hasHost, http://purl.obolibrary.org/obo/RO_0002454
+reared ex,,hasHost, http://purl.obolibrary.org/obo/RO_0002454
+reared ex.,,hasHost, http://purl.obolibrary.org/obo/RO_0002454
+host to,, hostOf, http://purl.obolibrary.org/obo/RO_0002453
+host,,hasHost, http://purl.obolibrary.org/obo/RO_0002454
+h,,hasHost, http://purl.obolibrary.org/obo/RO_0002454
+larval foodplant,,eats, http://purl.obolibrary.org/obo/RO_0002470
+ectoparasite of,,ectoparasiteOf, http://purl.obolibrary.org/obo/RO_0002632
+parasite of,,parasiteOf, http://purl.obolibrary.org/obo/RO_0002444
+stomach contents of,,eatenBy, http://purl.obolibrary.org/obo/RO_0002471
+stomach contents,,eats, http://purl.obolibrary.org/obo/RO_0002470
+has stomach contents,,eats, http://purl.obolibrary.org/obo/RO_0002470
+eaten by,,eatenBy, http://purl.obolibrary.org/obo/RO_0002471
+(ate),,eats, http://purl.obolibrary.org/obo/RO_0002470
+(eaten by),,eatenBy, http://purl.obolibrary.org/obo/RO_0002471
+(parasite of),,parasiteOf, http://purl.obolibrary.org/obo/RO_0002444
+(host of),, hostOf, http://purl.obolibrary.org/obo/RO_0002453
+(in amplexus with),,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+consumption,,eats, http://purl.obolibrary.org/obo/RO_0002470
+flower predator,,eats, http://purl.obolibrary.org/obo/RO_0002470
+flower visitor,,visitsFlowersOf, http://purl.obolibrary.org/obo/RO_0002622
+folivory,,eats, http://purl.obolibrary.org/obo/RO_0002470
+fruit thief,,eats, http://purl.obolibrary.org/obo/RO_0002470
+ingestion,,eats, http://purl.obolibrary.org/obo/RO_0002470
+pollinator,,pollinates, http://purl.obolibrary.org/obo/RO_0002455
+seed disperser,,dispersalVectorOf, http://eol.org/schema/terms/DispersalVector
+seed predator,,eats, http://purl.obolibrary.org/obo/RO_0002470
+vector of,,vectorOf, http://purl.obolibrary.org/obo/RO_0002459
+found on,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+visitsflowersof,,visitsFlowersOf, http://purl.obolibrary.org/obo/RO_0002622
+collected on,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+reared from,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+emerged from,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+collected in,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+hyperparasitoid of,,hyperparasiteOf, http://purl.obolibrary.org/obo/RO_0002553
+on,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+under,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+inside,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437
+in,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437

@@ -20,7 +20,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.eol.globi.util.InteractUtil;
+import org.eol.globi.util.InteractTypeMapperFactoryImpl;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -90,7 +90,12 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     private int retrieveDataParseResults() throws StudyImporterException {
-        TermLookupService termLookupService = InteractUtil.getTermLookupService(getDataset());
+        TermLookupService termLookupService;
+        try {
+            termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(getDataset());
+        } catch (TermLookupServiceException e) {
+            throw new StudyImporterException("failed to find interaction term mapping", e);
+        }
 
         int totalInteractions = 0;
         int previousResultCount = 0;
