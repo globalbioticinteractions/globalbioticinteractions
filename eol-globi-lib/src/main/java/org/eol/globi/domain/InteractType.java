@@ -128,6 +128,8 @@ public enum InteractType implements RelType {
     InteractionRole targetRole;
 
     private static final Map<String, InteractType> SYNONYMS_OR_HYPORNYMS = new HashMap<String, InteractType>() {{
+        put("http://eol.org/schema/terms/HasDispersalVector", HAS_VECTOR);
+        put("http://eol.org/schema/terms/DispersalVector", VECTOR_OF);
         put("http://eol.org/schema/terms/FlowersVisitedBy", FLOWERS_VISITED_BY);
         put("http://eol.org/schema/terms/VisitsFlowersOf", VISITS_FLOWERS_OF);
         put("http://eol.org/schema/terms/kills", KILLS);

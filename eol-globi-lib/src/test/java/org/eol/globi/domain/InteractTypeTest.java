@@ -52,8 +52,8 @@ public class InteractTypeTest {
     @Test
     public void typeOfLabels() {
         assertThat(typeOf("RO:0002459"), is(VECTOR_OF));
-        assertThat(typeOf("http://eol.org/schema/terms/DispersalVector"), is(DISPERSAL_VECTOR_OF));
-        assertThat(typeOf("http://eol.org/schema/terms/HasDispersalVector"), is(HAS_DISPERAL_VECTOR));
+        assertThat(typeOf("http://eol.org/schema/terms/HasDispersalVector"), is(HAS_VECTOR));
+        assertThat(typeOf("http://eol.org/schema/terms/DispersalVector"), is(VECTOR_OF));
         assertThat(typeOf("http://eol.org/schema/terms/FlowersVisitedBy"), is(FLOWERS_VISITED_BY));
         assertThat(typeOf("http://eol.org/schema/terms/VisitsFlowersOf"), is(VISITS_FLOWERS_OF));
         assertThat(typeOf("http://eol.org/schema/terms/emergedFrom"), is(INTERACTS_WITH));
