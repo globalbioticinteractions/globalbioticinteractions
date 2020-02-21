@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_ID;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
@@ -71,6 +72,7 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_CODE;
 import static org.eol.globi.domain.PropertyAndValueDictionary.INSTITUTION_CODE;
 import static org.eol.globi.domain.PropertyAndValueDictionary.OCCURRENCE_ID;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -325,6 +327,113 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         handleRelations(someListener, RelTypes.COLLECTED);
 
         assertThat(foundSpecimen.get(), is(1));
+    }
+
+    @Test
+    public void importWithMissingTargetTaxonButAvailableInstitutionCollectionCatalogTriple() throws StudyImporterException {
+        List<String> msgs = new ArrayList<>();
+        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new NullImportLogger() {
+            @Override
+            public void info(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+        });
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(SOURCE_TAXON_NAME, "Donald duck");
+        link.put(SOURCE_TAXON_PATH, "Aves | Donald | Donald duck");
+        link.put(SOURCE_TAXON_PATH_NAMES, "class | genus | species");
+        link.put(SOURCE_TAXON_SPECIFIC_EPITHET, "duck");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(TARGET_OCCURRENCE_ID, "occurrenceId123");
+        link.put(TARGET_INSTITUTION_CODE, "institutionCode123");
+        link.put(TARGET_COLLECTION_CODE, "collectionCode123");
+        link.put(TARGET_COLLECTION_ID, "collectionId123");
+        link.put(TARGET_CATALOG_NUMBER, "catalogNumber123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_ID, "123");
+        link.put(REFERENCE_CITATION, "");
+
+        listener.newLink(link);
+        assertThat(msgs, hasItem("target taxon name missing: using institutionCode/collectionCode/collectionId/catalogNumber/occurrenceId as placeholder"));
+
+        final AtomicBoolean foundPair = new AtomicBoolean(false);
+        NodeUtil.RelationshipListener relationshipListener = relationship -> {
+            final SpecimenNode predator = new SpecimenNode(relationship.getEndNode());
+            for (Relationship stomachRel : NodeUtil.getStomachContents(predator)) {
+                final SpecimenNode prey = new SpecimenNode(stomachRel.getEndNode());
+                final TaxonNode preyTaxon = getOrigTaxon(prey);
+
+                assertThat(preyTaxon.getName(), is("institutionCode123 | collectionCode123 | collectionId123 | catalogNumber123 | occurrenceId123"));
+                foundPair.set(true);
+            }
+        };
+
+
+        handleRelations(relationshipListener, RelTypes.COLLECTED);
+        assertThat(foundPair.get(), is(true));
+
+    }
+
+    @Test
+    public void importWithMissingSourceTaxonButAvailableInstitutionCollectionCatalogTriple() throws StudyImporterException {
+        List<String> msgs = new ArrayList<>();
+        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new NullImportLogger() {
+            @Override
+            public void info(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+        });
+        final HashMap<String, String> link = new HashMap<>();
+        link.put(TARGET_TAXON_NAME, "Donald duck");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(SOURCE_OCCURRENCE_ID, "occurrenceId123");
+        link.put(SOURCE_INSTITUTION_CODE, "institutionCode123");
+        link.put(SOURCE_COLLECTION_CODE, "collectionCode123");
+        link.put(SOURCE_COLLECTION_ID, "collectionId123");
+        link.put(SOURCE_CATALOG_NUMBER, "catalogNumber123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_ID, "123");
+        link.put(REFERENCE_CITATION, "");
+
+        listener.newLink(link);
+        assertThat(msgs, hasItem("source taxon name missing: using institutionCode/collectionCode/collectionId/catalogNumber/occurrenceId as placeholder"));
+
+        final AtomicBoolean foundPair = new AtomicBoolean(false);
+        NodeUtil.RelationshipListener relationshipListener = relationship -> {
+            final SpecimenNode predator = new SpecimenNode(relationship.getEndNode());
+            for (Relationship stomachRel : NodeUtil.getStomachContents(predator)) {
+                final SpecimenNode pred = new SpecimenNode(stomachRel.getStartNode());
+                final TaxonNode predTaxon = getOrigTaxon(predator);
+
+                assertThat(predTaxon.getName(), is("institutionCode123 | collectionCode123 | collectionId123 | catalogNumber123 | occurrenceId123"));
+                foundPair.set(true);
+            }
+        };
+
+
+        handleRelations(relationshipListener, RelTypes.COLLECTED);
+        assertThat(foundPair.get(), is(true));
+
     }
 
     @Test

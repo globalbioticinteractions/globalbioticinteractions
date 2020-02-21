@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_ID;
@@ -91,17 +93,53 @@ class InteractionListenerImpl implements InteractionListener {
     }
 
     @Override
-    public void newLink(Map<String, String> properties) throws StudyImporterException {
+    public void newLink(Map<String, String> link) throws StudyImporterException {
         try {
-            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(properties);
-            for (Map<String, String> expandedProperties : propertiesList) {
-                if (properties != null && validLink(expandedProperties)) {
-                    logIfPossible(expandedProperties, "biotic interaction found");
-                    importValidLink(expandedProperties);
+            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(link);
+            for (Map<String, String> expandedLink : propertiesList) {
+                addPlaceholderNamesIfNeeded(expandedLink);
+
+                if (expandedLink != null && validLink(expandedLink)) {
+                    logIfPossible(expandedLink, "biotic interaction found");
+                    importValidLink(expandedLink);
                 }
             }
         } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to import: " + properties, e);
+            throw new StudyImporterException("failed to import: " + link, e);
+        }
+    }
+
+    public void addPlaceholderNamesIfNeeded(Map<String, String> expandedLink) {
+        if (createSourceTaxonPredicate(null).negate().test(expandedLink)) {
+            Stream<String> placeholderNames = Stream.of(
+                    SOURCE_INSTITUTION_CODE,
+                    SOURCE_COLLECTION_CODE,
+                    SOURCE_COLLECTION_ID,
+                    SOURCE_CATALOG_NUMBER,
+                    SOURCE_OCCURRENCE_ID);
+            addPlaceholderNamesIfPossible(expandedLink, placeholderNames, "source", SOURCE_TAXON_NAME);
+        }
+        if (createTargetTaxonPredicate(null).negate().test(expandedLink)) {
+            Stream<String> placeholderNames = Stream.of(
+                    TARGET_INSTITUTION_CODE,
+                    TARGET_COLLECTION_CODE,
+                    TARGET_COLLECTION_ID,
+                    TARGET_CATALOG_NUMBER,
+                    TARGET_OCCURRENCE_ID);
+            addPlaceholderNamesIfPossible(expandedLink, placeholderNames, "target", TARGET_TAXON_NAME);
+        }
+    }
+
+    public void addPlaceholderNamesIfPossible(Map<String, String> expandedLink, Stream<String> placeholderNames, String sourceOrTarget, String nameToBeFilled) {
+        final String placeholderMessage = " using institutionCode/collectionCode/collectionId/catalogNumber/occurrenceId as placeholder";
+
+        String targetNamePlaceholder = placeholderNames
+                .map(expandedLink::get)
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
+        if (StringUtils.isNotBlank(targetNamePlaceholder)) {
+            logWarningIfPossible(expandedLink, sourceOrTarget + " taxon name missing:" + placeholderMessage);
+            expandedLink.putIfAbsent(nameToBeFilled, targetNamePlaceholder);
         }
     }
 
@@ -116,26 +154,9 @@ class InteractionListenerImpl implements InteractionListener {
     }
 
     static boolean validLink(Map<String, String> link, ImportLogger logger) {
-        Predicate<Map<String, String>> hasSourceTaxon = (Map<String, String> l) -> {
-            String sourceTaxonName = l.get(SOURCE_TAXON_NAME);
-            String sourceTaxonId = l.get(SOURCE_TAXON_ID);
-            boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
-            if (!isValid) {
-                logger.warn(LogUtil.contextFor(l), "source taxon name missing");
-            }
-            return isValid;
-        };
+        Predicate<Map<String, String>> hasSourceTaxon = createSourceTaxonPredicate(logger);
 
-        Predicate<Map<String, String>> hasTargetTaxon = (Map<String, String> l) -> {
-            String targetTaxonName = l.get(TARGET_TAXON_NAME);
-            String targetTaxonId = l.get(TARGET_TAXON_ID);
-
-            boolean isValid = StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId);
-            if (!isValid) {
-                logger.warn(LogUtil.contextFor(l), "target taxon name missing");
-            }
-            return isValid;
-        };
+        Predicate<Map<String, String>> hasTargetTaxon = createTargetTaxonPredicate(logger);
 
         Predicate<Map<String, String>> hasInteractionType = createInteractionTypePredicate(logger);
 
@@ -146,6 +167,31 @@ class InteractionListenerImpl implements InteractionListener {
                 .and(hasInteractionType)
                 .and(hasReferenceId)
                 .test(link);
+    }
+
+    private static Predicate<Map<String, String>> createSourceTaxonPredicate(ImportLogger logger) {
+        return (Map<String, String> l) -> {
+            String sourceTaxonName = l.get(SOURCE_TAXON_NAME);
+            String sourceTaxonId = l.get(SOURCE_TAXON_ID);
+            boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
+            if (!isValid && logger != null) {
+                logger.warn(LogUtil.contextFor(l), "source taxon name missing");
+            }
+            return isValid;
+        };
+    }
+
+    private static Predicate<Map<String, String>> createTargetTaxonPredicate(ImportLogger logger) {
+        return (Map<String, String> l) -> {
+            String targetTaxonName = l.get(TARGET_TAXON_NAME);
+            String targetTaxonId = l.get(TARGET_TAXON_ID);
+
+            boolean isValid = StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId);
+            if (!isValid && logger != null) {
+                logger.warn(LogUtil.contextFor(l), "target taxon name missing");
+            }
+            return isValid;
+        };
     }
 
     private static Predicate<Map<String, String>> createReferencePredicate(ImportLogger logger) {
@@ -345,15 +391,15 @@ class InteractionListenerImpl implements InteractionListener {
                     // 8888 is a magic number used by Arctos
                     // see http://handbook.arctosdb.org/documentation/dates.html#restricted-data
                     // https://github.com/ArctosDB/arctos/issues/2426
-                    logWarning(link, "date [" + DateUtil.printDate(date) + "] appears to be restricted, see http://handbook.arctosdb.org/documentation/dates.html#restricted-data");
+                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] appears to be restricted, see http://handbook.arctosdb.org/documentation/dates.html#restricted-data");
                 } else if (date.after(new Date())) {
-                    logWarning(link, "date [" + DateUtil.printDate(date) + "] is in the future");
+                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] is in the future");
                 } else if (dateTime.getYear() < 100) {
-                    logWarning(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
+                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
             } catch (IllegalArgumentException ex) {
-                logWarning(link, "invalid date string [" + eventDate + "]");
+                logWarningIfPossible(link, "invalid date string [" + eventDate + "]");
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
             }
@@ -401,7 +447,7 @@ class InteractionListenerImpl implements InteractionListener {
             try {
                 centroid = LocationUtil.parseLatLng(latitude, longitude);
             } catch (InvalidLocationException e) {
-                logWarning(link, "found invalid location: [" + e.getMessage() + "]");
+                logWarningIfPossible(link, "found invalid location: [" + e.getMessage() + "]");
             }
         }
         String localityId = getFirstValueForTerms(link, LOCALITY_ID_TERMS);
@@ -412,7 +458,7 @@ class InteractionListenerImpl implements InteractionListener {
                     centroid = getGeoNamesService().findLatLng(localityId);
                 } catch (IOException ex) {
                     String message = "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]";
-                    logWarning(link, message);
+                    logWarningIfPossible(link, message);
                 }
             }
         }
@@ -438,11 +484,11 @@ class InteractionListenerImpl implements InteractionListener {
         return location == null ? null : nodeFactory.getOrCreateLocation(location);
     }
 
-    private void logWarning(Map<String, String> link, String message) {
-        logWarning(link, message, getLogger());
+    private void logWarningIfPossible(Map<String, String> link, String message) {
+        logWarningIfPossible(link, message, getLogger());
     }
 
-    private static void logWarning(Map<String, String> link, String message, ImportLogger logger) {
+    private static void logWarningIfPossible(Map<String, String> link, String message, ImportLogger logger) {
         if (logger != null) {
             logger.warn(LogUtil.contextFor(link), message);
         }
