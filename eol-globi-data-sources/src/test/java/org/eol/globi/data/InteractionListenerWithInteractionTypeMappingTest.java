@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.InteractTypeMapper;
@@ -37,6 +36,7 @@ public class InteractionListenerWithInteractionTypeMappingTest {
         }, new NullImportLogger());
         listener.newLink(new HashMap<String, String>() {
             {
+                put(INTERACTION_TYPE_NAME, "eats");
                 put(TaxonUtil.TARGET_TAXON_GENUS, "Donald");
                 put(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET, "duck");
             }
