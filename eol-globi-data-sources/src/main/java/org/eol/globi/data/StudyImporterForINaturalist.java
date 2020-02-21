@@ -92,7 +92,13 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private int retrieveDataParseResults() throws StudyImporterException {
         TermLookupService termLookupService;
         try {
-            termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(getDataset(), "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id", InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
+            termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(getDataset(),
+                    "observation_field_id",
+                    "observation_field_id",
+                    "observation_field_name",
+                    "interaction_type_id",
+                    URI.create("interaction_types_ignored.csv"),
+                    URI.create("interaction_types.csv"));
         } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed to find interaction term mapping", e);
         }

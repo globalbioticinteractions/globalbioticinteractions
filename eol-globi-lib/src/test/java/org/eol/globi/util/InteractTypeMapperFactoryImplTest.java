@@ -33,14 +33,14 @@ public class InteractTypeMapperFactoryImplTest {
     public InteractTypeMapperImpl createIgnoreServiceMock() throws IOException, TermLookupServiceException {
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
-                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8))
-                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8));
-        when(resourceService.retrieve(URI.create("interaction_types.csv")))
+                .thenReturn(IOUtils.toInputStream("provided_interaction_type_id\nshouldBeIgnored", StandardCharsets.UTF_8))
+                .thenReturn(IOUtils.toInputStream("provided_interaction_type_id\nshouldBeIgnored", StandardCharsets.UTF_8));
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
 
         TermLookupService ignoreTermService = InteractTypeMapperFactoryImpl.getIgnoredTermService(
                 resourceService,
-                "observation_field_id",
+                "provided_interaction_type_id",
                 URI.create("interaction_types_ignored.csv"));
 
         TermLookupService termMapper = Mockito.mock(TermLookupService.class);
@@ -54,10 +54,10 @@ public class InteractTypeMapperFactoryImplTest {
 
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
-                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8))
-                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8));
-        when(resourceService.retrieve(URI.create("interaction_types.csv")))
-                .thenReturn(IOUtils.toInputStream("observation_field_name,observation_field_id,interaction_type_label,interaction_type_id" +
+                .thenReturn(IOUtils.toInputStream("provided_interaction_type_id\nshouldBeIgnored", StandardCharsets.UTF_8))
+                .thenReturn(IOUtils.toInputStream("provided_interaction_type_id\nshouldBeIgnored", StandardCharsets.UTF_8));
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream("provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
                         "\nshouldBeMapped,id1,interactsWith, http://purl.obolibrary.org/obo/RO_0002437\n" +
                         "\nshouldBeMapped,id2," + InteractType.ATE.getLabel() + "," + InteractType.ATE.getIRI()
                         , StandardCharsets.UTF_8));
@@ -78,7 +78,7 @@ public class InteractTypeMapperFactoryImplTest {
     }
 
     private String getTestMap() {
-        return "observation_field_name,observation_field_id,interaction_type_label,interaction_type_id\n" +
+        return "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
                 "shouldBeMapped,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437";
     }
 
@@ -86,16 +86,16 @@ public class InteractTypeMapperFactoryImplTest {
     public void createAndNoMappingResource() throws TermLookupServiceException, IOException {
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
-                .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8));
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
 
-        when(resourceService.retrieve(URI.create("interaction_types.csv"))).thenThrow(new IOException("kaboom!"));
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv"))).thenThrow(new IOException("kaboom!"));
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
 
         try {
             InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
             interactTypeMapper.getInteractType("shouldBeIgnored");
         } catch (TermLookupServiceException ex) {
-            assertThat(ex.getMessage(), is("failed to load interaction mapping from [interaction_types.csv]"));
+            assertThat(ex.getMessage(), is("failed to load interaction mapping from [interaction_types_mapping.csv]"));
             throw ex;
         }
     }
@@ -105,7 +105,7 @@ public class InteractTypeMapperFactoryImplTest {
 
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv"))).thenThrow(new IOException("kaboom!"));
-        when(resourceService.retrieve(URI.create("interaction_types.csv"))).thenThrow(new IOException("kaboom!"));
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv"))).thenThrow(new IOException("kaboom!"));
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
         try {
             interactTypeMapperFactory.create();
@@ -121,8 +121,8 @@ public class InteractTypeMapperFactoryImplTest {
 
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
-                .thenReturn(IOUtils.toInputStream("ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
-        when(resourceService.retrieve(URI.create("interaction_types.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
 
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);

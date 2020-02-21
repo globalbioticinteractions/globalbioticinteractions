@@ -24,7 +24,7 @@ import java.util.TreeMap;
 public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory {
 
     public static final URI TYPE_IGNORED_URI_DEFAULT = URI.create("interaction_types_ignored.csv");
-    public static final URI TYPE_MAP_URI_DEFAULT = URI.create("interaction_types.csv");
+    public static final URI TYPE_MAP_URI_DEFAULT = URI.create("interaction_types_mapping.csv");
     private final ResourceService resourceService;
 
     public InteractTypeMapperFactoryImpl() {
@@ -79,16 +79,16 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
 
         final TermLookupService termMappingService
                 = getTermLookupService(resourceService,
-                "observation_field_id",
-                "observation_field_id",
-                "observation_field_name",
-                "interaction_type_id",
+                "interaction_type_ignored",
+                "provided_interaction_type_id",
+                "provided_interaction_type_label",
+                "mapped_to_interaction_type_id",
                 TYPE_IGNORED_URI_DEFAULT,
                 TYPE_MAP_URI_DEFAULT);
 
         final TermLookupService ignoredTermLookupService
                 = getIgnoredTermService(resourceService,
-                "observation_field_id",
+                "interaction_type_ignored",
                 TYPE_IGNORED_URI_DEFAULT);
 
         return new InteractTypeMapperWithFallbackImpl(
@@ -99,8 +99,15 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     public static Map<String, InteractType> buildTypeMap(LabeledCSVParser labeledCSVParser,
                                                          String providedInteractionTypeIdColumnName,
                                                          String providedInteractionTypeNameColumnName,
-                                                         String resolvedInteractionTypeIdColumnName) throws TermLookupServiceException, IOException {
+                                                         String mappedInteractionTypeIdColumnName)
+            throws TermLookupServiceException, IOException {
         Map<String, InteractType> typeMap = new TreeMap<>();
+
+        List<String> columnNames = Arrays.asList(labeledCSVParser.getLabels());
+        assertColumnNamePresent(columnNames, providedInteractionTypeNameColumnName);
+        assertColumnNamePresent(columnNames, providedInteractionTypeIdColumnName);
+        assertColumnNamePresent(columnNames, mappedInteractionTypeIdColumnName);
+
         while (labeledCSVParser.getLine() != null) {
             String provideInteractionIdString = labeledCSVParser.getValueByLabel(providedInteractionTypeIdColumnName);
             String providedInteractionId = StringUtils.trim(StringUtils.lowerCase(provideInteractionIdString));
@@ -108,7 +115,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
             String provideInteractionNameString = labeledCSVParser.getValueByLabel(providedInteractionTypeNameColumnName);
             String providedInteractionName = StringUtils.trim(StringUtils.lowerCase(provideInteractionNameString));
 
-            String interactionTypeId = StringUtils.lowerCase(StringUtils.trim(labeledCSVParser.getValueByLabel(resolvedInteractionTypeIdColumnName)));
+            String interactionTypeId = StringUtils.lowerCase(StringUtils.trim(labeledCSVParser.getValueByLabel(mappedInteractionTypeIdColumnName)));
             InteractType interactType = InteractType.typeOf(interactionTypeId);
             if (interactType == null) {
                 throw new TermLookupServiceException("failed to map interaction type to [" + interactionTypeId + "] on line [" + labeledCSVParser.lastLineNumber() + "]: interaction type unknown to GloBI");
@@ -136,6 +143,12 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return typeMap;
     }
 
+    public static void assertColumnNamePresent(List<String> columnNames, String columnNameToCheck) throws TermLookupServiceException {
+        if (!columnNames.contains(columnNameToCheck)) {
+            throw new TermLookupServiceException("missing column [" + columnNameToCheck + "] in mapping file");
+        }
+    }
+
     public static List<String> buildTypesIgnored(LabeledCSVParser labeledCSVParser, String ignoredInteractionTypeColumnName) throws IOException {
         List<String> typeMap1 = new ArrayList<>();
         while (labeledCSVParser.getLine() != null) {
@@ -154,12 +167,17 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
                                                          String resolvedInteractionTypeIdColumnName,
                                                          URI ignoredTypeListURI,
                                                          URI interactionTypeMapURI) throws TermLookupServiceException {
-        List<String> typesIgnored = getAndParseIgnoredTypeList(resourceService, ignoredInteractionTypeColumnName, ignoredTypeListURI);
+        List<String> typesIgnored = getAndParseIgnoredTypeList(
+                resourceService,
+                ignoredInteractionTypeColumnName,
+                ignoredTypeListURI);
+
         Map<String, InteractType> typeMap = getAndParseTypeMap(resourceService,
                 providedInteractionTypeIdColumnName,
                 providedInteractionTypeNameColumnName,
                 resolvedInteractionTypeIdColumnName,
                 interactionTypeMapURI);
+
         return getTermLookupService(typesIgnored, typeMap);
     }
 

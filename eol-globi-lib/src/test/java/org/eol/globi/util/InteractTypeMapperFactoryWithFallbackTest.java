@@ -25,7 +25,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
                 .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8))
                 .thenReturn(IOUtils.toInputStream("observation_field_id\nshouldBeIgnored", StandardCharsets.UTF_8));
-        when(resourceService.retrieve(URI.create("interaction_types.csv")))
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream("", StandardCharsets.UTF_8));
 
         InteractTypeMapper interactTypeMapper

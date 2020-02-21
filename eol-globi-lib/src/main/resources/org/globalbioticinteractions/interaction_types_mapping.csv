@@ -1,4 +1,4 @@
-observation_field_name,observation_field_id,interaction_type_label,interaction_type_id
+provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id
 associated with,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 ex,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 ex.,,hasHost,http://purl.obolibrary.org/obo/RO_0002454

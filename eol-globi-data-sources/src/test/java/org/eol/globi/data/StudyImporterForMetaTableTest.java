@@ -413,7 +413,7 @@ public class StudyImporterForMetaTableTest {
             public InputStream retrieve(URI resourceName) throws IOException {
                 Map<URI, String> resourceMap = new HashMap<URI, String>() {{
                    put(URI.create("interaction_types_ignored.csv"), "field_observation_id\nshouldBeIgnored");
-                   put(URI.create("interaction_types.csv"), "observation_field_name,observation_field_id,interaction_type_label,interaction_type_id\n" +
+                   put(URI.create("interaction_types_mapping.csv"), "observation_field_name,observation_field_id,interaction_type_label,interaction_type_id\n" +
                            "associated with,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437");
                 }};
 
