@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
@@ -31,17 +32,22 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
         TaxonUtil.enrichTaxonNames(link);
 
         String interactionTypeName = link.get(INTERACTION_TYPE_NAME);
-        if (mapper.shouldIgnoreInteractionType(interactionTypeName)) {
+        String interactionTypeId = link.get(INTERACTION_TYPE_ID);
+        if (StringUtils.isBlank(interactionTypeName) && StringUtils.isBlank(interactionTypeId)) {
+            if (logger != null) {
+                logger.info(LogUtil.contextFor(link), "no interaction type defined");
+            }
+        } else if (mapper.shouldIgnoreInteractionType(interactionTypeName)) {
             if (logger != null) {
                 logger.info(LogUtil.contextFor(link), "ignoring interaction record for name [" + interactionTypeName + "]");
             }
         } else {
             InteractType mappedType = null;
-            if (link.containsKey(INTERACTION_TYPE_ID)) {
-                mappedType = mapper.getInteractType(link.get(INTERACTION_TYPE_ID));
+            if (StringUtils.isNotBlank(interactionTypeId)) {
+                mappedType = mapper.getInteractType(interactionTypeId);
             }
 
-            if (mappedType == null && link.containsKey(INTERACTION_TYPE_NAME)) {
+            if (mappedType == null && StringUtils.isNotBlank(interactionTypeName)) {
                 mappedType = mapper.getInteractType(interactionTypeName);
             }
 
