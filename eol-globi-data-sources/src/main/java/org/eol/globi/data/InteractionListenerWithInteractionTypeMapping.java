@@ -3,12 +3,15 @@ package org.eol.globi.data;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
+import org.eol.globi.util.InteractUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID_VERBATIM;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME_VERBATIM;
 
 public class InteractionListenerWithInteractionTypeMapping implements InteractionListener {
     private final InteractTypeMapper mapper;
@@ -46,6 +49,8 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
             if (mappedType != null) {
                 properties.put(INTERACTION_TYPE_ID, mappedType.getIRI());
                 properties.put(INTERACTION_TYPE_NAME, mappedType.getLabel());
+                InteractUtil.putNotBlank(properties, INTERACTION_TYPE_ID_VERBATIM, properties.get(INTERACTION_TYPE_ID));
+                InteractUtil.putNotBlank(properties, INTERACTION_TYPE_NAME_VERBATIM, properties.get(INTERACTION_TYPE_NAME));
             }
             listener.newLink(properties);
         }

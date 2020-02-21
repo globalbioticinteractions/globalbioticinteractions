@@ -62,7 +62,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
                 InteractionListener interactionListener = new InteractionListenerWithInteractionTypeMapping(
                         getInteractionListener(),
-                        createInteractionTypeMapperForImporter(getDataset()),
+                        createInteractionTypeMapperForImporter(datasetProxy),
                         getLogger());
                 final InteractionListener listener = new TableInteractionListenerProxy(datasetProxy, interactionListener);
                 importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy, getLogger());

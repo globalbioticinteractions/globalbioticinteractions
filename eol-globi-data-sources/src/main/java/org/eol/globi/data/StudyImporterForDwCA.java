@@ -85,7 +85,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     public static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex.+\\W.*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
     public static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
-    private InteractTypeMapper interactionTypeMapper;
 
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -93,10 +92,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     }
 
     private InteractTypeMapper getInteractionTypeMapper() throws StudyImporterException {
-        if (interactionTypeMapper == null) {
-            interactionTypeMapper = InteractUtil.createInteractionTypeMapperForImporter(getDataset());
-        }
-        return interactionTypeMapper;
+        return InteractUtil.createInteractionTypeMapperForImporter(getDataset());
     }
 
     @Override
@@ -119,7 +115,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             InteractionListener listenerProxy = new InteractionListenerWithInteractionTypeMapping(
                     new InteractionListenerWithContext(),
-                    getInteractionTypeMapper(),
+                    InteractUtil.createInteractionTypeMapperForImporter(getDataset()),
                     getLogger());
 
             importResourceRelationExtension(archive, listenerProxy);

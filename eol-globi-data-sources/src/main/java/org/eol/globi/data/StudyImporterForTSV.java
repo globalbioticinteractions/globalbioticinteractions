@@ -6,6 +6,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 
 public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String INTERACTION_TYPE_ID = "interactionTypeId";
+    public static final String INTERACTION_TYPE_ID_VERBATIM = INTERACTION_TYPE_ID + "Verbatim";
     public static final String STUDY_SOURCE_CITATION = "studySourceCitation";
     public static final String REFERENCE_ID = "studyTitle";
     public static final String REFERENCE_DOI = "referenceDoi";
@@ -30,6 +32,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String REFERENCE_URL = "referenceUrl";
     public static final String LOCALITY_NAME = "localityName";
     public static final String INTERACTION_TYPE_NAME = "interactionTypeName";
+    public static final String INTERACTION_TYPE_NAME_VERBATIM = INTERACTION_TYPE_NAME + "Verbatim";
     public static final String HABITAT_NAME = "habitatName";
     public static final String HABITAT_ID = "habitatId";
     public static final String SOURCE_OCCURRENCE_ID = "sourceOccurrenceId";
@@ -110,13 +113,13 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
         while (parser.getLine() != null) {
             final Map<String, String> link = new TreeMap<>();
             final String referenceDoi = StringUtils.replace(parser.getValueByLabel(REFERENCE_DOI), " ", "");
-            putNotBlank(link, REFERENCE_DOI, referenceDoi);
-            putNotBlank(link, REFERENCE_CITATION, CSVTSVUtil.valueOrNull(parser, REFERENCE_CITATION));
-            putNotBlank(link, REFERENCE_URL, CSVTSVUtil.valueOrNull(parser, REFERENCE_URL));
-            putNotBlank(link, STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
+            InteractUtil.putNotBlank(link, REFERENCE_DOI, referenceDoi);
+            InteractUtil.putNotBlank(link, REFERENCE_CITATION, CSVTSVUtil.valueOrNull(parser, REFERENCE_CITATION));
+            InteractUtil.putNotBlank(link, REFERENCE_URL, CSVTSVUtil.valueOrNull(parser, REFERENCE_URL));
+            InteractUtil.putNotBlank(link, STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
 
-            putNotBlank(link, TaxonUtil.SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_ID)));
-            putNotBlank(link, TaxonUtil.TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_ID)));
+            InteractUtil.putNotBlank(link, TaxonUtil.SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_ID)));
+            InteractUtil.putNotBlank(link, TaxonUtil.TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_ID)));
 
 
             Stream.concat(
@@ -156,10 +159,10 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
                         ? PropertyAndValueDictionary.REFUTES
                         : PropertyAndValueDictionary.SUPPORTS;
             }
-            putNotBlank(link, ARGUMENT_TYPE_ID, argumentTypeId);
+            InteractUtil.putNotBlank(link, ARGUMENT_TYPE_ID, argumentTypeId);
 
-            putNotBlank(link, RESOURCE_LINE_NUMBER, Integer.toString(parser.getLastLineNumber()));
-            putNotBlank(link, RESOURCE_URI, resourceURI.toString());
+            InteractUtil.putNotBlank(link, RESOURCE_LINE_NUMBER, Integer.toString(parser.getLastLineNumber()));
+            InteractUtil.putNotBlank(link, RESOURCE_URI, resourceURI.toString());
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 
@@ -169,21 +172,15 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     }
 
     private void doIdentifyMap(LabeledCSVParser parser, Map<String, String> link, String propertyName) {
-        putNotBlank(link, propertyName, StringUtils.trim(parser.getValueByLabel(propertyName)));
+        InteractUtil.putNotBlank(link, propertyName, StringUtils.trim(parser.getValueByLabel(propertyName)));
     }
 
     private void attemptToGenerateReferencePropertiesIfMissing(String namespace, Map<String, String> link) {
         if (!ExternalIdUtil.hasProperty(link, REFERENCE_CITATION)) {
-            putNotBlank(link, REFERENCE_CITATION, generateReferenceCitation(link));
+            InteractUtil.putNotBlank(link, REFERENCE_CITATION, generateReferenceCitation(link));
         }
         if (!ExternalIdUtil.hasProperty(link, REFERENCE_ID)) {
-            putNotBlank(link, REFERENCE_ID, namespace + generateReferenceId(link));
-        }
-    }
-
-    private void putNotBlank(Map<String, String> link, String key, String value) {
-        if (StringUtils.isNotBlank(value)) {
-            link.put(key, value);
+            InteractUtil.putNotBlank(link, REFERENCE_ID, namespace + generateReferenceId(link));
         }
     }
 

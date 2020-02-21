@@ -8,6 +8,7 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupServiceException;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.TreeSet;
 
 public class InteractUtil {
@@ -40,6 +41,12 @@ public class InteractUtil {
             return createInteractionTypeMapper(dataset);
         } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed to create interaction type mapper", e);
+        }
+    }
+
+    public static void putNotBlank(Map<String, String> link, String key, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            link.put(key, value);
         }
     }
 }
