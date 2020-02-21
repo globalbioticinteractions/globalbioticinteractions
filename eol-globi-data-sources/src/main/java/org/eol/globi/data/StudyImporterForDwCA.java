@@ -14,6 +14,7 @@ import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.ClosableIterator;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.mapdb.DB;
@@ -683,7 +684,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     }
                     put(DatasetConstant.CONTENT_HASH, getDataset().getOrDefault(DatasetConstant.CONTENT_HASH, ""));
 
-                    String sourceCitationTrimmed = StringUtils.trim(getDataset().getCitation());
+                    String sourceCitationTrimmed = CitationUtil.sourceCitationLastAccessed(getDataset());
                     StudyImporterForDwCA.putIfAbsentAndNotBlank(this, STUDY_SOURCE_CITATION, sourceCitationTrimmed);
                     StudyImporterForDwCA.putIfAbsentAndNotBlank(this, REFERENCE_CITATION, sourceCitationTrimmed);
                     StudyImporterForDwCA.putIfAbsentAndNotBlank(this, REFERENCE_ID, sourceCitationTrimmed);

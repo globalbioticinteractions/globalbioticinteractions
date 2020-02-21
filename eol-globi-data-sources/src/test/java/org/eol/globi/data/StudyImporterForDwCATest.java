@@ -33,6 +33,7 @@ import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.gbif.dwc.terms.DwcTerm.relatedResourceID;
 import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.greaterThan;
@@ -163,10 +164,13 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
-    public void importRecords() throws StudyImporterException, URISyntaxException {
+    public void importRecords() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI(), inStream -> inStream));
+        DatasetImpl dataset = new DatasetImpl("some/namespace", resource.toURI(), inStream -> inStream);
+        dataset.setConfig(new ObjectMapper().readTree("{ \"citation\": \"some citation\" }"));
+        studyImporterForDwCA.setDataset(dataset);
+
         AtomicBoolean someRecords = new AtomicBoolean(false);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
@@ -177,7 +181,9 @@ public class StudyImporterForDwCATest {
                 assertThat(properties.get(TaxonUtil.SOURCE_TAXON_NAME), is(not(nullValue())));
                 assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(not(nullValue())));
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString("some citation"));
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString("Accessed at"));
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString("dataset/dwca.zip"));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), is(not(nullValue())));
