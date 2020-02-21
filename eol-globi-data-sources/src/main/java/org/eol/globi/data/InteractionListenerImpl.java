@@ -138,8 +138,8 @@ class InteractionListenerImpl implements InteractionListener {
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(CharsetConstant.SEPARATOR));
         if (StringUtils.isNotBlank(targetNamePlaceholder)) {
-            logWarningIfPossible(expandedLink, sourceOrTarget + " taxon name missing:" + placeholderMessage);
             expandedLink.putIfAbsent(nameToBeFilled, targetNamePlaceholder);
+            logWarningIfPossible(expandedLink, sourceOrTarget + " taxon name missing:" + placeholderMessage);
         }
     }
 
