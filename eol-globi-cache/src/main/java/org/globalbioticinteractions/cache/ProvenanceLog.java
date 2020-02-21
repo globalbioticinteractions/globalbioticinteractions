@@ -2,15 +2,12 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class ProvenanceLog {
@@ -23,7 +20,7 @@ public class ProvenanceLog {
 
     private static void appendProvenanceLog(ContentProvenance contentProvenance, File cacheDir) throws IOException {
         List<String> accessLogEntry = compileLogEntries(contentProvenance);
-        File accessLog = getProvenanceLogFile(contentProvenance.getNamespace(), cacheDir.getAbsolutePath());
+        File accessLog = findProvenanceLogFile(contentProvenance.getNamespace(), cacheDir.getAbsolutePath());
         String prefix = accessLog.exists() ? "\n" : "";
         String accessLogLine = StringUtils.join(accessLogEntry, '\t');
         try {
@@ -47,8 +44,8 @@ public class ProvenanceLog {
         return logEntries;
     }
 
-    public static File getProvenanceLogFile(String namespace, String cacheDir) throws IOException {
-        File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(cacheDir, namespace);
+    public static File findProvenanceLogFile(String namespace, String cacheDir) throws IOException {
+        File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cacheDir, namespace);
         return getProvenanceLogFile(cacheDirForNamespace);
     }
 

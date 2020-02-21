@@ -30,17 +30,17 @@ public final class CacheUtil {
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
 
-    public static File getCacheDirForNamespace(String cachePath, String namespace) throws IOException {
-        File cacheDir = new File(cachePath);
-        return getCacheDirForNamespace(cacheDir, namespace);
-    }
-
-    public static File getCacheDirForNamespace(File cacheDir, String namespace) throws IOException {
-        FileUtils.forceMkdir(cacheDir);
-        File directory = new File(cacheDir, namespace);
+    public static File findOrMakeCacheDirForNamespace(String cachePath, String namespace) throws IOException {
+        File directory = findCacheDirForNamespace(cachePath, namespace);
         FileUtils.forceMkdir(directory);
         return directory;
     }
+
+    public static File findCacheDirForNamespace(String cachePath, String namespace) {
+        File cacheDir = new File(cachePath);
+        return new File(cacheDir, namespace);
+    }
+
 
     public static ContentProvenance cacheStream(InputStream inputStream, File cacheDir) throws IOException {
         File destinationFile = null;
@@ -89,4 +89,5 @@ public final class CacheUtil {
                 && new File(archiveURI).exists()
                 && new File(archiveURI).isDirectory();
     }
+
 }

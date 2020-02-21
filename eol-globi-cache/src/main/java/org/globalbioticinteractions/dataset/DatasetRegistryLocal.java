@@ -103,7 +103,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         };
         File accessFile;
         try {
-            accessFile = ProvenanceLog.getProvenanceLogFile(namespace, cacheDir);
+            accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
         } catch (IOException e) {
             throw new DatasetFinderException("issue accessing provenance log", e);
         }

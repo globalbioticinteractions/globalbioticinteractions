@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.content;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
@@ -37,7 +36,7 @@ public class ContentStoreLocal implements ContentStore {
     @Override
     public ContentProvenance store(ContentSource source) throws IOException {
         URI generatedContentURI = URI.create(UUID.randomUUID().toString());
-        File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
+        File cacheDirForNamespace = CacheUtil.findOrMakeCacheDirForNamespace(storeDir.getAbsolutePath(), namespace);
         InputStream is = getInputStreamFactory().create(source.getContent().orElseThrow(() -> new IOException("failed to access content source")));
         ContentProvenance localProvenance = CacheUtil.cacheStream(is, cacheDirForNamespace);
         ContentProvenance provenanceInNamespace = new ContentProvenance(namespace, generatedContentURI, localProvenance.getLocalURI(), localProvenance.getSha256(), localProvenance.getSha256());

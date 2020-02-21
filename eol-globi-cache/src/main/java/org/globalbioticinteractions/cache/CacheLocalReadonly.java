@@ -58,10 +58,10 @@ public class CacheLocalReadonly implements Cache {
         ContentProvenance meta = null;
         File accessFile;
         try {
-            File cacheDirForNamespace = CacheUtil.getCacheDirForNamespace(cachePath, namespace);
+            File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
 
             String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
-            accessFile = ProvenanceLog.getProvenanceLogFile(namespace, cachePath);
+            accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cachePath);
             if (accessFile.exists()) {
                 String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
                 for (String row : rows) {
