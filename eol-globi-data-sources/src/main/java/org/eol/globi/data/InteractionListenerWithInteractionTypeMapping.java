@@ -47,10 +47,10 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
 
             HashMap<String, String> properties = new HashMap<>(link);
             if (mappedType != null) {
-                properties.put(INTERACTION_TYPE_ID, mappedType.getIRI());
-                properties.put(INTERACTION_TYPE_NAME, mappedType.getLabel());
                 InteractUtil.putNotBlank(properties, INTERACTION_TYPE_ID_VERBATIM, properties.get(INTERACTION_TYPE_ID));
                 InteractUtil.putNotBlank(properties, INTERACTION_TYPE_NAME_VERBATIM, properties.get(INTERACTION_TYPE_NAME));
+                properties.put(INTERACTION_TYPE_ID, mappedType.getIRI());
+                properties.put(INTERACTION_TYPE_NAME, mappedType.getLabel());
             }
             listener.newLink(properties);
         }
