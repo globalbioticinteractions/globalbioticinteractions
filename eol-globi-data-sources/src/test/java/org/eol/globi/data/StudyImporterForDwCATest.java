@@ -218,7 +218,7 @@ public class StudyImporterForDwCATest {
                 assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is(not(nullValue())));
                 assertThat(properties.get(INTERACTION_TYPE_ID), is(not(nullValue())));
-                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), is(expectedCitation));
+                assertThat(properties.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString(expectedCitation));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(properties.get(StudyImporterForTSV.REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
