@@ -63,7 +63,7 @@ public class InteractTypeMapperFactoryImplTest {
                         , StandardCharsets.UTF_8));
 
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
         assertThat(interactTypeMapper.getInteractType("id1"), is(InteractType.INTERACTS_WITH));
         assertThat(interactTypeMapper.getInteractType("id2"), is(InteractType.ATE));
         assertThat(interactTypeMapper.getInteractType("shouldBeMapped"), is(InteractType.INTERACTS_WITH));
@@ -72,7 +72,7 @@ public class InteractTypeMapperFactoryImplTest {
 
     @Test
     public void createAndIgnoreBlankTerm() throws TermLookupServiceException, IOException {
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = createIgnoreServiceMock();
+        InteractTypeMapper interactTypeMapper = createIgnoreServiceMock();
         assertTrue(interactTypeMapper.shouldIgnoreInteractionType(""));
 
     }
@@ -92,7 +92,7 @@ public class InteractTypeMapperFactoryImplTest {
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
 
         try {
-            InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+            InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
             interactTypeMapper.getInteractType("shouldBeIgnored");
         } catch (TermLookupServiceException ex) {
             assertThat(ex.getMessage(), is("failed to load interaction mapping from [interaction_types.csv]"));
@@ -126,7 +126,7 @@ public class InteractTypeMapperFactoryImplTest {
                 .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
 
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
         assertThat(interactTypeMapper.getInteractType("shouldBeMapped"), is(InteractType.INTERACTS_WITH));
 
     }

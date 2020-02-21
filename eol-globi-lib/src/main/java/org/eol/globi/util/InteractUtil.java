@@ -2,16 +2,12 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.TreeSet;
 
 public class InteractUtil {
@@ -32,10 +28,18 @@ public class InteractUtil {
         return joinInteractTypes(types);
     }
 
-    public static InteractTypeMapperFactory.InteractTypeMapper createInteractionTypeMapper(ResourceService resourceService) throws TermLookupServiceException {
+    public static InteractTypeMapper createInteractionTypeMapper(ResourceService resourceService) throws TermLookupServiceException {
         return new InteractTypeMapperFactoryWithFallback(
                         new InteractTypeMapperFactoryImpl(resourceService),
                         new InteractTypeMapperFactoryImpl())
                 .create();
+    }
+
+    public static InteractTypeMapper createInteractionTypeMapperForImporter(ResourceService dataset) throws StudyImporterException {
+        try {
+            return createInteractionTypeMapper(dataset);
+        } catch (TermLookupServiceException e) {
+            throw new StudyImporterException("failed to create interaction type mapper", e);
+        }
     }
 }

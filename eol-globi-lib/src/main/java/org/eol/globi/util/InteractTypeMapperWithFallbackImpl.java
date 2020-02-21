@@ -1,29 +1,24 @@
 package org.eol.globi.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Term;
-import org.eol.globi.service.TermLookupService;
-import org.eol.globi.service.TermLookupServiceException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-public class InteractTypeMapperWithFallbackImpl implements InteractTypeMapperFactory.InteractTypeMapper {
+public class InteractTypeMapperWithFallbackImpl implements InteractTypeMapper {
 
-    private final List<InteractTypeMapperFactory.InteractTypeMapper> mappers;
+    private final List<InteractTypeMapper> mappers;
 
-    public InteractTypeMapperWithFallbackImpl(InteractTypeMapperFactory.InteractTypeMapper... mappers) {
+    public InteractTypeMapperWithFallbackImpl(InteractTypeMapper... mappers) {
         this.mappers = Arrays.asList(mappers);
     }
 
     @Override
     public boolean shouldIgnoreInteractionType(String interactionTypeNameOrId) {
         // combine ignore lists - so if any of the mappers ignores a term, the term will be ignored.
-        Optional<InteractTypeMapperFactory.InteractTypeMapper> first = mappers
+        Optional<InteractTypeMapper> first = mappers
                 .stream().
                         filter(x -> x.shouldIgnoreInteractionType(interactionTypeNameOrId))
                 .findFirst();

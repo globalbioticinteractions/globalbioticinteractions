@@ -19,7 +19,7 @@ public class InteractTypeMapperFactoryForROTest {
     @Test
     public void defaultMapping() throws TermLookupServiceException, IOException {
 
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryForRO().create();
 
         assertNotNull(interactTypeMapper);
@@ -35,7 +35,7 @@ public class InteractTypeMapperFactoryForROTest {
 
     @Test
     public void ensureAllInteractTypesAreSupported() throws TermLookupServiceException {
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryForRO().create();
 
         InteractType[] interactionTypes = InteractType.values();

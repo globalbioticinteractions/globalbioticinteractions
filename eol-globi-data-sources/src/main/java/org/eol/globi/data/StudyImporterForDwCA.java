@@ -4,8 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.util.InteractTypeMapperFactory;
+import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
@@ -38,8 +37,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
@@ -88,20 +85,16 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     public static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex.+\\W.*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
     public static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
-    private InteractTypeMapperFactory.InteractTypeMapper interactionTypeMapper;
+    private InteractTypeMapper interactionTypeMapper;
 
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
-    private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws StudyImporterException {
+    private InteractTypeMapper getInteractionTypeMapper() throws StudyImporterException {
         if (interactionTypeMapper == null) {
-            try {
-                interactionTypeMapper = InteractUtil.createInteractionTypeMapper(getDataset());
-            } catch (TermLookupServiceException e) {
-                throw new StudyImporterException("failed to create interaction type mapper", e);
-            }
+            interactionTypeMapper = InteractUtil.createInteractionTypeMapperForImporter(getDataset());
         }
         return interactionTypeMapper;
     }
@@ -124,7 +117,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             tmpDwA = Files.createTempDirectory("dwca");
             Archive archive = DwCAUtil.archiveFor(resourceURI, tmpDwA.toString());
 
-            InteractionListener listenerProxy = new InteractionListenerProxy();
+            InteractionListener listenerProxy = new InteractionListenerWithInteractionTypeMapping(
+                    new InteractionListenerWithContext(),
+                    getInteractionTypeMapper(),
+                    getLogger());
 
             importResourceRelationExtension(archive, listenerProxy);
 
@@ -517,7 +513,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    private static String findRelationshipTypeIdByLabel(String relationship, InteractTypeMapperFactory.InteractTypeMapper mapper) {
+    private static String findRelationshipTypeIdByLabel(String relationship, InteractTypeMapper mapper) {
 
         String relationshipKey = StringUtils.lowerCase(StringUtils.trim(relationship));
 
@@ -676,54 +672,31 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         return hasExtension(archive, EXTENSION_RESOURCE_RELATIONSHIP);
     }
 
-    private class InteractionListenerProxy implements InteractionListener {
-        InteractionListener listener = getInteractionListener();
+    private class InteractionListenerWithContext implements InteractionListener {
+
+        private final InteractionListener listener = getInteractionListener();
 
         @Override
         public void newLink(Map<String, String> properties) throws StudyImporterException {
-            TaxonUtil.enrichTaxonNames(properties);
-            InteractTypeMapperFactory.InteractTypeMapper interactionTypeMapper = getInteractionTypeMapper();
-
-            List<Map<String, String>> interactions = Stream.of(properties)
-                    .filter(x -> !interactionTypeMapper.shouldIgnoreInteractionType(x.get(INTERACTION_TYPE_NAME)))
-                    .map(x -> {
-                        if (!x.containsKey(INTERACTION_TYPE_ID) && x.containsKey(INTERACTION_TYPE_NAME)) {
-                            InteractType interactTypeForName = interactionTypeMapper.getInteractType(x.get(INTERACTION_TYPE_NAME));
-                            if (interactTypeForName != null) {
-                                x.put(INTERACTION_TYPE_ID, interactTypeForName.getIRI());
-                            }
-                        }
-                        return x;
-                    })
-                    .collect(Collectors.toList());
-
-            for (Map<String, String> interaction : interactions) {
-                emitLink(interaction);
-            }
-
-        }
-
-        public void emitLink(Map<String, String> properties) throws StudyImporterException {
             if (getDataset() == null) {
-                listener.newLink(properties);
+                this.listener.newLink(properties);
             } else {
-                listener.newLink(new HashMap<String, String>(properties) {{
+                this.listener.newLink(new HashMap<String, String>(properties) {{
                     if (getDataset().getArchiveURI() != null) {
                         put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
                     }
                     put(DatasetConstant.CONTENT_HASH, getDataset().getOrDefault(DatasetConstant.CONTENT_HASH, ""));
 
                     String sourceCitationTrimmed = StringUtils.trim(getDataset().getCitation());
-                    putIfAbsentAndNotBlank(this, STUDY_SOURCE_CITATION, sourceCitationTrimmed);
-                    putIfAbsentAndNotBlank(this, REFERENCE_CITATION, sourceCitationTrimmed);
-                    putIfAbsentAndNotBlank(this, REFERENCE_ID, sourceCitationTrimmed);
+                    StudyImporterForDwCA.putIfAbsentAndNotBlank(this, STUDY_SOURCE_CITATION, sourceCitationTrimmed);
+                    StudyImporterForDwCA.putIfAbsentAndNotBlank(this, REFERENCE_CITATION, sourceCitationTrimmed);
+                    StudyImporterForDwCA.putIfAbsentAndNotBlank(this, REFERENCE_ID, sourceCitationTrimmed);
 
                 }});
             }
-        }
-    }
 
-    ;
+        }
+    };
 
 
 }

@@ -8,7 +8,7 @@ import org.eol.globi.service.TermLookupServiceException;
 
 import java.util.List;
 
-public class InteractTypeMapperImpl implements InteractTypeMapperFactory.InteractTypeMapper {
+public class InteractTypeMapperImpl implements InteractTypeMapper {
 
     private final TermLookupService ignoredTermLookupService;
     private final TermLookupService termMappingService;

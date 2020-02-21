@@ -10,7 +10,7 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.eol.globi.util.InteractTypeMapperFactory;
+import org.eol.globi.util.InteractTypeMapper;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.joda.time.format.DateTimeFormat;
@@ -30,6 +30,7 @@ import java.util.TreeMap;
 
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
+import static org.eol.globi.util.InteractUtil.*;
 
 public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
@@ -59,7 +60,10 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
                 Dataset datasetProxy = new DatasetProxy(dataset);
                 datasetProxy.setConfig(tableConfig);
 
-                InteractionListener interactionListener = getInteractionListener();
+                InteractionListener interactionListener = new InteractionListenerWithInteractionTypeMapping(
+                        getInteractionListener(),
+                        createInteractionTypeMapperForImporter(getDataset()),
+                        getLogger());
                 final InteractionListener listener = new TableInteractionListenerProxy(datasetProxy, interactionListener);
                 importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy, getLogger());
             }
@@ -181,7 +185,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     }
 
 
-    public static InteractType generateInteractionType(Map<String, String> properties, InteractTypeMapperFactory.InteractTypeMapper mapper) {
+    public static InteractType generateInteractionType(Map<String, String> properties, InteractTypeMapper mapper) {
         final String interactionTypeName = properties.get(StudyImporterForTSV.INTERACTION_TYPE_NAME);
         return StringUtils.isNotBlank(interactionTypeName)
                 ? mapper.getInteractType(interactionTypeName)
@@ -306,11 +310,11 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         }
     }
 
-    static public String valueOrDefault(String value, Column column) {
+    public static String valueOrDefault(String value, Column column) {
         return (value == null && StringUtils.isNotBlank(column.getDefaultValue())) ? column.getDefaultValue() : value;
     }
 
-    static public void setInteractionType(Map<String, String> properties, InteractType type) {
+    public static void setInteractionType(Map<String, String> properties, InteractType type) {
         if (type != null) {
             properties.put(StudyImporterForTSV.INTERACTION_TYPE_ID, type.getIRI());
             properties.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, type.getLabel());

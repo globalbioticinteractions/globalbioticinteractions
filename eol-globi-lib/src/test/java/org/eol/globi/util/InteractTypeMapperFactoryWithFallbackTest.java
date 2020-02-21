@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -29,7 +28,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
         when(resourceService.retrieve(URI.create("interaction_types.csv")))
                 .thenReturn(IOUtils.toInputStream("", StandardCharsets.UTF_8));
 
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryWithFallback().create();
 
         assertNull(interactTypeMapper);
@@ -40,11 +39,11 @@ public class InteractTypeMapperFactoryWithFallbackTest {
     public void createAndIgnoreTermSingleMapper() throws TermLookupServiceException {
 
         InteractTypeMapperFactory factory1 = Mockito.mock(InteractTypeMapperFactory.class);
-        InteractTypeMapperFactory.InteractTypeMapper mapper = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
+        InteractTypeMapper mapper = Mockito.mock(InteractTypeMapper.class);
 
         when(factory1.create()).thenReturn(mapper);
 
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryWithFallback(factory1).create();
 
         assertNotNull(interactTypeMapper);
@@ -55,14 +54,14 @@ public class InteractTypeMapperFactoryWithFallbackTest {
     public void chooseFirstWorkingMapper() throws TermLookupServiceException {
 
         InteractTypeMapperFactory factory1 = Mockito.mock(InteractTypeMapperFactory.class);
-        InteractTypeMapperFactory.InteractTypeMapper mapper1 = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
+        InteractTypeMapper mapper1 = Mockito.mock(InteractTypeMapper.class);
         when(factory1.create()).thenReturn(mapper1);
         InteractTypeMapperFactory factory2 = Mockito.mock(InteractTypeMapperFactory.class);
-        InteractTypeMapperFactory.InteractTypeMapper mapper2 = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
+        InteractTypeMapper mapper2 = Mockito.mock(InteractTypeMapper.class);
         when(factory2.create()).thenReturn(mapper2);
 
 
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryWithFallback(factory1, factory2).create();
 
         assertThat(interactTypeMapper, is(mapper1));
@@ -75,11 +74,11 @@ public class InteractTypeMapperFactoryWithFallbackTest {
         InteractTypeMapperFactory factory1 = Mockito.mock(InteractTypeMapperFactory.class);
         when(factory1.create()).thenThrow(new TermLookupServiceException("kaboom!"));
 
-        InteractTypeMapperFactory.InteractTypeMapper mapper = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
+        InteractTypeMapper mapper = Mockito.mock(InteractTypeMapper.class);
         InteractTypeMapperFactory factory2 = Mockito.mock(InteractTypeMapperFactory.class);
         when(factory2.create()).thenReturn(mapper);
 
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryWithFallback(factory1, factory2).create();
 
         assertThat(interactTypeMapper, is(mapper));
@@ -90,13 +89,13 @@ public class InteractTypeMapperFactoryWithFallbackTest {
     public void createAndTermFirstMapperOkSecondMapperFails() throws TermLookupServiceException {
 
         InteractTypeMapperFactory factory1 = Mockito.mock(InteractTypeMapperFactory.class);
-        InteractTypeMapperFactory.InteractTypeMapper mapper = Mockito.mock(InteractTypeMapperFactory.InteractTypeMapper.class);
+        InteractTypeMapper mapper = Mockito.mock(InteractTypeMapper.class);
         when(factory1.create()).thenReturn(mapper);
 
         InteractTypeMapperFactory factory2 = Mockito.mock(InteractTypeMapperFactory.class);
         when(factory2.create()).thenThrow(new TermLookupServiceException("kaboom!"));
 
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryWithFallback(factory1, factory2).create();
 
         assertThat(interactTypeMapper, is(mapper));
@@ -110,7 +109,7 @@ public class InteractTypeMapperFactoryWithFallbackTest {
         when(factory1.create()).thenThrow(new TermLookupServiceException("kaboom!"));
 
 
-        InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper
+        InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryWithFallback(factory1).create();
 
     }

@@ -18,23 +18,12 @@ import java.util.Map;
 
 public class TableInteractionListenerProxy implements InteractionListener {
     private final InteractionListener interactionListener;
-    private final Dataset dataset;
     private final String dataSourceCitation;
-    private InteractTypeMapperFactory.InteractTypeMapper interactTypeMapper;
 
     public TableInteractionListenerProxy(Dataset dataset, InteractionListener interactionListener) {
-        this.dataset = dataset;
         this.interactionListener = interactionListener;
         this.dataSourceCitation = CitationUtil.sourceCitationLastAccessed(dataset);
     }
-
-    private InteractTypeMapperFactory.InteractTypeMapper getInteractionTypeMapper() throws TermLookupServiceException {
-        if (interactTypeMapper == null) {
-            interactTypeMapper = InteractUtil.createInteractionTypeMapper(dataset);
-        }
-        return interactTypeMapper;
-    }
-
 
     @Override
     public void newLink(final Map<String, String> properties) throws StudyImporterException {
@@ -48,14 +37,6 @@ public class TableInteractionListenerProxy implements InteractionListener {
             }
         };
 
-        TaxonUtil.enrichTaxonNames(enrichedProperties);
-        InteractType type;
-        try {
-            type = StudyImporterForMetaTable.generateInteractionType(enrichedProperties, getInteractionTypeMapper());
-        } catch (TermLookupServiceException e) {
-            throw new StudyImporterException("failed to map interaction types", e);
-        }
-        StudyImporterForMetaTable.setInteractionType(enrichedProperties, type);
         interactionListener.newLink(enrichedProperties);
     }
 

@@ -8,7 +8,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.InteractTypeMapperFactory;
+import org.eol.globi.util.InteractTypeMapper;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 
@@ -210,7 +210,7 @@ public class StudyImporterForMetaTableTest {
 
     @Test
     public void interactionTypeMapping() {
-        InteractTypeMapperFactory.InteractTypeMapper mapper = new InteractTypeMapperFactory.InteractTypeMapper() {
+        InteractTypeMapper mapper = new InteractTypeMapper() {
             @Override
             public boolean shouldIgnoreInteractionType(String nameOrId) {
                 return false;
@@ -226,7 +226,7 @@ public class StudyImporterForMetaTableTest {
 
     @Test
     public void interactionTypeMappingValid() {
-        InteractTypeMapperFactory.InteractTypeMapper mapper = new InteractTypeMapperFactory.InteractTypeMapper() {
+        InteractTypeMapper mapper = new InteractTypeMapper() {
             @Override
             public boolean shouldIgnoreInteractionType(String nameOrId) {
                 return false;
