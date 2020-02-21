@@ -2,6 +2,9 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.LogContext;
+import org.eol.globi.util.InteractTypeMapper;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
@@ -62,29 +65,5 @@ public class TableInteractionListenerProxyTest {
     }
 
 
-    @Test
-    public void withTaxonHierachy() throws IOException, StudyImporterException {
-        final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
-        JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"some resource url\" }");
-        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
-        dataset.setConfig(config);
-        final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
-            @Override
-            public void newLink(Map<String, String> properties) throws StudyImporterException {
-                links.add(properties);
-            }
-        });
-        listener.newLink(new HashMap<String, String>() {
-            {
-                put(TaxonUtil.TARGET_TAXON_GENUS, "Donald");
-                put(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET, "duck");
-            }
-        });
-
-        assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Donald duck"));
-        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_PATH_NAMES), is("genus | species"));
-        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_PATH), is("Donald | Donald duck"));
-    }
 
 }
