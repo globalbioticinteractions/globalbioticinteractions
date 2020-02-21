@@ -97,6 +97,31 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void nonInteractionRecordMessage() throws StudyImporterException, URISyntaxException {
+        StringBuilder actualMessage = new StringBuilder();
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mcz-adjusted/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
+        studyImporterForDwCA.setLogger(new NullImportLogger() {
+            @Override
+            public void info(LogContext ctx, String message) {
+                actualMessage.append(message);
+            }
+        });
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                recordCounter.incrementAndGet();
+            }
+        });
+        studyImporterForDwCA.importStudy();
+        assertThat(recordCounter.get(), is(0));
+        assertThat(actualMessage.toString(), startsWith("no interaction type defined"));
+    }
+
+    @Test
     public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomething(resource.toURI(), new AtomicInteger(0));

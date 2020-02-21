@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,6 +107,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             }
 
             String archiveURL = getDataset().getOrDefault("url", archiveURI == null ? null : archiveURI.toString());
+            getLogger().info(null, "[" + archiveURL + "]: indexing interaction records");
             URI resourceURI = getDataset().getLocalURI(URI.create(archiveURL));
             if (resourceURI == null) {
                 throw new StudyImporterException("failed to access DwC archive at [" + archiveURL + "]");
@@ -114,7 +116,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             tmpDwA = Files.createTempDirectory("dwca");
             Archive archive = DwCAUtil.archiveFor(resourceURI, tmpDwA.toString());
 
-            InteractionListener listenerProxy = new InteractionListenerWithInteractionTypeMapping(
+            InteractionListenerWithInteractionTypeMapping listenerProxy = new InteractionListenerWithInteractionTypeMapping(
                     new InteractionListenerWithContext(),
                     InteractUtil.createInteractionTypeMapperForImporter(getDataset()),
                     getLogger());
@@ -123,7 +125,9 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             importAssociatedTaxaExtension(archive, listenerProxy);
 
-            importCore(archive, listenerProxy);
+            int i = importCore(archive, listenerProxy);
+            getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] records");
+            getLogger().info(null, "[" + archiveURL + "]: submitted [" + listenerProxy.getNumberOfSubmittedLinks() + "] records with potential interaction information");
 
         } catch (IOException | IllegalStateException e) {
             // catching IllegalStateException to prevents RuntimeException from stopping all
@@ -136,7 +140,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    public void importCore(Archive archive, InteractionListener interactionListener) throws StudyImporterException {
+    public int importCore(Archive archive, InteractionListener interactionListener) throws StudyImporterException {
+        AtomicInteger recordCounter = new AtomicInteger(0);
         ClosableIterator<Record> iterator = archive.getCore().iterator();
         while (true) {
             try {
@@ -145,10 +150,13 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 }
                 Record rec = iterator.next();
                 handleRecord(interactionListener, rec);
+                recordCounter.incrementAndGet();
             } catch (IllegalStateException ex) {
                 LogUtil.logError(getLogger(), "failed to handle dwc record", ex);
             }
         }
+        return recordCounter.get();
+
     }
 
     public void handleRecord(InteractionListener interactionListener, Record rec) throws StudyImporterException {

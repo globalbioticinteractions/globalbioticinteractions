@@ -8,6 +8,7 @@ import org.eol.globi.util.InteractUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID_VERBATIM;
@@ -18,6 +19,7 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
     private final InteractTypeMapper mapper;
     final InteractionListener listener;
     private final ImportLogger logger;
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     InteractionListenerWithInteractionTypeMapping(InteractionListener listener,
                                                   InteractTypeMapper mapper,
@@ -59,10 +61,14 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
                 properties.put(INTERACTION_TYPE_NAME, mappedType.getLabel());
             }
             listener.newLink(properties);
+            counter.incrementAndGet();
         }
-
-
     }
+
+    public int getNumberOfSubmittedLinks() {
+        return counter.get();
+    }
+
 
 
 }
