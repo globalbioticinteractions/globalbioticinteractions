@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,6 +38,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -98,7 +100,7 @@ public class StudyImporterForDwCATest {
 
     @Test
     public void nonInteractionRecordMessage() throws StudyImporterException, URISyntaxException {
-        StringBuilder actualMessage = new StringBuilder();
+        List<String> msgs = new ArrayList<>();
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mcz-adjusted/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         AtomicInteger recordCounter = new AtomicInteger(0);
@@ -106,7 +108,7 @@ public class StudyImporterForDwCATest {
         studyImporterForDwCA.setLogger(new NullImportLogger() {
             @Override
             public void info(LogContext ctx, String message) {
-                actualMessage.append(message);
+                msgs.add(message);
             }
         });
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
@@ -118,7 +120,11 @@ public class StudyImporterForDwCATest {
         });
         studyImporterForDwCA.importStudy();
         assertThat(recordCounter.get(), is(0));
-        assertThat(actualMessage.toString(), startsWith("no interaction type defined"));
+        assertThat(msgs, hasItem("no interaction type defined"));
+        String joinedMsgs = StringUtils.join(msgs, "\n");
+        assertThat(joinedMsgs, containsString("]: indexing interaction records"));
+        assertThat(joinedMsgs, containsString("]: scanned [1] record(s)"));
+        assertThat(joinedMsgs, containsString("]: detected [0] interaction record(s)"));
     }
 
     @Test

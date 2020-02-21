@@ -126,8 +126,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             importAssociatedTaxaExtension(archive, listenerProxy);
 
             int i = importCore(archive, listenerProxy);
-            getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] records");
-            getLogger().info(null, "[" + archiveURL + "]: submitted [" + listenerProxy.getNumberOfSubmittedLinks() + "] records with potential interaction information");
+            getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
+            getLogger().info(null, "[" + archiveURL + "]: detected [" + listenerProxy.getNumberOfSubmittedLinks() + "] interaction record(s)");
 
         } catch (IOException | IllegalStateException e) {
             // catching IllegalStateException to prevents RuntimeException from stopping all
