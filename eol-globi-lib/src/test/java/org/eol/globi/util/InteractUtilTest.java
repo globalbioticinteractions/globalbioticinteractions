@@ -164,11 +164,11 @@ public class InteractUtilTest {
             public InputStream retrieve(URI resourceName) throws IOException {
                 if (resourceName.equals(InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT)) {
                     return IOUtils.toInputStream(
-                            "observation_field_id,providedName,interaction_type_id,resolvedName\n" +
+                            "provided_interaction_type_id,provided_interaction_type_label,mapped_to_interaction_type_id,mapped_to_interaction_type_label\n" +
                                     "someProvidedId,someProvidedName,http://purl.obolibrary.org/obo/RO_0002440,someResolvedName", StandardCharsets.UTF_8);
                 } else {
                     return IOUtils.toInputStream(
-                            "observation_field_id\n" +
+                            "interaction_type_ignored\n" +
                                     "someIgnoredId", StandardCharsets.UTF_8);
 
                 }
@@ -179,7 +179,12 @@ public class InteractUtilTest {
                 fail("not [" + resourceName + "]");
                 return null;
             }
-        }, "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id", InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
+        }, "interaction_type_ignored",
+                "provided_interaction_type_id",
+                "provided_interaction_type_label",
+                "mapped_to_interaction_type_id",
+                InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT,
+                InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
 
         List<Term> someProvidedId = termLookupService.lookupTermByName("someProvidedId");
         assertThat(someProvidedId.size(), is(1));
