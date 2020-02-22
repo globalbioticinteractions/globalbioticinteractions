@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
@@ -20,6 +21,7 @@ import org.mapdb.DBMaker;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -80,11 +82,11 @@ public class StudyImporterForRSS extends BaseStudyImporter {
             if (needsIndexing(dataset)) {
                 try {
                     handleDataset(studyImporter -> {
+                        studyImporter.setLogger(getLogger());
                         if (studyImporter instanceof StudyImporterWithListener) {
                             ((StudyImporterWithListener) studyImporter)
                                     .setInteractionListener(indexingListener);
                         }
-                        studyImporter.setLogger(getLogger());
                     }, dataset);
                 } catch (StudyImporterException | IllegalStateException ex) {
                     LogUtil.logError(getLogger(), ex);
@@ -199,12 +201,14 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     }
 
     private static Dataset attemptEasyArthropodCapture(Dataset datasetOrig, SyndEntry entry) {
-        String citation = StringUtils.trim(entry.getDescription().getValue());
+        SyndContent description = entry.getDescription();
+        String descriptionString = description == null ? null : description.getValue();
+        String title = entry.getTitle();
+        String citation = StringUtils.trim(StringUtils.join(Arrays.asList(title, descriptionString), CharsetConstant.SEPARATOR));
         String archiveURI = StringUtils.trim(entry.getLink());
         return embeddedDatasetFor(datasetOrig,
                 citation,
-                URI.create(archiveURI),
-                false
+                URI.create(archiveURI)
         );
     }
 
@@ -228,12 +232,9 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         Dataset dataset;
         String title = entry.getTitle();
         String citation = StringUtils.trim(title);
-        String hasDependencies = datasetOrig.getOrDefault("hasDependencies", "false");
         dataset = embeddedDatasetFor(datasetOrig,
                 citation,
-                URI.create(foreignEntries.get("dwca")),
-                StringUtils.equalsIgnoreCase("true", hasDependencies)
-        );
+                URI.create(foreignEntries.get("dwca")));
         return dataset;
     }
 
@@ -252,17 +253,11 @@ public class StudyImporterForRSS extends BaseStudyImporter {
         return foreignEntries;
     }
 
+
     static Dataset embeddedDatasetFor(final Dataset datasetOrig,
                                       final String embeddedCitation,
                                       final URI embeddedArchiveURI) {
-        return embeddedDatasetFor(datasetOrig, embeddedCitation, embeddedArchiveURI, false);
-    }
-
-
-    static Dataset embeddedDatasetFor(final Dataset datasetOrig,
-                                      final String embeddedCitation,
-                                      final URI embeddedArchiveURI,
-                                      final boolean hasDependencies) {
+        String hasDependencies = datasetOrig.getOrDefault("hasDependencies", "false");
         ObjectNode config = new ObjectMapper().createObjectNode();
         config.put("citation", embeddedCitation);
         config.put("format", "application/dwca");

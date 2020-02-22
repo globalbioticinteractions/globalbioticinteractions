@@ -93,10 +93,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         super(parserFactory, nodeFactory);
     }
 
-    private InteractTypeMapper getInteractionTypeMapper() throws StudyImporterException {
-        return InteractUtil.createInteractionTypeMapperForImporter(getDataset());
-    }
-
     @Override
     public void importStudy() throws StudyImporterException {
         URI archiveURI = getDataset().getArchiveURI();
@@ -679,14 +675,12 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     private class InteractionListenerWithContext implements InteractionListener {
 
-        private final InteractionListener listener = getInteractionListener();
-
         @Override
         public void newLink(Map<String, String> properties) throws StudyImporterException {
             if (getDataset() == null) {
-                this.listener.newLink(properties);
+                getInteractionListener().newLink(properties);
             } else {
-                this.listener.newLink(new HashMap<String, String>(properties) {{
+                getInteractionListener().newLink(new HashMap<String, String>(properties) {{
                     if (getDataset().getArchiveURI() != null) {
                         put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
                     }
