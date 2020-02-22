@@ -48,7 +48,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
             datasetProxy.setConfigURI(jsonNode.getLeft());
         } catch (Throwable ex) {
             String msg = "failed to configure dataset in namespace [" + namespace + "]";
-            throw new DatasetFinderException(dataset == null ? msg : (msg + " with archiveURI [" + dataset.getArchiveURI() + "] and citation [" + dataset.getCitation() + "]"));
+            throw new DatasetFinderException(dataset == null ? msg : (msg + " with archiveURI [" + dataset.getArchiveURI() + "] and citation [" + dataset.getCitation() + "]"), ex);
         }
         return datasetProxy;
     }
