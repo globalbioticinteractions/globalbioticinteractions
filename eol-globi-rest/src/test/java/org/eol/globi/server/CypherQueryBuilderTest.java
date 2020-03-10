@@ -16,13 +16,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.eol.globi.domain.InteractType.*;
-import static org.eol.globi.server.CypherQueryBuilder.*;
-import static org.eol.globi.server.QueryType.*;
+import static org.eol.globi.domain.InteractType.INTERACTS_WITH;
+import static org.eol.globi.domain.InteractType.KILLS;
+import static org.eol.globi.domain.InteractType.PARASITE_OF;
+import static org.eol.globi.domain.InteractType.POLLINATED_BY;
+import static org.eol.globi.domain.InteractType.PREYS_UPON;
+import static org.eol.globi.domain.InteractType.RELATED_TO;
+import static org.eol.globi.domain.InteractType.SYMBIONT_OF;
+import static org.eol.globi.server.CypherQueryBuilder.appendMatchAndWhereClause;
+import static org.eol.globi.server.CypherQueryBuilder.buildInteractionQuery;
+import static org.eol.globi.server.CypherQueryBuilder.createInteractionTypeSelector;
+import static org.eol.globi.server.CypherQueryBuilder.locations;
+import static org.eol.globi.server.CypherQueryBuilder.spatialInfo;
+import static org.eol.globi.server.QueryType.MULTI_TAXON_ALL;
+import static org.eol.globi.server.QueryType.MULTI_TAXON_DISTINCT;
+import static org.eol.globi.server.QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY;
+import static org.eol.globi.server.QueryType.SINGLE_TAXON_ALL;
+import static org.eol.globi.server.QueryType.SINGLE_TAXON_DISTINCT;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 public class CypherQueryBuilderTest {
 
@@ -370,9 +382,8 @@ public class CypherQueryBuilderTest {
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("source_taxon_prefix", "somePrefix.*");
-            put("target_taxon_prefix", "somePrefix.*");
+            put("source_taxon_name", "path:\\\"urn:catalog:AMNH:Mammals:M-39582\\\"");
+            put("target_taxon_name", "path:\\\"Paradyschiria lineata Kessel, 1925\\\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
