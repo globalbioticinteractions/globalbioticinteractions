@@ -30,11 +30,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -67,6 +69,84 @@ public class TaxonCacheServiceTest {
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
         assertThat(enrichedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
+    }
+
+
+    @Test
+    public void enrichMultipleById() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:11987314");
+            }
+        };
+        assertHolorchis(properties);
+    }
+
+    @Test
+    public void enrichMultipleByName() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "holorchis castex");
+            }
+        };
+        assertHolorchis(properties);
+    }
+
+    @Test
+    public void enrichMultipleByNameMismatch() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.NAME, "donald duck");
+            }
+        };
+        List<Map<String, String>> enrich = enrichHolorchis(properties);
+        assertNull(enrich);
+    }
+
+    @Test
+    public void enrichMultipleByIdMismatch() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:1234");
+            }
+        };
+        List<Map<String, String>> enrich = enrichHolorchis(properties);
+        assertNull(enrich);
+    }
+
+    @Test
+    public void enrichMultipleByResolvedId() throws PropertyEnricherException {
+        Map<String, String> properties = new HashMap<String, String>() {
+            {
+                put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL_V2:11987314");
+            }
+        };
+        assertHolorchis(properties);
+    }
+
+    private void assertHolorchis(Map<String, String> properties) throws PropertyEnricherException {
+        List<Map<String, String>> enrich = enrichHolorchis(properties);
+        for (Map<String, String> enrichSingle : enrich) {
+            Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrichSingle);
+            assertThat(enrichedTaxon.getName(), is("Holorchis castex"));
+            assertThat(enrichedTaxon.getExternalId(), anyOf(
+                    is("EOL_V2:11987314"),
+                    is("IRMNG:11821202"),
+                    is("NCBI:681679"),
+                    is("OTT:627299"),
+                    is("WD:Q41000883"),
+                    is("WORMS:594684"),
+                    is("GBIF:5890922")
+            ));
+        }
+    }
+
+    public List<Map<String, String>> enrichHolorchis(Map<String, String> properties) throws PropertyEnricherException {
+        final TaxonCacheService cacheService1 = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
+                "/org/eol/globi/taxon/taxonMapHolorchis.tsv");
+        cacheService1.setCacheDir(mapdbDir);
+        return cacheService1.enrichAllMatches(properties);
     }
 
     @Test
