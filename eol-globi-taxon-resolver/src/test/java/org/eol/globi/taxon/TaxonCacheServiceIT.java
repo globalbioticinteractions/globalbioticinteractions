@@ -43,7 +43,7 @@ public class TaxonCacheServiceIT {
         taxon.setExternalId("EOL:1049789");
 
         watch.start();
-        final Map<String, String> enriched = cacheService.enrich(TaxonUtil.taxonToMap(taxon));
+        final Map<String, String> enriched = cacheService.enrichFirstMatch(TaxonUtil.taxonToMap(taxon));
         assertThat(TaxonUtil.mapToTaxon(enriched).getPath(), is("Animalia | Chordata | Aves | Columbiformes | Columbidae | Turtur | Turtur tympanistria"));
         watch.stop();
     }

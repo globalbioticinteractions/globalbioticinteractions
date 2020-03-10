@@ -8,6 +8,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,10 +59,10 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
 
     @Test
     public void createSpeciesMatchHigherOrder() throws NodeFactoryException {
-        PropertyEnricher enricher = new PropertyEnricher() {
+        PropertyEnricher enricher = new PropertyEnricherSingle() {
 
             @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 if ("bla bla".equals(taxon.getName())) {
                     taxon.setPath("a path");
@@ -112,9 +113,9 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
 
     @Test
     public void createTaxonWithExplicitRanks() throws NodeFactoryException {
-        ((ResolvingTaxonIndex)this.taxonService).setEnricher(new PropertyEnricher() {
+        ((ResolvingTaxonIndex)this.taxonService).setEnricher(new PropertyEnricherSingle() {
             @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return properties;
             }
 
@@ -126,9 +127,9 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
         super.createTaxonWithExplicitRanks();
     }
     public ResolvingTaxonIndex getIndex() {
-        return new ResolvingTaxonIndex(new PropertyEnricher() {
+        return new ResolvingTaxonIndex(new PropertyEnricherSingle() {
                     @Override
-                    public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+                    public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                         return new TreeMap<>(properties);
                     }
 
@@ -140,9 +141,9 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
     }
 
     private static ResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
-        return new ResolvingTaxonIndex(new PropertyEnricher() {
+        return new ResolvingTaxonIndex(new PropertyEnricherSingle() {
             @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 taxon.setPathNames("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "etc" + CharsetConstant.SEPARATOR);
                 taxon.setPath("a kingdom name" + CharsetConstant.SEPARATOR + "a phylum name" + CharsetConstant.SEPARATOR + "a etc name" + CharsetConstant.SEPARATOR);
@@ -163,11 +164,11 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
     @Test
     public final void synonymsAddedToIndexOnce() throws NodeFactoryException {
         ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
-        taxonService.setEnricher(new PropertyEnricher() {
+        taxonService.setEnricher(new PropertyEnricherSingle() {
             private boolean firstTime = true;
 
             @Override
-            public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 Taxon taxon = TaxonUtil.mapToTaxon(properties);
                 if ("not pref".equals(taxon.getName())) {
                     if (!firstTime) {

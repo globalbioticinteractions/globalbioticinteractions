@@ -40,7 +40,7 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
             try {
                 taxon = TaxonUtil.enrich(enricher, taxon);
             } catch (PropertyEnricherException e) {
-                throw new NodeFactoryException("failed to enrich taxon with name [" + taxon.getName() + "]", e);
+                throw new NodeFactoryException("failed to enrichFirstMatch taxon with name [" + taxon.getName() + "]", e);
             }
             indexedTaxon = findTaxon(taxon);
             if (indexedTaxon == null) {

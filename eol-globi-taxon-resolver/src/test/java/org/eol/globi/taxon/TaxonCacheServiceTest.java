@@ -62,7 +62,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService cacheService = getTaxonCacheService();
-        Map<String, String> enrich = cacheService.enrich(properties);
+        Map<String, String> enrich = cacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
@@ -193,7 +193,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService cacheService = getTaxonCacheService();
-        Map<String, String> enrich = cacheService.enrich(properties);
+        Map<String, String> enrich = cacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Acteocina inculta"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:455065"));
@@ -209,7 +209,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService cacheService = getTaxonCacheService();
-        Map<String, String> enrich = cacheService.enrich(properties);
+        Map<String, String> enrich = cacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Acteocina inculta"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:455065"));
@@ -231,7 +231,7 @@ public class TaxonCacheServiceTest {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "some cached externalId");
             }
         };
-        Map<String, String> enrich = getTaxonCacheService().enrich(properties);
+        Map<String, String> enrich = getTaxonCacheService().enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("some name"));
         assertThat(enrichedTaxon.getExternalId(), is("some cached externalId"));
@@ -244,7 +244,7 @@ public class TaxonCacheServiceTest {
                 put(PropertyAndValueDictionary.NAME, PropertyAndValueDictionary.NO_MATCH);
             }
         };
-        Map<String, String> enrich = getTaxonCacheService().enrich(properties);
+        Map<String, String> enrich = getTaxonCacheService().enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is(PropertyAndValueDictionary.NO_MATCH));
         assertThat(enrichedTaxon.getExternalId(), is(nullValue()));
@@ -258,7 +258,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
@@ -273,7 +273,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Homo sapiens"));
         assertThat(enrichedTaxon.getExternalId(), is("NCBI:9606"));
@@ -288,7 +288,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is(nullValue()));
         assertThat(enrichedTaxon.getExternalId(), is("1276240"));
@@ -303,7 +303,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
@@ -319,7 +319,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Gadus morhua"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1234"));
@@ -335,7 +335,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
@@ -351,7 +351,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is(nullValue()));
         assertThat(enrichedTaxon.getPath(), is(nullValue()));
@@ -366,7 +366,7 @@ public class TaxonCacheServiceTest {
                 put(PropertyAndValueDictionary.EXTERNAL_ID, "EOL:1276240");
             }
         };
-        Map<String, String> enrich = getTaxonCacheService().enrich(properties);
+        Map<String, String> enrich = getTaxonCacheService().enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Anas crecca carolinensis"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1276240"));
@@ -381,7 +381,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Homo sapiens"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:327955"));
@@ -396,7 +396,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Homo sapiens"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:327955"));
@@ -411,7 +411,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Felis catus"));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:1037781"));
@@ -463,7 +463,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is("Canis lupus dingo"));
         assertThat(enrichedTaxon.getExternalId(), is(nullValue()));
@@ -478,7 +478,7 @@ public class TaxonCacheServiceTest {
             }
         };
         final TaxonCacheService taxonCacheService = getTaxonCacheService();
-        Map<String, String> enrich = taxonCacheService.enrich(properties);
+        Map<String, String> enrich = taxonCacheService.enrichFirstMatch(properties);
         Taxon enrichedTaxon = TaxonUtil.mapToTaxon(enrich);
         assertThat(enrichedTaxon.getName(), is(nullValue()));
         assertThat(enrichedTaxon.getExternalId(), is("EOL:541190"));

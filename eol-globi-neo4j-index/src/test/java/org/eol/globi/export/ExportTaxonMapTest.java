@@ -3,13 +3,13 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -20,16 +20,15 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ExportTaxonMapTest extends GraphDBTestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
-        final PropertyEnricher taxonEnricher = new PropertyEnricher() {
+        final PropertyEnricher taxonEnricher = new PropertyEnricherSingle() {
             @Override
-            public Map<String, String> enrich(Map<String, String> properties) {
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) {
                 Taxon taxon = new TaxonImpl();
                 TaxonUtil.mapToTaxon(properties, taxon);
                 if ("Homo sapiens".equals(taxon.getName())) {

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertThat;
 
 public class LinkerTermMatcherTest extends GraphDBTestCase {
 
-    @Ignore
     @Test
     public void holorchisCastexMissedLink() throws NodeFactoryException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/448

@@ -27,6 +27,7 @@ import org.mapdb.Fun;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -60,26 +61,41 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     @Override
-    public Map<String, String> enrich(Map<String, String> properties) throws PropertyEnricherException {
+    public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+        List<Map<String, String>> enriched = enrichAllMatches(properties);
+        return (enriched == null || enriched.size() == 0)
+                ? Collections.unmodifiableMap(properties)
+                : enriched.get(0);
+    }
+
+    @Override
+    public List<Map<String, String>> enrichAllMatches(Map<String, String> properties) throws PropertyEnricherException {
         lazyInit();
         String externalId = getExternalId(properties);
-        Map<String, String> enriched = null;
+        List<Map<String, String>> enriched = null;
         if (StringUtils.isNotBlank(externalId)) {
             enriched = getTaxon(externalId);
         }
         if (enriched == null) {
             enriched = getTaxon(getName(properties));
         }
-        return enriched == null ? Collections.unmodifiableMap(properties) : enriched;
+        return enriched;
     }
 
-    private Map<String, String> getTaxon(String value) throws PropertyEnricherException {
-        Map<String, String> enriched = null;
+    private List<Map<String, String>> getTaxon(String value) throws PropertyEnricherException {
+        List<Map<String, String>> enriched = null;
         if (TaxonUtil.isNonEmptyValue(value)) {
-            Taxon[] ids = lookupTerm(value);
-            if (ids != null && ids.length > 0) {
-                String resolvedId = ids[0].getExternalId();
-                enriched = resolvedIdToTaxonMap.get(StringUtils.lowerCase(resolvedId));
+            Taxon[] taxaMatched = lookupTerm(value);
+            for (Taxon taxonMatch : taxaMatched) {
+                String resolvedId = taxonMatch.getExternalId();
+                Map<String, String> enrichedSingle = resolvedIdToTaxonMap.get(StringUtils.lowerCase(resolvedId));
+                if (enrichedSingle != null) {
+                    if (enriched == null) {
+                        enriched = new ArrayList<>();
+                    }
+                    enriched.add(enrichedSingle);
+                }
+
             }
         }
         return enriched;
@@ -202,7 +218,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         lazyInit();
         for (Term term : terms) {
             String nodeIdAndName = term.getName();
-            Long nodeId = term instanceof TermRequestImpl ? ((TermRequestImpl)term).getNodeId() : null;
+            Long nodeId = term instanceof TermRequestImpl ? ((TermRequestImpl) term).getNodeId() : null;
             if (!resolveName(termMatchListener, term, term.getId(), nodeId)) {
                 if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, term.getName(), nodeId)) {
                     termMatchListener.foundTaxonForTerm(nodeId, term, new TaxonImpl(term.getId(), term.getName()), NameType.NONE);

@@ -145,7 +145,9 @@ public class Normalizer {
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
             LOG.info("resolving names with taxon cache ...");
-            final TaxonCacheService taxonCacheService = new TaxonCacheService("/taxa/taxonCache.tsv.gz", "/taxa/taxonMap.tsv.gz");
+            final TaxonCacheService taxonCacheService = new TaxonCacheService(
+                    "/taxa/taxonCache.tsv.gz",
+                    "/taxa/taxonMap.tsv.gz");
             try {
                 ResolvingTaxonIndex index = new ResolvingTaxonIndex(taxonCacheService, graphService);
                 index.setIndexResolvedTaxaOnly(true);

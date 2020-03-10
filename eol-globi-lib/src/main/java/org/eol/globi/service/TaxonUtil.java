@@ -190,7 +190,7 @@ public class TaxonUtil {
     public static Taxon enrich(PropertyEnricher enricher, Taxon taxon) throws PropertyEnricherException {
         Map<String, String> properties = taxonToMap(taxon);
         Taxon enrichedTaxon = new TaxonImpl();
-        mapToTaxon(enricher.enrich(properties), enrichedTaxon);
+        mapToTaxon(enricher.enrichFirstMatch(properties), enrichedTaxon);
         return enrichedTaxon;
     }
 
