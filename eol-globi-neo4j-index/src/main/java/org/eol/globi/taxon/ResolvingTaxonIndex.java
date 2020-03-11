@@ -2,6 +2,7 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
@@ -10,6 +11,9 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
+
+import java.util.List;
+import java.util.Map;
 
 public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
     private PropertyEnricher enricher;
@@ -36,17 +40,16 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
 
     private TaxonNode resolveAndIndex(Taxon origTaxon, Taxon taxon) throws NodeFactoryException {
         TaxonNode indexedTaxon = findTaxon(taxon);
+        List<Map<String, String>> taxonMatches;
         while (indexedTaxon == null) {
             try {
-                taxon = TaxonUtil.enrich(enricher, taxon);
+                taxonMatches = enricher.enrichAllMatches(TaxonUtil.taxonToMap(taxon));
             } catch (PropertyEnricherException e) {
                 throw new NodeFactoryException("failed to enrichFirstMatch taxon with name [" + taxon.getName() + "]", e);
             }
-            indexedTaxon = findTaxon(taxon);
-            if (indexedTaxon == null) {
-                if (TaxonUtil.isResolved(taxon)) {
-                    indexedTaxon = createAndIndexTaxon(origTaxon, taxon);
-                } else {
+            if (taxonMatches != null && taxonMatches.size() > 0) {
+                indexedTaxon = indexFirst(taxonMatches, origTaxon);
+                if (indexedTaxon == null) {
                     String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
                     if (StringUtils.equals(truncatedName, taxon.getName())) {
                         if (isIndexResolvedOnly()) {
@@ -58,6 +61,30 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
                         taxon = new TaxonImpl();
                         taxon.setName(truncatedName);
                         indexedTaxon = findTaxonByName(taxon.getName());
+                    }
+                }
+            }
+        }
+        return indexedTaxon;
+    }
+
+    public TaxonNode indexFirst(List<Map<String, String>> taxonMatches, Taxon origTaxon) throws NodeFactoryException {
+        Map<String, String> firstEnriched = taxonMatches.get(0);
+        Taxon taxon = TaxonUtil.mapToTaxon(firstEnriched);
+        TaxonNode indexedTaxon = findTaxon(taxon);
+        if (indexedTaxon == null) {
+            if (TaxonUtil.isResolved(taxon)) {
+                indexedTaxon = createAndIndexTaxon(origTaxon, taxon);
+
+                for (int i = 1; i < taxonMatches.size(); i++) {
+                    Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatches.get(i));
+                    if (!TaxonUtil.likelyHomonym(indexedTaxon, sameAsTaxon)) {
+                        NodeUtil.connectTaxa(
+                                sameAsTaxon,
+                                indexedTaxon,
+                                getGraphDbService(),
+                                RelTypes.SAME_AS
+                        );
                     }
                 }
             }
