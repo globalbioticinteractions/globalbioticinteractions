@@ -182,8 +182,15 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
 
     protected TaxonNode addNoMatchTaxon(Taxon origTaxon) throws NodeFactoryException {
         Taxon noMatchTaxon = TaxonUtil.copy(origTaxon);
-        noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName()) ? origTaxon.getName() : PropertyAndValueDictionary.NO_NAME);
-        noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId()) ? origTaxon.getExternalId() : PropertyAndValueDictionary.NO_MATCH);
+
+        noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName())
+                ? origTaxon.getName()
+                : PropertyAndValueDictionary.NO_NAME);
+
+        noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId())
+                ? origTaxon.getExternalId()
+                : PropertyAndValueDictionary.NO_MATCH);
+
         return createAndIndexTaxon(origTaxon, noMatchTaxon);
     }
 
