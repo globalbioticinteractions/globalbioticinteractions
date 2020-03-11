@@ -150,7 +150,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
             transaction.success();
         }
         return taxonNode;
-    }   
+    }
 
     private void populateRankNames(Taxon taxon, Node node, String rank) {
         Map<String, String> pathNameMap = TaxonUtil.toPathNameMap(taxon);
