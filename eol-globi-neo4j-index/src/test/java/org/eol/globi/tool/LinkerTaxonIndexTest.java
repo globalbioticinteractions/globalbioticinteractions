@@ -36,8 +36,8 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
         TaxonImpl taxon2 = new TaxonImpl("Homo sapiens also2", "FOO:444");
         taxon1.setPathIds("BARZ:111 | FOOZ:777");
-        NodeUtil.connectTaxa(taxon1, (TaxonNode)taxon, getGraphDb(), RelTypes.SAME_AS);
-        NodeUtil.connectTaxa(taxon2, (TaxonNode)taxon, getGraphDb(), RelTypes.SAME_AS);
+        NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+        NodeUtil.connectTaxa(taxon2, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
 
         taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("Bla blaus", null));
         taxon.setExternalId("FOO 1234");
@@ -45,32 +45,71 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         new LinkerTaxonIndex(getGraphDb()).link();
 
-        Transaction transaction = getGraphDb().beginTx();
-        IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
-                .query("*:*");
-        Node next = hits.next();
-        assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
-        assertThat(hits.hasNext(), is(true));
-        hits.close();
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                    .query("*:*");
+            Node next = hits.next();
+            assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
+            assertThat(hits.hasNext(), is(true));
+            hits.close();
 
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:123");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444 " + PropertyAndValueDictionary.PATH + ":BAR\\:123");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:*");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
-        assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
+            assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:123");
+            assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444");
+            assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444 " + PropertyAndValueDictionary.PATH + ":BAR\\:123");
+            assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:*");
+            assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
+            assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
 
-        Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
-        assertThat(((NodeBacked)node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
-                , is("Animalia | Mammalia | Homo sapiens | BARZ:111 | FOOZ:777 | Bar:123 | FOO:444"));
-        assertThat(((NodeBacked)node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
-                , is("Bar:123 | FOO:444"));
+            Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
+            assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
+                    , is("Animalia | Mammalia | Homo sapiens | BARZ:111 | FOOZ:777 | Bar:123 | FOO:444"));
+            assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
+                    , is("Bar:123 | FOO:444"));
 
-        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").size(), is(1));
-        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").size(), is(0));
+            assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").size(), is(1));
+            assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").size(), is(0));
 
-        transaction.success();
-        transaction.close();
+            transaction.success();
+        }
+    }
+
+    @Test
+    public void linkingNoPath() throws NodeFactoryException {
+        Taxon taxonFound = new TaxonImpl("urn:catalog:AMNH:Mammals:M-39582", null);
+        taxonIndex.getOrCreateTaxon(taxonFound);
+        resolveNames();
+
+        new LinkerTaxonIndex(getGraphDb()).link();
+
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                    .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"");
+            assertThat(hits.hasNext(), is(false));
+            hits.close();
+
+            transaction.success();
+        }
+    }
+
+    @Test
+    public void linkingWithPath() throws NodeFactoryException {
+        Taxon taxonFound = new TaxonImpl("urn:catalog:AMNH:Mammals:M-39582", null);
+        taxonFound.setPath("urn:catalog:AMNH:Mammals:M-39582");
+        taxonIndex.getOrCreateTaxon(taxonFound);
+        resolveNames();
+
+        new LinkerTaxonIndex(getGraphDb()).link();
+
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                    .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"");
+            Node next = hits.next();
+            assertThat(new TaxonNode(next).getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
+            assertThat(hits.hasNext(), is(false));
+            hits.close();
+
+            transaction.success();
+        }
     }
 
     @Test
