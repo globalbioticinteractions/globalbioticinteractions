@@ -72,13 +72,10 @@ public class LinkerTaxonIndex implements Linker {
         }
     }
 
-    protected void addToFuzzyIndex(GraphDatabaseService graphDb, TaxonFuzzySearchIndex fuzzySearchIndex, Node indexNode, TaxonNode taxonNode) {
-        Transaction tx = graphDb.beginTx();
-        try {
+    private void addToFuzzyIndex(GraphDatabaseService graphDb, TaxonFuzzySearchIndex fuzzySearchIndex, Node indexNode, TaxonNode taxonNode) {
+        try (Transaction tx = graphDb.beginTx()) {
             fuzzySearchIndex.index(indexNode, taxonNode);
             tx.success();
-        } finally {
-            tx.close();
         }
     }
 

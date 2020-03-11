@@ -54,8 +54,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         TaxonNode firstMatchingTaxon = null;
         if (StringUtils.isNotBlank(value)) {
             String query = key + ":\"" + QueryParser.escape(value) + "\"";
-            Transaction transaction = graphDbService.beginTx();
-            try {
+            try (Transaction transaction = graphDbService.beginTx()) {
                 IndexHits<Node> matchingTaxa = taxons.query(query);
                 Node matchingTaxon;
                 if (matchingTaxa.hasNext()) {
@@ -66,8 +65,6 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
                 }
                 matchingTaxa.close();
                 transaction.success();
-            } finally {
-                transaction.close();
             }
         }
         return firstMatchingTaxon;
@@ -126,6 +123,10 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
                 tx.close();
             }
         }
+    }
+
+    protected GraphDatabaseService getGraphDbService() {
+        return graphDbService;
     }
 
     protected TaxonNode createAndIndexTaxon(Taxon origTaxon, Taxon taxon) throws NodeFactoryException {

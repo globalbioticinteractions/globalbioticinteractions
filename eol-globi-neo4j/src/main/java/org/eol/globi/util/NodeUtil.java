@@ -55,14 +55,11 @@ public class NodeUtil {
     }
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {
-        Transaction tx = graphDb.beginTx();
-        try {
+        try (Transaction tx = graphDb.beginTx()) {
             TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
             TaxonUtil.copy(taxon, sameAsTaxon);
             taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
             tx.success();
-        } finally {
-            tx.close();
         }
     }
 

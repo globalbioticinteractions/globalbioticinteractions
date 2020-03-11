@@ -46,7 +46,8 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         new LinkerTaxonIndex(getGraphDb()).link();
 
         Transaction transaction = getGraphDb().beginTx();
-        IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS).query("*:*");
+        IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                .query("*:*");
         Node next = hits.next();
         assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
         assertThat(hits.hasNext(), is(true));
