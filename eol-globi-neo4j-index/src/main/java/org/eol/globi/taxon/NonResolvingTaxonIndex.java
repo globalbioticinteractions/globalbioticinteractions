@@ -125,14 +125,13 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         }
     }
 
-    protected GraphDatabaseService getGraphDbService() {
+    GraphDatabaseService getGraphDbService() {
         return graphDbService;
     }
 
-    protected TaxonNode createAndIndexTaxon(Taxon origTaxon, Taxon taxon) throws NodeFactoryException {
+    TaxonNode createAndIndexTaxon(Taxon origTaxon, Taxon taxon) throws NodeFactoryException {
         TaxonNode taxonNode;
-        Transaction transaction = graphDbService.beginTx();
-        try {
+        try (Transaction transaction = graphDbService.beginTx()) {
             Node node = graphDbService.createNode();
             taxonNode = new TaxonNode(node, taxon.getName());
 
@@ -149,8 +148,6 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
             indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, taxonNode);
 
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return taxonNode;
     }
