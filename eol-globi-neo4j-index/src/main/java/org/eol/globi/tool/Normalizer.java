@@ -167,7 +167,6 @@ public class Normalizer {
 
                 LOG.info("adding same and similar terms for resolved taxa...");
                 List<Linker> linkers = new ArrayList<>();
-                linkers.add(new LinkerTermMatcher(graphService, taxonCacheService));
                 appendOpenTreeTaxonLinker(graphService, linkers);
                 linkers.forEach(LinkUtil::doTimedLink);
                 LOG.info("adding same and similar terms for resolved taxa done.");
