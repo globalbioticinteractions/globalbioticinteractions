@@ -22,7 +22,9 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class LinkerTaxonIndexTest extends GraphDBTestCase {
@@ -62,7 +64,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
             Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
             assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
-                    , is("Animalia | Mammalia | Homo sapiens | BARZ:111 | FOOZ:777 | Bar:123 | FOO:444"));
+                    , is("Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia"));
             assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
                     , is("Bar:123 | FOO:444"));
 
@@ -74,28 +76,12 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     }
 
     @Test
-    public void linkingNoPath() throws NodeFactoryException {
+    public void linkingWithNameOnly() throws NodeFactoryException {
         Taxon taxonFound = new TaxonImpl("urn:catalog:AMNH:Mammals:M-39582", null);
         taxonIndex.getOrCreateTaxon(taxonFound);
-        resolveNames();
-
-        new LinkerTaxonIndex(getGraphDb()).link();
-
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
-                    .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"");
-            assertThat(hits.hasNext(), is(false));
-            hits.close();
-
-            transaction.success();
-        }
-    }
-
-    @Test
-    public void linkingWithPath() throws NodeFactoryException {
-        Taxon taxonFound = new TaxonImpl("urn:catalog:AMNH:Mammals:M-39582", null);
-        taxonFound.setPath("urn:catalog:AMNH:Mammals:M-39582");
-        taxonIndex.getOrCreateTaxon(taxonFound);
+        Taxon foundTaxon = taxonIndex.findTaxonByName("urn:catalog:AMNH:Mammals:M-39582");
+        assertThat(foundTaxon, is(not(nullValue())));
+        assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
         resolveNames();
 
         new LinkerTaxonIndex(getGraphDb()).link();
@@ -106,6 +92,28 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
             Node next = hits.next();
             assertThat(new TaxonNode(next).getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
             assertThat(hits.hasNext(), is(false));
+            hits.close();
+
+            transaction.success();
+        }
+    }
+
+    @Test
+    public void linkingWithIdOnlyNoPath() throws NodeFactoryException {
+        Taxon taxonFound = new TaxonImpl(null, "some id");
+        taxonIndex.getOrCreateTaxon(taxonFound);
+        resolveNames();
+
+        new LinkerTaxonIndex(getGraphDb()).link();
+
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                    .query("path:\"some id\"");
+            assertThat(hits.hasNext(), is(true));
+            Node next = hits.next();
+            assertThat(new TaxonNode(next).getExternalId(), is("some id"));
+            assertThat(hits.hasNext(), is(false));
+
             hits.close();
 
             transaction.success();

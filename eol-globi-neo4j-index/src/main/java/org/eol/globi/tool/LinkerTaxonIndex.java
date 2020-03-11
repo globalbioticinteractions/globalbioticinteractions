@@ -55,11 +55,11 @@ public class LinkerTaxonIndex implements Linker {
                     addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, sameAsTaxon);
                 }
                 taxonPathIdsAndNames.addAll(taxonIds);
-                String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+                String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
                 ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
                 hit.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
 
-                String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+                String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
                 hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
                 tx.success();
                 tx.close();
@@ -87,6 +87,9 @@ public class LinkerTaxonIndex implements Linker {
     }
 
     private void addPathIdAndNames(List<String> externalIds, TaxonNode taxonNode) {
+        if (StringUtils.isNotBlank(taxonNode.getName())) {
+            externalIds.add(taxonNode.getName());
+        }
         addDelimitedList(externalIds, taxonNode.getPath());
         addDelimitedList(externalIds, taxonNode.getPathIds());
     }
