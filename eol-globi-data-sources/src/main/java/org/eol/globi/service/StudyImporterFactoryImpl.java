@@ -61,11 +61,9 @@ import java.util.HashMap;
 
 public class StudyImporterFactoryImpl implements StudyImporterFactory {
 
-    private final Dataset dataset;
     private final NodeFactory nodeFactory;
 
-    public StudyImporterFactoryImpl(Dataset dataset, NodeFactory nodeFactory) {
-        this.dataset = dataset;
+    public StudyImporterFactoryImpl(NodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
     }
 
@@ -163,7 +161,10 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
 
     private static boolean isMetaTableImporter(JsonNode desc) {
         boolean isMetaTable = false;
-        final JsonNode contextNode = desc.get("@context");
+
+        final JsonNode contextNode =
+                desc == null ? null : desc.get("@context");
+
         if (contextNode != null) {
             if (contextNode.isArray()) {
                 for (JsonNode node : contextNode) {
@@ -187,7 +188,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
     }
 
     @Override
-    public StudyImporter createImporter() throws StudyImporterException {
-        return createImporter(this.dataset, this.nodeFactory);
+    public StudyImporter createImporter(Dataset dataset) throws StudyImporterException {
+        return createImporter(dataset, this.nodeFactory);
     }
 }

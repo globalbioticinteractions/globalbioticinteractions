@@ -66,7 +66,7 @@ public class StudyImporterForRegistry extends NodeBasedImporter {
     }
 
     public void importData(Dataset dataset) throws StudyImporterException {
-        StudyImporter importer = new StudyImporterFactoryImpl(dataset, getNodeFactory()).createImporter();
+        StudyImporter importer = new StudyImporterFactoryImpl(getNodeFactory()).createImporter(dataset);
         if (importer != null) {
             if (getLogger() != null) {
                 importer.setLogger(getLogger());

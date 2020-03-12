@@ -55,7 +55,7 @@ public class StudyImporterFactoryImplIT {
     public void createHafner() throws StudyImporterException, DatasetFinderException, IOException {
         final DatasetRegistry datasetRegistryGitHubRemote = new DatasetRegistryGitHubRemote(inStream -> inStream);
         Dataset dataset = new DatasetFactory(datasetRegistryGitHubRemote).datasetFor("globalbioticinteractions/hafner");
-        StudyImporter importer = new StudyImporterFactoryImpl(dataset, null).createImporter();
+        StudyImporter importer = new StudyImporterFactoryImpl(null).createImporter(dataset);
         assertThat(importer, is(notNullValue()));
         StudyImporterForHafner gomexsiImporter = (StudyImporterForHafner) importer;
         assertThat(gomexsiImporter.getDataset().getLocalURI(URI.create("hafner/gopher_lice_int.csv")), is("gopher_lice_int.csv"));
@@ -129,7 +129,7 @@ public class StudyImporterFactoryImplIT {
 
     public StudyImporter importerFor(DatasetRegistryGitHubRemote datasetFinderGitHubRemote, String repo) throws StudyImporterException, DatasetFinderException {
         Dataset dataset = new DatasetFactory(datasetFinderGitHubRemote).datasetFor(repo);
-        return new StudyImporterFactoryImpl(dataset, null).createImporter();
+        return new StudyImporterFactoryImpl(null).createImporter(dataset);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class StudyImporterFactoryImplIT {
     public void jsonldImporterCached() throws StudyImporterException, DatasetFinderException  {
         final DatasetRegistry datasetRegistry = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(inStream -> inStream), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets", inStream -> inStream));
         Dataset dataset = new DatasetFactory(datasetRegistry).datasetFor("globalbioticinteractions/jsonld-template-dataset");
-        StudyImporter importer = new StudyImporterFactoryImpl(dataset, null).createImporter();
+        StudyImporter importer = new StudyImporterFactoryImpl(null).createImporter(dataset);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForJSONLD.class)));
     }
@@ -172,7 +172,7 @@ public class StudyImporterFactoryImplIT {
 
     StudyImporter getTemplateImporter(DatasetRegistry datasetRegistry, String repo) throws DatasetFinderException, StudyImporterException {
         Dataset dataset = new DatasetFactory(datasetRegistry).datasetFor(repo);
-        StudyImporter importer = new StudyImporterFactoryImpl(dataset, null).createImporter();
+        StudyImporter importer = new StudyImporterFactoryImpl(null).createImporter(dataset);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForTSV.class)));
         return importer;
