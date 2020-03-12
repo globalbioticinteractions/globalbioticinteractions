@@ -117,8 +117,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
     private Node findLocationBy(Location location, String key, String value) {
         Node matchingLocation = null;
         String query = key + ":\"" + QueryParser.escape(value) + "\"";
-        Transaction transaction = getGraphDb().beginTx();
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> matchingLocations = locations.query(query);
             for (Node node : matchingLocations) {
                 final LocationNode foundLocation = new LocationNode(node);
@@ -129,8 +128,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
             matchingLocations.close();
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return matchingLocation;
     }
@@ -179,8 +176,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         Node matchingLocation = null;
         validate(location);
         QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
-        Transaction transaction = getGraphDb().beginTx();
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
             for (Node node : matchingLocations) {
                 final LocationNode foundLocation = new LocationNode(node);
@@ -191,31 +187,26 @@ public class NodeFactoryNeo4j implements NodeFactory {
             }
             matchingLocations.close();
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return matchingLocation;
     }
 
     @Override
     public SeasonNode createSeason(String seasonNameLower) {
-        Transaction transaction = graphDb.beginTx();
         SeasonNode season;
-        try {
+        try (Transaction transaction = graphDb.beginTx()) {
             Node node = graphDb.createNode();
             season = new SeasonNode(node, seasonNameLower);
             seasons.add(node, SeasonNode.TITLE, seasonNameLower);
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return season;
     }
 
     private LocationNode createLocation(final Location location) {
-        Transaction transaction = graphDb.beginTx();
         LocationNode locationNode;
-        try {
+
+        try (Transaction transaction = graphDb.beginTx()) {
             Node node = graphDb.createNode();
             locationNode = new LocationNode(node, fromLocation(location));
             if (location.getLatitude() != null) {
@@ -237,8 +228,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 locations.add(node, LocationConstant.LOCALITY_ID, location.getLocalityId());
             }
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return locationNode;
     }
@@ -316,13 +305,10 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
 
     private SpecimenNode createSpecimen() {
-        Transaction transaction = graphDb.beginTx();
         SpecimenNode specimen;
-        try {
+        try (Transaction transaction = graphDb.beginTx()) {
             specimen = new SpecimenNode(graphDb.createNode(), null);
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return specimen;
     }
@@ -330,9 +316,9 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public StudyNode createStudy(Study study) {
-        Transaction transaction = graphDb.beginTx();
         StudyNode studyNode;
-        try {
+
+        try (Transaction transaction = graphDb.beginTx()) {
             Node node = graphDb.createNode();
             studyNode = new StudyNode(node, study.getTitle());
             studyNode.setSource(study.getSource());
@@ -353,8 +339,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
             studies.add(node, StudyConstant.TITLE, study.getTitle());
             studies.add(node, StudyConstant.TITLE_IN_NAMESPACE, getTitleInNamespace(study));
             transaction.success();
-        } finally {
-            transaction.close();
         }
 
         return studyNode;
@@ -422,13 +406,10 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Deprecated
     @Override
     public StudyNode findStudy(String title) {
-        Transaction transaction = getGraphDb().beginTx();
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             StudyNode study = findStudy(new StudyImpl(title));
             transaction.success();
             return study;
-        } finally {
-            transaction.close();
         }
     }
 
@@ -448,15 +429,12 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public SeasonNode findSeason(String seasonName) {
-        Transaction transaction = getGraphDb().beginTx();
         Node seasonHit;
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
             seasonHit = nodeIndexHits.getSingle();
             nodeIndexHits.close();
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return seasonHit == null ? null : new SeasonNode(seasonHit);
     }
@@ -489,15 +467,12 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
         if (specimen != null && date != null) {
-            Transaction tx = getGraphDb().beginTx();
-            try {
+            try (Transaction tx = getGraphDb().beginTx()) {
                 Iterable<Relationship> rels = getCollectedRel(specimen);
                 for (Relationship rel : rels) {
                     rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
                 }
                 tx.success();
-            } finally {
-                tx.close();
             }
         }
     }
@@ -517,8 +492,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
         Date date = null;
-        Transaction tx = getGraphDb().beginTx();
-        try {
+        try (Transaction tx = getGraphDb().beginTx()) {
             Iterable<Relationship> rels = getCollectedRel(specimen);
             if (rels.iterator().hasNext()) {
                 Relationship rel = rels.iterator().next();
@@ -528,8 +502,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 }
             }
             tx.success();
-        } finally {
-            tx.close();
         }
 
         return date;
@@ -580,8 +552,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private List<Ecoregion> getEcoRegions(Node locationNode) {
         List<Ecoregion> ecoregions = null;
-        Transaction transaction = getGraphDb().beginTx();
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             Iterable<Relationship> relationships = locationNode.getRelationships(NodeUtil.asNeo4j(RelTypes.IN_ECOREGION), Direction.OUTGOING);
             for (Relationship relationship : relationships) {
                 Node ecoregionNode = relationship.getEndNode();
@@ -595,8 +566,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 }
                 ecoregions.add(ecoregion);
             }
-        } finally {
-            transaction.close();
         }
         return ecoregions;
     }
@@ -626,30 +595,21 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private void associateLocationWithEcoRegion(Location location, Ecoregion ecoregion) {
         Node ecoregionNode = findEcoRegion(ecoregion);
-        Transaction tx = graphDb.beginTx();
-        try {
+        try (Transaction tx = graphDb.beginTx()) {
             if (ecoregionNode == null) {
                 ecoregionNode = addAndIndexEcoRegion(ecoregion);
             }
             ((NodeBacked) location).getUnderlyingNode().createRelationshipTo(ecoregionNode, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
             tx.success();
-        } finally {
-            tx.close();
         }
     }
 
     private Node findEcoRegion(Ecoregion ecoregion) {
         String query = "name:\"" + ecoregion.getName() + "\"";
-        Transaction transaction = getGraphDb().beginTx();
-        try {
-            IndexHits<Node> hits = this.ecoregions.query(query);
-            try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            try (IndexHits<Node> hits = this.ecoregions.query(query)) {
                 return hits.hasNext() ? hits.next() : null;
-            } finally {
-                hits.close();
             }
-        } finally {
-            transaction.close();
         }
     }
 
@@ -673,16 +633,13 @@ public class NodeFactoryNeo4j implements NodeFactory {
     protected EnvironmentNode findEnvironment(String name) {
         EnvironmentNode firstMatchingEnvironment = null;
         String query = "name:\"" + name + "\"";
-        Transaction transaction = getGraphDb().beginTx();
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> matches = environments.query(query);
             if (matches.hasNext()) {
                 firstMatchingEnvironment = new EnvironmentNode(matches.next());
             }
             matches.close();
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return firstMatchingEnvironment;
     }
@@ -737,15 +694,15 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return ecoregionFinder;
     }
 
-    public IndexHits<Node> findCloseMatchesForEcoregion(String ecoregionName) {
+    IndexHits<Node> findCloseMatchesForEcoregion(String ecoregionName) {
         return QueryUtil.query(ecoregionName, PropertyAndValueDictionary.NAME, ecoregions);
     }
 
-    public IndexHits<Node> findCloseMatchesForEcoregionPath(String ecoregionPath) {
+    IndexHits<Node> findCloseMatchesForEcoregionPath(String ecoregionPath) {
         return QueryUtil.query(ecoregionPath, PropertyAndValueDictionary.PATH, ecoregionPaths);
     }
 
-    public IndexHits<Node> suggestEcoregionByName(String wholeOrPartialEcoregionNameOrPath) {
+    IndexHits<Node> suggestEcoregionByName(String wholeOrPartialEcoregionNameOrPath) {
         return ecoregionSuggestions.query("name:\"" + wholeOrPartialEcoregionNameOrPath + "\"");
     }
 
@@ -761,21 +718,17 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public Dataset getOrCreateDataset(Dataset originatingDataset) {
-        Transaction transaction = graphDb.beginTx();
-        try {
+        try (Transaction transaction = graphDb.beginTx()) {
             Dataset datasetCreated = getOrCreateDatasetNoTx(originatingDataset);
             transaction.success();
             return datasetCreated;
-        } finally {
-            transaction.close();
         }
     }
 
     @Override
     public Interaction createInteraction(Study study) throws NodeFactoryException {
-        Transaction transaction = graphDb.beginTx();
         InteractionNode interactionNode;
-        try {
+        try (Transaction transaction = graphDb.beginTx()) {
             Node node = graphDb.createNode();
             StudyNode studyNode = getOrCreateStudy(study);
             interactionNode = new InteractionNode(node);
@@ -785,8 +738,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
                 interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
             }
             transaction.success();
-        } finally {
-            transaction.close();
         }
         return interactionNode;
     }
