@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class StudyImporterForBell extends BaseStudyImporter {
+public class StudyImporterForBell extends NodeBasedImporter {
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForBell.class);
 

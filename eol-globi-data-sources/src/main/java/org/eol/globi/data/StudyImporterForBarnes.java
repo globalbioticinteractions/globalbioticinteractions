@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-public class StudyImporterForBarnes extends BaseStudyImporter {
+public class StudyImporterForBarnes extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBarnes.class);
 
     public static final String SOURCE = "Barnes, C. et al., 2008. PREDATOR AND PREY BODY SIZES IN MARINE FOOD WEBS. Ecology, 89(3), pp.881–881. Available at: https://doi.org/10.1890/07-1551.1 . Data provided by Carolyn Barnes. Also available at " + "http://www.esapubs.org/Archive/ecol/E089/051/" + " .";

@@ -18,7 +18,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForKelpForest extends BaseStudyImporter {
+public class StudyImporterForKelpForest extends NodeBasedImporter {
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForKelpForest.class);
 

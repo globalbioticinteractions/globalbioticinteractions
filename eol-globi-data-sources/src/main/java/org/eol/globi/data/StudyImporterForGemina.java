@@ -13,7 +13,7 @@ import org.globalbioticinteractions.doi.DOI;
 import java.io.IOException;
 import java.net.URI;
 
-public class StudyImporterForGemina extends BaseStudyImporter {
+public class StudyImporterForGemina extends NodeBasedImporter {
 
     public StudyImporterForGemina(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

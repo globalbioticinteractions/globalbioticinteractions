@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class StudyImporterForRaymond extends BaseStudyImporter {
+public class StudyImporterForRaymond extends NodeBasedImporter {
 
     private final static Log LOG = LogFactory.getLog(StudyImporterForRaymond.class);
 

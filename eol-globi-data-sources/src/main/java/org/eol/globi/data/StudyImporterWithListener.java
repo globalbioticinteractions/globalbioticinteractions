@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.service.GeoNamesService;
 
-public abstract class StudyImporterWithListener extends BaseStudyImporter {
+public abstract class StudyImporterWithListener extends NodeBasedImporter {
 
     private InteractionListener interactionListener;
 

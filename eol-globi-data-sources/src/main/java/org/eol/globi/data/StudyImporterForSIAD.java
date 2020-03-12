@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForSIAD extends BaseStudyImporter {
+public class StudyImporterForSIAD extends NodeBasedImporter {
 
     private final static Map<String, InteractType> map = new HashMap<String, InteractType>() {
         {

@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForSimons extends BaseStudyImporter {
+public class StudyImporterForSimons extends NodeBasedImporter {
 
     public static final String NORTHING = "northing";
     public static final String EASTING = "easting";

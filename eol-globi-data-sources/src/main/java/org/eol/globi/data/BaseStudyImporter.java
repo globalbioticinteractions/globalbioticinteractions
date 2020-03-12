@@ -12,8 +12,7 @@ import org.globalbioticinteractions.doi.DOI;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
-    private ParserFactory parserFactory;
+public abstract class BaseStudyImporter implements StudyImporter {
     protected ImportFilter importFilter = recordNumber -> true;
     private AtomicLong currentLine = null;
     private URI currentResource = null;
@@ -26,8 +25,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     private String sourceCitationLastAccessed;
 
     public BaseStudyImporter(ParserFactory parserFactory, NodeFactory nodeFactory) {
-        super(nodeFactory);
-        this.parserFactory = parserFactory;
+
     }
 
     @Override
@@ -63,10 +61,6 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
 
     public DOI getSourceDOI() {
         return dataset == null ? null : dataset.getDOI();
-    }
-
-    protected void setBasisOfRecordAsLiterature(Specimen specimen) throws NodeFactoryException {
-        specimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html#LITERATURE", "Literature"));
     }
 
     public void setDataset(Dataset dataset) {
@@ -117,7 +111,4 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         return builder.append(message).toString();
     }
 
-    protected ParserFactory getParserFactory() {
-        return parserFactory;
-    }
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class StudyImporterForWrast extends BaseStudyImporter {
+public class StudyImporterForWrast extends NodeBasedImporter {
 
     public static final String LENGTH_IN_MM = "lengthInMm";
     public static final String SEASON = "season";

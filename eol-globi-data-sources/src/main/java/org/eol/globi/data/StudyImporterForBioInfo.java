@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyImporter {
+public class StudyImporterForBioInfo extends NodeBasedImporter implements StudyImporter {
     public static final String REFERENCE_DATA_FILE = "bioinfo.org.uk/eol_references.csv.gz";
     public static final String RELATIONS_DATA_FILE = "bioinfo.org.uk/eol_taxon_relations.csv.gz";
     public static final String TAXON_DATA_FILE = "bioinfo.org.uk/eol_taxa.csv.gz";

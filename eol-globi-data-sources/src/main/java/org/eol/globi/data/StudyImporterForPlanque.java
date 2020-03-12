@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.replace;
 
-public class StudyImporterForPlanque extends BaseStudyImporter {
+public class StudyImporterForPlanque extends NodeBasedImporter {
     private final static Log LOG = LogFactory.getLog(StudyImporterForPlanque.class);
 
     public StudyImporterForPlanque(ParserFactory parserFactory, NodeFactory nodeFactory) {

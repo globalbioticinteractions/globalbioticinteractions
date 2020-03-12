@@ -22,7 +22,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class StudyImporterForBaremore extends BaseStudyImporter {
+public class StudyImporterForBaremore extends NodeBasedImporter {
     private static final URI DATA_SOURCE = URI.create("baremore/ANGELSHARK_DIET_DATAREQUEST_10012012.csv");
 
     public StudyImporterForBaremore(ParserFactory parserFactory, NodeFactory nodeFactory) {

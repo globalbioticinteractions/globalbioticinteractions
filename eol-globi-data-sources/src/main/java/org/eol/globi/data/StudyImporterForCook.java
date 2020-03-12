@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 
-public class StudyImporterForCook extends BaseStudyImporter {
+public class StudyImporterForCook extends NodeBasedImporter {
     private static final URI DATASET_RESOURCE_NAME = URI.create("cook/cook_atlantic_croaker_data.csv");
 
     public StudyImporterForCook(ParserFactory parserFactory, NodeFactory nodeFactory) {

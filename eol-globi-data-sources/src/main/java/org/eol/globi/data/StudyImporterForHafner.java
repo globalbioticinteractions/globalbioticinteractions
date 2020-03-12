@@ -11,7 +11,7 @@ import org.globalbioticinteractions.doi.DOI;
 import java.io.IOException;
 import java.net.URI;
 
-public class StudyImporterForHafner extends BaseStudyImporter {
+public class StudyImporterForHafner extends NodeBasedImporter {
 
     public static final URI RESOURCE = URI.create("hafner/gopher_lice_int.csv");
 

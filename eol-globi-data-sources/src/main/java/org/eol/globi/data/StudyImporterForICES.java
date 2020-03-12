@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 
-public class StudyImporterForICES extends BaseStudyImporter {
+public class StudyImporterForICES extends NodeBasedImporter {
 
     public StudyImporterForICES(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

@@ -17,7 +17,7 @@ import org.globalbioticinteractions.doi.DOI;
 import java.io.IOException;
 import java.net.URI;
 
-public class StudyImporterForCruaud extends BaseStudyImporter {
+public class StudyImporterForCruaud extends NodeBasedImporter {
 
     private static final Log LOG = LogFactory.getLog(StudyImporterForCruaud.class);
 

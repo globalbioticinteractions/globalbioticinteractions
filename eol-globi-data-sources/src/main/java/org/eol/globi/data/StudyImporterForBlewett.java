@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyImporterForBlewett extends BaseStudyImporter {
+public class StudyImporterForBlewett extends NodeBasedImporter {
     public static final String COLLECTION_NO = "Collection #";
 
     public StudyImporterForBlewett(ParserFactory parserFactory, NodeFactory nodeFactory) {

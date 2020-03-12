@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyImporterForRoopnarine extends BaseStudyImporter {
+public class StudyImporterForRoopnarine extends NodeBasedImporter {
 
     public StudyImporterForRoopnarine(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

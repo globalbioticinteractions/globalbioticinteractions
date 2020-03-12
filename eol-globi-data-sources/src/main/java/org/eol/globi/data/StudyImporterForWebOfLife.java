@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class StudyImporterForWebOfLife extends BaseStudyImporter {
+public class StudyImporterForWebOfLife extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForWebOfLife.class);
     public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es";
 

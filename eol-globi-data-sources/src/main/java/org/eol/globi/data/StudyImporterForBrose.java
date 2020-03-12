@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyImporterForBrose extends BaseStudyImporter {
+public class StudyImporterForBrose extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForBrose.class);
 
     public static final String SOURCE = "Brose, U. et al., 2005. Body sizes of consumers and their resources. Ecology 86:2545. Available from doi:10.1890/05-0379 .";

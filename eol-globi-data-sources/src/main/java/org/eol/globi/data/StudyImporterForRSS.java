@@ -30,7 +30,7 @@ import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class StudyImporterForRSS extends BaseStudyImporter {
+public class StudyImporterForRSS extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForRSS.class);
     public static final String HAS_DEPENDENCIES = "hasDependencies";
 

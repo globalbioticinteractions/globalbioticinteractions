@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class StudyImporterForINaturalist extends BaseStudyImporter {
+public class StudyImporterForINaturalist extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForINaturalist.class);
 
     public static final String INATURALIST_URL = "https://www.inaturalist.org";

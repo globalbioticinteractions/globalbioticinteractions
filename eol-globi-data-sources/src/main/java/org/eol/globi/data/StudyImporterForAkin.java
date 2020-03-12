@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class StudyImporterForAkin extends BaseStudyImporter {
+public class StudyImporterForAkin extends NodeBasedImporter {
 
     public StudyImporterForAkin(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

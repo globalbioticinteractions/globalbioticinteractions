@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForSPIRE extends BaseStudyImporter {
+public class StudyImporterForSPIRE extends NodeBasedImporter {
 
     public static final String OF_HABITAT = "ofHabitat";
     public static final String COUNTRY = "Country";

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class StudyImporterForSeltmann extends BaseStudyImporter {
+public class StudyImporterForSeltmann extends NodeBasedImporter {
     public static final String FIELD_ASSOCIATED_GENUS = "aec:associatedGenus";
     public static final String FIELD_ASSOCIATED_SPECIFIC_EPITHET = "aec:associatedSpecificEpithet";
     public static final String FIELD_ASSOCIATED_SCIENTIFIC_NAME = "aec:associatedScientificName";

@@ -16,6 +16,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.util.SpecimenUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.IllegalFieldValueException;
@@ -34,7 +35,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.trim;
 
-public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
+public class StudyImporterForGoMexSI2 extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForGoMexSI2.class);
     public static final String GOMEXI_SOURCE_DESCRIPTION = "http://gomexsi.tamucc.edu";
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
@@ -330,7 +331,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addObservation(Map<String, List<Map<String, String>>> predatorUIToPreyLists, LabeledCSVParser parser, Study study, Location location, String predatorId, Map<String, String> predatorProperties, DateTime eventDate) throws StudyImporterException {
         try {
             Specimen predatorSpecimen = createSpecimen(study, predatorProperties);
-            setBasisOfRecordAsLiterature(predatorSpecimen);
+            SpecimenUtil.setBasisOfRecordAsLiterature(predatorSpecimen, getNodeFactory());
             predatorSpecimen.setExternalId(predatorId);
             if (location == null) {
                 getLogger().warn(study, "no location for predator with id [" + predatorSpecimen.getExternalId() + "]");
@@ -344,7 +345,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                     if (preyProperties != null) {
                         try {
                             Specimen prey = createSpecimen(study, preyProperties);
-                            setBasisOfRecordAsLiterature(prey);
+                            SpecimenUtil.setBasisOfRecordAsLiterature(prey, getNodeFactory());
                             prey.caughtIn(location);
                             if (eventDate != null) {
                                 getNodeFactory().setUnixEpochProperty(prey, eventDate.toDate());

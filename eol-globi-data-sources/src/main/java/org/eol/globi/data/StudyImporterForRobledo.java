@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudyImporterForRobledo extends BaseStudyImporter {
+public class StudyImporterForRobledo extends NodeBasedImporter {
 
     public StudyImporterForRobledo(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

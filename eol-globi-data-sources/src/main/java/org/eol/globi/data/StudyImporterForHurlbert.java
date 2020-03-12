@@ -23,6 +23,7 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.globalbioticinteractions.util.SpecimenUtil;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class StudyImporterForHurlbert extends BaseStudyImporter {
+public class StudyImporterForHurlbert extends NodeBasedImporter {
 
     public static final URI RESOURCE = URI.create("AvianDietDatabase.txt");
 
@@ -116,7 +117,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         try {
             Taxon predatorTaxon = new TaxonImpl(predatorName);
             Specimen predatorSpecimen = getNodeFactory().createSpecimen(study, predatorTaxon);
-            setBasisOfRecordAsLiterature(predatorSpecimen);
+            SpecimenUtil.setBasisOfRecordAsLiterature(predatorSpecimen, getNodeFactory());
 
             Taxon preyTaxon = new TaxonImpl(preyTaxonName);
             String preyNameId = StringUtils.trim(columnValueOrNull(record, "Prey_Name_ITIS_ID"));
@@ -124,7 +125,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
                 preyTaxon.setExternalId(TaxonomyProvider.ITIS.getIdPrefix() + preyNameId);
             }
             Specimen preySpecimen = getNodeFactory().createSpecimen(study, preyTaxon);
-            setBasisOfRecordAsLiterature(preySpecimen);
+            SpecimenUtil.setBasisOfRecordAsLiterature(preySpecimen, getNodeFactory());
 
             String preyStage = StringUtils.trim(columnValueOrNull(record, "Prey_Stage"));
             if (StringUtils.isNotBlank(preyStage)) {

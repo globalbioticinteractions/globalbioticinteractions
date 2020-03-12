@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class StudyImporterForCoetzer extends BaseStudyImporter {
+public class StudyImporterForCoetzer extends NodeBasedImporter {
 
     public StudyImporterForCoetzer(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

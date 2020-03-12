@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 
-public class StudyImporterForJSONLD extends BaseStudyImporter {
+public class StudyImporterForJSONLD extends NodeBasedImporter {
 
     public URI getResourceURI() {
         return getDataset().getConfigURI();

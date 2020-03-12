@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class StudyImporterForRegistry extends BaseStudyImporter {
+public class StudyImporterForRegistry extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForRegistry.class);
 
     private final DatasetRegistry finder;

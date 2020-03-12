@@ -12,7 +12,7 @@ import org.globalbioticinteractions.doi.DOI;
 import java.io.IOException;
 import java.net.URI;
 
-public class StudyImporterForJRFerrerParis extends BaseStudyImporter {
+public class StudyImporterForJRFerrerParis extends NodeBasedImporter {
 
     private static final URI RESOURCE = URI.create("http://files.figshare.com/1674327/20140912_CompiledButterflyHostPlantRecords_JRFP.csv");
 
