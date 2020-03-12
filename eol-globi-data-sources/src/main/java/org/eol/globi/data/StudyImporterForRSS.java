@@ -14,7 +14,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.globalbioticinteractions.dataset.DatasetUtil;
-import org.eol.globi.service.StudyImporterFactory;
+import org.eol.globi.service.StudyImporterFactoryImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.mapdb.DBMaker;
 
@@ -107,7 +107,7 @@ public class StudyImporterForRSS extends NodeBasedImporter {
     public void handleDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset) throws StudyImporterException {
         getNodeFactory().getOrCreateDataset(dataset);
         NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(getNodeFactory(), dataset);
-        StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
+        StudyImporter studyImporter = new StudyImporterFactoryImpl(dataset, nodeFactoryForDataset).createImporter();
         studyImporter.setDataset(dataset);
         if (getLogger() != null) {
             studyImporter.setLogger(getLogger());

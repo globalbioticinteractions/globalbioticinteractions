@@ -7,7 +7,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFactory;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetFinderException;
-import org.eol.globi.service.StudyImporterFactory;
+import org.eol.globi.service.StudyImporterFactoryImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,7 +66,7 @@ public class StudyImporterForRegistry extends NodeBasedImporter {
     }
 
     public void importData(Dataset dataset) throws StudyImporterException {
-        StudyImporter importer = new StudyImporterFactory().createImporter(dataset, getNodeFactory());
+        StudyImporter importer = new StudyImporterFactoryImpl(dataset, getNodeFactory()).createImporter();
         if (importer != null) {
             if (getLogger() != null) {
                 importer.setLogger(getLogger());
