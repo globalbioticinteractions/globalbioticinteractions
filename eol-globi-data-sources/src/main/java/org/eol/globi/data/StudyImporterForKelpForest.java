@@ -34,7 +34,7 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
         try {
             String source = "Beas-Luna, R., Novak, M., Carr, M. H., Tinker, M. T., Black, A., Caselle, J. E., … Iles, A. (2014). An Online Database for Informing Ecological Network Models: http://kelpforest.ucsc.edu. PLoS ONE, 9(10), e109356. doi:10.1371/journal.pone.0109356";
             Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(source, source, new DOI("1371", "journal.pone.0109356"), source));
-            LabeledCSVParser parser = parserFactory.createParser(NODES, "UTF-8");
+            LabeledCSVParser parser = getParserFactory().createParser(NODES, "UTF-8");
             String line[];
             Map<String, Long> nameToId = new HashMap<String, Long>();
             while ((line = parser.getLine()) != null) {
@@ -54,7 +54,7 @@ public class StudyImporterForKelpForest extends BaseStudyImporter {
                 }
             };
 
-            parser = parserFactory.createParser(LINKS, "UTF-8");
+            parser = getParserFactory().createParser(LINKS, "UTF-8");
             while ((line = parser.getLine()) != null) {
                 if (line.length > 2) {
                     String interactionType = parser.getValueByLabel("type");

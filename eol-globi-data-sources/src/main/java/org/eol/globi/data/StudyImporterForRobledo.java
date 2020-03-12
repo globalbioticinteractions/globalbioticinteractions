@@ -41,7 +41,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         // TODO: need to map date range of collections
         URI studyResource = URI.create("robledo/table_s1_extract.csv");
         try {
-            LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
+            LabeledCSVParser parser = getParserFactory().createParser(studyResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String beetleName = parser.getValueByLabel("Herbivore species");
                 String beetleScientificName = completeBeetleName(beetleName);

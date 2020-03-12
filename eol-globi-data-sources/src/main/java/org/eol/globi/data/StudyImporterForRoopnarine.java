@@ -65,7 +65,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
 
     private List<Specimen> importTrophicInteractions(URI trophicGuildLookup, Map<Integer, List<String>> trophicGuildNumberToSpeciesMap, URI studyResource, Study study, Location location) throws StudyImporterException {
         try {
-            LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
+            LabeledCSVParser parser = getParserFactory().createParser(studyResource, CharsetConstant.UTF8);
             List<Specimen> predatorSpecimen = new ArrayList<Specimen>();
             while (parser.getLine() != null) {
                 List<String> preyTaxonList = importPreyList(trophicGuildNumberToSpeciesMap, parser, study);
@@ -87,7 +87,7 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
     private Map<Integer, List<String>> buildGuildLookup(URI trophicGuildLookup) throws StudyImporterException {
         final Map<Integer, List<String>> trophicGuildNumberToSpeciesMap = new HashMap<Integer, List<String>>();
         try {
-            LabeledCSVParser parser = parserFactory.createParser(trophicGuildLookup, CharsetConstant.UTF8);
+            LabeledCSVParser parser = getParserFactory().createParser(trophicGuildLookup, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 Integer guildNumber = parseGuildNumber(trophicGuildLookup, parser);
 

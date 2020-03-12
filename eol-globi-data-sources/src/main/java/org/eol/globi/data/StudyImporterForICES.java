@@ -75,7 +75,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
         try {
             URI resource = URI.create("ices/StomachDataSet.csv.gz");
             setCurrentResource(resource);
-            parser = parserFactory.createParser(resource, CharsetConstant.UTF8);
+            parser = getParserFactory().createParser(resource, CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access datasource", e);
         }

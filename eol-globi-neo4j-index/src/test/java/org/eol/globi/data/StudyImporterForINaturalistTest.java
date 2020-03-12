@@ -168,7 +168,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Ignore
     @Test
     public void loadIgnoredInteractions() throws IOException {
-        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, CharsetConstant.UTF8);
+        LabeledCSVParser labeledCSVParser = importer.getParserFactory().createParser(InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, CharsetConstant.UTF8);
         List<String> typeMap1 = InteractTypeMapperFactoryImpl.buildTypesIgnored(labeledCSVParser, "observation_field_id");
 
         assertThat(typeMap1.contains(PREFIX_OBSERVATION_FIELD + 13), is(false));
@@ -179,7 +179,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Test
     public void loadInteractionMap() throws IOException, TermLookupServiceException {
         URI resourceName = InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT;
-        LabeledCSVParser labeledCSVParser = importer.parserFactory.createParser(resourceName, CharsetConstant.UTF8);
+        LabeledCSVParser labeledCSVParser = importer.getParserFactory().createParser(resourceName, CharsetConstant.UTF8);
         Map<String, InteractType> typeMap = InteractTypeMapperFactoryImpl.buildTypeMap(labeledCSVParser, "observation_field_id", "observation_field_name", "interaction_type_id");
 
         assertThat(typeMap.get(PREFIX_OBSERVATION_FIELD + 13), is(InteractType.ATE));

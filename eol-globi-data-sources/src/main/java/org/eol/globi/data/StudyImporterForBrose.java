@@ -58,13 +58,13 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
-            dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
+            dataParser = getParserFactory().createParser(RESOURCE_PATH, CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         dataParser.changeDelimiter('\t');
 
-        Map<String, String> refMap = ReferenceUtil.buildRefMap(parserFactory, REFERENCE_PATH);
+        Map<String, String> refMap = ReferenceUtil.buildRefMap(getParserFactory(), REFERENCE_PATH);
 
         try {
             while (dataParser.getLine() != null) {

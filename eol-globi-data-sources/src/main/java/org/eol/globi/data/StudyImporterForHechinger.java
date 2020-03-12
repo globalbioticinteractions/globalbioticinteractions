@@ -65,7 +65,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
     public void importStudy() throws StudyImporterException {
         Study study = createStudy();
         try {
-            LabeledCSVParser nodes = parserFactory.createParser(getNodesResourceName(), CharsetConstant.UTF8);
+            LabeledCSVParser nodes = getParserFactory().createParser(getNodesResourceName(), CharsetConstant.UTF8);
 
             nodes.changeDelimiter(getDelimiter());
 
@@ -96,7 +96,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
                 }
             }
 
-            LabeledCSVParser links = parserFactory.createParser(getLinksResourceName(), CharsetConstant.UTF8);
+            LabeledCSVParser links = getParserFactory().createParser(getLinksResourceName(), CharsetConstant.UTF8);
             links.changeDelimiter(getDelimiter());
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();

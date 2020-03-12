@@ -32,7 +32,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
-            dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
+            dataParser = getParserFactory().createParser(RESOURCE_PATH, CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }

@@ -25,7 +25,7 @@ public class StudyImporterForCook extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         LabeledCSVParser parser;
         try {
-            parser = parserFactory.createParser(DATASET_RESOURCE_NAME, CharsetConstant.UTF8);
+            parser = getParserFactory().createParser(DATASET_RESOURCE_NAME, CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource", e);
         }

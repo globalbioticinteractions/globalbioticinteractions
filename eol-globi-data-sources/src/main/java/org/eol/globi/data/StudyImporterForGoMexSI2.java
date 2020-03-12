@@ -122,10 +122,10 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         URI referenceResource = getReferencesResourcePath();
 
         try {
-            LabeledCSVParser parser = parserFactory.createParser(referenceResource, CharsetConstant.UTF8);
+            LabeledCSVParser parser = getParserFactory().createParser(referenceResource, CharsetConstant.UTF8);
             Map<String, String> studyContributorMap = collectContributors(referenceResource, parser);
 
-            parser = parserFactory.createParser(referenceResource, CharsetConstant.UTF8);
+            parser = getParserFactory().createParser(referenceResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(referenceResource, parser, "DATA_ID");
                 Study study = referenceIdToStudy.get(refId);
@@ -175,7 +175,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         URI locationResource = getLocationsResourcePath();
         try {
             TermLookupService cmecsService = new CMECSService(getDataset());
-            LabeledCSVParser parser = parserFactory.createParser(locationResource, CharsetConstant.UTF8);
+            LabeledCSVParser parser = getParserFactory().createParser(locationResource, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String refId = getMandatoryValue(locationResource, parser, "DATA_ID");
                 if (!refIdToStudyMap.containsKey(refId)) {
@@ -481,7 +481,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     private void addSpecimen(URI datafile, String scientificNameLabel, ParseEventHandler specimenListener) throws StudyImporterException {
         try {
-            LabeledCSVParser parser = parserFactory.createParser(datafile, CharsetConstant.UTF8);
+            LabeledCSVParser parser = getParserFactory().createParser(datafile, CharsetConstant.UTF8);
             parseSpecimen(datafile, scientificNameLabel, specimenListener, parser);
         } catch (IOException e) {
             throw new StudyImporterException("failed to open resource [" + datafile + "]", e);

@@ -25,7 +25,7 @@ public class StudyImporterForGemina extends BaseStudyImporter {
         try {
             String source = "Schriml, L. M., Arze, C., Nadendla, S., Ganapathy, A., Felix, V., Mahurkar, A., … Hall, N. (2009). GeMInA, Genomic Metadata for Infectious Agents, a geospatial surveillance pathogen database. Nucleic Acids Research, 38(Database), D754–D764. doi:10.1093/nar/gkp832";
             Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(source, source, new DOI("1093", "nar/gkp832"), source));
-            LabeledCSVParser parser = parserFactory.createParser(studyResource, "UTF-8");
+            LabeledCSVParser parser = getParserFactory().createParser(studyResource, "UTF-8");
             parser.changeDelimiter('\t');
             String line[];
             while ((line = parser.getLine()) != null) {

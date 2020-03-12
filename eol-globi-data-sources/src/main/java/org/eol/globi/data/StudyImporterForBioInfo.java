@@ -222,9 +222,9 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
         LabeledCSVParser relationsParser;
         try {
-            refMap = buildRefMap(parserFactory.createParser(URI.create(REFERENCE_DATA_FILE), CharsetConstant.UTF8));
-            Map<String, Taxon> taxonMap = buildTaxonMap(parserFactory.createParser(URI.create(TAXON_DATA_FILE), CharsetConstant.UTF8));
-            relationsParser = parserFactory.createParser(URI.create(RELATIONS_DATA_FILE), CharsetConstant.UTF8);
+            refMap = buildRefMap(getParserFactory().createParser(URI.create(REFERENCE_DATA_FILE), CharsetConstant.UTF8));
+            Map<String, Taxon> taxonMap = buildTaxonMap(getParserFactory().createParser(URI.create(TAXON_DATA_FILE), CharsetConstant.UTF8));
+            relationsParser = getParserFactory().createParser(URI.create(RELATIONS_DATA_FILE), CharsetConstant.UTF8);
             createRelations(relationsParser, refMap, taxonMap);
         } catch (IOException e1) {
             throw new StudyImporterException("problem reading trophic relations file [" + RELATIONS_DATA_FILE + "]", e1);

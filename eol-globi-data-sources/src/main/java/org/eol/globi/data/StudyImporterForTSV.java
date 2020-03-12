@@ -98,7 +98,7 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
         } else {
             LabeledCSVParser parser = null;
             try {
-                parser = parserFactory.createParser(resourceURI, "UTF-8");
+                parser = getParserFactory().createParser(resourceURI, "UTF-8");
                 parser.changeDelimiter(newDelim);
             } catch (IOException ex) {
                 parserExceptions.add(new IOException("failed to access [" + resourceURI.toString() + "]", ex));

@@ -41,7 +41,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
-            dataParser = parserFactory.createParser(getLinks(), CharsetConstant.UTF8);
+            dataParser = getParserFactory().createParser(getLinks(), CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read links", e);
         }
@@ -50,8 +50,8 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
 
         Map<String, List<String>> pairwiseKeyToAuthorYears = new TreeMap<String, List<String>>();
         try {
-            Map<String, String> authorYearToFullReference = ReferenceUtil.buildRefMap(parserFactory, getReferences(), "AUTHOR_YEAR", "FULL_REFERENCE", '\t');
-            LabeledCSVParser referenceParser = parserFactory.createParser(getReferencesForLinks(), CharsetConstant.UTF8);
+            Map<String, String> authorYearToFullReference = ReferenceUtil.buildRefMap(getParserFactory(), getReferences(), "AUTHOR_YEAR", "FULL_REFERENCE", '\t');
+            LabeledCSVParser referenceParser = getParserFactory().createParser(getReferencesForLinks(), CharsetConstant.UTF8);
             referenceParser.changeDelimiter('\t');
 
             while (referenceParser.getLine() != null) {

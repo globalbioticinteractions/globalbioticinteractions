@@ -82,7 +82,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
         study1.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
         Study study = getNodeFactory().getOrCreateStudy(study1);
         try {
-            LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
+            LabeledCSVParser csvParser = getParserFactory().createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
             LengthParser parser = new LengthParserImpl(COLUMN_MAPPER.get(LENGTH_IN_MM));
             getPredatorSpecimenMap().clear();
             while (csvParser.getLine() != null) {
@@ -192,7 +192,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
     private Map<String, Double> createDepthMap(Study study) throws StudyImporterException {
         Map<String, Double> depthMap;
         try {
-            LabeledCSVParser depthParser = parserFactory.createParser(LAVACA_BAY_ENVIRONMENTAL, CharsetConstant.UTF8);
+            LabeledCSVParser depthParser = getParserFactory().createParser(LAVACA_BAY_ENVIRONMENTAL, CharsetConstant.UTF8);
             depthMap = new HashMap<>();
             while (depthParser.getLine() != null) {
                 String seasonDepth = depthParser.getValueByLabel("Season");
@@ -258,7 +258,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
         LabeledCSVParser parser = null;
         try {
-            parser = parserFactory.createParser(LAVACA_BAY_LOCATIONS, CharsetConstant.UTF8);
+            parser = getParserFactory().createParser(LAVACA_BAY_LOCATIONS, CharsetConstant.UTF8);
             while (parser.getLine() != null) {
                 String habitateDef = parser.getValueByLabel(COLUMN_MAPPER.get(HABITAT));
                 String regionDef = parser.getValueByLabel(COLUMN_MAPPER.get(REGION));

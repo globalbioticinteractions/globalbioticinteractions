@@ -55,7 +55,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
     }
 
     private Study importStudy(URI studyResource) throws StudyImporterException {
-        return createAndPopulateStudy(parserFactory, studyResource);
+        return createAndPopulateStudy(getParserFactory(), studyResource);
     }
 
 

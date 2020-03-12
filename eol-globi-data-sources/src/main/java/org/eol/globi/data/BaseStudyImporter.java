@@ -13,7 +13,7 @@ import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BaseStudyImporter extends BaseImporter implements StudyImporter {
-    protected ParserFactory parserFactory;
+    private ParserFactory parserFactory;
     protected ImportFilter importFilter = recordNumber -> true;
     private AtomicLong currentLine = null;
     private URI currentResource = null;
@@ -117,4 +117,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
         return builder.append(message).toString();
     }
 
+    protected ParserFactory getParserFactory() {
+        return parserFactory;
+    }
 }

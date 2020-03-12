@@ -25,7 +25,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         LabeledCSVParser dataParser;
         try {
-            dataParser = parserFactory.createParser(RESOURCE_PATH, CharsetConstant.UTF8);
+            dataParser = getParserFactory().createParser(RESOURCE_PATH, CharsetConstant.UTF8);
         } catch (IOException e) {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
@@ -44,7 +44,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     }
 
     private Map<String, String> buildRefMap() throws StudyImporterException {
-        return ReferenceUtil.buildRefMap(parserFactory, REFERENCE_PATH);
+        return ReferenceUtil.buildRefMap(getParserFactory(), REFERENCE_PATH);
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, String> refMap) throws StudyImporterException {

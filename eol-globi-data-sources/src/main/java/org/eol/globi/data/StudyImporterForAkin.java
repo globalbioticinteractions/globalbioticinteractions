@@ -36,7 +36,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
     }
 
     private Study importAkinStudyFile(String[][] siteInfos, URI studyResource, Study study) throws IOException, StudyImporterException, NodeFactoryException {
-        LabeledCSVParser parser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
+        LabeledCSVParser parser = getParserFactory().createParser(studyResource, CharsetConstant.UTF8);
         String[] header = parser.getLabels();
         String[] line;
 

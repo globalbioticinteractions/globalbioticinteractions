@@ -33,7 +33,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         Study study;
         try {
-            LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
+            LabeledCSVParser parser = getParserFactory().createParser(DATA_SOURCE, CharsetConstant.UTF8);
             String[] line;
 
             study = getNodeFactory().getOrCreateStudy(

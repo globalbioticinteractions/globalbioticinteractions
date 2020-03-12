@@ -81,7 +81,7 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
 
     private void downloadAndImportResource(URI resource, String source) throws StudyImporterException {
         try {
-            LabeledCSVParser labeledCSVParser = parserFactory.createParser(resource, "UTF-8");
+            LabeledCSVParser labeledCSVParser = getParserFactory().createParser(resource, "UTF-8");
             labeledCSVParser.changeDelimiter('\t');
             while (labeledCSVParser.getLine() != null) {
                 String name = labeledCSVParser.getValueByLabel("name");
