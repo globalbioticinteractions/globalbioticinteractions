@@ -1,9 +1,13 @@
 package org.eol.globi.data;
 
 public class BaseImporter {
-    protected NodeFactory nodeFactory;
+    private NodeFactory nodeFactory;
 
-    public BaseImporter(NodeFactory nodeFactory) {
+    BaseImporter(NodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
+    }
+
+    protected NodeFactory getNodeFactory() {
+        return nodeFactory;
     }
 }

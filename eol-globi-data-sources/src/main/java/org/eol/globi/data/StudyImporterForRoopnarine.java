@@ -34,13 +34,13 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
         Map<String, LatLng> resourceLocation = resourceLocationMap(suffix, prefix);
 
         DOI doi = new DOI("7167", "2013/857470");
-        Study study = nodeFactory.getOrCreateStudy(
+        Study study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl("Roopnarine et al 2013", "Roopnarine, P.D. & Hertog, R., 2013. Detailed Food Web Networks of Three Greater Antillean Coral Reef Systems: The Cayman Islands, Cuba, and Jamaica. DatasetImpl Papers in Ecology, 2013, pp.1–9. Available at: https://doi.org/10.7167/2013/857470.", doi, null));
         for (Map.Entry<String, LatLng> resourceLatLngEntry : resourceLocation.entrySet()) {
             LatLng latLng = resourceLatLngEntry.getValue();
             Location location;
             try {
-                location = nodeFactory.getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), 0.0, null));
+                location = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), 0.0, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }
@@ -125,14 +125,14 @@ public class StudyImporterForRoopnarine extends BaseStudyImporter {
             if (StringUtils.isBlank(predatorTaxa)) {
                 getLogger().info(study, "found blank predator name on line [" + parser.lastLineNumber() + "]");
             } else {
-                Specimen predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(predatorTaxa, null));
+                Specimen predatorSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(predatorTaxa, null));
                 predatorSpecimen.caughtIn(location);
                 predatorSpecimenList.add(predatorSpecimen);
                 for (String preyTaxonName : preyTaxonList) {
                     if (StringUtils.isBlank(preyTaxonName)) {
                         getLogger().info(study, "found blank prey name for predator [" + predatorTaxa + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
-                        Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preyTaxonName, null));
+                        Specimen preySpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(preyTaxonName, null));
                         preySpecimen.caughtIn(location);
                         predatorSpecimen.ate(preySpecimen);
                     }

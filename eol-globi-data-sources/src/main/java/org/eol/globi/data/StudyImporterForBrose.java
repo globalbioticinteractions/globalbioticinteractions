@@ -85,7 +85,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy(new StudyImpl("BROSE-" + StringUtils.abbreviate(longReference, 20), SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
+            localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BROSE-" + StringUtils.abbreviate(longReference, 20), SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String name = getName(parser, "Taxonomy consumer", "Common name(s) consumer");
             if (StringUtils.isBlank(name)) {
@@ -119,13 +119,13 @@ public class StudyImporterForBrose extends BaseStudyImporter {
         if (latLng == null) {
             getLogger().warn(localStudy, "failed to find location for [" + locationString + "]");
         } else {
-            location = nodeFactory.getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
+            location = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
             String habitat = StringUtils.join(parser.getValueByLabel("General habitat"), " ", parser.getValueByLabel("Specific habitat"));
             String habitatId = "BROSE:" + habitat.replaceAll("\\W", "_");
-            nodeFactory.getOrCreateEnvironments(location, habitatId, habitat);
+            getNodeFactory().getOrCreateEnvironments(location, habitatId, habitat);
         }
 
-        Specimen consumer = nodeFactory.createSpecimen(localStudy, new TaxonImpl(predatorName, null));
+        Specimen consumer = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(predatorName, null));
         consumer.caughtIn(location);
         addLifeStage(parser, consumer, "Lifestage consumer");
 
@@ -136,7 +136,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
             LOG.warn(message);
             getLogger().warn(localStudy, message);
         } else {
-            Specimen resource = nodeFactory.createSpecimen(localStudy, new TaxonImpl(name, null));
+            Specimen resource = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(name, null));
             resource.caughtIn(location);
             addLifeStage(parser, resource, "Lifestage - resource");
             String interactionType = parser.getValueByLabel("Type of feeding interaction");
@@ -164,7 +164,7 @@ public class StudyImporterForBrose extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen specimen, String label) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel(label);
         try {
-            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
+            List<Term> terms = getNodeFactory().getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() == 0) {
                 throw new StudyImporterException("unsupported life stage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }

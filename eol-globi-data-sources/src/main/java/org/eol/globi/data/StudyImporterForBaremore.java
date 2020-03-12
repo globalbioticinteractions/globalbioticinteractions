@@ -36,9 +36,9 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
             LabeledCSVParser parser = parserFactory.createParser(DATA_SOURCE, CharsetConstant.UTF8);
             String[] line;
 
-            study = nodeFactory.getOrCreateStudy(
+            study = getNodeFactory().getOrCreateStudy(
                     new StudyImpl("Baremore 2010", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, new DOI("3354", "ab00214"), ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010")));
-            Location collectionLocation = nodeFactory.getOrCreateLocation(new LocationImpl(29.219302, -87.06665, null, null));
+            Location collectionLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(29.219302, -87.06665, null, null));
 
             Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();
 
@@ -50,7 +50,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                 } else {
                     Specimen predatorSpecimen = specimenMap.get(sharkId);
                     if (predatorSpecimen == null) {
-                        predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Squatina dumeril", null));
+                        predatorSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Squatina dumeril", null));
                         predatorSpecimen.caughtIn(collectionLocation);
                         addLifeStage(parser, predatorSpecimen);
                         addCollectionDate(collectionDateString, predatorSpecimen);
@@ -68,9 +68,9 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
                     if (StringUtils.isBlank(preySpeciesDescription)) {
                         getLogger().info(study, "found blank prey species description [" + preySpeciesDescription + "] on line [" + parser.lastLineNumber() + "]");
                     } else {
-                        Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preySpeciesDescription, null));
+                        Specimen preySpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(preySpeciesDescription, null));
                         preySpecimen.caughtIn(collectionLocation);
-                        nodeFactory.setUnixEpochProperty(preySpecimen, nodeFactory.getUnixEpochProperty(predatorSpecimen));
+                        getNodeFactory().setUnixEpochProperty(preySpecimen, getNodeFactory().getUnixEpochProperty(predatorSpecimen));
                         predatorSpecimen.ate(preySpecimen);
                     }
                 }
@@ -83,7 +83,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predatorSpecimen) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Mat State");
         try {
-            List<Term> lifeStages = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
+            List<Term> lifeStages = getNodeFactory().getTermLookupService().lookupTermByName(lifeStageString);
             if (lifeStages.size() == 0) {
                 throw new StudyImporterException("unsupported lifeStage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }
@@ -96,7 +96,7 @@ public class StudyImporterForBaremore extends BaseStudyImporter {
     private Date addCollectionDate(String dateTime, Specimen specimen) throws NodeFactoryException {
         try {
             Date collectionDate = org.eol.globi.util.DateUtil.parsePatternUTC(dateTime, "MM/dd/yyyy").toDate();
-            nodeFactory.setUnixEpochProperty(specimen, collectionDate);
+            getNodeFactory().setUnixEpochProperty(specimen, collectionDate);
             return collectionDate;
         } catch (IllegalArgumentException ex) {
             throw new NodeFactoryException("failed to parse [" + dateTime + "]");

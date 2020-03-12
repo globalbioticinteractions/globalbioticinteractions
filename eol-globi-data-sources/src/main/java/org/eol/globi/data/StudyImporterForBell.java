@@ -73,25 +73,25 @@ public class StudyImporterForBell extends BaseStudyImporter {
                         collectionId = "";
                     }
 
-                    Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bell-" + collectionId, sourceCitation, DOI.create("10.1654/4756.1"), ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null)));
+                    Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("bell-" + collectionId, sourceCitation, DOI.create("10.1654/4756.1"), ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null)));
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");
 
                     String parasiteName = StringUtils.join(new String[]{StringUtils.trim(genus), StringUtils.trim(species)}, " ");
-                    Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl(parasiteName, null));
+                    Specimen parasite = getNodeFactory().createSpecimen(study, new TaxonImpl(parasiteName, null));
                     parasite.setExternalId(externalId);
                     Location location = getLocation(parser, parasite);
                     parasite.caughtIn(location);
 
                     String scientificName = parser.getValueByLabel("SCIENTIFIC_NAME");
                     String hostName = StringUtils.trim(scientificName);
-                    Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
+                    Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                     host.caughtIn(location);
                     host.setExternalId(externalId);
                     Date date = parseDate(parser);
-                    nodeFactory.setUnixEpochProperty(parasite, date);
-                    nodeFactory.setUnixEpochProperty(host, date);
+                    getNodeFactory().setUnixEpochProperty(parasite, date);
+                    getNodeFactory().setUnixEpochProperty(host, date);
                     parasite.interactsWith(host, InteractType.PARASITE_OF);
                 }
             } catch (Throwable e) {
@@ -150,7 +150,7 @@ public class StudyImporterForBell extends BaseStudyImporter {
         String longitude = parser.getValueByLabel("DEC_LONG");
         Location location = null;
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            location = nodeFactory.getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
+            location = getNodeFactory().getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
         }
         return location;
     }

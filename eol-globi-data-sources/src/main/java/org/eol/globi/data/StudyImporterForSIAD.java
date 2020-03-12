@@ -91,11 +91,11 @@ public class StudyImporterForSIAD extends BaseStudyImporter {
                 String citation = "ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + CitationUtil.createLastAccessedString(ref);
                 StudyImpl study1 = new StudyImpl(title, source, null, citation);
                 study1.setExternalId(ref);
-                Study study = nodeFactory.getOrCreateStudy(study1);
+                Study study = getNodeFactory().getOrCreateStudy(study1);
 
-                Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(name, null));
+                Specimen specimen = getNodeFactory().createSpecimen(study, new TaxonImpl(name, null));
                 String hostName = labeledCSVParser.getValueByLabel("host name");
-                Specimen hostSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
+                Specimen hostSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                 InteractType type = map.get(labeledCSVParser.getValueByLabel("interaction"));
                 specimen.interactsWith(hostSpecimen, type);
             }

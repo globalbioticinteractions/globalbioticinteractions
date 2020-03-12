@@ -37,7 +37,7 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            Study study = nodeFactory.getOrCreateStudy(
+            Study study = getNodeFactory().getOrCreateStudy(
                     new StudyImpl("cruaud", SOURCE, new DOI("1093", "sysbio/sys068"), null));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
@@ -46,15 +46,15 @@ public class StudyImporterForCruaud extends BaseStudyImporter {
                         String hostName = StringUtils.trim(dataParser.getValueByLabel("Natural host Ficus species"));
                         hostName = StringUtils.replace(hostName, "F.", "Ficus");
                         if (areNamesAvailable(parasiteName, hostName)) {
-                            Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl(parasiteName, null));
-                            Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
+                            Specimen parasite = getNodeFactory().createSpecimen(study, new TaxonImpl(parasiteName, null));
+                            Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
                             if (getGeoNamesService().hasTermForLocale(samplingLocation)) {
                                 LatLng pointForLocality = getGeoNamesService().findLatLng(samplingLocation);
                                 if (pointForLocality == null) {
                                     LOG.warn("no location associated with locality [" + samplingLocation + "]");
                                 } else {
-                                    Location location = nodeFactory.getOrCreateLocation(new LocationImpl(pointForLocality.getLat(), pointForLocality.getLng(), null, null));
+                                    Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(pointForLocality.getLat(), pointForLocality.getLng(), null, null));
                                     parasite.caughtIn(location);
                                     host.caughtIn(location);
                                 }

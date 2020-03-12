@@ -65,7 +65,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
     }
 
     private Study importStudy(ParserFactory parserFactory, URI studyResource) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(
+        Study study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl("Simons 1997", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997")));
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
@@ -115,9 +115,9 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     private Season getOrCreateSeason(String seasonName) {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        Season season = nodeFactory.findSeason(seasonNameLower);
+        Season season = getNodeFactory().findSeason(seasonNameLower);
         if (null == season) {
-            season = nodeFactory.createSeason(seasonNameLower);
+            season = getNodeFactory().createSeason(seasonNameLower);
         }
         return season;
     }
@@ -138,7 +138,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
         Double depth = parseAsDouble(csvParser, columnToNormalizedTermMapper.get(DEPTH));
         Double altitude = depth == null ? null : -depth;
         try {
-            return nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
+            return getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }
@@ -152,7 +152,7 @@ public class StudyImporterForSimons extends BaseStudyImporter {
 
     private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
-            return nodeFactory.createSpecimen(study, new TaxonImpl(speciesName, null));
+            return getNodeFactory().createSpecimen(study, new TaxonImpl(speciesName, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen", e);
         }

@@ -92,7 +92,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(
+        Study study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl("GoMexSI", GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null)));
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
@@ -163,7 +163,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
         String description = getMandatoryValue(referenceResource, parser, "TITLE_REF");
         String publicationYear = getMandatoryValue(referenceResource, parser, "YEAR_PUB");
 
-        study = nodeFactory.getOrCreateStudy(
+        study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl(refTag, getSourceCitation(), null, ExternalIdUtil.toCitation(contributors, description, publicationYear)));
         if (isNotBlank(externalId)) {
             study.setExternalId(ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
@@ -188,7 +188,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                         Location location = parseLocation(locationResource, parser);
                         DateTime eventDate = parseEventDate(locationResource, parser);
 
-                        Location locationNode = nodeFactory.getOrCreateLocation(location);
+                        Location locationNode = getNodeFactory().getOrCreateLocation(location);
 
                         enrichLocation(metaStudy, locationResource, cmecsService, parser, locationNode);
 
@@ -318,7 +318,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                 if (terms.size() == 0) {
                     getLogger().warn(metaStudy, msg);
                 }
-                nodeFactory.addEnvironmentToLocation(location, terms);
+                getNodeFactory().addEnvironmentToLocation(location, terms);
             } catch (TermLookupServiceException e) {
                 getLogger().warn(metaStudy, msg);
             }
@@ -347,8 +347,8 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
                             setBasisOfRecordAsLiterature(prey);
                             prey.caughtIn(location);
                             if (eventDate != null) {
-                                nodeFactory.setUnixEpochProperty(prey, eventDate.toDate());
-                                nodeFactory.setUnixEpochProperty(predatorSpecimen, eventDate.toDate());
+                                getNodeFactory().setUnixEpochProperty(prey, eventDate.toDate());
+                                getNodeFactory().setUnixEpochProperty(predatorSpecimen, eventDate.toDate());
                             }
                             predatorSpecimen.ate(prey);
                         } catch (NodeFactoryException e) {
@@ -406,7 +406,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     }
 
     private Specimen createSpecimen(Study study, Map<String, String> properties) throws StudyImporterException {
-        Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(properties.get(PropertyAndValueDictionary.NAME), null));
+        Specimen specimen = getNodeFactory().createSpecimen(study, new TaxonImpl(properties.get(PropertyAndValueDictionary.NAME), null));
         specimen.setLengthInMm(doubleValueOrNull(properties, SpecimenConstant.LENGTH_IN_MM));
         specimen.setFrequencyOfOccurrence(doubleValueOrNull(properties, SpecimenConstant.FREQUENCY_OF_OCCURRENCE));
         setSpecimenProperty(specimen, SpecimenConstant.FREQUENCY_OF_OCCURRENCE_PERCENT, properties);
@@ -434,7 +434,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addLifeStage(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
             String lifeStageName = properties.get(SpecimenConstant.LIFE_STAGE_LABEL);
-            Term term = nodeFactory.getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
+            Term term = getNodeFactory().getOrCreateLifeStage(GOMEXSI_NAMESPACE + lifeStageName, lifeStageName);
             specimen.setLifeStage(term);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map life stage", e);
@@ -444,7 +444,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addPhysiologicalState(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
             String name = properties.get(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL);
-            Term term = nodeFactory.getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
+            Term term = getNodeFactory().getOrCreatePhysiologicalState(GOMEXSI_NAMESPACE + name, name);
             specimen.setPhysiologicalState(term);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map life stage", e);
@@ -454,7 +454,7 @@ public class StudyImporterForGoMexSI2 extends BaseStudyImporter {
     private void addBodyPart(Map<String, String> properties, Specimen specimen) throws StudyImporterException {
         try {
             String name = properties.get(SpecimenConstant.BODY_PART_LABEL);
-            Term term = nodeFactory.getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
+            Term term = getNodeFactory().getOrCreateBodyPart(GOMEXSI_NAMESPACE + name, name);
             specimen.setBodyPart(term);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to map body part", e);

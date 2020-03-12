@@ -9,7 +9,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
                         try {
                             taxonForNode.put(nodeId, name);
                             String stage = nodes.getValueByLabel("Stage");
-                            stageForNode.put(nodeId, nodeFactory.getOrCreateLifeStage(getNamespace() + ":" + stage, stage));
+                            stageForNode.put(nodeId, getNodeFactory().getOrCreateLifeStage(getNamespace() + ":" + stage, stage));
                         } catch (NodeFactoryException e) {
                             throw new StudyImporterException("failed to reader line [" + nodes.lastLineNumber() + "]", e);
                         }
@@ -102,22 +101,22 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    Location loc = nodeFactory.getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
+                    Location loc = getNodeFactory().getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
                     if (loc != null) {
                         locations.add(loc);
                     }
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtCSM"))) {
-                    locations.add(nodeFactory.getOrCreateLocation(new LocationImpl(34.403511, -119.537873, null, null)));
+                    locations.add(getNodeFactory().getOrCreateLocation(new LocationImpl(34.403511, -119.537873, null, null)));
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtEPB"))) {
-                    locations.add(nodeFactory.getOrCreateLocation(new LocationImpl(31.748606, -116.626854, null, null)));
+                    locations.add(getNodeFactory().getOrCreateLocation(new LocationImpl(31.748606, -116.626854, null, null)));
                 }
 
                 if (StringUtils.equals("1", links.getValueByLabel("PresentAtBSQ"))) {
-                    locations.add(nodeFactory.getOrCreateLocation(new LocationImpl(30.378207, -115.938835, null, null)));
+                    locations.add(getNodeFactory().getOrCreateLocation(new LocationImpl(30.378207, -115.938835, null, null)));
                 }
 
                 for (Location location : locations) {
@@ -167,12 +166,12 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
         if (interactType == null) {
             throw new StudyImporterException("failed to map interaction type [" + linkType + "] in line [" + links.lastLineNumber() + "]");
         }
-        Specimen consumer = nodeFactory.createSpecimen(study, new TaxonImpl(taxonForNode.get(consumerNodeID), null));
+        Specimen consumer = getNodeFactory().createSpecimen(study, new TaxonImpl(taxonForNode.get(consumerNodeID), null));
         consumer.setLifeStage(stageForNode.get(consumerNodeID));
         consumer.setExternalId(getNamespace() + ":NodeID:" + consumerNodeID);
         consumer.caughtIn(location);
         String resourceName = taxonForNode.get(resourceNodeID);
-        Specimen resource = nodeFactory.createSpecimen(study, new TaxonImpl(resourceName, null));
+        Specimen resource = getNodeFactory().createSpecimen(study, new TaxonImpl(resourceName, null));
         resource.setLifeStage(stageForNode.get(resourceNodeID));
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);

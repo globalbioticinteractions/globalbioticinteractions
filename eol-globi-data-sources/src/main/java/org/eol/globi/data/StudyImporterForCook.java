@@ -36,23 +36,23 @@ public class StudyImporterForCook extends BaseStudyImporter {
                 null,
                 citation);
         study1.setExternalId("http://repositories.lib.utexas.edu/handle/2152/ETD-UT-2012-08-6285");
-        Study study = nodeFactory.getOrCreateStudy(study1);
+        Study study = getNodeFactory().getOrCreateStudy(study1);
 
         try {
 
             Double latitude = LocationUtil.parseDegrees("27º51'N");
             Double longitude = LocationUtil.parseDegrees("97º8'W");
 
-            Location sampleLocation = nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, -3.0, null));
+            Location sampleLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, -3.0, null));
 
             try {
                 while (parser.getLine() != null) {
-                    Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl("Micropogonias undulatus", null));
+                    Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl("Micropogonias undulatus", null));
                     host.setLengthInMm(Double.parseDouble(parser.getValueByLabel("Fish Length")) * 10.0);
 
                     String dateString = parser.getValueByLabel("Date");
                     Date collectionDate = DateUtil.parsePatternUTC(dateString, "MM/dd/yyyy").toDate();
-                    nodeFactory.setUnixEpochProperty(host, collectionDate);
+                    getNodeFactory().setUnixEpochProperty(host, collectionDate);
                     host.caughtIn(sampleLocation);
 
                     String[] isoCols = {"Iso 1", "Iso 2", "Iso 3", "Iso 4 ", "Iso 5"};
@@ -78,13 +78,13 @@ public class StudyImporterForCook extends BaseStudyImporter {
             boolean lengthAvailable = parasiteDetected && !"NA".equals(valueByLabel);
 
             if (parasiteDetected) {
-                Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl("Cymothoa excisa", null));
+                Specimen parasite = getNodeFactory().createSpecimen(study, new TaxonImpl("Cymothoa excisa", null));
                 parasite.caughtIn(sampleLocation);
                 if (lengthAvailable) {
                     double parasiteLengthCm = Double.parseDouble(valueByLabel);
                     parasite.setLengthInMm(parasiteLengthCm * 10.0);
                 }
-                nodeFactory.setUnixEpochProperty(parasite, collectionDate);
+                getNodeFactory().setUnixEpochProperty(parasite, collectionDate);
                 parasite.interactsWith(host, InteractType.PARASITE_OF);
             }
         } catch (NumberFormatException ex) {

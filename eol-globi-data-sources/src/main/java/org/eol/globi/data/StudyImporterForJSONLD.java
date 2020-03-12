@@ -66,12 +66,12 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 String authorURI = solution.get("author").toString();
                 String author;
                 try {
-                    author = nodeFactory.getAuthorResolver().findFullName(authorURI);
+                    author = getNodeFactory().getAuthorResolver().findFullName(authorURI);
                 } catch (IOException e) {
                     throw new StudyImporterException("failed to query author URI [" + authorURI + "]");
                 }
                 final String source1 = author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + CitationUtil.createLastAccessedString(getResourceURI().toString());
-                Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getResourceURI() + subj, source1, null, subj));
+                Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(getResourceURI() + subj, source1, null, subj));
                 study.setExternalId(subj);
                 Specimen source = createSpecimen(solution, study, "subjTaxon");
                 Specimen target = createSpecimen(solution, study, "targetTaxon");
@@ -83,9 +83,9 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
                 }
                 String collTime = solution.get("collTime").asLiteral().getString();
                 Date date = parseDate(collTime);
-                nodeFactory.setUnixEpochProperty(source, date);
-                nodeFactory.setUnixEpochProperty(target, date);
-                Location loc = nodeFactory.getOrCreateLocation(
+                getNodeFactory().setUnixEpochProperty(source, date);
+                getNodeFactory().setUnixEpochProperty(target, date);
+                Location loc = getNodeFactory().getOrCreateLocation(
                         new LocationImpl(solution.get("collLat").asLiteral().getDouble(), solution.get("collLng").asLiteral().getDouble(), null, null));
                 target.caughtIn(loc);
                 source.caughtIn(loc);
@@ -109,7 +109,7 @@ public class StudyImporterForJSONLD extends BaseStudyImporter {
     protected Specimen createSpecimen(QuerySolution solution, Study study, String targetTaxon1) throws NodeFactoryException {
         String targetTaxon = solution.get(targetTaxon1).asResource().getLocalName();
         String taxonId = targetTaxon.replaceAll("NCBITaxon_", TaxonomyProvider.NCBI.getIdPrefix());
-        return nodeFactory.createSpecimen(study, new TaxonImpl(null, taxonId));
+        return getNodeFactory().createSpecimen(study, new TaxonImpl(null, taxonId));
     }
 
     private Model buildModel() throws IOException {

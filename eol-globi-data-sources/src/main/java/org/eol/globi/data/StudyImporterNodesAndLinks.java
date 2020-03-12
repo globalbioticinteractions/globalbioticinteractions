@@ -21,7 +21,7 @@ public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListen
     }
 
     Study createStudy() throws NodeFactoryException {
-        return nodeFactory.getOrCreateStudy(new StudyImpl(getNamespace(), getSourceCitation(), getSourceDOI(), null));
+        return getNodeFactory().getOrCreateStudy(new StudyImpl(getNamespace(), getSourceCitation(), getSourceDOI(), null));
     }
 
     public URI getLinksResourceName() {

@@ -214,7 +214,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         StudyImpl study1 = new StudyImpl(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null, citation.toString());
         study1.setExternalId(url);
 
-        Study study = nodeFactory.getOrCreateStudy(study1);
+        Study study = getNodeFactory().getOrCreateStudy(study1);
         createAssociation(observationId, interactionDataType, interactionTypeId, observation, targetTaxon, sourceTaxon, study, observationDate);
     }
 
@@ -253,7 +253,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     private Specimen createAssociation(long observationId, String interactionDataType, InteractType interactType, JsonNode observation, Taxon targetTaxon, Taxon sourceTaxonName, Study study, Date observationDate) throws StudyImporterException, NodeFactoryException {
         Specimen sourceSpecimen = getSourceSpecimen(observationId, interactionDataType, sourceTaxonName, study);
         setBasisOfRecord(sourceSpecimen);
-        Specimen targetSpecimen = nodeFactory.createSpecimen(study, targetTaxon);
+        Specimen targetSpecimen = getNodeFactory().createSpecimen(study, targetTaxon);
         setBasisOfRecord(targetSpecimen);
 
         setCollectionDate(sourceSpecimen, targetSpecimen, observationDate);
@@ -268,7 +268,7 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
     }
 
     private void setBasisOfRecord(Specimen sourceSpecimen) throws NodeFactoryException {
-        sourceSpecimen.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord("http://rs.tdwg.org/dwc/dwctype/HumanObservation", "HumanObservation"));
+        sourceSpecimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("http://rs.tdwg.org/dwc/dwctype/HumanObservation", "HumanObservation"));
     }
 
     private Location parseLocation(JsonNode observation) throws NodeFactoryException {
@@ -278,22 +278,22 @@ public class StudyImporterForINaturalist extends BaseStudyImporter {
         if (latitudeString != null && longitudeString != null) {
             double latitude = Double.parseDouble(latitudeString);
             double longitude = Double.parseDouble(longitudeString);
-            location = nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, null, null));
+            location = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, null, null));
 
         }
         return location;
     }
 
     private void setCollectionDate(Specimen sourceSpecimen, Specimen targetSpecimen, Date observationDate) throws NodeFactoryException {
-        nodeFactory.setUnixEpochProperty(sourceSpecimen, observationDate);
-        nodeFactory.setUnixEpochProperty(targetSpecimen, observationDate);
+        getNodeFactory().setUnixEpochProperty(sourceSpecimen, observationDate);
+        getNodeFactory().setUnixEpochProperty(targetSpecimen, observationDate);
     }
 
     private Specimen getSourceSpecimen(long observationId, String interactionDataType, Taxon sourceTaxon, Study study) throws StudyImporterException, NodeFactoryException {
         if (!"taxon".equals(interactionDataType)) {
             throw new StudyImporterException("expected [taxon] as observation_type datatype, but found [" + interactionDataType + "]");
         }
-        Specimen sourceSpecimen = nodeFactory.createSpecimen(study, sourceTaxon);
+        Specimen sourceSpecimen = getNodeFactory().createSpecimen(study, sourceTaxon);
         sourceSpecimen.setExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
 
         return sourceSpecimen;

@@ -105,8 +105,8 @@ public class StudyImporterForRSS extends BaseStudyImporter {
     }
 
     public void handleDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset) throws StudyImporterException {
-        nodeFactory.getOrCreateDataset(dataset);
-        NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
+        getNodeFactory().getOrCreateDataset(dataset);
+        NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(getNodeFactory(), dataset);
         StudyImporter studyImporter = new StudyImporterFactory().createImporter(dataset, nodeFactoryForDataset);
         studyImporter.setDataset(dataset);
         if (getLogger() != null) {

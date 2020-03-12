@@ -101,7 +101,7 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");
-                Study study = nodeFactory.getOrCreateStudy(new StudyImpl("seltmann" + references, CitationUtil.sourceCitationLastAccessed(this.getDataset(), references), null, references));
+                Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("seltmann" + references, CitationUtil.sourceCitationLastAccessed(this.getDataset(), references), null, references));
                 String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
@@ -194,11 +194,11 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
 
     protected void createInteraction(LabeledCSVParser occurrence, Study study, Map<String, String> assoc, String targetName, String sourceName, Date date, InteractType interactType) throws StudyImporterException {
 
-        Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(sourceName, null));
-        Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(targetName, null));
+        Specimen source = getNodeFactory().createSpecimen(study, new TaxonImpl(sourceName, null));
+        Specimen target = getNodeFactory().createSpecimen(study, new TaxonImpl(targetName, null));
 
         String sourceBasisOfRecord = occurrence.getValueByLabel("basisOfRecord");
-        source.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(sourceBasisOfRecord, sourceBasisOfRecord));
+        source.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord(sourceBasisOfRecord, sourceBasisOfRecord));
         final String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
         source.setProperty(FIELD_IDIGBIO_RECORD_ID, recordId);
         source.setExternalId(recordId);
@@ -206,17 +206,17 @@ public class StudyImporterForSeltmann extends BaseStudyImporter {
         source.setProperty(FIELD_CATALOG_NUMBER, occurrence.getValueByLabel(FIELD_CATALOG_NUMBER));
 
         String targetBasisOfRecord = assoc.get("dwc:basisOfRecord");
-        target.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord(targetBasisOfRecord, targetBasisOfRecord));
+        target.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord(targetBasisOfRecord, targetBasisOfRecord));
         final String assocRecordId = assoc.get(FIELD_IDIGBIO_RECORD_ID);
         target.setProperty(FIELD_IDIGBIO_RECORD_ID, assocRecordId);
         target.setExternalId(assocRecordId);
 
-        nodeFactory.setUnixEpochProperty(source, date);
-        nodeFactory.setUnixEpochProperty(target, date);
+        getNodeFactory().setUnixEpochProperty(source, date);
+        getNodeFactory().setUnixEpochProperty(target, date);
         String latitude = occurrence.getValueByLabel("decimalLatitude");
         String longitude = occurrence.getValueByLabel("decimalLongitude");
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            Location loc = nodeFactory.getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
+            Location loc = getNodeFactory().getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), null, null));
             source.caughtIn(loc);
         }
 

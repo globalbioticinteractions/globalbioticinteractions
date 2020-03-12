@@ -122,7 +122,7 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
 
         for (String longReference : longReferences) {
             String studyId = "PLANQUE-" + StringUtils.abbreviate(longReference, 20) + MD5.getHashString(longReference);
-            Study localStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyId, getSourceCitation(), null, ExternalIdUtil.toCitation(null, longReference, null)));
+            Study localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl(studyId, getSourceCitation(), null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String predatorName = parser.getValueByLabel("PREDATOR");
             if (StringUtils.isBlank(predatorName)) {
@@ -135,16 +135,16 @@ public class StudyImporterForPlanque extends BaseStudyImporter {
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen predator = nodeFactory.createSpecimen(localStudy, new TaxonImpl(normalizeName(predatorName), null));
+        Specimen predator = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(normalizeName(predatorName), null));
         // from http://www.geonames.org/630674/barents-sea.html
-        Location location = nodeFactory.getOrCreateLocation(new LocationImpl(74.0, 36.0, null, null));
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(74.0, 36.0, null, null));
         predator.caughtIn(location);
 
         String preyName = parser.getValueByLabel("PREY");
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(localStudy, new TaxonImpl(normalizeName(preyName), null));
+            Specimen prey = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(normalizeName(preyName), null));
             prey.caughtIn(location);
             predator.ate(prey);
         }

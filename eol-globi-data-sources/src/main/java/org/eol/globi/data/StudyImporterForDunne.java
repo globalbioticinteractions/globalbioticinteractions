@@ -10,10 +10,8 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
-import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +26,7 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
 
     @Override
     Study createStudy() throws NodeFactoryException {
-        return nodeFactory.getOrCreateStudy(new StudyImpl(getNamespace(), getSourceCitationLastAccessed(), getSourceDOI(), null));
+        return getNodeFactory().getOrCreateStudy(new StudyImpl(getNamespace(), getSourceCitationLastAccessed(), getSourceDOI(), null));
     }
 
     @Override
@@ -55,7 +53,7 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
             while (links.getLine() != null) {
                 List<Location> locations = new ArrayList<>();
                 if (getLocation() != null) {
-                    Location loc = nodeFactory.getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
+                    Location loc = getNodeFactory().getOrCreateLocation(new LocationImpl(getLocation().getLat(), getLocation().getLng(), null, null));
                     if (loc != null) {
                         locations.add(loc);
                     }
@@ -81,10 +79,10 @@ public class StudyImporterForDunne extends StudyImporterNodesAndLinks {
     private void addLink(Study study, Map<Integer, Taxon> taxonForNode, LabeledCSVParser links, Location location) throws StudyImporterException {
         Integer consumerNodeID = Integer.parseInt(links.getValueByLabel("Consumer"));
         Integer resourceNodeID = Integer.parseInt(links.getValueByLabel("Resource"));
-        Specimen consumer = nodeFactory.createSpecimen(study, taxonForNode.get(consumerNodeID));
+        Specimen consumer = getNodeFactory().createSpecimen(study, taxonForNode.get(consumerNodeID));
         consumer.setExternalId(getNamespace() + ":NodeID:" + consumerNodeID);
         consumer.caughtIn(location);
-        Specimen resource = nodeFactory.createSpecimen(study, taxonForNode.get(resourceNodeID));
+        Specimen resource = getNodeFactory().createSpecimen(study, taxonForNode.get(resourceNodeID));
         resource.setExternalId(getNamespace() + ":NodeID:" + resourceNodeID);
         resource.caughtIn(location);
         consumer.interactsWith(resource, InteractType.ATE);

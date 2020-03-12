@@ -26,12 +26,12 @@ public abstract class StudyImporterWithListener extends BaseStudyImporter {
     @Override
     public void setLogger(ImportLogger importLogger) {
         super.setLogger(importLogger);
-        this.interactionListener = initListener(nodeFactory);
+        this.interactionListener = initListener(getNodeFactory());
     }
 
     @Override
     public void setGeoNamesService(GeoNamesService geoNamesService) {
         super.setGeoNamesService(geoNamesService);
-        this.interactionListener = initListener(nodeFactory);
+        this.interactionListener = initListener(getNodeFactory());
     }
 }

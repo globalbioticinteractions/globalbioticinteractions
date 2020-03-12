@@ -25,7 +25,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
         LabeledCSVParser parser = createParser();
 
 
-        Study study = nodeFactory.getOrCreateStudy(
+        Study study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl("ICES", "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .", null, "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES"));
         study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
@@ -40,17 +40,17 @@ public class StudyImporterForICES extends BaseStudyImporter {
                     String currentStomachId = parser.getValueByLabel("ICES StomachID");
                     if (lastStomachId == null || !lastStomachId.equals(currentStomachId)) {
                         predator = addPredator(parser, study);
-                        nodeFactory.setUnixEpochProperty(predator, date);
+                        getNodeFactory().setUnixEpochProperty(predator, date);
                         predator.caughtIn(location);
                     }
 
                     String preyName = parser.getValueByLabel("Prey Species Name");
                     Specimen prey = null;
                     if (StringUtils.isNotBlank(preyName)) {
-                        prey = nodeFactory.createSpecimen(study, new TaxonImpl(preyName, null));
+                        prey = getNodeFactory().createSpecimen(study, new TaxonImpl(preyName, null));
                     }
                     if (prey != null) {
-                        nodeFactory.setUnixEpochProperty(prey, date);
+                        getNodeFactory().setUnixEpochProperty(prey, date);
                         prey.caughtIn(location);
                         predator.ate(prey);
                     }
@@ -65,7 +65,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
 
     private Specimen addPredator(LabeledCSVParser parser, Study study) throws StudyImporterException {
         Specimen predatorSpecimen;
-        predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Predator"), null));
+        predatorSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Predator"), null));
         predatorSpecimen.setLengthInMm(parseDoubleField(parser, "Predator (mean) Lengh"));
         return predatorSpecimen;
     }
@@ -99,7 +99,7 @@ public class StudyImporterForICES extends BaseStudyImporter {
         Double lon = parseDoubleField(parser, "Longitude");
         Double depth = parseDoubleField(parser, "Depth");
         try {
-            return nodeFactory.getOrCreateLocation(new LocationImpl(lat, lon, depth == null ? null : -depth, null));
+            return getNodeFactory().getOrCreateLocation(new LocationImpl(lat, lon, depth == null ? null : -depth, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }

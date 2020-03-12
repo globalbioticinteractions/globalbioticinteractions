@@ -24,7 +24,7 @@ public class StudyImporterForGemina extends BaseStudyImporter {
         URI studyResource = URI.create("gemina_search_2008-01-03.txt");
         try {
             String source = "Schriml, L. M., Arze, C., Nadendla, S., Ganapathy, A., Felix, V., Mahurkar, A., … Hall, N. (2009). GeMInA, Genomic Metadata for Infectious Agents, a geospatial surveillance pathogen database. Nucleic Acids Research, 38(Database), D754–D764. doi:10.1093/nar/gkp832";
-            Study study = nodeFactory.getOrCreateStudy(new StudyImpl(source, source, new DOI("1093", "nar/gkp832"), source));
+            Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(source, source, new DOI("1093", "nar/gkp832"), source));
             LabeledCSVParser parser = parserFactory.createParser(studyResource, "UTF-8");
             parser.changeDelimiter('\t');
             String line[];
@@ -32,10 +32,10 @@ public class StudyImporterForGemina extends BaseStudyImporter {
                 if (line.length > 7) {
                     String pathogenId = parser.getValueByLabel("Pathogen Taxonomy");
                     String pathogenExternalId = StringUtils.isBlank(pathogenId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + pathogenId;
-                    Specimen pathogen = nodeFactory.createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Pathogen"), pathogenExternalId));
+                    Specimen pathogen = getNodeFactory().createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Pathogen"), pathogenExternalId));
                     String hostId = line[7];
                     String hostReservoirExternalId = StringUtils.isBlank(hostId) ? null : TaxonomyProvider.NCBI.getIdPrefix() + hostId;
-                    Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId));
+                    Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(parser.getValueByLabel("Host/Reservoir"), hostReservoirExternalId));
                     pathogen.interactsWith(host, InteractType.PATHOGEN_OF);
                 }
             }

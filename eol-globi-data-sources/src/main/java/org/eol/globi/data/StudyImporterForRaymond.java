@@ -151,8 +151,8 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             prey.caughtIn(sampleLocation);
 
             Date date = parseCollectionDate(dietParser);
-            nodeFactory.setUnixEpochProperty(prey, date);
-            nodeFactory.setUnixEpochProperty(predator, date);
+            getNodeFactory().setUnixEpochProperty(prey, date);
+            getNodeFactory().setUnixEpochProperty(predator, date);
             predator.ate(prey);
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import data", e);
@@ -161,9 +161,9 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private Specimen getSpecimen(LabeledCSVParser dietParser, String nameLabel, String lifeStageLabel, Study study) throws NodeFactoryException {
         String predatorName = dietParser.getValueByLabel(nameLabel);
-        Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(predatorName, null));
+        Specimen predator = getNodeFactory().createSpecimen(study, new TaxonImpl(predatorName, null));
         String predatorLifeStage = dietParser.getValueByLabel(lifeStageLabel);
-        predator.setLifeStage(nodeFactory.getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
+        predator.setLifeStage(getNodeFactory().getOrCreateLifeStage("RAYMOND:" + predatorLifeStage, predatorLifeStage));
         return predator;
     }
 
@@ -213,7 +213,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
             double bottom = Double.parseDouble(southString);
             LatLng centroid = calculateCentroidOfBBox(left, top, right, bottom);
             try {
-                loc = nodeFactory.getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
+                loc = getNodeFactory().getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
             } catch (NodeFactoryException ex) {
                 String locationString = StringUtils.join(Arrays.asList(westString, northString, eastString, southString), ",");
                 LOG.warn("found invalid locations [" + locationString + "] on line [" + (dietParser.lastLineNumber() + 1) + "]: " + ex.getMessage());
@@ -234,7 +234,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
                 if (centroid == null) {
                     getLogger().warn(study, "missing lat/lng bounding box [" + dietParser.lastLineNumber() + "] and attempted to using location [" + location + "] failed.");
                 } else {
-                    loc = nodeFactory.getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
+                    loc = getNodeFactory().getOrCreateLocation(new LocationImpl(centroid.getLat(), centroid.getLng(), null, null));
                 }
             } catch (IOException e) {
                 getLogger().warn(study, "failed to lookup point for location [" + location + "] on line [" + dietParser.lastLineNumber() + "]");
@@ -271,7 +271,7 @@ public class StudyImporterForRaymond extends BaseStudyImporter {
 
     private Study getOrCreateStudy(String citation) throws NodeFactoryException {
         String title = StringUtils.abbreviate(citation, 16) + MD5.getHashString(citation);
-        return nodeFactory.getOrCreateStudy(new StudyImpl(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from https://doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + CitationUtil.createLastAccessedString(RESOURCE_URL), null, citation));
+        return getNodeFactory().getOrCreateStudy(new StudyImpl(title, "Raymond, B., Marshall, M., Nevitt, G., Gillies, C., van den Hoff, J., Stark, J.S., Losekoot, M., Woehler, E.J., and Constable, A.J. (2011) A Southern Ocean dietary database. Ecology 92(5):1188. Available from https://doi.org/10.1890/10-1907.1 . Data set supplied by Ben Raymond. " + CitationUtil.createLastAccessedString(RESOURCE_URL), null, citation));
     }
 
 

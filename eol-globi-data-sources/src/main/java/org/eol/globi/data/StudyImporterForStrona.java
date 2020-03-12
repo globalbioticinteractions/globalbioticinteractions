@@ -30,7 +30,7 @@ public class StudyImporterForStrona extends BaseStudyImporter {
             throw new StudyImporterException("failed to read resource [" + RESOURCE_PATH + "]", e);
         }
         try {
-            Study study = nodeFactory.getOrCreateStudy(
+            Study study = getNodeFactory().getOrCreateStudy(
                     new StudyImpl("strona2013", SOURCE + " . " + CitationUtil.createLastAccessedString(RESOURCE_PATH), new DOI("1890", "12-1419.1"), SOURCE));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
@@ -38,8 +38,8 @@ public class StudyImporterForStrona extends BaseStudyImporter {
                         String parasiteName = StringUtils.trim(dataParser.getValueByLabel("P_SP"));
                         String hostName = StringUtils.trim(dataParser.getValueByLabel("H_SP"));
                         if (areNamesAvailable(parasiteName, hostName)) {
-                            Specimen parasite = nodeFactory.createSpecimen(study, new TaxonImpl(parasiteName, null));
-                            Specimen host = nodeFactory.createSpecimen(study, new TaxonImpl(hostName, null));
+                            Specimen parasite = getNodeFactory().createSpecimen(study, new TaxonImpl(parasiteName, null));
+                            Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                             parasite.interactsWith(host, InteractType.PARASITE_OF);
                         }
                     } catch (NodeFactoryException | NumberFormatException e) {

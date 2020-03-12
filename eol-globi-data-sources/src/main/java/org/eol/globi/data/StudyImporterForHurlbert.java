@@ -84,7 +84,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
         String namespace = getDataset() == null ? "" : getDataset().getNamespace();
         StudyImpl study1 = new StudyImpl(namespace + sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE.toString()), null, sourceCitation);
         study1.setOriginatingDataset(getDataset());
-        Study study = nodeFactory.getOrCreateStudy(study1);
+        Study study = getNodeFactory().getOrCreateStudy(study1);
 
         //ID,Common_Name,Scientific_Name,,,,Prey_Common_Name,Fraction_Diet_By_Wt_or_Vol,Fraction_Diet_By_Items,Fraction_Occurrence,Fraction_Diet_Unspecified,Item Sample Size,Bird Sample size,Sites,StudyNode Type,Notes,Source
 
@@ -115,7 +115,7 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
     protected void importInteraction(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, Study study, String preyTaxonName, String predatorName) throws StudyImporterException {
         try {
             Taxon predatorTaxon = new TaxonImpl(predatorName);
-            Specimen predatorSpecimen = nodeFactory.createSpecimen(study, predatorTaxon);
+            Specimen predatorSpecimen = getNodeFactory().createSpecimen(study, predatorTaxon);
             setBasisOfRecordAsLiterature(predatorSpecimen);
 
             Taxon preyTaxon = new TaxonImpl(preyTaxonName);
@@ -123,23 +123,23 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             if (NumberUtils.isDigits(preyNameId)) {
                 preyTaxon.setExternalId(TaxonomyProvider.ITIS.getIdPrefix() + preyNameId);
             }
-            Specimen preySpecimen = nodeFactory.createSpecimen(study, preyTaxon);
+            Specimen preySpecimen = getNodeFactory().createSpecimen(study, preyTaxon);
             setBasisOfRecordAsLiterature(preySpecimen);
 
             String preyStage = StringUtils.trim(columnValueOrNull(record, "Prey_Stage"));
             if (StringUtils.isNotBlank(preyStage)) {
-                Term lifeStage = nodeFactory.getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
+                Term lifeStage = getNodeFactory().getOrCreateLifeStage("HULBERT:" + StringUtils.replace(preyStage, " ", "_"), preyStage);
                 preySpecimen.setLifeStage(lifeStage);
             }
 
             String preyPart = StringUtils.trim(columnValueOrNull(record, "Prey_Part"));
             if (StringUtils.isNotBlank(preyPart)) {
-                Term term = nodeFactory.getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
+                Term term = getNodeFactory().getOrCreateBodyPart("HULBERT:" + StringUtils.replace(preyPart, " ", "_"), preyPart);
                 preySpecimen.setBodyPart(term);
             }
             Date date = addCollectionDate(record, study);
-            nodeFactory.setUnixEpochProperty(predatorSpecimen, date);
-            nodeFactory.setUnixEpochProperty(preySpecimen, date);
+            getNodeFactory().setUnixEpochProperty(predatorSpecimen, date);
+            getNodeFactory().setUnixEpochProperty(preySpecimen, date);
 
             LocationImpl location = new LocationImpl(null, null, null, null);
             String longitude = columnValueOrNull(record, "Longitude_dd");
@@ -159,13 +159,13 @@ public class StudyImporterForHurlbert extends BaseStudyImporter {
             String locationSpecific = columnValueOrNull(record, "Location_Specific");
             location.setLocality(StringUtils.join(Arrays.asList(locationRegion, locationSpecific), ":"));
 
-            Location locationNode = nodeFactory.getOrCreateLocation(location);
+            Location locationNode = getNodeFactory().getOrCreateLocation(location);
             String habitat_type = columnValueOrNull(record, "Habitat_type");
             List<Term> habitatList = Arrays.stream(StringUtils.split(StringUtils.defaultIfBlank(habitat_type, ""), ";"))
                     .map(StringUtils::trim)
                     .map(habitat -> new TermImpl(idForHabitat(habitat), habitat))
                     .collect(Collectors.toList());
-            nodeFactory.addEnvironmentToLocation(locationNode, habitatList);
+            getNodeFactory().addEnvironmentToLocation(locationNode, habitatList);
 
             preySpecimen.caughtIn(locationNode);
             predatorSpecimen.caughtIn(locationNode);

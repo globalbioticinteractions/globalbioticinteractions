@@ -25,7 +25,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         String description = "García-Robledo C, Erickson DL, Staines CL, Erwin TL, Kress WJ. Tropical Plant–Herbivore Networks: Reconstructing Species Interactions Using DNA Barcodes Heil M, editor. PLoS ONE [Internet]. 2013 January 8;8(1):e52967. Available from: https://doi.org/10.1371/journal.pone.0052967";
         DOI doi = new DOI("1371", "journal.pone.0052967");
         Study study1 = new StudyImpl("García-Robledo et al 2013", description, doi, description);
-        Study study = nodeFactory.getOrCreateStudy(study1);
+        Study study = getNodeFactory().getOrCreateStudy(study1);
         Map<String, String> abrLookup = buildPlantLookup();
 
         // spatial location from: http://www.ots.ac.cr/index.php?option=com_content&task=view&id=163&Itemid=348
@@ -33,7 +33,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
         Double longitude = LocationUtil.parseDegrees("83°59'W");
         Location location;
         try {
-            location = nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, 35.0, null));
+            location = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, 35.0, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to create location", e);
         }
@@ -45,7 +45,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
             while (parser.getLine() != null) {
                 String beetleName = parser.getValueByLabel("Herbivore species");
                 String beetleScientificName = completeBeetleName(beetleName);
-                Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(beetleScientificName, null));
+                Specimen predator = getNodeFactory().createSpecimen(study, new TaxonImpl(beetleScientificName, null));
                 predator.caughtIn(location);
                 for (String plantAbbreviation : abrLookup.keySet()) {
                     String plantScientificName = abrLookup.get(plantAbbreviation);
@@ -53,7 +53,7 @@ public class StudyImporterForRobledo extends BaseStudyImporter {
                     try {
                         int interactionCode = Integer.parseInt(valueByLabel);
                         if (interactionCode > 0) {
-                            Specimen plant = nodeFactory.createSpecimen(study, new TaxonImpl(plantScientificName, null));
+                            Specimen plant = getNodeFactory().createSpecimen(study, new TaxonImpl(plantScientificName, null));
                             plant.caughtIn(location);
                             predator.ate(plant);
                         }

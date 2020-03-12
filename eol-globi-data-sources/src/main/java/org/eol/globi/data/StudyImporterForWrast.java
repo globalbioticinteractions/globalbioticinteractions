@@ -10,7 +10,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.util.DateUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -81,7 +80,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
                 null,
                 citation);
         study1.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");
-        Study study = nodeFactory.getOrCreateStudy(study1);
+        Study study = getNodeFactory().getOrCreateStudy(study1);
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(LAVACA_BAY_DATA_SOURCE, CharsetConstant.UTF8);
             LengthParser parser = new LengthParserImpl(COLUMN_MAPPER.get(LENGTH_IN_MM));
@@ -130,7 +129,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
             Location sampleLocation;
             try {
-                sampleLocation = nodeFactory.getOrCreateLocation(new LocationImpl(latLng1.getLat(), latLng1.getLng(), altitude, null));
+                sampleLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng1.getLat(), latLng1.getLng(), altitude, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }
@@ -149,8 +148,8 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
             Date date = parseCollectionDate(csvParser, study);
             try {
-                nodeFactory.setUnixEpochProperty(predator, date);
-                nodeFactory.setUnixEpochProperty(prey, date);
+                getNodeFactory().setUnixEpochProperty(predator, date);
+                getNodeFactory().setUnixEpochProperty(prey, date);
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("specimen not associated to study", e);
             }
@@ -240,9 +239,9 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     private Season getOrCreateSeason(String seasonName) {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        Season season = nodeFactory.findSeason(seasonNameLower);
+        Season season = getNodeFactory().findSeason(seasonNameLower);
         if (null == season) {
-            season = nodeFactory.createSeason(seasonNameLower);
+            season = getNodeFactory().createSeason(seasonNameLower);
         }
         return season;
     }
@@ -329,7 +328,7 @@ public class StudyImporterForWrast extends BaseStudyImporter {
 
     private Specimen createAndClassifySpecimen(final String speciesName, Study study) throws StudyImporterException {
         try {
-            return nodeFactory.createSpecimen(study, new TaxonImpl(speciesName, null));
+            return getNodeFactory().createSpecimen(study, new TaxonImpl(speciesName, null));
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to classify specimen with name [" + speciesName + "]", e);
         }

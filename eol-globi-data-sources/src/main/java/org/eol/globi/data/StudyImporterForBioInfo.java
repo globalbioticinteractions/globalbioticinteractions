@@ -236,7 +236,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
         String bioInfoId = TaxonomyProvider.BIO_INFO + "ref:" + refId;
         StudyImpl study1 = new StudyImpl(bioInfoId, sourceCitation, null, citation);
         study1.setExternalId(ExternalIdUtil.urlForExternalId(bioInfoId));
-        return nodeFactory.getOrCreateStudy(study1);
+        return getNodeFactory().getOrCreateStudy(study1);
     }
 
     protected void createRelations(LabeledCSVParser parser, Map<String, String> refMap, Map<String, Taxon> taxonMap) throws StudyImporterException {
@@ -293,7 +293,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
                 if (taxon == null) {
                     getLogger().warn(study, "empty/no taxon name for bioinfo taxon id [" + bioTaxonId + "] on line [" + parser.lastLineNumber() + 1 + "]");
                 } else {
-                    specimen = nodeFactory.createSpecimen(study, new TaxonImpl(taxon.getName(), TaxonomyProvider.BIO_INFO + "taxon:" + bioTaxonId));
+                    specimen = getNodeFactory().createSpecimen(study, new TaxonImpl(taxon.getName(), TaxonomyProvider.BIO_INFO + "taxon:" + bioTaxonId));
                     setSpecimenExternalId(parser, specimen);
                 }
             } catch (NodeFactoryException e) {
@@ -329,7 +329,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     private List<Term> parseLifeStage(String lifeStageString, Study study) throws StudyImporterException {
         try {
-            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
+            List<Term> terms = getNodeFactory().getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() > 0) {
             } else {
                 getLogger().warn(study, "failed to map life stage [" + lifeStageString + "]");
@@ -343,7 +343,7 @@ public class StudyImporterForBioInfo extends BaseStudyImporter implements StudyI
 
     private Specimen createSpecimen(Study study, LabeledCSVParser labeledCSVParser, String externalId) throws StudyImporterException {
         try {
-            Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(null, TaxonomyProvider.NBN.getIdPrefix() + externalId));
+            Specimen specimen = getNodeFactory().createSpecimen(study, new TaxonImpl(null, TaxonomyProvider.NBN.getIdPrefix() + externalId));
             setSpecimenExternalId(labeledCSVParser, specimen);
             return specimen;
         } catch (NodeFactoryException e) {

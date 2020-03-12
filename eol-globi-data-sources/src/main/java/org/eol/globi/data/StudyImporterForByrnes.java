@@ -61,7 +61,7 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
                 String singleShortRef = StringUtils.trim(ref);
                 String longRef = refMap.get(singleShortRef);
                 String citation = StringUtils.isBlank(longRef) ? singleShortRef : longRef;
-                localStudy = nodeFactory.getOrCreateStudy(new StudyImpl("BYRNES-" + StringUtils.abbreviate(citation, 32),
+                localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BYRNES-" + StringUtils.abbreviate(citation, 32),
                         SOURCE,
                         null,
                         citation));
@@ -83,13 +83,13 @@ public class StudyImporterForByrnes extends BaseStudyImporter {
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen predator = nodeFactory.createSpecimen(localStudy, new TaxonImpl(predatorName, null));
+        Specimen predator = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(predatorName, null));
 
         String preyName = parser.getValueByLabel("Prey");
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(localStudy, new TaxonImpl(preyName, null));
+            Specimen prey = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(preyName, null));
             String feedingLink = parser.getValueByLabel("Feeding Link?");
             if (StringUtils.equals("1", StringUtils.trim(feedingLink))) {
                 predator.ate(prey);

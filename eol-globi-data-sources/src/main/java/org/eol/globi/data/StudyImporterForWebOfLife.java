@@ -104,7 +104,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
                     if (!networkTempFileMap.containsKey(networkId)) {
                         throw new StudyImporterException("found network id [" + networkId + "], but no associated data.");
                     }
-                    final Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bascompte:" + citation, sourceCitation, null, citation));
+                    final Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("bascompte:" + citation, sourceCitation, null, citation));
                     importNetwork(parseInteractionType(parser),
                             parseLocation(parser), study, networkTempFileMap.get(networkId));
                 }
@@ -142,7 +142,7 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
             try {
                 final double lat = Double.parseDouble(latitude);
                 final double lng = Double.parseDouble(longitude);
-                networkLocation = nodeFactory.getOrCreateLocation(new LocationImpl(lat, lng, null, null));
+                networkLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(lat, lng, null, null));
             } catch (NumberFormatException ex) {
                 getLogger().warn(null, "found invalid lat,lng pair: [" + latitude + "], [" + longitude + "] on line [" + parser.lastLineNumber() + "] in [references.csv]");
             }
@@ -165,12 +165,12 @@ public class StudyImporterForWebOfLife extends BaseStudyImporter {
         String[] line;
         while ((line = interactions.getLine()) != null) {
             String sourceTaxonName = line[0];
-            final Specimen sourceSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(sourceTaxonName, null));
+            final Specimen sourceSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(sourceTaxonName, null));
             sourceSpecimen.caughtIn(networkLocation);
             for (String targetTaxonName : targetTaxonNames) {
                 final String valueByLabel = StringUtils.trim(interactions.getValueByLabel(targetTaxonName));
                 if (StringUtils.isNotBlank(valueByLabel) && !StringUtils.equals("0", valueByLabel)) {
-                    final Specimen targetSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(targetTaxonName, null));
+                    final Specimen targetSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(targetTaxonName, null));
                     targetSpecimen.caughtIn(networkLocation);
                     sourceSpecimen.interactsWith(targetSpecimen, interactType1);
                 }

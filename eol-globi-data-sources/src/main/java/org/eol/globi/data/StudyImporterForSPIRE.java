@@ -157,7 +157,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     private void importValidLink(Map<String, String> properties) throws NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(
+        Study study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl(properties.get(StudyConstant.TITLE), SOURCE_SPIRE, null, properties.get(StudyConstant.DESCRIPTION)));
         try {
             Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
@@ -166,7 +166,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
             if (latLng == null) {
                 getLogger().warn(study, "failed to find location for county [" + locality + "]");
             } else {
-                Location location = nodeFactory.getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
+                Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(latLng.getLat(), latLng.getLng(), null, null));
                 predator.caughtIn(location);
                 String habitat = properties.get(OF_HABITAT);
                 if (StringUtils.isNotBlank(habitat)) {
@@ -183,12 +183,12 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
     }
 
     private void addEnvironment(Location location, String id, String name) throws NodeFactoryException {
-        nodeFactory.getOrCreateEnvironments(location, id, name);
+        getNodeFactory().getOrCreateEnvironments(location, id, name);
     }
 
     private Specimen createSpecimen(String taxonName, Study study) throws NodeFactoryException {
         taxonName = taxonName.replaceAll("_", " ");
-        Specimen specimen = nodeFactory.createSpecimen(study, new TaxonImpl(taxonName, null));
+        Specimen specimen = getNodeFactory().createSpecimen(study, new TaxonImpl(taxonName, null));
 
         if (taxonName.contains("adult")) {
             addLifeStage(specimen, "adult");
@@ -210,7 +210,7 @@ public class StudyImporterForSPIRE extends BaseStudyImporter {
 
     private void addLifeStage(Specimen specimen, String name) throws NodeFactoryException {
         Term terms;
-        terms = nodeFactory.getOrCreateLifeStage("SPIRE:" + name, name);
+        terms = getNodeFactory().getOrCreateLifeStage("SPIRE:" + name, name);
         specimen.setLifeStage(terms);
     }
 

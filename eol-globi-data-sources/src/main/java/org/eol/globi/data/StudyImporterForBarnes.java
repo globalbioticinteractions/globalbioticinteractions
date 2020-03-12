@@ -11,7 +11,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.ExternalIdUtil;
 
@@ -62,7 +61,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = nodeFactory.getOrCreateStudy(new StudyImpl("BARNES-" + shortReference, SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
+            localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BARNES-" + shortReference, SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String predatorName = parser.getValueByLabel("Predator");
             if (StringUtils.isBlank(predatorName)) {
@@ -81,21 +80,21 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     }
 
     private void addInteractionForPredator(LabeledCSVParser parser, Study localStudy, String predatorName) throws NodeFactoryException, StudyImporterException {
-        Specimen predator = nodeFactory.createSpecimen(localStudy, new TaxonImpl(predatorName, null));
+        Specimen predator = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(predatorName, null));
         addLifeStage(parser, predator);
 
         Double latitude = LocationUtil.parseDegrees(parser.getValueByLabel("Latitude"));
         Double longitude = LocationUtil.parseDegrees(parser.getValueByLabel("Longitude"));
         String depth = parser.getValueByLabel("Depth");
         Double altitudeInMeters = -1.0 * Double.parseDouble(depth);
-        Location location = nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, altitudeInMeters, null));
+        Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, altitudeInMeters, null));
         predator.caughtIn(location);
 
         String preyName = parser.getValueByLabel("Prey");
         if (StringUtils.isBlank(preyName)) {
             getLogger().warn(localStudy, "found empty prey name on line [" + parser.lastLineNumber() + "]");
         } else {
-            Specimen prey = nodeFactory.createSpecimen(localStudy, new TaxonImpl(preyName, null));
+            Specimen prey = getNodeFactory().createSpecimen(localStudy, new TaxonImpl(preyName, null));
             prey.caughtIn(location);
             predator.ate(prey);
         }
@@ -104,7 +103,7 @@ public class StudyImporterForBarnes extends BaseStudyImporter {
     private void addLifeStage(LabeledCSVParser parser, Specimen predator) throws StudyImporterException {
         String lifeStageString = parser.getValueByLabel("Predator lifestage");
         try {
-            List<Term> terms = nodeFactory.getTermLookupService().lookupTermByName(lifeStageString);
+            List<Term> terms = getNodeFactory().getTermLookupService().lookupTermByName(lifeStageString);
             if (terms.size() == 0) {
                 throw new StudyImporterException("unsupported life stage [" + lifeStageString + "] on line [" + parser.getLastLineNumber() + "]");
             }

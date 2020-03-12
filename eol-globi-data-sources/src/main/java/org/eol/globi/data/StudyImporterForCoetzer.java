@@ -127,9 +127,9 @@ public class StudyImporterForCoetzer extends BaseStudyImporter {
                         final String reference = refMap.get(taxonId);
                         final String sourceTaxonName = taxonMap.get(taxonId);
                         if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(sourceTaxonName)) {
-                            final Study study = nodeFactory.getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, getSourceCitationLastAccessed(), null, reference));
-                            final Specimen source = nodeFactory.createSpecimen(study, new TaxonImpl(StringUtils.trim(sourceTaxonName), null));
-                            final Specimen target = nodeFactory.createSpecimen(study, new TaxonImpl(StringUtils.trim(targetTaxonName), null));
+                            final Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, getSourceCitationLastAccessed(), null, reference));
+                            final Specimen source = getNodeFactory().createSpecimen(study, new TaxonImpl(StringUtils.trim(sourceTaxonName), null));
+                            final Specimen target = getNodeFactory().createSpecimen(study, new TaxonImpl(StringUtils.trim(targetTaxonName), null));
                             final InteractType relType = interactTypeMap.get(interactionString);
                             if (relType == null) {
                                 throw new StudyImporterException("found unsupported interaction type [" + interactionString + "]");

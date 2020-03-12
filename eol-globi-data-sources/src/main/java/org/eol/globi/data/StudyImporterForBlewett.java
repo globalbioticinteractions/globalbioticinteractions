@@ -33,7 +33,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     @Override
     public void importStudy() throws StudyImporterException {
         String citation = "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006. doi:10.18785/gcr.1801.01 ";
-        Study study = nodeFactory.getOrCreateStudy(
+        Study study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl("Blewett 2006",
                         StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION,
                         null,
@@ -73,7 +73,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
             }
             Location location;
             try {
-                location = nodeFactory.getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0, null));
+                location = getNodeFactory().getOrCreateLocation(new LocationImpl(Double.parseDouble(latitude), Double.parseDouble(longitude), 0.0, null));
             } catch (NodeFactoryException e) {
                 throw new StudyImporterException("failed to create location", e);
             }
@@ -132,9 +132,9 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
     }
 
     private Specimen addPredator(Study study, LabeledCSVParser parser, String[] line) throws NodeFactoryException, TermLookupServiceException {
-        Specimen predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Centropomus undecimalis", null));
+        Specimen predatorSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Centropomus undecimalis", null));
 
-        predatorSpecimen.setLifeStage(nodeFactory.getTermLookupService().lookupTermByName("adult"));
+        predatorSpecimen.setLifeStage(getNodeFactory().getTermLookupService().lookupTermByName("adult"));
         try {
             String length = parser.getValueByLabel("Standard Length");
             predatorSpecimen.setLengthInMm(Double.parseDouble(length));
@@ -157,7 +157,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
         Date collectionDatetime = collectionTimeMap.get(collectionCodeTrim);
         if (collectionDatetime != null) {
             for (Specimen item : items) {
-                nodeFactory.setUnixEpochProperty(item, collectionDatetime);
+                getNodeFactory().setUnixEpochProperty(item, collectionDatetime);
             }
         }
     }
@@ -173,7 +173,7 @@ public class StudyImporterForBlewett extends BaseStudyImporter {
                         int preyCount = Integer.parseInt(preyCountString);
                         String preyName = header[i];
                         for (int j = 0; j < preyCount; j++) {
-                            Specimen preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(preyName, null));
+                            Specimen preySpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(preyName, null));
                             preyItems.add(preySpecimen);
                         }
                     } catch (NumberFormatException e) {

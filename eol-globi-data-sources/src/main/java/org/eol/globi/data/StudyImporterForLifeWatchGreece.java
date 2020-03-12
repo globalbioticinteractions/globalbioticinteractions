@@ -30,7 +30,7 @@ public class StudyImporterForLifeWatchGreece extends BaseStudyImporter {
     public void importStudy() throws StudyImporterException {
         try {
             InteractionListener interactionListener = new InteractionListener();
-            interactionListener.setListener(new ParsedInteractionListener(nodeFactory));
+            interactionListener.setListener(new ParsedInteractionListener(getNodeFactory()));
             handleTable(interactionListener, "pub_tax_trait.csv.gz");
         } catch (IOException e) {
             throw new StudyImporterException("failed to import study", e);

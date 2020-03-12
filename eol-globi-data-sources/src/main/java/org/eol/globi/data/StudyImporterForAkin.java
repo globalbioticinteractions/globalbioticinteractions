@@ -108,7 +108,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             throw new StudyImporterException("failed to parse longitude [" + longitudeString + "]");
         }
 
-        return nodeFactory.getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
+        return getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, altitude, null));
     }
 
     private void addPrey(Study study, LabeledCSVParser parser, String[] header, String[] line, Specimen specimen, Location location) throws StudyImporterException {
@@ -121,8 +121,8 @@ public class StudyImporterForAkin extends BaseStudyImporter {
                     if (StringUtils.isNotBlank(preyVolumeString)) {
                         double volume = Double.parseDouble(preyVolumeString);
                         if (volume > 0) {
-                            Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(preySpeciesName, null));
-                            prey.setLifeStage(parseLifeStage(nodeFactory.getTermLookupService(), preySpeciesName));
+                            Specimen prey = getNodeFactory().createSpecimen(study, new TaxonImpl(preySpeciesName, null));
+                            prey.setLifeStage(parseLifeStage(getNodeFactory().getTermLookupService(), preySpeciesName));
                             prey.setVolumeInMilliLiter(volume);
                             prey.caughtIn(location);
                             specimen.ate(prey);
@@ -154,7 +154,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         int speciesIndex = findIndexForColumnWithNameThrowOnMissing("Fish Species", header);
         String speciesName = line[speciesIndex];
         if (StringUtils.isNotBlank(speciesName)) {
-            specimen = nodeFactory.createSpecimen(study, new TaxonImpl(speciesName, null));
+            specimen = getNodeFactory().createSpecimen(study, new TaxonImpl(speciesName, null));
             addSpecimenLength(parser, header, line, specimen, study);
             addStomachVolume(parser, header, line, specimen, study);
             addCollectionDate(study, parser, header, line, specimen);
@@ -170,7 +170,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
         if (!StringUtils.isBlank(dateString)) {
             try {
                 Date date = DateUtil.parsePatternUTC(dateString, "MM.dd.yy").toDate();
-                nodeFactory.setUnixEpochProperty(specimen, date);
+                getNodeFactory().setUnixEpochProperty(specimen, date);
             } catch (IllegalArgumentException e) {
                 getLogger().warn(study, "not setting collection date, because [" + dateString + "] on line [" + parser.getLastLineNumber() + "] could not be read as date.");
             } catch (NodeFactoryException e) {
@@ -232,7 +232,7 @@ public class StudyImporterForAkin extends BaseStudyImporter {
             DOI doi = new DOI("1007", "bf02784282");
             StudyImpl study1 = new StudyImpl("Akin et al 2006", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, doi, ExternalIdUtil.toCitation("Senol Akin", "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
                     "; August 2006, Volume 29, Issue 4, pp 552-567", "2006"));
-            study = nodeFactory.getOrCreateStudy(
+            study = getNodeFactory().getOrCreateStudy(
                     study1);
             String[][] siteInfo = loadSampleSiteLocations();
             importAkinStudyFile(siteInfo, studyResource, study);

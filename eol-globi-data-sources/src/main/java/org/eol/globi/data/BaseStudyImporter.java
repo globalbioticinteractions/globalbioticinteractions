@@ -66,7 +66,7 @@ public abstract class BaseStudyImporter extends BaseImporter implements StudyImp
     }
 
     protected void setBasisOfRecordAsLiterature(Specimen specimen) throws NodeFactoryException {
-        specimen.setBasisOfRecord(nodeFactory.getOrCreateBasisOfRecord("http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html#LITERATURE", "Literature"));
+        specimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html#LITERATURE", "Literature"));
     }
 
     public void setDataset(Dataset dataset) {
