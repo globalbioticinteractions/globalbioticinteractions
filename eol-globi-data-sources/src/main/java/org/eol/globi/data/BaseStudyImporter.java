@@ -24,10 +24,6 @@ public abstract class BaseStudyImporter implements StudyImporter {
     private ImportLogger importLogger = new NullImportLogger();
     private String sourceCitationLastAccessed;
 
-    public BaseStudyImporter(ParserFactory parserFactory, NodeFactory nodeFactory) {
-
-    }
-
     @Override
     public void setFilter(ImportFilter importFilter) {
         this.importFilter = importFilter;

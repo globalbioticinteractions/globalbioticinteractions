@@ -79,7 +79,7 @@ public class StudyImporterFactoryIT {
         assertThat(importer, is(instanceOf(StudyImporterForWood.class)));
         StudyImporterForWood importerz = (StudyImporterForWood) importer;
         assertThat(importerz.getSourceCitation(), containsString("Wood"));
-        assertThat(importerz.getDataset().getLocalURI(importerz.getLinksResourceName()).toString(), endsWith(".csv"));
+        assertThat(importerz.getDataset().getLocalURI(URI.create("links")).toString(), endsWith(".csv"));
     }
 
     @Test

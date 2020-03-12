@@ -5,7 +5,6 @@ public abstract class NodeBasedImporter extends BaseStudyImporter {
     private NodeFactory nodeFactory;
 
     NodeBasedImporter(ParserFactory parserFactory, NodeFactory nodeFactory) {
-        super(parserFactory, nodeFactory);
         this.nodeFactory = nodeFactory;
         this.parserFactory = parserFactory;
     }

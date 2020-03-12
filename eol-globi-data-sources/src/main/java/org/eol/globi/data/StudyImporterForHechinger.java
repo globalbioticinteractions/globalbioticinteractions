@@ -139,7 +139,7 @@ public class StudyImporterForHechinger extends StudyImporterNodesAndLinks {
 
     private String parseMostGranularTaxonName(LabeledCSVParser nodes) {
         String name = null;
-        String ranks[] = {"Kingdom", "Phylum", "Subphylum", "Superclass", "Class", "Subclass", "Order", "Suborder", "Infraorder", "Superfamily", "Family"};
+        String[] ranks = {"Kingdom", "Phylum", "Subphylum", "Superclass", "Class", "Subclass", "Order", "Suborder", "Infraorder", "Superfamily", "Family"};
         String specificEpithet = nodes.getValueByLabel("SpecificEpithet");
         String genus = nodes.getValueByLabel("Genus");
         if (StringUtils.isNotBlank(genus)) {

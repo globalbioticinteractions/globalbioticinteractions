@@ -4,12 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
+import org.globalbioticinteractions.dataset.Dataset;
 
 import java.net.URI;
 
-public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListener {
+public abstract class StudyImporterNodesAndLinks extends NodeBasedImporter {
 
     public StudyImporterNodesAndLinks(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -37,11 +39,21 @@ public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListen
     }
 
     public LatLng getLocation() {
-        return parseLocation(getDataset().getConfig());
+        Dataset dataset = getDataset();
+        return locationForDataset(dataset);
     }
 
-    public TermImpl getLocality() {
-        return parseLocality(getDataset().getConfig());
+    public static LatLng locationForDataset(Dataset dataset) {
+        return parseLocation(dataset.getConfig());
+    }
+
+    public Term getLocality() {
+        Dataset dataset = getDataset();
+        return localityForDataset(dataset);
+    }
+
+    public static Term localityForDataset(Dataset dataset) {
+        return parseLocality(dataset.getConfig());
     }
 
     private static LatLng parseLocation(JsonNode desc) {
@@ -59,7 +71,7 @@ public abstract class StudyImporterNodesAndLinks extends StudyImporterWithListen
         return loc;
     }
 
-    private static TermImpl parseLocality(JsonNode desc) {
+    public static TermImpl parseLocality(JsonNode desc) {
         TermImpl locality = null;
         JsonNode location = desc.get("location");
         if (location != null) {

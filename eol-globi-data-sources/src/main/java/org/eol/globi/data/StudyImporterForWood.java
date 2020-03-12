@@ -2,15 +2,18 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.Term;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class StudyImporterForWood extends StudyImporterNodesAndLinks {
+public class StudyImporterForWood extends StudyImporterWithListener {
 
     public StudyImporterForWood(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -18,7 +21,7 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        try (InputStream resource = getDataset().retrieve(getLinksResourceName())) {
+        try (InputStream resource = getDataset().retrieve(URI.create("links"))) {
             importLinks(resource, getInteractionListener(), getFilter());
         } catch (IOException e) {
             throw new StudyImporterException(e);
@@ -48,13 +51,15 @@ public class StudyImporterForWood extends StudyImporterNodesAndLinks {
         link.put(StudyImporterForTSV.REFERENCE_ID, getSourceDOI().toPrintableDOI());
         link.put(StudyImporterForTSV.REFERENCE_DOI, getSourceDOI().toString());
         link.put(StudyImporterForTSV.REFERENCE_URL, getSourceDOI().toURI().toString());
-        if (getLocality() != null) {
-            link.put(StudyImporterForTSV.LOCALITY_NAME, getLocality().getName());
-            link.put(StudyImporterForTSV.LOCALITY_ID, getLocality().getId());
+        Term locality = StudyImporterNodesAndLinks.localityForDataset(getDataset());
+        if (locality != null) {
+            link.put(StudyImporterForTSV.LOCALITY_NAME, locality.getName());
+            link.put(StudyImporterForTSV.LOCALITY_ID, locality.getId());
         }
-        if (getLocation() != null) {
-            link.put(StudyImporterForTSV.DECIMAL_LATITUDE, Double.toString(getLocation().getLat()));
-            link.put(StudyImporterForTSV.DECIMAL_LONGITUDE, Double.toString(getLocation().getLng()));
+        LatLng latLng = StudyImporterNodesAndLinks.locationForDataset(getDataset());
+        if (latLng != null) {
+            link.put(StudyImporterForTSV.DECIMAL_LATITUDE, Double.toString(latLng.getLat()));
+            link.put(StudyImporterForTSV.DECIMAL_LONGITUDE, Double.toString(latLng.getLng()));
         }
         link.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, "preysOn");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "RO:0002439");
