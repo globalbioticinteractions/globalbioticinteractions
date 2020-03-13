@@ -730,6 +730,27 @@ public class CypherQueryBuilderTest {
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some name\\\"}")));
     }
 
+
+    @Test
+    public void findInteractionsAccordingToWithSourceTaxonIdTargetUnsupportedTaxonIdAndNameOnlyAndExactMatchOnlyIncludeObservations2() throws IOException {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("exactNameMatchOnly", new String[]{"true"});
+                put("sourceTaxon", new String[]{"Arthropoda"});
+                put("targetTaxon", new String[]{"FOO:123", "some name"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name"});
+            }
+        };
+
+        query = buildInteractionQuery(params, MULTI_TAXON_ALL);
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxons({source_taxon_name}) " +
+                EXPECTED_MATCH_CLAUSE_ALL +
+                "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['FOO:123','some name'])" +
+                " OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc" +
+                " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"FOO:123\\\" OR name:\\\"some name\\\"}")));
+    }
+
     @Test
     public void findInteractionsAccordingToNoTaxa() throws IOException {
         HashMap<String, String[]> params = new HashMap<String, String[]>() {

@@ -207,7 +207,7 @@ public class CypherQueryBuilder {
     public static String selectorPrefixForName(String name, boolean isExactMatch) {
         String prefix = "path:";
         if (isExactMatch) {
-            if (isExternalId(name) && ExternalIdUtil.isSupported(name)) {
+            if (isExternalId(name)) {
                 prefix = "externalId:";
             } else {
                 prefix = "name:";
@@ -647,12 +647,12 @@ public class CypherQueryBuilder {
     }
 
     private static void appendNameWhereClause(StringBuilder query, String taxonLabel, List<String> taxonNames, String property) {
-        query.append("(exists(").append(taxonLabel).append("." + property + ") AND ");
-        query.append(taxonLabel).append("." + property + " IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
+        query.append("(exists(").append(taxonLabel).append(".").append(property).append(") AND ").append(taxonLabel).append(".").append(property).append(" IN ['").append(StringUtils.join(taxonNames, "','")).append("']) ");
     }
 
     private static boolean isExternalId(String taxonName) {
-        return StringUtils.contains(taxonName, ":");
+        return StringUtils.contains(taxonName, ":")
+                && ExternalIdUtil.isSupported(taxonName);
     }
 
     protected static List<String> collectParamValues(Map parameterMap, ParamName name) {
