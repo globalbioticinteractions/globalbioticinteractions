@@ -6,14 +6,33 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.queryParser.QueryParser;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.*;
+import org.eol.globi.domain.DatasetNode;
+import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.EnvironmentNode;
+import org.eol.globi.domain.Interaction;
+import org.eol.globi.domain.InteractionNode;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.LocationNode;
+import org.eol.globi.domain.NodeBacked;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.SeasonNode;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenConstant;
+import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyConstant;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.Term;
+import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.DOIResolver;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.ORCIDResolverImpl;
 import org.eol.globi.service.QueryUtil;
@@ -22,6 +41,8 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.Dataset;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -528,23 +549,17 @@ public class NodeFactoryNeo4j implements NodeFactory {
         for (Term term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
-                Transaction transaction = graphDb.beginTx();
-                try {
+                try (Transaction transaction = graphDb.beginTx()) {
                     EnvironmentNode environmentNode = new EnvironmentNode(graphDb.createNode(), term.getId(), term.getName());
                     environments.add(environmentNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, term.getName());
                     transaction.success();
                     environment = environmentNode;
-                } finally {
-                    transaction.close();
                 }
             }
-            Transaction transaction = graphDb.beginTx();
-            try {
+            try (Transaction transaction = graphDb.beginTx()) {
                 location.addEnvironment(environment);
                 normalizedEnvironments.add(environment);
                 transaction.success();
-            } finally {
-                transaction.close();
             }
         }
         return normalizedEnvironments;
@@ -552,7 +567,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private List<Ecoregion> getEcoRegions(Node locationNode) {
         List<Ecoregion> ecoregions = null;
-        try (Transaction transaction = getGraphDb().beginTx()) {
+        try (Transaction ignored = getGraphDb().beginTx()) {
             Iterable<Relationship> relationships = locationNode.getRelationships(NodeUtil.asNeo4j(RelTypes.IN_ECOREGION), Direction.OUTGOING);
             for (Relationship relationship : relationships) {
                 Node ecoregionNode = relationship.getEndNode();
@@ -606,7 +621,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     private Node findEcoRegion(Ecoregion ecoregion) {
         String query = "name:\"" + ecoregion.getName() + "\"";
-        try (Transaction transaction = getGraphDb().beginTx()) {
+        try (Transaction ignored = getGraphDb().beginTx()) {
             try (IndexHits<Node> hits = this.ecoregions.query(query)) {
                 return hits.hasNext() ? hits.next() : null;
             }
