@@ -151,7 +151,6 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
                 return Collections.emptyList();
             }
 
-
             @Override
             public void shutdown() {
 

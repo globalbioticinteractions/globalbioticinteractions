@@ -48,7 +48,7 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
                 throw new NodeFactoryException("failed to enrichFirstMatch taxon with name [" + taxon.getName() + "]", e);
             }
             if (taxonMatches != null && taxonMatches.size() > 0) {
-                indexedTaxon = indexFirst(taxonMatches, origTaxon);
+                indexedTaxon = indexFirstAndConnectRemaining(taxonMatches, origTaxon);
             }
 
             if (indexedTaxon == null) {
@@ -69,7 +69,7 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
         return indexedTaxon;
     }
 
-    public TaxonNode indexFirst(List<Map<String, String>> taxonMatches, Taxon origTaxon) throws NodeFactoryException {
+    public TaxonNode indexFirstAndConnectRemaining(List<Map<String, String>> taxonMatches, Taxon origTaxon) throws NodeFactoryException {
         Map<String, String> firstEnriched = taxonMatches.get(0);
         Taxon taxon = TaxonUtil.mapToTaxon(firstEnriched);
         TaxonNode indexedTaxon = findTaxon(taxon);
