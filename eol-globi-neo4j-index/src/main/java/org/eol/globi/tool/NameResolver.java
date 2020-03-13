@@ -69,29 +69,33 @@ public class NameResolver {
                     final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
                     if (classifiedAs == null) {
                         final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING);
-                        final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
-                        try {
-                            if (taxonFilter.shouldInclude(describedAsTaxon)) {
-                                Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
-                                if (resolvedTaxon != null) {
-                                    specimen.classifyAs(resolvedTaxon);
+                        if (describedAs == null) {
+                            LOG.warn("failed to find original taxon description for specimen for [" + study1.getCitation() + "]");
+                        } else {
+                            final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
+                            try {
+                                if (taxonFilter.shouldInclude(describedAsTaxon)) {
+                                    Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
+                                    if (resolvedTaxon != null) {
+                                        specimen.classifyAs(resolvedTaxon);
+                                    }
                                 }
-                            }
-                        } catch (NodeFactoryException e) {
-                            LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
-                        } finally {
-                            count++;
-                            if (count % batchSize == 0) {
-                                watchForBatch.stop();
-                                final long duration = watchForBatch.getTime();
-                                if (duration > 0) {
-                                    LOG.info("resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
+                            } catch (NodeFactoryException e) {
+                                LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
+                            } finally {
+                                count++;
+                                if (count % batchSize == 0) {
+                                    watchForBatch.stop();
+                                    final long duration = watchForBatch.getTime();
+                                    if (duration > 0) {
+                                        LOG.info("resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
+                                    }
+                                    watchForBatch.reset();
+                                    watchForBatch.start();
+                                    transaction.success();
+                                    transaction.close();
+                                    transaction = graphService.beginTx();
                                 }
-                                watchForBatch.reset();
-                                watchForBatch.start();
-                                transaction.success();
-                                transaction.close();
-                                transaction = graphService.beginTx();
                             }
                         }
                     }
