@@ -49,19 +49,20 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
             }
             if (taxonMatches != null && taxonMatches.size() > 0) {
                 indexedTaxon = indexFirst(taxonMatches, origTaxon);
-                if (indexedTaxon == null) {
-                    String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
-                    if (StringUtils.equals(truncatedName, taxon.getName())) {
-                        if (isIndexResolvedOnly()) {
-                            break;
-                        } else {
-                            indexedTaxon = addNoMatchTaxon(origTaxon);
-                        }
+            }
+
+            if (indexedTaxon == null) {
+                String truncatedName = NodeUtil.truncateTaxonName(taxon.getName());
+                if (StringUtils.equals(truncatedName, taxon.getName())) {
+                    if (isIndexResolvedOnly()) {
+                        break;
                     } else {
-                        taxon = new TaxonImpl();
-                        taxon.setName(truncatedName);
-                        indexedTaxon = findTaxonByName(taxon.getName());
+                        indexedTaxon = addNoMatchTaxon(origTaxon);
                     }
+                } else {
+                    taxon = new TaxonImpl();
+                    taxon.setName(truncatedName);
+                    indexedTaxon = findTaxonByName(taxon.getName());
                 }
             }
         }

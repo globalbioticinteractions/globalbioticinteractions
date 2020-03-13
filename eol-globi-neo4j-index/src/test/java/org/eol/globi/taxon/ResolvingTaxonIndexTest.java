@@ -23,12 +23,14 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import static org.eol.globi.tool.LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -133,6 +135,34 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
         TaxonNode someOtherFoundTaxonNodeTake2 = taxonService.findTaxonByName("some name2");
         assertNull(someOtherFoundTaxonNodeTake2);
 
+    }
+
+
+    @Test
+    public void noMatch() throws NodeFactoryException {
+        this.taxonService = new ResolvingTaxonIndex(new PropertyEnricher() {
+            @Override
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                return properties;
+            }
+
+            @Override
+            public List<Map<String, String>> enrichAllMatches(Map<String, String> properties) throws PropertyEnricherException {
+                return Collections.emptyList();
+            }
+
+
+            @Override
+            public void shutdown() {
+
+            }
+        }, getGraphDb()
+        ) {{
+            setIndexResolvedTaxaOnly(true);
+        }};
+
+        TaxonNode indexedTaxonNode = taxonService.getOrCreateTaxon(new TaxonImpl("some name1"));
+        assertThat(indexedTaxonNode, is(nullValue()));
     }
 
 
