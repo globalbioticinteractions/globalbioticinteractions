@@ -13,6 +13,7 @@ import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
@@ -206,7 +207,7 @@ public class CypherQueryBuilder {
     public static String selectorPrefixForName(String name, boolean isExactMatch) {
         String prefix = "path:";
         if (isExactMatch) {
-            if (isExternalId(name)) {
+            if (isExternalId(name) && ExternalIdUtil.isSupported(name)) {
                 prefix = "externalId:";
             } else {
                 prefix = "name:";

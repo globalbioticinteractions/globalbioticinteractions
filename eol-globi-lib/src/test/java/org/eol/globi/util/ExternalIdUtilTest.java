@@ -80,4 +80,14 @@ public class ExternalIdUtilTest {
         assertTrue(ExternalIdUtil.isLikelyId("bla:1234-123"));
         assertTrue(ExternalIdUtil.isLikelyId("https://some/thing"));
     }
+
+    @Test
+    public void isUnsupportedId() {
+        assertThat(ExternalIdUtil.isSupported("urn:catalog:AMNH:Mammals:M-39582"), is(false));
+    }
+
+    @Test
+    public void isSupportedId() {
+        assertThat(ExternalIdUtil.isSupported("EOL:123"), is(true));
+    }
 }

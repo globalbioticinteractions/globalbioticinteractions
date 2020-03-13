@@ -659,7 +659,8 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void prefixSelectorForName() {
-        assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", true), is("externalId:"));
+        assertThat(CypherQueryBuilder.selectorPrefixForName("EOL:123", true), is("externalId:"));
+        assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", true), is("name:"));
         assertThat(CypherQueryBuilder.selectorPrefixForName("bla:123", false), is("path:"));
         assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", false), is("path:"));
         assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", true), is("name:"));
