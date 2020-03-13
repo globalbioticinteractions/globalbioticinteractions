@@ -58,11 +58,13 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     }
 
     private void eats(Specimen specimen, String scientificName, String taxonExternalId, Study study) throws NodeFactoryException {
-        Specimen otherSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl(scientificName, taxonExternalId));
-        otherSpecimen.setVolumeInMilliLiter(124.0);
+        Specimen otherSpecimen1 = nodeFactory.createSpecimen(study, new TaxonImpl(scientificName, taxonExternalId));
+        otherSpecimen1.setVolumeInMilliLiter(124.0);
+        specimen.ate(otherSpecimen1);
 
-        specimen.ate(otherSpecimen);
-        specimen.ate(otherSpecimen);
+        Specimen otherSpecimen2 = nodeFactory.createSpecimen(study, new TaxonImpl(scientificName, taxonExternalId));
+        otherSpecimen2.setVolumeInMilliLiter(124.0);
+        specimen.ate(otherSpecimen2);
     }
 
 
