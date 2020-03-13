@@ -59,7 +59,9 @@ public class NodeBacked {
         Iterator<Relationship> iterator = relationships.iterator();
         while (iterator.hasNext() && !alreadyHasRelationship) {
             Relationship relationship = iterator.next();
-            alreadyHasRelationship = endNode.getNodeID() == relationship.getEndNode().getId();
+            alreadyHasRelationship =
+                    relationship.getStartNode().getId() == this.getUnderlyingNode().getId()
+                            && relationship.getEndNode().getId() == endNode.getUnderlyingNode().getId();
         }
         return alreadyHasRelationship;
     }
