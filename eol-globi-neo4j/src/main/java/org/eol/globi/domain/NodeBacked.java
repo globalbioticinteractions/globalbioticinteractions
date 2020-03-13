@@ -33,13 +33,10 @@ public class NodeBacked {
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType) {
-        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
         Relationship rel;
-        try {
-            rel = createRelationshipToNoTx((NodeBacked)endNode, relType);
+        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
+            rel = createRelationshipToNoTx((NodeBacked) endNode, relType);
             tx.success();
-        } finally {
-            tx.close();
         }
 
         return rel;
@@ -47,19 +44,31 @@ public class NodeBacked {
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
         Relationship rel = null;
-        if (!this.equals(endNode)) {
-            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(relType));
-            boolean hasRelationship = false;
-            Iterator<Relationship> iterator = relationships.iterator();
-            while (iterator.hasNext() && !hasRelationship) {
-                Relationship relationship = iterator.next();
-                hasRelationship = endNode.equals(relationship.getEndNode());
-            }
-            if (!hasRelationship) {
+        if (getNodeID() != endNode.getNodeID()) {
+            if (!alreadyRelated(endNode, relType)) {
                 rel = getUnderlyingNode().createRelationshipTo(endNode.getUnderlyingNode(), NodeUtil.asNeo4j(relType));
             }
         }
         return rel;
+    }
+
+    private boolean alreadyRelated(NodeBacked endNode, RelType relType) {
+        Iterable<Relationship> relationships = getRelatedRelations(endNode, relType);
+
+        boolean alreadyHasRelationship = false;
+        Iterator<Relationship> iterator = relationships.iterator();
+        while (iterator.hasNext() && !alreadyHasRelationship) {
+            Relationship relationship = iterator.next();
+            alreadyHasRelationship = endNode.getNodeID() == relationship.getEndNode().getId();
+        }
+        return alreadyHasRelationship;
+    }
+
+    Iterable<Relationship> getRelatedRelations(NodeBacked endNode, RelType relType) {
+        boolean thisMoreConnected = this.getUnderlyingNode().getDegree() > endNode.getUnderlyingNode().getDegree();
+        Node start = thisMoreConnected ? endNode.getUnderlyingNode() : this.getUnderlyingNode();
+        Direction direction = thisMoreConnected ? Direction.INCOMING : Direction.OUTGOING;
+        return start.getRelationships(direction, NodeUtil.asNeo4j(relType));
     }
 
     public long getNodeID() {
