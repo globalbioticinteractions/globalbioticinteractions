@@ -31,7 +31,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +178,7 @@ public class StudyImporterForHurlbert extends NodeBasedImporter {
 
     }
 
-    private final static Map<String, String> HABITAT_MAPPING = new HashMap<String, String>() {{
+    private final static Map<String, String> HABITAT_MAPPING = new TreeMap<String, String>() {{
         put("agriculture", "ENVO:00000077");
         put("coniferous forest", "ENVO:01000240");
         put("deciduous forest", "ENVO:01000816");

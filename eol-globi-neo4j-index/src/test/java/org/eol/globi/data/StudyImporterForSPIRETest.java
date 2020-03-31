@@ -21,7 +21,7 @@ import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void parseIllegalTitle() throws StudyImporterException {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        TreeMap<String, String> properties = new TreeMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("this is really not supported, and is unformatted", properties);
         assertThat(properties.get(StudyConstant.TITLE), is("this is really not su...e9154c16f07ad2470849d90a8a0b9dab"));
         assertThat(properties.get(StudyConstant.DESCRIPTION), is("this is really not supported, and is unformatted"));
@@ -48,7 +48,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void parseAnotherYetYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new TreeMap<String, String>();
         String titlesAndAuthors = "G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87.";
         StudyImporterForSPIRE.parseTitlesAndAuthors(titlesAndAuthors, properties);
         assertThat(properties.get(StudyConstant.DESCRIPTION), is("G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87."));
@@ -57,7 +57,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void parseAnotherYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new TreeMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274.", properties);
         assertThat(properties.get(StudyConstant.TITLE), is("Hawkins and Goeden, 1...fcebc21f82937fa4ab9f77a0ecbd62e3"));
         assertThat(properties.get(StudyConstant.DESCRIPTION), is("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274."));
@@ -66,7 +66,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     @Test
     public void mergeIdenticalReferences() throws StudyImporterException {
         // see https://github.com/danielabar/globi-proto/issues/59#issuecomment-92150679
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new TreeMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("G. W. Minshall, Role of allochthonous detritus in the trophic structure\n" +
                 " of a woodland springbrook community, Ecology 48(1):139-149, from p. 148 (1967).\n" +
                 "", properties);
@@ -76,7 +76,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
     public void parseYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new TreeMap<String, String>();
         StudyImporterForSPIRE.parseTitlesAndAuthors("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209.", properties);
         assertThat(properties.get(StudyConstant.TITLE), is("Townsend, CR, Thompso...db61dcc043a135ac2fa8b440e11165e3"));
         assertThat(properties.get(StudyConstant.DESCRIPTION), is("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209."));
@@ -90,7 +90,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
 
     private void assertSingleImport(String spireHabitat, String envoId, String envoLabel) throws NodeFactoryException {
         StudyImporterForSPIRE studyImporterForSPIRE = createImporter();
-        HashMap<String, String> properties = new HashMap<String, String>();
+        TreeMap<String, String> properties = new TreeMap<String, String>();
         properties.put(StudyConstant.TITLE, "the study of men eating dogs");
         properties.put(StudyImporterForSPIRE.PREY_NAME, "dog");
         properties.put(StudyImporterForSPIRE.PREDATOR_NAME, "man");
@@ -189,7 +189,7 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
     }
 
     private void assertGAZMapping(TestInteractionListener listener) {
-        Map<String, TermImpl> gazMap = new HashMap<String, TermImpl>() {{
+        Map<String, TermImpl> gazMap = new TreeMap<String, TermImpl>() {{
             put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new TermImpl("GAZ:00146864", "The Catlins"));
             put("Country: Scotland", new TermImpl("GAZ:00002639", "Scotland"));
             put("Country: USA;   State: Georgia", new TermImpl("GAZ:00002611", "State of Georgia"));

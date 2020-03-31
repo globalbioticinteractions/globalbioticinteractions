@@ -18,7 +18,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +56,7 @@ public final class ExportUtil {
     }
 
     public static void export(Appender appender, GraphDatabaseService graphService, List<String> queries) throws IOException {
-        HashMap<String, Object> params = new HashMap<String, Object>() {{
+        TreeMap<String, Object> params = new TreeMap<String, Object>() {{
         }};
         writeResults(appender, graphService, queries, params, true);
     }
@@ -125,11 +125,11 @@ public final class ExportUtil {
         }
     }
 
-    static void writeResults(Appender appender, GraphDatabaseService dbService, String query, HashMap<String, Object> params, boolean includeHeader) throws IOException {
+    static void writeResults(Appender appender, GraphDatabaseService dbService, String query, Map<String, Object> params, boolean includeHeader) throws IOException {
         writeResults(appender, dbService, Collections.singletonList(query), params, includeHeader);
     }
 
-    static void writeResults(Appender appender, GraphDatabaseService dbService, List<String> queries, HashMap<String, Object> params, boolean includeHeader) throws IOException {
+    static void writeResults(Appender appender, GraphDatabaseService dbService, List<String> queries, Map<String, Object> params, boolean includeHeader) throws IOException {
         for (String query : queries) {
             Result rows = dbService.execute(query, params);
             List<String> columns = rows.columns();

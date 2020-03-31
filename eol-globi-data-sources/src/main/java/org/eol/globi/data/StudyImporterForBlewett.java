@@ -19,7 +19,7 @@ import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +39,8 @@ public class StudyImporterForBlewett extends NodeBasedImporter {
                         null,
                         citation));
         try {
-            Map<String, Location> collectionLocationMap = new HashMap<>();
-            Map<String, Date> collectionTimeMap = new HashMap<String, Date>();
+            Map<String, Location> collectionLocationMap = new TreeMap<>();
+            Map<String, Date> collectionTimeMap = new TreeMap<String, Date>();
             buildLocationTimeMaps(collectionLocationMap, collectionTimeMap, study);
             parsePredatorPreyInteraction(study, collectionLocationMap, collectionTimeMap);
         } catch (IOException e) {

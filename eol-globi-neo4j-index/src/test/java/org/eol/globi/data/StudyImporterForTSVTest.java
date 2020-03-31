@@ -12,7 +12,7 @@ import org.neo4j.graphdb.Direction;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -50,7 +50,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void importFewLinesTSV() throws StudyImporterException {
-        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
+        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {{
             put("http://example.com/interactions.tsv", firstFewLinesTSV);
         }});
         StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
@@ -65,7 +65,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void importFewLinesCSV() throws StudyImporterException {
-        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
+        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {{
             put("http://example.com/interactions.csv", firstFewLinesCSV);
         }});
         StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
@@ -80,7 +80,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void importFewLinesCSVAndTSV() throws StudyImporterException {
-        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {{
+        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {{
             put("http://example.com/interactions.tsv", firstFewLinesTSV);
             put("http://example.com/interactions.csv", firstFewLinesCSV);
         }});
@@ -249,7 +249,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void generateReferenceId() throws StudyImporterException {
-        String id = StudyImporterForTSV.generateReferenceId(new HashMap<String, String>() {{
+        String id = StudyImporterForTSV.generateReferenceId(new TreeMap<String, String>() {{
             put(REFERENCE_URL, "http://bla");
         }});
 
@@ -258,7 +258,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void generateReferenceIdFromCitation() throws StudyImporterException {
-        String id = StudyImporterForTSV.generateReferenceId(new HashMap<String, String>() {{
+        String id = StudyImporterForTSV.generateReferenceId(new TreeMap<String, String>() {{
             put(STUDY_SOURCE_CITATION, "http://source");
             put(REFERENCE_CITATION, "http://bla");
         }});
@@ -268,7 +268,7 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void generateReferenceCitation() throws StudyImporterException {
-        String id = StudyImporterForTSV.generateReferenceCitation(new HashMap<String, String>() {{
+        String id = StudyImporterForTSV.generateReferenceCitation(new TreeMap<String, String>() {{
             put(REFERENCE_URL, "http://bla");
         }});
 

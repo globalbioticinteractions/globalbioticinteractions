@@ -6,13 +6,13 @@ import org.eol.globi.util.CSVTSVUtil;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public class TestParserFactory implements ParserFactory {
     private String csvString;
 
-    private Map<String, String> map = new HashMap<String, String>();
+    private Map<String, String> map = new TreeMap<String, String>();
 
     public TestParserFactory(String csvString) {
         this.csvString = csvString;

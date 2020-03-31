@@ -27,7 +27,7 @@ import org.neo4j.graphdb.Transaction;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +55,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     @Test
     public void importNotSupportedTestResponse() throws IOException, StudyImporterException {
         final ArrayList<String> typesIgnored = new ArrayList<>();
-        final HashMap<String, InteractType> typeMap = new HashMap<>();
+        final TreeMap<String, InteractType> typeMap = new TreeMap<>();
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
                 InteractTypeMapperFactoryImpl.getTermLookupService(typesIgnored, typeMap));
         resolveNames();
@@ -68,7 +68,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
         final ArrayList<String> typesIgnored = new ArrayList<String>() {{
             add(PREFIX_OBSERVATION_FIELD + 47);
         }};
-        final HashMap<String, InteractType> typeMap = new HashMap<String, InteractType>() {
+        final TreeMap<String, InteractType> typeMap = new TreeMap<String, InteractType>() {
             {
                 put(PREFIX_OBSERVATION_FIELD + 13, InteractType.ATE);
             }
@@ -145,7 +145,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     public void importTestResponseWithTaxonId() throws IOException, StudyImporterException {
         final ArrayList<String> typesIgnored = new ArrayList<String>() {{
         }};
-        final HashMap<String, InteractType> typeMap = new HashMap<String, InteractType>() {
+        final TreeMap<String, InteractType> typeMap = new TreeMap<String, InteractType>() {
             {
                 put(PREFIX_OBSERVATION_FIELD + 47, InteractType.HAS_HOST);
             }

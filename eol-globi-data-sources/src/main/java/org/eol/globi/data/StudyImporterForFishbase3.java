@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.data.StudyImporterForHurlbert.columnValueOrNull;
 
@@ -45,7 +46,7 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
 
                 @Override
                 public void newLink(Map<String, String> properties) throws StudyImporterException {
-                    listener.newLink(new HashMap<String, String>(properties) {{
+                    listener.newLink(new TreeMap<String, String>(properties) {{
                         put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
                     }});
                 }

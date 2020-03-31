@@ -1,7 +1,7 @@
 package org.eol.globi.geo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class EcoregionFinderFactoryImpl implements EcoregionFinderFactory {
     }
 
     private Map<EcoregionType, EcoregionFinderConfig> getUrlTypeMap() {
-        return new HashMap<EcoregionType, EcoregionFinderConfig>() {{
+        return new TreeMap<EcoregionType, EcoregionFinderConfig>() {{
             // Terrestrial Ecosystem of the World
             // http://maps.tnc.org/files/metadata/TerrEcos.xml
             // http://maps.tnc.org/files/shp/terr-ecoregions-TNC.zip

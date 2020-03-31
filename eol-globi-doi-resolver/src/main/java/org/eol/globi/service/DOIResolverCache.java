@@ -15,7 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,7 +36,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
 
     @Override
     public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
-        Map<String, DOI> results = new HashMap<>();
+        Map<String, DOI> results = new TreeMap<>();
         for (String reference : references) {
             DOI doi = getDoiCitationMap().get(reference);
             if (doi != null) {
@@ -54,7 +54,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                 init(bufferedReader);
             } catch (PropertyEnricherException | IOException e) {
                 LOG.warn("failed to initialize doi cache using [" + doiCacheResource + "], cache disabled", e);
-                doiCitationMap = new HashMap<>();
+                doiCitationMap = new TreeMap<>();
             }
         }
         return doiCitationMap;

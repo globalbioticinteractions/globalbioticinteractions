@@ -679,7 +679,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             if (getDataset() == null) {
                 getInteractionListener().newLink(properties);
             } else {
-                getInteractionListener().newLink(new HashMap<String, String>(properties) {{
+                getInteractionListener().newLink(new TreeMap<String, String>(properties) {{
                     if (getDataset().getArchiveURI() != null) {
                         put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
                     }

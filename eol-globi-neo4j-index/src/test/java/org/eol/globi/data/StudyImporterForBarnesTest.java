@@ -15,7 +15,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -52,7 +52,7 @@ public class StudyImporterForBarnesTest extends GraphDBTestCase {
                 "34931\tn/a\tn/a\tZeus faber\tJohn dory\tectotherm vertebrate\tadult\tpiscivorous\t3.5470E+02\tmm\ttotal length\t2.9085E+02\t0.0000E+00\t3.5470E+02\tFishbase (species)\t3.5470E+01\tmid-class\tM=0.0230SL^2.9114\tDorel (1986)\t1\t4.1983E+02\tg\t2.3354E+03\t1.9156E+03\t5.5628E+00\t4.1983E+02\tall\tMicromesistius potassou\tBlue-whiting\tectotherm vertebrate\t2.1704E+01\tcm\tL = 10^ ((logM-log(0.0038))/3.082)\t1\tDorel (1986)\t2.1704E+01\tmass\tn/a\tn/a\tindividual\t5.0000E+01\tg\t5.3502E+02\t4.8502E+02\t1.0700E+01\t5.0000E+01\tWeighed\tn/a\t0\tEastern Mediterranean\t38�00'N\t23�00'E\t75\t19.3\t4.6\t435\t17\tStergiou & Fourtouni 1991\tEuboikos and Pagassitikos Gulfs\tPredator length mid-class\n";
 
 
-        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {
+        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {
             {
                 put(StudyImporterForBarnes.RESOURCE_PATH.toString(), firstFourLines);
                 put(StudyImporterForBarnes.REFERENCE_PATH.toString(), "short,full\nBethea et al (2004),something long\nStergiou & Fourtouni 1991,something longer");

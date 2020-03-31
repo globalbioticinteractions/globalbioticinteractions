@@ -16,7 +16,7 @@ import org.globalbioticinteractions.doi.DOI;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class StudyImporterForBaremore extends NodeBasedImporter {
                     new StudyImpl("Baremore 2010", StudyImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, new DOI("3354", "ab00214"), ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010")));
             Location collectionLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(29.219302, -87.06665, null, null));
 
-            Map<Integer, Specimen> specimenMap = new HashMap<Integer, Specimen>();
+            Map<Integer, Specimen> specimenMap = new TreeMap<Integer, Specimen>();
 
             while ((line = parser.getLine()) != null) {
                 Integer sharkId = Integer.parseInt(line[0]);

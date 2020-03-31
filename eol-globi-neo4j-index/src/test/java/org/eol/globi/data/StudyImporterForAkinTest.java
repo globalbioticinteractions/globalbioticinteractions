@@ -21,7 +21,7 @@ import org.neo4j.graphdb.Relationship;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -88,12 +88,12 @@ public class StudyImporterForAkinTest extends GraphDBTestCase {
                 Node speciesNode = specimenNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
                 assertThat(speciesNode.getProperty("name"), is("Pogonias cromis"));
                 Iterable<Relationship> ateRels = specimenNode.getRelationships(NodeUtil.asNeo4j(InteractType.ATE), Direction.OUTGOING);
-                Map<String, Map<String, Object>> preys = new HashMap<String, Map<String, Object>>();
+                Map<String, Map<String, Object>> preys = new TreeMap<String, Map<String, Object>>();
                 for (Relationship ateRel : ateRels) {
                     Node preyNode = ateRel.getEndNode();
                     Node taxonNode = preyNode.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING).getEndNode();
                     String name = (String) taxonNode.getProperty("name");
-                    HashMap<String, Object> propertyMap = new HashMap<String, Object>();
+                    Map<String, Object> propertyMap = new TreeMap<String, Object>();
                     propertyMap.put("name", name);
                     propertyMap.put(SpecimenConstant.VOLUME_IN_ML, preyNode.getProperty(SpecimenConstant.VOLUME_IN_ML));
                     preys.put(name, propertyMap);

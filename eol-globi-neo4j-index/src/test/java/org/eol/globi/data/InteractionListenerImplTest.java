@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -86,7 +86,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void importBlankCitation() throws StudyImporterException {
         final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, null);
-        final HashMap<String, String> link = new HashMap<String, String>();
+        final TreeMap<String, String> link = new TreeMap<String, String>();
         link.put(SOURCE_OCCURRENCE_ID, "123");
         link.put(SOURCE_CATALOG_NUMBER, "catalogNumber123");
         link.put(SOURCE_COLLECTION_CODE, "collectionCode123");
@@ -190,7 +190,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void importRefutingClaim() throws StudyImporterException {
         final InteractionListenerImpl listener = getAssertingListener();
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
@@ -218,7 +218,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void importWithLocalityAndLatLng() throws StudyImporterException {
         final InteractionListenerImpl listener = getAssertingListener();
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
@@ -254,7 +254,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void importWithSex() throws StudyImporterException {
         final InteractionListenerImpl listener = getAssertingListener();
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_SEX_NAME, "female");
         link.put(SOURCE_SEX_ID, "some:female");
@@ -291,7 +291,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void importWithTaxonHierarchy() throws StudyImporterException {
         final InteractionListenerImpl listener = getAssertingListener();
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "Donald duck");
         link.put(SOURCE_TAXON_PATH, "Aves | Donald | Donald duck");
         link.put(SOURCE_TAXON_PATH_NAMES, "class | genus | species");
@@ -348,7 +348,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 msgs.add(message);
             }
         });
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "Donald duck");
         link.put(SOURCE_TAXON_PATH, "Aves | Donald | Donald duck");
         link.put(SOURCE_TAXON_PATH_NAMES, "class | genus | species");
@@ -403,7 +403,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 msgs.add(message);
             }
         });
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(TARGET_TAXON_NAME, "Donald duck");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
         link.put(SOURCE_OCCURRENCE_ID, "occurrenceId123");
@@ -458,7 +458,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
     public void assertSymbiotaDateString(String symbiotaTime, String expectedUTC) throws StudyImporterException {
         final InteractionListenerImpl listener = getAssertingListener();
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
@@ -503,7 +503,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         Predicate<Map<String, String>> interactionTypePredicate =
                 InteractionListenerImpl.createInteractionTypePredicate(null);
 
-        assertThat(interactionTypePredicate.test(new HashMap<String, String>()), is(false));
+        assertThat(interactionTypePredicate.test(new TreeMap<String, String>()), is(false));
     }
 
     @Test
@@ -511,7 +511,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         Predicate<Map<String, String>> interactionTypePredicate =
                 InteractionListenerImpl.createInteractionTypePredicate(null);
 
-        assertThat(interactionTypePredicate.test(new HashMap<String, String>() {{
+        assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.INTERACTION_TYPE_ID, "bla");
         }}), is(false));
     }
@@ -521,7 +521,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         Predicate<Map<String, String>> interactionTypePredicate =
                 InteractionListenerImpl.createInteractionTypePredicate(null);
 
-        assertThat(interactionTypePredicate.test(new HashMap<String, String>() {{
+        assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
         }}), is(true));
     }
@@ -547,7 +547,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             }
         });
 
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
@@ -587,7 +587,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
         });
 
-        final HashMap<String, String> link = new HashMap<>();
+        final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");

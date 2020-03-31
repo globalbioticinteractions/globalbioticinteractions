@@ -10,7 +10,7 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,7 +46,7 @@ public class ExporterMeasurementOrFact extends ExporterBase {
 
     @Override
     public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new TreeMap<String, String>();
 
         AtomicReference<IOException> lastException = new AtomicReference<>();
         NodeUtil.RelationshipListener handler = collectedRel -> {

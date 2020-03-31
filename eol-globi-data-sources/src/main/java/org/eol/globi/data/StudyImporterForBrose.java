@@ -18,7 +18,7 @@ import org.eol.globi.util.ExternalIdUtil;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class StudyImporterForBrose extends NodeBasedImporter {
     public static final URI RESOURCE_PATH = URI.create("http://www.esapubs.org/archive/ecol/E086/135/bodysizes_2008.txt");
     public static final URI REFERENCE_PATH = URI.create("brose/references.csv");
 
-    private static final Map<String, LatLng> LOC_MAP = new HashMap<String, LatLng>() {{
+    private static final Map<String, LatLng> LOC_MAP = new TreeMap<String, LatLng>() {{
         put("Country: United Kingdom; UTM: 51.24'N, 0.34'W; Silwood Park, Berkshire", new LatLng(51.24d, -0.34d));
         put("Country: United Kingdom; UTM: 53.40'N, 0.59'W; Skipwith Common, North Yorkshire", new LatLng(53.40, -0.59));
         put("Country: United Kingdom; the River Frome, Dorset;  UTM: 50.40'N, 2.11'W", new LatLng(50.40, -2.11));
@@ -140,7 +140,7 @@ public class StudyImporterForBrose extends NodeBasedImporter {
             resource.caughtIn(location);
             addLifeStage(parser, resource, "Lifestage - resource");
             String interactionType = parser.getValueByLabel("Type of feeding interaction");
-            Map<String, InteractType> typeMapping = new HashMap<String, InteractType>() {
+            Map<String, InteractType> typeMapping = new TreeMap<String, InteractType>() {
                 {
                     put("predacious", InteractType.PREYS_UPON);
                     put("predator", InteractType.PREYS_UPON);

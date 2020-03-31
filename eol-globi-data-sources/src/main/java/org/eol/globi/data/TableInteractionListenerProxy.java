@@ -15,6 +15,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class TableInteractionListenerProxy implements InteractionListener {
     private final InteractionListener interactionListener;
@@ -27,7 +28,7 @@ public class TableInteractionListenerProxy implements InteractionListener {
 
     @Override
     public void newLink(final Map<String, String> properties) throws StudyImporterException {
-        final HashMap<String, String> enrichedProperties = new HashMap<String, String>() {
+        final Map<String, String> enrichedProperties = new TreeMap<String, String>() {
             {
                 putAll(properties);
                 put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);

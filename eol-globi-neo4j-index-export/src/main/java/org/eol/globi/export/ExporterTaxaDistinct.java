@@ -6,7 +6,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public class ExporterTaxaDistinct extends ExporterTaxa {
@@ -31,7 +31,7 @@ public class ExporterTaxaDistinct extends ExporterTaxa {
                 ", taxon.rank as rank" +
                 ", taxon.externalId as taxonId");
 
-        Map<String, String> row = new HashMap<String, String>();
+        Map<String, String> row = new TreeMap<String, String>();
         Map<String, Object> result;
         while (results.hasNext()) {
             result = results.next();

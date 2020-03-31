@@ -18,7 +18,7 @@ import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -56,7 +56,7 @@ public class StudyImporterForBroseTest extends GraphDBTestCase {
                 "16866\tCohen et al. (2005)\tCohen et al. (2005)\t\"Country: United Kingdom; UTM: 51.24'N, 0.34'W; Silwood Park, Berkshire\"\tterrestrial\tabandoned field\trearing\t\"measurement; regression\"\tAphelinus varipes\tadult\tparasitoid wasp\tinvertebrate\tparasitoid\t0.000896552\t0.000896552\t0.000896552\t-999\t-999\t-999\tSitobion fragariae / Sitobion avenae\tnymphs\taphid\tinvertebrate\t0.001965517\t0.001965517\t0.001965517\t-999\t-999\t-999\t0.127890431\t\"newly emerged adult parsitoids were measured; resource length was measured without cauda; for data on individual body sizes and body sizes of hyperparasitoids and mummy parasitoids see Cohen et al. (2005); 1 pair of individuals were measured\"\n";
 
 
-        TestParserFactory parserFactory = new TestParserFactory(new HashMap<String, String>() {
+        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {
             {
                 put(StudyImporterForBrose.RESOURCE_PATH.toString(), headAndTail);
                 put(StudyImporterForBrose.REFERENCE_PATH.toString(), "short,full\nCohen et al. (2005),something long\nYodzis (1998),something longer");

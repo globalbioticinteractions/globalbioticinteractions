@@ -26,7 +26,7 @@ import org.neo4j.graphdb.Transaction;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -128,10 +128,10 @@ public class StudyImporterForBioInfoTest extends GraphDBTestCase {
         LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
         StudyImporterForBioInfo importer = new StudyImporterForBioInfo(new ParserFactoryLocal(), nodeFactory);
-        importer.createRelations(labeledCSVParser, new HashMap<String, String>() {{
+        importer.createRelations(labeledCSVParser, new TreeMap<String, String>() {{
             put("60527", "citation A");
             put("60536", "citation B");
-        }}, new HashMap<>());
+        }}, new TreeMap<>());
         resolveNames();
 
         Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");

@@ -17,7 +17,7 @@ import org.neo4j.graphdb.Relationship;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +38,7 @@ public class StudyImporterForWrastTest extends GraphDBTestCase {
         csvString += "7,25,2001,\"Lower\",\"Spring\",\"Non-Veg \",1,\"Ariidae\",\"Arius felis\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
         csvString += "7,26,2001,\"Upper\",\"Spring\",\"Reef\",2,\"Depth\",\"Missing depth\",176,\"Aegathoa oculata \",\"Aegathoa oculata\",4,\"I\",0.01,3.3333333333,2.1,,2\n";
 
-        Map<String, String> contentMap = new HashMap<>();
+        Map<String, String> contentMap = new TreeMap<>();
         String locationString = "\"Location\",\"Latitude\",\"Longitude\",,\"Region\",\"Habitat\",\"Site\"\n" +
                 "\"LM1\",28.595267,-96.477033,,\"Lower\",\"Marsh edge\",1\n" +
                 "\"LSG1\",28.596233,-96.476483,,\"Lower\",\"Marsh edge\",1\n" +

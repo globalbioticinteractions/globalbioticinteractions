@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public class DOIResolverImpl implements DOIResolver {
@@ -50,7 +50,7 @@ public class DOIResolverImpl implements DOIResolver {
     }
 
     private Map<String, DOI> requestLinks(Collection<String> references) throws IOException {
-        Map<String, DOI> doiMap = new HashMap<>();
+        Map<String, DOI> doiMap = new TreeMap<>();
         for (String reference : references) {
             try {
                 URIBuilder builder = new URIBuilder(baseURL + "/works");

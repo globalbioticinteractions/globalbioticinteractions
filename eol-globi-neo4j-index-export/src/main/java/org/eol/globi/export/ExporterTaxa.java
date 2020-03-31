@@ -3,13 +3,13 @@ package org.eol.globi.export;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.ExternalIdUtil;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public abstract class ExporterTaxa extends ExporterBase {
 
     static protected void resultsToRow(Map<String, String> properties, Map<String, Object> result) {
-        Map<String, String> rankMap = new HashMap<String, String>() {
+        Map<String, String> rankMap = new TreeMap<String, String>() {
             {
                 put("kingdom", EOLDictionary.KINGDOM);
                 put("phylum", EOLDictionary.PHYLUM);

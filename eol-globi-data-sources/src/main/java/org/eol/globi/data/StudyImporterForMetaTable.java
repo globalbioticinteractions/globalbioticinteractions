@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
@@ -100,7 +100,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
             String doi = result.get("doi").asText();
             String year = result.get("metadata_modified").asText().substring(0, 4);
             for (JsonNode resource : result.get("resources")) {
-                Map<String, Object> table = new HashMap<String, Object>();
+                Map<String, Object> table = new TreeMap<String, Object>();
                 table.put("dcterms:bibliographicCitation", author + " (" + year + "). " + title + ". https://doi.org/" + doi);
                 table.put("url", resource.get("url").asText());
                 if (config.has("headerRowCount")) {
@@ -204,8 +204,8 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
                                  List<Column> columnNames,
                                  CSVParse csvParse, JsonNode config, ImportLogger importLogger) throws StudyImporterException {
         String[] line;
-        Map<String, String> defaults = new HashMap<>();
-        final Map<String, String> sameAs = new HashMap<String, String>() {{
+        Map<String, String> defaults = new TreeMap<>();
+        final Map<String, String> sameAs = new TreeMap<String, String>() {{
             put("doi", REFERENCE_DOI);
             put("url", REFERENCE_URL);
         }};
@@ -223,7 +223,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
 
         try {
             while ((line = csvParse.getLine()) != null) {
-                Map<String, String> mappedLine = new HashMap<>(defaults);
+                Map<String, String> mappedLine = new TreeMap<>(defaults);
                 if (line.length < columnNames.size()) {
                     if (importLogger != null) {
                         importLogger.warn(null, "found [" + columnNames.size() + "] column definitions, but only [" + line.length + "] values: assuming undefined values are empty.");

@@ -143,7 +143,7 @@ class InteractionListenerImpl implements InteractionListener {
         }
     }
 
-    public void logIfPossible(Map<String, String> expandedProperties, String msg) {
+    private void logIfPossible(Map<String, String> expandedProperties, String msg) {
         if (logger != null) {
             logger.info(LogUtil.contextFor(expandedProperties), msg);
         }

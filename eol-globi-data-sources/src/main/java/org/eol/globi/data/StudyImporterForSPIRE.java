@@ -22,7 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public class StudyImporterForSPIRE extends NodeBasedImporter {
@@ -84,7 +84,7 @@ public class StudyImporterForSPIRE extends NodeBasedImporter {
         }
 
         ResIterator resIterator = model.listSubjects();
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new TreeMap<String, String>();
         Long subjectCounter = 0L;
         while (resIterator.hasNext() && getImportFilter().shouldImportRecord(subjectCounter)) {
             properties.clear();

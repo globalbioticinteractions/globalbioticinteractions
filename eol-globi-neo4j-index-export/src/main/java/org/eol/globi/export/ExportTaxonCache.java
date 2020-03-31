@@ -4,7 +4,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 public class ExportTaxonCache implements StudyExporter {
 
@@ -43,7 +43,7 @@ public class ExportTaxonCache implements StudyExporter {
                 ", taxon.externalUrl as externalUrl" +
                 ", taxon.thumbnailUrl as thumbnailUrl";
 
-        HashMap<String, Object> params = new HashMap<String, Object>() {{
+        TreeMap<String, Object> params = new TreeMap<String, Object>() {{
         }};
 
         ExportUtil.writeResults(appender,

@@ -12,7 +12,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         StudyImporterForSzoboszlai studyImporterForSzoboszlai = new StudyImporterForSzoboszlai(new ParserFactoryLocal(), nodeFactory);
         studyImporterForSzoboszlai.setDataset(getTestDataset());
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
-        HashMap<Integer, LatLng> localeMap = new HashMap<Integer, LatLng>();
+        TreeMap<Integer, LatLng> localeMap = new TreeMap<Integer, LatLng>();
         localeMap.put(2361, new LatLng(34.00824202376044, -120.72716166720323));
         studyImporterForSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), new InteractionListener() {
             @Override
