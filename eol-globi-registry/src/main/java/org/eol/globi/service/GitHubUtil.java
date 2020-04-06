@@ -103,7 +103,7 @@ public class GitHubUtil {
         return reposWithData;
     }
 
-    public static List<String> searchGitHubForCandidateRepositories(InputStreamFactory inputStreamFactory) throws URISyntaxException, IOException {
+    private static List<String> searchGitHubForCandidateRepositories(InputStreamFactory inputStreamFactory) throws URISyntaxException, IOException {
         int page = 1;
         int totalAvailable = 0;
         List<String> globiRepos = new ArrayList<>();
