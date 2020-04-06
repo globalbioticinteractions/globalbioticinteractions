@@ -19,6 +19,7 @@ import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -674,11 +675,11 @@ public class CypherQueryBuilder {
 
     public static CypherQuery createPagedQuery(HttpServletRequest request, CypherQuery query, long defaultLimit) {
         long defaultValue = 0L;
-        long offset = getValueOrDefault(request, "offset", defaultValue);
+        long offset = getPagedQueryLongProperty(request, "offset", defaultValue);
         if (offset == defaultValue) {
-            offset = getValueOrDefault(request, "skip", defaultValue);
+            offset = getPagedQueryLongProperty(request, "skip", defaultValue);
         }
-        long limit = getValueOrDefault(request, "limit", defaultLimit);
+        long limit = getPagedQueryLongProperty(request, "limit", defaultLimit);
         return createPagedQuery(query, offset, limit);
     }
 
@@ -686,16 +687,30 @@ public class CypherQueryBuilder {
         return new CypherQuery(query.getQuery() + " SKIP " + offset + " LIMIT " + limit, query.getParams(), query.getVersion());
     }
 
-    private static long getValueOrDefault(HttpServletRequest request, String paramName, long defaultValue) {
+    static long getPagedQueryLongProperty(HttpServletRequest request, String paramName, long defaultValue) {
         long offset = defaultValue;
         if (request != null) {
             String offsetValue = request.getParameter(paramName);
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(offsetValue)) {
-                try {
-                    offset = Long.parseLong(offsetValue);
-                } catch (NumberFormatException ex) {
-                    LOG.warn("malformed " + paramName + " found [" + offsetValue + "]", ex);
+            offset = parsePagedQueryLongValue(paramName, offset, offsetValue);
+        }
+        return offset;
+    }
+
+    static long parsePagedQueryLongValue(String paramName, long offset, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            try {
+                String valLowerCase = StringUtils.lowerCase(value);
+                String valTranslatePlusE = StringUtils.replace(valLowerCase, "+e", "e+");
+                String valTranslateMinusE = StringUtils.replace(valTranslatePlusE, "-e", "e-");
+                BigDecimal bigDecimal = new BigDecimal(valTranslateMinusE);
+                offset = bigDecimal.toBigInteger().longValue();
+                if (offset < 0) {
+                    throw new NumberFormatException("expected positive number, not [" + value + "]");
                 }
+            } catch (NumberFormatException ex) {
+                String o = "malformed query value [" + paramName + "] found: [" + value + "]. Expected some positive integer value (e.g., 1, 2, 400, 1000).";
+                LOG.warn(o, ex);
+                throw new IllegalArgumentException(o, ex);
             }
         }
         return offset;
