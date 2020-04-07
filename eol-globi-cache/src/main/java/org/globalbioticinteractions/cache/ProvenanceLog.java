@@ -26,7 +26,7 @@ public class ProvenanceLog {
         try {
             FileUtils.writeStringToFile(accessLog, prefix + accessLogLine, StandardCharsets.UTF_8, true);
         } catch (IOException ex) {
-            throw new IOException("failed to write to [" + accessLog.getAbsolutePath() + "]");
+            throw new IOException("failed to write to [" + accessLog.getAbsolutePath() + "]", ex);
         }
     }
 
