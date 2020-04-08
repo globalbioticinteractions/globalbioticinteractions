@@ -118,7 +118,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     }
 
     public static boolean isNHMResource(JsonNode config) {
-        return config.has("url") && StringUtils.startsWith(config.get("url").asText(), "http://data.nhm.ac.uk/api");
+        return config.has("url") && StringUtils.contains(config.get("url").asText(), "//data.nhm.ac.uk/api");
     }
 
     static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode tableConfig, Dataset dataset, ImportLogger importLogger) throws IOException, StudyImporterException {
