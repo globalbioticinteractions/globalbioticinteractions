@@ -26,9 +26,6 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     }
 
     private static void createInteraction(NodeBacked source, InteractType relType, NodeBacked target) {
-        NodeBacked subject = relType.targetRole == InteractType.InteractionRole.SUBJECT ? target : source;
-        NodeBacked object = relType.sourceRole == InteractType.InteractionRole.OBJECT ? source : target;
-
         boolean isFlipped = relType.sourceRole == InteractType.InteractionRole.OBJECT;
 
         final Relationship interactRel = source.createRelationshipToNoTx(target, relType);
