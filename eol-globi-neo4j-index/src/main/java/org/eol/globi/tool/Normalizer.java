@@ -19,7 +19,9 @@ import org.eol.globi.data.StudyImporterForRegistry;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.export.GraphExporterImpl;
+import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
+import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
@@ -40,6 +42,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Normalizer {
@@ -209,7 +213,18 @@ public class Normalizer {
 
     private EcoregionFinder getEcoregionFinder() {
         if (null == ecoregionFinder) {
-            ecoregionFinder = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl().createAll());
+            //ecoregionFinder = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl().createAll());
+            ecoregionFinder = new EcoregionFinder() {
+                @Override
+                public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
+                    return Collections.emptyList();
+                }
+
+                @Override
+                public void shutdown() {
+
+                }
+            };
         }
         return ecoregionFinder;
     }
