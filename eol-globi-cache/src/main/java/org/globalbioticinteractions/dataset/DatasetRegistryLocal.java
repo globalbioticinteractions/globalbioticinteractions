@@ -67,7 +67,8 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
         Collection<String> namespaces = new TreeSet<>();
         AccessFileLineListener lineListener = values -> {
-            if (values.length > 5 && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
+            if (values.length >= 5
+                    && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
                 namespaces.add(values[0]);
             }
         };
