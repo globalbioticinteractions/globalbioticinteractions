@@ -15,8 +15,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringEndsWith.endsWith;
@@ -94,6 +97,8 @@ public class DatasetRegistryLocalTest {
                         cacheDir.getAbsolutePath(),
                         inStream -> inStream));
 
+        Collection<String> availableNamespaces = registry.findNamespaces();
+        assertThat(availableNamespaces, not(contains("local")));
 
         try {
             registry.datasetFor("local");
