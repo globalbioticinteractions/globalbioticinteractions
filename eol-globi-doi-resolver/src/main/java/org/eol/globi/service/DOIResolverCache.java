@@ -50,7 +50,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         if (doiCitationMap == null) {
             try {
                 LOG.info("loading doi cache at [" + doiCacheResource + "]");
-                BufferedReader bufferedReader = createBufferedReader(doiCacheResource);
+                BufferedReader bufferedReader = CacheServiceUtil.createBufferedReader(doiCacheResource);
                 init(bufferedReader);
             } catch (PropertyEnricherException | IOException e) {
                 LOG.warn("failed to initialize doi cache using [" + doiCacheResource + "], cache disabled", e);

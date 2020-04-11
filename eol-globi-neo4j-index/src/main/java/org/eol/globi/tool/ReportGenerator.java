@@ -10,10 +10,13 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.service.CacheService;
+import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyNodeListener;
+import org.mapdb.DB;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -22,6 +25,7 @@ import org.neo4j.graphdb.Transaction;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class ReportGenerator {
     private static final Log LOG = LogFactory.getLog(ReportGenerator.class);
@@ -29,6 +33,7 @@ public class ReportGenerator {
     public static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 
     private final GraphDatabaseService graphService;
+    private final CacheService cacheService;
 
     private GraphDatabaseService getGraphDb() {
         return this.graphService;
@@ -36,6 +41,7 @@ public class ReportGenerator {
 
     public ReportGenerator(GraphDatabaseService graphService) {
         this.graphService = graphService;
+        this.cacheService = new CacheService();
     }
 
     public void run() {
@@ -87,8 +93,8 @@ public class ReportGenerator {
             }
 
             @Override
-            public boolean matches(Study study, String sourceId2) {
-                return StringUtils.equals(parse(study), sourceId2);
+            public boolean matches(Study study, String sourceId) {
+                return StringUtils.equals(parse(study), sourceId);
             }
 
             @Override
@@ -124,42 +130,63 @@ public class ReportGenerator {
     }
 
 
-    void generateReportForStudySources(SourceHandler sourceHandler) {
+    private void generateReportForStudySources(SourceHandler sourceHandler) {
+        try {
+            DB reportCache = cacheService.initDb("sourceReports" + UUID.randomUUID());
+            reportForHandler(sourceHandler, reportCache);
+            reportCache.close();
+        } catch (PropertyEnricherException e) {
+            LOG.warn("failed to create report", e);
+        }
 
-        final Set<String> groupByKeys = new HashSet<String>();
-        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
-            @Override
-            public void onStudy(StudyNode study) {
-                String groupByKey = sourceHandler.parse(study);
-                if (StringUtils.isNotBlank(groupByKey)) {
-                    groupByKeys.add(groupByKey);
-                }
+    }
+
+    private void reportForHandler(SourceHandler sourceHandler, DB reportCache) {
+        final Set<String> groupByKeys = reportCache
+                .createHashSet("groupByKeys")
+                .make();
+
+        NodeUtil.findStudies(getGraphDb(), study -> {
+            String groupByKey = sourceHandler.parse(study);
+            if (StringUtils.isNotBlank(groupByKey)) {
+                groupByKeys.add(groupByKey);
             }
         });
+        final Set<Long> distinctTaxonIds = reportCache
+                .createHashSet("distinctTaxonIds")
+                .make();
+
+        final Set<Long> distinctTaxonIdsNoMatch = reportCache
+                .createHashSet("distinctTaxonIdsNoMatch")
+                .make();
+
+        final Set<String> distinctSources = reportCache
+                .createHashSet("distinctSource")
+                .make();
+
+        final Set<String> distinctDatasets = reportCache
+                .createHashSet("distinctDatasets")
+                .make();
 
         for (final String groupByKey : groupByKeys) {
-            final Set<Long> distinctTaxonIds = new HashSet<>();
-            final Set<Long> distinctTaxonIdsNoMatch = new HashSet<>();
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
-            final Set<String> distinctSources = new HashSet<String>();
-            final Set<String> distinctDatasets = new HashSet<String>();
+            distinctDatasets.clear();
+            distinctSources.clear();
+            distinctTaxonIds.clear();
+            distinctTaxonIdsNoMatch.clear();
 
-            NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
-                @Override
-                public void onStudy(StudyNode study) {
-                    if (sourceHandler.matches(study, groupByKey)) {
-                        countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
-                        studyCounter.count();
-                        distinctSources.add(study.getSource());
-                        distinctDatasets.add(study.getSourceId());
-                    }
-
+            NodeUtil.findStudies(getGraphDb(), study -> {
+                if (sourceHandler.matches(study, groupByKey)) {
+                    countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
+                    studyCounter.count();
+                    distinctSources.add(study.getSource());
+                    distinctDatasets.add(study.getSourceId());
                 }
+
             });
 
-            Transaction tx = getGraphDb().beginTx();
-            try {
+            try (Transaction tx = getGraphDb().beginTx()) {
                 final Node node = getGraphDb().createNode();
                 node.setProperty(sourceHandler.getGroupByKeyName(), groupByKey);
                 node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
@@ -172,34 +199,36 @@ public class ReportGenerator {
 
                 getGraphDb().index().forNodes("reports").add(node, sourceHandler.getGroupByKeyName(), groupByKey);
                 tx.success();
-            } finally {
-                tx.close();
             }
         }
-
-
     }
 
     void generateReportForCollection() {
-        final Set<Long> distinctTaxonIds = new HashSet<Long>();
-        final Set<Long> distinctTaxonIdsNoMatch = new HashSet<Long>();
+        try {
+            DB reportCache = cacheService.initDb("collectionReport");
+            generateCollectionReport(reportCache);
+            reportCache.close();
+        } catch (PropertyEnricherException e) {
+            LOG.warn("failed to generate collection report", e);
+        }
+    }
+
+    private void generateCollectionReport(DB reportCache) {
+        final Set<Long> distinctTaxonIds = reportCache.createHashSet("distinctTaxonIds").make();
+        final Set<Long> distinctTaxonIdsNoMatch = reportCache.createHashSet("distinctTaxonIdsNoMatch").make();
         final Counter counter = new Counter();
         final Counter studyCounter = new Counter();
-        final Set<String> distinctSources = new HashSet<String>();
-        final Set<String> distinctDatasets = new HashSet<String>();
+        final Set<String> distinctSources = reportCache.createHashSet("distinctSources").make();
+        final Set<String> distinctDatasets = reportCache.createHashSet("distinctDatasets").make();
 
-        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
-            @Override
-            public void onStudy(StudyNode study) {
-                countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
-                studyCounter.count();
-                distinctSources.add(study.getSource());
-                distinctDatasets.add(study.getSourceId());
-            }
+        NodeUtil.findStudies(getGraphDb(), study -> {
+            countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
+            studyCounter.count();
+            distinctSources.add(study.getSource());
+            distinctDatasets.add(study.getSourceId());
         });
 
-        Transaction tx = getGraphDb().beginTx();
-        try {
+        try (Transaction tx = getGraphDb().beginTx()) {
             final Node node = getGraphDb().createNode();
             node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
@@ -210,11 +239,7 @@ public class ReportGenerator {
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
             getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             tx.success();
-        } finally {
-            tx.close();
         }
-
-
     }
 
 

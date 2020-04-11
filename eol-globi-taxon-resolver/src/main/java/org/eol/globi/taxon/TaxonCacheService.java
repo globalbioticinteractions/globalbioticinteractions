@@ -1,7 +1,6 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.logging.Log;
@@ -13,11 +12,11 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.CacheService;
+import org.eol.globi.service.CacheServiceUtil;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.TermRequestImpl;
-import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -142,18 +141,18 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         try {
             File luceneDir = new File(getCacheDir().getAbsolutePath(), "lucene");
             boolean preexisting = luceneDir.exists();
-            createCacheDir(luceneDir, isTemporary());
+            CacheServiceUtil.createCacheDir(luceneDir);
             TaxonLookupServiceImpl taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir)) {{
                 setMaxHits(getMaxTaxonLinks());
                 start();
             }};
-            if (isTemporary() || !preexisting) {
+            if (!preexisting) {
                 final AtomicInteger count = new AtomicInteger(0);
                 LOG.info("local taxon map of [" + taxonMap.getResource() + "] building...");
 
                 StopWatch watch = new StopWatch();
                 watch.start();
-                BufferedReader reader = createBufferedReader(taxonMap.getResource());
+                BufferedReader reader = CacheServiceUtil.createBufferedReader(taxonMap.getResource());
 
                 reader.lines()
                         .filter(taxonMap.getValidator())
@@ -267,7 +266,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final TermResource<Taxon> config) throws IOException {
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
-            private BufferedReader reader = createBufferedReader(config.getResource());
+            private BufferedReader reader = CacheServiceUtil.createBufferedReader(config.getResource());
             private AtomicBoolean lineAvailable = new AtomicBoolean(false);
             private String currentLine = null;
 
