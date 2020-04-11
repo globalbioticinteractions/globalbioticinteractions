@@ -18,8 +18,6 @@
         <globi.neo4j.index.version>0.6-SNAPSHOT</globi.neo4j.index.version>
         <globi.taxa.version>0.3.21</globi.taxa.version>
         <globi.tsv.version>1.0-SNAPSHOT</globi.tsv.version>
-        <github.client.id>specified on commandline</github.client.id>
-        <github.client.secret>specified on commandline</github.client.secret>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <dataset.dir>change/me/in/pom.xml</dataset.dir>
         <data.dir>${project.build.directory}/data</data.dir>
@@ -55,8 +53,6 @@
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx6G</argument>
-                        <argument>-Dgithub.client.id=${github.client.id}</argument>
-                        <argument>-Dgithub.client.secret=${github.client.secret}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
                         <argument>-Dott.url=file://${shapefiles.dir}/ott/taxonomy.tsv</argument>
