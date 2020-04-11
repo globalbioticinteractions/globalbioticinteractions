@@ -57,7 +57,7 @@ public class ResourceUtil {
                 LOG.info("caching of [" + resource + "] started...");
                 is = getCachedRemoteInputStream(resource, factory);
                 LOG.info("caching of [" + resource + "] complete.");
-            } else if (StringUtils.startsWith(resource.getScheme(), "file")) {
+            } else if (isFileURI(resource)) {
                 is = factory.create(new FileInputStream(new File(resource)));
             } else if (StringUtils.startsWith(resource.toString(), "jar:file:/")) {
                 URL url = resource.toURL();
@@ -108,6 +108,10 @@ public class ResourceUtil {
         } catch (IOException ex) {
             throw new IOException("issue accessing [" + resource + "]", ex);
         }
+    }
+
+    public static boolean isFileURI(URI resource) {
+        return StringUtils.startsWith(resource.getScheme(), "file");
     }
 
     public static URI getAbsoluteResourceURI(URI context, URI resourceName) {

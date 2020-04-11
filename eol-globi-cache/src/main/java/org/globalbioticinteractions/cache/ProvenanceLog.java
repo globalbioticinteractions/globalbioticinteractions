@@ -2,6 +2,7 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.ResourceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,15 @@ public class ProvenanceLog {
     public final static String PROVENANCE_LOG_FILENAME = "access.tsv";
 
     public static void appendProvenanceLog(File cacheDir, ContentProvenance contentProvenance) throws IOException {
-        appendProvenanceLog(contentProvenance, cacheDir);
+        if (needsCaching(contentProvenance, cacheDir)) {
+            appendProvenanceLog(contentProvenance, cacheDir);
+        }
+    }
+
+    static boolean needsCaching(ContentProvenance contentProvenance, File cacheDir) {
+        boolean isCacheDir = ResourceUtil.isFileURI(contentProvenance.getSourceURI())
+                && StringUtils.startsWith(new File(contentProvenance.getSourceURI()).getAbsolutePath(), cacheDir.getAbsolutePath());
+        return !CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI()) && !isCacheDir;
     }
 
     private static void appendProvenanceLog(ContentProvenance contentProvenance, File cacheDir) throws IOException {
@@ -30,16 +39,16 @@ public class ProvenanceLog {
         }
     }
 
-    static List<String> compileLogEntries(ContentProvenance meta) {
+    static List<String> compileLogEntries(ContentProvenance contentProvenance) {
         List<String> logEntries;
-        if (CacheLocalReadonly.isJarResource(meta.getLocalURI())) {
+        if (CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI())) {
             logEntries = Collections.emptyList();
         } else {
-            logEntries = Arrays.asList(meta.getNamespace()
-                    , meta.getSourceURI().toString()
-                    , meta.getSha256() == null ? "" : meta.getSha256()
-                    , meta.getAccessedAt()
-                    , meta.getType());
+            logEntries = Arrays.asList(contentProvenance.getNamespace()
+                    , contentProvenance.getSourceURI().toString()
+                    , contentProvenance.getSha256() == null ? "" : contentProvenance.getSha256()
+                    , contentProvenance.getAccessedAt()
+                    , contentProvenance.getType());
         }
         return logEntries;
     }

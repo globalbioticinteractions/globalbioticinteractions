@@ -13,11 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class ProvenanceLogTest {
@@ -54,10 +56,47 @@ public class ProvenanceLogTest {
     }
 
     @Test
-    public void accessLogJarEntry() throws IOException, URISyntaxException {
-        ContentProvenance meta = new ContentProvenance("some/namespace", URI.create("http://example.com"), URI.create("jar:file://file.zip!/something"), "1234", "1970-01-01");
-        List<String> strings = ProvenanceLog.compileLogEntries(meta);
-        assertThat(strings, is(empty()));
+    public void detectJarEntry() throws IOException, URISyntaxException {
+        ContentProvenance meta = new ContentProvenance(
+                "some/namespace",
+                URI.create("http://example.com"),
+                URI.create("jar:file://file.zip!/something"),
+                "1234",
+                "1970-01-01");
+        assertFalse(ProvenanceLog.needsCaching(meta, tempDirectory));
+    }
+
+    @Test
+    public void remoteURINeedsCaching() throws IOException, URISyntaxException {
+        ContentProvenance meta = new ContentProvenance(
+                "some/namespace",
+                URI.create("http://example.com"),
+                new File(tempDirectory, "somefile.txt").toURI(),
+                "1234",
+                "1970-01-01");
+        assertTrue(ProvenanceLog.needsCaching(meta, tempDirectory));
+    }
+
+    @Test
+    public void localURIOutsideOfCacheDirNeedsCaching() throws IOException, URISyntaxException {
+        ContentProvenance meta = new ContentProvenance(
+                "some/namespace",
+                tempDirectory.getParentFile().toURI(),
+                new File(tempDirectory, "somefile.txt").toURI(),
+                "1234",
+                "1970-01-01");
+        assertTrue(ProvenanceLog.needsCaching(meta, tempDirectory));
+    }
+
+    @Test
+    public void localURIInsideOfCacheDirNeedsCaching() throws IOException, URISyntaxException {
+        ContentProvenance meta = new ContentProvenance(
+                "some/namespace",
+                new File(tempDirectory, "somefile.txt").toURI(),
+                new File(tempDirectory, "somefile.txt").toURI(),
+                "1234",
+                "1970-01-01");
+        assertFalse(ProvenanceLog.needsCaching(meta, tempDirectory));
     }
 
 
