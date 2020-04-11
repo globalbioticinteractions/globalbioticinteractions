@@ -102,54 +102,6 @@ public class ReportGenerator {
         });
     }
 
-    public void generateReportForStudies() {
-        NodeUtil.findStudies(getGraphDb(), this::generateReportForStudy);
-
-    }
-
-    protected void generateReportForStudy(StudyNode study) {
-        Set<Long> ids = new HashSet<Long>();
-        HashSet<Long> idsNoMatch1 = new HashSet<>();
-        generateReportForStudy(study, ids, new Counter(), idsNoMatch1);
-    }
-
-    protected void generateReportForStudy(StudyNode study, Set<Long> ids, Counter interactionCounter, HashSet<Long> idsNoMatch) {
-        countInteractionsAndTaxa(study, ids, interactionCounter, idsNoMatch);
-
-        Transaction tx = getGraphDb().beginTx();
-        try {
-            Node node = getGraphDb().createNode();
-            if (StringUtils.isNotBlank(study.getSource())) {
-                node.setProperty(StudyConstant.SOURCE, study.getSource());
-            }
-            if (StringUtils.isNotBlank(study.getSourceId())) {
-                node.setProperty(StudyConstant.SOURCE_ID, study.getSourceId());
-            }
-            if (StringUtils.isNotBlank(study.getCitation())) {
-                node.setProperty(StudyConstant.CITATION, study.getCitation());
-            }
-            if (null != study.getDOI()) {
-                node.setProperty(StudyConstant.DOI, study.getDOI().toString());
-            }
-            if (StringUtils.isNotBlank(study.getExternalId())) {
-                node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, study.getExternalId());
-            }
-            node.setProperty(StudyConstant.TITLE, study.getTitle());
-            node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, interactionCounter.getCount() / 2);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, ids.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, idsNoMatch.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, 1);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, 1);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, 1);
-            getGraphDb().index().forNodes("reports").add(node, StudyConstant.TITLE, study.getTitle());
-            getGraphDb().index().forNodes("reports").add(node, StudyConstant.SOURCE, study.getTitle());
-            tx.success();
-        } finally {
-            tx.close();
-        }
-    }
-
     interface SourceHandler {
         String parse(Study study);
 
@@ -177,6 +129,7 @@ public class ReportGenerator {
 
 
     void generateReportForStudySources(SourceHandler sourceHandler) {
+
         final Set<String> groupByKeys = new HashSet<String>();
         NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
             @Override

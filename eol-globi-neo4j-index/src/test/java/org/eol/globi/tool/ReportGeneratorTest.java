@@ -23,54 +23,6 @@ import static org.junit.Assert.assertThat;
 public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
-    public void generateStudyReport() throws NodeFactoryException {
-        StudyImpl study1 = new StudyImpl("a second title", "a third source", null, null);
-        study1.setSourceId("a/third/source");
-        createStudy(study1);
-
-        StudyImpl studyWithDoi = new StudyImpl("a title", "a third source", new DOI("12345", "444"), "citation");
-        studyWithDoi.setSourceId("a/third/source");
-        createStudy(studyWithDoi);
-        resolveNames();
-
-        new ReportGenerator(getGraphDb()).generateReportForStudies();
-
-        Transaction transaction = getGraphDb().beginTx();
-        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.TITLE, "a title");
-        assertThat(reports.size(), is(1));
-        Node reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(StudyConstant.TITLE), is("a title"));
-        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("a/third/source"));
-        assertThat(reportNode.getProperty(StudyConstant.CITATION), is("citation"));
-        assertThat(reportNode.getProperty(StudyConstant.DOI), is("10.12345/444"));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.EXTERNAL_ID), is("https://doi.org/10.12345/444"));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-        reports.close();
-
-        reports = getGraphDb().index().forNodes("reports").get(StudyConstant.TITLE, "a second title");
-        assertThat(reports.size(), is(1));
-        reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(StudyConstant.TITLE), is("a second title"));
-        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("a/third/source"));
-        assertThat(reportNode.hasProperty(StudyConstant.CITATION), is(false));
-        assertThat(reportNode.hasProperty(StudyConstant.DOI), is(false));
-        assertThat(reportNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_ID), is(false));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-        reports.close();
-        transaction.success();
-        transaction.close();
-    }
-
-
-    @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
         study1.setSourceId("az/source");
