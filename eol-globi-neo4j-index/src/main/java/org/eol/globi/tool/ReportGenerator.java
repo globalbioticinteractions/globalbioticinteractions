@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
@@ -15,7 +14,6 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.StudyNodeListener;
 import org.mapdb.DB;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -23,7 +21,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,10 +46,6 @@ public class ReportGenerator {
         generateReportForCollection();
         LOG.info("report for collection done.");
 
-        LOG.info("report for source citations generating ...");
-        generateReportForSourceCitations();
-        LOG.info("report for source citations done.");
-
         LOG.info("report for sources generating ...");
         generateReportForSourceIndividuals();
         LOG.info("report for sources done.");
@@ -62,78 +55,57 @@ public class ReportGenerator {
         LOG.info("report for source organizations done.");
     }
 
-    public void generateReportForSourceCitations() {
-        generateReportForStudySources(new SourceHandler() {
-            @Override
-            public String parse(Study study) {
-                return study.getSource();
-            }
-
-            @Override
-            public boolean matches(Study study, String sourceId) {
-                return StringUtils.equals(parse(study), sourceId);
-            }
-
-            @Override
-            public String getGroupByKeyName() {
-                return StudyConstant.SOURCE;
-            }
-        });
-    }
-
     public void generateReportForSourceIndividuals() {
-        generateReportForStudySources(new SourceHandlerBasic());
-    }
-
-    public void generateReportForSourceOrganizations() {
-        generateReportForStudySources(new SourceHandler() {
+        generateReportForStudySources(new NamespaceHandler() {
             @Override
-            public String parse(Study source) {
-                return StringUtils.split(source.getSourceId(), "/")[0];
+            public String parse(String namespace) {
+                return namespace;
             }
 
             @Override
-            public boolean matches(Study study, String sourceId) {
-                return StringUtils.equals(parse(study), sourceId);
+            public String datasetQueryFor(String namespace) {
+                return namespace;
             }
 
             @Override
-            public String getGroupByKeyName() {
+            public String getNamespaceKey() {
                 return StudyConstant.SOURCE_ID;
             }
         });
     }
 
-    interface SourceHandler {
-        String parse(Study study);
+    public void generateReportForSourceOrganizations() {
+        generateReportForStudySources(new NamespaceHandler() {
+            @Override
+            public String parse(String namespace) {
+                return StringUtils.split(namespace, "/")[0];
+            }
 
-        boolean matches(Study study, String sourceId);
+            @Override
+            public String datasetQueryFor(String namespace) {
+                return namespace + "/*";
+            }
 
-        String getGroupByKeyName();
+            @Override
+            public String getNamespaceKey() {
+                return StudyConstant.SOURCE_ID;
+            }
+        });
     }
 
-    private static class SourceHandlerBasic implements SourceHandler {
-        @Override
-        public String parse(Study study) {
-            return study.getSourceId();
-        }
+    interface NamespaceHandler {
+        String parse(String namespace);
 
-        @Override
-        public boolean matches(Study study, String sourceId) {
-            return StringUtils.equals(parse(study), sourceId);
-        }
+        String datasetQueryFor(String namespace);
 
-        @Override
-        public String getGroupByKeyName() {
-            return StudyConstant.SOURCE_ID;
-        }
+        String getNamespaceKey();
     }
 
 
-    private void generateReportForStudySources(SourceHandler sourceHandler) {
+    private void generateReportForStudySources(NamespaceHandler namespaceHandler) {
         try {
             DB reportCache = cacheService.initDb("sourceReports" + UUID.randomUUID());
-            reportForHandler(sourceHandler, reportCache);
+            reportForHandler(namespaceHandler, reportCache);
             reportCache.close();
         } catch (PropertyEnricherException e) {
             LOG.warn("failed to create report", e);
@@ -141,17 +113,19 @@ public class ReportGenerator {
 
     }
 
-    private void reportForHandler(SourceHandler sourceHandler, DB reportCache) {
-        final Set<String> groupByKeys = reportCache
-                .createHashSet("groupByKeys")
+    private void reportForHandler(NamespaceHandler namespaceHandler, DB reportCache) {
+        final Set<String> namespaceGroups = reportCache
+                .createHashSet("namespaces")
                 .make();
 
-        NodeUtil.findStudies(getGraphDb(), study -> {
-            String groupByKey = sourceHandler.parse(study);
-            if (StringUtils.isNotBlank(groupByKey)) {
-                groupByKeys.add(groupByKey);
+        // collect distinct namespaces
+        NodeUtil.findDatasetsByQuery(getGraphDb(), dataset -> {
+            String namespace = dataset.getNamespace();
+            if (StringUtils.isNotBlank(namespace)) {
+                namespaceGroups.add(namespaceHandler.parse(namespace));
             }
-        });
+        }, "namespace", "*");
+
         final Set<Long> distinctTaxonIds = reportCache
                 .createHashSet("distinctTaxonIds")
                 .make();
@@ -160,15 +134,15 @@ public class ReportGenerator {
                 .createHashSet("distinctTaxonIdsNoMatch")
                 .make();
 
-        final Set<String> distinctSources = reportCache
-                .createHashSet("distinctSource")
-                .make();
-
         final Set<String> distinctDatasets = reportCache
                 .createHashSet("distinctDatasets")
                 .make();
 
-        for (final String groupByKey : groupByKeys) {
+        final Set<String> distinctSources = reportCache
+                .createHashSet("distinctSources")
+                .make();
+
+        for (final String namespaceGroup : namespaceGroups) {
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
             distinctDatasets.clear();
@@ -176,19 +150,23 @@ public class ReportGenerator {
             distinctTaxonIds.clear();
             distinctTaxonIdsNoMatch.clear();
 
-            NodeUtil.findStudies(getGraphDb(), study -> {
-                if (sourceHandler.matches(study, groupByKey)) {
+            NodeUtil.findDatasetsByQuery(getGraphDb(), dataset -> {
+                Iterable<Relationship> studiesInDataset = dataset.getUnderlyingNode().getRelationships(
+                        Direction.INCOMING,
+                        NodeUtil.asNeo4j(RelTypes.IN_DATASET));
+                for (Relationship studyInDataset : studiesInDataset) {
+                    StudyNode study = new StudyNode(studyInDataset.getStartNode());
                     countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                     studyCounter.count();
                     distinctSources.add(study.getSource());
                     distinctDatasets.add(study.getSourceId());
                 }
-
-            });
+            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup));
 
             try (Transaction tx = getGraphDb().beginTx()) {
                 final Node node = getGraphDb().createNode();
-                node.setProperty(sourceHandler.getGroupByKeyName(), groupByKey);
+                String sourceIdPrefix = "globi:" + namespaceGroup;
+                node.setProperty(namespaceHandler.getNamespaceKey(), sourceIdPrefix);
                 node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
@@ -197,7 +175,11 @@ public class ReportGenerator {
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
                 node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
 
-                getGraphDb().index().forNodes("reports").add(node, sourceHandler.getGroupByKeyName(), groupByKey);
+                getGraphDb()
+                        .index()
+                        .forNodes("reports")
+                        .add(node, namespaceHandler.getNamespaceKey(), sourceIdPrefix);
+
                 tx.success();
             }
         }
@@ -237,7 +219,8 @@ public class ReportGenerator {
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
             node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
-            getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+            getGraphDb().index().forNodes("reports")
+                    .add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
             tx.success();
         }
     }
@@ -264,7 +247,6 @@ public class ReportGenerator {
                     idsNoMatch.add(taxonNode.getId());
                 }
             }
-
         };
 
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);

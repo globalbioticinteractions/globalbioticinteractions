@@ -8,8 +8,8 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -24,34 +24,57 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException {
+
+        Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
+                new DatasetImpl("az/source", URI.create("http://example.com"), inStream -> inStream));
         StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
-        study1.setSourceId("az/source");
+        study1.setSourceId("globi:az/source");
+        study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
+
+
         StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
-        study2.setSourceId("az/source");
+        study2.setSourceId("globi:az/source");
+        study2.setOriginatingDataset(originatingDataset1);
         createStudy(study2);
+
+
+        Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
+                new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
+
+
         StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
-        study3.setSourceId("zother/source");
+        study3.setSourceId("globi:zother/source");
+        study3.setOriginatingDataset(originatingDataset3);
         createStudy(study3);
         resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForSourceIndividuals();
 
         Transaction transaction = getGraphDb().beginTx();
-        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "az/source");
+
+        IndexHits<Node> reports = getGraphDb()
+                .index()
+                .forNodes("reports")
+                .get(StudyConstant.SOURCE_ID, "globi:az/source");
+
         Node reportNode = reports.getSingle();
+        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az/source"));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("az/source"));
         reports.close();
 
-        IndexHits<Node> otherReports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "zother/source");
+        IndexHits<Node> otherReports = getGraphDb()
+                .index()
+                .forNodes("reports")
+                .get(StudyConstant.SOURCE_ID, "globi:zother/source");
+
         Node otherReport = otherReports.getSingle();
-        assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("zother/source"));
+        assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("globi:zother/source"));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
@@ -65,34 +88,56 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateStudySourceOrganizationReports() throws NodeFactoryException {
+        Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
+                new DatasetImpl("az/source1", URI.create("http://example.com"), inStream -> inStream));
+
         StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
-        study1.setSourceId("az/source1");
+        study1.setSourceId("globi:az/source1");
+        study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
+
+        Dataset originatingDataset2 = nodeFactory.getOrCreateDataset(
+                new DatasetImpl("az/source2", URI.create("http://example.com"), inStream -> inStream));
+
         StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
-        study2.setSourceId("az/source2");
+        study2.setSourceId("globi:az/source2");
+        study2.setOriginatingDataset(originatingDataset2);
         createStudy(study2);
+
+        Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
+                new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
+
         StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
-        study3.setSourceId("zother/source");
+        study3.setSourceId("globi:zother/source");
+        study3.setOriginatingDataset(originatingDataset3);
         createStudy(study3);
         resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForSourceOrganizations();
 
         Transaction transaction = getGraphDb().beginTx();
-        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "az");
+        IndexHits<Node> reports = getGraphDb()
+                .index()
+                .forNodes("reports")
+                .get(StudyConstant.SOURCE_ID, "globi:az");
+
         Node reportNode = reports.getSingle();
+        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az"));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("az"));
         reports.close();
 
-        IndexHits<Node> otherReports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE_ID, "zother");
+        IndexHits<Node> otherReports = getGraphDb()
+                .index()
+                .forNodes("reports")
+                .get(StudyConstant.SOURCE_ID, "globi:zother");
+
         Node otherReport = otherReports.getSingle();
-        assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("zother"));
+        assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("globi:zother"));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
@@ -105,59 +150,26 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     }
 
     @Test
-    public void generateStudySourceCitationReports() throws NodeFactoryException {
-        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
-        study1.setSourceId("az/source1");
-        createStudy(study1);
-        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
-        study2.setSourceId("az/source2");
-        createStudy(study2);
-        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
-        study3.setSourceId("zother/source");
-        createStudy(study3);
-        resolveNames();
-
-        new ReportGenerator(getGraphDb()).generateReportForSourceCitations();
-
-        Transaction transaction = getGraphDb().beginTx();
-        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE, "az source");
-        Node reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        assertThat(reportNode.getProperty(StudyConstant.SOURCE), is("az source"));
-        reports.close();
-
-        IndexHits<Node> otherReports = getGraphDb().index().forNodes("reports").get(StudyConstant.SOURCE, "zother source");
-        Node otherReport = otherReports.getSingle();
-        assertThat(otherReport.getProperty(StudyConstant.SOURCE), is("zother source"));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-
-        transaction.success();
-        transaction.close();
-    }
-
-    @Test
     public void generateCollectionReport() throws NodeFactoryException {
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        Dataset originatingDatasetNode = nodeFactory.getOrCreateDataset(originatingDataset);
         StudyImpl study1 = new StudyImpl("a title", "source", null, "citation");
-        study1.setOriginatingDataset(originatingDataset);
+        study1.setOriginatingDataset(originatingDatasetNode);
         createStudy(study1);
+
         StudyImpl study2 = new StudyImpl("another title", "another source", null, "citation");
-        study2.setOriginatingDataset(originatingDataset);
+        study2.setOriginatingDataset(originatingDatasetNode);
         createStudy(study2);
         resolveNames();
 
         new ReportGenerator(getGraphDb()).generateReportForCollection();
 
         Transaction transaction = getGraphDb().beginTx();
-        IndexHits<Node> reports = getGraphDb().index().forNodes("reports").query("*:*");
+        IndexHits<Node> reports = getGraphDb()
+                .index()
+                .forNodes("reports")
+                .query("*:*");
+
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(2));

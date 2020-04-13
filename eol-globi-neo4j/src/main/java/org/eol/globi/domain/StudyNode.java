@@ -26,13 +26,10 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public String getTitle() {
-        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
+        try (Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx()) {
             String title = (String) getUnderlyingNode().getProperty("title");
             transaction.success();
             return title;
-        } finally {
-            transaction.close();
         }
     }
 

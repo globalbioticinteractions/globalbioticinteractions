@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NodeBacked;
@@ -65,27 +66,40 @@ public class NodeUtil {
 
     public static List<StudyNode> findAllStudies(GraphDatabaseService graphService) {
         final List<StudyNode> studies = new ArrayList<>();
-        findStudies(graphService, study -> studies.add(study));
+        findStudies(graphService, studies::add);
         return studies;
     }
 
     public static void findStudies(GraphDatabaseService graphService, StudyNodeListener listener) {
-        Transaction transaction = graphService.beginTx();
-        try {
+        findStudiesByQuery(graphService, listener, "title", "*");
+    }
+
+    public static void findStudiesByQuery(GraphDatabaseService graphService, StudyNodeListener listener, String queryKey, String queryValue) {
+        try (Transaction transaction = graphService.beginTx()) {
             Index<Node> studyIndex = graphService.index().forNodes("studies");
-            IndexHits<Node> hits = studyIndex.query("title", "*");
+            IndexHits<Node> hits = studyIndex.query(queryKey, queryValue);
             for (Node hit : hits) {
                 listener.onStudy(new StudyNode(hit));
             }
             hits.close();
             transaction.success();
-        } finally {
-            transaction.close();
+        }
+    }
+
+    public static void findDatasetsByQuery(GraphDatabaseService graphService, DatasetNodeListener listener, String queryKey, String queryValue) {
+        try (Transaction transaction = graphService.beginTx()) {
+            Index<Node> studyIndex = graphService.index().forNodes("datasets");
+            IndexHits<Node> hits = studyIndex.query(queryKey, queryValue);
+            for (Node hit : hits) {
+                listener.on(new DatasetNode(hit));
+            }
+            hits.close();
+            transaction.success();
         }
     }
 
     public static RelationshipType asNeo4j(RelType type) {
-        return () -> type.name();
+        return type::name;
     }
 
     public static RelationshipType[] asNeo4j() {
