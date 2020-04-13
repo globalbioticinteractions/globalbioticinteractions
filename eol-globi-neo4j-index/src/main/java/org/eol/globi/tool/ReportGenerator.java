@@ -143,6 +143,7 @@ public class ReportGenerator {
                 .make();
 
         for (final String namespaceGroup : namespaceGroups) {
+            LOG.info("generate report for namespace(s) [" + namespaceHandler.datasetQueryFor(namespaceGroup) + "]...");
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
             distinctDatasets.clear();
@@ -182,6 +183,7 @@ public class ReportGenerator {
 
                 tx.success();
             }
+            LOG.info("generate report for namespace(s) [" + namespaceHandler.datasetQueryFor(namespaceGroup) + "] done.");
         }
     }
 
