@@ -33,10 +33,6 @@ public class GitHubUtil {
     public static final String GITHUB_CLIENT_ID_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_ID";
     public static final String GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_SECRET";
 
-    static String httpGet(String path, String query) throws URISyntaxException, IOException {
-        return httpGet(path, query, new BasicResponseHandler());
-    }
-
     static String httpGet(String path, String query, ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
         HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
         return doHttpGetWithBasicAuthIfCredentialsIfAvailable(
