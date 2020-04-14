@@ -657,16 +657,19 @@ public class CypherQueryBuilder {
     }
 
     protected static List<String> collectParamValues(Map parameterMap, ParamName name) {
-        List<String> taxa = new ArrayList<String>();
+        List<String> paramValues = new ArrayList<String>();
         if (parameterMap != null && parameterMap.containsKey(name.getName())) {
             Object paramObject = parameterMap.get(name.getName());
             if (paramObject instanceof String[]) {
-                Collections.addAll(taxa, (String[]) paramObject);
+                Collections.addAll(paramValues, (String[]) paramObject);
             } else if (paramObject instanceof String) {
-                taxa.add((String) paramObject);
+                paramValues.add((String) paramObject);
             }
         }
-        return taxa.stream().filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        return paramValues.stream()
+                .filter(StringUtils::isNotBlank)
+                .map(StringUtils::trim)
+                .collect(Collectors.toList());
     }
 
     public static CypherQuery createPagedQuery(HttpServletRequest request, CypherQuery query) {

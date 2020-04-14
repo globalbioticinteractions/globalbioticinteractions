@@ -429,6 +429,32 @@ public class CypherQueryBuilderTest {
         assertThat(query.getParams(), is(expected));
     }
 
+    @Test
+    public void accordingToDatasetWithBlanksInNamespace()  {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("targetTaxon", new String[]{"Arthropoda"});
+                put("accordingTo", new String[]{"globi:some/namespace    "});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "number_of_interactions", "number_of_studies", "number_of_sources"});
+            }
+        };
+
+        query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START dataset = node:datasets({accordingTo}) " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WITH study " +
+                "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
+                "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study " +
+                "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source)) as sourceCount " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
+        Map<String, String> expected = new HashMap<String, String>() {{
+            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+            put("accordingTo", "namespace:(some/namespace)");
+        }};
+        assertThat(query.getParams(), is(expected));
+    }
+
 
     @Test
     public void findNumberOfStudiesForDistinctInteractionsAccordingTo()  {
