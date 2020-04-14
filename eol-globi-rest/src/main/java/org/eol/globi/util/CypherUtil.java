@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class CypherUtil {
     public static final String CYPHER_VERSION_2_3 = "2.3";
@@ -64,17 +66,29 @@ public class CypherUtil {
     }
 
     public static String executeRemote(CypherQuery query) throws IOException {
-        logQuery(query);
+        logQuery(query, "executing");
         return executeCypherQuery(query);
     }
 
-    private static void logQuery(CypherQuery query) {
-        LOG.info("executing query: [" + query.getVersionedQuery() + "] with params [" + query.getParams() + "]");
+    private static void logQuery(CypherQuery query, String status) {
+        LOG.info(status + " query: [" + query.getVersionedQuery() + "] with params [" + query.getParams() + "]");
+    }
+
+    private static void logSlowQuery(CypherQuery query, String status) {
+        LOG.warn(status + " query: [" + query.getVersionedQuery() + "] with params [" + query.getParams() + "]");
     }
 
     public static HttpResponse execute(CypherQuery cypherQuery) throws IOException {
-        logQuery(cypherQuery);
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        logQuery(cypherQuery, "executing");
         HttpPost req = getCypherRequest(cypherQuery);
+        stopWatch.stop();
+        long delayMs = stopWatch.getTime(TimeUnit.MILLISECONDS);
+        logQuery(cypherQuery, "completed (" + delayMs + "ms)");
+        if (delayMs > 5 * 60 * 1000) {
+            logSlowQuery(cypherQuery, "slow (" + delayMs + "ms)");
+        }
         return HttpUtil.getHttpClient().execute(req);
     }
 }
