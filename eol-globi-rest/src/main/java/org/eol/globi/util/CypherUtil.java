@@ -87,7 +87,7 @@ public class CypherUtil {
         return HttpUtil.getHttpClient().execute(req);
     }
 
-    public static void logQueryFinish(CypherQuery cypherQuery, StopWatch stopWatch) {
+    private static void logQueryFinish(CypherQuery cypherQuery, StopWatch stopWatch) {
         stopWatch.stop();
         long delayMs = stopWatch.getTime(TimeUnit.MILLISECONDS);
         logQuery(cypherQuery, "completed (" + delayMs + "ms)");
@@ -96,7 +96,7 @@ public class CypherUtil {
         }
     }
 
-    public static StopWatch logQueryStart(CypherQuery cypherQuery) {
+    private static StopWatch logQueryStart(CypherQuery cypherQuery) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logQuery(cypherQuery, "executing");
