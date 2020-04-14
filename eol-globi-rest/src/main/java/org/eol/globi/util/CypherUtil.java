@@ -66,8 +66,10 @@ public class CypherUtil {
     }
 
     public static String executeRemote(CypherQuery query) throws IOException {
-        logQuery(query, "executing");
-        return executeCypherQuery(query);
+        StopWatch stopWatch = logQueryStart(query);
+        String result = executeCypherQuery(query);
+        logQueryFinish(query, stopWatch);
+        return result;
     }
 
     private static void logQuery(CypherQuery query, String status) {
@@ -79,16 +81,25 @@ public class CypherUtil {
     }
 
     public static HttpResponse execute(CypherQuery cypherQuery) throws IOException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        logQuery(cypherQuery, "executing");
+        StopWatch stopWatch = logQueryStart(cypherQuery);
         HttpPost req = getCypherRequest(cypherQuery);
+        logQueryFinish(cypherQuery, stopWatch);
+        return HttpUtil.getHttpClient().execute(req);
+    }
+
+    public static void logQueryFinish(CypherQuery cypherQuery, StopWatch stopWatch) {
         stopWatch.stop();
         long delayMs = stopWatch.getTime(TimeUnit.MILLISECONDS);
         logQuery(cypherQuery, "completed (" + delayMs + "ms)");
         if (delayMs > 5 * 60 * 1000) {
             logSlowQuery(cypherQuery, "slow (" + delayMs + "ms)");
         }
-        return HttpUtil.getHttpClient().execute(req);
+    }
+
+    public static StopWatch logQueryStart(CypherQuery cypherQuery) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        logQuery(cypherQuery, "executing");
+        return stopWatch;
     }
 }
