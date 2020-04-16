@@ -97,9 +97,6 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-        </repository>
-        <repository>
             <id>globi</id>
             <name>GloBI Release</name>
             <url>https://depot.globalbioticinteractions.org/release/</url>
