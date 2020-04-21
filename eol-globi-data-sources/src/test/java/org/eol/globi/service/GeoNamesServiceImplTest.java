@@ -90,6 +90,12 @@ public class GeoNamesServiceImplTest {
     }
 
     @Test
+    public void retrievePointForIgnoredLocality() throws IOException {
+        LatLng point = new GeoNamesServiceImpl().findLatLng("Country: General;   Locality: General");
+        assertThat(point, is(nullValue()));
+    }
+
+    @Test
     public void retrieveAnyGeoNamesId() throws IOException {
         // Half Moon Bay, http://www.geonames.org/2164089/half-moon-bay.html
         LatLng point = new GeoNamesServiceImpl().getCentroid(2164089L);

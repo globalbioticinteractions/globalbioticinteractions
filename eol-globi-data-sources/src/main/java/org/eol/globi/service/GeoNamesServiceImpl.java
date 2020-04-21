@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.geo.LatLng;
@@ -12,6 +13,8 @@ import org.eol.globi.geo.LatLng;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
@@ -21,10 +24,13 @@ public class GeoNamesServiceImpl implements GeoNamesService {
 
     public static final TermImpl GEO_TERM_EARTH = new TermImpl(GEONAMES.getIdPrefix() + "6295630", "Earth");
 
+    private static Set<String> IGNORED_LOCALES = new TreeSet<String>() {{
+        add("Country: General;   Locality: General");
+    }};
+
     private static Map<String, TermImpl> LOCALE_TO_GEONAMES = new HashMap<String, TermImpl>() {{
         put("Country: New Zealand;   State: Otago;   Locality: Catlins, Craggy Tor catchment", new TermImpl(GEONAMES.getIdPrefix() + "6612109", "Otago"));
         put("Country: Scotland", new TermImpl(GEONAMES.getIdPrefix() + "2638360", "Scotland"));
-        put("Country: USA;   State: Kentucky", new TermImpl(GEONAMES.getIdPrefix() + "6254925", "State of Kentucky"));
         put("Country: USA;   State: Georgia", new TermImpl(GEONAMES.getIdPrefix() + "4197000", "State of Georgia"));
         put("Country: USA;   State: Iowa", new TermImpl(GEONAMES.getIdPrefix() + "4862182", "State of Iowa"));
         put("Country: Southern Ocean", new TermImpl(GEONAMES.getIdPrefix() + "4036776", "Southern Ocean"));
@@ -271,16 +277,19 @@ public class GeoNamesServiceImpl implements GeoNamesService {
 
     private LatLng getCentroidForLocale(String locale) throws IOException {
         LatLng point = null;
-        TermImpl term = LOCALE_TO_GEONAMES.get(locale);
-        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/39
-        if (term != null && !term.equals(GEO_TERM_EARTH)) {
-            String geoNamesTerm = term.getId();
-            if (LOCALE_TO_GEONAMES.containsKey(locale)) {
-                point = getCentroidForGeoNameTerm(geoNamesTerm);
-            }
 
-            if (point != null) {
-                pointCache.put(geoNamesTerm, point);
+        if (!IGNORED_LOCALES.contains(locale)) {
+            Term term = LOCALE_TO_GEONAMES.get(locale);
+            // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/39
+            if (term != null && !term.equals(GEO_TERM_EARTH)) {
+                String geoNamesTerm = term.getId();
+                if (LOCALE_TO_GEONAMES.containsKey(locale)) {
+                    point = getCentroidForGeoNameTerm(geoNamesTerm);
+                }
+
+                if (point != null) {
+                    pointCache.put(geoNamesTerm, point);
+                }
             }
         }
         return point;
