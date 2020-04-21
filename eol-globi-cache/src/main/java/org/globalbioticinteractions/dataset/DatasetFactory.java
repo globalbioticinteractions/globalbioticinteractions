@@ -21,7 +21,7 @@ interface DatasetConfigurer {
 }
 
 interface DatasetFactoryInterface {
-    Dataset datasetFor(String datasetURI) throws DatasetFinderException;
+    Dataset datasetFor(String datasetURI) throws DatasetRegistryException;
 }
 
 public class DatasetFactory implements DatasetFactoryInterface {
@@ -39,7 +39,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
     }
 
     @Override
-    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         Dataset dataset = registry.datasetFor(namespace);
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
         try {
@@ -48,12 +48,12 @@ public class DatasetFactory implements DatasetFactoryInterface {
             datasetProxy.setConfigURI(jsonNode.getLeft());
         } catch (Throwable ex) {
             String msg = "failed to configure dataset in namespace [" + namespace + "]";
-            throw new DatasetFinderException(dataset == null ? msg : (msg + " with archiveURI [" + dataset.getArchiveURI() + "] and citation [" + dataset.getCitation() + "]"), ex);
+            throw new DatasetRegistryException(dataset == null ? msg : (msg + " with archiveURI [" + dataset.getArchiveURI() + "] and citation [" + dataset.getCitation() + "]"), ex);
         }
         return datasetProxy;
     }
 
-    private Pair<URI, JsonNode> configDataset(ResourceService dataset) throws DatasetFinderException {
+    private Pair<URI, JsonNode> configDataset(ResourceService dataset) throws DatasetRegistryException {
         Map<URI, DatasetConfigurer> datasetHandlers = new TreeMap<URI, DatasetConfigurer>() {{
             put(URI.create("/globi.json"), new JSONConfigurer());
             put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
@@ -69,16 +69,16 @@ public class DatasetFactory implements DatasetFactoryInterface {
                     break;
                 }
             } catch (IOException e) {
-                throw new DatasetFinderException("failed to access configURI for [" + configResource.toString() + "]", e);
+                throw new DatasetRegistryException("failed to access configURI for [" + configResource.toString() + "]", e);
             }
         }
         try {
             if (configPair == null) {
-                throw new DatasetFinderException("failed to find configuration");
+                throw new DatasetRegistryException("failed to find configuration");
             }
             return Pair.of(configPair.getLeft(), configPair.getRight().configure(dataset, configPair.getLeft()));
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to find configuration", e);
+            throw new DatasetRegistryException("failed to find configuration", e);
 
         }
     }

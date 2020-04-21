@@ -1,9 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.GitHubUtil;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,12 +17,12 @@ public class DatasetRegistryGitHubArchiveMaster implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetFinderException {
+    public Collection<String> findNamespaces() throws DatasetRegistryException {
         return namespaces;
     }
 
     @Override
-    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         return GitHubUtil.getArchiveDataset(namespace, "master", inStream -> inStream);
     }
 

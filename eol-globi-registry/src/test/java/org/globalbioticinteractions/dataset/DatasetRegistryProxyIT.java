@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class DatasetRegistryProxyIT {
 
     @Test
-    public void zenodoGitHubTest() throws DatasetFinderException {
+    public void zenodoGitHubTest() throws DatasetRegistryException {
         DatasetRegistryProxy proxy = new DatasetRegistryProxy(Arrays.asList(
                 new DatasetRegistryZenodo(inStream -> inStream),
                 new DatasetRegistryGitHubArchive(inStream -> inStream))
@@ -26,7 +26,7 @@ public class DatasetRegistryProxyIT {
     }
 
     @Test
-    public void gitHubOnlyTest() throws DatasetFinderException {
+    public void gitHubOnlyTest() throws DatasetRegistryException {
         DatasetRegistryProxy proxy = new DatasetRegistryProxy(Collections.singletonList(new DatasetRegistryGitHubArchive(inStream -> inStream)));
 
         Dataset dataset = proxy.datasetFor("globalbioticinteractions/template-dataset");

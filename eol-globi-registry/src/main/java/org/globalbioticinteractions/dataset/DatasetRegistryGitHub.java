@@ -2,8 +2,6 @@ package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.util.InputStreamFactory;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,11 +16,11 @@ public abstract class DatasetRegistryGitHub implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetFinderException {
+    public Collection<String> findNamespaces() throws DatasetRegistryException {
         try {
             return GitHubUtil.find(getInputStreamFactory());
         } catch (URISyntaxException | IOException e) {
-            throw new DatasetFinderException(e);
+            throw new DatasetRegistryException(e);
         }
     }
 

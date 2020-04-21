@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 public class DatasetRegistryGitHubIT {
 
     @Test
-    public void discoverDatasetsInGitHub() throws DatasetFinderException {
+    public void discoverDatasetsInGitHub() throws DatasetRegistryException {
         AtomicBoolean usedStreamFactory = new AtomicBoolean(false);
         Collection<String> urls = new DatasetRegistryGitHubArchive(inStream -> {
             usedStreamFactory.set(true);
@@ -26,7 +26,7 @@ public class DatasetRegistryGitHubIT {
     }
 
     @Test
-    public void datasetFor() throws DatasetFinderException {
+    public void datasetFor() throws DatasetRegistryException {
         URI uri = new DatasetRegistryGitHubArchive(inStream -> inStream).datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
         assertThat(uri.toString(), startsWith("https://github.com/globalbioticinteractions/template-dataset/archive/"));
         assertThat(uri.toString(), endsWith(".zip"));

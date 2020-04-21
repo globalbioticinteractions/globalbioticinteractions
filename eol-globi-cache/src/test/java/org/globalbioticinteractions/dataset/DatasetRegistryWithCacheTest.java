@@ -35,7 +35,7 @@ public class DatasetRegistryWithCacheTest {
     }
 
     @Test
-    public void cacheDatasetLocal() throws DatasetFinderException, IOException, URISyntaxException {
+    public void cacheDatasetLocal() throws DatasetRegistryException, IOException, URISyntaxException {
         Dataset datasetCached = datasetCached();
 
         assertNotNull(datasetCached.getArchiveURI());

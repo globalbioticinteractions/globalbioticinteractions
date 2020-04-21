@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.hamcrest.core.Is;
@@ -19,12 +19,12 @@ public class StudyImporterForRegistryTest {
     public void throwOnMissingConfig() throws StudyImporterException {
         StudyImporterForRegistry importer = new StudyImporterForRegistry(null, null, new DatasetRegistry() {
             @Override
-            public Collection<String> findNamespaces() throws DatasetFinderException {
+            public Collection<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList("some/namespace");
             }
 
             @Override
-            public Dataset datasetFor(String namespace) throws DatasetFinderException {
+            public Dataset datasetFor(String namespace) throws DatasetRegistryException {
                 return new DatasetImpl("some/namespace", URI.create("some:uri"), in -> in);
             }
         });

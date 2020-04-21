@@ -14,7 +14,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,7 +45,7 @@ public class StudyImporterForINaturalistTest extends GraphDBTestCase {
     protected StudyImporterForINaturalist importer;
 
     @Before
-    public void setup() throws DatasetFinderException {
+    public void setup() throws DatasetRegistryException {
         Dataset dataset = datasetFor("globalbioticinteractions/inaturalist");
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         importer = new StudyImporterForINaturalist(parserFactory, nodeFactory);

@@ -42,7 +42,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetFinderException {
+    public Collection<String> findNamespaces() throws DatasetRegistryException {
         File directory = new File(cacheDir);
         Collection<String> namespaces = Collections.emptyList();
         if (directory.exists() && directory.isDirectory()) {
@@ -57,7 +57,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         void onValues(String[] values);
     }
 
-    private Collection<String> collectNamespaces(File directory) throws DatasetFinderException {
+    private Collection<String> collectNamespaces(File directory) throws DatasetRegistryException {
         Collection<File> accessFiles = FileUtils.listFiles(directory, new FileFileFilter() {
             @Override
             public boolean accept(File file) {
@@ -79,7 +79,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         return namespaces;
     }
 
-    private void scanAccessFile(File accessFile, AccessFileLineListener accessLine) throws DatasetFinderException {
+    private void scanAccessFile(File accessFile, AccessFileLineListener accessLine) throws DatasetRegistryException {
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(accessFile), StandardCharsets.UTF_8)) {
             BufferedReader bufferedReader = IOUtils.toBufferedReader(reader);
             String line;
@@ -87,12 +87,12 @@ public class DatasetRegistryLocal implements DatasetRegistry {
                 accessLine.onValues(CSVTSVUtil.splitTSV(line));
             }
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to read ", e);
+            throw new DatasetRegistryException("failed to read ", e);
         }
     }
 
 
-    private URI findLastCachedDatasetURI(String namespace) throws DatasetFinderException {
+    private URI findLastCachedDatasetURI(String namespace) throws DatasetRegistryException {
         AtomicReference<URI> sourceURI = new AtomicReference<>();
         AccessFileLineListener accessFileLineListener = values -> {
             if (values.length > 4
@@ -106,7 +106,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         try {
             accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
         } catch (IOException e) {
-            throw new DatasetFinderException("issue accessing provenance log", e);
+            throw new DatasetRegistryException("issue accessing provenance log", e);
         }
         if (accessFile.exists()) {
             scanAccessFile(accessFile, accessFileLineListener);
@@ -116,18 +116,18 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
 
     @Override
-    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         Dataset dataset;
 
         final URI sourceURI = findLastCachedDatasetURI(namespace);
         dataset = sourceURI == null ? null : new DatasetFactory(new DatasetRegistry() {
             @Override
-            public Collection<String> findNamespaces() throws DatasetFinderException {
+            public Collection<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList(namespace);
             }
 
             @Override
-            public Dataset datasetFor(String s) throws DatasetFinderException {
+            public Dataset datasetFor(String s) throws DatasetRegistryException {
                 Dataset dataset = new DatasetImpl(namespace, sourceURI, getInputStreamFactory());
                 return new DatasetWithCache(dataset,
                         cacheFactory.cacheFor(dataset));
@@ -135,7 +135,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         }).datasetFor(namespace);
 
         if (dataset == null) {
-            throw new DatasetFinderException("failed to retrieve/cache dataset in namespace [" + namespace + "]");
+            throw new DatasetRegistryException("failed to retrieve/cache dataset in namespace [" + namespace + "]");
         }
 
         return dataset;

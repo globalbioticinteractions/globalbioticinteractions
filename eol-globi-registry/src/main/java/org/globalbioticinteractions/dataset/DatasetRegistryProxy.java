@@ -25,7 +25,7 @@ public class DatasetRegistryProxy implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetFinderException {
+    public Collection<String> findNamespaces() throws DatasetRegistryException {
         Collection<String> namespacesAll = new ArrayList<>();
         for (DatasetRegistry registry : registries) {
             Collection<String> namespaces = registry.findNamespaces();
@@ -50,7 +50,7 @@ public class DatasetRegistryProxy implements DatasetRegistry {
 
 
     @Override
-    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         DatasetRegistry registry = registryForNamespace == null
                 ? null
                 : registryForNamespace.get(namespace);
@@ -60,15 +60,15 @@ public class DatasetRegistryProxy implements DatasetRegistry {
                 : registry.datasetFor(namespace);
 
         if (dataset == null) {
-            throw new DatasetFinderException("failed to find dataset for [" + namespace + "]");
+            throw new DatasetRegistryException("failed to find dataset for [" + namespace + "]");
         }
 
         return dataset;
     }
 
-    private Dataset queryForDataset(String namespace) throws DatasetFinderException {
+    private Dataset queryForDataset(String namespace) throws DatasetRegistryException {
         Dataset dataset = null;
-        DatasetFinderException lastException = null;
+        DatasetRegistryException lastException = null;
         for (DatasetRegistry datasetRegistry : registries) {
             try {
                 dataset = datasetRegistry.datasetFor(namespace);
@@ -76,13 +76,13 @@ public class DatasetRegistryProxy implements DatasetRegistry {
                     associateNamespaceWithRegistry(datasetRegistry, namespace);
                     break;
                 }
-            } catch (DatasetFinderException ex) {
+            } catch (DatasetRegistryException ex) {
                 lastException = ex;
             }
 
         }
         if (dataset == null && lastException != null) {
-            throw new DatasetFinderException("failed to find dataset for [" + namespace + "] possibly due to unexpected error", lastException);
+            throw new DatasetRegistryException("failed to find dataset for [" + namespace + "] possibly due to unexpected error", lastException);
         }
         return dataset;
     }

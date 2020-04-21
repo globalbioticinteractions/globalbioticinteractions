@@ -23,14 +23,12 @@ import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
-import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.eol.globi.service.DatasetLocal;
-import org.eol.globi.service.EcoregionFinderProxy;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonCacheService;
@@ -254,7 +252,7 @@ public class Normalizer {
             importer.setDataset(new DatasetLocal(inStream -> inStream));
             importer.setLogger(new NullImportLogger());
             importer.importStudy();
-        } catch (StudyImporterException | DatasetFinderException e) {
+        } catch (StudyImporterException | DatasetRegistryException e) {
             LOG.error("problem encountered while importing [" + StudyImporterForRegistry.class.getName() + "]", e);
         }
         EcoregionFinder regionFinder = getEcoregionFinder();

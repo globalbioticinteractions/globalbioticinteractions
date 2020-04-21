@@ -40,13 +40,13 @@ public class DatasetRegistryLocalTest {
     }
 
     @Test
-    public void findNamespaces() throws DatasetFinderException, URISyntaxException {
+    public void findNamespaces() throws DatasetRegistryException, URISyntaxException {
         assertThat(createDatasetRegistry().findNamespaces(),
                 hasItem("globalbioticinteractions/template-dataset"));
     }
 
     @Test
-    public void dataset() throws DatasetFinderException, URISyntaxException {
+    public void dataset() throws DatasetRegistryException, URISyntaxException {
         Dataset actual = createDatasetRegistry().datasetFor("globalbioticinteractions/template-dataset");
         assertThat(actual, is(notNullValue()));
         assertThat(actual.getConfigURI().toString(), endsWith("/test-cache/globalbioticinteractions/template-dataset/6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2!/template-dataset-8abd2ba18457288f33527193299504015fae6def/globi.json"));
@@ -55,7 +55,7 @@ public class DatasetRegistryLocalTest {
     }
 
     @Test
-    public void datasetLocal() throws DatasetFinderException, URISyntaxException, IOException {
+    public void datasetLocal() throws DatasetRegistryException, URISyntaxException, IOException {
         Path testCacheDir = Files.createTempDirectory(Paths.get("target/"), "test");
         File localDatasetDir = new File(getClass().getResource("/test-dataset-local/globi.json").toURI()).getParentFile();
         File accessFile = createLocalCacheDir(testCacheDir, localDatasetDir);
@@ -81,8 +81,8 @@ public class DatasetRegistryLocalTest {
 
     }
 
-    @Test(expected = DatasetFinderException.class)
-    public void datasetLocalNoValidAccessFile() throws DatasetFinderException, URISyntaxException, IOException {
+    @Test(expected = DatasetRegistryException.class)
+    public void datasetLocalNoValidAccessFile() throws DatasetRegistryException, URISyntaxException, IOException {
         Path testCacheDir = Files.createTempDirectory(Paths.get("target/"), "test");
         File localDatasetDir = new File(getClass().getResource("/test-dataset-local/globi.json").toURI()).getParentFile();
         File testCacheDirLocal = new File(testCacheDir.toFile(), "local");
@@ -102,7 +102,7 @@ public class DatasetRegistryLocalTest {
 
         try {
             registry.datasetFor("local");
-        } catch (DatasetFinderException ex) {
+        } catch (DatasetRegistryException ex) {
             assertThat(ex.getMessage(), is("failed to retrieve/cache dataset in namespace [local]"));
             throw ex;
         }
@@ -147,8 +147,8 @@ public class DatasetRegistryLocalTest {
     }
 
 
-    @Test(expected = DatasetFinderException.class)
-    public void nonExistingDataset() throws DatasetFinderException, URISyntaxException {
+    @Test(expected = DatasetRegistryException.class)
+    public void nonExistingDataset() throws DatasetRegistryException, URISyntaxException {
         createDatasetRegistry().datasetFor("non/existing");
     }
 

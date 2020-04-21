@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFactory;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.eol.globi.service.StudyImporterFactoryImpl;
 
 import java.util.ArrayList;
@@ -25,20 +25,20 @@ public class StudyImporterForRegistry extends NodeBasedImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        Collection<String> repositories;
+        Collection<String> namespaces;
         try {
-            repositories = getDatasetFinder().findNamespaces();
-        } catch (DatasetFinderException e) {
+            namespaces = getDatasetFinder().findNamespaces();
+        } catch (DatasetRegistryException e) {
             throw new StudyImporterException("failed to discover datasets", e);
         }
 
 
         List<String> repositoriesWithIssues = new ArrayList<>();
-        for (String repository : repositories) {
+        for (String namespace : namespaces) {
             try {
-                importData(repository);
+                importData(namespace);
             } catch (StudyImporterException e) {
-                repositoriesWithIssues.add(repository);
+                repositoriesWithIssues.add(namespace);
             }
         }
 
@@ -47,15 +47,15 @@ public class StudyImporterForRegistry extends NodeBasedImporter {
         }
     }
 
-    public void importData(String repository) throws StudyImporterException {
+    public void importData(String namespace) throws StudyImporterException {
         try {
-            LOG.info("importing github repo [" + repository + "]...");
-            Dataset dataset = new DatasetFactory(getDatasetFinder()).datasetFor(repository);
+            LOG.info("importing github repo [" + namespace + "]...");
+            Dataset dataset = new DatasetFactory(getDatasetFinder()).datasetFor(namespace);
             getNodeFactory().getOrCreateDataset(dataset);
             importData(dataset);
-            LOG.info("importing github repo [" + repository + "] done.");
-        } catch (StudyImporterException | DatasetFinderException ex) {
-            String msg = "failed to import data from repo [" + repository + "]";
+            LOG.info("importing github repo [" + namespace + "] done.");
+        } catch (StudyImporterException | DatasetRegistryException ex) {
+            String msg = "failed to import data from repo [" + namespace + "]";
             LOG.error(msg, ex);
             throw new StudyImporterException(msg, ex);
         }

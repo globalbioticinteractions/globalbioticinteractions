@@ -7,7 +7,7 @@ import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.geo.EcoregionFinderException;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.eol.globi.service.TermLookupService;
@@ -61,16 +61,16 @@ public abstract class GraphDBTestCase {
         return study;
     }
 
-    public static Dataset datasetFor(String namespace) throws DatasetFinderException {
+    public static Dataset datasetFor(String namespace) throws DatasetRegistryException {
         DatasetRegistry finder = new DatasetRegistryWithCache(
                 new DatasetRegistry() {
                     @Override
-                    public Collection<String> findNamespaces() throws DatasetFinderException {
+                    public Collection<String> findNamespaces() throws DatasetRegistryException {
                         return Collections.emptyList();
                     }
 
                     @Override
-                    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+                    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
                         return new DatasetImpl(namespace, URI.create("some:uri"), in -> in);
                     }
                 },

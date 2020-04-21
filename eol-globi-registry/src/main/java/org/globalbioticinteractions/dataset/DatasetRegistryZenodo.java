@@ -10,9 +10,6 @@ import org.eol.globi.service.ResponseHandlerWithInputStreamFactory;
 import org.eol.globi.taxon.XmlUtil;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InputStreamFactory;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetFinderException;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -40,32 +37,32 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetFinderException {
+    public Collection<String> findNamespaces() throws DatasetRegistryException {
         return find(getFeedStream());
     }
 
     @Override
-    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         try {
             InputStream feedStream = getFeedStream();
             URI zenodoGitHubArchives = findZenodoGitHubArchives(getRecordNodeList(feedStream), namespace);
             return zenodoGitHubArchives == null ? null : new DatasetZenodo(namespace, zenodoGitHubArchives, getInputStreamFactory());
         } catch (XPathExpressionException | IOException e) {
-            throw new DatasetFinderException("failed to query archive url for [" + namespace + "]", e);
+            throw new DatasetRegistryException("failed to query archive url for [" + namespace + "]", e);
         }
     }
 
-    private InputStream getFeedStream() throws DatasetFinderException {
+    private InputStream getFeedStream() throws DatasetRegistryException {
         initFeedCacheIfNeeded();
 
         try {
             return IOUtils.toInputStream(getCachedFeed(), StandardCharsets.UTF_8.name());
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to get Zenodo registry feed", e);
+            throw new DatasetRegistryException("failed to get Zenodo registry feed", e);
         }
     }
 
-    public void initFeedCacheIfNeeded() throws DatasetFinderException {
+    public void initFeedCacheIfNeeded() throws DatasetRegistryException {
         if (StringUtils.isBlank(getCachedFeed())) {
             setCachedFeed(getFeed(getInputStreamFactory()));
         }
@@ -128,28 +125,28 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         return refs;
     }
 
-    static NodeList getRecordNodeList(InputStream is) throws DatasetFinderException {
+    static NodeList getRecordNodeList(InputStream is) throws DatasetRegistryException {
         try {
             return (NodeList) XmlUtil.applyXPath(is, "//*[local-name()='record']", XPathConstants.NODESET);
         } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
-            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
+            throw new DatasetRegistryException("failed to find published github repos in zenodo", e);
         }
     }
 
 
-    static NodeList getRelationsNodeList(InputStream is) throws DatasetFinderException {
+    static NodeList getRelationsNodeList(InputStream is) throws DatasetRegistryException {
         try {
             return (NodeList) XmlUtil.applyXPath(is, "//*[local-name()='relatedIdentifier']", XPathConstants.NODESET);
         } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
-            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
+            throw new DatasetRegistryException("failed to find published github repos in zenodo", e);
         }
     }
 
-    static String getFeed() throws DatasetFinderException {
+    static String getFeed() throws DatasetRegistryException {
         return getFeed(inStream -> inStream);
     }
 
-    static String getFeed(InputStreamFactory factory) throws DatasetFinderException {
+    static String getFeed(InputStreamFactory factory) throws DatasetRegistryException {
         try {
             HttpClient httpClient = HttpUtil.getHttpClient();
             String requestUrl = "https://zenodo.org/oai2d?verb=ListRecords&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3";
@@ -159,16 +156,16 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
                     httpClient,
                     new ResponseHandlerWithInputStreamFactory(factory));
         } catch (IOException e) {
-            throw new DatasetFinderException("failed to find published github repos in zenodo", e);
+            throw new DatasetRegistryException("failed to find published github repos in zenodo", e);
         }
     }
 
 
-    private Collection<String> find(InputStream xmlFeed) throws DatasetFinderException {
+    private Collection<String> find(InputStream xmlFeed) throws DatasetRegistryException {
         return findPublishedGitHubRepos(getRelations(xmlFeed));
     }
 
-    static Collection<String> getRelations(InputStream is) throws DatasetFinderException {
+    static Collection<String> getRelations(InputStream is) throws DatasetRegistryException {
         return getRelations(getRelationsNodeList(is));
     }
 

@@ -25,20 +25,20 @@ public class DatasetRegistryWithCacheIT {
     }
 
     @Test
-    public void zenodoTest() throws DatasetFinderException, IOException {
+    public void zenodoTest() throws DatasetRegistryException, IOException {
         assertTemplateDataset("zenodo.org",
                 new DatasetRegistryZenodo(inStream -> inStream),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature. <https://doi.org/10.5281/zenodo.207958>. Accessed on");
     }
 
     @Test
-    public void githubTest() throws DatasetFinderException, IOException {
+    public void githubTest() throws DatasetRegistryException, IOException {
         assertTemplateDataset("github.com",
                 new DatasetRegistryGitHubArchive(inStream -> inStream),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature. Accessed on");
     }
 
-    private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetFinderException, IOException {
+    private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetRegistryException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
@@ -50,7 +50,7 @@ public class DatasetRegistryWithCacheIT {
 
 
     @Test
-    public void gitHubTest() throws DatasetFinderException, IOException {
+    public void gitHubTest() throws DatasetRegistryException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(inStream -> inStream), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
@@ -62,7 +62,7 @@ public class DatasetRegistryWithCacheIT {
     }
 
     @Test
-    public void hafnerTest() throws DatasetFinderException, IOException {
+    public void hafnerTest() throws DatasetRegistryException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(inStream -> inStream),
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 

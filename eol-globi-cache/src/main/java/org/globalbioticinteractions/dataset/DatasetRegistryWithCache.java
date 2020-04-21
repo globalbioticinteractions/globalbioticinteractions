@@ -14,11 +14,11 @@ public class DatasetRegistryWithCache implements DatasetRegistry {
         this.cacheFactory = factory;
     }
 
-    public Collection<String> findNamespaces() throws DatasetFinderException {
+    public Collection<String> findNamespaces() throws DatasetRegistryException {
         return getRegistry().findNamespaces();
     }
 
-    public Dataset datasetFor(String namespace) throws DatasetFinderException {
+    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         Dataset dataset = getRegistry().datasetFor(namespace);
         return new DatasetWithCache(dataset, getCacheFactory().cacheFor(dataset));
     }

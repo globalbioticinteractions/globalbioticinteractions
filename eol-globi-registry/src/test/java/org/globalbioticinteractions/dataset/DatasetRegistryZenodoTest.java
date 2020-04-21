@@ -1,7 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import org.globalbioticinteractions.dataset.DatasetFinderException;
-import org.globalbioticinteractions.dataset.DatasetRegistryZenodo;
 import org.junit.Test;
 import org.w3c.dom.NodeList;
 
@@ -18,7 +16,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 public class DatasetRegistryZenodoTest {
 
     @Test
-    public void extractGitHubRepos() throws DatasetFinderException {
+    public void extractGitHubRepos() throws DatasetRegistryException {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-1-item.xml");
         Collection<String> relations = DatasetRegistryZenodo.getRelations(resourceAsStream);
         Collection<String> refs = DatasetRegistryZenodo.findPublishedGitHubRepos(relations);
@@ -27,7 +25,7 @@ public class DatasetRegistryZenodoTest {
     }
 
     @Test
-    public void extractGitHubRepos3() throws DatasetFinderException {
+    public void extractGitHubRepos3() throws DatasetRegistryException {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
         Collection<String> relations = DatasetRegistryZenodo.getRelations(resourceAsStream);
         Collection<String> refs = DatasetRegistryZenodo.findPublishedGitHubRepos(relations);
@@ -36,7 +34,7 @@ public class DatasetRegistryZenodoTest {
     }
 
     @Test
-    public void findMatchingGithub() throws IOException, XPathExpressionException, DatasetFinderException {
+    public void findMatchingGithub() throws IOException, XPathExpressionException, DatasetRegistryException {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
         NodeList records = DatasetRegistryZenodo.getRecordNodeList(resourceAsStream);
         URI uri = DatasetRegistryZenodo.findZenodoGitHubArchives(records, "jhammock/Layman-and-Allgeier-Lionfish");
@@ -46,7 +44,7 @@ public class DatasetRegistryZenodoTest {
     }
 
     @Test
-    public void noMatchingGithub() throws IOException, XPathExpressionException, DatasetFinderException {
+    public void noMatchingGithub() throws IOException, XPathExpressionException, DatasetRegistryException {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
         NodeList records = DatasetRegistryZenodo.getRecordNodeList(resourceAsStream);
         URI uri = DatasetRegistryZenodo.findZenodoGitHubArchives(records, "jhammock/Layman-and-Allgeier-Lionfish");
