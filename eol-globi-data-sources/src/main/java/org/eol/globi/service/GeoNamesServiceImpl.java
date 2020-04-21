@@ -267,7 +267,9 @@ public class GeoNamesServiceImpl implements GeoNamesService {
             point = getCentroidForLocale(geoNameTermOrLocale);
         }
         if (point == null) {
-            LOG.warn("failed to query (lat,lng) for term [" + geoNameTermOrLocale + "]");
+            if (!IGNORED_LOCALES.contains(geoNameTermOrLocale)) {
+                LOG.warn("failed to query (lat,lng) for term [" + geoNameTermOrLocale + "]");
+            }
         } else {
             pointCache.put(geoNameTermOrLocale, point);
         }
@@ -278,18 +280,16 @@ public class GeoNamesServiceImpl implements GeoNamesService {
     private LatLng getCentroidForLocale(String locale) throws IOException {
         LatLng point = null;
 
-        if (!IGNORED_LOCALES.contains(locale)) {
-            Term term = LOCALE_TO_GEONAMES.get(locale);
-            // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/39
-            if (term != null && !term.equals(GEO_TERM_EARTH)) {
-                String geoNamesTerm = term.getId();
-                if (LOCALE_TO_GEONAMES.containsKey(locale)) {
-                    point = getCentroidForGeoNameTerm(geoNamesTerm);
-                }
+        Term term = LOCALE_TO_GEONAMES.get(locale);
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/39
+        if (term != null && !term.equals(GEO_TERM_EARTH)) {
+            String geoNamesTerm = term.getId();
+            if (LOCALE_TO_GEONAMES.containsKey(locale)) {
+                point = getCentroidForGeoNameTerm(geoNamesTerm);
+            }
 
-                if (point != null) {
-                    pointCache.put(geoNamesTerm, point);
-                }
+            if (point != null) {
+                pointCache.put(geoNamesTerm, point);
             }
         }
         return point;
