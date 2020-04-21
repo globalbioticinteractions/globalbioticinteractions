@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporter;
@@ -26,6 +27,7 @@ import org.eol.globi.geo.EcoregionFinderFactoryImpl;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
+import org.globalbioticinteractions.dataset.DatasetFinderException;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EcoregionFinderProxy;
@@ -243,19 +245,27 @@ public class Normalizer {
         factory.setEcoregionFinder(getEcoregionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         try {
-            CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
-            DatasetRegistry registry = new DatasetRegistryLocal(cacheDir, cacheFactory);
+            DatasetRegistry registry = getDatasetRegistry(cacheDir);
+            String namespacelist = StringUtils.join(registry.findNamespaces(), CharsetConstant.SEPARATOR);
+
+            LOG.info("found dataset namespaces: {" + namespacelist + "}");
+
             StudyImporter importer = new StudyImporterForRegistry(new ParserFactoryLocal(), factory, registry);
             importer.setDataset(new DatasetLocal(inStream -> inStream));
             importer.setLogger(new NullImportLogger());
             importer.importStudy();
-        } catch (StudyImporterException e) {
+        } catch (StudyImporterException | DatasetFinderException e) {
             LOG.error("problem encountered while importing [" + StudyImporterForRegistry.class.getName() + "]", e);
         }
         EcoregionFinder regionFinder = getEcoregionFinder();
         if (regionFinder != null) {
             regionFinder.shutdown();
         }
+    }
+
+    private DatasetRegistry getDatasetRegistry(String cacheDir) {
+        CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
+        return new DatasetRegistryLocal(cacheDir, cacheFactory);
     }
 
 }
