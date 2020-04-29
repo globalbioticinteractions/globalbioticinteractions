@@ -75,14 +75,14 @@ public class InteractUtilTest {
                 put("seed disperser", InteractType.VECTOR_OF);
                 put("seed predator", InteractType.ATE);
                 put("vector of", InteractType.VECTOR_OF);
-                put("found on", InteractType.INTERACTS_WITH);
+                put("found on", InteractType.ADJACENT_TO);
                 put("visitsflowersof", InteractType.VISITS_FLOWERS_OF);
-                put("collected on", InteractType.INTERACTS_WITH);
+                put("collected on", InteractType.ADJACENT_TO);
                 put("reared from", InteractType.INTERACTS_WITH);
                 put("emerged from", InteractType.INTERACTS_WITH);
                 put("collected in", InteractType.INTERACTS_WITH);
                 put("hyperparasitoid of", InteractType.HYPERPARASITE_OF);
-                put("on", InteractType.INTERACTS_WITH);
+                put("on", InteractType.ADJACENT_TO);
                 put("under", InteractType.INTERACTS_WITH);
                 put("inside", InteractType.INTERACTS_WITH);
                 put("in", InteractType.INTERACTS_WITH);

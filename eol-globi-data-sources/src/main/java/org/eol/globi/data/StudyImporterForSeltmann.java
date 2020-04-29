@@ -232,7 +232,6 @@ public class StudyImporterForSeltmann extends NodeBasedImporter {
             final Map<String, InteractType> assocInteractMap = new HashMap<String, InteractType>() {
                 {
                     // interaction types that could probably be more specific (e.g. found inside, found on, emerged from)
-                    put("http://purl.obolibrary.org/obo/RO_0002220", InteractType.INTERACTS_WITH);
                     put("http://purl.obolibrary.org/obo/RO_0001025", InteractType.INTERACTS_WITH);
                     put("http://eol.org/schema/terms/emergedFrom", InteractType.INTERACTS_WITH);
                 }
