@@ -39,7 +39,9 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
             if (logger != null) {
                 logger.info(LogUtil.contextFor(link), "no interaction type defined");
             }
-        } else if (mapper.shouldIgnoreInteractionType(interactionTypeName)) {
+        }
+
+        if (mapper.shouldIgnoreInteractionType(interactionTypeName)) {
             if (logger != null) {
                 logger.info(LogUtil.contextFor(link), "ignoring interaction record for name [" + interactionTypeName + "]");
             }

@@ -29,22 +29,22 @@ pollinator,,pollinates,http://purl.obolibrary.org/obo/RO_0002455
 seed disperser,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 seed predator,,eats,http://purl.obolibrary.org/obo/RO_0002470
 vector of,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
-found on,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+found on,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 visitsflowersof,,visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
-collected on,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+collected on,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 reared from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 emerged from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 collected in,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 hyperparasitoid of,,hyperparasiteOf,http://purl.obolibrary.org/obo/RO_0002553
-on,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+on,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 under,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 inside,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 in,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 dispersalVector,http://eol.org/schema/terms/DispersalVector,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 hasDispersalVector,http://eol.org/schema/terms/HasDispersalVector,hasVector,http://purl.obolibrary.org/obo/RO_0002460
 dispersalVectorOf,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
-perchingOn,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
-perchedOnBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+perchingOn,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
+perchedOnBy,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 endoparasitoidOf,,endoparasiteOf,http://purl.obolibrary.org/obo/RO_0002634
 hasEndoparasitoid,,hasEndoparasite,http://purl.obolibrary.org/obo/RO_0002635
 hasEctoparasitoid,,hasEctoparasite,http://purl.obolibrary.org/obo/RO_0002633
