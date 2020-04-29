@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
@@ -28,7 +27,7 @@ import static org.eol.globi.data.StudyImporterForDwCA.importAssociatedTaxaExtens
 import static org.eol.globi.data.StudyImporterForDwCA.importResourceRelationExtension;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedOccurrences;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedTaxa;
-import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicProperties;
+import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicPropertiesForInteractionsOnly;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
@@ -120,7 +119,6 @@ public class StudyImporterForDwCATest {
         });
         studyImporterForDwCA.importStudy();
         assertThat(recordCounter.get(), is(0));
-        assertThat(msgs, hasItem("no interaction type defined"));
         String joinedMsgs = StringUtils.join(msgs, "\n");
         assertThat(joinedMsgs, containsString("]: indexing interaction records"));
         assertThat(joinedMsgs, containsString("]: scanned [1] record(s)"));
@@ -226,7 +224,7 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromZip() throws StudyImporterException, URISyntaxException, IOException {
+    public void importRecordsFromZip() throws StudyImporterException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
 
@@ -467,7 +465,7 @@ public class StudyImporterForDwCATest {
     @Test
     public void dynamicProperties() {
         String s = "targetTaxonName: Homo sapiens; targetTaxonId: https://www.gbif.org/species/2436436; interactionTypeName: eats; interactionTypeId: http://purl.obolibrary.org/obo/RO_0002470; targetBodyPartName: blood; targetBodyPartId: http://purl.obolibrary.org/obo/NCIT_C12434\",\"eats: Homo sapiens";
-        Map<String, String> properties = parseDynamicProperties(s);
+        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("eats"));
@@ -475,9 +473,16 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void dynamicPropertiesEmptyOnNoInteractions() {
+        String s = "targetTaxonName: Homo sapiens; targetTaxonId: https://www.gbif.org/species/2436436; targetBodyPartName: blood; targetBodyPartId: http://purl.obolibrary.org/obo/NCIT_C12434\",\"eats: Homo sapiens";
+        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+        assertThat(properties.isEmpty(), is(true));
+    }
+
+    @Test
     public void dynamicProperties2() {
         String s = "sourceLifeStageName=pupae ; sourceLifeStageID= ; experimentalConditionName=in nature ; experimentalConditionID=http://purl.obolibrary.org/obo/ENVO_01001226 ; interactionTypeName=inside ; interactionTypeId=http://purl.obolibrary.org/obo/RO_0001025 ; targetTaxonName=Mus ; targetTaxonId=https://www.gbif.org/species/2311167";
-        Map<String, String> properties = parseDynamicProperties(s);
+        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Mus"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("inside"));

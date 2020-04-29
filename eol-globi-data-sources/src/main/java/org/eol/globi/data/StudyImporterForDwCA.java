@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +172,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
         String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
         if (StringUtils.isNotBlank(dynamicProperties)) {
-            interactionCandidates.add(parseDynamicProperties(dynamicProperties));
+            Map<String, String> parsedDynamicProperties = parseDynamicPropertiesForInteractionsOnly(dynamicProperties);
+            if (!parsedDynamicProperties.isEmpty()) {
+                interactionCandidates.add(parsedDynamicProperties);
+            }
         }
 
 
@@ -335,7 +339,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         return propertyList;
     }
 
-    static Map<String, String> parseDynamicProperties(String s) {
+    static Map<String, String> parseDynamicPropertiesForInteractionsOnly(String s) {
         Map<String, String> properties = new HashMap<>();
         String[] parts = StringUtils.splitByWholeSeparator(s, ";");
         for (String part : parts) {
@@ -344,7 +348,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 properties.put(StringUtils.trim(propertyValue[0]), StringUtils.trim(propertyValue[1]));
             }
         }
-        return properties;
+        // only consider dynamic properties if interaction types are defined in it.
+        return properties.containsKey(INTERACTION_TYPE_ID)
+                || properties.containsKey(INTERACTION_TYPE_NAME)
+                ? properties
+                : Collections.emptyMap();
     }
 
     static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener) {
