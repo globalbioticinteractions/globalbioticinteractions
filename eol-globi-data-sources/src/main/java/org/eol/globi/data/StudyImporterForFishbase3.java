@@ -45,8 +45,8 @@ public class StudyImporterForFishbase3 extends StudyImporterWithListener {
                 private final InteractionListener listener = getInteractionListener();
 
                 @Override
-                public void newLink(Map<String, String> properties) throws StudyImporterException {
-                    listener.newLink(new TreeMap<String, String>(properties) {{
+                public void newLink(Map<String, String> link) throws StudyImporterException {
+                    listener.newLink(new TreeMap<String, String>(link) {{
                         put(StudyImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
                     }});
                 }

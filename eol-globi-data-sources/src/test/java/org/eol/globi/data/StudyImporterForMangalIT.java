@@ -21,12 +21,12 @@ public class StudyImporterForMangalIT {
         importer.setDataset(new DatasetLocal(inStream -> inStream));
         importer.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> properties) throws StudyImporterException {
+            public void newLink(Map<String, String> link) throws StudyImporterException {
 
-                InteractionListenerImpl.validLink(properties, new NullImportLogger() {
+                InteractionListenerImpl.validLink(link, new NullImportLogger() {
                     @Override
                     public void warn(LogContext ctx, String message) {
-                        fail(message + "for [" + properties + "]");
+                        fail(message + "for [" + link + "]");
                     }
 
                 });

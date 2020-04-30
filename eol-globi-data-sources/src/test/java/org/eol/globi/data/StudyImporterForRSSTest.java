@@ -303,8 +303,8 @@ public class StudyImporterForRSSTest {
         final List<Map<String, String>> receivedLinks = new ArrayList<>();
         studyImporter.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> properties) throws StudyImporterException {
-                receivedLinks.add(properties);
+            public void newLink(Map<String, String> link) throws StudyImporterException {
+                receivedLinks.add(link);
             }
         });
         TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<String, Map<String, String>>() {{

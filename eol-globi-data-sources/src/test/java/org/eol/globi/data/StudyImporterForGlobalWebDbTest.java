@@ -45,7 +45,7 @@ public class StudyImporterForGlobalWebDbTest {
                     try {
                         StudyImporterForGlobalWebDb.parseDietMatrix(new InteractionListener() {
                             @Override
-                            public void newLink(Map<String, String> properties) throws StudyImporterException {
+                            public void newLink(Map<String, String> link) throws StudyImporterException {
                                 count.incrementAndGet();
                             }
                         }, matrixString, "a source citation");

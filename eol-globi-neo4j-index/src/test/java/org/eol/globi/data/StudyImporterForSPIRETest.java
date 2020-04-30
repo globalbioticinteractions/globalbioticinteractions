@@ -155,9 +155,9 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         final List<String> predators = new ArrayList<String>();
         importer.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> properties) {
-                if (!StudyImporterForSPIRE.isValid(properties)) {
-                    predators.add(properties.get(StudyImporterForSPIRE.PREDATOR_NAME));
+            public void newLink(Map<String, String> link) {
+                if (!StudyImporterForSPIRE.isValid(link)) {
+                    predators.add(link.get(StudyImporterForSPIRE.PREDATOR_NAME));
                 }
             }
         });
@@ -370,31 +370,31 @@ public class StudyImporterForSPIRETest extends GraphDBTestCase {
         List<String> publicationYears = new ArrayList<String>();
 
         @Override
-        public void newLink(Map<String, String> properties) {
-            if (properties.containsKey(StudyImporterForSPIRE.LOCALITY_ORIGINAL)) {
-                localities.add(properties.get(StudyImporterForSPIRE.LOCALITY_ORIGINAL));
+        public void newLink(Map<String, String> link) {
+            if (link.containsKey(StudyImporterForSPIRE.LOCALITY_ORIGINAL)) {
+                localities.add(link.get(StudyImporterForSPIRE.LOCALITY_ORIGINAL));
             }
 
-            if (properties.containsKey(StudyConstant.DESCRIPTION)) {
-                descriptions.add(properties.get(StudyConstant.DESCRIPTION));
+            if (link.containsKey(StudyConstant.DESCRIPTION)) {
+                descriptions.add(link.get(StudyConstant.DESCRIPTION));
             }
-            if (properties.containsKey(StudyConstant.TITLE)) {
-                titles.add(properties.get(StudyConstant.TITLE));
-            }
-
-            if (properties.containsKey(StudyConstant.TITLE)) {
-                titles.add(properties.get(StudyConstant.TITLE));
-            }
-            if (properties.containsKey(StudyImporterForSPIRE.OF_HABITAT)) {
-                environments.add(properties.get(StudyImporterForSPIRE.OF_HABITAT));
-            }
-            if (properties.containsKey(StudyConstant.PUBLICATION_YEAR)) {
-                publicationYears.add(properties.get(StudyConstant.PUBLICATION_YEAR));
+            if (link.containsKey(StudyConstant.TITLE)) {
+                titles.add(link.get(StudyConstant.TITLE));
             }
 
+            if (link.containsKey(StudyConstant.TITLE)) {
+                titles.add(link.get(StudyConstant.TITLE));
+            }
+            if (link.containsKey(StudyImporterForSPIRE.OF_HABITAT)) {
+                environments.add(link.get(StudyImporterForSPIRE.OF_HABITAT));
+            }
+            if (link.containsKey(StudyConstant.PUBLICATION_YEAR)) {
+                publicationYears.add(link.get(StudyConstant.PUBLICATION_YEAR));
+            }
 
-            if (!StudyImporterForSPIRE.isValid(properties)) {
-                invalidInteractions.add(new TreeMap<String, String>(properties));
+
+            if (!StudyImporterForSPIRE.isValid(link)) {
+                invalidInteractions.add(new TreeMap<String, String>(link));
             }
 
             count++;

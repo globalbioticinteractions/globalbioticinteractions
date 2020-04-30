@@ -30,8 +30,8 @@ public class TableInteractionListenerProxyTest {
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> properties) throws StudyImporterException {
-                links.add(properties);
+            public void newLink(Map<String, String> link) throws StudyImporterException {
+                links.add(link);
             }
         });
         listener.newLink(new HashMap<>());
@@ -49,8 +49,8 @@ public class TableInteractionListenerProxyTest {
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> properties) throws StudyImporterException {
-                links.add(properties);
+            public void newLink(Map<String, String> link) throws StudyImporterException {
+                links.add(link);
             }
         });
         listener.newLink(new HashMap<String, String>() {

@@ -27,12 +27,12 @@ public class TableInteractionListenerProxy implements InteractionListener {
     }
 
     @Override
-    public void newLink(final Map<String, String> properties) throws StudyImporterException {
+    public void newLink(final Map<String, String> link) throws StudyImporterException {
         final Map<String, String> enrichedProperties = new TreeMap<String, String>() {
             {
-                putAll(properties);
+                putAll(link);
                 put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
-                final String referenceCitation = StringUtils.isBlank(properties.get(StudyImporterForTSV.REFERENCE_CITATION)) ? StudyImporterForMetaTable.generateReferenceCitation(properties) : properties.get(StudyImporterForTSV.REFERENCE_CITATION);
+                final String referenceCitation = StringUtils.isBlank(link.get(StudyImporterForTSV.REFERENCE_CITATION)) ? StudyImporterForMetaTable.generateReferenceCitation(link) : link.get(StudyImporterForTSV.REFERENCE_CITATION);
                 put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
                 put(StudyImporterForTSV.REFERENCE_CITATION, StringUtils.isBlank(referenceCitation) ? dataSourceCitation : referenceCitation);
             }

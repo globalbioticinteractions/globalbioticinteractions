@@ -284,13 +284,13 @@ public class StudyImporterForRSS extends NodeBasedImporter {
         }
 
         @Override
-        public void newLink(Map<String, String> properties) throws StudyImporterException {
+        public void newLink(Map<String, String> link) throws StudyImporterException {
             Map<String, String> enrichedProperties = null;
-            if (properties.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)) {
-                String targetOccurrenceId = properties.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID);
+            if (link.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)) {
+                String targetOccurrenceId = link.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID);
                 Map<String, String> targetProperties = interactionsWithUnresolvedOccurrenceIds.get(targetOccurrenceId);
                 if (targetProperties != null) {
-                    TreeMap<String, String> enrichedMap = new TreeMap<>(properties);
+                    TreeMap<String, String> enrichedMap = new TreeMap<>(link);
                     enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_NAME, TaxonUtil.TARGET_TAXON_NAME);
                     enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_ID, TaxonUtil.TARGET_TAXON_ID);
                     enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, StudyImporterForTSV.TARGET_LIFE_STAGE_NAME);
@@ -300,7 +300,7 @@ public class StudyImporterForRSS extends NodeBasedImporter {
                     enrichedProperties = enrichedMap;
                 }
             }
-            interactionListener.newLink(enrichedProperties == null ? properties : enrichedProperties);
+            interactionListener.newLink(enrichedProperties == null ? link : enrichedProperties);
         }
 
         public void enrichProperties(Map<String, String> targetProperties, TreeMap<String, String> enrichedMap, String sourceKey, String targetKey) {
@@ -319,17 +319,17 @@ public class StudyImporterForRSS extends NodeBasedImporter {
         }
 
         @Override
-        public void newLink(Map<String, String> properties) throws StudyImporterException {
+        public void newLink(Map<String, String> link) throws StudyImporterException {
 
-            if (properties.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)
-                    && properties.containsKey(StudyImporterForTSV.SOURCE_OCCURRENCE_ID)) {
-                String value = properties.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID);
+            if (link.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)
+                    && link.containsKey(StudyImporterForTSV.SOURCE_OCCURRENCE_ID)) {
+                String value = link.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID);
 
                 if (StringUtils.startsWith(value, "http://arctos.database.museum/guid/")) {
                     String[] splitValue = StringUtils.split(value, "?");
                     value = splitValue.length == 1 ? value : splitValue[0];
                 }
-                interactionsWithUnresolvedOccurrenceIds.put(value, new HashMap<>(properties));
+                interactionsWithUnresolvedOccurrenceIds.put(value, new HashMap<>(link));
             }
         }
     }

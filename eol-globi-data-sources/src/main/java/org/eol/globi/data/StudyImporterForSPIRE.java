@@ -38,8 +38,8 @@ public class StudyImporterForSPIRE extends NodeBasedImporter {
 
     private InteractionListener interactionListener = new InteractionListener() {
         @Override
-        public void newLink(Map<String, String> properties) throws StudyImporterException {
-            importTrophicLink(properties);
+        public void newLink(Map<String, String> link) throws StudyImporterException {
+            importTrophicLink(link);
         }
     };
 

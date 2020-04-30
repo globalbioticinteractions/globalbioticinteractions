@@ -286,12 +286,12 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
         importer.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> properties) throws StudyImporterException {
+            public void newLink(Map<String, String> link) throws StudyImporterException {
                 int i = atomicInteger.incrementAndGet();
-                assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
-                assertThat(properties.get(INTERACTION_TYPE_NAME), is(nullValue()));
-                assertThat(properties.get(TARGET_TAXON_NAME), is(nullValue()));
-                assertThat(properties.get(ASSOCIATED_TAXA), is(nullValue()));
+                assertThat(link.get(INTERACTION_TYPE_ID), is(nullValue()));
+                assertThat(link.get(INTERACTION_TYPE_NAME), is(nullValue()));
+                assertThat(link.get(TARGET_TAXON_NAME), is(nullValue()));
+                assertThat(link.get(ASSOCIATED_TAXA), is(nullValue()));
             }
         });
         importStudy(importer);

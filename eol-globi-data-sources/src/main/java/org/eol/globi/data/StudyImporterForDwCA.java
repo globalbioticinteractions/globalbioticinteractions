@@ -683,11 +683,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
     private class InteractionListenerWithContext implements InteractionListener {
 
         @Override
-        public void newLink(Map<String, String> properties) throws StudyImporterException {
+        public void newLink(Map<String, String> link) throws StudyImporterException {
             if (getDataset() == null) {
-                getInteractionListener().newLink(properties);
+                getInteractionListener().newLink(link);
             } else {
-                getInteractionListener().newLink(new TreeMap<String, String>(properties) {{
+                getInteractionListener().newLink(new TreeMap<String, String>(link) {{
                     if (getDataset().getArchiveURI() != null) {
                         put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
                     }
