@@ -37,7 +37,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         try {
             interactTypeMapper = new InteractTypeMapperFactoryImpl(getDataset()).create();
         } catch (TermLookupServiceException e) {
-            throw new StudyImporterException("failed to create intereaction type mapper", e);
+            throw new StudyImporterException("failed to create interaction type mapper", e);
         }
 
 
@@ -45,14 +45,14 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         try {
             sources = parseSources(getDataset().retrieve(URI.create("https://www.batplant.org/fetch/source")));
         } catch (IOException e) {
-            throw new StudyImporterException("failed to access locations", e);
+            throw new StudyImporterException("failed to access sources", e);
         }
 
         Map<String, Taxon> taxa;
         try {
             taxa = parseTaxa(getDataset().retrieve(URI.create("https://www.batplant.org/fetch/taxon")));
         } catch (IOException e) {
-            throw new StudyImporterException("failed to access locations", e);
+            throw new StudyImporterException("failed to access taxa", e);
         }
         Map<String, Map<String, String>> locations;
         try {
@@ -274,9 +274,11 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                                 }
 
                                 String locationId = textValueOrNull(interactionNode, "location");
-                                Map<String, String> locationProperties = locations.get(locationId);
-                                if (locationProperties != null) {
-                                    interactionRecord.putAll(locationProperties);
+                                if (StringUtils.isNotBlank(locationId)) {
+                                    Map<String, String> locationProperties = locations.get(locationId);
+                                    if (locationProperties != null) {
+                                        interactionRecord.putAll(locationProperties);
+                                    }
                                 }
 
                                 testListener.newLink(interactionRecord);
