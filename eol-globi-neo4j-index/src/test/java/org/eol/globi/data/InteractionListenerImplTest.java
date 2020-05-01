@@ -34,6 +34,8 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_ID;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_IDS;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_RANK;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
@@ -72,6 +74,8 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_CODE;
 import static org.eol.globi.domain.PropertyAndValueDictionary.INSTITUTION_CODE;
 import static org.eol.globi.domain.PropertyAndValueDictionary.OCCURRENCE_ID;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_IDS;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_RANK;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -293,11 +297,15 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final InteractionListenerImpl listener = getAssertingListener();
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "Donald duck");
+        link.put(SOURCE_TAXON_RANK, "species");
         link.put(SOURCE_TAXON_PATH, "Aves | Donald | Donald duck");
+        link.put(SOURCE_TAXON_PATH_IDS, "AvesId | DonaldId | DonaldId duckId");
         link.put(SOURCE_TAXON_PATH_NAMES, "class | genus | species");
         link.put(SOURCE_TAXON_SPECIFIC_EPITHET, "duck");
         link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
         link.put(TARGET_TAXON_NAME, "mini");
+        link.put(TARGET_TAXON_RANK, "species");
+        link.put(TARGET_TAXON_PATH_IDS, "miniId");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
@@ -319,6 +327,8 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             if (someSpecimen.getUnderlyingNode().hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE))) {
                 assertThat(taxon.getPath(), is("Aves | Donald | Donald duck"));
                 assertThat(taxon.getPathNames(), is("class | genus | species"));
+                assertThat(taxon.getRank(), is("species"));
+                assertThat(taxon.getPathIds(), is("AvesId | DonaldId | DonaldId duckId"));
                 foundSpecimen.incrementAndGet();
             }
 

@@ -72,11 +72,15 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_IDS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_NAMES;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_RANK;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_IDS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_NAMES;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_RANK;
 
 class InteractionListenerImpl implements InteractionListener {
     private static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
@@ -245,7 +249,9 @@ class InteractionListenerImpl implements InteractionListener {
                 SOURCE_TAXON_PATH,
                 SOURCE_TAXON_PATH_NAMES,
                 SOURCE_SEX_NAME,
-                SOURCE_SEX_ID);
+                SOURCE_SEX_ID,
+                SOURCE_TAXON_RANK,
+                SOURCE_TAXON_PATH_IDS);
 
         setExternalIdNotBlank(link, SOURCE_OCCURRENCE_ID, source);
         setPropertyIfAvailable(link, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
@@ -266,7 +272,9 @@ class InteractionListenerImpl implements InteractionListener {
                 TARGET_TAXON_PATH,
                 TARGET_TAXON_PATH_NAMES,
                 TARGET_SEX_NAME,
-                TARGET_SEX_ID);
+                TARGET_SEX_ID,
+                TARGET_TAXON_RANK,
+                TARGET_TAXON_PATH_IDS);
 
         setExternalIdNotBlank(link, TARGET_OCCURRENCE_ID, target);
         setPropertyIfAvailable(link, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
@@ -307,7 +315,7 @@ class InteractionListenerImpl implements InteractionListener {
                                     String taxonPathLabel,
                                     String taxonPathNamesLabel,
                                     String sexLabel,
-                                    String sexId) throws StudyImporterException {
+                                    String sexId, String taxonRankLabel, String taxonPathIdsLabel) throws StudyImporterException {
         String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
         RelTypes[] argumentType = refutes(argumentTypeId)
                 ? new RelTypes[]{RelTypes.REFUTES}
@@ -317,9 +325,20 @@ class InteractionListenerImpl implements InteractionListener {
         String sourceTaxonId = link.get(taxonIdLabel);
         TaxonImpl taxon = new TaxonImpl(sourceTaxonName, sourceTaxonId);
 
+        String taxonRank = link.get(taxonRankLabel);
+        if (StringUtils.isNotBlank(taxonRank)) {
+            taxon.setRank(taxonRank);
+        }
+
+
         String taxonPath = link.get(taxonPathLabel);
         if (StringUtils.isNotBlank(taxonPath)) {
             taxon.setPath(taxonPath);
+        }
+
+        String taxonPathIds = link.get(taxonPathIdsLabel);
+        if (StringUtils.isNotBlank(taxonPathIds)) {
+            taxon.setPathIds(taxonPathIds);
         }
 
         String taxonPathNames = link.get(taxonPathNamesLabel);
