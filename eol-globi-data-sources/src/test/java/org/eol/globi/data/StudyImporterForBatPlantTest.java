@@ -1,13 +1,14 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.service.TaxonUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,40 @@ public class StudyImporterForBatPlantTest {
 
 
     @Test
-    public void parseLocation() {
+    public void parseLocation() throws IOException {
+        String location = "\"1\": \"{\\\"id\\\":1,\\\"parent\\\":207,\\\"children\\\":[],\\\"locationType\\\":{\\\"id\\\":3,\\\"displayName\\\":\\\"Habitat\\\"},\\\"region\\\":{\\\"id\\\":170," +
+                "\\\"displayName\\\":\\\"South America\\\"},\\\"country\\\":{\\\"id\\\":207,\\\"displayName\\\":\\\"Uruguay\\\"},\\\"geoJsonId\\\":232,\\\"interactions\\\":[3001,3" +
+                "002],\\\"habitatType\\\":{\\\"id\\\":1,\\\"displayName\\\":\\\"Forest\\\"},\\\"displayName\\\":\\\"Uruguay-Forest\\\",\\\"serverUpdatedAt\\\":\\\"2016-11-18T01:" +
+                "38:27-06:00\\\"}\"";
+
+        String someLocation= "\"2\": \"{\\\"id\\\":2,\\\"parent\\\":190,\\\"children\\\":[],\\\"locationType\\\":{\\\"id\\\":5,\\\"displayName\\\":\\\"Point\\\"},\\\"region\\\":{\\\"id\\\":170,\\\"" +
+                "displayName\\\":\\\"South America\\\"},\\\"country\\\":{\\\"id\\\":190,\\\"displayName\\\":\\\"Brazil\\\"},\\\"geoJsonId\\\":254,\\\"interactions\\\":[3003,3004" +
+                "],\\\"habitatType\\\":{\\\"id\\\":2,\\\"displayName\\\":\\\"Savanna\\\"},\\\"displayName\\\":\\\"Embrapa Cerrados\\\",\\\"elevation\\\":879,\\\"latitude\\\":-15.6" +
+                "283332999999995394091456546448171138763427734375,\\\"longitude\\\":-47.37083333000000351376002072356641292572021484375,\\\"serverUpdated" +
+                "At\\\":\\\"2020-04-28T15:44:11-05:00\\\"}\"";
+
+        String locationChunk = "{ \"location\": {" + location  + "," + someLocation + "}}";
+        InputStream inputStream = IOUtils.toInputStream(locationChunk, StandardCharsets.UTF_8);
+
+        Map<String, Map<String, String>> locations = StudyImporterForBatPlant.parseLocations(inputStream);
+
+        assertThat(locations.size(), is(2));
+
+        Map<String, String> properties = locations.get("1");
+
+        assertThat(properties.get(StudyImporterForTSV.HABITAT_ID), is("batplant:habitat:1"));
+        assertThat(properties.get(StudyImporterForTSV.HABITAT_NAME), is("forest"));
+        assertThat(properties.get(StudyImporterForTSV.LOCALITY_NAME), is("Uruguay-Forest"));
+        assertThat(properties.get(StudyImporterForTSV.LOCALITY_ID), is("batplant:location:1"));
+
+        properties = locations.get("2");
+
+        assertThat(properties.get(StudyImporterForTSV.HABITAT_ID), is("batplant:habitat:2"));
+        assertThat(properties.get(StudyImporterForTSV.HABITAT_NAME), is("savanna"));
+        assertThat(properties.get(StudyImporterForTSV.DECIMAL_LONGITUDE), is("-47.37083333"));
+        assertThat(properties.get(StudyImporterForTSV.DECIMAL_LATITUDE), is("-15.6283333"));
+        assertThat(properties.get(StudyImporterForTSV.LOCALITY_NAME), is("Embrapa Cerrados"));
+        assertThat(properties.get(StudyImporterForTSV.LOCALITY_ID), is("batplant:location:2"));
 
     }
 
@@ -97,6 +131,12 @@ public class StudyImporterForBatPlantTest {
         Map<String, String> sources = new TreeMap<>();
         sources.put("955", "some reference");
 
+        Map<String, Map<String, String>> locations = new TreeMap<String, Map<String, String>>() {{
+            put("30", new TreeMap<String, String>(){{
+                put(StudyImporterForTSV.LOCALITY_ID, "some:locality:id:30");
+            }});
+        }};
+
         String interactionJson = "{\"interaction\": {" +
                 "    \"1\": \"{\\\"id\\\":1," +
                 "\\\"source\\\":955," +
@@ -113,7 +153,7 @@ public class StudyImporterForBatPlantTest {
         List<Map<String, String>> links = new ArrayList<>();
         InteractionListener testListener = links::add;
 
-        StudyImporterForBatPlant.parseInteractions(taxa, sources, interactionJson, testListener);
+        StudyImporterForBatPlant.parseInteractions(taxa, sources, interactionJson, testListener, locations);
 
         assertThat(links.size(), Is.is(1));
 
@@ -122,7 +162,7 @@ public class StudyImporterForBatPlantTest {
         assertThat(firstLink.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Predation"));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_ID), is("batplant:source:955"));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_CITATION), is("some reference"));
-        assertThat(firstLink.get(StudyImporterForTSV.LOCALITY_ID), is("batplant:location:30"));
+        assertThat(firstLink.get(StudyImporterForTSV.LOCALITY_ID), is("some:locality:id:30"));
         assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_ID), is("batplant:taxon:974"));
         assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_PATH), is("Micronycteris | Micronycteris hirsuta"));
         assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_ID), is("batplant:taxon:885"));

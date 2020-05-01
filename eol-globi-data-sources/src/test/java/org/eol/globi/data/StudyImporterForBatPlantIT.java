@@ -17,32 +17,6 @@ import static org.junit.Assert.*;
 
 public class StudyImporterForBatPlantIT {
 
-    private static final Map<String, InteractType> INTERACTION_TYPE_MAP = new HashMap<String, InteractType>() {{
-        // seed dispersal
-        put("batplant:interactionTypeId:1", InteractType.DISPERSAL_VECTOR_OF);
-        // consume
-        put("batplant:interactionTypeId:2", InteractType.ATE);
-        // pollination
-        put("batplant:interactionTypeId:3", InteractType.POLLINATES);
-        // visitation
-        put("batplant:interactionTypeId:4", InteractType.VISITS);
-        // transports
-        put("batplant:interactionTypeId:5", InteractType.DISPERSAL_VECTOR_OF);
-        // roosts
-        put("batplant:interactionTypeId:6", InteractType.CO_OCCURS_WITH);
-        // host
-        put("batplant:interactionTypeId:7", InteractType.HOST_OF);
-        // cohabitation
-        put("batplant:interactionTypeId:8", InteractType.CO_OCCURS_WITH);
-        // prey
-        put("batplant:interactionTypeId:9", InteractType.PREYED_UPON_BY);
-        // Hematophagy (blood eating)
-        put("batplant:interactionTypeId:10", InteractType.ATE);
-        // Predation
-        put("batplant:interactionTypeId:11", InteractType.PREYS_UPON);
-    }};
-
-
     @Test
     public void importAll() throws StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);

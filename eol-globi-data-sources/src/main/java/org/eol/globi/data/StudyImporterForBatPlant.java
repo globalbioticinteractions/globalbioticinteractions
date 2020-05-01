@@ -26,7 +26,7 @@ import java.util.TreeMap;
 
 public class StudyImporterForBatPlant extends StudyImporterWithListener {
 
-    public StudyImporterForBatPlant(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    StudyImporterForBatPlant(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
@@ -51,6 +51,12 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         Map<String, Taxon> taxa;
         try {
             taxa = parseTaxa(getDataset().retrieve(URI.create("https://www.batplant.org/fetch/taxon")));
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to access locations", e);
+        }
+        Map<String, Map<String, String>> locations;
+        try {
+            locations = parseLocations(getDataset().retrieve(URI.create("https://www.batplant.org/fetch/location")));
         } catch (IOException e) {
             throw new StudyImporterException("failed to access locations", e);
         }
@@ -79,7 +85,8 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
             parseInteractions(taxa,
                     sources,
                     interactionListener,
-                    getDataset().retrieve(URI.create("https://www.batplant.org/fetch/interaction")));
+                    getDataset().retrieve(URI.create("https://www.batplant.org/fetch/interaction")),
+                    locations);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access interactions", e);
         }
@@ -183,7 +190,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
 
     }
 
-    static Map<String, JsonNode> indexTaxonNodes(ObjectMapper objectMapper, JsonNode taxon) throws IOException {
+    private static Map<String, JsonNode> indexTaxonNodes(ObjectMapper objectMapper, JsonNode taxon) throws IOException {
         Map<String, JsonNode> taxonNodes = new TreeMap<>();
         Iterator<Map.Entry<String, JsonNode>> taxonEntries = taxon.getFields();
         while (taxonEntries.hasNext()) {
@@ -198,12 +205,12 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         return taxonNodes;
     }
 
-    static void parseInteractions(Map<String, Taxon> taxa, Map<String, String> sources, String interactionJson, InteractionListener testListener) throws IOException, StudyImporterException {
+    static void parseInteractions(Map<String, Taxon> taxa, Map<String, String> sources, String interactionJson, InteractionListener testListener, Map<String, Map<String, String>> locations) throws IOException, StudyImporterException {
         InputStream in = IOUtils.toInputStream(interactionJson, StandardCharsets.UTF_8);
-        parseInteractions(taxa, sources, testListener, in);
+        parseInteractions(taxa, sources, testListener, in, locations);
     }
 
-    public static void parseInteractions(Map<String, Taxon> taxa, Map<String, String> sources, InteractionListener testListener, InputStream in) throws IOException, StudyImporterException {
+    public static void parseInteractions(Map<String, Taxon> taxa, Map<String, String> sources, InteractionListener testListener, InputStream in, Map<String, Map<String, String>> locations) throws IOException, StudyImporterException {
         final ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(in);
 
@@ -267,7 +274,10 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                                 }
 
                                 String locationId = textValueOrNull(interactionNode, "location");
-                                interactionRecord.put(StudyImporterForTSV.LOCALITY_ID, "batplant:location:" + locationId);
+                                Map<String, String> locationProperties = locations.get(locationId);
+                                if (locationProperties != null) {
+                                    interactionRecord.putAll(locationProperties);
+                                }
 
                                 testListener.newLink(interactionRecord);
                             }
@@ -280,7 +290,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         }
     }
 
-    private static String textValueOrNull(JsonNode interactionType, String key) {
+    static String textValueOrNull(JsonNode interactionType, String key) {
         String textValue = null;
         JsonNode interactionTypeId = interactionType.get(key);
         if (interactionTypeId != null) {
@@ -306,6 +316,61 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         path.add(taxonName);
         return taxonName;
     }
+
+    static Map<String, Map<String, String>> parseLocations(InputStream inputStream) throws IOException {
+        Map<String, Map<String, String>> locations = new TreeMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(inputStream);
+        if (jsonNode.has("location")) {
+            JsonNode sources = jsonNode.get("location");
+            Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.getFields();
+            while (taxonEntries.hasNext()) {
+                Map.Entry<String, JsonNode> next = taxonEntries.next();
+                JsonNode sourceValue = next.getValue();
+                if (sourceValue.isTextual()) {
+                    JsonNode locationNode = objectMapper.readTree(sourceValue.getTextValue());
+                    String id = textValueOrNull(locationNode, "id");
+                    locations.put(id, parseLocationNode(locationNode));
+                }
+            }
+        }
+        return locations;
+    }
+
+    private static Map<String, String> parseLocationNode(JsonNode locationNode) {
+        Map<String, String> properties = new TreeMap<>();
+        if (locationNode.has("latitude") &&
+                locationNode.has("longitude")) {
+            properties.put(StudyImporterForTSV.DECIMAL_LATITUDE,
+                    textValueOrNull(locationNode, "latitude"));
+            properties.put(StudyImporterForTSV.DECIMAL_LONGITUDE,
+                    textValueOrNull(locationNode, "longitude"));
+        }
+
+        if (locationNode.has("displayName")) {
+            properties.put(StudyImporterForTSV.LOCALITY_NAME,
+                    textValueOrNull(locationNode, "displayName"));
+            String id = textValueOrNull(locationNode, "id");
+            if (StringUtils.isNotBlank(id)) {
+                properties.put(StudyImporterForTSV.LOCALITY_ID,
+                        "batplant:location:" + id);
+            }
+
+        }
+        if (locationNode.has("habitatType")) {
+            JsonNode habitatType = locationNode.get("habitatType");
+            properties.put(StudyImporterForTSV.HABITAT_NAME,
+                    StringUtils.lowerCase(textValueOrNull(habitatType, "displayName")));
+            String id = textValueOrNull(habitatType, "id");
+            if (StringUtils.isNotBlank(id)) {
+                properties.put(StudyImporterForTSV.HABITAT_ID,
+                        "batplant:habitat:" + id);
+            }
+
+        }
+        return properties;
+    }
+
 
 
 }
