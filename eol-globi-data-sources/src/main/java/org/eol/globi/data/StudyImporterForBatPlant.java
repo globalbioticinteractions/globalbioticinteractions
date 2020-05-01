@@ -26,7 +26,7 @@ import java.util.TreeMap;
 
 public class StudyImporterForBatPlant extends StudyImporterWithListener {
 
-    StudyImporterForBatPlant(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForBatPlant(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
