@@ -396,6 +396,11 @@ class InteractionListenerImpl implements InteractionListener {
                     logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] is in the future");
                 } else if (dateTime.getYear() < 100) {
                     logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
+                } else if (StringUtils.split(eventDate, "/").length > 1) {
+                    DateTime endDate = DateUtil.parseDateUTC(StringUtils.split(eventDate, "/")[1]);
+                    if (dateTime.isAfter(endDate)) {
+                        logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
+                    }
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
             } catch (IllegalArgumentException ex) {

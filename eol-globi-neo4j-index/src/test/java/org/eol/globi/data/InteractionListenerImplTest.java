@@ -566,7 +566,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     }
 
     @Test
-    public void malformedDOI() throws StudyImporterException {
+    public void malformedDOI() {
         final List<String> msgs = new ArrayList<>();
         InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, new GeoNamesService() {
 
@@ -599,6 +599,48 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
             interactionListener.newLink(link);
             assertThat(msgs.size(), is(1));
             assertThat(msgs.get(0), startsWith("found malformed doi [bla:XXX]"));
+        } catch (StudyImporterException ex) {
+            fail("should not throw on failing geoname lookup");
+        }
+    }
+
+
+    @Test
+    public void malformedDateRange() {
+        final List<String> msgs = new ArrayList<>();
+        InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, new GeoNamesService() {
+
+            @Override
+            public boolean hasTermForLocale(String locality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findLatLng(String locality) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        }, new NullImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+        });
+
+        final TreeMap<String, String> link = new TreeMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(REFERENCE_ID, "123");
+        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "10.12/123");
+        link.put(StudyImporterForMetaTable.EVENT_DATE, "2009-09/2003-09");
+        try {
+            interactionListener.newLink(link);
+            assertThat(msgs.size(), is(2));
+            assertThat(msgs.get(0), startsWith("date range [2009-09/2003-09] appears to start after it ends."));
+            assertThat(msgs.get(1), startsWith("date range [2009-09/2003-09] appears to start after it ends."));
         } catch (StudyImporterException ex) {
             fail("should not throw on failing geoname lookup");
         }
