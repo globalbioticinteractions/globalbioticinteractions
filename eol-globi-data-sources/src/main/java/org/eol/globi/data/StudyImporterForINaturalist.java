@@ -39,7 +39,7 @@ public class StudyImporterForINaturalist extends NodeBasedImporter {
     public static final String INATURALIST_URL = "https://www.inaturalist.org";
 
 
-    private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<Long, String>();
+    private final Map<Long, String> unsupportedInteractionTypes = new TreeMap<>();
     public static final String PREFIX_OBSERVATION_FIELD = INATURALIST_URL + "/observation_fields/";
 
     public StudyImporterForINaturalist(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -89,7 +89,7 @@ public class StudyImporterForINaturalist extends NodeBasedImporter {
         return description + CitationUtil.createLastAccessedString(INATURALIST_URL);
     }
 
-    private int retrieveDataParseResults() throws StudyImporterException {
+    private void retrieveDataParseResults() throws StudyImporterException {
         TermLookupService termLookupService;
         try {
             termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(getDataset(),
@@ -103,7 +103,6 @@ public class StudyImporterForINaturalist extends NodeBasedImporter {
             throw new StudyImporterException("failed to find interaction term mapping", e);
         }
 
-        int totalInteractions = 0;
         int previousResultCount = 0;
         int pageNumber = 1;
         do {
@@ -113,16 +112,14 @@ public class StudyImporterForINaturalist extends NodeBasedImporter {
                 previousResultCount = parseJSON(resource,
                         termLookupService);
                 pageNumber++;
-                totalInteractions += previousResultCount;
             } catch (IOException | StudyImporterException e) {
                 throw new StudyImporterException("failed to import iNaturalist at [" + uri + "]", e);
             }
 
         } while (previousResultCount > 0);
-        return totalInteractions;
     }
 
-    protected int parseJSON(InputStream retargetAsStream, TermLookupService termLookupService) throws StudyImporterException {
+    int parseJSON(InputStream retargetAsStream, TermLookupService termLookupService) throws StudyImporterException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array;
         try {
@@ -171,7 +168,7 @@ public class StudyImporterForINaturalist extends NodeBasedImporter {
             int interactionTypeId = observationField.get("id").getIntValue();
             String interactionTypeIdURI = "https://www.inaturalist.org/observation_fields/" + interactionTypeId;
 
-            List<Term> mappedTerms = null;
+            List<Term> mappedTerms;
             try {
                 mappedTerms = mapInteractionType(new TermImpl(interactionTypeIdURI, interactionTypeName), termLookupService);
             } catch (TermLookupServiceException e) {

@@ -2,18 +2,13 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -53,28 +48,11 @@ public class StudyImporterForBatPlantTest {
 
         String sourceChunk = "{ \"source\": {" + someSource + "," + someOtherSource + "}}";
 
-        Map<Integer, String> sourceCitations = new TreeMap<>();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(sourceChunk);
-        if (jsonNode.has("source")) {
-            JsonNode sources = jsonNode.get("source");
-            Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.getFields();
-            while (taxonEntries.hasNext()) {
-                Map.Entry<String, JsonNode> next = taxonEntries.next();
-                JsonNode sourceValue = next.getValue();
-                if (sourceValue.isTextual()) {
-                    JsonNode sourceNode = objectMapper.readTree(sourceValue.getTextValue());
-                    String id = textValueOrNull(sourceNode, "id");
-                    String description = textValueOrNull(sourceNode, "description");
-                    sourceCitations.put(Integer.parseInt(id), description);
-                }
-            }
-        }
+        Map<String, String> sourceCitations = StudyImporterForBatPlant.parseCitations(sourceChunk);
 
         assertThat(sourceCitations.size(), is(2));
-        assertThat(sourceCitations.get(955), is("Gardner, A. L. 1977. Feeding habits. In: Biology of bats of the New World family Phyllostomatidae. Part II (R. J. Baker, J. K. Jones & D. C. Carter, eds.). pp. 293-350. The Museum, Texas Tech University Press, Lubbock, USA."));
-        assertThat(sourceCitations.get(745), is("Delaval, M. 2004. Impacts des perturbations d'origine anthropique sur les peuplements de chauves-souris en Guyane Française. Ph.D. Dissertation. University of Paris VI, Paris, France."));
+        assertThat(sourceCitations.get("955"), is("Gardner, A. L. 1977. Feeding habits. In: Biology of bats of the New World family Phyllostomatidae. Part II (R. J. Baker, J. K. Jones & D. C. Carter, eds.). pp. 293-350. The Museum, Texas Tech University Press, Lubbock, USA."));
+        assertThat(sourceCitations.get("745"), is("Delaval, M. 2004. Impacts des perturbations d'origine anthropique sur les peuplements de chauves-souris en Guyane Française. Ph.D. Dissertation. University of Paris VI, Paris, France."));
 
 
     }
@@ -84,7 +62,7 @@ public class StudyImporterForBatPlantTest {
         String taxonChunk = getTestTaxonChunk();
 
 
-        Map<String, Taxon> taxonObjs = collectTaxa(taxonChunk);
+        Map<String, Taxon> taxonObjs = StudyImporterForBatPlant.parseTaxa(taxonChunk);
 
         assertThat(taxonObjs.size(), is(3));
         assertThat(taxonObjs.get("974").getName(), is("Micronycteris hirsuta"));
@@ -111,117 +89,11 @@ public class StudyImporterForBatPlantTest {
         return "{ \"taxon\": { " + someOtherTaxon + "," + someTaxon + "," + someTaxonParent + "} }";
     }
 
-    public Map<String, Taxon> collectTaxa(String taxonChunk) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode taxaNode = objectMapper.readTree(taxonChunk);
-
-        Map<String, Taxon> taxonObjs = new TreeMap<>();
-        if (taxaNode.has("taxon")) {
-            JsonNode taxon = taxaNode.get("taxon");
-            Map<String, JsonNode> taxonNodes = indexTaxonNodes(objectMapper, taxon);
-            buildTaxonHierarchies(taxonObjs, taxonNodes, objectMapper, taxon);
-        }
-        return taxonObjs;
-    }
-
-    public void buildTaxonHierarchies(Map<String, Taxon> taxonObjs, Map<String, JsonNode> taxonNodes, ObjectMapper objectMapper, JsonNode taxon) throws IOException {
-        Iterator<Map.Entry<String, JsonNode>> taxonEntries = taxon.getFields();
-        while (taxonEntries.hasNext()) {
-            Map.Entry<String, JsonNode> next = taxonEntries.next();
-            JsonNode taxonValue = next.getValue();
-            if (taxonValue.isTextual()) {
-                JsonNode taxonNode = objectMapper.readTree(taxonValue.getTextValue());
-                List<String> path = new ArrayList<>();
-                List<String> pathIds = new ArrayList<>();
-                List<String> ranks = new ArrayList<>();
-
-                String taxonId = appendTaxonIdToPathIds(taxonNode, pathIds);
-                appendNameToPath(taxonNode, path);
-                appendToRanks(taxonNode, ranks);
-
-                String taxonParentId = textValueOrNull(taxonNode, "parent");
-                // collect parents
-                while (StringUtils.isNotBlank(taxonParentId)) {
-                    JsonNode parentNode = taxonNodes.get(taxonParentId);
-                    if (parentNode == null) {
-                        break;
-                    } else {
-                        appendTaxonIdToPathIds(parentNode, pathIds);
-                        appendNameToPath(parentNode, path);
-                        appendToRanks(parentNode, ranks);
-                        taxonParentId = textValueOrNull(parentNode, "parent");
-                    }
-
-                }
-
-                taxonNodes.put(taxonId, taxonNode);
-
-
-                TaxonImpl taxonObj = new TaxonImpl(path.get(0), pathIds.get(0));
-                taxonObj.setRank(ranks.get(0));
-
-                Collections.reverse(path);
-                Collections.reverse(pathIds);
-                Collections.reverse(ranks);
-
-                taxonObj.setPathIds(StringUtils.join(pathIds, CharsetConstant.SEPARATOR));
-                taxonObj.setPath(StringUtils.join(path, CharsetConstant.SEPARATOR));
-                taxonObj.setPathNames(StringUtils.join(ranks, CharsetConstant.SEPARATOR));
-
-                taxonObjs.put(taxonId, taxonObj);
-
-            }
-        }
-
-    }
-
-    public Map<String, JsonNode> indexTaxonNodes(ObjectMapper objectMapper, JsonNode taxon) throws IOException {
-        Map<String, JsonNode> taxonNodes = new TreeMap<>();
-        Iterator<Map.Entry<String, JsonNode>> taxonEntries = taxon.getFields();
-        while (taxonEntries.hasNext()) {
-            Map.Entry<String, JsonNode> next = taxonEntries.next();
-            JsonNode taxonValue = next.getValue();
-            if (taxonValue.isTextual()) {
-                JsonNode taxonNode = objectMapper.readTree(taxonValue.getTextValue());
-                String taxonId = textValueOrNull(taxonNode, "id");
-                taxonNodes.put(taxonId, taxonNode);
-
-                String taxonParentId = textValueOrNull(taxonNode, "parent");
-                String rankName = taxonNode.get("level").get("displayName").asText();
-                String taxonName = textValueOrNull(taxonNode, "name");
-                String taxonNameId = "batplant:taxon:" + taxonId;
-                String taxonParentNameId = "batplant:taxon:" + taxonParentId;
-                TaxonImpl taxonObj = new TaxonImpl(taxonName, taxonNameId);
-                taxonObj.setPathIds(StringUtils.join(taxonParentNameId, taxonNameId, CharsetConstant.SEPARATOR));
-                taxonObj.setRank(rankName);
-            }
-        }
-        return taxonNodes;
-    }
-
-    public String appendTaxonIdToPathIds(JsonNode taxonNode, List<String> pathIds) {
-        String taxonId = textValueOrNull(taxonNode, "id");
-        pathIds.add("batplant:taxon:" + taxonId);
-        return taxonId;
-    }
-
-    public String appendToRanks(JsonNode taxonNode, List<String> ranks) {
-        String rankName = taxonNode.get("level").get("displayName").asText();
-        ranks.add(StringUtils.lowerCase(rankName));
-        return rankName;
-    }
-
-    public String appendNameToPath(JsonNode taxonNode, List<String> path) {
-        String taxonName = textValueOrNull(taxonNode, "name");
-        path.add(taxonName);
-        return taxonName;
-    }
-
     @Test
     public void parseInteraction() throws StudyImporterException, IOException {
 
         String taxonChunk = getTestTaxonChunk();
-        Map<String, Taxon> taxa = collectTaxa(taxonChunk);
+        Map<String, Taxon> taxa = StudyImporterForBatPlant.parseTaxa(taxonChunk);
         Map<String, String> sources = new TreeMap<>();
         sources.put("955", "some reference");
 
@@ -241,7 +113,7 @@ public class StudyImporterForBatPlantTest {
         List<Map<String, String>> links = new ArrayList<>();
         InteractionListener testListener = links::add;
 
-        parseInteractions(taxa, sources, interactionJson, testListener);
+        StudyImporterForBatPlant.parseInteractions(taxa, sources, interactionJson, testListener);
 
         assertThat(links.size(), Is.is(1));
 
@@ -255,90 +127,6 @@ public class StudyImporterForBatPlantTest {
         assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_PATH), is("Micronycteris | Micronycteris hirsuta"));
         assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_ID), is("batplant:taxon:885"));
         assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_PATH), is("Sphingidae"));
-    }
-
-    public void parseInteractions(Map<String, Taxon> taxa, Map<String, String> sources, String interactionJson, InteractionListener testListener) throws IOException, StudyImporterException {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(interactionJson);
-
-        if (jsonNode.has("interaction")) {
-            JsonNode interaction = jsonNode.get("interaction");
-            if (interaction.isObject()) {
-                Iterator<Map.Entry<String, JsonNode>> fields = interaction.getFields();
-                while (fields.hasNext()) {
-                    Map.Entry<String, JsonNode> entry = fields.next();
-                    JsonNode value = entry.getValue();
-                    if (value.isTextual()) {
-                        JsonNode interactionNode = objectMapper.readTree(value.getTextValue());
-                        JsonNode interactionType = interactionNode.get("interactionType");
-                        if (interactionType != null && interactionType.isObject()) {
-                            String interactionTypeId = textValueOrNull(interactionType, "id");
-                            String interactionTypeName = textValueOrNull(interactionType, "displayName");
-                            if (StringUtils.isNotBlank(interactionTypeId)
-                                    && StringUtils.isNotBlank(interactionTypeName)) {
-
-                                Map<String, String> interactionRecord = new TreeMap<>();
-
-                                interactionRecord.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "batplant:interactionTypeId:" + interactionTypeId);
-                                interactionRecord.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, interactionTypeName);
-
-                                String sourceTaxonId = textValueOrNull(interactionNode, "subject");
-                                Taxon sourceTaxon = taxa.get(sourceTaxonId);
-                                if (sourceTaxon != null) {
-                                    Map<String, String> properties = new HashMap<>();
-                                    properties.put(TaxonUtil.SOURCE_TAXON_NAME, sourceTaxon.getName());
-                                    properties.put(TaxonUtil.SOURCE_TAXON_RANK, sourceTaxon.getRank());
-                                    properties.put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxon.getExternalId());
-                                    properties.put(TaxonUtil.SOURCE_TAXON_PATH, sourceTaxon.getPath());
-                                    properties.put(TaxonUtil.SOURCE_TAXON_PATH_IDS, sourceTaxon.getPathIds());
-                                    properties.put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, sourceTaxon.getPathNames());
-                                    interactionRecord.putAll(properties);
-                                }
-                                interactionRecord.put(TaxonUtil.SOURCE_TAXON_ID, "batplant:taxon:" + sourceTaxonId);
-                                String targetTaxonId = textValueOrNull(interactionNode, "object");
-                                Taxon targetTaxon = taxa.get(targetTaxonId);
-                                if (sourceTaxon != null) {
-                                    Map<String, String> properties = new HashMap<>();
-                                    properties.put(TaxonUtil.TARGET_TAXON_NAME, targetTaxon.getName());
-                                    properties.put(TaxonUtil.TARGET_TAXON_RANK, targetTaxon.getRank());
-                                    properties.put(TaxonUtil.TARGET_TAXON_ID, targetTaxon.getExternalId());
-                                    properties.put(TaxonUtil.TARGET_TAXON_PATH, targetTaxon.getPath());
-                                    properties.put(TaxonUtil.TARGET_TAXON_PATH_IDS, targetTaxon.getPathIds());
-                                    properties.put(TaxonUtil.TARGET_TAXON_PATH_NAMES, targetTaxon.getPathNames());
-                                    interactionRecord.putAll(properties);
-                                } else {
-                                    interactionRecord.put(TaxonUtil.TARGET_TAXON_ID, "batplant:taxon:" + targetTaxonId);
-                                }
-
-                                String sourceId = textValueOrNull(interactionNode, "source");
-
-                                interactionRecord.put(StudyImporterForTSV.REFERENCE_ID, "batplant:source:" + sourceId);
-                                String citationString = sources.get(sourceId);
-                                if (StringUtils.isNotBlank(citationString)) {
-                                    interactionRecord.put(StudyImporterForTSV.REFERENCE_CITATION, citationString);
-                                }
-
-                                String locationId = textValueOrNull(interactionNode, "location");
-                                interactionRecord.put(StudyImporterForTSV.LOCALITY_ID, "batplant:location:" + locationId);
-
-                                testListener.newLink(interactionRecord);
-                            }
-
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
-    private String textValueOrNull(JsonNode interactionType, String key) {
-        String textValue = null;
-        JsonNode interactionTypeId = interactionType.get(key);
-        if (interactionTypeId != null) {
-            textValue = interactionTypeId.asText();
-        }
-        return textValue;
     }
 
 
