@@ -125,9 +125,13 @@ public class TaxonUtil {
         add(TARGET_TAXON_SPECIFIC_EPITHET);
         add(TARGET_TAXON_SUBSPECIFIC_EPITHET);
     }};
+    public static final String SOURCE_TAXON_RANK = SOURCE_TAXON + "Rank";
+    public static final String SOURCE_TAXON_PATH_IDS = SOURCE_TAXON_PATH + "Ids";
+    public static final String TARGET_TAXON_PATH_IDS = TARGET_TAXON_PATH + "Ids";
+    public static final String TARGET_TAXON_RANK = TARGET_TAXON + "Rank";
 
     public static Map<String, String> taxonToMap(Taxon taxon) {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
         properties.put(NAME, taxon.getName());
         properties.put(RANK, taxon.getRank());
         properties.put(EXTERNAL_ID, taxon.getExternalId());
