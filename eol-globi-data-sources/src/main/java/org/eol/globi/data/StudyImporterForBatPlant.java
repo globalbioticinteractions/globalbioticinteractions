@@ -193,15 +193,6 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                 JsonNode taxonNode = objectMapper.readTree(taxonValue.getTextValue());
                 String taxonId = textValueOrNull(taxonNode, "id");
                 taxonNodes.put(taxonId, taxonNode);
-
-                String taxonParentId = textValueOrNull(taxonNode, "parent");
-                String rankName = taxonNode.get("level").get("displayName").asText();
-                String taxonName = textValueOrNull(taxonNode, "name");
-                String taxonNameId = "batplant:taxon:" + taxonId;
-                String taxonParentNameId = "batplant:taxon:" + taxonParentId;
-                TaxonImpl taxonObj = new TaxonImpl(taxonName, taxonNameId);
-                taxonObj.setPathIds(StringUtils.join(taxonParentNameId, taxonNameId, CharsetConstant.SEPARATOR));
-                taxonObj.setRank(rankName);
             }
         }
         return taxonNodes;
@@ -289,7 +280,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         }
     }
 
-    static String textValueOrNull(JsonNode interactionType, String key) {
+    private static String textValueOrNull(JsonNode interactionType, String key) {
         String textValue = null;
         JsonNode interactionTypeId = interactionType.get(key);
         if (interactionTypeId != null) {
@@ -298,19 +289,19 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         return textValue;
     }
 
-    public static String appendTaxonIdToPathIds(JsonNode taxonNode, List<String> pathIds) {
+    private static String appendTaxonIdToPathIds(JsonNode taxonNode, List<String> pathIds) {
         String taxonId = textValueOrNull(taxonNode, "id");
         pathIds.add("batplant:taxon:" + taxonId);
         return taxonId;
     }
 
-    public static String appendToRanks(JsonNode taxonNode, List<String> ranks) {
+    private static String appendToRanks(JsonNode taxonNode, List<String> ranks) {
         String rankName = taxonNode.get("level").get("displayName").asText();
         ranks.add(StringUtils.lowerCase(rankName));
         return rankName;
     }
 
-    public static String appendNameToPath(JsonNode taxonNode, List<String> path) {
+    private static String appendNameToPath(JsonNode taxonNode, List<String> path) {
         String taxonName = textValueOrNull(taxonNode, "name");
         path.add(taxonName);
         return taxonName;

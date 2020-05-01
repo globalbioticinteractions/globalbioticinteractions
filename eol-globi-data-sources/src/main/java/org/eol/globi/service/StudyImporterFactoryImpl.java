@@ -9,6 +9,7 @@ import org.eol.globi.data.ParserFactoryForDataset;
 import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterForAkin;
+import org.eol.globi.data.StudyImporterForBatPlant;
 import org.eol.globi.data.StudyImporterForDwCA;
 import org.eol.globi.data.StudyImporterForGlobalWebDb;
 import org.eol.globi.data.StudyImporterForMangal;
@@ -150,6 +151,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("dwca", StudyImporterForDwCA.class);
                 put("rss", StudyImporterForRSS.class);
                 put("mangal", StudyImporterForMangal.class);
+                put("batplant", StudyImporterForBatPlant.class);
             }
         };
         Class<? extends StudyImporter> anImporter = supportedFormats.get(format);
