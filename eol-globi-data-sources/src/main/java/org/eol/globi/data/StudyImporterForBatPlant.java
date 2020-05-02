@@ -11,6 +11,7 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
+import org.eol.globi.util.JSONUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -112,8 +113,8 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                 JsonNode sourceValue = next.getValue();
                 if (sourceValue.isTextual()) {
                     JsonNode sourceNode = objectMapper.readTree(sourceValue.getTextValue());
-                    String id = textValueOrNull(sourceNode, "id");
-                    String description = textValueOrNull(sourceNode, "description");
+                    String id = JSONUtil.textValueOrNull(sourceNode, "id");
+                    String description = JSONUtil.textValueOrNull(sourceNode, "description");
                     sourceCitations.put(id, description);
                 }
             }
@@ -154,7 +155,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                 appendNameToPath(taxonNode, path);
                 appendToRanks(taxonNode, ranks);
 
-                String taxonParentId = textValueOrNull(taxonNode, "parent");
+                String taxonParentId = JSONUtil.textValueOrNull(taxonNode, "parent");
                 // collect parents
                 while (StringUtils.isNotBlank(taxonParentId)) {
                     JsonNode parentNode = taxonNodes.get(taxonParentId);
@@ -164,7 +165,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                         appendTaxonIdToPathIds(parentNode, pathIds);
                         appendNameToPath(parentNode, path);
                         appendToRanks(parentNode, ranks);
-                        taxonParentId = textValueOrNull(parentNode, "parent");
+                        taxonParentId = JSONUtil.textValueOrNull(parentNode, "parent");
                     }
 
                 }
@@ -198,7 +199,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
             JsonNode taxonValue = next.getValue();
             if (taxonValue.isTextual()) {
                 JsonNode taxonNode = objectMapper.readTree(taxonValue.getTextValue());
-                String taxonId = textValueOrNull(taxonNode, "id");
+                String taxonId = JSONUtil.textValueOrNull(taxonNode, "id");
                 taxonNodes.put(taxonId, taxonNode);
             }
         }
@@ -225,8 +226,8 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                         JsonNode interactionNode = objectMapper.readTree(value.getTextValue());
                         JsonNode interactionType = interactionNode.get("interactionType");
                         if (interactionType != null && interactionType.isObject()) {
-                            String interactionTypeId = textValueOrNull(interactionType, "id");
-                            String interactionTypeName = textValueOrNull(interactionType, "displayName");
+                            String interactionTypeId = JSONUtil.textValueOrNull(interactionType, "id");
+                            String interactionTypeName = JSONUtil.textValueOrNull(interactionType, "displayName");
                             if (StringUtils.isNotBlank(interactionTypeId)
                                     && StringUtils.isNotBlank(interactionTypeName)) {
 
@@ -237,7 +238,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                                 interactionRecord.put(StudyImporterForTSV.INTERACTION_TYPE_ID, nativeInteractionType);
                                 interactionRecord.put(StudyImporterForTSV.INTERACTION_TYPE_NAME, interactionTypeName);
 
-                                String sourceTaxonId = textValueOrNull(interactionNode, "subject");
+                                String sourceTaxonId = JSONUtil.textValueOrNull(interactionNode, "subject");
                                 Taxon sourceTaxon = taxa.get(sourceTaxonId);
                                 if (sourceTaxon != null) {
                                     Map<String, String> properties = new HashMap<>();
@@ -250,7 +251,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                                     interactionRecord.putAll(properties);
                                 }
                                 interactionRecord.put(TaxonUtil.SOURCE_TAXON_ID, "batplant:taxon:" + sourceTaxonId);
-                                String targetTaxonId = textValueOrNull(interactionNode, "object");
+                                String targetTaxonId = JSONUtil.textValueOrNull(interactionNode, "object");
                                 Taxon targetTaxon = taxa.get(targetTaxonId);
                                 if (sourceTaxon != null) {
                                     Map<String, String> properties = new HashMap<>();
@@ -265,7 +266,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                                     interactionRecord.put(TaxonUtil.TARGET_TAXON_ID, "batplant:taxon:" + targetTaxonId);
                                 }
 
-                                String sourceId = textValueOrNull(interactionNode, "source");
+                                String sourceId = JSONUtil.textValueOrNull(interactionNode, "source");
 
                                 interactionRecord.put(StudyImporterForTSV.REFERENCE_ID, "batplant:source:" + sourceId);
                                 String citationString = sources.get(sourceId);
@@ -273,7 +274,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                                     interactionRecord.put(StudyImporterForTSV.REFERENCE_CITATION, citationString);
                                 }
 
-                                String locationId = textValueOrNull(interactionNode, "location");
+                                String locationId = JSONUtil.textValueOrNull(interactionNode, "location");
                                 if (StringUtils.isNotBlank(locationId)) {
                                     Map<String, String> locationProperties = locations.get(locationId);
                                     if (locationProperties != null) {
@@ -292,17 +293,8 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         }
     }
 
-    static String textValueOrNull(JsonNode interactionType, String key) {
-        String textValue = null;
-        JsonNode interactionTypeId = interactionType.get(key);
-        if (interactionTypeId != null) {
-            textValue = interactionTypeId.asText();
-        }
-        return textValue;
-    }
-
     private static String appendTaxonIdToPathIds(JsonNode taxonNode, List<String> pathIds) {
-        String taxonId = textValueOrNull(taxonNode, "id");
+        String taxonId = JSONUtil.textValueOrNull(taxonNode, "id");
         pathIds.add("batplant:taxon:" + taxonId);
         return taxonId;
     }
@@ -314,7 +306,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
     }
 
     private static String appendNameToPath(JsonNode taxonNode, List<String> path) {
-        String taxonName = textValueOrNull(taxonNode, "name");
+        String taxonName = JSONUtil.textValueOrNull(taxonNode, "name");
         path.add(taxonName);
         return taxonName;
     }
@@ -331,7 +323,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
                 JsonNode sourceValue = next.getValue();
                 if (sourceValue.isTextual()) {
                     JsonNode locationNode = objectMapper.readTree(sourceValue.getTextValue());
-                    String id = textValueOrNull(locationNode, "id");
+                    String id = JSONUtil.textValueOrNull(locationNode, "id");
                     locations.put(id, parseLocationNode(locationNode));
                 }
             }
@@ -344,15 +336,15 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         if (locationNode.has("latitude") &&
                 locationNode.has("longitude")) {
             properties.put(StudyImporterForTSV.DECIMAL_LATITUDE,
-                    textValueOrNull(locationNode, "latitude"));
+                    JSONUtil.textValueOrNull(locationNode, "latitude"));
             properties.put(StudyImporterForTSV.DECIMAL_LONGITUDE,
-                    textValueOrNull(locationNode, "longitude"));
+                    JSONUtil.textValueOrNull(locationNode, "longitude"));
         }
 
         if (locationNode.has("displayName")) {
             properties.put(StudyImporterForTSV.LOCALITY_NAME,
-                    textValueOrNull(locationNode, "displayName"));
-            String id = textValueOrNull(locationNode, "id");
+                    JSONUtil.textValueOrNull(locationNode, "displayName"));
+            String id = JSONUtil.textValueOrNull(locationNode, "id");
             if (StringUtils.isNotBlank(id)) {
                 properties.put(StudyImporterForTSV.LOCALITY_ID,
                         "batplant:location:" + id);
@@ -362,8 +354,8 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         if (locationNode.has("habitatType")) {
             JsonNode habitatType = locationNode.get("habitatType");
             properties.put(StudyImporterForTSV.HABITAT_NAME,
-                    StringUtils.lowerCase(textValueOrNull(habitatType, "displayName")));
-            String id = textValueOrNull(habitatType, "id");
+                    StringUtils.lowerCase(JSONUtil.textValueOrNull(habitatType, "displayName")));
+            String id = JSONUtil.textValueOrNull(habitatType, "id");
             if (StringUtils.isNotBlank(id)) {
                 properties.put(StudyImporterForTSV.HABITAT_ID,
                         "batplant:habitat:" + id);
