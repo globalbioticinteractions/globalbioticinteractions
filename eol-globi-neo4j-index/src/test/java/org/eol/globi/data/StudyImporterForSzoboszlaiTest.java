@@ -9,7 +9,9 @@ import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -64,6 +66,25 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
         studyImporterForSzoboszlai.setDataset(testDataset);
 
         Map<Integer, LatLng> localityMap = studyImporterForSzoboszlai.importShapes();
+
+
+        assertLocalityMap(localityMap);
+    }
+
+    @Test
+    public void importShapes2() throws IOException {
+        Dataset testDataset = getTestDataset();
+        ParserFactory parserFactory = new ParserFactoryForDataset(testDataset);
+        StudyImporterForSzoboszlai studyImporterForSzoboszlai = new StudyImporterForSzoboszlai(parserFactory, nodeFactory);
+        studyImporterForSzoboszlai.setDataset(testDataset);
+
+        Map<Integer, LatLng> localityMap = studyImporterForSzoboszlai.importShapes2();
+
+        assertLocalityMap(localityMap);
+    }
+
+    private void assertLocalityMap(Map<Integer, LatLng> localityMap) {
+        assertThat(localityMap.size(), is(376));
 
         LatLng centroid = localityMap.get(2361);
         assertThat(centroid, is(notNullValue()));

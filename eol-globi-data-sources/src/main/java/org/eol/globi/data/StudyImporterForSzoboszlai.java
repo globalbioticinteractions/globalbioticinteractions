@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.CSVParse;
 import com.Ostermiller.util.LabeledCSVParser;
 import com.Ostermiller.util.MD5;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -20,8 +21,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +52,32 @@ public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
         super(parserFactory, nodeFactory);
     }
 
+    public Map<Integer, LatLng> importShapes2() throws IOException {
+        InputStream localities = getDataset().retrieve(URI.create("classpath:/org/eol/globi/data/szoboszlai/szoboszlai-localities.tsv"));
+
+        CSVParse tsvParser = CSVTSVUtil.createTSVParser(
+                new InputStreamReader(localities, StandardCharsets.UTF_8)
+        );
+
+        Map<Integer, LatLng> localityMap = new TreeMap<>();
+
+        String[] line;
+
+        while ((line = tsvParser.getLine()) != null) {
+            if (line.length >= 3) {
+                Integer localeNum = Integer.parseInt(line[0]);
+                double latitude = Double.parseDouble(line[1]);
+                double longitude = Double.parseDouble(line[2]);
+                localityMap.put(localeNum, new LatLng(latitude, longitude));
+            }
+        }
+        return localityMap;
+    }
+
     @Override
     public void importStudy() throws StudyImporterException {
         try {
-            Map<Integer, LatLng> localeMap = importShapes();
+            Map<Integer, LatLng> localeMap = importShapes2();
             try (InputStream inputStream = getDataset().retrieve(URI.create("links"))) {
                 importLinks(inputStream
                         , getInteractionListener()
