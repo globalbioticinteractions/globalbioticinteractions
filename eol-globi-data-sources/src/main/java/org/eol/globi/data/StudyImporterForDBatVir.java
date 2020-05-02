@@ -44,7 +44,7 @@ public class StudyImporterForDBatVir extends StudyImporterWithListener {
 
     private static final int BATCH_SIZE = 100;
 
-    StudyImporterForDBatVir(ParserFactory parserFactory, NodeFactory nodeFactory) {
+    public StudyImporterForDBatVir(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
