@@ -138,51 +138,6 @@
                                     </artifactItems>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>unpack</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <!-- artifacts to enable ecoregion related geospatial indexing -->
-                                        <artifactItem>
-                                            <groupId>org.eol.globi.geo</groupId>
-                                            <artifactId>feow-tnc</artifactId>
-                                            <version>20140115</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}/feow-tnc</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.eol.globi.geo</groupId>
-                                            <artifactId>teow-tnc</artifactId>
-                                            <version>20140115</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}/teow-tnc</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.eol.globi.geo</groupId>
-                                            <artifactId>meow-tnc</artifactId>
-                                            <version>20140115</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}/meow-tnc</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.eol.globi.geo</groupId>
-                                            <artifactId>longhurst</artifactId>
-                                            <version>v4_2010</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}/longhurst</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                     <plugin>

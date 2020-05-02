@@ -59,19 +59,6 @@ public class StudyImporterForSzoboszlaiTest extends GraphDBTestCase {
     }
 
     @Test
-    public void importShapes() throws StudyImporterException, IOException {
-        Dataset testDataset = getTestDataset();
-        ParserFactory parserFactory = new ParserFactoryForDataset(testDataset);
-        StudyImporterForSzoboszlai studyImporterForSzoboszlai = new StudyImporterForSzoboszlai(parserFactory, nodeFactory);
-        studyImporterForSzoboszlai.setDataset(testDataset);
-
-        Map<Integer, LatLng> localityMap = studyImporterForSzoboszlai.importShapes();
-
-
-        assertLocalityMap(localityMap);
-    }
-
-    @Test
     public void importShapes2() throws IOException {
         Dataset testDataset = getTestDataset();
         ParserFactory parserFactory = new ParserFactoryForDataset(testDataset);

@@ -17,7 +17,6 @@
         <module>eol-globi-data-sources</module>
         <module>eol-globi-doi-resolver</module>
         <module>eol-globi-taxon-resolver</module>
-        <module>eol-globi-geo</module>
         <module>eol-globi-neo4j</module>
         <module>eol-globi-neo4j-index-export</module>
         <module>eol-globi-neo4j-index</module>
