@@ -77,7 +77,8 @@ public class CypherQueryBuilderTest {
             spatialClause = " ";
         }
 
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:" + studyRel + "]-study" + spatialClause;
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-" + expectedInteractionClause + "-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:" + studyRel + "]-study-[:IN_DATASET]->dataset" + spatialClause;
     }
 
     public static final String EXPECTED_RETURN_CLAUSE = "RETURN " +
@@ -418,7 +419,7 @@ public class CypherQueryBuilderTest {
                 "MATCH study-[:IN_DATASET]->dataset " +
                 "WITH study " +
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
-                "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study " +
+                "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source)) as sourceCount " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
@@ -444,7 +445,8 @@ public class CypherQueryBuilderTest {
                 "MATCH study-[:IN_DATASET]->dataset " +
                 "WITH study " +
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
-                "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study " +
+                "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source)) as sourceCount " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
@@ -471,7 +473,8 @@ public class CypherQueryBuilderTest {
                 "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) " +
                 "WITH study " +
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
-                "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study " +
+                "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source)) as sourceCount " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
@@ -594,7 +597,10 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTaxon("Arthropoda", "source") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
@@ -1227,7 +1233,12 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + HAS_TARGET_TAXON_PLANTAE + expectedReturnClause()));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset, " +
+                "sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + HAS_TARGET_TAXON_PLANTAE + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1235,7 +1246,12 @@ public class CypherQueryBuilderTest {
     public void findPlantPreyObservationsWithoutLocation()  {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         CypherQuery query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
+                "WHERE " + HAS_TARGET_TAXON_PLANTAE +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1243,7 +1259,11 @@ public class CypherQueryBuilderTest {
     public void findPlantParasiteObservationsWithoutLocation()  {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "parasiteOf", "Plantae", params, SINGLE_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
+                "WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1251,7 +1271,14 @@ public class CypherQueryBuilderTest {
     public void findPreyObservationsNoLocation()  {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "preysOn", null, params, SINGLE_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START " +
+                "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH " +
+                "sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
+                "OPTIONAL MATCH " +
+                "sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
     }
 
@@ -1259,7 +1286,13 @@ public class CypherQueryBuilderTest {
     public void findKillsObservationsNoLocation()  {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "kills", null, params, SINGLE_TAXON_ALL);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(KILLS) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START " +
+                "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH " +
+                "sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(KILLS) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
     }
 
@@ -1272,7 +1305,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + HAS_TARGET_TAXON_PLANTAE + "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START " +
+                "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset, " +
+                "sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + HAS_TARGET_TAXON_PLANTAE + "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1280,7 +1319,14 @@ public class CypherQueryBuilderTest {
     public void findDistinctPlantPreyWithoutLocation()  {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE " + HAS_TARGET_TAXON_PLANTAE + "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START " +
+                "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH " +
+                "sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PREYS_UPON) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
+                "WHERE " + HAS_TARGET_TAXON_PLANTAE +
+                "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1288,7 +1334,15 @@ public class CypherQueryBuilderTest {
     public void findDistinctPlantParasiteWithoutLocation()  {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "parasiteOf", "Plantae", params, SINGLE_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study WHERE " + HAS_TARGET_TAXON_PLANTAE + "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START " +
+                "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                "MATCH " +
+                "sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
+                "WHERE " + HAS_TARGET_TAXON_PLANTAE +
+                "RETURN " +
+                "sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
         assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
@@ -1351,8 +1405,10 @@ public class CypherQueryBuilderTest {
 
     protected void assertLocationMatchAndWhereClause(String clause) {
         assertThat(clause.replaceAll("\\s+", " ")
-                , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
-                        ", sourceSpecimen<-[collected_rel:COLLECTED]-study, sourceSpecimen-[:COLLECTED_AT]->loc" +
+                , is(" MATCH " +
+                        "sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                        "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset, " +
+                        "sourceSpecimen-[:COLLECTED_AT]->loc" +
                         " WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 "));
     }
 
@@ -1380,7 +1436,7 @@ public class CypherQueryBuilderTest {
                     add("preysOn");
                 }}, params, new StringBuilder(), MULTI_TAXON_ALL).toString()
                 , is(" MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon" +
-                        ", sourceSpecimen<-[collected_rel:COLLECTED]-study "));
+                        ", sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset "));
     }
 
     @Test

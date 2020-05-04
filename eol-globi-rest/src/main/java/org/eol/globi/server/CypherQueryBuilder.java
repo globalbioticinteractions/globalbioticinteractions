@@ -591,7 +591,8 @@ public class CypherQueryBuilder {
     }
 
     private static String getInteractionMatch(String interactionTypeSelector, String studyRel) {
-        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:" + studyRel + "]-study";
+        return "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + interactionTypeSelector + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:" + studyRel + "]-study-[:IN_DATASET]->dataset";
     }
 
 
