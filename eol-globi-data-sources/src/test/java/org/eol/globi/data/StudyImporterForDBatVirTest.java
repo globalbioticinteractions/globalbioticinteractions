@@ -16,7 +16,16 @@ import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.service.TaxonUtil.*;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_IDS;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_NAMES;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_IDS;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_NAMES;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class StudyImporterForDBatVirTest {

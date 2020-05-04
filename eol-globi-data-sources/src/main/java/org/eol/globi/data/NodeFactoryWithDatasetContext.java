@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.*;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.TermLookupService;
 
@@ -53,7 +54,17 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     }
 
     private Study studyForDataset(Study study) {
-        StudyImpl study1 = new StudyImpl(study.getTitle(), study.getSource(), study.getDOI(), study.getCitation());
+        String sourceCitation =
+                StringUtils.isBlank(study.getSource())
+                        ? CitationUtil.sourceCitationLastAccessed(dataset)
+                        : study.getSource();
+
+        StudyImpl study1 = new StudyImpl(
+                study.getTitle(),
+                sourceCitation,
+                study.getDOI(),
+                study.getCitation());
+
         study1.setExternalId(study.getExternalId());
         if (StringUtils.isNotBlank(dataset.getNamespace())) {
             study1.setSourceId("globi:" + StringUtils.trim(dataset.getNamespace()));

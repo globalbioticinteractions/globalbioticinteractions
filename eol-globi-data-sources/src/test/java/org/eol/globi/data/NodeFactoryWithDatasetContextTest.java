@@ -2,8 +2,10 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -37,6 +39,28 @@ public class NodeFactoryWithDatasetContextTest {
 
     @Test
     public void getOrCreateStudy() throws NodeFactoryException {
+        NodeFactory factory = Mockito.mock(NodeFactory.class);
+        Dataset dataset = new DatasetImpl(
+                "some/namespace",
+                URI.create("some:uri"),
+                inStream -> inStream);
+
+        NodeFactoryWithDatasetContext factoryWithDS =
+                new NodeFactoryWithDatasetContext(factory, dataset);
+
+        factoryWithDS.getOrCreateStudy(new StudyImpl("some title"));
+
+        ArgumentCaptor<Study> argument = ArgumentCaptor.forClass(Study.class);
+        verify(factory).getOrCreateStudy(argument.capture());
+        assertEquals("globi:some/namespace", argument.getValue().getSourceId());
+        assertEquals("some title", argument.getValue().getTitle());
+
+        String sourceCitation = CitationUtil.sourceCitationLastAccessed(dataset);
+        assertEquals(sourceCitation, argument.getValue().getSource());
+    }
+
+    @Test
+    public void getOrCreateStudyEmptyStudySource() throws NodeFactoryException {
         NodeFactory factory = Mockito.mock(NodeFactory.class);
         Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
