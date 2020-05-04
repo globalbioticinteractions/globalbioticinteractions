@@ -69,7 +69,7 @@ public class StudyImporterForSzoboszlai extends StudyImporterWithListener {
                         , localeMap);
             }
         } catch (IOException e) {
-            throw new StudyImporterException("failed to import [" + getDataset().getArchiveURI().toString() + "]");
+            throw new StudyImporterException("failed to import [" + getDataset().getArchiveURI().toString() + "]", e);
         }
     }
 
