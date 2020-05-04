@@ -268,7 +268,8 @@ public class CypherQueryBuilderTest {
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
-                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*, target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
@@ -283,10 +284,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
-                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
@@ -301,10 +305,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.doi) AND study.doi =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "WHERE (exists(study.doi) AND study.doi =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
-                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Q10.1234/4325\\\\E|\\\\Q10.332/222\\\\E|\\\\Q10.444/222\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
 
     }
@@ -321,10 +328,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
-                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
+                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Qhttp://inaturalist.org/bla\\\\E), target_taxon_name=path:\\\"Arthropoda\\\"}")));
     }
 
