@@ -72,7 +72,7 @@ public class StudyImporterForDBatVir extends StudyImporterWithListener {
 
         int batchSize = totalCount;
         try {
-            Integer batchSizeParsed = Integer.getInteger(batchSizeValue);
+            int batchSizeParsed = Integer.parseInt(batchSizeValue);
             batchSize = batchSizeParsed > 0 ? batchSizeParsed : totalCount;
         } catch (NumberFormatException ex) {
             if (getLogger() != null) {
