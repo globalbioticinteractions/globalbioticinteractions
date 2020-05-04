@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
@@ -68,6 +69,37 @@ public class StudyImporterForDBatVirTest {
         assertThat(links.get(0).get(REFERENCE_ID), Is.is("http://www.ncbi.nlm.nih.gov/pubmed/28393313"));
         assertThat(links.get(0).get(REFERENCE_URL), Is.is("http://www.ncbi.nlm.nih.gov/pubmed/28393313"));
         assertThat(links.get(0).get(REFERENCE_CITATION), Is.is("Waruhiu C, Ommeh S, Obanda V, Agwanda B, Gakuya F, Ge XY, Yang XL, Wu LJ, Zohaib A, Hu B, Shi ZL, Molecular detection of viruses in Kenyan bats and discovery of novel astroviruses, caliciviruses and rotaviruses. Virol Sin 2017, 32(2):101-114."));
+
+    }
+
+    @Test
+    public void parseInteractionsFull() throws IOException, StudyImporterException {
+        InputStream first2 = new GZIPInputStream(getClass().getResourceAsStream("/org/eol/globi/data/dbatvir/dbatvir.json.gz"));
+
+        List<Map<String, String>> links = new ArrayList<>();
+        InteractionListener interactionListener = links::add;
+
+        StudyImporterForDBatVir.parseInteractions(first2, interactionListener);
+
+        assertThat(links.size(), Is.is(11164));
+
+        assertThat(links.get(0).get(SOURCE_TAXON_NAME), Is.is("Eptesicus nilssoni"));
+        assertThat(links.get(0).get(SOURCE_TAXON_ID), Is.is("NCBI:59451"));
+
+        assertThat(links.get(0).get(INTERACTION_TYPE_ID), Is.is("http://purl.obolibrary.org/obo/RO_0002453"));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME), Is.is("hostOf"));
+
+        assertThat(links.get(0).get(TARGET_TAXON_NAME), Is.is("ZV2011"));
+        assertThat(links.get(0).get(TARGET_TAXON_ID), Is.is("NCBI:2706560"));
+        assertThat(links.get(0).get(TARGET_TAXON_PATH), Is.is("Phenuiviridae | Zwiesel bat banyangvirus | ZV2011"));
+        assertThat(links.get(0).get(TARGET_TAXON_PATH_IDS), Is.is(" | NCBI:2706560 | "));
+        assertThat(links.get(0).get(TARGET_TAXON_PATH_NAMES), Is.is("family | species | strain"));
+
+        assertThat(links.get(0).get(StudyImporterForMetaTable.EVENT_DATE), Is.is("2011"));
+        assertThat(links.get(0).get(LOCALITY_NAME), Is.is("Germany"));
+        assertThat(links.get(0).get(REFERENCE_ID), Is.is("http://www.ncbi.nlm.nih.gov/pubmed/31992832"));
+        assertThat(links.get(0).get(REFERENCE_URL), Is.is("http://www.ncbi.nlm.nih.gov/pubmed/31992832"));
+        assertThat(links.get(0).get(REFERENCE_CITATION), Is.is("Kohl C, Brinkmann A, Radonic A, Dabrowski PW, Nitsche A, Muhldorfer K, Wibbelt G, Kurth A, Zwiesel bat banyangvirus, a potentially zoonotic Huaiyangshan banyangvirus (Formerly known as SFTS)-like banyangvirus in Northern bats from Germany. Sci Rep 2020, 10(1):1370."));
 
     }
 

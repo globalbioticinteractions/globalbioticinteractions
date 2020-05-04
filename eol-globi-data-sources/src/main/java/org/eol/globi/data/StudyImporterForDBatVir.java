@@ -12,7 +12,9 @@ import org.jsoup.safety.Whitelist;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -86,7 +88,7 @@ public class StudyImporterForDBatVir extends StudyImporterWithListener {
                 InputStream interactionsPage = getDataset().retrieve(pageURL1);
                 parseInteractions(interactionsPage, getInteractionListener());
             } catch (IOException e) {
-                getLogger().warn(null, "failed to retrieve page [" + pageURL1.toString() + "]");
+                getLogger().warn(null, "failed to retrieve page [" + pageURL1.toString() + "], because of: [" + e.getMessage() + "]");
             }
         }
 
@@ -116,7 +118,7 @@ public class StudyImporterForDBatVir extends StudyImporterWithListener {
 
     public static void parseInteractions(InputStream pageStream, InteractionListener interactionListener) throws IOException, StudyImporterException {
         ObjectMapper objectMapper = getLenientObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(pageStream);
+        JsonNode jsonNode = objectMapper.readTree(new InputStreamReader(pageStream, StandardCharsets.ISO_8859_1));
         if (jsonNode.has("data")) {
             JsonNode data = jsonNode.get("data");
             Map<String, String> link = new TreeMap<>();
