@@ -103,7 +103,7 @@ public class CypherReturnClauseBuilder {
                 put(STUDY_URL, ResultObject.STUDY.getLabel() + ".externalId");
                 put(STUDY_DOI, ResultObject.STUDY.getLabel() + ".doi");
                 put(STUDY_CITATION, ResultObject.STUDY.getLabel() + ".citation");
-                put(STUDY_SOURCE_CITATION, ResultObject.STUDY.getLabel() + ".source");
+                put(STUDY_SOURCE_CITATION, ResultObject.DATASET.getLabel() + ".citation");
             }
         };
     }
