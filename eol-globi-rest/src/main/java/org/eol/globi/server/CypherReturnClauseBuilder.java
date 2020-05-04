@@ -41,7 +41,9 @@ import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH_IDS;
 import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_PATH_RANKS;
 import static org.eol.globi.server.util.ResultField.STUDY_CITATION;
 import static org.eol.globi.server.util.ResultField.STUDY_DOI;
+import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_ARCHIVE_URI;
 import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_CITATION;
+import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_LAST_SEEN_AT;
 import static org.eol.globi.server.util.ResultField.STUDY_TITLE;
 import static org.eol.globi.server.util.ResultField.STUDY_URL;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BASIS_OF_RECORD;
@@ -104,6 +106,8 @@ public class CypherReturnClauseBuilder {
                 put(STUDY_DOI, ResultObject.STUDY.getLabel() + ".doi");
                 put(STUDY_CITATION, ResultObject.STUDY.getLabel() + ".citation");
                 put(STUDY_SOURCE_CITATION, ResultObject.DATASET.getLabel() + ".citation");
+                put(STUDY_SOURCE_ARCHIVE_URI, ResultObject.DATASET.getLabel() + ".archiveURI");
+                put(STUDY_SOURCE_LAST_SEEN_AT, ResultObject.DATASET.getLabel() + ".lastSeenAt");
             }
         };
     }

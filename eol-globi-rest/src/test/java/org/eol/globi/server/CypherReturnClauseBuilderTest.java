@@ -35,6 +35,27 @@ public class CypherReturnClauseBuilderTest {
     }
 
     @Test
+    public void multiTaxonAllDatasetFields() {
+        StringBuilder query = new StringBuilder();
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_ALL,
+                new TreeMap<String, String[]>() {
+                    {
+                        put("field", new String[]{
+                                "study_source_citation",
+                                "study_source_archive_uri",
+                                "study_source_last_seen_at"
+                        });
+                    }
+                });
+        assertThat(query.toString(), is(" RETURN " +
+                "dataset.citation as study_source_citation," +
+                "dataset.archiveURI as study_source_archive_uri," +
+                "dataset.lastSeenAt as study_source_last_seen_at"));
+    }
+
+    @Test
     public void multiTaxonAllUnknownReturnFieldsWithTaxonPrefix() {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
@@ -198,14 +219,14 @@ public class CypherReturnClauseBuilderTest {
                         "interaction.label as iType, " +
                         "sourceTaxon " +
                         "WITH " +
-                         "sourceTaxon, iType, targetTaxon " +
+                        "sourceTaxon, iType, targetTaxon " +
                         "MATCH sourceTaxon-[:SAME_AS*0..1]->sourceTaxonSameAs, targetTaxon-[:SAME_AS*0..1]->targetTaxonSameAs " +
                         "WHERE " +
-                         "sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
-                         "targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
+                        "sourceTaxonSameAs.externalId =~ {source_taxon_prefix} AND " +
+                        "targetTaxonSameAs.externalId =~ {target_taxon_prefix} " +
                         "WITH sourceTaxonSameAs as sourceTaxon, iType, targetTaxonSameAs as targetTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name," +
-                         "targetTaxon.name as target_taxon_name"));
+                        "targetTaxon.name as target_taxon_name"));
     }
 
     @Test
