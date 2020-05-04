@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ import static org.eol.globi.util.JSONUtil.textValueOrEmpty;
 
 public class StudyImporterForDBatVir extends StudyImporterWithListener {
 
-    private static final int BATCH_SIZE = 100;
+    private static final int BATCH_SIZE_DEFAULT = -1;
 
     public StudyImporterForDBatVir(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -68,8 +67,21 @@ public class StudyImporterForDBatVir extends StudyImporterWithListener {
     public void importStudy() throws StudyImporterException {
         int totalCount = getTotalCount();
 
-        for (int offset = 0; offset < totalCount; offset += BATCH_SIZE) {
-            URI pageURL1 = getPageURL(offset, BATCH_SIZE);
+        String batchSizeValue = getDataset()
+                .getOrDefault("batchSize", Integer.toString(BATCH_SIZE_DEFAULT));
+
+        int batchSize = totalCount;
+        try {
+            Integer batchSizeParsed = Integer.getInteger(batchSizeValue);
+            batchSize = batchSizeParsed > 0 ? batchSizeParsed : totalCount;
+        } catch (NumberFormatException ex) {
+            if (getLogger() != null) {
+                getLogger().warn(null, "invalid batchSize value [" + batchSizeValue + "]");
+            }
+        }
+
+        for (int offset = 0; offset < totalCount; offset += batchSize) {
+            URI pageURL1 = getPageURL(offset, batchSize);
             try {
                 InputStream interactionsPage = getDataset().retrieve(pageURL1);
                 parseInteractions(interactionsPage, getInteractionListener());
@@ -241,7 +253,6 @@ public class StudyImporterForDBatVir extends StudyImporterWithListener {
             link.put(propertyLabel, value);
         }
     }
-
 
 
 }
