@@ -16,7 +16,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
                 "OPTIONAL MATCH dtaxon-[sameAs:SAME_AS]->otherTaxon " +
                 "WHERE not(exists(dtaxon.path)) AND otherTaxon = null " +
                 "WITH dtaxon, otherTaxon, study " +
-                "MATCH study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:CLASSIFIED_AS]->dtaxon, " +
+                "MATCH dataset<-[:IN_DATASET]-study-[:COLLECTED|REFUTES|SUPPORTS]->specimen-[:CLASSIFIED_AS]->dtaxon, " +
                 "specimen-[:ORIGINALLY_DESCRIBED_AS]->origTaxon " +
                 "OPTIONAL MATCH dtaxon-[:SIMILAR_TO]->ftaxon " +
                 "RETURN distinct(origTaxon.name) as `unmatched taxon name`" +
@@ -26,7 +26,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
                 ", ftaxon.path as `similar to taxon path`" +
                 ", ftaxon.externalId as `similar to taxon id`" +
                 ", study.citation as `study`" +
-                ", study.source as `source`";
+                ", dataset.citation as `source`";
 
         HashMap<String, Object> params = new HashMap<String, Object>() {{
             put("study_title", study.getTitle());
