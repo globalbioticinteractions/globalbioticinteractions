@@ -729,7 +729,9 @@ public class CypherQueryBuilder {
             query.append("START study = node:studies('*:*') ");
         }
 
-        query.append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:" + createStudyRel(parameterMap) + "]-study")
+        query.append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:")
+                .append(createStudyRel(parameterMap))
+                .append("]-study-[:IN_DATASET]->dataset")
                 .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
         if (RequestHelper.isSpatialSearch(parameterMap)) {
             query.append(", sourceSpecimen-[:COLLECTED_AT]->loc");
@@ -744,7 +746,7 @@ public class CypherQueryBuilder {
                 .append(", count(interact) as `number of interactions`")
                 .append(", count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`")
                 .append(", count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`")
-                .append(", count(distinct(study.source)) as `number of distinct study sources`")
+                .append(", count(distinct(dataset)) as `number of distinct study sources`")
                 .append(", count(c." + SpecimenConstant.DATE_IN_UNIX_EPOCH + ") as `number of interactions with timestamp`")
         ;
         if (RequestHelper.isSpatialSearch(parameterMap)) {
@@ -766,7 +768,7 @@ public class CypherQueryBuilder {
     protected static Map<String, String> addSourceWhereClause(Map<String, String[]> parameterMap, StringBuilder query) {
         String[] sourceList = parameterMap == null ? null : parameterMap.get("source");
         final String source = sourceList != null && sourceList.length > 0 ? sourceList[0] : null;
-        String sourceWhereClause = StringUtils.isBlank(source) ? "" : " study.source = {source}";
+        String sourceWhereClause = StringUtils.isBlank(source) ? "" : " dataset.citation = {source}";
         Map<String, String> params = StringUtils.isBlank(source) ? EMPTY_PARAMS : new HashMap<String, String>() {{
             put("source", source);
         }};
@@ -778,11 +780,4 @@ public class CypherQueryBuilder {
         return params;
     }
 
-    public static CypherQuery stats(final String source) {
-        HashMap<String, String[]> paramMap = new HashMap<String, String[]>();
-        if (StringUtils.isNotBlank(source)) {
-            paramMap.put("source", new String[]{source});
-        }
-        return spatialInfo(paramMap);
-    }
 }
