@@ -25,6 +25,7 @@ public enum TaxonomyProvider {
     INATURALIST_TAXON("INAT_TAXON:"),
     WIKIDATA("WD:"),
     FISHBASE_CACHE("FBC:"),
+    BATPLANT("batplant:taxon:"),
     GULFBASE("BioGoMx:");
 
     private final List<String> idPrefixes;
