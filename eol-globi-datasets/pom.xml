@@ -26,6 +26,16 @@
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${globi.tsv.version}</version>
+            <classifier>tsv</classifier>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
     <build>
         <extensions>
             <extension>
