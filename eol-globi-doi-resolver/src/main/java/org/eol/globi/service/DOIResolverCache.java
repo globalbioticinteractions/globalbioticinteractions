@@ -121,6 +121,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                     }
                 })
                 .make();
+        db.commit();
         watch.stop();
         LOG.info("doi cache built in [" + watch.getTime() / 1000 + "] s.");
     }

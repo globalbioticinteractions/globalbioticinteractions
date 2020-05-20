@@ -11,9 +11,6 @@ public class CacheService {
 
     private File cacheDir = new File("./target/term-cache");
 
-    private boolean temporary = true;
-    private boolean readonly = false;
-
     public DB initDb(String cacheName) throws PropertyEnricherException {
         File mapdbCacheDir = getMapDBDir();
         if (!mapdbCacheDir.exists()) {
@@ -42,19 +39,4 @@ public class CacheService {
         return this.cacheDir;
     }
 
-    public boolean isTemporary() {
-        return temporary;
-    }
-
-    public void setTemporary(boolean temporary) {
-        this.temporary = temporary;
-    }
-
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
-    }
-
-    public boolean getReadonly() {
-        return readonly;
-    }
 }
