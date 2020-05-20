@@ -70,60 +70,63 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
         StopWatch watch = new StopWatch();
         watch.start();
         final CSVParse parser = CSVTSVUtil.createTSVParser(reader);
+        if (db.exists("doiCache")) {
+            LOG.info("reusing existing doi cache...");
+        } else {
+            LOG.info("doi cache building...");
+            doiCitationMap = db
+                    .createTreeMap("doiCache")
+                    .pumpPresort(300000)
+                    .pumpIgnoreDuplicates()
+                    .pumpSource(new Iterator<Fun.Tuple2<String, DOI>>() {
+                        private String[] line = null;
+                        final AtomicBoolean nextLineParsed = new AtomicBoolean(false);
 
-        LOG.info("doi cache building...");
-        doiCitationMap = db
-                .createTreeMap("doiCache")
-                .pumpPresort(300000)
-                .pumpIgnoreDuplicates()
-                .pumpSource(new Iterator<Fun.Tuple2<String, DOI>>() {
-                    private String[] line = null;
-                    final AtomicBoolean nextLineParsed = new AtomicBoolean(false);
-
-                    String getCitation(String[] line) {
-                        return line != null && line.length > 1 ? line[1] : null;
-                    }
-
-                    DOI getDOI(String[] line) {
-                        String doiString = line[0];
-                        try {
-                            return StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
-                        } catch (MalformedDOIException e) {
-                            LOG.warn("skipping malformed doi [" + doiString + "]", e);
-                            return null;
+                        String getCitation(String[] line) {
+                            return line != null && line.length > 1 ? line[1] : null;
                         }
-                    }
 
-                    @Override
-                    public boolean hasNext() {
-                        try {
-                            while (!nextLineParsed.get()) {
-                                line = parser.getLine();
-                                if (line == null) {
-                                    break;
-                                }
-                                nextLineParsed.set(getDOI(line) != null
-                                        && StringUtils.isNotBlank(getCitation(line)));
+                        DOI getDOI(String[] line) {
+                            String doiString = line[0];
+                            try {
+                                return StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
+                            } catch (MalformedDOIException e) {
+                                LOG.warn("skipping malformed doi [" + doiString + "]", e);
+                                return null;
                             }
-                            return line != null && nextLineParsed.get();
-                        } catch (IOException e) {
-                            LOG.error("problem reading", e);
-                            return false;
                         }
-                    }
 
-                    @Override
-                    public Fun.Tuple2<String, DOI> next() {
-                        String citationString = StringUtils.defaultString(getCitation(line), "");
-                        DOI doi = getDOI(line);
-                        nextLineParsed.set(false);
-                        return new Fun.Tuple2<>(citationString, doi);
-                    }
-                })
-                .make();
-        db.commit();
-        watch.stop();
-        LOG.info("doi cache built in [" + watch.getTime() / 1000 + "] s.");
+                        @Override
+                        public boolean hasNext() {
+                            try {
+                                while (!nextLineParsed.get()) {
+                                    line = parser.getLine();
+                                    if (line == null) {
+                                        break;
+                                    }
+                                    nextLineParsed.set(getDOI(line) != null
+                                            && StringUtils.isNotBlank(getCitation(line)));
+                                }
+                                return line != null && nextLineParsed.get();
+                            } catch (IOException e) {
+                                LOG.error("problem reading", e);
+                                return false;
+                            }
+                        }
+
+                        @Override
+                        public Fun.Tuple2<String, DOI> next() {
+                            String citationString = StringUtils.defaultString(getCitation(line), "");
+                            DOI doi = getDOI(line);
+                            nextLineParsed.set(false);
+                            return new Fun.Tuple2<>(citationString, doi);
+                        }
+                    })
+                    .make();
+            db.commit();
+            watch.stop();
+            LOG.info("doi cache built in [" + watch.getTime() / 1000 + "] s.");
+        }
     }
 
 }

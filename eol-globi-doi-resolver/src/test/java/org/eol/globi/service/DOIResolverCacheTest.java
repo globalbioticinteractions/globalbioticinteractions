@@ -51,6 +51,20 @@ public class DOIResolverCacheTest {
     }
 
     @Test
+    public void initCacheTwice() throws IOException, PropertyEnricherException {
+        String bla = "doi\tcitation" +
+                "\ndoi:10.some/doi\tsome citation" +
+                "\ndoi:10.some/other/doi\tsome other citation";
+        Reader reader = new StringReader(bla);
+
+        doiResolverCache.init(reader);
+        doiResolverCache.init(reader);
+        Map<String, DOI> doiForReference = doiResolverCache.resolveDoiFor(Arrays.asList("some citation", "some other citation"));
+        assertThat(doiForReference.get("some other citation").toString(), is("10.some/other/doi"));
+        assertThat(doiForReference.get("some citation").toString(), is("10.some/doi"));
+    }
+
+    @Test
     public void initCache2() throws IOException, PropertyEnricherException {
         String bla = "doi\tcitation\n" +
                 "10.some/A\tcitationA\n" +
