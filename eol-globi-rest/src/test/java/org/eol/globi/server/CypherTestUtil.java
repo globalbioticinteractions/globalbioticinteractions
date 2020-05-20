@@ -1,7 +1,9 @@
 package org.eol.globi.server;
 
+import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.server.util.ResultField;
+import org.eol.globi.service.CacheService;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.tool.LinkerTaxonIndex;
 import org.eol.globi.tool.ReportGenerator;
@@ -9,8 +11,10 @@ import org.eol.globi.util.CypherQuery;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class CypherTestUtil {
     public static final String CYPHER_RESULT = "{\n" +
@@ -27,7 +31,12 @@ public class CypherTestUtil {
         new NodeFactoryNeo4j(graphDatabaseService);
         new NonResolvingTaxonIndex(graphDatabaseService);
         new LinkerTaxonIndex(graphDatabaseService).link();
-        new ReportGenerator(graphDatabaseService).run();
+        CacheService cacheService = new CacheService();
+        File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
+        cacheService.setCacheDir(cacheDir);
+        ReportGenerator reportGenerator = new ReportGenerator(graphDatabaseService, cacheService);
+
+        reportGenerator.run();
         HashMap<String, Object> params = cypherQuery.getParams() == null ? null : new HashMap<>(cypherQuery.getParams());
         try {
             graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
@@ -39,6 +48,8 @@ public class CypherTestUtil {
             if (!ex.getMessage().contains("Encountered \" \":\" \": \"\"")) {
                 throw ex;
             }
+        } finally {
+            FileUtils.deleteQuietly(cacheDir);
         }
     }
 }

@@ -37,8 +37,12 @@ public class ReportGenerator {
     }
 
     public ReportGenerator(GraphDatabaseService graphService) {
+        this(graphService, new CacheService());
+    }
+
+    public ReportGenerator(GraphDatabaseService graphService, CacheService cacheService) {
         this.graphService = graphService;
-        this.cacheService = new CacheService();
+        this.cacheService = cacheService;
     }
 
     public void run() {
