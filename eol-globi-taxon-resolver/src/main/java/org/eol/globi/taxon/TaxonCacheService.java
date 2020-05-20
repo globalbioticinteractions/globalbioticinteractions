@@ -196,6 +196,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                         .pumpSource(taxonCacheIterator(taxonCache))
                         .keySerializer(BTreeKeySerializer.STRING)
                         .make();
+                db.commit();
+
             } catch (IOException e) {
                 throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
             }

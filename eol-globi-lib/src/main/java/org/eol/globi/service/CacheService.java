@@ -5,21 +5,33 @@ import org.mapdb.DBMaker;
 
 import java.io.File;
 
+import static org.eol.globi.service.CacheServiceUtil.createCacheDir;
+
 public class CacheService {
 
     private File cacheDir = new File("./target/term-cache");
 
+    private boolean temporary = true;
+    private boolean readonly = false;
+
     public DB initDb(String cacheName) throws PropertyEnricherException {
-        File mapdbCacheDir = new File(getCacheDir(), "mapdb");
-        CacheServiceUtil.createCacheDir(mapdbCacheDir);
+        File mapdbCacheDir = getMapDBDir();
+        if (!mapdbCacheDir.exists()) {
+            createCacheDir(getMapDBDir());
+        }
+        File mapDBFile = new File(mapdbCacheDir, cacheName);
+
         DBMaker dbMaker = DBMaker
-                .newFileDB(new File(mapdbCacheDir, cacheName))
+                .newFileDB(mapDBFile)
                 .mmapFileEnableIfSupported()
-                .closeOnJvmShutdown()
                 .transactionDisable()
-                .deleteFilesAfterClose();
+                .closeOnJvmShutdown();
         return dbMaker
                 .make();
+    }
+
+    private File getMapDBDir() {
+        return new File(getCacheDir(), "mapdb");
     }
 
     public void setCacheDir(File cacheFilename) {
@@ -30,4 +42,19 @@ public class CacheService {
         return this.cacheDir;
     }
 
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
+    }
+
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
+    }
+
+    public boolean getReadonly() {
+        return readonly;
+    }
 }
