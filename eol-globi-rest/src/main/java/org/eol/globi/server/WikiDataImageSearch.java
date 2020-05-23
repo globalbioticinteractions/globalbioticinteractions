@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.WordUtils;
@@ -17,13 +18,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.split;
-import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 
 public class WikiDataImageSearch implements ImageSearch {
 
@@ -31,41 +33,69 @@ public class WikiDataImageSearch implements ImageSearch {
 
     @Override
     public TaxonImage lookupImageForExternalId(String externalId) throws IOException {
-        return startsWithIgnoreCase(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix())
-                ? requestImage(externalId, () -> "en")
-                : null;
+        return lookupImageForExternalId(externalId, () -> "en");
     }
 
     @Override
     public TaxonImage lookupImageForExternalId(String externalId, SearchContext context) throws IOException {
-        return startsWithIgnoreCase(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix())
-                ? requestImage(externalId, context)
-                : null;
+        String sparqlQuery = createSparqlQuery(externalId, context.getPreferredLanguage());
+        return StringUtils.isBlank(sparqlQuery)
+                ? null
+                : executeQuery(externalId, context, sparqlQuery);
     }
 
-    private TaxonImage requestImage(String externalId, SearchContext context) throws IOException {
+    private TaxonImage executeQuery(String externalId, SearchContext context, String sparql) throws IOException {
         TaxonImage taxonImage = null;
-        String wikiDataId = replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
-
-        String sparql = "SELECT ?item ?pic ?name WHERE { \n" +
-                "  wd:" + wikiDataId + " wdt:P18 ?pic . \n" +
-                "  SERVICE wikibase:label {\n" +
-                "    bd:serviceParam wikibase:language \"" + context.getPreferredLanguage() + "\" .\n" +
-                "    wd:" + wikiDataId + " wdt:P1843 ?name .\n" +
-                "  }\n" +
-                "} limit 1";
-
         try {
             URI url = new URI("https", "query.wikidata.org", "/sparql", "query=" + sparql, null);
             LOG.info("requesting image [" + url + "]");
             HttpGet httpGet = HttpUtil.httpGetJson(url);
             String jsonString = HttpUtil.executeAndRelease(httpGet, HttpUtil.getFailFastHttpClient());
-            return parseWikidataResult(externalId, taxonImage, jsonString, context);
+            taxonImage = parseWikidataResult(externalId, taxonImage, jsonString, context);
 
         } catch (URISyntaxException e) {
             throw new IOException("marlformed uri", e);
         }
+        return taxonImage;
+    }
 
+    String createSparqlQuery(String externalId, String preferredLanguage) {
+        TaxonomyProvider taxonomyProvider = ExternalIdUtil.taxonomyProviderFor(externalId);
+        Map<TaxonomyProvider, String> nonWdProviders = new TreeMap<TaxonomyProvider, String>() {{
+            put(TaxonomyProvider.ITIS, "P815");
+            put(TaxonomyProvider.NCBI, "P685");
+            put(TaxonomyProvider.EOL, "P830");
+            put(TaxonomyProvider.WORMS, "P850");
+            put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA, "P5055");
+            put(TaxonomyProvider.FISHBASE_CACHE, "P938");
+            put(TaxonomyProvider.GBIF, "P846");
+            put(TaxonomyProvider.INATURALIST_TAXON, "P3151");
+        }};
+
+        String query = null;
+
+        if (TaxonomyProvider.WIKIDATA.equals(taxonomyProvider)) {
+            String wikiDataId = replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
+
+            query = "SELECT ?item ?pic ?name WHERE {\n" +
+                    "  wd:" + wikiDataId + " wdt:P18 ?pic .\n" +
+                    "  SERVICE wikibase:label {\n" +
+                    "    bd:serviceParam wikibase:language \"" + preferredLanguage + "\" .\n" +
+                    "    wd:" + wikiDataId + " wdt:P1843 ?name .\n" +
+                    "  }\n" +
+                    "} limit 1";
+        } else if (taxonomyProvider != null && nonWdProviders.containsKey(taxonomyProvider)) {
+            String taxonId = replace(externalId, taxonomyProvider.getIdPrefix(), "");
+            query = "SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
+                    "  ?wdpage wdt:P18 ?pic .\n" +
+                    "  ?wdpage wdt:" + nonWdProviders.get(taxonomyProvider) + " \"" + taxonId + "\" .\n" +
+                    "  SERVICE wikibase:label {\n" +
+                    "   bd:serviceParam wikibase:language \"" + preferredLanguage + "\" .\n" +
+                    "   ?wdpage wdt:P1843 ?name .\n" +
+                    "  }\n" +
+                    "} limit 1";
+        }
+        return query;
     }
 
     private TaxonImage parseWikidataResult(String externalId, TaxonImage taxonImage, String jsonString, SearchContext context) throws IOException {
@@ -76,7 +106,14 @@ public class WikiDataImageSearch implements ImageSearch {
                 JsonNode bindings = results.get("bindings");
                 for (JsonNode binding : bindings) {
                     taxonImage = new TaxonImage();
-                    taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(externalId));
+                    JsonNode wdPage = binding.get("wdpage");
+                    if (valueExists(wdPage)) {
+                        String pageUrl = wdPage.get("value").asText();
+                        taxonImage.setInfoURL(pageUrl);
+                    } else {
+                        taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(externalId));
+                    }
+
                     JsonNode pic = binding.get("pic");
                     if (valueExists(pic)) {
                         taxonImage.setThumbnailURL(replace(pic.get("value").asText(), "http:", "https:") + "?width=100");

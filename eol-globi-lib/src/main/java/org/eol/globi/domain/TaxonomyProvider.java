@@ -25,6 +25,8 @@ public enum TaxonomyProvider {
     INATURALIST_TAXON("INAT_TAXON:"),
     WIKIDATA("WD:"),
     FISHBASE_CACHE("FBC:"),
+    FISHBASE_SPECCODE("FBC:FB:SpecCode:"),
+    SEALIFEBASE_SPECCODE("FBC:SLB:SpecCode:"),
     BATPLANT("batplant:taxon:"),
     GULFBASE("BioGoMx:");
 
