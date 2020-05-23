@@ -43,21 +43,22 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
 
 
         Map<String, String> sources;
+        String baseUrl = "https://www.batbase.org/";
         try {
-            sources = parseSources(getDataset().retrieve(URI.create("https://www.batplant.org/fetch/source")));
+            sources = parseSources(getDataset().retrieve(URI.create(baseUrl + "fetch/source")));
         } catch (IOException e) {
             throw new StudyImporterException("failed to access sources", e);
         }
 
         Map<String, Taxon> taxa;
         try {
-            taxa = parseTaxa(getDataset().retrieve(URI.create("https://www.batplant.org/fetch/taxon")));
+            taxa = parseTaxa(getDataset().retrieve(URI.create(baseUrl + "fetch/taxon")));
         } catch (IOException e) {
             throw new StudyImporterException("failed to access taxa", e);
         }
         Map<String, Map<String, String>> locations;
         try {
-            locations = parseLocations(getDataset().retrieve(URI.create("https://www.batplant.org/fetch/location")));
+            locations = parseLocations(getDataset().retrieve(URI.create(baseUrl + "fetch/location")));
         } catch (IOException e) {
             throw new StudyImporterException("failed to access locations", e);
         }
@@ -86,7 +87,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
             parseInteractions(taxa,
                     sources,
                     interactionListener,
-                    getDataset().retrieve(URI.create("https://www.batplant.org/fetch/interaction")),
+                    getDataset().retrieve(URI.create(baseUrl + "fetch/interaction")),
                     locations);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access interactions", e);
