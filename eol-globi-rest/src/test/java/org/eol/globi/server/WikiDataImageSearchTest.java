@@ -24,10 +24,6 @@ public class WikiDataImageSearchTest {
 
     @Test
     public void lookupLionByNCBI() throws IOException {
-        // NCBI https://www.wikidata.org/wiki/Property:P685
-        // iNaturalist https://www.wikidata.org/wiki/Property:P3151
-        // GBIF https://www.wikidata.org/wiki/Property:P846
-        // EOL https://www.wikidata.org/wiki/Property:P830
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("NCBI:9689");
         assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
@@ -62,7 +58,6 @@ public class WikiDataImageSearchTest {
 
     @Test
     public void lookupLionByITIS() throws IOException {
-        // ITIS https://www.wikidata.org/wiki/Property:P815
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("ITIS:183803");
         assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));

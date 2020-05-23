@@ -92,6 +92,13 @@ public class ImageServiceIT extends ITBase {
         assertThat(response, is(notNullValue()));
     }
 
+    @Test
+    public void imagesForNCBIBatWithImage() throws IOException {
+        String uri = getURLPrefix() + "imagesForNames?name=NCBI:59451";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+    }
+
     @Test(expected = HttpResponseException.class)
     public void imagesForNamesNoParams() throws IOException {
         String uri = getURLPrefix() + "imagesForNames";

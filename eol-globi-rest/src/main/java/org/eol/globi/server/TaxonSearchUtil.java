@@ -1,12 +1,10 @@
 package org.eol.globi.server;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
-import org.eol.globi.util.ExternalIdUtil;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +20,11 @@ import java.util.Map;
 
 public class TaxonSearchUtil {
 
-    public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request) throws IOException {
+    public interface LinkMapper {
+        String linkForNode(JsonNode node);
+    }
+
+    public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request, LinkMapper linkMapper) throws IOException {
 
         final CypherQuery pagedQuery = createPagedQuery(taxonPath, request);
 
@@ -33,18 +35,15 @@ public class TaxonSearchUtil {
         if (dataNode != null) {
             for (JsonNode jsonNode : dataNode) {
                 if (jsonNode.isArray() && jsonNode.size() > 1) {
-                    String externalId = jsonNode.get(0).asText();
-                    String externalUrl = jsonNode.get(1).asText();
-                    String resolvedUrl = ExternalIdUtil.urlForExternalId(externalId);
-                    if (StringUtils.isNotBlank(resolvedUrl)) {
-                        links.add(resolvedUrl);
-                    } else if (StringUtils.isNotBlank(externalUrl)) {
-                        links.add(externalUrl);
-                    }
+                    addLinksFromNode(links, jsonNode, linkMapper);
                 }
             }
         }
         return links;
+    }
+
+    public static void addLinksFromNode(Collection<String> links, JsonNode jsonNode, LinkMapper linkMapper) {
+        links.add(linkMapper.linkForNode(jsonNode));
     }
 
     public static CypherQuery createPagedQuery(String taxonPath, HttpServletRequest request) {

@@ -47,32 +47,36 @@ public class ImageService {
             if (taxon != null) {
                 Collection<String> links = taxonSearch.findTaxonIds(scientificName);
                 if (links != null) {
-                    Stream<String> ids = replaceWithPrefix(links);
-                    for (String id : ids.collect(Collectors.toList())) {
-                        taxonImage = imageSearch.lookupImageForExternalId(id, new SearchContext() {
-
-                            @Override
-                            public String getPreferredLanguage() {
-                                return preferredLanguage;
-                            }
-                        });
-                        if (taxonImage != null) {
-                            break;
-                        }
-                    }
-
-                    if (taxonImage == null && !links.isEmpty()) {
-                        taxonImage = new TaxonImage();
-                        taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(links.iterator().next()));
-                    }
-
-                    TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage, preferredLanguage);
+                    taxonImage = enrichWithImage(preferredLanguage, taxonImage, taxon, links);
                 }
             }
         }
         if (taxonImage == null) {
             throw new ResourceNotFoundException("no image for [" + scientificName + "]");
         }
+        return taxonImage;
+    }
+
+    private TaxonImage enrichWithImage(@RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage, TaxonImage taxonImage, Map<String, String> taxon, Collection<String> links) throws IOException {
+        for (String id : links) {
+            taxonImage = imageSearch.lookupImageForExternalId(id, new SearchContext() {
+
+                @Override
+                public String getPreferredLanguage() {
+                    return preferredLanguage;
+                }
+            });
+            if (taxonImage != null) {
+                break;
+            }
+        }
+
+        if (taxonImage == null && !links.isEmpty()) {
+            taxonImage = new TaxonImage();
+            taxonImage.setInfoURL(ExternalIdUtil.urlForExternalId(links.iterator().next()));
+        }
+
+        TaxonUtil.enrichTaxonImageWithTaxon(taxon, taxonImage, preferredLanguage);
         return taxonImage;
     }
 

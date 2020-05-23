@@ -97,7 +97,21 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     @Override
     public Collection<String> findTaxonIds(String scientificName) throws IOException {
-        return taxonLinks(scientificName, null);
+        return TaxonSearchUtil.linksForTaxonName(scientificName, null, new TaxonSearchUtil.LinkMapper() {
+
+            @Override
+            public String linkForNode(JsonNode node) {
+                String link = null;
+                String externalId = node.get(0).asText();
+                String externalUrl = node.get(1).asText();
+                if (StringUtils.isNotBlank(externalId)) {
+                    link = externalId;
+                } else if (StringUtils.isNotBlank(externalUrl)) {
+                    link = externalUrl;
+                }
+                return link;
+            }
+        });
     }
 
     @RequestMapping(value = "/findCloseMatches", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -140,7 +154,22 @@ public class TaxonSearchImpl implements TaxonSearch {
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Collection<String> taxonLinks(@PathVariable("taxonPath") final String taxonPath, HttpServletRequest request) throws IOException {
-        return TaxonSearchUtil.linksForTaxonName(taxonPath, request);
+        return TaxonSearchUtil.linksForTaxonName(taxonPath, request, new TaxonSearchUtil.LinkMapper() {
+
+            @Override
+            public String linkForNode(JsonNode node) {
+                String link = null;
+                String externalId = node.get(0).asText();
+                String externalUrl = node.get(1).asText();
+                String resolvedUrl = ExternalIdUtil.urlForExternalId(externalId);
+                if (StringUtils.isNotBlank(resolvedUrl)) {
+                    link = resolvedUrl;
+                } else if (StringUtils.isNotBlank(externalUrl)) {
+                    link = externalUrl;
+                }
+                return link;
+            }
+        });
     }
 
     private String buildLuceneQuery(String taxonName, String name) {
