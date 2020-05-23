@@ -81,12 +81,11 @@ public class ImageService {
                 .findFirst();
     }
 
-    static Stream<String> replaceWithPrefix(Collection<String> links) {
+    private static Stream<String> replaceWithPrefix(Collection<String> links) {
         return links.stream()
                 .map(x -> StringUtils.replace(x
                         , "https://www.wikidata.org/wiki/"
-                        , TaxonomyProvider.WIKIDATA.getIdPrefix()))
-                .filter(x -> x.startsWith(TaxonomyProvider.WIKIDATA.getIdPrefix()));
+                        , TaxonomyProvider.WIKIDATA.getIdPrefix()));
     }
 
     @RequestMapping(value = "/imagesForName", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
