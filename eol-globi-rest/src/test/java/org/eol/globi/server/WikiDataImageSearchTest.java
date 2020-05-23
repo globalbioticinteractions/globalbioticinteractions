@@ -79,6 +79,14 @@ public class WikiDataImageSearchTest {
     }
 
     @Test
+    public void northernBat() throws IOException {
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("NBN:NHMSYS0000528007");
+        assertNotNull(taxonImage);
+        assertThat(taxonImage.getCommonName(), is("Northern Bat @en"));
+        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q300941"));
+    }
+
+    @Test
     public void lookupLionJapanese() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140", new SearchContext() {
             @Override

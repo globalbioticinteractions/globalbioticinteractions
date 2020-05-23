@@ -72,6 +72,7 @@ public class WikiDataImageSearch implements ImageSearch {
             put(TaxonomyProvider.SEALIFEBASE_SPECCODE, "P6018");
             put(TaxonomyProvider.GBIF, "P846");
             put(TaxonomyProvider.INATURALIST_TAXON, "P3151");
+            put(TaxonomyProvider.NBN, "P3240");
         }};
 
         String query = null;
