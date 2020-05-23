@@ -65,6 +65,7 @@ public class WikiDataImageSearch implements ImageSearch {
             put(TaxonomyProvider.ITIS, "P815");
             put(TaxonomyProvider.NCBI, "P685");
             put(TaxonomyProvider.EOL, "P830");
+            put(TaxonomyProvider.EOL_V2, "P830");
             put(TaxonomyProvider.WORMS, "P850");
             put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA, "P5055");
             put(TaxonomyProvider.FISHBASE_SPECCODE, "P938");

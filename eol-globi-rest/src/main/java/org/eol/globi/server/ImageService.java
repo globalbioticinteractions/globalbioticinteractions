@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 @Controller
 public class ImageService {
 
-    ImageSearch imageSearch = new WikiDataImageSearch();
+    private ImageSearch imageSearch = new WikiDataImageSearch();
 
     @Autowired
     private TaxonSearch taxonSearch;
