@@ -1,19 +1,16 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
-import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.tool.NullImportLogger;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class StudyImporterForBatPlantIT {
 
