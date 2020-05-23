@@ -50,7 +50,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.FISHBASE_SPECCODE.getIdPrefix(), "http://fishbase.org/summary/");
         put(TaxonomyProvider.SEALIFEBASE_SPECCODE.getIdPrefix(), "http://sealifebase.org/Summary/SpeciesSummary.php?id=");
         put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
-        put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "http://www.wikidata.org/entity/");
+        put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
         put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
     }};
 

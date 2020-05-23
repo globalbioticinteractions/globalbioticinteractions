@@ -18,7 +18,7 @@ public class WikiDataImageSearchTest {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140");
         assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
-        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
         assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
     }
 
@@ -75,7 +75,7 @@ public class WikiDataImageSearchTest {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q608821");
         assertNotNull(taxonImage);
         assertThat(taxonImage.getCommonName(), is("Northern Red-backed Vole, Red Vole @en"));
-        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q608821"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q608821"));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class WikiDataImageSearchTest {
         });
         assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
-        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
         assertThat(taxonImage.getCommonName(), is("ライオン (raion) @ja"));
     }
 
@@ -102,7 +102,7 @@ public class WikiDataImageSearchTest {
         });
         assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
-        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
         assertThat(taxonImage.getCommonName(), is(nullValue()));
     }
 
