@@ -198,6 +198,62 @@ public class StudyImporterForMetaTableTest {
     }
 
     @Test
+    public void generateSourceTaxonPathWithSpecificEpithet() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET, "some epithet");
+                put(TaxonUtil.SOURCE_TAXON_GENUS, "aGenus");
+                put(TaxonUtil.SOURCE_TAXON_CLASS, "aClass");
+            }
+        };
+        assertThat(TaxonUtil.generateSourceTaxonPath(properties), is("aClass | aGenus | aGenus some epithet"));
+        assertThat(TaxonUtil.generateSourceTaxonPathNames(properties), is("class | genus | species"));
+    }
+
+    @Test
+    public void generateTargetTaxonPathWithSpecificEpithet() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET, "some epithet");
+                put(TaxonUtil.TARGET_TAXON_SPECIES, "some species");
+                put(TaxonUtil.TARGET_TAXON_GENUS, "aGenus");
+                put(TaxonUtil.TARGET_TAXON_CLASS, "aClass");
+            }
+        };
+        assertThat(TaxonUtil.generateTargetTaxonPath(properties), is("aClass | aGenus | aGenus some epithet"));
+        assertThat(TaxonUtil.generateTargetTaxonPathNames(properties), is("class | genus | species"));
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("aGenus some epithet"));
+    }
+
+    @Test
+    public void generateSourceTaxonPathWithSpecies() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(TaxonUtil.SOURCE_TAXON_SPECIES, "some species");
+                put(TaxonUtil.SOURCE_TAXON_GENUS, "aGenus");
+                put(TaxonUtil.SOURCE_TAXON_CLASS, "aClass");
+            }
+        };
+        assertThat(TaxonUtil.generateSourceTaxonPath(properties), is("aClass | aGenus | some species"));
+        assertThat(TaxonUtil.generateSourceTaxonPathNames(properties), is("class | genus | species"));
+        assertThat(TaxonUtil.generateSourceTaxonName(properties), is("some species"));
+    }
+
+    @Test
+    public void generateTargetTaxonPathWithSpecies() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(TaxonUtil.TARGET_TAXON_SPECIES, "some species");
+                put(TaxonUtil.TARGET_TAXON_GENUS, "aGenus");
+                put(TaxonUtil.TARGET_TAXON_CLASS, "aClass");
+            }
+        };
+        assertThat(TaxonUtil.generateTargetTaxonPath(properties), is("aClass | aGenus | some species"));
+        assertThat(TaxonUtil.generateTargetTaxonPathNames(properties), is("class | genus | species"));
+        assertThat(TaxonUtil.generateTargetTaxonName(properties), is("some species"));
+    }
+
+    @Test
     public void generateSpeciesName() {
         final HashMap<String, String> properties = new HashMap<String, String>() {
             {
@@ -205,7 +261,11 @@ public class StudyImporterForMetaTableTest {
                 put(TaxonUtil.SOURCE_TAXON_CLASS, "aClass");
             }
         };
-        assertThat(TaxonUtil.generateSpeciesName(properties, TaxonUtil.SOURCE_TAXON_GENUS, TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET, TaxonUtil.SOURCE_TAXON_SUBSPECIFIC_EPITHET), is(nullValue()));
+        assertThat(TaxonUtil.generateSpeciesName(properties,
+                TaxonUtil.SOURCE_TAXON_GENUS,
+                TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET,
+                TaxonUtil.SOURCE_TAXON_SUBSPECIFIC_EPITHET,
+                TaxonUtil.SOURCE_TAXON_SPECIES), is(nullValue()));
     }
 
     @Test
