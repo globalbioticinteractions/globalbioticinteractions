@@ -33,6 +33,8 @@ import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_LIFE_STAGE;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_LIFE_STAGE_ID;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_SEX;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_SEX_ID;
 import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_COMMON_NAMES;
 import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_EXTERNAL_ID;
 import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_NAME;
@@ -54,6 +56,8 @@ import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_LIFE_STAGE;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_LIFE_STAGE_ID;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_SEX;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_SEX_ID;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_COUNT;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_COUNT_PERCENT;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_TOTAL_FREQUENCY_OF_OCCURRENCE;
@@ -127,6 +131,10 @@ public class CypherReturnClauseBuilder {
                 put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
                 put(TARGET_SPECIMEN_LIFE_STAGE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.LIFE_STAGE_LABEL);
                 put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
+                put(SOURCE_SPECIMEN_SEX, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.SEX_LABEL);
+                put(SOURCE_SPECIMEN_SEX_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.SEX_ID);
+                put(TARGET_SPECIMEN_SEX, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.SEX_LABEL);
+                put(TARGET_SPECIMEN_SEX_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.SEX_ID);
 
             }
         };
@@ -303,6 +311,7 @@ public class CypherReturnClauseBuilder {
                         put(SOURCE_TAXON_PATH, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".path");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
+                        put(SOURCE_SPECIMEN_SEX, "NULL");
                         put(INTERACTION_TYPE, ResultObject.INTERACTION_TYPE.getLabel());
                         put(NUMBER_OF_INTERACTIONS, ResultObject.INTERACTION_COUNT.getLabel());
                         put(NUMBER_OF_STUDIES, ResultObject.STUDY_COUNT.getLabel());
@@ -312,6 +321,7 @@ public class CypherReturnClauseBuilder {
                         put(TARGET_TAXON_PATH, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".path");
                         put(TARGET_SPECIMEN_LIFE_STAGE, "NULL");
                         put(TARGET_SPECIMEN_BASIS_OF_RECORD, "NULL");
+                        put(TARGET_SPECIMEN_SEX, "NULL");
                         put(LATITUDE, "NULL");
                         put(LONGITUDE, "NULL");
                         put(STUDY_TITLE, "NULL");
@@ -331,8 +341,10 @@ public class CypherReturnClauseBuilder {
                         put(NUMBER_OF_INTERACTIONS, ResultObject.INTERACTION.getLabel() + ".count");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
+                        put(SOURCE_SPECIMEN_SEX, "NULL");
                         put(TARGET_SPECIMEN_LIFE_STAGE, "NULL");
                         put(TARGET_SPECIMEN_BASIS_OF_RECORD, "NULL");
+                        put(TARGET_SPECIMEN_SEX, "NULL");
                         put(LATITUDE, "NULL");
                         put(LONGITUDE, "NULL");
                         put(STUDY_TITLE, "NULL");

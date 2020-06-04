@@ -53,6 +53,11 @@ public enum ResultField {
     TARGET_SPECIMEN_LIFE_STAGE("target_specimen_life_stage"),
     TARGET_SPECIMEN_LIFE_STAGE_ID("target_specimen_life_stage_id"),
 
+    SOURCE_SPECIMEN_SEX("source_specimen_sex"),
+    SOURCE_SPECIMEN_SEX_ID("source_specimen_sex_id"),
+    TARGET_SPECIMEN_SEX("target_specimen_sex"),
+    TARGET_SPECIMEN_SEX_ID("target_specimen_sex_id"),
+
     SOURCE_SPECIMEN_BASIS_OF_RECORD("source_specimen_basis_of_record"),
     TARGET_SPECIMEN_BASIS_OF_RECORD("target_specimen_basis_of_record"),
 

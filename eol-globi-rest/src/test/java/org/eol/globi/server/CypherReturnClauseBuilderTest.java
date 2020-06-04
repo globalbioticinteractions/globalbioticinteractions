@@ -260,7 +260,10 @@ public class CypherReturnClauseBuilderTest {
         StringBuilder query = new StringBuilder();
         TreeMap<String, String[]> parameterMap = new TreeMap<String, String[]>() {
             {
-                put("field", new String[]{"source_taxon_name", "target_taxon_name", "source_taxon_name"});
+                put("field", new String[]{
+                        "source_taxon_name",
+                        "target_taxon_name",
+                        "source_taxon_name"});
             }
         };
         CypherReturnClauseBuilder.appendReturnClauseMap(
@@ -270,6 +273,27 @@ public class CypherReturnClauseBuilderTest {
         assertThat(query.toString(), is(" RETURN " +
                 "sourceTaxon.name as source_taxon_name," +
                 "targetTaxon.name as target_taxon_name"));
+    }
+
+    @Test
+    public void multiTaxonSexLabelsIds() {
+        StringBuilder query = new StringBuilder();
+        TreeMap<String, String[]> parameterMap = new TreeMap<String, String[]>() {
+            {
+                put("field", new String[]{
+                        "source_taxon_name",
+                        "source_specimen_sex",
+                        "source_specimen_sex_id",
+                        "target_specimen_sex",
+                        "target_specimen_sex_id",
+                        "target_taxon_name"});
+            }
+        };
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_ALL,
+                parameterMap);
+        assertThat(query.toString(), is(" RETURN sourceTaxon.name as source_taxon_name,sourceSpecimen.sexLabel as source_specimen_sex,sourceSpecimen.sexId as source_specimen_sex_id,targetSpecimen.sexLabel as target_specimen_sex,targetSpecimen.sexId as target_specimen_sex_id,targetTaxon.name as target_taxon_name"));
     }
 
     @Test
