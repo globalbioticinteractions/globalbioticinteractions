@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -225,6 +226,51 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void parseOwlPellets() {
+        Map<String, String> properties = StudyImporterForDwCA.parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks("Found in Burrowing Owl pellet");
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Burrowing Owl"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("pellet"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("found in"));
+    }
+
+    @Test
+    public void parseOwlPelletsRandom() {
+        Map<String, String> properties = StudyImporterForDwCA
+                .parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks("hey, this is some random comment");
+
+        assertThat(MapUtils.isEmpty(properties), is(true));
+    }
+
+    @Test
+    public void parseOwlPelletsBlank() {
+        Map<String, String> properties = StudyImporterForDwCA
+                .parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks("");
+
+        assertThat(MapUtils.isEmpty(properties), is(true));
+    }
+
+    @Test
+    public void parseOwlPelletsSpeciesUnknown() {
+        Map<String, String> properties = StudyImporterForDwCA
+                .parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks("Found in owl pellet - species unknown");
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("owl"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("pellet"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("found in"));
+    }
+
+    @Test
+    public void parseOwlPelletsSpecies2() throws IOException {
+        Map<String, String> properties = StudyImporterForDwCA
+                .parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks("Found in Northern Saw-Whet Owl pellet");
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Northern Saw-Whet Owl"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("pellet"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("found in"));
+    }
+
+    @Test
     public void importRecordsFromZip() throws StudyImporterException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         StudyImporterForDwCA studyImporterForDwCA = new StudyImporterForDwCA(null, null);
@@ -293,7 +339,7 @@ public class StudyImporterForDwCATest {
     public void occurrenceRemarks() throws IOException {
         String occurrenceRemarks = "2.5 gluteraldehyde Neutral red Permount {\"hostGen\":\"Biomphalaria\",\"hostSpec\":\"havanensis\"}";
 
-        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+        Map<String, String> properties = StudyImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
 
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Biomphalaria havanensis"));
@@ -309,7 +355,7 @@ public class StudyImporterForDwCATest {
         String occurrenceRemarks = "4% Formaldehyde Original USNPC preservative was a solution of 70% ethanol, 3% formalin, and 2% glycerine " +
                 "{\"hostGen\":\"Lutjanus\",\"hostSpec\":\"campechanus\",\"hostHiTax\":\"Actinopterygii: Pereciformes: Lutjanidae\",\"hostBodyLoc\":\"ovary\"}";
 
-        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+        Map<String, String> properties = StudyImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
 
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Lutjanus campechanus"));
@@ -331,7 +377,7 @@ public class StudyImporterForDwCATest {
                 "\"hostBodyLoc\":\"intestine\"," +
                 "\"hostFldNo\":\"AChoudhury-BA-CR98-3\"}";
 
-        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+        Map<String, String> properties = StudyImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
 
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Bryconamericus scleroparius"));
@@ -350,7 +396,7 @@ public class StudyImporterForDwCATest {
         String occurrenceRemarks = "{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1\"\"}";
 
         try {
-            StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+            StudyImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
         } catch (IOException ex) {
             assertThat(ex.getMessage(), is("found likely malformed host description [{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1\"\"}], see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/505"));
             throw ex;

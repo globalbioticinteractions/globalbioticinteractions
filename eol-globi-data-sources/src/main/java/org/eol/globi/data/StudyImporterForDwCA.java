@@ -59,6 +59,7 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
@@ -181,10 +182,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
         if (StringUtils.isNotBlank(occurrenceRemarks)) {
             try {
-                Map<String, String> properties = parseOccurrenceRemarks(occurrenceRemarks);
-                if (MapUtils.isNotEmpty(properties)) {
-                    interactionCandidates.add(properties);
-                }
+                addUSNMStyleHostOccurrenceRemarks(interactionCandidates, occurrenceRemarks);
+                addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(interactionCandidates, occurrenceRemarks);
             } catch (IOException e) {
                 if (getLogger() != null) {
                     Map<String, String> interactionProperties = new HashMap<>();
@@ -212,6 +211,36 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
             mapCoreProperties(rec, interactionProperties);
             interactionListener.newLink(interactionProperties);
+        }
+    }
+
+    public static void addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
+        Map<String, String> properties = parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            interactionCandidates.add(properties);
+        }
+    }
+
+    public static Map<String, String> parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(String occurrenceRemarks) {
+        Map<String, String> properties = Collections.emptyMap();
+
+        Matcher matcher = Pattern.compile("^(found in)(.*)(pellet).*", Pattern.CASE_INSENSITIVE).matcher(StringUtils.trim(occurrenceRemarks));
+        if (matcher.matches()) {
+            properties = new TreeMap<String, String>() {{
+                put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group(2)));
+                put(INTERACTION_TYPE_NAME, "found in");
+                put(TARGET_BODY_PART_NAME, "pellet");
+                put(TARGET_BODY_PART_ID, "http://purl.obolibrary.org/obo/UBERON_0036018");
+            }};
+        }
+        return properties;
+    }
+
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void addUSNMStyleHostOccurrenceRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
+        Map<String, String> properties = parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            interactionCandidates.add(properties);
         }
     }
 
@@ -727,7 +756,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         }
     }
 
-    public static Map<String, String> parseOccurrenceRemarks(String occurrenceRemarks) throws IOException {
+    public static Map<String, String> parseUSNMStyleHostOccurrenceRemarks(String occurrenceRemarks) throws IOException {
         Map<String, String> properties = Collections.emptyMap();
         String candidateJsonChunk = null;
         String[] split = StringUtils.splitPreserveAllTokens(occurrenceRemarks, "{");

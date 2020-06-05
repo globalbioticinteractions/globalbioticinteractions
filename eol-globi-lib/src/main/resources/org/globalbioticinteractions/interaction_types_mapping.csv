@@ -30,6 +30,7 @@ seed disperser,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 seed predator,,eats,http://purl.obolibrary.org/obo/RO_0002470
 vector of,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 found on,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
+found in,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 visitsflowersof,,visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
 collected on,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 reared from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
