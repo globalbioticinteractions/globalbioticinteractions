@@ -241,7 +241,10 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
         String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
         if (StringUtils.isNotBlank(occurrenceRemarks)) {
-            interactionCandidates.add(parseOccurrenceRemarks(occurrenceRemarks));
+            Map<String, String> properties = parseOccurrenceRemarks(occurrenceRemarks);
+            if (MapUtils.isNotEmpty(properties)) {
+                interactionCandidates.add(properties);
+            }
         }
 
         String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
