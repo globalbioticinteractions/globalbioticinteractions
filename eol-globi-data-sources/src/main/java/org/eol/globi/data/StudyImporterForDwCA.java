@@ -277,8 +277,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         mapIfAvailable(rec, interactionProperties, SOURCE_SEX_NAME, DwcTerm.sex);
     }
 
-    private static void mapReferenceInfo(Record rec, Map<String, String> interactionProperties) {
+    static void mapReferenceInfo(Record rec, Map<String, String> interactionProperties) {
         String value = StringUtils.trim(rec.value(DcTerm.references));
+        if (StringUtils.isBlank(value)) {
+            value = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
+        }
         if (StringUtils.isNotBlank(value)) {
             interactionProperties.put(REFERENCE_CITATION, value);
             interactionProperties.put(REFERENCE_ID, value);

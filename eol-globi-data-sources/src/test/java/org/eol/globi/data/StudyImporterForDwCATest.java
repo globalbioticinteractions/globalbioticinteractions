@@ -9,6 +9,10 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
 import org.gbif.dwc.Archive;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.terms.DcTerm;
+import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.Term;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.junit.Test;
@@ -19,19 +23,26 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.eol.globi.data.StudyImporterForDwCA.hasResourceRelationships;
 import static org.eol.globi.data.StudyImporterForDwCA.importAssociatedTaxaExtension;
 import static org.eol.globi.data.StudyImporterForDwCA.importResourceRelationExtension;
+import static org.eol.globi.data.StudyImporterForDwCA.mapReferenceInfo;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedOccurrences;
 import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedTaxa;
 import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicPropertiesForInteractionsOnly;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.gbif.dwc.terms.DwcTerm.relatedResourceID;
@@ -169,7 +180,7 @@ public class StudyImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void newLink(Map<String, String> link) throws StudyImporterException {
-                assertThat(link.get(StudyImporterForTSV.REFERENCE_URL), startsWith("http://arctos.database.museum/guid/"));
+                assertThat(link.get(REFERENCE_URL), startsWith("http://arctos.database.museum/guid/"));
                 assertThat(link.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID), anyOf(
                         is("http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:183644?seid=158590"),
@@ -215,9 +226,9 @@ public class StudyImporterForDwCATest {
                 assertThat(link.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString("some citation"));
                 assertThat(link.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString("Accessed at"));
                 assertThat(link.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString("dataset/dwca.zip"));
-                assertThat(link.get(StudyImporterForTSV.REFERENCE_ID), is(not(nullValue())));
+                assertThat(link.get(REFERENCE_ID), is(not(nullValue())));
                 assertThat(link.get(StudyImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
-                assertThat(link.get(StudyImporterForTSV.REFERENCE_URL), is(not(nullValue())));
+                assertThat(link.get(REFERENCE_URL), is(not(nullValue())));
                 someRecords.set(true);
             }
         });
@@ -295,9 +306,9 @@ public class StudyImporterForDwCATest {
                 assertThat(link.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
                 assertThat(link.get(INTERACTION_TYPE_ID), is(not(nullValue())));
                 assertThat(link.get(StudyImporterForTSV.STUDY_SOURCE_CITATION), containsString(expectedCitation));
-                assertThat(link.get(StudyImporterForTSV.REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                assertThat(link.get(REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(link.get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
-                assertThat(link.get(StudyImporterForTSV.REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                assertThat(link.get(REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 someRecords.set(true);
             }
         });
@@ -790,4 +801,78 @@ public class StudyImporterForDwCATest {
     }
 
 
+    @Test
+    public void mapReferencesInfo() {
+        DummyRecord dummyRecord = new DummyRecord(new HashMap<Term, String>() {{
+            put(DcTerm.references,
+                    "some reference");
+        }});
+
+        TreeMap<String, String> properties = new TreeMap<>();
+        mapReferenceInfo(dummyRecord, properties);
+        assertThat(properties.get(REFERENCE_CITATION), is("some reference"));
+        assertThat(properties.get(REFERENCE_ID), is("some reference"));
+        assertThat(properties.get(REFERENCE_URL), is(nullValue()));
+
+    }
+
+    @Test
+    public void mapReferencesInfoWithURL() {
+        DummyRecord dummyRecord = new DummyRecord(new HashMap<Term, String>() {{
+            put(DcTerm.references,
+                    "https://example.org");
+        }});
+        TreeMap<String, String> properties = new TreeMap<>();
+        mapReferenceInfo(dummyRecord, properties);
+        assertThat(properties.get(REFERENCE_CITATION), is("https://example.org"));
+        assertThat(properties.get(REFERENCE_ID), is("https://example.org"));
+        assertThat(properties.get(REFERENCE_URL), is("https://example.org"));
+    }
+
+    @Test
+    public void mapReferencesInfoWithOccurrenceId() {
+        DummyRecord dummyRecord = new DummyRecord(new HashMap<Term, String>() {{
+            put(DwcTerm.occurrenceID,
+                    "https://example.org");
+        }});
+        TreeMap<String, String> properties = new TreeMap<>();
+        mapReferenceInfo(dummyRecord, properties);
+        assertThat(properties.get(REFERENCE_CITATION), is("https://example.org"));
+        assertThat(properties.get(REFERENCE_ID), is("https://example.org"));
+        assertThat(properties.get(REFERENCE_URL), is("https://example.org"));
+    }
+
+    private class DummyRecord implements Record {
+
+        private final Map<Term, String>  valueMap;
+
+        DummyRecord(Map<Term,String> valueMap) {
+            this.valueMap = valueMap;
+        }
+
+        @Override
+        public String id() {
+            return null;
+        }
+
+        @Override
+        public Term rowType() {
+            return null;
+        }
+
+        @Override
+        public String value(Term term) {
+            return valueMap.get(term);
+        }
+
+        @Override
+        public String column(int i) {
+            return null;
+        }
+
+        @Override
+        public Set<Term> terms() {
+            return null;
+        }
+    }
 }
