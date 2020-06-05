@@ -1,7 +1,10 @@
 package org.eol.globi.data;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +59,7 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
@@ -75,6 +80,8 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_KINGDOM;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ORDER;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_NAMES;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PHYLUM;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET;
 
@@ -92,6 +99,68 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
     public StudyImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
+    }
+
+    public static Map<String, String> parseOccurrenceRemarks(String occurrenceRemarks) {
+        Map<String, String> properties = Collections.emptyMap();
+        String[] split = StringUtils.split(occurrenceRemarks, "{");
+        if (split.length > 1) {
+            String[] splitClosing = StringUtils.splitPreserveAllTokens(split[1], "}");
+            if (splitClosing.length > 1) {
+                String candidateJsonChunk = "{" + splitClosing[0] + "}";
+                try {
+                    properties = new TreeMap<>();
+                    JsonNode jsonNode = new ObjectMapper().readTree(candidateJsonChunk);
+
+                    Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.getFields();
+                    while(fields.hasNext()) {
+                        Map.Entry<String, JsonNode> field = fields.next();
+                        if (field.getValue().isValueNode()) {
+                            properties.put(field.getKey(), field.getValue().asText());
+                        }
+                    }
+
+                    setPropertyIfExists(properties, jsonNode, "hostGen", TaxonUtil.TARGET_TAXON_GENUS);
+                    setPropertyIfExists(properties, jsonNode, "hostSpec", TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET);
+                    setPropertyIfExists(properties, jsonNode, "hostBodyLoc", TARGET_BODY_PART_NAME);
+
+                    String value = jsonNode.has("hostHiTax") ? jsonNode.get("hostHiTax").asText() : null;
+                    if (StringUtils.isNotBlank(value)) {
+                        String[] taxa = StringUtils.split(value, " :");
+                        List<String> path = new ArrayList<>(Arrays.asList(taxa));
+                        List<String> pathNames = new ArrayList<>(Collections.nCopies(path.size() - 1, "|"));
+                        if (properties.containsKey(TARGET_TAXON_GENUS)) {
+                            path.add(properties.get(TARGET_TAXON_GENUS));
+                            pathNames.add("| genus");
+                        }
+                        if (properties.containsKey(TARGET_TAXON_SPECIFIC_EPITHET) && properties.containsKey(TARGET_TAXON_GENUS)) {
+                            String speciesName = TaxonUtil.generateTargetTaxonName(properties);
+                            properties.put(TARGET_TAXON_NAME, speciesName);
+                            path.add(speciesName);
+                            pathNames.add("| species");
+                        }
+                        properties.put(TARGET_TAXON_PATH, StringUtils.join(path, CharsetConstant.SEPARATOR));
+                        properties.put(TARGET_TAXON_PATH_NAMES, StringUtils.join(pathNames, " "));
+                    }
+
+                    if (MapUtils.isNotEmpty(properties)) {
+                        properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
+                        properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
+                        TaxonUtil.enrichTaxonNames(properties);
+                    }
+                } catch (IOException e) {
+                    //
+                }
+            }
+        }
+        return properties;
+    }
+
+    private static void setPropertyIfExists(Map<String, String> properties, JsonNode jsonNode, String remarkKey, String propertyName) {
+        String value = jsonNode.has(remarkKey) ? jsonNode.get(remarkKey).asText() : null;
+        if (StringUtils.isNotBlank(value)) {
+            properties.put(propertyName, StringUtils.trim(value));
+        }
     }
 
     @Override
@@ -170,6 +239,11 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
         }
 
+        String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
+        if (StringUtils.isNotBlank(occurrenceRemarks)) {
+            interactionCandidates.add(parseOccurrenceRemarks(occurrenceRemarks));
+        }
+
         String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
         if (StringUtils.isNotBlank(dynamicProperties)) {
             Map<String, String> parsedDynamicProperties = parseDynamicPropertiesForInteractionsOnly(dynamicProperties);
@@ -177,7 +251,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 interactionCandidates.add(parsedDynamicProperties);
             }
         }
-
 
         Map<String, String> interaction = new HashMap<>(rec.terms().size());
         for (Term term : rec.terms()) {

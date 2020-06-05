@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
@@ -30,6 +31,7 @@ import static org.eol.globi.data.StudyImporterForDwCA.parseAssociatedTaxa;
 import static org.eol.globi.data.StudyImporterForDwCA.parseDynamicPropertiesForInteractionsOnly;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.gbif.dwc.terms.DwcTerm.relatedResourceID;
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -285,6 +287,72 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarks() {
+        String occurrenceRemarks = "2.5 gluteraldehyde Neutral red Permount {\"hostGen\":\"Biomphalaria\",\"hostSpec\":\"havanensis\"}";
+
+        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Biomphalaria havanensis"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Biomphalaria"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("havanensis"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarks2() {
+        String occurrenceRemarks = "4% Formaldehyde Original USNPC preservative was a solution of 70% ethanol, 3% formalin, and 2% glycerine " +
+                "{\"hostGen\":\"Lutjanus\",\"hostSpec\":\"campechanus\",\"hostHiTax\":\"Actinopterygii: Pereciformes: Lutjanidae\",\"hostBodyLoc\":\"ovary\"}";
+
+        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Lutjanus campechanus"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Lutjanus"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("campechanus"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_PATH), is("Actinopterygii | Pereciformes | Lutjanidae | Lutjanus | Lutjanus campechanus"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_PATH_NAMES), is("| | | genus | species"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("ovary"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarks3() {
+        String occurrenceRemarks = "AFA Acetocarmine Canada balsam " +
+                "{\"hostGen\":\"Bryconamericus\"," +
+                "\"hostSpec\":\"scleroparius\"," +
+                "\"hostBodyLoc\":\"intestine\"," +
+                "\"hostFldNo\":\"AChoudhury-BA-CR98-3\"}";
+
+        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Bryconamericus scleroparius"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Bryconamericus"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("scleroparius"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_PATH), is("Bryconamericus | Bryconamericus scleroparius"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_PATH_NAMES), is("genus | species"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("intestine"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarksMalformed() {
+        String occurrenceRemarks = "{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1\"\"}";
+
+        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+
+        assertThat(properties.isEmpty(), is(true));
     }
 
     @Test
