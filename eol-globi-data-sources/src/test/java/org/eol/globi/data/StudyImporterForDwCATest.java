@@ -290,7 +290,7 @@ public class StudyImporterForDwCATest {
 
     @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
-    public void occurrenceRemarks() {
+    public void occurrenceRemarks() throws IOException {
         String occurrenceRemarks = "2.5 gluteraldehyde Neutral red Permount {\"hostGen\":\"Biomphalaria\",\"hostSpec\":\"havanensis\"}";
 
         Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
@@ -305,7 +305,7 @@ public class StudyImporterForDwCATest {
 
     @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
-    public void occurrenceRemarks2() {
+    public void occurrenceRemarks2() throws IOException {
         String occurrenceRemarks = "4% Formaldehyde Original USNPC preservative was a solution of 70% ethanol, 3% formalin, and 2% glycerine " +
                 "{\"hostGen\":\"Lutjanus\",\"hostSpec\":\"campechanus\",\"hostHiTax\":\"Actinopterygii: Pereciformes: Lutjanidae\",\"hostBodyLoc\":\"ovary\"}";
 
@@ -324,7 +324,7 @@ public class StudyImporterForDwCATest {
 
     @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
-    public void occurrenceRemarks3() {
+    public void occurrenceRemarks3() throws IOException {
         String occurrenceRemarks = "AFA Acetocarmine Canada balsam " +
                 "{\"hostGen\":\"Bryconamericus\"," +
                 "\"hostSpec\":\"scleroparius\"," +
@@ -344,14 +344,17 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
     }
 
-    @Test
+    @Test(expected = IOException.class)
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
-    public void occurrenceRemarksMalformed() {
+    public void occurrenceRemarksMalformed() throws IOException {
         String occurrenceRemarks = "{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1\"\"}";
 
-        Map<String, String> properties = StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
-
-        assertThat(properties.isEmpty(), is(true));
+        try {
+            StudyImporterForDwCA.parseOccurrenceRemarks(occurrenceRemarks);
+        } catch (IOException ex) {
+            assertThat(ex.getMessage(), is("found likely malformed host description [{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1\"\"}], see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/505"));
+            throw ex;
+        }
     }
 
     @Test

@@ -101,67 +101,6 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         super(parserFactory, nodeFactory);
     }
 
-    public static Map<String, String> parseOccurrenceRemarks(String occurrenceRemarks) {
-        Map<String, String> properties = Collections.emptyMap();
-        String[] split = StringUtils.split(occurrenceRemarks, "{");
-        if (split.length > 1) {
-            String[] splitClosing = StringUtils.splitPreserveAllTokens(split[1], "}");
-            if (splitClosing.length > 1) {
-                String candidateJsonChunk = "{" + splitClosing[0] + "}";
-                try {
-                    properties = new TreeMap<>();
-                    JsonNode jsonNode = new ObjectMapper().readTree(candidateJsonChunk);
-
-                    Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.getFields();
-                    while(fields.hasNext()) {
-                        Map.Entry<String, JsonNode> field = fields.next();
-                        if (field.getValue().isValueNode()) {
-                            properties.put(field.getKey(), field.getValue().asText());
-                        }
-                    }
-
-                    setPropertyIfExists(properties, jsonNode, "hostGen", TaxonUtil.TARGET_TAXON_GENUS);
-                    setPropertyIfExists(properties, jsonNode, "hostSpec", TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET);
-                    setPropertyIfExists(properties, jsonNode, "hostBodyLoc", TARGET_BODY_PART_NAME);
-
-                    String value = jsonNode.has("hostHiTax") ? jsonNode.get("hostHiTax").asText() : null;
-                    if (StringUtils.isNotBlank(value)) {
-                        String[] taxa = StringUtils.split(value, " :");
-                        List<String> path = new ArrayList<>(Arrays.asList(taxa));
-                        List<String> pathNames = new ArrayList<>(Collections.nCopies(path.size() - 1, "|"));
-                        if (properties.containsKey(TARGET_TAXON_GENUS)) {
-                            path.add(properties.get(TARGET_TAXON_GENUS));
-                            pathNames.add("| genus");
-                        }
-                        if (properties.containsKey(TARGET_TAXON_SPECIFIC_EPITHET) && properties.containsKey(TARGET_TAXON_GENUS)) {
-                            String speciesName = TaxonUtil.generateTargetTaxonName(properties);
-                            properties.put(TARGET_TAXON_NAME, speciesName);
-                            path.add(speciesName);
-                            pathNames.add("| species");
-                        }
-                        properties.put(TARGET_TAXON_PATH, StringUtils.join(path, CharsetConstant.SEPARATOR));
-                        properties.put(TARGET_TAXON_PATH_NAMES, StringUtils.join(pathNames, " "));
-                    }
-
-                    if (MapUtils.isNotEmpty(properties)) {
-                        properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
-                        properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
-                        TaxonUtil.enrichTaxonNames(properties);
-                    }
-                } catch (IOException e) {
-                    //
-                }
-            }
-        }
-        return properties;
-    }
-
-    private static void setPropertyIfExists(Map<String, String> properties, JsonNode jsonNode, String remarkKey, String propertyName) {
-        String value = jsonNode.has(remarkKey) ? jsonNode.get(remarkKey).asText() : null;
-        if (StringUtils.isNotBlank(value)) {
-            properties.put(propertyName, StringUtils.trim(value));
-        }
-    }
 
     @Override
     public void importStudy() throws StudyImporterException {
@@ -241,9 +180,17 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
         String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
         if (StringUtils.isNotBlank(occurrenceRemarks)) {
-            Map<String, String> properties = parseOccurrenceRemarks(occurrenceRemarks);
-            if (MapUtils.isNotEmpty(properties)) {
-                interactionCandidates.add(properties);
+            try {
+                Map<String, String> properties = parseOccurrenceRemarks(occurrenceRemarks);
+                if (MapUtils.isNotEmpty(properties)) {
+                    interactionCandidates.add(properties);
+                }
+            } catch (IOException e) {
+                if (getLogger() != null) {
+                    Map<String, String> interactionProperties = new HashMap<>();
+                    mapCoreProperties(rec, interactionProperties);
+                    getLogger().warn(LogUtil.contextFor(interactionProperties), e.getMessage());
+                }
             }
         }
 
@@ -778,7 +725,80 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             }
 
         }
-    };
+    }
+
+    public static Map<String, String> parseOccurrenceRemarks(String occurrenceRemarks) throws IOException {
+        Map<String, String> properties = Collections.emptyMap();
+        String candidateJsonChunk = null;
+        String[] split = StringUtils.splitPreserveAllTokens(occurrenceRemarks, "{");
+        if (split.length > 1) {
+            String[] splitClosing = StringUtils.splitPreserveAllTokens(split[1], "}");
+            if (splitClosing.length > 1) {
+                candidateJsonChunk = "{" + splitClosing[0] + "}";
+            }
+        }
+
+        if (StringUtils.isNotBlank(candidateJsonChunk)) {
+            try {
+                properties = parseJsonChunk(candidateJsonChunk);
+            } catch (IOException ex) {
+                if (StringUtils.contains(candidateJsonChunk, "hostGen")) {
+                    throw new IOException("found likely malformed host description [" + candidateJsonChunk + "], see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/505");
+                }
+            }
+        }
+        return properties;
+    }
+
+    public static Map<String, String> parseJsonChunk(String candidateJsonChunk) throws IOException {
+        Map<String, String> properties = new TreeMap<>();
+        JsonNode jsonNode = new ObjectMapper().readTree(candidateJsonChunk);
+
+        Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.getFields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            if (field.getValue().isValueNode()) {
+                properties.put(field.getKey(), field.getValue().asText());
+            }
+        }
+
+        setPropertyIfExists(properties, jsonNode, "hostGen", TaxonUtil.TARGET_TAXON_GENUS);
+        setPropertyIfExists(properties, jsonNode, "hostSpec", TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET);
+        setPropertyIfExists(properties, jsonNode, "hostBodyLoc", TARGET_BODY_PART_NAME);
+
+        String value = jsonNode.has("hostHiTax") ? jsonNode.get("hostHiTax").asText() : null;
+        if (StringUtils.isNotBlank(value)) {
+            String[] taxa = StringUtils.split(value, " :");
+            List<String> path = new ArrayList<>(Arrays.asList(taxa));
+            List<String> pathNames = new ArrayList<>(Collections.nCopies(path.size() - 1, "|"));
+            if (properties.containsKey(TARGET_TAXON_GENUS)) {
+                path.add(properties.get(TARGET_TAXON_GENUS));
+                pathNames.add("| genus");
+            }
+            if (properties.containsKey(TARGET_TAXON_SPECIFIC_EPITHET) && properties.containsKey(TARGET_TAXON_GENUS)) {
+                String speciesName = TaxonUtil.generateTargetTaxonName(properties);
+                properties.put(TARGET_TAXON_NAME, speciesName);
+                path.add(speciesName);
+                pathNames.add("| species");
+            }
+            properties.put(TARGET_TAXON_PATH, StringUtils.join(path, CharsetConstant.SEPARATOR));
+            properties.put(TARGET_TAXON_PATH_NAMES, StringUtils.join(pathNames, " "));
+        }
+
+        if (MapUtils.isNotEmpty(properties)) {
+            properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
+            properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
+            TaxonUtil.enrichTaxonNames(properties);
+        }
+        return properties;
+    }
+
+    private static void setPropertyIfExists(Map<String, String> properties, JsonNode jsonNode, String remarkKey, String propertyName) {
+        String value = jsonNode.has(remarkKey) ? jsonNode.get(remarkKey).asText() : null;
+        if (StringUtils.isNotBlank(value)) {
+            properties.put(propertyName, StringUtils.trim(value));
+        }
+    }
 
 
 }
