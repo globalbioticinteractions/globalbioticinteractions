@@ -73,7 +73,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     }
 
 
-    static public List<JsonNode> collectTables(Dataset dataset) throws StudyImporterException {
+    static List<JsonNode> collectTables(Dataset dataset) throws StudyImporterException {
         JsonNode config = dataset.getConfig();
         List<JsonNode> tableList = new ArrayList<JsonNode>();
         if (config.has("tables")) {
@@ -89,7 +89,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         return tableList;
     }
 
-    public static void generateTablesForNHMResources(List<JsonNode> tableList, Dataset dataset) throws StudyImporterException {
+    private static void generateTablesForNHMResources(List<JsonNode> tableList, Dataset dataset) throws StudyImporterException {
         JsonNode config = dataset.getConfig();
         String nhmUrl = config.get("url").asText();
         try (InputStream resource1 = dataset.retrieve(URI.create(nhmUrl))) {
@@ -117,11 +117,11 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         }
     }
 
-    public static boolean isNHMResource(JsonNode config) {
+    private static boolean isNHMResource(JsonNode config) {
         return config.has("url") && StringUtils.contains(config.get("url").asText(), "//data.nhm.ac.uk/api");
     }
 
-    static public void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode tableConfig, Dataset dataset, ImportLogger importLogger) throws IOException, StudyImporterException {
+    static void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode tableConfig, Dataset dataset, ImportLogger importLogger) throws IOException, StudyImporterException {
         if (tableConfig.has("tableSchema")) {
             List<Column> columns = columnsForSchema(tableConfig, tableConfig.get("tableSchema"), dataset);
             final CSVParse csvParse = tableFactory.createParser(tableConfig, dataset);
@@ -129,13 +129,13 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         }
     }
 
-    public static List<Column> columnsForSchema(JsonNode table, JsonNode tableSchema, Dataset dataset) throws IOException {
+    private static List<Column> columnsForSchema(JsonNode table, JsonNode tableSchema, Dataset dataset) throws IOException {
         return tableSchema.isValueNode() ?
                 columnsFromExternalSchema(tableSchema, dataset) :
                 columnNamesForMetaTable(table);
     }
 
-    static public List<Column> columnsFromExternalSchema(JsonNode tableSchema, Dataset dataset) throws IOException {
+    static List<Column> columnsFromExternalSchema(JsonNode tableSchema, Dataset dataset) throws IOException {
         String tableSchemaLocation = tableSchema.asText();
         try (InputStream resource = dataset.retrieve(URI.create(tableSchemaLocation))) {
             final JsonNode schema = new ObjectMapper().readTree(resource);
@@ -157,7 +157,7 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
         return nullValueArray;
     }
 
-    public static String generateReferenceCitation(Map<String, String> properties) {
+    static String generateReferenceCitation(Map<String, String> properties) {
         StringBuilder citation = new StringBuilder();
         append(citation, properties.get(AUTHOR), ", ");
         append(citation, properties.get(YEAR), ". ");
