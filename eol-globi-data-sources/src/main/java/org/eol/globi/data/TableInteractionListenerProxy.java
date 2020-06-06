@@ -22,12 +22,14 @@ public class TableInteractionListenerProxy implements InteractionListener {
             {
                 putAll(link);
                 put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
-                final String referenceCitation = StringUtils.isBlank(link.get(StudyImporterForTSV.REFERENCE_CITATION))
+
+                final String referenceCitation =
+                        StringUtils.isBlank(link.get(StudyImporterForTSV.REFERENCE_CITATION))
                         ? StudyImporterForMetaTable.generateReferenceCitation(link)
                         : link.get(StudyImporterForTSV.REFERENCE_CITATION);
 
-                putIfAbsent(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
-                putIfAbsent(StudyImporterForTSV.REFERENCE_CITATION,
+                put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
+                put(StudyImporterForTSV.REFERENCE_CITATION,
                         StringUtils.isBlank(referenceCitation)
                         ? dataSourceCitation :
                         referenceCitation);
