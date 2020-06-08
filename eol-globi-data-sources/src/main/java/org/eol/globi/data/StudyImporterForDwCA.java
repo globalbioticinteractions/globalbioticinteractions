@@ -61,6 +61,8 @@ import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_CATALOG_NUMBER;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_FIELD_NUMBER;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
@@ -797,6 +799,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         setPropertyIfExists(properties, jsonNode, "hostGen", TaxonUtil.TARGET_TAXON_GENUS);
         setPropertyIfExists(properties, jsonNode, "hostSpec", TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET);
         setPropertyIfExists(properties, jsonNode, "hostBodyLoc", TARGET_BODY_PART_NAME);
+        setPropertyIfExists(properties, jsonNode, "hostFldNo", TARGET_FIELD_NUMBER);
+        setPropertyIfExists(properties, jsonNode, "hostMusNo", TARGET_CATALOG_NUMBER);
 
         String value = jsonNode.has("hostHiTax") ? jsonNode.get("hostHiTax").asText() : null;
         if (StringUtils.isNotBlank(value)) {

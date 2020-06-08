@@ -61,8 +61,10 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     public static final String TARGET_COLLECTION_ID = "targetCollectionId";
     public static final String SOURCE_INSTITUTION_CODE = "sourceInstitutionCode";
     public static final String TARGET_INSTITUTION_CODE = "targetInstitutionCode";
-    public static final String SOURCE_CATALOG_NUMBER = "sourceCatalogNumber";
-    public static final String TARGET_CATALOG_NUMBER = "targetCatalogNumber";
+    public static final String SOURCE_CATALOG_NUMBER = "sourceCatalogNumber"; // see http://rs.tdwg.org/dwc/terms/catalogNumber
+    public static final String SOURCE_FIELD_NUMBER = "sourceFieldNumber"; // see http://rs.tdwg.org/dwc/terms/fieldNumber
+    public static final String TARGET_CATALOG_NUMBER = "targetCatalogNumber"; // see http://rs.tdwg.org/dwc/terms/catalogNumber
+    public static final String TARGET_FIELD_NUMBER = "targetFieldNumber"; // see http://rs.tdwg.org/dwc/terms/fieldNumber
 
     public String getBaseUrl() {
         return getDataset().getArchiveURI().toString();

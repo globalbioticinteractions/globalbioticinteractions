@@ -44,6 +44,8 @@ import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_CATALOG_NUMBER;
+import static org.eol.globi.data.StudyImporterForTSV.TARGET_FIELD_NUMBER;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.gbif.dwc.terms.DwcTerm.relatedResourceID;
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -356,6 +358,23 @@ public class StudyImporterForDwCATest {
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Biomphalaria havanensis"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Biomphalaria"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("havanensis"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarksComplex() throws IOException {
+        String occurrenceRemarks = "{\"hostGen\":\"Hybopsis\",  \"hostSpec\":\"dorsalis\",  \"hostHiTax\":\"Pisces: Cypriniformes: Cyprinidae\",  \"hostSyn\":\"Notropis dorsalis\",   \"hostBodyLoc\":\"gills\", \"hostFldNo\":\"DCloutman-6028-4\",  \"hostMusNo\":\"KU-34829 (University of Kansas\"}";
+
+        Map<String, String> properties = StudyImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
+
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Hybopsis dorsalis"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Hybopsis"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("dorsalis"));
+        assertThat(properties.get(TARGET_FIELD_NUMBER), is("DCloutman-6028-4"));
+        assertThat(properties.get(TARGET_CATALOG_NUMBER), is("KU-34829 (University of Kansas"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
     }
