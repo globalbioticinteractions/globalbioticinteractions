@@ -289,7 +289,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 URI referenceURI = new URI(value);
                 URL url = referenceURI.toURL();
                 interactionProperties.put(REFERENCE_URL, url.toString());
-            } catch (MalformedURLException | URISyntaxException e) {
+            } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
                 // opportunistic extraction of url from references to take advantage of practice used in Symbiota)
             }
         }

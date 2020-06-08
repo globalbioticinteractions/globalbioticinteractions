@@ -817,6 +817,21 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void mapReferencesInfoValidURIButInvalidURL() {
+        DummyRecord dummyRecord = new DummyRecord(new HashMap<Term, String>() {{
+            put(DwcTerm.occurrenceID,
+                    "something");
+        }});
+
+        TreeMap<String, String> properties = new TreeMap<>();
+        mapReferenceInfo(dummyRecord, properties);
+        assertThat(properties.get(REFERENCE_CITATION), is("something"));
+        assertThat(properties.get(REFERENCE_ID), is("something"));
+        assertThat(properties.get(REFERENCE_URL), is(nullValue()));
+
+    }
+
+    @Test
     public void mapReferencesInfoWithURL() {
         DummyRecord dummyRecord = new DummyRecord(new HashMap<Term, String>() {{
             put(DcTerm.references,
