@@ -198,7 +198,12 @@ public class StudyImporterForDBatVir extends StudyImporterWithListener {
                 link.put(SOURCE_TAXON_PATH_IDS, sourceTaxonPathIds);
 
 
-                setPropertyIfNotBlank(link, interactionNode, StudyImporterForMetaTable.EVENT_DATE, "CollectionDate");
+                String value = JSONUtil.textValueOrNull(interactionNode, "CollectionDate");
+                if (StringUtils.isNotBlank(value)) {
+                    // account for usage of ~ instead of / to annotate date range
+                    String replace = StringUtils.replace(value, "~", "/");
+                    link.put(StudyImporterForMetaTable.EVENT_DATE, replace);
+                }
 
 
                 String localityName = Stream.of(JSONUtil.textValueOrNull(interactionNode, "Country"),

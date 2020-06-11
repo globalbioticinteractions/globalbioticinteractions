@@ -112,5 +112,20 @@ public class StudyImporterForDBatVirTest {
 
     }
 
+    @Test
+    public void parseWithDateRange() throws IOException, StudyImporterException {
+        InputStream first2 = getClass().getResourceAsStream("/org/eol/globi/data/dbatvir/dbatvir-daterange.json");
+
+        List<Map<String, String>> links = new ArrayList<>();
+        InteractionListener interactionListener = links::add;
+
+        StudyImporterForDBatVir.parseInteractions(first2, interactionListener);
+
+        assertThat(links.size(), Is.is(2));
+
+        assertThat(links.get(0).get(StudyImporterForMetaTable.EVENT_DATE), Is.is("2012-03/2014-07"));
+
+    }
+
 
 }
