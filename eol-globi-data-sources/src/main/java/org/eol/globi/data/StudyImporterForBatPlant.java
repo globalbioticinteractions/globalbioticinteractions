@@ -43,7 +43,7 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
 
 
         Map<String, String> sources;
-        String baseUrl = "https://www.batplant.org/";
+        String baseUrl = getDataset().getOrDefault("url", "https://www.batbase.org/");
         try {
             sources = parseSources(getDataset().retrieve(URI.create(baseUrl + "fetch/source")));
         } catch (IOException e) {
@@ -365,7 +365,6 @@ public class StudyImporterForBatPlant extends StudyImporterWithListener {
         }
         return properties;
     }
-
 
 
 }

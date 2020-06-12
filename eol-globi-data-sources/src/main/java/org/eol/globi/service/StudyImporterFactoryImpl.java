@@ -153,6 +153,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("rss", StudyImporterForRSS.class);
                 put("mangal", StudyImporterForMangal.class);
                 put("batplant", StudyImporterForBatPlant.class);
+                put("batbase", StudyImporterForBatPlant.class);
                 put("dbatvir", StudyImporterForDBatVir.class);
             }
         };
