@@ -4,17 +4,17 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyNodeListener;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,17 +24,16 @@ import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.hamcrest.Matchers.hasItem;
 
 public class StudyImporterForTSVTest extends GraphDBTestCase {
 
@@ -303,23 +302,33 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void eventDateRange() throws StudyImporterException {
-        AtomicInteger atomicInteger = new AtomicInteger(0);
+        assertEventDate("sourceOccurrenceId\tsourceTaxonId\tsourceTaxonName\tsourceBodyPartId\tsourceBodyPartName\tsourceLifeStageId\tsourceLifeStageName\tinteractionTypeId\tinteractionTypeName\ttargetOccurrenceId\ttargetTaxonId\ttargetTaxonName\ttargetBodyPartId\ttargetBodyPartName\ttargetLifeStageId\ttargetLifeStageName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceUrl\treferenceCitation\n");
+    }
 
-        String firstFewLines = "sourceOccurrenceId\tsourceTaxonId\tsourceTaxonName\tsourceBodyPartId\tsourceBodyPartName\tsourceLifeStageId\tsourceLifeStageName\tinteractionTypeId\tinteractionTypeName\ttargetOccurrenceId\ttargetTaxonId\ttargetTaxonName\ttargetBodyPartId\ttargetBodyPartName\ttargetLifeStageId\ttargetLifeStageName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\tobservationDateTime\treferenceDoi\treferenceUrl\treferenceCitation\n" +
+    @Test
+    public void eventDateRange2() throws StudyImporterException {
+        assertEventDate("sourceOccurrenceId\tsourceTaxonId\tsourceTaxonName\tsourceBodyPartId\tsourceBodyPartName\tsourceLifeStageId\tsourceLifeStageName\tinteractionTypeId\tinteractionTypeName\ttargetOccurrenceId\ttargetTaxonId\ttargetTaxonName\ttargetBodyPartId\ttargetBodyPartName\ttargetLifeStageId\ttargetLifeStageName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\thttp://rs.tdwg.org/dwc/terms/eventDate\treferenceDoi\treferenceUrl\treferenceCitation\n");
+    }
+
+    @Test
+    public void eventDateRange3() throws StudyImporterException {
+        assertEventDate("sourceOccurrenceId\tsourceTaxonId\tsourceTaxonName\tsourceBodyPartId\tsourceBodyPartName\tsourceLifeStageId\tsourceLifeStageName\tinteractionTypeId\tinteractionTypeName\ttargetOccurrenceId\ttargetTaxonId\ttargetTaxonName\ttargetBodyPartId\ttargetBodyPartName\ttargetLifeStageId\ttargetLifeStageName\tlocalityId\tlocalityName\tdecimalLatitude\tdecimalLongitude\teventDate\treferenceDoi\treferenceUrl\treferenceCitation\n");
+    }
+
+    private void assertEventDate(String header) throws StudyImporterException {
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        String firstFewLines = header +
                 "\tITIS:632267\tRousettus aegyptiacus\t\t\t\t\thttp://purl.obolibrary.org/obo/RO_0002470\teats\t\tITIS:28882\tCitrus sp.\thttp://purl.obolibrary.org/obo/PO_0009001\tfruit\t\t\tGEONAMES:298795\tHatay, Adana, Mersin, and Antalya, Turkey\t\t\t1999-09/2003-09\t\thttp://journals.tubitak.gov.tr/zoology/issues/zoo-08-32-1/zoo-32-1-2-0604-8.pdf\tAlbayrak, I., Aşan, N., & Yorulmaz, T. (2008). The natural history of the Egyptian fruit bat, Rousettus aegyptiacus, in Turkey (Mammalia: Chiroptera). Turkish Journal of Zoology, 32(1), 11-18.";
 
         StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(new TreeMap<String, String>() {{
             put("http://example.com/interactions.tsv", firstFewLines);
         }}), nodeFactory);
         importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
-        importer.setInteractionListener(new InteractionListener() {
-            @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                atomicInteger.incrementAndGet();
-                assertThat(link.get(StudyImporterForMetaTable.EVENT_DATE), is(not(nullValue())));
-                assertThat(link.get(SOURCE_TAXON_NAME), is("Rousettus aegyptiacus"));
-                assertThat(link.get(TARGET_TAXON_NAME), is("Citrus sp."));
-            }
+        importer.setInteractionListener(link -> {
+            atomicInteger.incrementAndGet();
+            assertThat(link.get(StudyImporterForMetaTable.EVENT_DATE), is(not(nullValue())));
+            assertThat(link.get(SOURCE_TAXON_NAME), is("Rousettus aegyptiacus"));
+            assertThat(link.get(TARGET_TAXON_NAME), is("Citrus sp."));
         });
         importStudy(importer);
         assertThat(atomicInteger.get(), is(1));
