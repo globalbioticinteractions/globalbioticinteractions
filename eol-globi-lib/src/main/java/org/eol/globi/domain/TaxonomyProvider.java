@@ -27,7 +27,7 @@ public enum TaxonomyProvider {
     FISHBASE_CACHE("FBC:"),
     FISHBASE_SPECCODE("FBC:FB:SpecCode:"),
     SEALIFEBASE_SPECCODE("FBC:SLB:SpecCode:"),
-    BATPLANT("batplant:taxon:"),
+    BATPLANT("batbase:taxon:"),
     GULFBASE("BioGoMx:");
 
     private final List<String> idPrefixes;

@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class StudyImporterForBatPlantTest {
+public class StudyImporterForBatBaseTest {
 
 
     @Test
@@ -37,26 +36,31 @@ public class StudyImporterForBatPlantTest {
         String locationChunk = "{ \"location\": {" + location  + "," + someLocation + "}}";
         InputStream inputStream = IOUtils.toInputStream(locationChunk, StandardCharsets.UTF_8);
 
-        Map<String, Map<String, String>> locations = StudyImporterForBatPlant.parseLocations(inputStream);
+        StudyImporterForBatBase.Prefixer prefixer = getFooPrefixer();
+        Map<String, Map<String, String>> locations = StudyImporterForBatPlant.parseLocations(inputStream, getFooPrefixer());
 
         assertThat(locations.size(), is(2));
 
         Map<String, String> properties = locations.get("1");
 
-        assertThat(properties.get(StudyImporterForTSV.HABITAT_ID), is("batplant:habitat:1"));
+        assertThat(properties.get(StudyImporterForTSV.HABITAT_ID), is("foo:habitat:1"));
         assertThat(properties.get(StudyImporterForTSV.HABITAT_NAME), is("forest"));
         assertThat(properties.get(StudyImporterForTSV.LOCALITY_NAME), is("Uruguay-Forest"));
-        assertThat(properties.get(StudyImporterForTSV.LOCALITY_ID), is("batplant:location:1"));
+        assertThat(properties.get(StudyImporterForTSV.LOCALITY_ID), is("foo:location:1"));
 
         properties = locations.get("2");
 
-        assertThat(properties.get(StudyImporterForTSV.HABITAT_ID), is("batplant:habitat:2"));
+        assertThat(properties.get(StudyImporterForTSV.HABITAT_ID), is("foo:habitat:2"));
         assertThat(properties.get(StudyImporterForTSV.HABITAT_NAME), is("savanna"));
         assertThat(properties.get(StudyImporterForTSV.DECIMAL_LONGITUDE), is("-47.37083333"));
         assertThat(properties.get(StudyImporterForTSV.DECIMAL_LATITUDE), is("-15.6283333"));
         assertThat(properties.get(StudyImporterForTSV.LOCALITY_NAME), is("Embrapa Cerrados"));
-        assertThat(properties.get(StudyImporterForTSV.LOCALITY_ID), is("batplant:location:2"));
+        assertThat(properties.get(StudyImporterForTSV.LOCALITY_ID), is("foo:location:2"));
 
+    }
+
+    public StudyImporterForBatBase.Prefixer getFooPrefixer() {
+        return value -> "foo:" + value;
     }
 
     @Test
@@ -96,21 +100,21 @@ public class StudyImporterForBatPlantTest {
         String taxonChunk = getTestTaxonChunk();
 
 
-        Map<String, Taxon> taxonObjs = StudyImporterForBatPlant.parseTaxa(taxonChunk);
+        Map<String, Taxon> taxonObjs = StudyImporterForBatPlant.parseTaxa(taxonChunk, getFooPrefixer());
 
         assertThat(taxonObjs.size(), is(3));
         assertThat(taxonObjs.get("974").getName(), is("Micronycteris hirsuta"));
-        assertThat(taxonObjs.get("974").getId(), is("batplant:taxon:974"));
+        assertThat(taxonObjs.get("974").getId(), is("foo:taxon:974"));
         assertThat(taxonObjs.get("974").getRank(), is("species"));
         assertThat(taxonObjs.get("974").getPath(), is("Micronycteris | Micronycteris hirsuta"));
-        assertThat(taxonObjs.get("974").getPathIds(), is("batplant:taxon:322 | batplant:taxon:974"));
+        assertThat(taxonObjs.get("974").getPathIds(), is("foo:taxon:322 | foo:taxon:974"));
         assertThat(taxonObjs.get("974").getPathNames(), is("genus | species"));
 
         assertThat(taxonObjs.get("885").getName(), is("Sphingidae"));
-        assertThat(taxonObjs.get("885").getId(), is("batplant:taxon:885"));
+        assertThat(taxonObjs.get("885").getId(), is("foo:taxon:885"));
         assertThat(taxonObjs.get("885").getRank(), is("family"));
         assertThat(taxonObjs.get("885").getPath(), is("Sphingidae"));
-        assertThat(taxonObjs.get("885").getPathIds(), is("batplant:taxon:885"));
+        assertThat(taxonObjs.get("885").getPathIds(), is("foo:taxon:885"));
         assertThat(taxonObjs.get("885").getPathNames(), is("family"));
 
     }
@@ -127,13 +131,13 @@ public class StudyImporterForBatPlantTest {
     public void parseInteraction() throws StudyImporterException, IOException {
 
         String taxonChunk = getTestTaxonChunk();
-        Map<String, Taxon> taxa = StudyImporterForBatPlant.parseTaxa(taxonChunk);
+        Map<String, Taxon> taxa = StudyImporterForBatPlant.parseTaxa(taxonChunk, getFooPrefixer());
         Map<String, String> sources = new TreeMap<>();
         sources.put("955", "some reference");
 
         Map<String, Map<String, String>> locations = new TreeMap<String, Map<String, String>>() {{
             put("30", new TreeMap<String, String>(){{
-                put(StudyImporterForTSV.LOCALITY_ID, "some:locality:id:30");
+                put(StudyImporterForTSV.LOCALITY_ID, "foo:locality:id:30");
             }});
         }};
 
@@ -153,19 +157,19 @@ public class StudyImporterForBatPlantTest {
         List<Map<String, String>> links = new ArrayList<>();
         InteractionListener testListener = links::add;
 
-        StudyImporterForBatPlant.parseInteractions(taxa, sources, interactionJson, testListener, locations);
+        StudyImporterForBatPlant.parseInteractions(taxa, sources, interactionJson, testListener, locations, getFooPrefixer());
 
         assertThat(links.size(), Is.is(1));
 
         Map<String, String> firstLink = links.get(0);
-        assertThat(firstLink.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("batplant:interactionTypeId:11"));
+        assertThat(firstLink.get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("foo:interactionTypeId:11"));
         assertThat(firstLink.get(StudyImporterForTSV.INTERACTION_TYPE_NAME), is("Predation"));
-        assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_ID), is("batplant:source:955"));
+        assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_ID), is("foo:source:955"));
         assertThat(firstLink.get(StudyImporterForTSV.REFERENCE_CITATION), is("some reference"));
-        assertThat(firstLink.get(StudyImporterForTSV.LOCALITY_ID), is("some:locality:id:30"));
-        assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_ID), is("batplant:taxon:974"));
+        assertThat(firstLink.get(StudyImporterForTSV.LOCALITY_ID), is("foo:locality:id:30"));
+        assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_ID), is("foo:taxon:974"));
         assertThat(firstLink.get(TaxonUtil.SOURCE_TAXON_PATH), is("Micronycteris | Micronycteris hirsuta"));
-        assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_ID), is("batplant:taxon:885"));
+        assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_ID), is("foo:taxon:885"));
         assertThat(firstLink.get(TaxonUtil.TARGET_TAXON_PATH), is("Sphingidae"));
     }
 

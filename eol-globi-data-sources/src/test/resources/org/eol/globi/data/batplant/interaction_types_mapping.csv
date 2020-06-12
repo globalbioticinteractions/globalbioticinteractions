@@ -1,12 +1,12 @@
 provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id
-Seed Dispersal,batplant:interactionTypeId:1,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
-Consume,batplant:interactionTypeId:2,eats,http://purl.obolibrary.org/obo/RO_0002470
-Pollination,batplant:interactionTypeId:3,pollinates,http://purl.obolibrary.org/obo/RO_0002455
-visitation,batplant:interactionTypeId:4,visits,http://purl.obolibrary.org/obo/RO_0002618
-transports,batplant:interactionTypeId:5,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
-roosts,batplant:interactionTypeId:6,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
-host,batplant:interactionTypeId:7,hostOf,http://purl.obolibrary.org/obo/RO_0002453
-cohabitation,batplant:interactionTypeId:8,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
-prey,batplant:interactionTypeId:9,preyedUponBy,http://purl.obolibrary.org/obo/RO_0002458
-Hematophagy,batplant:interactionTypeId:10,eats,http://purl.obolibrary.org/obo/RO_0002470
-Predation,batplant:interactionTypeId:11,preysOn,http://purl.obolibrary.org/obo/RO_0002439
+Seed Dispersal,batbase:interactionTypeId:1,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+Consume,batbase:interactionTypeId:2,eats,http://purl.obolibrary.org/obo/RO_0002470
+Pollination,batbase:interactionTypeId:3,pollinates,http://purl.obolibrary.org/obo/RO_0002455
+visitation,batbase:interactionTypeId:4,visits,http://purl.obolibrary.org/obo/RO_0002618
+transports,batbase:interactionTypeId:5,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+roosts,batbase:interactionTypeId:6,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
+host,batbase:interactionTypeId:7,hostOf,http://purl.obolibrary.org/obo/RO_0002453
+cohabitation,batbase:interactionTypeId:8,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
+prey,batbase:interactionTypeId:9,preyedUponBy,http://purl.obolibrary.org/obo/RO_0002458
+Hematophagy,batbase:interactionTypeId:10,eats,http://purl.obolibrary.org/obo/RO_0002470
+Predation,batbase:interactionTypeId:11,preysOn,http://purl.obolibrary.org/obo/RO_0002439

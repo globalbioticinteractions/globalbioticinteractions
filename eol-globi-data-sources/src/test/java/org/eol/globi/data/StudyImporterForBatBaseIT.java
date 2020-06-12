@@ -12,12 +12,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class StudyImporterForBatPlantIT {
+public class StudyImporterForBatBaseIT {
 
     @Test
     public void importAll() throws StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);
-        StudyImporterForBatPlant importer = new StudyImporterForBatPlant(null, null);
+        StudyImporterForBatBase importer = new StudyImporterForBatBase(null, null);
         DatasetImpl dataset = new DatasetImpl("test/batplant", URI.create("classpath:/org/eol/globi/data/batplant/"), is -> is);
         importer.setDataset(dataset);
         importer.setInteractionListener(link -> {
