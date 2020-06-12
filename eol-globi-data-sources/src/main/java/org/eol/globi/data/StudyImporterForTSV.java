@@ -123,6 +123,9 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
             InteractUtil.putNotBlank(link, TaxonUtil.SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_ID)));
             InteractUtil.putNotBlank(link, TaxonUtil.TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_ID)));
 
+            InteractUtil.putIfKeyNotExistsAndValueNotBlank(link, StudyImporterForMetaTable.EVENT_DATE, StringUtils.trimToNull(parser.getValueByLabel("observationDateTime")));
+            InteractUtil.putIfKeyNotExistsAndValueNotBlank(link, StudyImporterForMetaTable.EVENT_DATE, StringUtils.trimToNull(parser.getValueByLabel("eventDate")));
+            InteractUtil.putIfKeyNotExistsAndValueNotBlank(link, StudyImporterForMetaTable.EVENT_DATE, StringUtils.trimToNull(parser.getValueByLabel(StudyImporterForMetaTable.EVENT_DATE)));
 
             Stream.concat(
                     TaxonUtil.TAXON_RANK_PROPERTY_NAMES.stream(),

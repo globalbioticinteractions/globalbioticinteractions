@@ -49,4 +49,10 @@ public class InteractUtil {
             link.put(key, value);
         }
     }
+
+    public static void putIfKeyNotExistsAndValueNotBlank(Map<String, String> link, String key, String value) {
+        if (StringUtils.isBlank(link.get(key))) {
+            putNotBlank(link, key, value);
+        }
+    }
 }
