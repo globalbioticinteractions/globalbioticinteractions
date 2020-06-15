@@ -22,17 +22,31 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.mockito.Mockito.when;
 
 public class TaxonSearchImplIT {
 
     @Test
     public void nameSuggestions() throws IOException {
-        CypherQuery cypherQuery = new TaxonSearchImpl().findCloseMatchesForCommonAndScientificNames("homo zapiens", null);
+        CypherQuery cypherQuery = new TaxonSearchImpl()
+                .findCloseMatchesForCommonAndScientificNames("homo zapiens", null);
         CypherTestUtil.validate(cypherQuery);
         String result = new CypherQueryExecutor(cypherQuery).execute(null);
         assertThat(result, containsString("Homo sapiens"));
+    }
+
+    @Test
+    public void findApidae() throws IOException {
+        CypherQuery cypherQuery = new TaxonSearchImpl()
+                .findCloseMatchesForCommonAndScientificNames("Apidae", null);
+        CypherTestUtil.validate(cypherQuery);
+        String result = new CypherQueryExecutor(cypherQuery).execute(null);
+        JsonNode json = new ObjectMapper().readTree(result);
+
+        JsonNode data = json.get("data");
+        JsonNode firstRow = data.get(0);
+        JsonNode firstCell = firstRow.get(0);
+        assertThat(firstCell.asText(), is("Apidae"));
     }
 
     public static final String COLUMN_PREFIX = "{\"columns\":[\"taxon_name\",\"taxon_common_names\",\"taxon_path\",\"taxon_path_ids\"]";

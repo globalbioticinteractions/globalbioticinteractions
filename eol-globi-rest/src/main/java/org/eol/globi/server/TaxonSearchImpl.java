@@ -1,5 +1,7 @@
 package org.eol.globi.server;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.server.util.ResultField.TAXON_COMMON_NAMES;
 import static org.eol.globi.server.util.ResultField.TAXON_EXTERNAL_ID;
@@ -123,8 +126,10 @@ public class TaxonSearchImpl implements TaxonSearch {
     @RequestMapping(value = "/findCloseMatchesForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public CypherQuery findCloseMatchesForCommonAndScientificNames(@PathVariable("taxonName") final String taxonName, HttpServletRequest request) throws IOException {
+
+        StringBuilder exactQuery = new StringBuilder("START taxon = node:taxons(name = {taxonName}) ");
         String luceneQuery = buildLuceneQuery(taxonName, "name");
-        StringBuilder query = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
+        StringBuilder fuzzyQuery = new StringBuilder("START taxon = node:taxonNameSuggestions('" + luceneQuery + "') ");
 
         Map<ResultField, String> selectors = new HashMap<ResultField, String>() {
             {
@@ -147,8 +152,23 @@ public class TaxonSearchImpl implements TaxonSearch {
         if (request != null) {
             requestedFields.addAll(CypherQueryBuilder.collectRequestedFields(request.getParameterMap()));
         }
-        CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
-        return CypherQueryBuilder.createPagedQuery(request, new CypherQuery(query.toString(), null, CypherUtil.CYPHER_VERSION_2_3), 30);
+
+        CypherReturnClauseBuilder.appendReturnClauseDistinctz(
+                exactQuery,
+                CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()),
+                selectors);
+
+        CypherReturnClauseBuilder.appendReturnClauseDistinctz(
+                fuzzyQuery,
+                CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()),
+                selectors);
+
+        return CypherQueryBuilder.createPagedQuery(request,
+                new CypherQuery(exactQuery + " LIMIT 1 UNION " + fuzzyQuery.toString(),
+                        new TreeMap<String, String>() {{
+                            put("taxonName", taxonName);
+                        }},
+                        CypherUtil.CYPHER_VERSION_2_3), 30);
     }
 
     @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
