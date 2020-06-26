@@ -28,17 +28,6 @@ import static org.junit.Assert.assertTrue;
 public class ResourceUtilIT {
 
     @Test
-    public void remoteResource() {
-        assertTrue(ResourceUtil.resourceExists(URI.create("https://example.com")));
-    }
-
-    @Test
-    public void remoteFTPResourceExists() throws IOException {
-        URI uri = URI.create("ftp://ftp.genome.jp/pub/db/virushostdb/README");
-        assertTrue(ResourceUtil.resourceExists(uri));
-    }
-
-    @Test
     public void remoteFTPResource() throws IOException {
         URI uri = URI.create("ftp://ftp.genome.jp/pub/db/virushostdb/README");
         InputStream inputStream = ResourceUtil.asInputStream(uri.toString());

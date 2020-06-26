@@ -26,17 +26,8 @@ public class ResourceUtilTest {
     }
 
     @Test
-    public void localResource() throws URISyntaxException {
-        String name = getClass().getSimpleName() + ".class";
-        URL resource = getClass().getResource(name);
-        assertThat(new File(resource.toURI()).exists(), is(true));
-        assertTrue(ResourceUtil.resourceExists(resource.toURI()));
-    }
-
-    @Test
     public void localJarResource() throws URISyntaxException, IOException {
         URL resource = getClass().getResource("/java/lang/String.class");
-        assertTrue(ResourceUtil.resourceExists(resource.toURI()));
         InputStream inputStream = ResourceUtil.asInputStream(resource.toString());
         assertNotNull(inputStream);
         inputStream.close();
@@ -47,7 +38,6 @@ public class ResourceUtilTest {
     @Test
     public void localJarResourceWithInputStreamFactory() throws URISyntaxException, IOException {
         URL resource = getClass().getResource("/java/lang/String.class");
-        assertTrue(ResourceUtil.resourceExists(resource.toURI()));
         AtomicLong counter = new AtomicLong(0);
         InputStream inputStream = ResourceUtil.asInputStream(resource.toString(), new InputStreamFactory() {
             @Override
@@ -71,7 +61,6 @@ public class ResourceUtilTest {
     @Test
     public void kaboomWithInputStreamFactory() throws URISyntaxException {
         URL resource = getClass().getResource("/java/lang/String.class");
-        assertTrue(ResourceUtil.resourceExists(resource.toURI()));
         try {
             ResourceUtil.asInputStream(resource.toString(), new InputStreamFactory() {
                 @Override
@@ -87,26 +76,19 @@ public class ResourceUtilTest {
     }
 
     @Test
-    public void localResourceNull() throws URISyntaxException {
-        URL resource = getClass().getResource(getClass().getSimpleName() + ".class");
-        assertThat(new File(resource.toURI()).exists(), is(true));
-        assertFalse(ResourceUtil.resourceExists(null));
-    }
-
-    @Test
-    public void relativeURI() throws URISyntaxException {
+    public void relativeURI() {
         URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), URI.create("/path"));
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
     @Test
-    public void relativeURINoSlash() throws URISyntaxException {
+    public void relativeURINoSlash() {
         URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example"), URI.create("path"));
         assertThat(uri.toString(), is("some:/example/path"));
     }
 
     @Test
-    public void relativeURISlashContext() throws URISyntaxException {
+    public void relativeURISlashContext() {
         URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), URI.create("path"));
         assertThat(uri.toString(), is("some:/example/path"));
     }

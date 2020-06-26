@@ -67,27 +67,23 @@ public class StudyImporterForGoMexSI2 extends NodeBasedImporter {
         super(parserFactory, nodeFactory);
     }
 
-    protected URI getPreyResourcePath() throws StudyImporterException {
+    protected URI getPreyResourcePath() {
         return getResourcePath(URI.create("/Prey.csv"));
     }
 
-    private URI getResourcePath(URI resourceName) throws StudyImporterException {
-        try {
-            return getDataset().getLocalURI(resourceName);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to query [" + resourceName + "]", e);
-        }
+    private URI getResourcePath(URI resourceName) {
+        return resourceName;
     }
 
-    protected URI getPredatorResourcePath() throws StudyImporterException {
+    protected URI getPredatorResourcePath() {
         return getResourcePath(URI.create("/Predators.csv"));
     }
 
-    protected URI getReferencesResourcePath() throws StudyImporterException {
+    protected URI getReferencesResourcePath() {
         return getResourcePath(URI.create("/References.csv"));
     }
 
-    protected URI getLocationsResourcePath() throws StudyImporterException {
+    protected URI getLocationsResourcePath() {
         return getResourcePath(URI.create("/Locations.csv"));
     }
 
@@ -226,7 +222,7 @@ public class StudyImporterForGoMexSI2 extends NodeBasedImporter {
 
     private static DateTime parseEventDate(URI locationResource, LabeledCSVParser parser, String prefix) throws StudyImporterException {
 
-        Integer startYear = getMandatoryIntegerValue(locationResource, parser, prefix +"YEAR");
+        Integer startYear = getMandatoryIntegerValue(locationResource, parser, prefix + "YEAR");
         String startMonth = getMandatoryValue(locationResource, parser, prefix + "MON");
         Integer startDay = getMandatoryIntegerValue(locationResource, parser, prefix + "DAY");
 

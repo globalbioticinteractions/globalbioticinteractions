@@ -120,29 +120,6 @@ public class ResourceUtil {
                 : absoluteURIFor(context, resourceName);
     }
 
-    static boolean resourceExists(URI descriptor) {
-        return resourceExists(descriptor, inStream -> inStream);
-    }
-
-    public static boolean resourceExists(URI descriptor, InputStreamFactory factory) {
-        boolean exists = false;
-        if (null != descriptor) {
-            try {
-                if (isHttpURI(descriptor)) {
-                    HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpHead(descriptor));
-                    exists = resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-                } else {
-                    try (InputStream input = asInputStream(descriptor.toString(), factory)) {
-                        exists = input != null && input.available() > 0;
-                    }
-                }
-            } catch (IOException e) {
-                //
-            }
-        }
-        return exists;
-    }
-
     private static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
         HttpGet request = new HttpGet(resourceURI);
         try {
