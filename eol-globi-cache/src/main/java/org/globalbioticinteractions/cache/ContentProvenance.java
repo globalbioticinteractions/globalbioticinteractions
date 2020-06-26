@@ -48,17 +48,6 @@ public class ContentProvenance {
 
     /**
      *
-     * @return content hash of accessed source content
-     */
-
-    public URI getContentHash() {
-        return StringUtils.isBlank(getSha256())
-                ? null :
-                URI.create("hash://sha256/" + getSha256());
-    }
-
-    /**
-     *
      * @return time at which content at source location was accessed
      */
 
