@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -38,5 +39,10 @@ public final class DatasetUtil {
             }
         }
         return mappedResource;
+    }
+
+    public static URI mapResourceForDataset(Dataset dataset, URI resourceName) throws IOException {
+        URI mappedResource = getNamedResourceURI(dataset, resourceName);
+        return ResourceUtil.getAbsoluteResourceURI(dataset.getArchiveURI(), mappedResource);
     }
 }

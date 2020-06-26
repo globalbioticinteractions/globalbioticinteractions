@@ -19,14 +19,12 @@ public class ResourceServiceWithMapping implements ResourceService {
 
     @Override
     public InputStream retrieve(URI resourceName) throws IOException {
-        URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
-        URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(dataset.getArchiveURI(), mappedResource);
+        URI absoluteResourceURI = DatasetUtil.mapResourceForDataset(dataset, resourceName);
         return ResourceUtil.asInputStream(absoluteResourceURI, factory);
     }
 
     @Override
     public URI getLocalURI(URI resourceName) throws IOException {
-        URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
-        return ResourceUtil.getAbsoluteResourceURI(dataset.getArchiveURI(), mappedResource);
+        return DatasetUtil.mapResourceForDataset(dataset, resourceName);
     }
 }

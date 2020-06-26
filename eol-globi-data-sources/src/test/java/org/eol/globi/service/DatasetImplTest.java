@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 
@@ -14,40 +15,6 @@ import static org.junit.Assert.*;
 
 public class DatasetImplTest {
 
-    @Test
-    public void lookupMappedResourceRelative() throws IOException {
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        dataset.setConfig(new ObjectMapper().readTree("{\"resources\": { \"previous/path.txt\": \"current/path.txt\" } }"));
-        assertThat(dataset.getLocalURI(URI.create("previous/path.txt")).toString(), is("some:uri/current/path.txt"));
-    }
-
-    @Test
-    public void lookupMappedResourceAbsoluteToRelative() throws IOException {
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        dataset.setConfig(new ObjectMapper().readTree("{\"resources\": { \"http://example.org/previous/path.txt\": \"current/path.txt\" } }"));
-        assertThat(dataset.getLocalURI(URI.create("http://example.org/previous/path.txt")).toString(), is("some:uri/current/path.txt"));
-    }
-
-    @Test
-    public void lookupMappedResourceAbsoluteToAbsolute() throws IOException {
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        dataset.setConfig(new ObjectMapper().readTree("{\"resources\": { \"http://example.org/previous/path.txt\": \"http://example.org/current/path.txt\" } }"));
-        assertThat(dataset.getLocalURI(URI.create("http://example.org/previous/path.txt")).toString(), is("http://example.org/current/path.txt"));
-    }
-
-    @Test
-    public void lookupNonMappedResourceRelative() throws IOException {
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        assertThat(dataset.getLocalURI(URI.create("previous/path.txt")).toString(),
-                is("some:uri/previous/path.txt"));
-    }
-
-    @Test
-    public void lookupNonMappedResourceAbsolute() throws IOException {
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        assertThat(dataset.getLocalURI(URI.create("http://example.org/previous/path.txt")).toString(),
-                is("http://example.org/previous/path.txt"));
-    }
 
     @Test
     public void useCitationFromTableDefinition() throws IOException {
