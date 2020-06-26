@@ -28,6 +28,7 @@ import org.globalbioticinteractions.dataset.DatasetRegistryZenodo;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 import static org.hamcrest.core.Is.is;
@@ -57,8 +58,8 @@ public class StudyImporterFactoryImplIT {
         Dataset dataset = new DatasetFactory(datasetRegistryGitHubRemote).datasetFor("globalbioticinteractions/hafner");
         StudyImporter importer = new StudyImporterFactoryImpl(null).createImporter(dataset);
         assertThat(importer, is(notNullValue()));
-        StudyImporterForHafner gomexsiImporter = (StudyImporterForHafner) importer;
-        assertThat(gomexsiImporter.getDataset().getLocalURI(URI.create("hafner/gopher_lice_int.csv")), is("gopher_lice_int.csv"));
+        StudyImporterForHafner haftnerImporter = (StudyImporterForHafner) importer;
+        assertThat(haftnerImporter.getDataset().retrieve(URI.create("hafner/gopher_lice_int.csv")), is(notNullValue()));
     }
 
     @Test
@@ -79,7 +80,7 @@ public class StudyImporterFactoryImplIT {
         assertThat(importer, is(instanceOf(StudyImporterForWood.class)));
         StudyImporterForWood importerz = (StudyImporterForWood) importer;
         assertThat(importerz.getSourceCitation(), containsString("Wood"));
-        assertThat(importerz.getDataset().getLocalURI(URI.create("links")).toString(), endsWith(".csv"));
+        assertThat(importerz.getDataset().retrieve(URI.create("links")).toString(), is(notNullValue()));
     }
 
     @Test
@@ -101,7 +102,7 @@ public class StudyImporterFactoryImplIT {
         StudyImporter importer = importerFor(datasetFinderGitHubRemote, "globalbioticinteractions/arthropodEasyCaptureAMNH");
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForRSS.class)));
-        assertThat(((StudyImporterForRSS)importer).getRssFeedUrlString(), is(notNullValue()));
+        assertThat(((StudyImporterForRSS) importer).getRssFeedUrlString(), is(notNullValue()));
     }
 
     @Test
@@ -110,8 +111,8 @@ public class StudyImporterFactoryImplIT {
         StudyImporter importer = importerFor(datasetFinderGitHubRemote, "globalbioticinteractions/AfricaTreeDatabase");
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForMetaTable.class)));
-        assertThat(((StudyImporterForMetaTable)importer).getConfig(), is(notNullValue()));
-        assertThat(((StudyImporterForMetaTable)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/"));
+        assertThat(((StudyImporterForMetaTable) importer).getConfig(), is(notNullValue()));
+        assertThat(((StudyImporterForMetaTable) importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/"));
     }
 
     @Test
@@ -121,7 +122,7 @@ public class StudyImporterFactoryImplIT {
         StudyImporter importer = importerFor(datasetFinderGitHubRemote, repo);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForCoetzer.class)));
-        assertThat(((StudyImporterForCoetzer)importer).getDataset(), is(notNullValue()));
+        assertThat(((StudyImporterForCoetzer) importer).getDataset(), is(notNullValue()));
         URI archiveURL = ((StudyImporterForCoetzer) importer).getResourceArchiveURI();
         assertThat(archiveURL.toString(), endsWith("CatalogueOfAfrotropicalBees.zip"));
         assertThat(archiveURL.isAbsolute(), is(true));
@@ -138,9 +139,8 @@ public class StudyImporterFactoryImplIT {
         StudyImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
         StudyImporterForTSV importerTSV = (StudyImporterForTSV) importer;
         assertThat(importerTSV.getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
-        String actual = importerTSV.getDataset().getLocalURI(URI.create("this/is/relative")).toString();
-        assertThat(actual, startsWith("jar:file:"));
-        assertThat(actual, endsWith("this/is/relative"));
+        assertThat(importerTSV.getDataset().retrieve(URI.create("globi.json")), is(notNullValue()));
+
     }
 
     @Test
@@ -164,10 +164,9 @@ public class StudyImporterFactoryImplIT {
     public void defaultTSVImporterNotCached() throws StudyImporterException, DatasetRegistryException, IOException {
         final DatasetRegistry datasetRegistry = new DatasetRegistryGitHubRemote(inStream -> inStream);
         StudyImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
-        assertThat(((StudyImporterForTSV)importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
-        String actual = ((StudyImporterForTSV) importer).getDataset().getLocalURI(URI.create("this/is/relative")).toString();
-        assertThat(actual, startsWith("https:/"));
-        assertThat(actual, endsWith("this/is/relative"));
+        assertThat(((StudyImporterForTSV) importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/"));
+        InputStream actual = ((StudyImporterForTSV) importer).getDataset().retrieve(URI.create("globi.json"));
+        assertThat(actual, is(notNullValue()));
     }
 
     StudyImporter getTemplateImporter(DatasetRegistry datasetRegistry, String repo) throws DatasetRegistryException, StudyImporterException {
