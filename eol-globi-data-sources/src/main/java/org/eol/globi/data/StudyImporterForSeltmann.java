@@ -50,18 +50,6 @@ public class StudyImporterForSeltmann extends NodeBasedImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        final URI archiveURI;
-
-        try {
-            archiveURI = getDataset().getLocalURI(URI.create("archive"));
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to query archive", e);
-        }
-
-        if (archiveURI == null) {
-            throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
-        }
-
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()

@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
@@ -24,6 +25,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -116,26 +118,31 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             String archiveURL = getDataset().getOrDefault("url", archiveURI == null ? null : archiveURI.toString());
             getLogger().info(null, "[" + archiveURL + "]: indexing interaction records");
-            URI resourceURI = getDataset().getLocalURI(URI.create(archiveURL));
-            if (resourceURI == null) {
-                throw new StudyImporterException("failed to access DwC archive at [" + archiveURL + "]");
+
+            File dwcaFile = null;
+            try {
+                dwcaFile = File.createTempFile("dwca", "tmp.zip");
+                FileUtils.copyToFile(getDataset().retrieve(URI.create(archiveURL)), dwcaFile);
+                dwcaFile.deleteOnExit();
+
+                tmpDwA = Files.createTempDirectory("dwca");
+                Archive archive = DwCAUtil.archiveFor(dwcaFile.toURI(), tmpDwA.toString());
+
+                InteractionListenerWithInteractionTypeMapping listenerProxy = new InteractionListenerWithInteractionTypeMapping(
+                        new InteractionListenerWithContext(),
+                        InteractUtil.createInteractionTypeMapperForImporter(getDataset()),
+                        getLogger());
+
+                importResourceRelationExtension(archive, listenerProxy);
+
+                importAssociatedTaxaExtension(archive, listenerProxy);
+
+                int i = importCore(archive, listenerProxy);
+                getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
+                getLogger().info(null, "[" + archiveURL + "]: detected [" + listenerProxy.getNumberOfSubmittedLinks() + "] interaction record(s)");
+            } finally {
+                FileUtils.deleteQuietly(dwcaFile);
             }
-
-            tmpDwA = Files.createTempDirectory("dwca");
-            Archive archive = DwCAUtil.archiveFor(resourceURI, tmpDwA.toString());
-
-            InteractionListenerWithInteractionTypeMapping listenerProxy = new InteractionListenerWithInteractionTypeMapping(
-                    new InteractionListenerWithContext(),
-                    InteractUtil.createInteractionTypeMapperForImporter(getDataset()),
-                    getLogger());
-
-            importResourceRelationExtension(archive, listenerProxy);
-
-            importAssociatedTaxaExtension(archive, listenerProxy);
-
-            int i = importCore(archive, listenerProxy);
-            getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
-            getLogger().info(null, "[" + archiveURL + "]: detected [" + listenerProxy.getNumberOfSubmittedLinks() + "] interaction record(s)");
 
         } catch (IOException | IllegalStateException e) {
             // catching IllegalStateException to prevents RuntimeException from stopping all

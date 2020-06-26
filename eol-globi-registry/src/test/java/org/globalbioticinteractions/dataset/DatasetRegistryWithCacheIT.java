@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
@@ -44,7 +46,7 @@ public class DatasetRegistryWithCacheIT {
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
         assertThat(dataset.getArchiveURI().toString(), containsString(expectedURIFragment));
-        assertThat(dataset.getLocalURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
+        assertThat(dataset.retrieve(URI.create("globi.json")), Is.is(notNullValue()));
         assertThat(dataset.getCitation(), startsWith(expectedCitation));
     }
 
@@ -56,7 +58,7 @@ public class DatasetRegistryWithCacheIT {
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
-        assertThat(dataset.getLocalURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
+        assertThat(dataset.retrieve(URI.create("globi.json")), Is.is(notNullValue()));
         assertThat(dataset.getCitation(), startsWith("Eardley C, Coetzer W. 2011. Catalogue of Afrotropical Bees."));
 
     }
