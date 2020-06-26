@@ -28,14 +28,14 @@ public class DatasetRegistryWithCacheIT {
     public void zenodoTest() throws DatasetRegistryException, IOException {
         assertTemplateDataset("zenodo.org",
                 new DatasetRegistryZenodo(inStream -> inStream),
-                "Jorrit H. Poelen. 2014. Species associations manually extracted from literature. <https://doi.org/10.5281/zenodo.207958>. Accessed on");
+                "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 
     @Test
-    public void githubTest() throws DatasetRegistryException, IOException {
+    public void templateDatasetGithub() throws DatasetRegistryException, IOException {
         assertTemplateDataset("github.com",
                 new DatasetRegistryGitHubArchive(inStream -> inStream),
-                "Jorrit H. Poelen. 2014. Species associations manually extracted from literature. Accessed on");
+                "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 
     private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetRegistryException, IOException {
@@ -50,14 +50,14 @@ public class DatasetRegistryWithCacheIT {
 
 
     @Test
-    public void gitHubTest() throws DatasetRegistryException, IOException {
+    public void afrotropicalBees() throws DatasetRegistryException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(inStream -> inStream), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
         assertThat(dataset.getLocalURI(URI.create("globi.json")).toString(), startsWith("jar:file:/"));
-        assertThat(dataset.getCitation(), startsWith("Shan Kothari, Pers. Comm. 2014."));
+        assertThat(dataset.getCitation(), startsWith("Eardley C, Coetzer W. 2011. Catalogue of Afrotropical Bees."));
 
     }
 
