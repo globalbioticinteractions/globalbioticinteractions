@@ -49,7 +49,7 @@ public class DatasetRegistryLocalTest {
     public void dataset() throws DatasetRegistryException, URISyntaxException {
         Dataset actual = createDatasetRegistry().datasetFor("globalbioticinteractions/template-dataset");
         assertThat(actual, is(notNullValue()));
-        assertThat(actual.getConfigURI().toString(), endsWith("/test-cache/globalbioticinteractions/template-dataset/6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2!/template-dataset-8abd2ba18457288f33527193299504015fae6def/globi.json"));
+        assertThat(actual.getConfigURI(), is(URI.create("/globi.json")));
         assertThat(actual.getArchiveURI().toString(), is("https://github.com/globalbioticinteractions/template-dataset/archive/8abd2ba18457288f33527193299504015fae6def.zip"));
         assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
     }
@@ -70,7 +70,7 @@ public class DatasetRegistryLocalTest {
 
         Dataset actual = registry.datasetFor("local");
         assertThat(actual, is(notNullValue()));
-        assertThat(actual.getConfigURI().toString(), endsWith("/local/1cc8eff62af0e6bb3e7771666e2e4109f351b7dfc6fc1dc8314e5671a8eecb80"));
+        assertThat(actual.getConfigURI(), is(URI.create("/globi.json")));
         assertThat(actual.getArchiveURI().toString(), is(localDatasetDir.toURI().toString()));
         assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
 
