@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class ProvenanceLogTest {
@@ -47,16 +48,25 @@ public class ProvenanceLogTest {
 
     @Test
     public void appendToProvenanceLog() throws IOException {
-        ContentProvenance meta = new ContentProvenance("some/namespace", URI.create("http://example.com"), URI.create("cached:file.zip"), "1234", "1970-01-01T00:00:00Z");
-        ProvenanceLog.appendProvenanceLog(tempDirectory, meta);
         CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath());
-        URI localURI = cache.getLocalURI(URI.create("http://example.com"));
-        assertThat(localURI, is(notNullValue()));
-        assertThat(localURI.toString(), startsWith(tempDirectory.toURI().toString()));
+        assertNull(cache.provenanceOf(URI.create("http://example.com")));
+
+        ContentProvenance meta = new ContentProvenance("some/namespace",
+                URI.create("http://example.com"),
+                URI.create("cached:file.zip"), "1234",
+                "1970-01-01T00:00:00Z");
+        ProvenanceLog.appendProvenanceLog(tempDirectory, meta);
+
+        ContentProvenance contentProvenance = cache.provenanceOf(URI.create("http://example.com"));
+        assertThat(contentProvenance.getNamespace(), is("some/namespace"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
+        assertThat(contentProvenance.getSha256(), is("1234"));
+        assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
+        assertThat(contentProvenance.getType(), is(nullValue()));
     }
 
     @Test
-    public void detectJarEntry() throws IOException, URISyntaxException {
+    public void detectJarEntry() {
         ContentProvenance meta = new ContentProvenance(
                 "some/namespace",
                 URI.create("http://example.com"),

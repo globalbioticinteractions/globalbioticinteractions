@@ -10,12 +10,15 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
 
 public class DatasetProxyTest {
+
 
     @Test
     public void getOrDefault() {
@@ -58,48 +61,32 @@ public class DatasetProxyTest {
     }
 
     @Test
-    public void getResource() throws IOException {
-        JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
-        DatasetProxy testDataset = getTestDataset(null, configProxy);
-        assertThat(testDataset.getLocalURI(URI.create("someResource.csv")).toString(), Is.is("http://example.com/someResource.csv"));
-        URI expectedZipURI = URI.create("http://example.com/archive.zip");
-        assertThat(testDataset.getLocalURI(URI.create("archive")), Is.is(expectedZipURI));
-
-        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"someOtherArchive.zip\" } }");
-        testDataset = getTestDataset(config, configProxy);
-        assertThat(testDataset.getLocalURI(URI.create("archive")), Is.is(expectedZipURI));
-
-        testDataset = getTestDataset(config, null);
-        assertThat(testDataset.getLocalURI(URI.create("archive")), Is.is(URI.create("http://example.com/someOtherArchive.zip")));
-    }
-
-    @Test
-    public void getMappedResource() throws IOException {
-        JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
+    public void getMappedResource() throws IOException, URISyntaxException {
+        URL original = getClass().getResource("/org/globalbioticinteractions/content/original.txt");
+        URL proxied = getClass().getResource("/org/globalbioticinteractions/content/proxied.txt");
+        JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"" + proxied.toURI() + "\" } }");
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         dataset.setConfig(null);
+
+
+        final String hashOfOriginal = "0682c5f2076f099c34cfdd15a9e063849ed437a49677e6fcc5b4198c76575be5";
+        final String hashOfProxied = "b09f17ea1b5ca77b7a01a3ed62c84b38578817eddb34f827666c898a27504f67";
 
         DatasetProxy datasetProxy = new DatasetProxy(dataset);
         datasetProxy.setConfig(configProxy);
         DatasetProxy testDataset = datasetProxy;
 
-        assertThat(testDataset.getLocalURI(URI.create("someResource.csv")).toString(), Is.is("http://example.com/someResource.csv"));
-        assertThat(testDataset.getLocalURI(URI.create("archive")), Is.is(URI.create("http://example.com/archive.zip")));
+        TestHashUtil.assertContentHash(testDataset.retrieve(URI.create("archive")), hashOfProxied);
 
-        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"someOtherArchive.zip\" } }");
+        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"" + original.toURI() + "\" } }");
         testDataset = getTestDataset(config, configProxy);
-        assertThat(testDataset.getLocalURI(URI.create("archive")), Is.is(URI.create("http://example.com/archive.zip")));
+
+        TestHashUtil.assertContentHash(testDataset.retrieve(URI.create("archive")), hashOfProxied);
 
         testDataset = getTestDataset(config, null);
-        assertThat(testDataset.getLocalURI(URI.create("archive")), Is.is(URI.create("http://example.com/someOtherArchive.zip")));
-    }
 
-    @Test
-    public void getLocalJarResource() throws IOException {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("jar:file:/home/homer/dataset.zip!"), inStream -> inStream);
-        DatasetProxy datasetProxy = new DatasetProxy(dataset);
-        assertThat(datasetProxy.getLocalURI(URI.create("somefile.json")), is(URI.create("jar:file:/home/homer/dataset.zip!/somefile.json")));
-        assertThat(datasetProxy.getLocalURI(URI.create("http://example.com/somefile.json")), is(URI.create("http://example.com/somefile.json")));
+        TestHashUtil.assertContentHash(testDataset.retrieve(URI.create("archive")), hashOfOriginal);
+
     }
 
     public DatasetProxy getTestDataset() {
@@ -107,7 +94,11 @@ public class DatasetProxyTest {
     }
 
     public DatasetProxy getTestDataset(JsonNode config, JsonNode configProxy) {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetImpl(
+                "some/namespace",
+                URI.create("http://example.com"),
+                inStream -> inStream);
+
         dataset.setConfig(config);
 
         DatasetProxy datasetProxy = new DatasetProxy(dataset);

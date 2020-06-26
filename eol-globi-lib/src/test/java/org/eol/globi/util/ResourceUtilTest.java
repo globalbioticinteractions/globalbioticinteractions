@@ -5,7 +5,6 @@ import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -15,7 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class ResourceUtilTest {
 
@@ -26,7 +27,7 @@ public class ResourceUtilTest {
     }
 
     @Test
-    public void localJarResource() throws URISyntaxException, IOException {
+    public void localJarResource() throws IOException {
         URL resource = getClass().getResource("/java/lang/String.class");
         InputStream inputStream = ResourceUtil.asInputStream(resource.toString());
         assertNotNull(inputStream);
