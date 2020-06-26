@@ -34,11 +34,6 @@ public class StudyImporterForCoetzer extends NodeBasedImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        URI resourceArchiveURI = getResourceArchiveURI();
-        if (resourceArchiveURI == null) {
-            throw new StudyImporterException("failed to import [" + getDataset().getNamespace() + "]: no [archiveURL] specified");
-        }
-
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()
