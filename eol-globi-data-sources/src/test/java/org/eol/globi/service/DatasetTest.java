@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -28,9 +29,14 @@ public class DatasetTest {
         URI parentDir = archive.getParentFile().toURI();
 
         Dataset dataset = new DatasetImpl("some/namespace", parentDir, inStream -> inStream);
-        TestHashUtil.assertContentHash(dataset.retrieve(resource.toURI()), "c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147");
-        TestHashUtil.assertContentHash(dataset.retrieve(URI.create("archive.zip")), "c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147");
-        TestHashUtil.assertContentHash(dataset.retrieve(URI.create("/archive.zip")), "c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147");
+        InputStream retrieve = dataset.retrieve(resource.toURI());
+        assertArchiveHash(retrieve);
+        assertArchiveHash(dataset.retrieve(URI.create("archive.zip")));
+        assertArchiveHash(dataset.retrieve(URI.create("/archive.zip")));
+    }
+
+    private void assertArchiveHash(InputStream retrieve) throws IOException {
+        TestHashUtil.assertContentHash(retrieve, "c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147");
     }
 
     @Test(expected = IOException.class)

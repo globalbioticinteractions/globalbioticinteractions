@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactory;
-import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 
@@ -95,26 +94,4 @@ public class DatasetImpl implements Dataset {
         return configURI;
     }
 
-    private class ResourceServiceWithMapping implements ResourceService {
-        private final InputStreamFactory factory;
-        private final Dataset dataset;
-
-        public ResourceServiceWithMapping(InputStreamFactory factory, Dataset dataset) {
-            this.factory = factory;
-            this.dataset = dataset;
-        }
-
-        @Override
-        public InputStream retrieve(URI resourceName) throws IOException {
-            URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
-            URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
-            return ResourceUtil.asInputStream(absoluteResourceURI, factory);
-        }
-
-        @Override
-        public URI getLocalURI(URI resourceName) throws IOException {
-            URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
-            return ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
-        }
-    }
 }

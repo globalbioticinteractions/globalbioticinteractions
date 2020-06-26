@@ -1,16 +1,21 @@
 package org.eol.globi.data;
 
+import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.StudyNodeListener;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,11 +56,12 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void importFewLinesTSV() throws StudyImporterException {
-        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {{
-            put("http://example.com/interactions.tsv", firstFewLinesTSV);
+        Dataset dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLinesTSV);
         }});
-        StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importStudy(importer);
 
         assertExists("Leptoconchus incycloseris");
@@ -66,11 +72,14 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void importFewLinesCSV() throws StudyImporterException {
-        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {{
-            put("http://example.com/interactions.csv", firstFewLinesCSV);
+
+        Dataset dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.csv"), firstFewLinesCSV);
         }});
-        StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importStudy(importer);
 
         assertExists("TESTLeptoconchus incycloseris");
@@ -81,12 +90,13 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
 
     @Test
     public void importFewLinesCSVAndTSV() throws StudyImporterException {
-        TestParserFactory parserFactory = new TestParserFactory(new TreeMap<String, String>() {{
-            put("http://example.com/interactions.tsv", firstFewLinesTSV);
-            put("http://example.com/interactions.csv", firstFewLinesCSV);
+        DatasetImpl dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLinesTSV);
+            put(URI.create("/interactions.csv"), firstFewLinesCSV);
         }});
-        StudyImporterForTSV importer = new StudyImporterForTSV(parserFactory, nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importStudy(importer);
 
         assertExists("Leptoconchus incycloseris");
@@ -96,10 +106,25 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         assertStudyTitles("someRepodoi:10.1007/s13127-011-0039-1");
     }
 
+    public DatasetImpl getDataset(TreeMap<URI, String> treeMap) {
+        return new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream) {
+                @Override
+                public InputStream retrieve(URI resource) throws IOException {
+                    String input = treeMap.get(resource);
+                    return input == null ? null : IOUtils.toInputStream(input, StandardCharsets.UTF_8);
+                }
+            };
+    }
+
     @Test
     public void importFewLines() throws StudyImporterException {
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLinesTSV), nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        Dataset dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLinesTSV);
+        }});
+
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importStudy(importer);
 
         assertExists("Leptoconchus incycloseris");
@@ -125,8 +150,12 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
                 "EOL:678\t\tRO:0002444\t\tEOL:333\t\t\t\t\t\t\t\tGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\n" +
                 "EOL:912\t\tRO:0002444\t\tEOL:444\t\t\t\t\t\t\t\tGittenberger, A., Gittenberger, E. (2011). Cryptic, adaptive radiation of endoparasitic snails: sibling species of Leptoconchus (Gastropoda: Coralliophilidae) in corals. Org Divers Evol, 11(1), 21–41. doi:10.1007/s13127-011-0039-1\n";
 
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(minimalLines), nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        DatasetImpl dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), minimalLines);
+        }});
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importStudy(importer);
         Taxon taxon = taxonIndex.findTaxonById("EOL:123");
         assertThat(taxon, is(notNullValue()));
@@ -149,8 +178,14 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
                 "EOL:741039\tbovine adenovirus c\tRO:0002454\thasHost\tEOL:328699\tbos taurus\t\t\t\t\t\thttp://www.ncbi.nlm.nih.gov/nuccore/1002418\tdoi: 10.1038/sdata.2015.49\tWardeh, M. et al. Database of host-pathogen and related species interactions, and their global distribution. Sci. Data 2:150049 doi: 10.1038/sdata.2015.49 (2015)\n" +
                 "EOL:12141292\tichthyophonus hoferi\tRO:0002454\thasHost\tEOL:205418\tlimanda ferruginea\t\t\t\t\t\thttp://www.ncbi.nlm.nih.gov/nuccore/1002422\tdoi: 10.1038/sdata.2015.49\tWardeh, M. et al. Database of host-pathogen and related species interactions, and their global distribution. Sci. Data 2:150049 doi: 10.1038/sdata.2015.49 (2015)\n";
 
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+
+        DatasetImpl dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLines);
+        }});
+
+        importer.setDataset(dataset);
+
         importStudy(importer);
         Taxon taxon = taxonIndex.findTaxonById("EOL:2912748");
         assertThat(taxon, is(notNullValue()));
@@ -173,8 +208,13 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         String firstFewLines = "sourceTaxonFamily\tsourceTaxonGenus\tinteractionTypeId\ttargetTaxonName\n" +
                 "Bacillaceae\tBacillus\tRO:0002454\tMorus alba\n";
 
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        Dataset dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLines);
+        }});
+
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importStudy(importer);
         Taxon taxon = taxonIndex.findTaxonByName("Bacillus");
         assertThat(taxon, is(notNullValue()));
@@ -217,8 +257,12 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
     }
 
     private void assertArgumentType(String firstFewLines, final RelTypes argumentType) throws StudyImporterException {
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        DatasetImpl dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLines);
+        }});
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importStudy(importer);
         final AtomicBoolean foundStudy = new AtomicBoolean(false);
         NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
@@ -283,17 +327,19 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         String firstFewLines = "sourceTaxonName\tassociatedTaxa\n" +
                 "Homo sapiens\teats: Canis lupus | eats: Felis catus";
 
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(firstFewLines), nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
-        importer.setInteractionListener(new InteractionListener() {
-            @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                int i = atomicInteger.incrementAndGet();
-                assertThat(link.get(INTERACTION_TYPE_ID), is(nullValue()));
-                assertThat(link.get(INTERACTION_TYPE_NAME), is(nullValue()));
-                assertThat(link.get(TARGET_TAXON_NAME), is(nullValue()));
-                assertThat(link.get(ASSOCIATED_TAXA), is(nullValue()));
-            }
+        Dataset dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLines);
+        }});
+
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
+        importer.setInteractionListener(link -> {
+            int i = atomicInteger.incrementAndGet();
+            assertThat(link.get(INTERACTION_TYPE_ID), is(nullValue()));
+            assertThat(link.get(INTERACTION_TYPE_NAME), is(nullValue()));
+            assertThat(link.get(TARGET_TAXON_NAME), is(nullValue()));
+            assertThat(link.get(ASSOCIATED_TAXA), is(nullValue()));
         });
         importStudy(importer);
         assertThat(atomicInteger.get(), greaterThan(0));
@@ -320,10 +366,13 @@ public class StudyImporterForTSVTest extends GraphDBTestCase {
         String firstFewLines = header +
                 "\tITIS:632267\tRousettus aegyptiacus\t\t\t\t\thttp://purl.obolibrary.org/obo/RO_0002470\teats\t\tITIS:28882\tCitrus sp.\thttp://purl.obolibrary.org/obo/PO_0009001\tfruit\t\t\tGEONAMES:298795\tHatay, Adana, Mersin, and Antalya, Turkey\t\t\t1999-09/2003-09\t\thttp://journals.tubitak.gov.tr/zoology/issues/zoo-08-32-1/zoo-32-1-2-0604-8.pdf\tAlbayrak, I., Aşan, N., & Yorulmaz, T. (2008). The natural history of the Egyptian fruit bat, Rousettus aegyptiacus, in Turkey (Mammalia: Chiroptera). Turkish Journal of Zoology, 32(1), 11-18.";
 
-        StudyImporterForTSV importer = new StudyImporterForTSV(new TestParserFactory(new TreeMap<String, String>() {{
-            put("http://example.com/interactions.tsv", firstFewLines);
-        }}), nodeFactory);
-        importer.setDataset(new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream));
+        Dataset dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLines);
+        }});
+
+
+        StudyImporterForTSV importer = new StudyImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
         importer.setInteractionListener(link -> {
             atomicInteger.incrementAndGet();
             assertThat(link.get(StudyImporterForMetaTable.EVENT_DATE), is(not(nullValue())));

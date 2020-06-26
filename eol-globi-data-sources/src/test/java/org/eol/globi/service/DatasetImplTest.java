@@ -38,13 +38,15 @@ public class DatasetImplTest {
     @Test
     public void lookupNonMappedResourceRelative() throws IOException {
         Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        assertThat(dataset.getLocalURI(URI.create("previous/path.txt")).toString(), is("some:uri/previous/path.txt"));
+        assertThat(dataset.getLocalURI(URI.create("previous/path.txt")).toString(),
+                is("some:uri/previous/path.txt"));
     }
 
     @Test
     public void lookupNonMappedResourceAbsolute() throws IOException {
         Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        assertThat(dataset.getLocalURI(URI.create("http://example.org/previous/path.txt")).toString(), is("http://example.org/previous/path.txt"));
+        assertThat(dataset.getLocalURI(URI.create("http://example.org/previous/path.txt")).toString(),
+                is("http://example.org/previous/path.txt"));
     }
 
     @Test
