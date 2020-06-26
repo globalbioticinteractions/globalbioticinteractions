@@ -91,9 +91,6 @@ public class StudyImporterFactoryImplIT {
         assertThat(importer, is(instanceOf(StudyImporterForPlanque.class)));
         StudyImporterForPlanque importerz = (StudyImporterForPlanque) importer;
         assertThat(importerz.getSourceCitation(), containsString("Planque"));
-        assertThat(importerz.getLinks(), is(notNullValue()));
-        assertThat(importerz.getReferences(), is(notNullValue()));
-        assertThat(importerz.getReferencesForLinks(), is(notNullValue()));
     }
 
     @Test
@@ -116,16 +113,15 @@ public class StudyImporterFactoryImplIT {
     }
 
     @Test
-    public void createAfrotropicalBees() throws StudyImporterException, DatasetRegistryException {
+    public void createAfrotropicalBees() throws StudyImporterException, DatasetRegistryException, IOException {
         final DatasetRegistryGitHubRemote datasetFinderGitHubRemote = new DatasetRegistryGitHubRemote(inStream -> inStream);
         String repo = "globalbioticinteractions/Catalogue-of-Afrotropical-Bees";
         StudyImporter importer = importerFor(datasetFinderGitHubRemote, repo);
         assertThat(importer, is(notNullValue()));
         assertThat(importer, is(instanceOf(StudyImporterForCoetzer.class)));
         assertThat(((StudyImporterForCoetzer) importer).getDataset(), is(notNullValue()));
-        URI archiveURL = ((StudyImporterForCoetzer) importer).getResourceArchiveURI();
-        assertThat(archiveURL.toString(), endsWith("CatalogueOfAfrotropicalBees.zip"));
-        assertThat(archiveURL.isAbsolute(), is(true));
+        assertThat(((StudyImporterForCoetzer) importer).getDataset().retrieve(URI.create("archive")), is(notNullValue()));
+
     }
 
     public StudyImporter importerFor(DatasetRegistryGitHubRemote datasetFinderGitHubRemote, String repo) throws StudyImporterException, DatasetRegistryException {

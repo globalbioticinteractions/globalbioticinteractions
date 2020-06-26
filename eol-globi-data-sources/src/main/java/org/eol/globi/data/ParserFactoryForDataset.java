@@ -18,6 +18,10 @@ public class ParserFactoryForDataset implements ParserFactory {
 
     public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
         InputStream is = dataset.retrieve(studyResource);
+        return getLabeledCSVParser(is, characterEncoding);
+    }
+
+    public static LabeledCSVParser getLabeledCSVParser(InputStream is, String characterEncoding) throws IOException {
         return CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, characterEncoding));
     }
 

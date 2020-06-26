@@ -18,10 +18,19 @@ public class ReferenceUtil {
     }
 
     protected static Map<String, String> buildRefMap(ParserFactory parserFactory, URI referencePath, String keyColumnName, String valueColumnName, char delimiter) throws StudyImporterException {
-        Map<String, String> refMap = new TreeMap<String, String>();
+        LabeledCSVParser referenceParser;
         try {
-            LabeledCSVParser referenceParser = parserFactory.createParser(referencePath, CharsetConstant.UTF8);
-            referenceParser.changeDelimiter(delimiter);
+            referenceParser = parserFactory.createParser(referencePath, CharsetConstant.UTF8);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to read resource [" + referencePath + "]", e);
+        }
+        referenceParser.changeDelimiter(delimiter);
+        return buildRefMap(referenceParser, referencePath, keyColumnName, valueColumnName);
+    }
+
+    public static Map<String, String> buildRefMap(LabeledCSVParser referenceParser, URI referencePath, String keyColumnName, String valueColumnName) throws StudyImporterException {
+        Map<String, String> refMap = new TreeMap<>();
+        try {
             while (referenceParser.getLine() != null) {
                 String shortReference = referenceParser.getValueByLabel(keyColumnName);
                 if (StringUtils.isBlank(shortReference)) {

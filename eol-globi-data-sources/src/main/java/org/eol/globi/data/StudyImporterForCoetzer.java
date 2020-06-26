@@ -148,12 +148,4 @@ public class StudyImporterForCoetzer extends NodeBasedImporter {
         return StringUtils.isBlank(speciesName) ? StringUtils.trim(line[4]) : speciesName;
     }
 
-    public URI getResourceArchiveURI() throws StudyImporterException {
-        try {
-            return getDataset().getLocalURI(URI.create("archive"));
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to query archive resource in [" + getDataset().getNamespace() + "]", e);
-        }
-    }
-
 }

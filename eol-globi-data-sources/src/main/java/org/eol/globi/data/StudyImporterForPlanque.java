@@ -39,20 +39,12 @@ public class StudyImporterForPlanque extends NodeBasedImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        LabeledCSVParser dataParser;
-        try {
-            dataParser = getParserFactory().createParser(getLinks(), CharsetConstant.UTF8);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to read links", e);
-        }
-        dataParser.changeDelimiter('\t');
-
-
+        LabeledCSVParser dataParser = getParser(URI.create("links"));
         Map<String, List<String>> pairwiseKeyToAuthorYears = new TreeMap<String, List<String>>();
         try {
-            Map<String, String> authorYearToFullReference = ReferenceUtil.buildRefMap(getParserFactory(), getReferences(), "AUTHOR_YEAR", "FULL_REFERENCE", '\t');
-            LabeledCSVParser referenceParser = getParserFactory().createParser(getReferencesForLinks(), CharsetConstant.UTF8);
-            referenceParser.changeDelimiter('\t');
+            LabeledCSVParser parser = getParser(getReferences());
+            Map<String, String> authorYearToFullReference = ReferenceUtil.buildRefMap(parser, getReferences(),"AUTHOR_YEAR", "FULL_REFERENCE");
+            LabeledCSVParser referenceParser = getParser(getReferencesForLinks());
 
             while (referenceParser.getLine() != null) {
                 String pairwiseKey = referenceParser.getValueByLabel("PWKEY");
@@ -60,7 +52,7 @@ public class StudyImporterForPlanque extends NodeBasedImporter {
                 if (StringUtils.isNotBlank(pairwiseKey) && StringUtils.isNotBlank(authorYear)) {
                     List<String> authorYears = pairwiseKeyToAuthorYears.get(pairwiseKey);
                     if (CollectionUtils.isEmpty(authorYears)) {
-                        authorYears = new ArrayList<String>();
+                        authorYears = new ArrayList<>();
                     }
                     authorYears.add(authorYear);
                     pairwiseKeyToAuthorYears.put(pairwiseKey, authorYears);
@@ -94,6 +86,17 @@ public class StudyImporterForPlanque extends NodeBasedImporter {
         } catch (IOException e) {
             throw new StudyImporterException("problem importing study at line [" + dataParser.lastLineNumber() + "]", e);
         }
+    }
+
+    private LabeledCSVParser getParser(URI links) throws StudyImporterException {
+        LabeledCSVParser dataParser;
+        try {
+            dataParser = ParserFactoryForDataset.getLabeledCSVParser(getDataset().retrieve(links), CharsetConstant.UTF8);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to read links", e);
+        }
+        dataParser.changeDelimiter('\t');
+        return dataParser;
     }
 
     private void importLine(LabeledCSVParser parser, Map<String, List<String>> pairwiseKeyToFullCitation) throws StudyImporterException {
@@ -150,15 +153,11 @@ public class StudyImporterForPlanque extends NodeBasedImporter {
         }
     }
 
-    public URI getLinks() throws IOException {
-        return getDataset().getLocalURI(URI.create("links"));
+    public URI getReferences() {
+        return URI.create("references");
     }
 
-    public URI getReferences() throws IOException {
-        return getDataset().getLocalURI(URI.create("references"));
-    }
-
-    public URI getReferencesForLinks() throws IOException {
-        return getDataset().getLocalURI(URI.create("referencesForLinks"));
+    public URI getReferencesForLinks() {
+        return URI.create("referencesForLinks");
     }
 }
