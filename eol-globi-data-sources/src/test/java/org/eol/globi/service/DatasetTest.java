@@ -10,11 +10,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class DatasetTest {
+
+
 
     @Test
     public void resourceURL() throws IOException, URISyntaxException {
@@ -25,9 +28,9 @@ public class DatasetTest {
         URI parentDir = archive.getParentFile().toURI();
 
         Dataset dataset = new DatasetImpl("some/namespace", parentDir, inStream -> inStream);
-        assertThat(dataset.retrieve(resource.toURI()), is(notNullValue()));
-        assertThat(dataset.retrieve(URI.create("archive.zip")), is(notNullValue()));
-        assertThat(dataset.retrieve(URI.create("/archive.zip")), is(notNullValue()));
+        TestHashUtil.assertContentHash(dataset.retrieve(resource.toURI()), "c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147");
+        TestHashUtil.assertContentHash(dataset.retrieve(URI.create("archive.zip")), "c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147");
+        TestHashUtil.assertContentHash(dataset.retrieve(URI.create("/archive.zip")), "c9ecb3b0100c890bd00a5c201d06f0a78d92488591f726fbf4de5c88bda39147");
     }
 
     @Test(expected = IOException.class)

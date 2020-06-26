@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -121,9 +122,13 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
 
             File dwcaFile = null;
             try {
-                dwcaFile = File.createTempFile("dwca", "tmp.zip");
-                FileUtils.copyToFile(getDataset().retrieve(URI.create(archiveURL)), dwcaFile);
-                dwcaFile.deleteOnExit();
+                URI dwcaURI = URI.create(archiveURL);
+                dwcaFile = new File(dwcaURI);
+                if (dwcaFile.exists() && dwcaFile.isFile()) {
+                    dwcaFile = File.createTempFile("dwca", "tmp.zip");
+                    FileUtils.copyToFile(getDataset().retrieve(dwcaURI), dwcaFile);
+                    dwcaFile.deleteOnExit();
+                }
 
                 tmpDwA = Files.createTempDirectory("dwca");
                 Archive archive = DwCAUtil.archiveFor(dwcaFile.toURI(), tmpDwA.toString());
@@ -141,7 +146,9 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
                 getLogger().info(null, "[" + archiveURL + "]: detected [" + listenerProxy.getNumberOfSubmittedLinks() + "] interaction record(s)");
             } finally {
-                FileUtils.deleteQuietly(dwcaFile);
+                if (dwcaFile != null && dwcaFile.exists() && dwcaFile.isFile()) {
+                    FileUtils.deleteQuietly(dwcaFile);
+                }
             }
 
         } catch (IOException | IllegalStateException e) {
