@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 import static org.hamcrest.Matchers.contains;
@@ -55,7 +57,7 @@ public class DatasetRegistryLocalTest {
     }
 
     @Test
-    public void datasetLocal() throws DatasetRegistryException, URISyntaxException, IOException {
+    public void datasetLocal() throws DatasetRegistryException, URISyntaxException, IOException, NoSuchAlgorithmException {
         Path testCacheDir = Files.createTempDirectory(Paths.get("target/"), "test");
         File localDatasetDir = new File(getClass().getResource("/test-dataset-local/globi.json").toURI()).getParentFile();
         File accessFile = createLocalCacheDir(testCacheDir, localDatasetDir);
@@ -75,10 +77,10 @@ public class DatasetRegistryLocalTest {
         assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
 
         CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), inStream -> inStream);
-        URI localURI = readOnlyCache.getLocalURI(URI.create("https://example.org/data.zip"));
+        InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
-        assertThat(new File(localURI).exists(), is(true));
-
+        String actualHash = CacheUtil.calculateContentHash(inputStream, new NullOutputStream());
+        assertThat(actualHash, is("6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2"));
     }
 
     @Test(expected = DatasetRegistryException.class)

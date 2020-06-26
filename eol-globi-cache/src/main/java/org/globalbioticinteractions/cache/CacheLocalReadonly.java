@@ -148,8 +148,9 @@ public class CacheLocalReadonly implements Cache {
 
     @Override
     public InputStream retrieve(URI resourceURI) throws IOException {
-        URI resourceURI1 = getLocalURI(resourceURI);
-        return resourceURI1 == null ? null : ResourceUtil.asInputStream(resourceURI1.toString(), getInputStreamFactory());
+        ContentProvenance contentProvenance = provenanceOf(resourceURI);
+        URI resourceLocalURI = contentProvenance == null ? null : contentProvenance.getLocalURI();
+        return resourceLocalURI == null ? null : ResourceUtil.asInputStream(resourceLocalURI, getInputStreamFactory());
     }
 
     private InputStreamFactory getInputStreamFactory() {

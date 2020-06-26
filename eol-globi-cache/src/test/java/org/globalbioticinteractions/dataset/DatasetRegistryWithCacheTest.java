@@ -35,13 +35,10 @@ public class DatasetRegistryWithCacheTest {
     }
 
     @Test
-    public void cacheDatasetLocal() throws DatasetRegistryException, IOException, URISyntaxException {
+    public void cacheDatasetLocal() throws IOException, URISyntaxException {
         Dataset datasetCached = datasetCached();
 
         assertNotNull(datasetCached.getArchiveURI());
-        URI uri = datasetCached.getLocalURI(URI.create("globi.json"));
-        assertThat(uri.isAbsolute(), is(true));
-        assertThat(uri.toString(), startsWith("jar:file:"));
 
         try (InputStream is = datasetCached.retrieve(URI.create("globi.json"))) {
             assertNotNull(is);
