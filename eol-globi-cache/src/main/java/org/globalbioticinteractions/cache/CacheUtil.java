@@ -65,7 +65,7 @@ public final class CacheUtil {
         }
     }
 
-    private static String calculateContentHash(InputStream sourceStream, OutputStream os) throws NoSuchAlgorithmException, IOException {
+    public static String calculateContentHash(InputStream sourceStream, OutputStream os) throws NoSuchAlgorithmException, IOException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         try (DigestInputStream digestInputStream = new DigestInputStream(sourceStream, md)) {
             IOUtils.copy(digestInputStream, os);

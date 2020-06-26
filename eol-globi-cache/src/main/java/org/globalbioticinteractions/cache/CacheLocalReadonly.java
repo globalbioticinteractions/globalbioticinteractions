@@ -7,8 +7,10 @@ import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -16,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CacheLocalReadonly implements Cache {
     private final static Log LOG = LogFactory.getLog(CacheLocalReadonly.class);
@@ -55,7 +58,7 @@ public class CacheLocalReadonly implements Cache {
     }
 
     public static ContentProvenance getContentProvenance(URI resourceURI, String cachePath, String namespace) {
-        ContentProvenance meta = null;
+        AtomicReference<ContentProvenance> meta = new AtomicReference<>(null);
         File accessFile;
         try {
             File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
@@ -63,32 +66,29 @@ public class CacheLocalReadonly implements Cache {
             String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
             accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cachePath);
             if (accessFile.exists()) {
-                String[] rows = IOUtils.toString(accessFile.toURI(), StandardCharsets.UTF_8).split("\n");
-                for (String row : rows) {
-                    String[] split = CSVTSVUtil.splitTSV(row);
-                    if (split.length > 3) {
-                        URI sourceURI = URI.create(split[1]);
-                        String sha256 = split[2];
-                        String accessedAt = StringUtils.trim(split[3]);
-                        if (StringUtils.isNotBlank(sha256)) {
-                            ContentProvenance provenance = null;
-                            if (resourceURI.toString().startsWith("hash://sha256/")) {
-                                if (StringUtils.equals("hash://sha256/" + sha256, resourceURI.toString())) {
-                                    URI localResourceURI = new File(cacheDirForNamespace, sha256).toURI();
-                                    provenance = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
+                try (InputStream is = new FileInputStream(accessFile)) {
+                    ProvenanceLog.parseProvenanceStream(is, new ProvenanceLog.ProvenanceEntryListener() {
+                        @Override
+                        public void onValues(String[] values) {
+                            if (values.length > 3) {
+                                URI sourceURI = URI.create(values[1]);
+                                String sha256 = values[2];
+                                String accessedAt = StringUtils.trim(values[3]);
+                                if (StringUtils.isNotBlank(sha256)) {
+                                    ContentProvenance provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace, namespace);
+                                    if (provenance != null) {
+                                        meta.set(provenance);
+                                    }
                                 }
-                            } else {
-                                provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace, namespace);
                             }
-                            meta = provenance == null ? meta : provenance;
                         }
-                    }
+                    });
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | DatasetRegistryException e) {
             LOG.error("unexpected exception on getting meta for [" + resourceURI + "]", e);
         }
-        return meta;
+        return meta.get();
     }
 
     public static ContentProvenance getProvenance(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir, String namespace) {
@@ -114,9 +114,6 @@ public class CacheLocalReadonly implements Cache {
 
         if (candidateURI != null && StringUtils.startsWith(candidateURI.toString(), cacheDir.toString())) {
             hashCandidate = StringUtils.replace(candidateURI.toString(), cacheDir.toString(), "");
-        }
-        if (candidateURI != null && StringUtils.startsWith(candidateURI.toString(), "hash://sha256/")) {
-            hashCandidate = StringUtils.replace(candidateURI.toString(), "hash://sha256/", "");
         }
         return hashCandidate;
     }

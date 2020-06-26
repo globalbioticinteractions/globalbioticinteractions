@@ -23,12 +23,6 @@ public class DOIResolverImplTest {
     }
 
     @Test
-    public void validateDOIwithHashURI() throws MalformedDOIException {
-        DOI doi = DOI.create("10.123/hash://sha256/12345");
-        assertThat(doi.toString(), is("10.123/hash://sha256/12345"));
-    }
-
-    @Test
     public void extractDOIBelowMinScore() throws IOException, MalformedDOIException {
         String response = IOUtils.toString(getClass().getResourceAsStream("crossRefReply.json"), StandardCharsets.UTF_8);
         DOIResolverImpl doiResolver = new DOIResolverImpl();

@@ -1,11 +1,17 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,5 +66,21 @@ public class ProvenanceLog {
 
     private static File getProvenanceLogFile(File dir) {
         return new File(dir, PROVENANCE_LOG_FILENAME);
+    }
+
+    public static void parseProvenanceStream(InputStream is, ProvenanceEntryListener listener) throws DatasetRegistryException {
+        try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            BufferedReader bufferedReader = IOUtils.toBufferedReader(reader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                listener.onValues(CSVTSVUtil.splitTSV(line));
+            }
+        } catch (IOException e) {
+            throw new DatasetRegistryException("failed to read ", e);
+        }
+    }
+
+    public interface ProvenanceEntryListener {
+        void onValues(String[] values);
     }
 }

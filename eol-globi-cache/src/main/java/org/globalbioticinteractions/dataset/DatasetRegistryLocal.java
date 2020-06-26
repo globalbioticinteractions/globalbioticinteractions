@@ -1,25 +1,20 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.ProvenanceLog;
 import org.globalbioticinteractions.cache.CacheUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
@@ -53,10 +48,6 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         return namespaces;
     }
 
-    private interface AccessFileLineListener {
-        void onValues(String[] values);
-    }
-
     private Collection<String> collectNamespaces(File directory) throws DatasetRegistryException {
         Collection<File> accessFiles = FileUtils.listFiles(directory, new FileFileFilter() {
             @Override
@@ -66,7 +57,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         }, TrueFileFilter.INSTANCE);
 
         Collection<String> namespaces = new TreeSet<>();
-        AccessFileLineListener lineListener = values -> {
+        ProvenanceLog.ProvenanceEntryListener lineListener = values -> {
             if (values.length >= 5
                     && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
                 namespaces.add(values[0]);
@@ -74,27 +65,19 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         };
 
         for (File accessFile : accessFiles) {
-            scanAccessFile(accessFile, lineListener);
+            try (FileInputStream is = new FileInputStream(accessFile)) {
+                ProvenanceLog.parseProvenanceStream(is, lineListener);
+            } catch (IOException e) {
+                throw new DatasetRegistryException("failed to access [" + accessFile.getAbsolutePath() + "]", e);
+            }
         }
         return namespaces;
-    }
-
-    private void scanAccessFile(File accessFile, AccessFileLineListener accessLine) throws DatasetRegistryException {
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(accessFile), StandardCharsets.UTF_8)) {
-            BufferedReader bufferedReader = IOUtils.toBufferedReader(reader);
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                accessLine.onValues(CSVTSVUtil.splitTSV(line));
-            }
-        } catch (IOException e) {
-            throw new DatasetRegistryException("failed to read ", e);
-        }
     }
 
 
     private URI findLastCachedDatasetURI(String namespace) throws DatasetRegistryException {
         AtomicReference<URI> sourceURI = new AtomicReference<>();
-        AccessFileLineListener accessFileLineListener = values -> {
+        ProvenanceLog.ProvenanceEntryListener provenanceEntryListener = values -> {
             if (values.length > 4
                     && StringUtils.equalsIgnoreCase(StringUtils.trim(values[0]), namespace)
                     && StringUtils.equals(StringUtils.trim(values[4]), CacheUtil.MIME_TYPE_GLOBI)) {
@@ -105,11 +88,11 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         File accessFile;
         try {
             accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
+            if (accessFile.exists()) {
+                ProvenanceLog.parseProvenanceStream(new FileInputStream(accessFile), provenanceEntryListener);
+            }
         } catch (IOException e) {
             throw new DatasetRegistryException("issue accessing provenance log", e);
-        }
-        if (accessFile.exists()) {
-            scanAccessFile(accessFile, accessFileLineListener);
         }
         return sourceURI.get();
     }
