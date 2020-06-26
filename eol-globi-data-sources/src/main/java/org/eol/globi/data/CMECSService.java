@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -36,12 +37,8 @@ public class CMECSService implements TermLookupService {
 
     private final ResourceService service;
 
-    public CMECSService() {
-        this(new ResourceServiceDefault());
-    }
-
-    public CMECSService(ResourceService resourceServiceDefault) {
-        this.service = resourceServiceDefault;
+    public CMECSService(ResourceService resourceService) {
+        this.service = resourceService;
     }
 
     @Override
@@ -62,64 +59,36 @@ public class CMECSService implements TermLookupService {
         URI uri = URI.create("https://cmecscatalog.org/cmecs/documents/cmecs4.accdb");
         LOG.info("CMECS data [" + uri + "] downloading ...");
 
-        URI resourceURI = service.getLocalURI(uri);
-
-        if (resourceURI == null) {
-            throw new IOException("failed to access [" + uri + "]");
-        }
-        File mdbFile;
+        File mdbFile = null;
         try {
-            mdbFile = new File(resourceURI);
-        } catch (IllegalArgumentException ex) {
-            throw new IOException("failed to access [" + uri + "] via [" + resourceURI + "]", ex);
+            mdbFile = File.createTempFile("cmecs", "tmp.mdb");
+            mdbFile.deleteOnExit();
+            FileUtils.copyToFile(service.retrieve(uri), mdbFile);
+
+            Database db = new DatabaseBuilder()
+                    .setFile(mdbFile)
+                    .setReadOnly(true)
+                    .open();
+
+            Map<String, Term> aquaticSettingsTerms = new HashMap<>();
+
+            Table table = db.getTable("Aquatic Setting");
+            Map<String, Object> row;
+            while ((row = table.getNextRow()) != null) {
+                Integer id = (Integer) row.get("AquaticSetting_Id");
+                String name = (String) row.get("AquaticSettingName");
+                String termId = TaxonomyProvider.ID_CMECS + id;
+                aquaticSettingsTerms.put(StringUtils.lowerCase(StringUtils.strip(name)), new TermImpl(termId, name));
+            }
+            LOG.info(CMECSService.class.getSimpleName() + " instantiated.");
+            return aquaticSettingsTerms;
+        } finally {
+            FileUtils.deleteQuietly(mdbFile);
         }
-
-        Database db = new DatabaseBuilder()
-                .setFile(mdbFile)
-                .setReadOnly(true)
-                .open();
-
-        Map<String, Term> aquaticSettingsTerms = new HashMap<>();
-
-        Table table = db.getTable("Aquatic Setting");
-        Map<String, Object> row;
-        while ((row = table.getNextRow()) != null) {
-            Integer id = (Integer) row.get("AquaticSetting_Id");
-            String name = (String) row.get("AquaticSettingName");
-            String termId = TaxonomyProvider.ID_CMECS + id;
-            aquaticSettingsTerms.put(StringUtils.lowerCase(StringUtils.strip(name)), new TermImpl(termId, name));
-        }
-        LOG.info(CMECSService.class.getSimpleName() + " instantiated.");
-        return aquaticSettingsTerms;
     }
 
     public ResourceService getService() {
         return service;
     }
 
-    private static class ResourceServiceDefault implements ResourceService {
-
-        @Override
-        public InputStream retrieve(URI resourceName) throws IOException {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        public URI getLocalURI(URI resourceName) {
-            URI resourceURI = null;
-            HttpGet get = new HttpGet(resourceName);
-            try {
-                HttpResponse execute = HttpUtil.getHttpClient().execute(get);
-                File cmecs = File.createTempFile("cmecs", "accdb");
-                cmecs.deleteOnExit();
-                IOUtils.copy(execute.getEntity().getContent(), new FileOutputStream(cmecs));
-                LOG.info("CMECS data [" + resourceName + "] downloaded.");
-                resourceURI = cmecs.toURI();
-            } catch (IOException e) {
-                LOG.warn("failed to access [" + resourceName + "]", e);
-            }
-
-            return resourceURI;
-        }
-    }
 }

@@ -10,6 +10,7 @@ import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,20 +95,21 @@ public class StudyImporterForTSV extends StudyImporterWithListener {
     }
 
     private void importResource(String namespace, String sourceCitation, String resourceName, char newDelim, List<IOException> parserExceptions) throws IOException, StudyImporterException {
-        URI resourceURI = getDataset().getLocalURI(URI.create(resourceName));
-        if (resourceURI == null) {
-            parserExceptions.add(new IOException("failed to access [" + resourceName + "] as individual resource (e.g. local/remote data/file)."));
-        } else {
-            LabeledCSVParser parser = null;
-            try {
-                parser = getParserFactory().createParser(resourceURI, "UTF-8");
+        URI resourceURI = URI.create(resourceName);
+        LabeledCSVParser parser = null;
+        try {
+            InputStream is = getDataset().retrieve(resourceURI);
+            if (is == null) {
+                parserExceptions.add(new IOException("failed to access [" + resourceName + "] as individual resource (e.g. local/remote data/file)."));
+            } else {
+                parser = ParserFactoryForDataset.getLabeledCSVParser(is, CharsetConstant.UTF8);
                 parser.changeDelimiter(newDelim);
-            } catch (IOException ex) {
-                parserExceptions.add(new IOException("failed to access [" + resourceURI.toString() + "]", ex));
             }
-            if (parser != null) {
-                importResource(namespace, sourceCitation, getInteractionListener(), resourceURI, parser);
-            }
+        } catch (IOException ex) {
+            parserExceptions.add(new IOException("failed to access [" + resourceURI.toString() + "]", ex));
+        }
+        if (parser != null) {
+            importResource(namespace, sourceCitation, getInteractionListener(), resourceURI, parser);
         }
     }
 

@@ -1,11 +1,15 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.eol.globi.data.CMECSService;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -15,7 +19,7 @@ public class CMECSServiceTest {
 
     @Test
     public void lookupCMECSTerms() throws TermLookupServiceException {
-        TermLookupService service = new CMECSService();
+        TermLookupService service = getService();
 
         List<Term> estuarine = service.lookupTermByName("Estuarine");
         assertThat(estuarine.size(), is(1));
@@ -30,10 +34,24 @@ public class CMECSServiceTest {
         assertThat(ExternalIdUtil.urlForExternalId("https://cmecscatalog.org/cmecs/classification/aquaticSetting/15"), is("https://cmecscatalog.org/cmecs/classification/aquaticSetting/15"));
     }
 
-   @Test
+    public CMECSService getService() {
+        return new CMECSService(new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, in -> in);
+            }
+
+            @Override
+            public URI getLocalURI(URI resourceName) throws IOException {
+                throw new NotImplementedException("not implemented");
+            }
+        });
+    }
+
+    @Test
 
     public void lookupStripsCaseInsensitive() throws TermLookupServiceException {
-        TermLookupService service = new CMECSService();
+        TermLookupService service = getService();
         List<Term> estuarine = service.lookupTermByName("lacustrine Littoral ");
         assertThat(estuarine.size(), is(1));
         assertThat(estuarine.get(0).getName(), is("Lacustrine Littoral"));
