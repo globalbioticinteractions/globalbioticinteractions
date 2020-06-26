@@ -60,27 +60,24 @@ public class DatasetFactory implements DatasetFactoryInterface {
             put(URI.create("/eml.xml"), (dataset1, uri) -> EMLUtil.datasetWithEML(dataset, uri));
         }};
 
-        Pair<URI, DatasetConfigurer> configPair = null;
+        Pair<URI, JsonNode> configPair = null;
         for (URI configResource : datasetHandlers.keySet()) {
             try {
-                URI configURI = dataset.getLocalURI(configResource);
-                if (ResourceUtil.resourceExists(configURI, getInputStreamFactory())) {
-                    configPair = Pair.of(configURI, datasetHandlers.get(configResource));
+                DatasetConfigurer right = datasetHandlers.get(configResource);
+                JsonNode config = right.configure(dataset, configResource);
+                if (config != null) {
+                    configPair = Pair.of(configResource, config);
                     break;
                 }
             } catch (IOException e) {
-                throw new DatasetRegistryException("failed to access configURI for [" + configResource.toString() + "]", e);
+                //
             }
         }
-        try {
-            if (configPair == null) {
-                throw new DatasetRegistryException("failed to find configuration");
-            }
-            return Pair.of(configPair.getLeft(), configPair.getRight().configure(dataset, configPair.getLeft()));
-        } catch (IOException e) {
-            throw new DatasetRegistryException("failed to find configuration", e);
+        if (configPair == null) {
+            throw new DatasetRegistryException("failed to valid dataset configuration in [" + StringUtils.join(datasetHandlers.keySet() + "]"));
+        }
 
-        }
+        return configPair;
     }
 
     private InputStreamFactory getInputStreamFactory() {

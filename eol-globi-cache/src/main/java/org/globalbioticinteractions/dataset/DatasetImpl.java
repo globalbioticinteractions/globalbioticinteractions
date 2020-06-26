@@ -107,7 +107,8 @@ public class DatasetImpl implements Dataset {
         @Override
         public InputStream retrieve(URI resourceName) throws IOException {
             URI mappedResource = DatasetUtil.getNamedResourceURI(dataset, resourceName);
-            return ResourceUtil.asInputStream(getLocalURI(mappedResource).toString(), factory);
+            URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(getArchiveURI(), mappedResource);
+            return ResourceUtil.asInputStream(absoluteResourceURI, factory);
         }
 
         @Override
