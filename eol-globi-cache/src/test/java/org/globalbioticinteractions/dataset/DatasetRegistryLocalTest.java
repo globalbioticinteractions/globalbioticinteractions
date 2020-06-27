@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -124,7 +123,7 @@ public class DatasetRegistryLocalTest {
         InputStream resourceAsStream = getClass().getResourceAsStream("/org/globalbioticinteractions/dataset/" + sha256);
         assertNotNull(resourceAsStream);
 
-        FileUtils.copyToFile(
+        FileUtils.copyInputStreamToFile(
                 resourceAsStream,
                 new File(testCacheDirLocal, sha256)
         );
