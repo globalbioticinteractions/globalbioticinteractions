@@ -129,9 +129,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                 if (CacheUtil.isLocalDir(dwcaURI)) {
                     archive = DwCAUtil.archiveFor(dwcaURI, tmpDwA.toString());
                 } else {
-                    dwcaFile = new File(dwcaURI);
                     dwcaFile = File.createTempFile("dwca", "tmp.zip");
-                    FileUtils.copyToFile(getDataset().retrieve(dwcaURI), dwcaFile);
+                    FileUtils.copyInputStreamToFile(getDataset().retrieve(dwcaURI), dwcaFile);
                     dwcaFile.deleteOnExit();
                     archive = DwCAUtil.archiveFor(dwcaFile.toURI(), tmpDwA.toString());
                 }
