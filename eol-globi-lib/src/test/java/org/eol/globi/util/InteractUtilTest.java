@@ -144,11 +144,6 @@ public class InteractUtilTest {
                                 "someProvidedId,someProvidedName,someResolvedId,someResolvedName", StandardCharsets.UTF_8);
             }
 
-            @Override
-            public URI getLocalURI(URI resourceName) throws IOException {
-                fail("not [" + resourceName + "]");
-                return null;
-            }
         }, "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id", InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
 
         List<Term> someProvidedId = termLookupService.lookupTermByName("someProvidedId");
@@ -174,11 +169,6 @@ public class InteractUtilTest {
                 }
             }
 
-            @Override
-            public URI getLocalURI(URI resourceName) throws IOException {
-                fail("not [" + resourceName + "]");
-                return null;
-            }
         }, "interaction_type_ignored",
                 "provided_interaction_type_id",
                 "provided_interaction_type_label",

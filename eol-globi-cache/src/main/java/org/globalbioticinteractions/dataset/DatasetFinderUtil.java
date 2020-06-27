@@ -2,10 +2,12 @@ package org.globalbioticinteractions.dataset;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class DatasetFinderUtil {
 
@@ -25,4 +27,18 @@ public class DatasetFinderUtil {
             return URI.create("jar:" + localDatasetURI.toURI() + "!/" + archiveRoot);
         }
     }
+
+    public static String getLocalDatasetURIRoot(InputStream zipStream) {
+        String archiveRoot = "";
+        try (ZipInputStream is = new ZipInputStream(zipStream)) {
+            ZipEntry entry = is.getNextEntry();
+            if (entry.isDirectory()) {
+                archiveRoot = entry.getName();
+            }
+        } catch (IOException ex) {
+            //
+        }
+        return archiveRoot;
+    }
+
 }

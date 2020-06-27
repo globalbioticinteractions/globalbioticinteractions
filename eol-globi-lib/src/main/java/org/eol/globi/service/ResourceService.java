@@ -8,7 +8,4 @@ public interface ResourceService {
 
     InputStream retrieve(URI resourceName) throws IOException;
 
-    @Deprecated
-    URI getLocalURI(URI resourceName) throws IOException;
-
 }

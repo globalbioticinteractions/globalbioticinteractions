@@ -23,8 +23,4 @@ public class ResourceServiceWithMapping implements ResourceService {
         return ResourceUtil.asInputStream(absoluteResourceURI, factory);
     }
 
-    @Override
-    public URI getLocalURI(URI resourceName) throws IOException {
-        return DatasetUtil.mapResourceForDataset(dataset, resourceName);
-    }
 }

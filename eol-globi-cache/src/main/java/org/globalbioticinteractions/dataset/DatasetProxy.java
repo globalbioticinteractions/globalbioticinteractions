@@ -27,11 +27,6 @@ public class DatasetProxy implements Dataset {
     }
 
     @Override
-    public URI getLocalURI(URI resourcePath) throws IOException {
-        return datasetProxied.getLocalURI(DatasetUtil.getNamedResourceURI(this, resourcePath));
-    }
-
-    @Override
     public URI getArchiveURI() {
         return datasetProxied.getArchiveURI();
     }

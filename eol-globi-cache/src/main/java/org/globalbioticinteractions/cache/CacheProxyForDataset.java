@@ -32,7 +32,16 @@ public class CacheProxyForDataset extends CacheProxy {
             uri = mappedResourceName;
         } else {
             URI archiveURI = dataset.getArchiveURI();
-            uri = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
+            if (CacheUtil.isLocalDir(archiveURI)) {
+                uri = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
+            } else {
+                // assume remote archive
+                InputStream is = super.retrieve(archiveURI);
+                String localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(is);
+                ContentProvenance contentProvenance = super.provenanceOf(archiveURI);
+                URI localArchiveRoot = URI.create("jar:" + contentProvenance.getLocalURI() + "!/" + localDatasetRoot);
+                uri = ResourceUtil.getAbsoluteResourceURI(localArchiveRoot, mappedResourceName);
+            }
         }
         URI resourceLocation = uri;
         if (null == resourceLocation) {
@@ -43,49 +52,6 @@ public class CacheProxyForDataset extends CacheProxy {
             throw new IOException("resource [" + resourceName + "] not found");
         }
         return inputStream;
-    }
-
-    @Override
-    public URI getLocalURI(URI resourceName) {
-        URI uri = null;
-        try {
-            uri = redirectResourceLocationIfNeeded(resourceName);
-        } catch (IOException e) {
-            CacheProxyForDataset.LOG.warn("failed to get resource [" + resourceName + "]", e);
-        }
-        return uri;
-    }
-
-    private URI redirectResourceLocationIfNeeded(URI resourceName1) throws IOException {
-        URI mappedResourceName = DatasetUtil.getNamedResourceURI(dataset, resourceName1);
-
-        URI uri;
-        if (mappedResourceName.isAbsolute()) {
-            if (CacheUtil.isLocalDir(mappedResourceName)) {
-                uri = mappedResourceName;
-            } else {
-                uri = super.getLocalURI(mappedResourceName);
-            }
-        } else {
-            URI archiveURI = dataset.getArchiveURI();
-            uri = CacheUtil.isLocalDir(archiveURI)
-                    ? cacheFileInLocalDirectory(mappedResourceName, archiveURI)
-                    : cacheRemoteArchive(mappedResourceName, archiveURI);
-        }
-        return uri;
-    }
-
-    private URI cacheRemoteArchive(URI mappedResourceName, URI archiveURI) throws IOException {
-        URI localArchiveURI = super.getLocalURI(archiveURI);
-        URI localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(new File(localArchiveURI));
-        return ResourceUtil.getAbsoluteResourceURI(localDatasetRoot, mappedResourceName);
-    }
-
-    private URI cacheFileInLocalDirectory(URI mappedResourceName, URI archiveURI) throws IOException {
-        URI absoluteResourceURI = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-        return CacheUtil.isLocalDir(absoluteResourceURI)
-                ? absoluteResourceURI
-                : super.getLocalURI(absoluteResourceURI);
     }
 
 

@@ -14,17 +14,6 @@ public class CacheProxy implements Cache {
     }
 
     @Override
-    public URI getLocalURI(URI resourceName) throws IOException {
-        URI uri = null;
-        for (Cache cache : caches) {
-                uri = uri == null
-                        ? cache.getLocalURI(resourceName)
-                        : uri;
-        }
-        return uri;
-    }
-
-    @Override
     public ContentProvenance provenanceOf(URI resourceURI) {
         ContentProvenance provenance = null;
         for (Cache cache : caches) {

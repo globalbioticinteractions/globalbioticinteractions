@@ -35,17 +35,6 @@ public class DatasetWithCache implements Dataset {
         return cache.retrieve(resourceName);
     }
 
-    @Override
-    public URI getLocalURI(URI resourceName) {
-        URI uri = null;
-        try {
-            uri = cache.getLocalURI(resourceName);
-        } catch (IOException e) {
-            LOG.warn("failed to get resource [" + resourceName + "]", e);
-        }
-        return uri;
-    }
-
 
     private String getAccessedAt() {
         return getDatasetProvenance() == null ? null : getDatasetProvenance().getAccessedAt();

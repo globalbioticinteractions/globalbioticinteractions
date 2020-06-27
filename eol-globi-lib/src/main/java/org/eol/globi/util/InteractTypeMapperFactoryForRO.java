@@ -53,13 +53,5 @@ public class InteractTypeMapperFactoryForRO implements InteractTypeMapperFactory
             return getClass().getResourceAsStream(this.resourceName);
         }
 
-        @Override
-        public URI getLocalURI(URI resourceName) throws IOException {
-            try {
-                return getClass().getResource(this.resourceName).toURI();
-            } catch (URISyntaxException e) {
-                throw new IOException("failed to access [" + this.resourceName + "]", e);
-            }
-        }
     }
 }

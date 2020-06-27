@@ -63,10 +63,6 @@ public class StudyImporterForMangalTest {
                 }
             }
 
-            @Override
-            public URI getLocalURI(URI resourceName) {
-                return null;
-            }
         };
         List<JsonNode> nodes = new ArrayList<>();
 

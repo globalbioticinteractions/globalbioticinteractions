@@ -45,12 +45,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
                         : ResourceUtil.asInputStream(supportedURI.toString());
             }
 
-            @Override
-            public URI getLocalURI(URI resourceName) throws IOException {
-                return getSupportedURI(resourceName);
-            }
-
-            public URI getSupportedURI(URI resourceName) {
+            URI getSupportedURI(URI resourceName) {
                 List<URI> supportedResources = Arrays.asList(TYPE_IGNORED_URI_DEFAULT, TYPE_MAP_URI_DEFAULT);
                 URI resource = URI.create("classpath:/org/globalbioticinteractions/" + resourceName);
                 return supportedResources.contains(resourceName) ? resource : null;

@@ -47,12 +47,6 @@ public class CacheLocalReadonly implements Cache {
     }
 
     @Override
-    public URI getLocalURI(URI resourceName) {
-        ContentProvenance contentProvenance = provenanceOf(resourceName);
-        return contentProvenance == null ? null : contentProvenance.getLocalURI();
-    }
-
-    @Override
     public ContentProvenance provenanceOf(URI resourceURI) {
         return getContentProvenance(resourceURI, this.cachePath, this.namespace);
     }

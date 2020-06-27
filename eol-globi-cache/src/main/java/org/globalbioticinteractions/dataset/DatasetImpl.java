@@ -34,11 +34,6 @@ public class DatasetImpl implements Dataset {
     }
 
     @Override
-    public URI getLocalURI(URI resourceName) throws IOException {
-        return resourceService.getLocalURI(resourceName);
-    }
-
-    @Override
     public URI getArchiveURI() {
         return archiveURI;
     }

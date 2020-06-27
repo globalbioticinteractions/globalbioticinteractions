@@ -41,10 +41,6 @@ public class CMECSServiceTest {
                 return ResourceUtil.asInputStream(resourceName, in -> in);
             }
 
-            @Override
-            public URI getLocalURI(URI resourceName) throws IOException {
-                throw new NotImplementedException("not implemented");
-            }
         });
     }
 

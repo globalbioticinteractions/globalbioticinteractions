@@ -30,12 +30,6 @@ public class CachePullThrough implements Cache {
         return CacheUtil.cache(sourceURI, cacheDir, inStream -> inStream);
     }
 
-    @Override
-    public URI getLocalURI(URI resourceName) throws IOException {
-        ContentProvenance contentProvenanceWithNamespace = getContentProvenance(resourceName);
-        return contentProvenanceWithNamespace.getLocalURI();
-    }
-
     private ContentProvenance getContentProvenance(URI resourceName) throws IOException {
         File cacheDirForNamespace = CacheUtil.findOrMakeCacheDirForNamespace(cachePath, namespace);
         ContentProvenance localResourceLocation = CacheUtil.cache(resourceName, cacheDirForNamespace, getInputStreamFactory());
