@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import com.sun.xml.internal.bind.api.impl.NameConverter;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.globalbioticinteractions.cache.Cache;
@@ -18,7 +17,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
