@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
+import com.sun.xml.internal.bind.api.impl.NameConverter;
+import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheUtil;
@@ -10,8 +12,10 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -54,14 +58,12 @@ public class DatasetWithCacheTest {
     @Test
     public void getURIRelative() throws IOException, URISyntaxException {
         Cache cache = Mockito.mock(Cache.class);
-        URI cachedLocalURI = getClass().getResource("archive.zip").toURI();
-        when(cache.getLocalURI(any(URI.class))).thenReturn(cachedLocalURI);
+        when(cache.retrieve(URI.create("some:bla/foo"))).thenReturn(IOUtils.toInputStream("relative"));
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"), inStream -> inStream);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getLocalURI(URI.create("foo"));
-
-        assertThat(someURI, is(URI.create("jar:" + cachedLocalURI.toString() + "!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo")));
+        InputStream is = datasetWithCache.retrieve(URI.create("foo"));
+        assertThat(IOUtils.toString(is, StandardCharsets.UTF_8), is("relative"));
     }
 
     @Test
@@ -70,29 +72,32 @@ public class DatasetWithCacheTest {
         URI localFileURI = getClass().getResource("archive.zip").toURI();
         URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
         assertTrue(CacheUtil.isLocalDir(cachedLocalURI));
-        when(cache.getLocalURI(any(URI.class))).thenReturn(localFileURI);
+        when(cache.retrieve(URI.create(cachedLocalURI.toString() + "foo.txt"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI, inStream -> inStream);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getLocalURI(URI.create("foo.txt"));
-
-        assertThat(someURI, is(URI.create(cachedLocalURI.toString() + "archive.zip")));
+        InputStream is = datasetWithCache.retrieve(URI.create("foo.txt"));
+        assertThat(IOUtils.toString(is, StandardCharsets.UTF_8), is("relative"));
     }
 
-    @Test
+    @Test(expected = IOException.class)
     public void doNotCacheLocalDirResourceURI() throws IOException, URISyntaxException {
         Cache cache = Mockito.mock(Cache.class);
         URI localFileURI = getClass().getResource("archive.zip").toURI();
         URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
         assertTrue(CacheUtil.isLocalDir(cachedLocalURI));
-        when(cache.getLocalURI(any(URI.class))).thenReturn(localFileURI);
+        when(cache.retrieve(any(URI.class))).thenThrow(new IOException("kaboom!"));
+
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", cachedLocalURI, inStream -> inStream);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getLocalURI(cachedLocalURI);
+        try {
+            datasetWithCache.retrieve(cachedLocalURI);
+        } catch (IOException ex) {
+            assertThat(ex.getMessage(), is("kaboom!"));
+            throw ex;
+        }
 
-        assertThat(someURI, not(is(localFileURI)));
-        assertThat(someURI, is(cachedLocalURI));
     }
 
     @Test
@@ -100,14 +105,13 @@ public class DatasetWithCacheTest {
         String resourceName = "https://example.org/foo";
         URI resourceURI = URI.create(resourceName);
         Cache cache = Mockito.mock(Cache.class);
-        URI cachedLocalURI = URI.create("someCached.txt");
-        when(cache.getLocalURI(resourceURI)).thenReturn(cachedLocalURI);
+        when(cache.retrieve(resourceURI)).thenReturn(IOUtils.toInputStream("cached", StandardCharsets.UTF_8));
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"), inStream -> inStream);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
-        URI someURI = datasetWithCache.getLocalURI(URI.create(resourceName));
+        InputStream is = datasetWithCache.retrieve(URI.create(resourceName));
 
-        assertThat(someURI, is(URI.create("someCached.txt")));
+        assertThat(IOUtils.toString(is, StandardCharsets.UTF_8), is("cached"));
     }
 
     private DatasetWithCache datasetLastAccessedAt(String lastAccessed) {
