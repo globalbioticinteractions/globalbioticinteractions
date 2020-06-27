@@ -34,7 +34,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -130,7 +129,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
                     archive = DwCAUtil.archiveFor(dwcaURI, tmpDwA.toString());
                 } else {
                     dwcaFile = File.createTempFile("dwca", "tmp.zip");
-                    FileUtils.copyInputStreamToFile(getDataset().retrieve(dwcaURI), dwcaFile);
+                    FileUtils.copyToFile(getDataset().retrieve(dwcaURI), dwcaFile);
                     dwcaFile.deleteOnExit();
                     archive = DwCAUtil.archiveFor(dwcaFile.toURI(), tmpDwA.toString());
                 }
