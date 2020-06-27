@@ -2,12 +2,11 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFinderUtil;
 import org.globalbioticinteractions.dataset.DatasetUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -37,8 +36,14 @@ public class CacheProxyForDataset extends CacheProxy {
             } else {
                 // assume remote archive
                 InputStream is = super.retrieve(archiveURI);
+                if (is == null) {
+                    throw new IOException("failed to retrieve [" + archiveURI + "]");
+                }
                 String localDatasetRoot = DatasetFinderUtil.getLocalDatasetURIRoot(is);
-                ContentProvenance contentProvenance = super.provenanceOf(archiveURI);
+                ContentProvenance contentProvenance = provenanceOf(archiveURI);
+                if (contentProvenance == null) {
+                    throw new IOException("failed to cache [" + archiveURI + "]");
+                }
                 URI localArchiveRoot = URI.create("jar:" + contentProvenance.getLocalURI() + "!/" + localDatasetRoot);
                 uri = ResourceUtil.getAbsoluteResourceURI(localArchiveRoot, mappedResourceName);
             }
@@ -49,7 +54,7 @@ public class CacheProxyForDataset extends CacheProxy {
         }
         InputStream inputStream = super.retrieve(resourceLocation);
         if (null == inputStream) {
-            throw new IOException("resource [" + resourceName + "] not found");
+            throw new IOException("resource [" + resourceName + "] not found at [" + resourceLocation +"]");
         }
         return inputStream;
     }

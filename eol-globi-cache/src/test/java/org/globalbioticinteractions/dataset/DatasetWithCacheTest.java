@@ -53,10 +53,44 @@ public class DatasetWithCacheTest {
         assertThat(dataset.getCitation(), Is.is("Accessed via <some:bla>."));
     }
 
-    @Test
-    public void getURIRelative() throws IOException, URISyntaxException {
+    @Test(expected = IOException.class)
+    public void getURIRelativeWithFailedArchiveRetrieval() throws IOException {
         Cache cache = Mockito.mock(Cache.class);
-        when(cache.retrieve(URI.create("some:bla/foo"))).thenReturn(IOUtils.toInputStream("relative"));
+        when(cache.retrieve(URI.create("some:bla/foo"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
+        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"), inStream -> inStream);
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
+        try {
+            InputStream is = datasetWithCache.retrieve(URI.create("foo"));
+        } catch (IOException ex) {
+            assertThat(ex.getMessage(), is("failed to retrieve [some:bla]"));
+            throw ex;
+        }
+    }
+
+    @Test(expected = IOException.class)
+    public void getURIRelativeInNonZipArchive() throws IOException {
+        Cache cache = Mockito.mock(Cache.class);
+        when(cache.retrieve(URI.create("some:bla"))).thenReturn(IOUtils.toInputStream("this ain't no zipfile", StandardCharsets.UTF_8));
+        when(cache.retrieve(URI.create("jar:uri:cached!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
+        when(cache.provenanceOf(URI.create("some:bla"))).thenReturn(new ContentProvenance("foo/bar", URI.create("uri:source"), URI.create("uri:cached"), "1234", "1970-01-01"));
+        DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"), inStream -> inStream);
+
+        DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
+        try {
+            datasetWithCache.retrieve(URI.create("foo"));
+        } catch(IOException ex) {
+            assertThat(ex.getMessage(), is("resource [foo] not found at [jar:uri:cached!/foo]"));
+            throw ex;
+        }
+    }
+
+    @Test
+    public void getURIRelativeInArchive() throws IOException {
+        Cache cache = Mockito.mock(Cache.class);
+        when(cache.retrieve(URI.create("some:bla"))).thenReturn(getClass().getResourceAsStream("archive.zip"));
+        when(cache.retrieve(URI.create("jar:uri:cached!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
+        when(cache.provenanceOf(URI.create("some:bla"))).thenReturn(new ContentProvenance("foo/bar", URI.create("uri:source"), URI.create("uri:cached"), "1234", "1970-01-01"));
         DatasetImpl datasetUncached = new DatasetImpl("some/namespace", URI.create("some:bla"), inStream -> inStream);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);

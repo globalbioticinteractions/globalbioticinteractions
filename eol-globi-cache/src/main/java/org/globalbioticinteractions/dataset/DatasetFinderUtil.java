@@ -32,7 +32,7 @@ public class DatasetFinderUtil {
         String archiveRoot = "";
         try (ZipInputStream is = new ZipInputStream(zipStream)) {
             ZipEntry entry = is.getNextEntry();
-            if (entry.isDirectory()) {
+            if (entry != null && entry.isDirectory()) {
                 archiveRoot = entry.getName();
             }
         } catch (IOException ex) {
