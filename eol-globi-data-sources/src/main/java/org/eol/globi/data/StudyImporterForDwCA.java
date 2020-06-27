@@ -18,6 +18,7 @@ import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.ClosableIterator;
+import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DwCAUtil;
@@ -123,15 +124,18 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             File dwcaFile = null;
             try {
                 URI dwcaURI = URI.create(archiveURL);
-                dwcaFile = new File(dwcaURI);
-                if (dwcaFile.exists() && dwcaFile.isFile()) {
+                tmpDwA = Files.createTempDirectory("dwca");
+                Archive archive;
+                if (CacheUtil.isLocalDir(dwcaURI)) {
+                    archive = DwCAUtil.archiveFor(dwcaURI, tmpDwA.toString());
+                } else {
+                    dwcaFile = new File(dwcaURI);
                     dwcaFile = File.createTempFile("dwca", "tmp.zip");
                     FileUtils.copyToFile(getDataset().retrieve(dwcaURI), dwcaFile);
                     dwcaFile.deleteOnExit();
+                    archive = DwCAUtil.archiveFor(dwcaFile.toURI(), tmpDwA.toString());
                 }
 
-                tmpDwA = Files.createTempDirectory("dwca");
-                Archive archive = DwCAUtil.archiveFor(dwcaFile.toURI(), tmpDwA.toString());
 
                 InteractionListenerWithInteractionTypeMapping listenerProxy = new InteractionListenerWithInteractionTypeMapping(
                         new InteractionListenerWithContext(),
