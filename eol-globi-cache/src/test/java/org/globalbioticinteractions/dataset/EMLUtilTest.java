@@ -16,13 +16,13 @@ public class EMLUtilTest {
     @Test
     public void metaToMetaTables() throws URISyntaxException, IOException {
         Dataset origDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
-        String uriString = "jar:" + getClass().getResource("dwca.zip").toURI().toString() + "!/vampire-moth-dwca-master/eml.xml";
+        String uriString = "jar:" + getClass().getResource("dwca.zip").toURI().toString() + "!/vampire-moth-dwca-c4549a1690b84595c88946f477057b9ab76e5360/eml.xml";
 
         JsonNode config = EMLUtil.datasetWithEML(origDataset, URI.create(uriString));
 
         DatasetProxy proxy = new DatasetProxy(origDataset);
         proxy.setConfig(config);
-        assertThat(proxy.getCitation(), is ("Occurrence Records for vampire-moths-and-their-fruit-piercing-relatives. 2018-09-18. South Central California Network - 5f573b1a-0e9a-43cf-95d7-299207f98522."));
+        assertThat(proxy.getCitation(), is ("Occurrence Records for vampire-moths-and-their-fruit-piercing-relatives. 2018-09-27. South Central California Network - 2ba077c1-aa41-455e-9a84-bccb61a91230."));
         assertThat(proxy.getFormat(), is ("application/dwca"));
     }
 
