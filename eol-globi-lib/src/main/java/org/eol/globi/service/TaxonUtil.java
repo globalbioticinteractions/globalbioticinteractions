@@ -356,17 +356,6 @@ public class TaxonUtil {
         return !isNonEmptyValue(value);
     }
 
-    public static Map<String, String> appendNameSourceInfo(Map<String, String> enrichedProperties, final Class serviceClass, final Date date) {
-        enrichedProperties = new TreeMap<String, String>(enrichedProperties) {
-            {
-                put(NAME_SOURCE, serviceClass.getSimpleName());
-                put(NAME_SOURCE_URL, Version.getGitHubBaseUrl() + "/eol-globi-taxon-resolver/src/main/java/" + serviceClass.getName().replace(".", "/") + ".java");
-                put(NAME_SOURCE_ACCESSED_AT, DateUtil.printDate(date));
-            }
-        };
-        return enrichedProperties;
-    }
-
     public static String generateTargetTaxonPath(Map<String, String> properties) {
         return generateTaxonPath(properties,
                 getAllTargetTaxonRanks(),

@@ -13,21 +13,15 @@ import static org.hamcrest.CoreMatchers.hasItem;
 public class GitHubUtilTest {
 
     @Test
-    public void isGloBIRepo() throws IOException {
-        assertThat(GitHubUtil.isGloBIRepository(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV), is(true));
+    public void isGloBIRepo() throws IOException, URISyntaxException {
+        String lastCommitSHA = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, in -> in);
+        assertThat(GitHubUtil.isGloBIRepository(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, lastCommitSHA), is(true));
     }
 
     @Test
-    public void nonGloBIRepo() throws IOException {
-        assertThat(GitHubUtil.isGloBIRepository("ropensci/rgbif"), is(false));
+    public void nonGloBIRepo() throws IOException, URISyntaxException {
+        String lastCommitSHA = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, in -> in);
+        assertThat(GitHubUtil.isGloBIRepository("ropensci/rgbif", lastCommitSHA), is(false));
     }
-
-@Test
-    public void baseUrlMaster() {
-        assertThat(GitHubUtil.getBaseUrlMaster("globalbioticinteractions/template-dataset"),
-                is("https://raw.githubusercontent.com/globalbioticinteractions/template-dataset/master"));
-    }
-
-
 
 }

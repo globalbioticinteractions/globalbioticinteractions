@@ -31,8 +31,7 @@ public class DatasetRegistryProxy implements DatasetRegistry {
             Collection<String> namespaces = registry.findNamespaces();
             Collection<String> newNamespaces = CollectionUtils.subtract(namespaces, namespacesAll);
             for (String newNamespace : newNamespaces) {
-                String msg = "associating [" + newNamespace + "] with [" + registry.getClass().getSimpleName() + "]";
-                LOG.info(msg);
+                LOG.info("associating [" + newNamespace + "] with [" + registry.getClass().getSimpleName() + "]");
                 associateNamespaceWithRegistry(registry, newNamespace);
             }
             namespacesAll.addAll(newNamespaces);

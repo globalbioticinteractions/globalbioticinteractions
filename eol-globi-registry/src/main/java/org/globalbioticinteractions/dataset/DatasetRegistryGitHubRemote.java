@@ -20,7 +20,7 @@ public class DatasetRegistryGitHubRemote extends DatasetRegistryGitHub {
         try {
             String baseUrlLastCommit = GitHubUtil.getBaseUrlLastCommit(namespace, getInputStreamFactory());
             return new DatasetImpl(namespace, URI.create(baseUrlLastCommit), getInputStreamFactory());
-        } catch (URISyntaxException | IOException | StudyImporterException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new DatasetRegistryException(e);
         }
     }

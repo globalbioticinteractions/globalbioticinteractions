@@ -37,8 +37,4 @@ public class Version {
         return mainClass.getSimpleName() + " [version: " + getVersion() + "]";
     }
 
-    public static String getGitHubBaseUrl() {
-        String sha = getManifestAttributeValue("Git-Commit-Sha");
-        return "https://github.com/globalbioticinteractions/globalbioticinteractions/blob/" + (sha == null ? "master" : sha);
-    }
 }
