@@ -63,7 +63,7 @@ public class StudyImporterForDwCATest {
 
     @Test
     public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
-        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/vampire-moth-dwca-master/meta.xml");
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/vampire-moth-dwca-main/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomething(archiveRoot, new AtomicInteger(0));
     }

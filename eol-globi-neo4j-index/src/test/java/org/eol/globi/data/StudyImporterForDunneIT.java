@@ -21,8 +21,8 @@ public class StudyImporterForDunneIT extends GraphDBTestCase {
         String configJson = "{ \"citation\": \"blabla\",\n" +
                 "  \"format\": \"dunne\",\n" +
                 "  \"resources\": {\n" +
-                "    \"nodes\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakIntertidal/master/nodes.tsv\",\n" +
-                "    \"links\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakIntertidal/master/links.tsv\"\n" +
+                "    \"nodes\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakIntertidal/main/nodes.tsv\",\n" +
+                "    \"links\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakIntertidal/main/links.tsv\"\n" +
                 "  },\n" +
                 "  \"location\": {\n" +
                 "    \"locality\": {\n" +
@@ -56,8 +56,8 @@ public class StudyImporterForDunneIT extends GraphDBTestCase {
         String configJson = "{ \"citation\": \"blabla\",\n" +
                 "  \"format\": \"dunne\",\n" +
                 "  \"resources\": {\n" +
-                "    \"nodes\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakNearshore/master/nodes.tsv\",\n" +
-                "    \"links\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakNearshore/master/links.tsv\"\n" +
+                "    \"nodes\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakNearshore/main/nodes.tsv\",\n" +
+                "    \"links\": \"https://raw.githubusercontent.com/globalbioticinteractions/dunne2016SanakNearshore/main/links.tsv\"\n" +
                 "  },\n" +
                 "  \"location\": {\n" +
                 "    \"locality\": {\n" +

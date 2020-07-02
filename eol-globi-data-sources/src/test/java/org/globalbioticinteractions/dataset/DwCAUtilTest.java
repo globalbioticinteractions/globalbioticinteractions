@@ -40,7 +40,7 @@ public class DwCAUtilTest {
 
     @Test
     public void emitRecordsUnpacked() throws IOException, URISyntaxException {
-        URI archiveURI = getClass().getResource("vampire-moth-dwca-master/meta.xml").toURI();
+        URI archiveURI = getClass().getResource("vampire-moth-dwca-main/meta.xml").toURI();
 
         Archive dwcArchive =  DwCAUtil.archiveFor(Paths.get(archiveURI).getParent().toUri(), null);
         assertHasRecords(dwcArchive);
