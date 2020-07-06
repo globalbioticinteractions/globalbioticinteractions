@@ -14,6 +14,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
+import org.eol.globi.util.DatasetImportUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -142,8 +143,8 @@ public class StudyImporterForRSSTest {
     public void indexingInteractionListener() throws StudyImporterException {
 
         TreeMap<String, Map<String, String>> index = new TreeMap<>();
-        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener
-                = new StudyImporterForRSS.IndexingInteractionListener(index);
+        DatasetImportUtil.IndexingInteractionListener indexingInteractionListener
+                = new DatasetImportUtil.IndexingInteractionListener(index);
 
         indexingInteractionListener.newLink(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
@@ -159,8 +160,8 @@ public class StudyImporterForRSSTest {
         final Map<String, Map<String, String>> index = DBMaker.newTempTreeMap();
 
 
-        StudyImporterForRSS.IndexingInteractionListener indexingInteractionListener
-                = new StudyImporterForRSS.IndexingInteractionListener(index);
+        DatasetImportUtil.IndexingInteractionListener indexingInteractionListener
+                = new DatasetImportUtil.IndexingInteractionListener(index);
 
         indexingInteractionListener.newLink(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
@@ -320,7 +321,7 @@ public class StudyImporterForRSSTest {
                 }
             });
         }};
-        StudyImporterForRSS.EnrichingInteractionListener listener = new StudyImporterForRSS.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
+        DatasetImportUtil.EnrichingInteractionListener listener = new DatasetImportUtil.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
         listener.newLink(new TreeMap<String, String>() {{
             put(StudyImporterForTSV.TARGET_OCCURRENCE_ID, "1234");

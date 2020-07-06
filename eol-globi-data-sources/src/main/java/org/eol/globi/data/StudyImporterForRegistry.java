@@ -16,18 +16,18 @@ import java.util.List;
 public class StudyImporterForRegistry extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(StudyImporterForRegistry.class);
 
-    private final DatasetRegistry finder;
+    private final DatasetRegistry registry;
 
-    public StudyImporterForRegistry(ParserFactory parserFactory, NodeFactory nodeFactory, DatasetRegistry finder) {
+    public StudyImporterForRegistry(ParserFactory parserFactory, NodeFactory nodeFactory, DatasetRegistry registry) {
         super(parserFactory, nodeFactory);
-        this.finder = finder;
+        this.registry = registry;
     }
 
     @Override
     public void importStudy() throws StudyImporterException {
         Collection<String> namespaces;
         try {
-            namespaces = getDatasetFinder().findNamespaces();
+            namespaces = getRegistry().findNamespaces();
         } catch (DatasetRegistryException e) {
             throw new StudyImporterException("failed to discover datasets", e);
         }
@@ -47,10 +47,10 @@ public class StudyImporterForRegistry extends NodeBasedImporter {
         }
     }
 
-    public void importData(String namespace) throws StudyImporterException {
+    private void importData(String namespace) throws StudyImporterException {
         try {
             LOG.info("importing github repo [" + namespace + "]...");
-            Dataset dataset = new DatasetFactory(getDatasetFinder()).datasetFor(namespace);
+            Dataset dataset = new DatasetFactory(getRegistry()).datasetFor(namespace);
             getNodeFactory().getOrCreateDataset(dataset);
             importData(dataset);
             LOG.info("importing github repo [" + namespace + "] done.");
@@ -61,8 +61,8 @@ public class StudyImporterForRegistry extends NodeBasedImporter {
         }
     }
 
-    private DatasetRegistry getDatasetFinder() {
-        return finder;
+    private DatasetRegistry getRegistry() {
+        return registry;
     }
 
     public void importData(Dataset dataset) throws StudyImporterException {
