@@ -365,8 +365,8 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
         properties.add(e);
     }
 
-    private static String trimAndRemoveQuotes(String verbatimVerb) {
-        return StringUtils.trim(StringUtils.replace(StringUtils.trim(verbatimVerb), "\"", ""));
+    private static String trimAndRemoveQuotes(String verbatimTerm) {
+        return StringUtils.trim(InteractUtil.removeQuotesAndBackslashes(verbatimTerm));
     }
 
     private static void addDefaultInteractionForAssociatedTaxon(List<Map<String, String>> properties, String part) {

@@ -359,6 +359,17 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxaEscapedQuoted() {
+        String associatedTaxa = "\\\"eats\\\": \\\"Homo sapiens\\\"";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarks() throws IOException {
         String occurrenceRemarks = "2.5 gluteraldehyde Neutral red Permount {\"hostGen\":\"Biomphalaria\",\"hostSpec\":\"havanensis\"}";

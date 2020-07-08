@@ -2,9 +2,6 @@ package org.eol.globi.util;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.translate.AggregateTranslator;
-import org.apache.commons.text.translate.CharSequenceTranslator;
-import org.apache.commons.text.translate.LookupTranslator;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
 import org.eol.globi.domain.InteractType;
@@ -20,7 +17,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -67,7 +63,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return new TermLookupService() {
             @Override
             public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
-                return typesIgnored.contains(normalize(name))
+                return typesIgnored.contains(InteractUtil.normalizeInteractionNameOrId(name))
                         ? Collections.singletonList(new TermImpl(name, name))
                         : Collections.emptyList();
             }
@@ -117,12 +113,12 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
 
         while (labeledCSVParser.getLine() != null) {
             String provideInteractionIdString = labeledCSVParser.getValueByLabel(providedInteractionTypeIdColumnName);
-            String providedInteractionId = normalize(StringUtils.lowerCase(provideInteractionIdString));
+            String providedInteractionId = InteractUtil.normalizeInteractionNameOrId(StringUtils.lowerCase(provideInteractionIdString));
 
             String provideInteractionNameString = labeledCSVParser.getValueByLabel(providedInteractionTypeNameColumnName);
-            String providedInteractionName = normalize(StringUtils.lowerCase(provideInteractionNameString));
+            String providedInteractionName = InteractUtil.normalizeInteractionNameOrId(StringUtils.lowerCase(provideInteractionNameString));
 
-            String interactionTypeId = normalize(labeledCSVParser.getValueByLabel(mappedInteractionTypeIdColumnName));
+            String interactionTypeId = InteractUtil.normalizeInteractionNameOrId(labeledCSVParser.getValueByLabel(mappedInteractionTypeIdColumnName));
             InteractType interactType = InteractType.typeOf(interactionTypeId);
             if (interactType == null) {
                 throw new TermLookupServiceException("failed to map interaction type to [" + interactionTypeId + "] on line [" + labeledCSVParser.lastLineNumber() + "]: interaction type unknown to GloBI");
@@ -180,7 +176,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     public static List<String> buildTypesIgnored(LabeledCSVParser labeledCSVParser, String ignoredInteractionTypeColumnName) throws IOException {
         List<String> typeMap1 = new ArrayList<>();
         while (labeledCSVParser.getLine() != null) {
-            String inatIdString = normalize(labeledCSVParser.getValueByLabel(ignoredInteractionTypeColumnName));
+            String inatIdString = InteractUtil.normalizeInteractionNameOrId(labeledCSVParser.getValueByLabel(ignoredInteractionTypeColumnName));
             if (StringUtils.isNotBlank(inatIdString)) {
                 typeMap1.add(inatIdString);
             }
@@ -243,16 +239,6 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return labeledCSVParser;
     }
 
-    private static String normalize(String name) {
-        final Map<CharSequence, CharSequence> escapeJavaMap = new HashMap<>();
-        escapeJavaMap.put("\"", "");
-        escapeJavaMap.put("\\", "");
-        final CharSequenceTranslator mappingNormalizer = new AggregateTranslator(
-                new LookupTranslator(Collections.unmodifiableMap(escapeJavaMap)));
-
-        return StringUtils.lowerCase(StringUtils.trim(mappingNormalizer.translate(name)));
-    }
-
     public static TermLookupService getTermLookupService(List<String> typesIgnored, Map<String, InteractType> typeMap) {
         return new TermLookupService() {
 
@@ -260,7 +246,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
             @Override
             public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
                 List<Term> matchingTerms = Collections.emptyList();
-                String lowercaseName = normalize(name);
+                String lowercaseName = InteractUtil.normalizeInteractionNameOrId(name);
                 if (!typesIgnored.contains(lowercaseName)) {
                     final InteractType exactMatch = typeMap.get(lowercaseName);
                     final InteractType interactType = exactMatch == null ? typeMap.get("") : exactMatch;

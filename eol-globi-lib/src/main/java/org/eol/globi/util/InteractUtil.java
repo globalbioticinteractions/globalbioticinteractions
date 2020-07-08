@@ -1,6 +1,9 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.translate.AggregateTranslator;
+import org.apache.commons.text.translate.CharSequenceTranslator;
+import org.apache.commons.text.translate.LookupTranslator;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
@@ -8,6 +11,8 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupServiceException;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -54,5 +59,26 @@ public class InteractUtil {
         if (StringUtils.isBlank(link.get(key))) {
             putNotBlank(link, key, value);
         }
+    }
+
+    public static String normalizeInteractionNameOrId(String name) {
+        final String translate = removeQuotesAndBackslashes(name);
+        return StringUtils.lowerCase(StringUtils.trim(translate));
+    }
+
+
+    private static final CharSequenceTranslator mappingNormalizer;
+
+    static {
+        final Map<CharSequence, CharSequence> escapeJavaMap = new HashMap<CharSequence, CharSequence>() {{
+            put("\"", "");
+            put("\\", "");
+        }};
+        mappingNormalizer = new AggregateTranslator(
+                new LookupTranslator(Collections.unmodifiableMap(escapeJavaMap)));
+    }
+
+    public static String removeQuotesAndBackslashes(String name) {
+        return mappingNormalizer.translate(name);
     }
 }
