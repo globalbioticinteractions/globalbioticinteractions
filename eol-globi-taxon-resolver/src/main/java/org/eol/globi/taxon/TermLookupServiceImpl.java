@@ -36,10 +36,17 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
         if (mapping == null) {
             buildMapping(getMappingURIList());
         }
-        List<Term> terms = mapping.get(StringUtils.lowerCase(name));
+        final String name1 = name;
+        List<Term> terms = mapping.get(normalize(name));
         return terms == null ? new ArrayList<Term>() {{
             add(new TermImpl(PropertyAndValueDictionary.NO_MATCH, name));
         }} : terms;
+    }
+
+    private String normalize(String name) {
+        return StringUtils.replace(StringUtils.replace(
+                StringUtils.lowerCase(name), "\"", ""
+        ), "\\", "");
     }
 
     private void buildMapping(List<URI> uriList) throws TermLookupServiceException {
@@ -66,7 +73,7 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
                                 && StringUtils.isNotBlank(targetId)
                                 && StringUtils.isNotBlank(targetName)) {
                             List<Term> terms = mapping
-                                    .computeIfAbsent(StringUtils.lowerCase(sourceName), k -> new ArrayList<>());
+                                    .computeIfAbsent(normalize(sourceName), k -> new ArrayList<>());
                             terms.add(new TermImpl(targetId, targetName));
                         }
                     }

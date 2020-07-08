@@ -2,6 +2,9 @@ package org.eol.globi.util;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.translate.AggregateTranslator;
+import org.apache.commons.text.translate.CharSequenceTranslator;
+import org.apache.commons.text.translate.LookupTranslator;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
 import org.eol.globi.domain.InteractType;
@@ -17,9 +20,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory {
 
@@ -27,7 +32,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     public static final URI TYPE_MAP_URI_DEFAULT = URI.create("interaction_types_mapping.csv");
     private final ResourceService resourceService;
 
-    public InteractTypeMapperFactoryImpl() {
+    InteractTypeMapperFactoryImpl() {
         this(getResourceServiceForDefaultInteractionTypeMapping());
     }
 
@@ -62,7 +67,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return new TermLookupService() {
             @Override
             public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
-                return typesIgnored.contains(StringUtils.lowerCase(StringUtils.lowerCase(name)))
+                return typesIgnored.contains(normalize(name))
                         ? Collections.singletonList(new TermImpl(name, name))
                         : Collections.emptyList();
             }
@@ -71,7 +76,16 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
 
     @Override
     public InteractTypeMapper create() throws TermLookupServiceException {
+        final InteractTypeMapper mapperCustom = mapperForResourceService(resourceService);
+        final InteractTypeMapper mapperDefault = mapperForResourceService(getResourceServiceForDefaultInteractionTypeMapping());
+        final InteractTypeMapper mapperRO = new InteractTypeMapperFactoryForRO().create();
+        return new InteractTypeMapperWithFallbackImpl(
+                mapperCustom,
+                mapperDefault,
+                mapperRO);
+    }
 
+    public InteractTypeMapperImpl mapperForResourceService(ResourceService resourceService) throws TermLookupServiceException {
         final TermLookupService termMappingService
                 = getTermLookupService(resourceService,
                 "interaction_type_ignored",
@@ -86,9 +100,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
                 "interaction_type_ignored",
                 TYPE_IGNORED_URI_DEFAULT);
 
-        return new InteractTypeMapperWithFallbackImpl(
-                new InteractTypeMapperImpl(ignoredTermLookupService, termMappingService),
-                new InteractTypeMapperFactoryForRO().create());
+        return new InteractTypeMapperImpl(ignoredTermLookupService, termMappingService);
     }
 
     public static Map<String, InteractType> buildTypeMap(LabeledCSVParser labeledCSVParser,
@@ -105,37 +117,58 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
 
         while (labeledCSVParser.getLine() != null) {
             String provideInteractionIdString = labeledCSVParser.getValueByLabel(providedInteractionTypeIdColumnName);
-            String providedInteractionId = StringUtils.trim(StringUtils.lowerCase(provideInteractionIdString));
+            String providedInteractionId = normalize(StringUtils.lowerCase(provideInteractionIdString));
 
             String provideInteractionNameString = labeledCSVParser.getValueByLabel(providedInteractionTypeNameColumnName);
-            String providedInteractionName = StringUtils.trim(StringUtils.lowerCase(provideInteractionNameString));
+            String providedInteractionName = normalize(StringUtils.lowerCase(provideInteractionNameString));
 
-            String interactionTypeId = StringUtils.lowerCase(StringUtils.trim(labeledCSVParser.getValueByLabel(mappedInteractionTypeIdColumnName)));
+            String interactionTypeId = normalize(labeledCSVParser.getValueByLabel(mappedInteractionTypeIdColumnName));
             InteractType interactType = InteractType.typeOf(interactionTypeId);
             if (interactType == null) {
                 throw new TermLookupServiceException("failed to map interaction type to [" + interactionTypeId + "] on line [" + labeledCSVParser.lastLineNumber() + "]: interaction type unknown to GloBI");
             } else {
-                if (StringUtils.isNotBlank(providedInteractionId)) {
-                    if (typeMap.containsKey(providedInteractionId)) {
-                        throw new TermLookupServiceException("provided id [" + providedInteractionId + "] already mapped");
+                if (StringUtils.isBlank(providedInteractionId) && StringUtils.isBlank(providedInteractionName)) {
+                    if (typeMap.containsKey("")) {
+                        throw new TermLookupServiceException("only one default/blank interaction type can be defined, but found duplicate on line [" + labeledCSVParser.lastLineNumber() + "]: [" + StringUtils.join(labeledCSVParser.getLine(), "|") + "]");
                     }
-                    typeMap.put(providedInteractionId, interactType);
-                }
-
-                if (StringUtils.isNotBlank(providedInteractionName)) {
-                    InteractType interactType1 = typeMap.get(providedInteractionName);
-                    if (interactType1 == null) {
-                        typeMap.put(providedInteractionName, interactType);
-                    } else {
-                        if (StringUtils.isBlank(providedInteractionId)) {
-                            throw new TermLookupServiceException("provided name [" + providedInteractionName + "] already mapped: please provide unique interaction type name/id");
-                        }
+                    typeMap.put("", interactType);
+                } else {
+                    if (StringUtils.isNotBlank(providedInteractionId)) {
+                        setOrThrow(typeMap, providedInteractionId, interactType);
                     }
 
+                    if (StringUtils.isNotBlank(providedInteractionName)) {
+                        setOrThrow(typeMap, providedInteractionId, providedInteractionName, interactType);
+                    }
                 }
             }
         }
         return typeMap;
+    }
+
+    public static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, String providedInteractionName, InteractType interactType) throws TermLookupServiceException {
+        InteractType interactType1 = typeMap.get(providedInteractionName);
+        if (interactType1 == null) {
+            typeMap.put(providedInteractionName, interactType);
+        } else {
+            if (StringUtils.isBlank(providedInteractionId)) {
+                throw new TermLookupServiceException("provided name [" + providedInteractionName + "] already mapped: please provide unique interaction type name/id");
+            }
+        }
+    }
+
+    public static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, InteractType interactType) throws TermLookupServiceException {
+        if (typeMap.containsKey(providedInteractionId)) {
+            throw new TermLookupServiceException("provided id [" + providedInteractionId + "] already mapped");
+        }
+        typeMap.put(providedInteractionId, interactType);
+    }
+
+    public static void setDefaultIfNotDefined(InteractType interactType) {
+        AtomicReference<InteractType> defaultType = new AtomicReference<>();
+        if (defaultType.get() == null) {
+            defaultType.set(interactType);
+        }
     }
 
     public static void assertColumnNamePresent(List<String> columnNames, String columnNameToCheck) throws TermLookupServiceException {
@@ -147,7 +180,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     public static List<String> buildTypesIgnored(LabeledCSVParser labeledCSVParser, String ignoredInteractionTypeColumnName) throws IOException {
         List<String> typeMap1 = new ArrayList<>();
         while (labeledCSVParser.getLine() != null) {
-            String inatIdString = StringUtils.trim(StringUtils.lowerCase(labeledCSVParser.getValueByLabel(ignoredInteractionTypeColumnName)));
+            String inatIdString = normalize(labeledCSVParser.getValueByLabel(ignoredInteractionTypeColumnName));
             if (StringUtils.isNotBlank(inatIdString)) {
                 typeMap1.add(inatIdString);
             }
@@ -204,9 +237,20 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return typesIgnored;
     }
 
-    public static LabeledCSVParser parserFor(URI resourceURI, ResourceService resourceService) throws IOException {
+    private static LabeledCSVParser parserFor(URI resourceURI, ResourceService resourceService) throws IOException {
         InputStream is = resourceService.retrieve(resourceURI);
-        return CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8));
+        final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8));
+        return labeledCSVParser;
+    }
+
+    private static String normalize(String name) {
+        final Map<CharSequence, CharSequence> escapeJavaMap = new HashMap<>();
+        escapeJavaMap.put("\"", "");
+        escapeJavaMap.put("\\", "");
+        final CharSequenceTranslator mappingNormalizer = new AggregateTranslator(
+                new LookupTranslator(Collections.unmodifiableMap(escapeJavaMap)));
+
+        return StringUtils.lowerCase(StringUtils.trim(mappingNormalizer.translate(name)));
     }
 
     public static TermLookupService getTermLookupService(List<String> typesIgnored, Map<String, InteractType> typeMap) {
@@ -216,9 +260,10 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
             @Override
             public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
                 List<Term> matchingTerms = Collections.emptyList();
-                String lowercaseName = StringUtils.lowerCase(StringUtils.trim(name));
+                String lowercaseName = normalize(name);
                 if (!typesIgnored.contains(lowercaseName)) {
-                    InteractType interactType = typeMap.get(lowercaseName);
+                    final InteractType exactMatch = typeMap.get(lowercaseName);
+                    final InteractType interactType = exactMatch == null ? typeMap.get("") : exactMatch;
                     if (interactType != null) {
                         matchingTerms = new ArrayList<Term>() {{
                             add(new TermImpl(interactType.getIRI(), interactType.getLabel()));

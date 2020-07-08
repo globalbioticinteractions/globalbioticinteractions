@@ -58,8 +58,8 @@ public class InteractTypeMapperFactoryImplTest {
                 .thenReturn(IOUtils.toInputStream("provided_interaction_type_id\nshouldBeIgnored", StandardCharsets.UTF_8));
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream("provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
-                        "\nshouldBeMapped,id1,interactsWith, http://purl.obolibrary.org/obo/RO_0002437\n" +
-                        "\nshouldBeMapped,id2," + InteractType.ATE.getLabel() + "," + InteractType.ATE.getIRI()
+                                "\nshouldBeMapped,id1,interactsWith, http://purl.obolibrary.org/obo/RO_0002437\n" +
+                                "\nshouldBeMapped,id2," + InteractType.ATE.getLabel() + "," + InteractType.ATE.getIRI()
                         , StandardCharsets.UTF_8));
 
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
@@ -89,7 +89,7 @@ public class InteractTypeMapperFactoryImplTest {
                 .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
 
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv"))).thenThrow(new IOException("kaboom!"));
-        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
 
         try {
             InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
@@ -98,6 +98,104 @@ public class InteractTypeMapperFactoryImplTest {
             assertThat(ex.getMessage(), is("failed to load interaction mapping from [interaction_types_mapping.csv]"));
             throw ex;
         }
+    }
+
+
+    @Test
+    public void createMappingWithQuotes() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
+                "\n\\\"associates with\\\",,testing123,http://purl.obolibrary.org/obo/RO_0002437";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        final InteractType interactType = interactTypeMapper
+                .getInteractType("\"associates with\"");
+        assertThat(interactType, is(InteractType.INTERACTS_WITH));
+
+    }
+
+    @Test
+    public void createMappingWithQuotes2() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
+                "\nassociates\"\" with\"\",,testing123,http://purl.obolibrary.org/obo/RO_0002437";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        final InteractType interactType = interactTypeMapper
+                .getInteractType("\\\"associates with\\\"");
+        assertThat(interactType, is(InteractType.INTERACTS_WITH));
+
+    }
+
+    @Test
+    public void createBlankMapping() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
+                "\n,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        assertThat(interactTypeMapperFactory
+                .create()
+                .getInteractType("associates with"),
+                is(InteractType.INTERACTS_WITH));
+
+    }
+
+    @Test
+    public void createOverrideMappingEmptyMapping() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        final InteractType interactType = interactTypeMapper
+                .getInteractType("associated with");
+        assertThat(interactType, is(InteractType.INTERACTS_WITH));
+
+    }
+
+    @Test
+    public void createOverrideNonBlankMapping() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
+                "associated with,,pollinates,http://purl.obolibrary.org/obo/RO_0002455";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        InteractTypeMapper mapper = interactTypeMapperFactory.create();
+        assertThat(mapper.getInteractType("associated with"), is(InteractType.POLLINATES));
+        assertThat(mapper.getInteractType("pollinates"), is(InteractType.POLLINATES));
     }
 
     @Test(expected = TermLookupServiceException.class)
