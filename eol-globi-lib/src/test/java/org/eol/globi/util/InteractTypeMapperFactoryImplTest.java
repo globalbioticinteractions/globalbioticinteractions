@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -81,22 +83,37 @@ public class InteractTypeMapperFactoryImplTest {
                 "shouldBeMapped,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437";
     }
 
-    @Test(expected = TermLookupServiceException.class)
+    @Test
     public void createAndNoMappingResource() throws TermLookupServiceException, IOException {
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8))
                 .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
 
-        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv"))).thenThrow(new IOException("kaboom!"));
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenThrow(new IOException("kaboom!"));
+
         InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
 
-        try {
-            InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
-            interactTypeMapper.getInteractType("shouldBeIgnored");
-        } catch (TermLookupServiceException ex) {
-            assertThat(ex.getMessage(), is("failed to load interaction mapping from [interaction_types_mapping.csv]"));
-            throw ex;
-        }
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertNull(interactTypeMapper.getInteractType("shouldBeIgnored"));
+        assertTrue(interactTypeMapper.shouldIgnoreInteractionType("shouldBeIgnored"));
+    }
+
+    @Test
+    public void createAndFailedToAccessMappingResource() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(null);
+
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertTrue(interactTypeMapper.shouldIgnoreInteractionType("shouldBeIgnored"));
     }
 
 
@@ -154,8 +171,8 @@ public class InteractTypeMapperFactoryImplTest {
         InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
 
         assertThat(interactTypeMapperFactory
-                .create()
-                .getInteractType("associates with"),
+                        .create()
+                        .getInteractType("associates with"),
                 is(InteractType.INTERACTS_WITH));
 
     }
@@ -197,20 +214,19 @@ public class InteractTypeMapperFactoryImplTest {
         assertThat(mapper.getInteractType("pollinates"), is(InteractType.POLLINATES));
     }
 
-    @Test(expected = TermLookupServiceException.class)
+    @Test
     public void createAndNoIgnoreResource() throws TermLookupServiceException, IOException {
 
         ResourceService resourceService = Mockito.mock(ResourceService.class);
-        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv"))).thenThrow(new IOException("kaboom!"));
-        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv"))).thenThrow(new IOException("kaboom!"));
-        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
-        try {
-            interactTypeMapperFactory.create();
-        } catch (TermLookupServiceException ex) {
-            assertThat(ex.getMessage(), is("failed to load ignored interaction types from [interaction_types_ignored.csv]"));
-            throw ex;
-        }
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenThrow(new IOException("kaboom!"));
 
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenThrow(new IOException("kaboom!"));
+
+        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        final InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertNotNull(interactTypeMapper);
     }
 
     @Test
@@ -232,7 +248,21 @@ public class InteractTypeMapperFactoryImplTest {
     public void createAndMapTermNoIgnore() throws TermLookupServiceException, IOException {
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(null)
                 .thenReturn(null);
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
+
+        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertThat(interactTypeMapper.getInteractType("shouldBeMapped"), is(InteractType.INTERACTS_WITH));
+    }
+
+    @Test
+    public void createAndMapTermThrowOnMissingIgnore() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenThrow(new IOException("kaboom!"));
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
 
@@ -249,6 +279,20 @@ public class InteractTypeMapperFactoryImplTest {
                 .thenReturn(IOUtils.toInputStream("interaction_type_ignored\neats", StandardCharsets.UTF_8));
         when(resourceService.retrieve(URI.create("interaction_types_mappings.csv")))
                 .thenReturn(null);
+
+        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertThat(interactTypeMapper.getInteractType("eats"), is(nullValue()));
+    }
+
+    @Test
+    public void createAndIgnoreTermWithThrowingOnMapRetrieve() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\neats", StandardCharsets.UTF_8))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\neats", StandardCharsets.UTF_8));
+        when(resourceService.retrieve(URI.create("interaction_types_mappings.csv")))
+                .thenThrow(new IOException("kaboom!"));
 
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
         InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
