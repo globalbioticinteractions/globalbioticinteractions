@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -49,6 +50,12 @@ public class InteractTypeMapperFactoryImplTest {
     }
 
     @Test
+    public void doNotIgnoreBlankTermsByDefault() throws TermLookupServiceException, IOException {
+        InteractTypeMapper interactTypeMapper = createIgnoreServiceMock();
+        assertFalse(interactTypeMapper.shouldIgnoreInteractionType(""));
+    }
+
+    @Test
     public void duplicateProvidedLabelButSeparateProvidedIds() throws TermLookupServiceException, IOException {
 
         ResourceService resourceService = Mockito.mock(ResourceService.class);
@@ -66,13 +73,6 @@ public class InteractTypeMapperFactoryImplTest {
         assertThat(interactTypeMapper.getInteractType("id1"), is(InteractType.INTERACTS_WITH));
         assertThat(interactTypeMapper.getInteractType("id2"), is(InteractType.ATE));
         assertThat(interactTypeMapper.getInteractType("shouldBeMapped"), is(InteractType.INTERACTS_WITH));
-
-    }
-
-    @Test
-    public void createAndIgnoreBlankTerm() throws TermLookupServiceException, IOException {
-        InteractTypeMapper interactTypeMapper = createIgnoreServiceMock();
-        assertTrue(interactTypeMapper.shouldIgnoreInteractionType(""));
 
     }
 
@@ -245,6 +245,7 @@ public class InteractTypeMapperFactoryImplTest {
     public void createAndIgnoreTermNoMap() throws TermLookupServiceException, IOException {
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\neats", StandardCharsets.UTF_8))
                 .thenReturn(IOUtils.toInputStream("interaction_type_ignored\neats", StandardCharsets.UTF_8));
         when(resourceService.retrieve(URI.create("interaction_types_mappings.csv")))
                 .thenReturn(null);
