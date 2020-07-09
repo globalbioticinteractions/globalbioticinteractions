@@ -35,30 +35,24 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
 
         String interactionTypeName = link.get(INTERACTION_TYPE_NAME);
         String interactionTypeId = link.get(INTERACTION_TYPE_ID);
-        if (StringUtils.isBlank(interactionTypeName) && StringUtils.isBlank(interactionTypeId)) {
-            if (logger != null) {
-                logger.info(LogUtil.contextFor(link), "no interaction type defined");
-            }
-        }
-
         if (mapper.shouldIgnoreInteractionType(interactionTypeName)) {
             if (logger != null) {
                 logger.info(LogUtil.contextFor(link), "ignoring interaction record for name [" + interactionTypeName + "]");
             }
         } else {
             InteractType mappedType = null;
-            if (StringUtils.isNotBlank(interactionTypeId)) {
+            if (interactionTypeId != null) {
                 mappedType = mapper.getInteractType(interactionTypeId);
             }
 
-            if (mappedType == null && StringUtils.isNotBlank(interactionTypeName)) {
+            if (mappedType == null && interactionTypeName != null) {
                 mappedType = mapper.getInteractType(interactionTypeName);
             }
 
             HashMap<String, String> properties = new HashMap<>(link);
             if (mappedType != null) {
-                InteractUtil.putNotBlank(properties, INTERACTION_TYPE_ID_VERBATIM, properties.get(INTERACTION_TYPE_ID));
-                InteractUtil.putNotBlank(properties, INTERACTION_TYPE_NAME_VERBATIM, properties.get(INTERACTION_TYPE_NAME));
+                InteractUtil.putNotNull(properties, INTERACTION_TYPE_ID_VERBATIM, properties.get(INTERACTION_TYPE_ID));
+                InteractUtil.putNotNull(properties, INTERACTION_TYPE_NAME_VERBATIM, properties.get(INTERACTION_TYPE_NAME));
                 properties.put(INTERACTION_TYPE_ID, mappedType.getIRI());
                 properties.put(INTERACTION_TYPE_NAME, mappedType.getLabel());
             }
@@ -70,7 +64,6 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
     public int getNumberOfSubmittedLinks() {
         return counter.get();
     }
-
 
 
 }

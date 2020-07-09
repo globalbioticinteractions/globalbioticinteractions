@@ -76,5 +76,33 @@ public class InteractionListenerWithInteractionTypeMappingTest {
         assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
     }
 
+    @Test
+    public void withBlankInteractionType() throws StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<>();
+        InteractionListener listener = new InteractionListenerWithInteractionTypeMapping(links::add, new InteractTypeMapper() {
+            @Override
+            public boolean shouldIgnoreInteractionType(String nameOrId) {
+                return false;
+            }
+
+            @Override
+            public InteractType getInteractType(String nameOrId) {
+                return InteractType.ATE;
+            }
+        }, new NullImportLogger());
+        listener.newLink(new HashMap<String, String>() {
+            {
+                put(INTERACTION_TYPE_NAME, "");
+                put(INTERACTION_TYPE_ID, "");
+            }
+        });
+
+        assertThat(links.size(), is(1));
+        assertThat(links.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(0).get(INTERACTION_TYPE_ID_VERBATIM), is(""));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME_VERBATIM), is(""));
+    }
+
 
 }

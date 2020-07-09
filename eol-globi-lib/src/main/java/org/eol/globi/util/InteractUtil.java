@@ -34,10 +34,10 @@ public class InteractUtil {
         return joinInteractTypes(types);
     }
 
-    public static InteractTypeMapper createInteractionTypeMapper(ResourceService resourceService) throws TermLookupServiceException {
+    private static InteractTypeMapper createInteractionTypeMapper(ResourceService resourceService) throws TermLookupServiceException {
         return new InteractTypeMapperFactoryWithFallback(
-                        new InteractTypeMapperFactoryImpl(resourceService),
-                        new InteractTypeMapperFactoryImpl())
+                new InteractTypeMapperFactoryImpl(resourceService),
+                new InteractTypeMapperFactoryImpl())
                 .create();
     }
 
@@ -51,6 +51,12 @@ public class InteractUtil {
 
     public static void putNotBlank(Map<String, String> link, String key, String value) {
         if (StringUtils.isNotBlank(value)) {
+            link.put(key, value);
+        }
+    }
+
+    public static void putNotNull(Map<String, String> link, String key, String value) {
+        if (value != null) {
             link.put(key, value);
         }
     }
