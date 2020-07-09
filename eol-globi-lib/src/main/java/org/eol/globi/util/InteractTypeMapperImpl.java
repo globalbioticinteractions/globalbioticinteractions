@@ -22,14 +22,10 @@ public class InteractTypeMapperImpl implements InteractTypeMapper {
     public boolean shouldIgnoreInteractionType(String interactionTypeNameOrId) {
         boolean shouldIgnore = false;
         try {
-            if (StringUtils.isBlank(interactionTypeNameOrId)) {
-                shouldIgnore = true;
-            } else {
-                List<Term> terms = ignoredTermLookupService.lookupTermByName(interactionTypeNameOrId);
-                shouldIgnore = terms != null && !terms.isEmpty();
-            }
+            List<Term> terms = ignoredTermLookupService.lookupTermByName(interactionTypeNameOrId);
+            shouldIgnore = terms != null && !terms.isEmpty();
         } catch (TermLookupServiceException e) {
-
+            //
         }
         return shouldIgnore;
     }

@@ -63,7 +63,8 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return new TermLookupService() {
             @Override
             public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
-                return typesIgnored.contains(InteractUtil.normalizeInteractionNameOrId(name))
+                final String nameNorm = InteractUtil.normalizeInteractionNameOrId(name);
+                return StringUtils.isNotBlank(nameNorm) && typesIgnored.contains(nameNorm)
                         ? Collections.singletonList(new TermImpl(name, name))
                         : Collections.emptyList();
             }
@@ -142,7 +143,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         return typeMap;
     }
 
-    public static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, String providedInteractionName, InteractType interactType) throws TermLookupServiceException {
+    private static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, String providedInteractionName, InteractType interactType) throws TermLookupServiceException {
         InteractType interactType1 = typeMap.get(providedInteractionName);
         if (interactType1 == null) {
             typeMap.put(providedInteractionName, interactType);
@@ -153,35 +154,28 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
         }
     }
 
-    public static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, InteractType interactType) throws TermLookupServiceException {
+    private static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, InteractType interactType) throws TermLookupServiceException {
         if (typeMap.containsKey(providedInteractionId)) {
             throw new TermLookupServiceException("provided id [" + providedInteractionId + "] already mapped");
         }
         typeMap.put(providedInteractionId, interactType);
     }
 
-    public static void setDefaultIfNotDefined(InteractType interactType) {
-        AtomicReference<InteractType> defaultType = new AtomicReference<>();
-        if (defaultType.get() == null) {
-            defaultType.set(interactType);
-        }
-    }
-
-    public static void assertColumnNamePresent(List<String> columnNames, String columnNameToCheck) throws TermLookupServiceException {
+    private static void assertColumnNamePresent(List<String> columnNames, String columnNameToCheck) throws TermLookupServiceException {
         if (!columnNames.contains(columnNameToCheck)) {
             throw new TermLookupServiceException("missing column [" + columnNameToCheck + "] in mapping file");
         }
     }
 
     public static List<String> buildTypesIgnored(LabeledCSVParser labeledCSVParser, String ignoredInteractionTypeColumnName) throws IOException {
-        List<String> typeMap1 = new ArrayList<>();
+        List<String> typeMap = new ArrayList<>();
         while (labeledCSVParser.getLine() != null) {
-            String inatIdString = InteractUtil.normalizeInteractionNameOrId(labeledCSVParser.getValueByLabel(ignoredInteractionTypeColumnName));
-            if (StringUtils.isNotBlank(inatIdString)) {
-                typeMap1.add(inatIdString);
+            String ignoredIdString = InteractUtil.normalizeInteractionNameOrId(labeledCSVParser.getValueByLabel(ignoredInteractionTypeColumnName));
+            if (StringUtils.isNotBlank(ignoredIdString)) {
+                typeMap.add(ignoredIdString);
             }
         }
-        return typeMap1;
+        return typeMap;
     }
 
     public static TermLookupService getTermLookupService(ResourceService resourceService,
@@ -209,40 +203,42 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
                                                                String providedInteractionTypeIdColumnName,
                                                                String providedInteractionTypeNameColumnName,
                                                                String resolvedInteractionTypeIdColumnName, URI interactionTypeMapURI) throws TermLookupServiceException {
-        Map<String, InteractType> typeMap;
+        Map<String, InteractType> typeMap = Collections.emptyMap();
         try {
-            LabeledCSVParser labeledCSVParser = parserFor(interactionTypeMapURI, resourceService);
-            typeMap = buildTypeMap(labeledCSVParser, providedInteractionTypeIdColumnName, providedInteractionTypeNameColumnName, resolvedInteractionTypeIdColumnName);
-            labeledCSVParser.close();
+            final InputStream typeMapInputStream = resourceService.retrieve(interactionTypeMapURI);
+            if (typeMapInputStream != null) {
+                LabeledCSVParser labeledCSVParser = parserFor(typeMapInputStream);
+                typeMap = buildTypeMap(labeledCSVParser, providedInteractionTypeIdColumnName, providedInteractionTypeNameColumnName, resolvedInteractionTypeIdColumnName);
+                labeledCSVParser.close();
+            }
         } catch (IOException e) {
             throw new TermLookupServiceException("failed to load interaction mapping from [" + TYPE_MAP_URI_DEFAULT + "]", e);
         }
         return typeMap;
     }
 
-    public static List<String> getAndParseIgnoredTypeList(ResourceService resourceService,
-                                                          String ignoredInteractionTypeColumnName, URI ignoredTypeListURI) throws TermLookupServiceException {
-        List<String> typesIgnored;
+    private static List<String> getAndParseIgnoredTypeList(ResourceService resourceService,
+                                                           String ignoredInteractionTypeColumnName, URI ignoredTypeListURI) throws TermLookupServiceException {
+        List<String> typesIgnored = Collections.emptyList();
         try {
-            LabeledCSVParser labeledCSVParser = parserFor(ignoredTypeListURI, resourceService);
-            typesIgnored = buildTypesIgnored(labeledCSVParser, ignoredInteractionTypeColumnName);
-            labeledCSVParser.close();
+            final InputStream retrieve = resourceService.retrieve(ignoredTypeListURI);
+            if (retrieve != null) {
+                LabeledCSVParser labeledCSVParser = parserFor(retrieve);
+                typesIgnored = buildTypesIgnored(labeledCSVParser, ignoredInteractionTypeColumnName);
+                labeledCSVParser.close();
+            }
         } catch (IOException e) {
             throw new TermLookupServiceException("failed to load ignored interaction types from [" + TYPE_IGNORED_URI_DEFAULT + "]", e);
         }
         return typesIgnored;
     }
 
-    private static LabeledCSVParser parserFor(URI resourceURI, ResourceService resourceService) throws IOException {
-        InputStream is = resourceService.retrieve(resourceURI);
-        final LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8));
-        return labeledCSVParser;
+    private static LabeledCSVParser parserFor(InputStream is) throws IOException {
+        return CSVTSVUtil.createLabeledCSVParser(FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8));
     }
 
     public static TermLookupService getTermLookupService(List<String> typesIgnored, Map<String, InteractType> typeMap) {
         return new TermLookupService() {
-
-
             @Override
             public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
                 List<Term> matchingTerms = Collections.emptyList();

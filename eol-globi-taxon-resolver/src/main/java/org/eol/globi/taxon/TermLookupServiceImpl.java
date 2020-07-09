@@ -12,6 +12,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.HttpUtil;
+import org.eol.globi.util.InteractUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -36,7 +37,6 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
         if (mapping == null) {
             buildMapping(getMappingURIList());
         }
-        final String name1 = name;
         List<Term> terms = mapping.get(normalize(name));
         return terms == null ? new ArrayList<Term>() {{
             add(new TermImpl(PropertyAndValueDictionary.NO_MATCH, name));
@@ -44,9 +44,8 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
     }
 
     private String normalize(String name) {
-        return StringUtils.replace(StringUtils.replace(
-                StringUtils.lowerCase(name), "\"", ""
-        ), "\\", "");
+        return InteractUtil
+                .removeQuotesAndBackslashes(StringUtils.lowerCase(name));
     }
 
     private void buildMapping(List<URI> uriList) throws TermLookupServiceException {

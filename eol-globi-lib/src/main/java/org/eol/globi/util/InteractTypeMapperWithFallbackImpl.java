@@ -27,7 +27,16 @@ public class InteractTypeMapperWithFallbackImpl implements InteractTypeMapper {
 
     @Override
     public InteractType getInteractType(String interactionTypeNameOrId) {
-        Optional<InteractType> first = mappers
+        final Optional<InteractTypeMapper> lastMapper = mappers
+                .stream()
+                .filter(x -> x.shouldIgnoreInteractionType(interactionTypeNameOrId))
+                .findFirst();
+
+        int lastIndex = mappers.size() - 1;
+        if (lastMapper.isPresent()) {
+            lastIndex = mappers.indexOf(lastMapper.get());
+        }
+        Optional<InteractType> first = mappers.subList(0, lastIndex + 1)
                 .stream()
                 .map(x -> x.getInteractType(interactionTypeNameOrId))
                 .filter(Objects::nonNull)

@@ -13,6 +13,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -24,10 +25,8 @@ public class InteractTypeMapperFactoryImplTest {
 
     @Test
     public void createAndIgnoreTerm() throws TermLookupServiceException, IOException {
-
         InteractTypeMapperImpl interactTypeMapper = createIgnoreServiceMock();
         assertTrue(interactTypeMapper.shouldIgnoreInteractionType("shouldBeIgnored"));
-
     }
 
     public InteractTypeMapperImpl createIgnoreServiceMock() throws IOException, TermLookupServiceException {
@@ -227,6 +226,32 @@ public class InteractTypeMapperFactoryImplTest {
         InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
         assertThat(interactTypeMapper.getInteractType("shouldBeMapped"), is(InteractType.INTERACTS_WITH));
 
+    }
+
+    @Test
+    public void createAndMapTermNoIgnore() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(null);
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
+
+        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertThat(interactTypeMapper.getInteractType("shouldBeMapped"), is(InteractType.INTERACTS_WITH));
+    }
+
+    @Test
+    public void createAndIgnoreTermNoMap() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\neats", StandardCharsets.UTF_8));
+        when(resourceService.retrieve(URI.create("interaction_types_mappings.csv")))
+                .thenReturn(null);
+
+        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertThat(interactTypeMapper.getInteractType("eats"), is(nullValue()));
     }
 
 }

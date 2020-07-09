@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -28,15 +29,33 @@ public class InteractTypeMapperWithFallbackImplTest {
 
     @Test
     public void secondMapperGetToMap() {
-        InteractTypeMapper mapper1 = Mockito.mock(InteractTypeMapper.class);
-        when(mapper1.getInteractType("eats")).thenReturn(InteractType.ATE);
-        InteractTypeMapper mapper2 = Mockito.mock(InteractTypeMapper.class);
-        when(mapper2.getInteractType("eats")).thenReturn(null);
+        InteractTypeMapper second = Mockito.mock(InteractTypeMapper.class);
+        when(second.getInteractType("eats")).thenReturn(InteractType.ATE);
+        when(second.shouldIgnoreInteractionType("eats")).thenReturn(false);
+        InteractTypeMapper first = Mockito.mock(InteractTypeMapper.class);
+        when(first.getInteractType("eats")).thenReturn(null);
+        when(first.shouldIgnoreInteractionType("eats")).thenReturn(false);
 
         InteractTypeMapper interactTypeMapperWithFallback
-                = new InteractTypeMapperWithFallbackImpl(mapper2, mapper1);
+                = new InteractTypeMapperWithFallbackImpl(first, second);
 
         assertThat(interactTypeMapperWithFallback.getInteractType("eats"), is(InteractType.ATE));
+    }
+
+    @Test
+    public void secondMapperDoesNotGetToMapBecauseTermIgnoredByFirst() {
+        InteractTypeMapper first = Mockito.mock(InteractTypeMapper.class);
+        when(first.getInteractType("eats")).thenReturn(null);
+        when(first.shouldIgnoreInteractionType("eats")).thenReturn(true);
+
+        InteractTypeMapper second = Mockito.mock(InteractTypeMapper.class);
+        when(second.getInteractType("eats")).thenReturn(InteractType.ATE);
+        when(second.shouldIgnoreInteractionType("eats")).thenReturn(false);
+
+        InteractTypeMapper interactTypeMapperWithFallback
+                = new InteractTypeMapperWithFallbackImpl(first, second);
+
+        assertThat(interactTypeMapperWithFallback.getInteractType("eats"), is(nullValue()));
     }
 
     @Test
