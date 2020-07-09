@@ -249,10 +249,9 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
             @Override
             public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
                 List<Term> matchingTerms = Collections.emptyList();
-                String lowercaseName = InteractUtil.normalizeInteractionNameOrId(name);
-                if (!typesIgnored.contains(lowercaseName)) {
-                    final InteractType exactMatch = typeMap.get(lowercaseName);
-                    final InteractType interactType = exactMatch == null ? typeMap.get("") : exactMatch;
+                String nameNormalized = InteractUtil.normalizeInteractionNameOrId(name);
+                if (!typesIgnored.contains(nameNormalized)) {
+                    final InteractType interactType = typeMap.get(nameNormalized);
                     if (interactType != null) {
                         matchingTerms = new ArrayList<Term>() {{
                             add(new TermImpl(interactType.getIRI(), interactType.getLabel()));

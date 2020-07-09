@@ -172,8 +172,27 @@ public class InteractTypeMapperFactoryImplTest {
 
         assertThat(interactTypeMapperFactory
                         .create()
-                        .getInteractType("associates with"),
+                        .getInteractType(""),
                 is(InteractType.INTERACTS_WITH));
+    }
+
+    @Test
+    public void nonMatchingBlankMapping() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
+                "\n,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        assertThat(interactTypeMapperFactory
+                        .create()
+                        .getInteractType("foo"),
+                is(nullValue()));
 
     }
 

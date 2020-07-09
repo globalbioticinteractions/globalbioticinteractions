@@ -384,7 +384,7 @@ public class StudyImporterForDwCA extends StudyImporterWithListener {
             } else {
                 properties.add(new HashMap<String, String>() {{
                     put(TARGET_TAXON_NAME, part);
-                    put(INTERACTION_TYPE_NAME, "associated with");
+                    put(INTERACTION_TYPE_NAME, "");
                 }});
             }
         }

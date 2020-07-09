@@ -370,6 +370,17 @@ public class StudyImporterForDwCATest {
     }
 
     @Test
+    public void associatedTaxaBlank() {
+        String associatedTaxa = "Homo sapiens";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
+    }
+
+    @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarks() throws IOException {
         String occurrenceRemarks = "2.5 gluteraldehyde Neutral red Permount {\"hostGen\":\"Biomphalaria\",\"hostSpec\":\"havanensis\"}";
@@ -523,7 +534,7 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(1));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Cercidium praecox"));
-        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
@@ -535,7 +546,7 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(1));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Bucephala albeola"));
-        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
@@ -557,10 +568,10 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(2));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
-        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Felis catus"));
-        assertThat(properties.get(1).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(1).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(1).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
@@ -579,10 +590,10 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(9));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ceramium"));
-        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(8).get(TaxonUtil.TARGET_TAXON_NAME), is("and Grateloupia sp."));
-        assertThat(properties.get(8).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(8).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(8).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
@@ -593,10 +604,10 @@ public class StudyImporterForDwCATest {
 
         assertThat(properties.size(), is(9));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ceramium"));
-        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(8).get(TaxonUtil.TARGET_TAXON_NAME), is("and Grateloupia sp."));
-        assertThat(properties.get(8).get(INTERACTION_TYPE_NAME), is("associated with"));
+        assertThat(properties.get(8).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(8).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 
