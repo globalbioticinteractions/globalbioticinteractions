@@ -35,9 +35,13 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
 
         String interactionTypeName = link.get(INTERACTION_TYPE_NAME);
         String interactionTypeId = link.get(INTERACTION_TYPE_ID);
-        if (mapper.shouldIgnoreInteractionType(interactionTypeName)) {
+        if (mapper.shouldIgnoreInteractionType(interactionTypeName) || mapper.shouldIgnoreInteractionType(interactionTypeId)) {
             if (logger != null) {
-                logger.info(LogUtil.contextFor(link), "ignoring interaction record for name [" + interactionTypeName + "]");
+                logger.info(LogUtil.contextFor(link), "ignoring interaction record with interaction name [" + interactionTypeName + "]");
+            }
+        } else if (mapper.shouldIgnoreInteractionType(interactionTypeId)) {
+            if (logger != null) {
+                logger.info(LogUtil.contextFor(link), "ignoring interaction record with interaction id [" + interactionTypeName + "]");
             }
         } else {
             InteractType mappedType = null;

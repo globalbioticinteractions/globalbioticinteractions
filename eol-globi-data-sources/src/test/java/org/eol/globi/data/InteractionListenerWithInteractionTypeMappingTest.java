@@ -16,6 +16,7 @@ import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID_VERBATI
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME_VERBATIM;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class InteractionListenerWithInteractionTypeMappingTest {
@@ -102,6 +103,35 @@ public class InteractionListenerWithInteractionTypeMappingTest {
         assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(links.get(0).get(INTERACTION_TYPE_ID_VERBATIM), is(""));
         assertThat(links.get(0).get(INTERACTION_TYPE_NAME_VERBATIM), is(""));
+    }
+
+
+    @Test
+    public void withNullInteractionType() throws StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<>();
+        InteractionListener listener = new InteractionListenerWithInteractionTypeMapping(links::add, new InteractTypeMapper() {
+            @Override
+            public boolean shouldIgnoreInteractionType(String nameOrId) {
+                return false;
+            }
+
+            @Override
+            public InteractType getInteractType(String nameOrId) {
+                return InteractType.ATE;
+            }
+        }, new NullImportLogger());
+        listener.newLink(new HashMap<String, String>() {
+            {
+                put(INTERACTION_TYPE_NAME, null);
+                put(INTERACTION_TYPE_ID, null);
+            }
+        });
+
+        assertThat(links.size(), is(1));
+        assertThat(links.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is(nullValue()));
+        assertThat(links.get(0).get(INTERACTION_TYPE_ID_VERBATIM), is(nullValue()));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME_VERBATIM), is(nullValue()));
     }
 
 
