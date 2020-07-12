@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.Version;
@@ -18,8 +19,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -135,32 +138,36 @@ public class TaxonUtil {
     public static final List<String> TAXON_RANK_NAMES = Arrays.asList("kingdom", "phylum", "class", "order", "family", "genus");
 
     public static Map<String, String> taxonToMap(Taxon taxon) {
+        return taxonToMap(taxon, "");
+    }
+
+    public static Map<String, String> taxonToMap(Taxon taxon, String prefix) {
         Map<String, String> properties = new HashMap<>();
-        properties.put(NAME, taxon.getName());
-        properties.put(RANK, taxon.getRank());
-        properties.put(EXTERNAL_ID, taxon.getExternalId());
-        properties.put(PATH, taxon.getPath());
-        properties.put(PATH_IDS, taxon.getPathIds());
-        properties.put(PATH_NAMES, taxon.getPathNames());
-        properties.put(COMMON_NAMES, taxon.getCommonNames());
+        properties.put(prefix + NAME, taxon.getName());
+        properties.put(prefix + RANK, taxon.getRank());
+        properties.put(prefix + EXTERNAL_ID, taxon.getExternalId());
+        properties.put(prefix + PATH, taxon.getPath());
+        properties.put(prefix + PATH_IDS, taxon.getPathIds());
+        properties.put(prefix + PATH_NAMES, taxon.getPathNames());
+        properties.put(prefix + COMMON_NAMES, taxon.getCommonNames());
         if (StringUtils.isBlank(taxon.getExternalUrl()) && StringUtils.isNotBlank(taxon.getExternalId())) {
-            properties.put(EXTERNAL_URL, ExternalIdUtil.urlForExternalId(taxon.getExternalId()));
+            properties.put(prefix + EXTERNAL_URL, ExternalIdUtil.urlForExternalId(taxon.getExternalId()));
         } else {
-            properties.put(EXTERNAL_URL, taxon.getExternalUrl());
+            properties.put(prefix + EXTERNAL_URL, taxon.getExternalUrl());
         }
 
-        properties.put(THUMBNAIL_URL, taxon.getThumbnailUrl());
+        properties.put(prefix + THUMBNAIL_URL, taxon.getThumbnailUrl());
         Term status = taxon.getStatus();
         if (status != null
                 && StringUtils.isNotBlank(status.getId())
                 && StringUtils.isNotBlank(status.getName())) {
-            properties.put(STATUS_ID, status.getId());
-            properties.put(STATUS_LABEL, status.getName());
+            properties.put(prefix + STATUS_ID, status.getId());
+            properties.put(prefix + STATUS_LABEL, status.getName());
         }
 
-        properties.put(NAME_SOURCE, taxon.getNameSource());
-        properties.put(NAME_SOURCE_URL, taxon.getNameSourceURL());
-        properties.put(NAME_SOURCE_ACCESSED_AT, taxon.getNameSourceAccessedAt());
+        properties.put(prefix + NAME_SOURCE, taxon.getNameSource());
+        properties.put(prefix + NAME_SOURCE_URL, taxon.getNameSourceURL());
+        properties.put(prefix + NAME_SOURCE_ACCESSED_AT, taxon.getNameSourceAccessedAt());
 
         return Collections.unmodifiableMap(properties);
     }
@@ -232,14 +239,46 @@ public class TaxonUtil {
 
     public static boolean overlap(Taxon taxonA, Taxon taxonB) {
         if (isResolved(taxonA) && isResolved(taxonB)) {
-            Map<String, String> pathMapA = toPathNameMap(taxonA);
-            Map<String, String> pathMapB = toPathNameMap(taxonB);
-            return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
-                    || taxonPathLengthMismatch(pathMapA, pathMapB);
+            String[] pathA = StringUtils.split(taxonA.getPath(), CharsetConstant.SEPARATOR_CHAR);
+            String[] pathB = StringUtils.split(taxonB.getPath(), CharsetConstant.SEPARATOR_CHAR);
+            final Set<String> setA = Arrays.stream(pathA).map(StringUtils::trim).collect(Collectors.toCollection(HashSet::new));
+            final Set<String> setB = Arrays.stream(pathB).map(StringUtils::trim).collect(Collectors.toCollection(HashSet::new));
+            return setA.containsAll(setB) || setB.containsAll(setA);
         } else {
             return false;
         }
     }
+
+    public static List<Taxon> determineNonOverlappingTaxa(List<Taxon> collectTaxa) {
+        List<Taxon> nonOverlapping = new ArrayList<>(collectTaxa);
+        List<Taxon> overlapping;
+        while ((overlapping = nextOverlapping(nonOverlapping)).size() == 2) {
+            final Taxon first = overlapping.get(0);
+            final String[] split1 = StringUtils.split(first.getPath(), CharsetConstant.SEPARATOR_CHAR);
+            final Taxon second = overlapping.get(1);
+            final String[] split2 = StringUtils.split(second.getPath(), CharsetConstant.SEPARATOR_CHAR);
+            if (split1 != null && split2 != null && split1.length > split2.length) {
+                nonOverlapping.remove(first);
+            } else {
+                nonOverlapping.remove(second);
+            }
+        }
+        return nonOverlapping;
+    }
+
+    public static List<Taxon> nextOverlapping(List<Taxon> collectTaxa) {
+        for (Taxon taxon : collectTaxa) {
+            for (Taxon taxon1 : collectTaxa) {
+                if (taxon != taxon1) {
+                    if (TaxonUtil.overlap(taxon, taxon1)) {
+                        return Arrays.asList(taxon, taxon1);
+                    }
+                }
+            }
+        }
+        return Collections.emptyList();
+    }
+
 
     private static boolean hasHigherOrderTaxaMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
         boolean hasAtLeastOneMatchingRank = false;
@@ -257,6 +296,21 @@ public class TaxonUtil {
             }
         }
         return hasAtLeastOneSharedRank && !hasAtLeastOneMatchingRank;
+    }
+
+    private static boolean higherOrderTaxaMatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {
+        boolean allMatch = true;
+        boolean hasAtLeastOneSharedRank = false;
+        String[] ranks = new String[]{"phylum", "class", "order", "family"};
+        for (String rank : ranks) {
+            if (pathMapA.containsKey(rank) && pathMapB.containsKey(rank)) {
+                final String rankValueA = pathMapA.get(rank);
+                final String rankValueB = pathMapB.get(rank);
+                hasAtLeastOneSharedRank = true;
+                allMatch = allMatch && StringUtils.equals(rankValueA, rankValueB);
+            }
+        }
+        return hasAtLeastOneSharedRank && allMatch;
     }
 
     public static boolean taxonPathLengthMismatch(Map<String, String> pathMapA, Map<String, String> pathMapB) {

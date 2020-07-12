@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -8,10 +9,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.tool.NullImportLogger;
+import org.eol.globi.service.ResourceService;
+import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.CSVTSVUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,8 +29,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -37,16 +46,20 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         super(parserFactory, nodeFactory);
     }
 
-    public static void parseRowsAndEnrich(JsonNode biodivTable, InteractionListener listener) throws StudyImporterException {
-        parseRowsAndEnrich(biodivTable, listener, new NullImportLogger());
-    }
-
-    public static void parseRowsAndEnrich(JsonNode biodivTable, InteractionListener listener, ImportLogger logger) throws StudyImporterException {
+    public static void parseRowsAndEnrich(JsonNode biodivTable,
+                                          InteractionListener listener,
+                                          ImportLogger logger,
+                                          ResourceService resourceService) throws StudyImporterException {
         final Elements tables = getTables(biodivTable);
         Elements rows = tables.get(0).select("tr");
         final List<String> columnNames = getColumnNames(tables);
 
-        final Map<String, String> tableReferences = parseTableReferences(biodivTable);
+        final Map<String, String> tableReferences;
+        try {
+            tableReferences = parseTableReferences(biodivTable, resourceService);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to retrieve reference", e);
+        }
 
         for (Element row : rows) {
             Elements rowColumns = row.select("td");
@@ -83,11 +96,49 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                 } else {
                     for (Map<String, Term> distinctPermutation : distinctPermutations) {
                         listener.newLink(new TreeMap<String, String>(link) {{
+                            List<Taxon> collectTaxa = new ArrayList<>();
                             for (Map.Entry<String, Term> taxonNames : distinctPermutation.entrySet()) {
                                 put(taxonNames.getKey() + "_taxon_name", taxonNames.getValue().getName());
-                                put(taxonNames.getKey() + "_taxon_id", taxonNames.getValue().getId());
+                                final String id = taxonNames.getValue().getId();
+                                put(taxonNames.getKey() + "_taxon_id", id);
+                                try {
+                                    final Taxon taxon = retrieveTaxonHierarchyById(id, resourceService);
+                                    if (taxon != null) {
+                                        collectTaxa.add(taxon);
+                                        final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, taxonNames.getKey() + "_taxon_");
+                                        for (String s : taxonMap.keySet()) {
+                                            putIfAbsent(s, taxonMap.get(s));
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    // ignore
+                                }
                             }
-                        }});
+
+                            final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(collectTaxa);
+                            if (taxons.size() == 2) {
+                                put(StudyImporterForTSV.INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
+                                put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+
+                                final Taxon sourceTaxon = taxons.get(0);
+                                put(TaxonUtil.SOURCE_TAXON_NAME, sourceTaxon.getName());
+                                put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxon.getExternalId());
+                                put(TaxonUtil.SOURCE_TAXON_RANK, sourceTaxon.getRank());
+                                put(TaxonUtil.SOURCE_TAXON_PATH, sourceTaxon.getPath());
+                                put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, sourceTaxon.getPathNames());
+                                put(TaxonUtil.SOURCE_TAXON_PATH_IDS, sourceTaxon.getPathIds());
+
+                                final Taxon targetTaxon = taxons.get(1);
+                                put(TaxonUtil.TARGET_TAXON_NAME, targetTaxon.getName());
+                                put(TaxonUtil.TARGET_TAXON_ID, targetTaxon.getExternalId());
+                                put(TaxonUtil.TARGET_TAXON_RANK, targetTaxon.getRank());
+                                put(TaxonUtil.TARGET_TAXON_PATH, targetTaxon.getPath());
+                                put(TaxonUtil.TARGET_TAXON_PATH_NAMES, targetTaxon.getPathNames());
+                                put(TaxonUtil.TARGET_TAXON_PATH_IDS, targetTaxon.getPathIds());
+                            }
+                        }
+
+                        });
                     }
                 }
             }
@@ -144,6 +195,108 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return new TermImpl(id, name);
     }
 
+    public static String findCitationByDoi(String doi, ResourceService resourceService) throws IOException {
+        String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
+                "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
+                "PREFIX doco: <http://purl.org/spar/doco/>\n" +
+                "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
+                "select ?article ?title ?doi where { \n" +
+                "    BIND(\"" + doi + "\" AS ?doi). \n" +
+                "    ?article a fabio:JournalArticle.\n" +
+                "    ?article prism:doi ?doi.\n" +
+                "    ?article dc:title ?title.\n" +
+                "   \n" +
+                "} limit 1";
+
+        try {
+            final LabeledCSVParser parser = query(sparql, resourceService);
+            parser.getLine();
+            return StringUtils.join(Arrays.asList(parser.getValueByLabel("title"), parser.getValueByLabel("article"), parser.getValueByLabel("doi")), ". ");
+        } catch (URISyntaxException e) {
+            throw new IOException("marlformed uri", e);
+        }
+    }
+
+    public static LabeledCSVParser query(String sparql, ResourceService resourceService) throws URISyntaxException, IOException {
+        URI url = createSparqlURI(sparql);
+        return CSVTSVUtil.createLabeledCSVParser(resourceService.retrieve(url));
+    }
+
+    public static URI createSparqlURI(String sparql) throws URISyntaxException {
+        final URI endpoint = URI.create("http://graph.openbiodiv.net/repositories/OpenBiodiv2020");
+        return new URI(endpoint.getScheme(), endpoint.getHost(), endpoint.getPath(), "query=" + sparql, null);
+    }
+
+    public static Taxon retrieveTaxonHierarchyById(String taxonId, ResourceService resourceService) throws IOException {
+        final String normalizedTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "");
+        String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
+                "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
+                "PREFIX doco: <http://purl.org/spar/doco/>\n" +
+                "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
+                "select ?name ?rank ?id ?kingdom ?phylum ?class ?order ?family ?genus ?specificEpithet " +
+                "where { {\n" +
+                "    BIND(<http://openbiodiv.net/" + normalizedTaxonId + "> AS ?id). \n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/specificEpithet> ?specificEpithet.}\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/genus> ?genus.}\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/family> ?family.}\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/order> ?order. }\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/class> ?class. }\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/phylum> ?phylum.}\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/kingdom> ?kingdom.}\n" +
+                "    { ?id <http://proton.semanticweb.org/protonkm#mentions> ?taxon.\n" +
+                "      ?taxon <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://openbiodiv.net/ScientificName>.\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/verbatimTaxonRank> ?rank.}\n" +
+                "      ?taxon <http://www.w3.org/2000/01/rdf-schema#label> ?name.\n" +
+                "   } " +
+                "   UNION\n" +
+                "    { ?id <http://proton.semanticweb.org/protonkm#mentions> ?btaxon.\n" +
+                "      ?btaxon <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://openbiodiv.net/ScientificName>.\n" +
+                "      ?btaxon <http://openbiodiv.net/hasGbifTaxon> ?taxon.\n" +
+                "      OPTIONAL { ?taxon <http://rs.tdwg.org/dwc/terms/taxonRank> ?rank.}\n" +
+                "      ?btaxon <http://www.w3.org/2000/01/rdf-schema#label> ?name.\n" +
+                "   }" +
+                "  } " +
+                "} limit 2";
+
+        try {
+            final LabeledCSVParser parser = query(sparql, resourceService);
+            Taxon taxon = null;
+            while ((taxon == null
+                    || StringUtils.isBlank(taxon.getPathNames()))
+                    && parser.getLine() != null) {
+                taxon = parseTaxon(parser);
+            }
+            return taxon;
+        } catch (URISyntaxException e) {
+            throw new IOException("marlformed uri", e);
+        }
+    }
+
+    public static TaxonImpl parseTaxon(LabeledCSVParser parser) {
+        final String name = parser.getValueByLabel("name");
+        final String rank = StringUtils.defaultIfBlank(parser.getValueByLabel("rank"), null);
+        final String id = parser.getValueByLabel("id");
+        final TaxonImpl taxon = new TaxonImpl(name, id);
+        taxon.setRank(rank);
+
+        Map<String, String> nameMap = new LinkedHashMap<>();
+        nameMap.put(rank, name);
+        Arrays.asList("specificEpithet", "genus", "family", "order", "class", "phylum", "kingdom")
+                .forEach(x -> add(parser, nameMap, x));
+
+        final String path = TaxonUtil.generateTaxonPath(nameMap);
+        taxon.setPath(StringUtils.defaultIfBlank(path, name));
+        taxon.setPathNames(TaxonUtil.generateTaxonPathNames(nameMap));
+        return taxon;
+    }
+
+    public static void add(LabeledCSVParser parser, Map<String, String> nameMap, String rankName) {
+        final String valueByLabel = parser.getValueByLabel(rankName);
+        if (StringUtils.isNotBlank(valueByLabel)) {
+            nameMap.put(rankName, valueByLabel);
+        }
+    }
+
     @Override
     public void importStudy() throws StudyImporterException {
         try {
@@ -156,21 +309,24 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
             String line;
             while ((line = reader.readLine()) != null) {
                 final JsonNode biodivTable = new ObjectMapper().readTree(line);
-                parseRowsAndEnrich(biodivTable, getInteractionListener(), getLogger());
+                parseRowsAndEnrich(biodivTable, getInteractionListener(), getLogger(), getDataset());
             }
         } catch (IOException e) {
             throw new StudyImporterException("failed to retrieve resource", e);
         }
     }
 
-    private static Map<String, String> parseTableReferences(final JsonNode biodivTable) {
+    private static Map<String, String> parseTableReferences(final JsonNode biodivTable, ResourceService resourceService) throws IOException {
         final String table_id = biodivTable.has("table_id") ? biodivTable.get("table_id").asText() : "";
         final String referenceUrl = StringUtils.replaceAll(table_id, "[<>]", "");
-
+        final String doi = biodivTable.has("article_doi") ? biodivTable.get("article_doi").asText() : "";
+        final String citation = findCitationByDoi(doi, resourceService);
         return new TreeMap<String, String>() {
             {
+                put(StudyImporterForTSV.REFERENCE_ID, referenceUrl);
                 put(StudyImporterForTSV.REFERENCE_URL, referenceUrl);
-                put(StudyImporterForTSV.REFERENCE_DOI, biodivTable.has("article_doi") ? biodivTable.get("article_doi").asText() : "");
+                put(StudyImporterForTSV.REFERENCE_DOI, doi);
+                put(StudyImporterForTSV.REFERENCE_CITATION, citation);
                 put("tableCaption", biodivTable.has("caption") ? biodivTable.get("caption").asText() : "");
             }
         };

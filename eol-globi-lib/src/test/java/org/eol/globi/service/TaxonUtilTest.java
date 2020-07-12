@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
@@ -7,6 +8,8 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -244,6 +247,69 @@ public class TaxonUtilTest {
 
         final String pathNames = TaxonUtil.generateTaxonPathNames(nameMap);
         assertThat(pathNames, is("kingdom | family | genus"));
+    }
+
+    @Test
+    public void nonOverlapping2() {
+        final TaxonImpl taxonA = new TaxonImpl("name","id");
+        taxonA.setPath("");
+        final TaxonImpl taxonB = new TaxonImpl("otherName", "id");
+        taxonB.setPath("three | four");
+        final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(Arrays.asList(taxonA, taxonB));
+
+        assertThat(taxons.size(), is(2));
+    }
+
+    @Test
+    public void nonOverlapping3() {
+        final TaxonImpl taxonA = new TaxonImpl("name","id");
+        taxonA.setPath("");
+        final TaxonImpl taxonB = new TaxonImpl("otherName", "id");
+        taxonB.setPath("");
+        final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(Arrays.asList(taxonA, taxonB));
+
+        assertThat(taxons.size(), is(2));
+    }
+
+    @Test
+    public void nonOverlapping() {
+        final TaxonImpl taxonA = new TaxonImpl("name","id");
+        taxonA.setPath("one | two");
+        final TaxonImpl taxonB = new TaxonImpl("otherName", "id");
+        taxonB.setPath("three | four");
+        final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(Arrays.asList(taxonA, taxonB));
+
+        assertThat(taxons.size(), is(2));
+    }
+
+    @Test
+    public void overlapping() {
+        final TaxonImpl taxonA = new TaxonImpl("name", "id");
+        taxonA.setPath("one | two | three");
+        final TaxonImpl taxonB = new TaxonImpl("otherName", "id");
+        taxonB.setPath("one | two");
+
+        final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(
+                Arrays.asList(taxonA, taxonB)
+        );
+
+        assertThat(taxons.size(), is(1));
+        assertThat(taxons.get(0).getPath(), is("one | two"));
+    }
+
+    @Test
+    public void overlapping2() {
+        final TaxonImpl taxonA = new TaxonImpl("name","id");
+        taxonA.setPath("one | two | three");
+        final TaxonImpl taxonB = new TaxonImpl("otherName", "id");
+        taxonB.setPath("one | two");
+        final TaxonImpl taxonC = new TaxonImpl("otherName", "ids");
+        taxonC.setPath("three | four");
+        final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(
+                Arrays.asList(taxonA, taxonB, taxonC));
+
+        assertThat(taxons.size(), is(2));
+        assertThat(taxons.get(0).getPath(), is("one | two"));
     }
 
 }
