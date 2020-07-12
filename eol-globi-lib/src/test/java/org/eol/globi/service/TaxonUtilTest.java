@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -225,6 +226,24 @@ public class TaxonUtilTest {
         assertThat(enrichedImage.getThumbnailURL(), is("http://foo/bar/thumb"));
         assertThat(enrichedImage.getPageId(), is(nullValue()));
         assertThat(enrichedImage.getImageURL(), is(nullValue()));
+    }
+
+    @Test
+    public void toPathName() {
+        final TaxonImpl taxonA = new TaxonImpl("a", "b");
+        taxonA.setPathIds("1 | 2 | 3");
+        taxonA.setPathNames("kingdom | family | genus");
+        taxonA.setPath("Animalia | Hominidae | Homo");
+        final Map<String, String> nameMap = TaxonUtil.toPathNameMap(taxonA);
+        assertThat(nameMap, hasEntry("genus", "Homo"));
+        assertThat(nameMap, hasEntry("family", "Hominidae"));
+        assertThat(nameMap, hasEntry("kingdom", "Animalia"));
+
+        final String path = TaxonUtil.generateTaxonPath(nameMap);
+        assertThat(path, is("Animalia | Hominidae | Homo"));
+
+        final String pathNames = TaxonUtil.generateTaxonPathNames(nameMap);
+        assertThat(pathNames, is("kingdom | family | genus"));
     }
 
 }

@@ -132,6 +132,7 @@ public class TaxonUtil {
 
     public static final String TARGET_TAXON_SPECIES = TARGET_TAXON + "Species";
     public static final String SOURCE_TAXON_SPECIES = SOURCE_TAXON + "Species";
+    public static final List<String> TAXON_RANK_NAMES = Arrays.asList("kingdom", "phylum", "class", "order", "family", "genus");
 
     public static Map<String, String> taxonToMap(Taxon taxon) {
         Map<String, String> properties = new HashMap<>();
@@ -219,6 +220,17 @@ public class TaxonUtil {
     }
 
     public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {
+        if (isResolved(taxonA) && isResolved(taxonB)) {
+            Map<String, String> pathMapA = toPathNameMap(taxonA);
+            Map<String, String> pathMapB = toPathNameMap(taxonB);
+            return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
+                    || taxonPathLengthMismatch(pathMapA, pathMapB);
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean overlap(Taxon taxonA, Taxon taxonB) {
         if (isResolved(taxonA) && isResolved(taxonB)) {
             Map<String, String> pathMapA = toPathNameMap(taxonA);
             Map<String, String> pathMapB = toPathNameMap(taxonB);
@@ -542,5 +554,13 @@ public class TaxonUtil {
     public static boolean nonBlankNodeOrNonBlankId(Taxon taxon) {
         return taxon != null
                 && (StringUtils.isNotBlank(taxon.getName()) || StringUtils.isNotBlank(taxon.getId()));
+    }
+
+    public static String generateTaxonPath(Map<String, String> nameMap) {
+        return generateTaxonPath(nameMap, TAXON_RANK_NAMES, "genus", "specificEpithet", "subspecificEpithet");
+    }
+
+    public static String generateTaxonPathNames(Map<String, String> nameMap) {
+        return generateTaxonPathNames(nameMap, TAXON_RANK_NAMES, "", "genus", "specificEpithet", "subspecificEpithet", "species");
     }
 }

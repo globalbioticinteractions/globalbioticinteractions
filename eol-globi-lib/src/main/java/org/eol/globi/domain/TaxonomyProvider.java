@@ -28,6 +28,7 @@ public enum TaxonomyProvider {
     FISHBASE_SPECCODE("FBC:FB:SpecCode:"),
     SEALIFEBASE_SPECCODE("FBC:SLB:SpecCode:"),
     BATPLANT("batbase:taxon:"),
+    OPEN_BIODIV("http://openbiodiv.net/"),
     GULFBASE("BioGoMx:");
 
     private final List<String> idPrefixes;

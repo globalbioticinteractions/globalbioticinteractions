@@ -28,7 +28,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     public static final URI TYPE_MAP_URI_DEFAULT = URI.create("interaction_types_mapping.csv");
     private final ResourceService resourceService;
 
-    InteractTypeMapperFactoryImpl() {
+    public InteractTypeMapperFactoryImpl() {
         this(getResourceServiceForDefaultInteractionTypeMapping());
     }
 

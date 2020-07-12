@@ -15,6 +15,7 @@ import org.eol.globi.data.StudyImporterForDBatVir;
 import org.eol.globi.data.StudyImporterForDwCA;
 import org.eol.globi.data.StudyImporterForGlobalWebDb;
 import org.eol.globi.data.StudyImporterForMangal;
+import org.eol.globi.data.StudyImporterForPensoft;
 import org.eol.globi.data.StudyImporterForSaproxylic;
 import org.eol.globi.data.StudyImporterForRSS;
 import org.eol.globi.data.StudyImporterForBaremore;
@@ -156,6 +157,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("batplant", StudyImporterForBatPlant.class);
                 put("batbase", StudyImporterForBatBase.class);
                 put("dbatvir", StudyImporterForDBatVir.class);
+                put("pensoft", StudyImporterForPensoft.class);
             }
         };
         Class<? extends StudyImporter> anImporter = supportedFormats.get(format);
