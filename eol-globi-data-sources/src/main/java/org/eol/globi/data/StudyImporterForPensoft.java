@@ -18,6 +18,8 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,6 +27,7 @@ import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
 
 import java.io.BufferedReader;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -95,48 +98,49 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                     listener.newLink(link);
                 } else {
                     for (Map<String, Term> distinctPermutation : distinctPermutations) {
-                        listener.newLink(new TreeMap<String, String>(link) {{
-                            List<Taxon> collectTaxa = new ArrayList<>();
-                            for (Map.Entry<String, Term> taxonNames : distinctPermutation.entrySet()) {
-                                put(taxonNames.getKey() + "_taxon_name", taxonNames.getValue().getName());
-                                final String id = taxonNames.getValue().getId();
-                                put(taxonNames.getKey() + "_taxon_id", id);
-                                try {
-                                    final Taxon taxon = retrieveTaxonHierarchyById(id, resourceService);
-                                    if (taxon != null) {
-                                        collectTaxa.add(taxon);
-                                        final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, taxonNames.getKey() + "_taxon_");
-                                        for (String s : taxonMap.keySet()) {
-                                            putIfAbsent(s, taxonMap.get(s));
+                        listener.newLink(new TreeMap<String, String>(link) {
+                            {
+                                List<Taxon> collectTaxa = new ArrayList<>();
+                                for (Map.Entry<String, Term> taxonNames : distinctPermutation.entrySet()) {
+                                    put(taxonNames.getKey() + "_taxon_name", taxonNames.getValue().getName());
+                                    final String id = taxonNames.getValue().getId();
+                                    put(taxonNames.getKey() + "_taxon_id", id);
+                                    try {
+                                        final Taxon taxon = retrieveTaxonHierarchyById(id, resourceService);
+                                        if (taxon != null) {
+                                            collectTaxa.add(taxon);
+                                            final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, taxonNames.getKey() + "_taxon_");
+                                            for (String s : taxonMap.keySet()) {
+                                                putIfAbsent(s, taxonMap.get(s));
+                                            }
                                         }
+                                    } catch (IOException e) {
+                                        // ignore
                                     }
-                                } catch (IOException e) {
-                                    // ignore
+                                }
+
+                                final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(collectTaxa);
+                                if (taxons.size() == 2) {
+                                    put(StudyImporterForTSV.INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
+                                    put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+
+                                    final Taxon sourceTaxon = taxons.get(0);
+                                    put(TaxonUtil.SOURCE_TAXON_NAME, sourceTaxon.getName());
+                                    put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxon.getExternalId());
+                                    put(TaxonUtil.SOURCE_TAXON_RANK, sourceTaxon.getRank());
+                                    put(TaxonUtil.SOURCE_TAXON_PATH, sourceTaxon.getPath());
+                                    put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, sourceTaxon.getPathNames());
+                                    put(TaxonUtil.SOURCE_TAXON_PATH_IDS, sourceTaxon.getPathIds());
+
+                                    final Taxon targetTaxon = taxons.get(1);
+                                    put(TaxonUtil.TARGET_TAXON_NAME, targetTaxon.getName());
+                                    put(TaxonUtil.TARGET_TAXON_ID, targetTaxon.getExternalId());
+                                    put(TaxonUtil.TARGET_TAXON_RANK, targetTaxon.getRank());
+                                    put(TaxonUtil.TARGET_TAXON_PATH, targetTaxon.getPath());
+                                    put(TaxonUtil.TARGET_TAXON_PATH_NAMES, targetTaxon.getPathNames());
+                                    put(TaxonUtil.TARGET_TAXON_PATH_IDS, targetTaxon.getPathIds());
                                 }
                             }
-
-                            final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(collectTaxa);
-                            if (taxons.size() == 2) {
-                                put(StudyImporterForTSV.INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                                put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
-
-                                final Taxon sourceTaxon = taxons.get(0);
-                                put(TaxonUtil.SOURCE_TAXON_NAME, sourceTaxon.getName());
-                                put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxon.getExternalId());
-                                put(TaxonUtil.SOURCE_TAXON_RANK, sourceTaxon.getRank());
-                                put(TaxonUtil.SOURCE_TAXON_PATH, sourceTaxon.getPath());
-                                put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, sourceTaxon.getPathNames());
-                                put(TaxonUtil.SOURCE_TAXON_PATH_IDS, sourceTaxon.getPathIds());
-
-                                final Taxon targetTaxon = taxons.get(1);
-                                put(TaxonUtil.TARGET_TAXON_NAME, targetTaxon.getName());
-                                put(TaxonUtil.TARGET_TAXON_ID, targetTaxon.getExternalId());
-                                put(TaxonUtil.TARGET_TAXON_RANK, targetTaxon.getRank());
-                                put(TaxonUtil.TARGET_TAXON_PATH, targetTaxon.getPath());
-                                put(TaxonUtil.TARGET_TAXON_PATH_NAMES, targetTaxon.getPathNames());
-                                put(TaxonUtil.TARGET_TAXON_PATH_IDS, targetTaxon.getPathIds());
-                            }
-                        }
 
                         });
                     }
@@ -211,8 +215,12 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         try {
             final LabeledCSVParser parser = query(sparql, resourceService);
             parser.getLine();
-            return StringUtils.join(Arrays.asList(parser.getValueByLabel("title"), parser.getValueByLabel("article"), parser.getValueByLabel("doi")), ". ");
-        } catch (URISyntaxException e) {
+            final String doiURIString = DOI.create(doi).toURI().toString();
+            return StringUtils.join(Arrays.asList(
+                    parser.getValueByLabel("title"),
+                    parser.getValueByLabel("article"),
+                    doiURIString), ". ");
+        } catch (URISyntaxException | MalformedDOIException e) {
             throw new IOException("marlformed uri", e);
         }
     }

@@ -85,7 +85,7 @@ public class StudyImporterForPensoftTest {
     @Test
     public void retrieveCitation() throws IOException {
         String citation = StudyImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", getResourceServiceTest());
-        assertThat(citation, is("Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2. 10.3897/zookeys.306.5455"));
+        assertThat(citation, is("Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     public ResourceService getResourceServiceTest() {
