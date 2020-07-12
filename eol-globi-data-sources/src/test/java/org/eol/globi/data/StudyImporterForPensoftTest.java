@@ -254,7 +254,7 @@ public class StudyImporterForPensoftTest {
         final ObjectNode tableObj = new ObjectMapper().createObjectNode();
         tableObj.put("table_id", "<http://openbiodiv.net/FB706B4E-BAC2-4432-AD28-48063E7753E4>");
         tableObj.put("caption", "a caption");
-        tableObj.put("article_doi", "some/doi");
+        tableObj.put("article_doi", "10.12/34");
         tableObj.put("table_content", tableContent);
 
         List<Map<String, String>> rowValues = new ArrayList<>();
