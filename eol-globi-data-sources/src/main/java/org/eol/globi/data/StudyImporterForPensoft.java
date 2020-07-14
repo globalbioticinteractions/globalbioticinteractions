@@ -200,21 +200,22 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
     }
 
     public static String findCitationByDoi(String doi, ResourceService resourceService) throws IOException {
-       String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
+        String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
                 "PREFIX doco: <http://purl.org/spar/doco/>\n" +
                 "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
-                " ?article ?title ?doi (group_concat(distinct ?authorName; separator=\", \") as ?authorsList)  ( REPLACE(str(?pubDate), \"(\\d*)-.*\", \"$1\") as ?pubYear) where { \n" +
+                "SELECT ?article ?title ?doi (group_concat(distinct ?authorName; separator=\", \") as ?authorsList)  ( REPLACE(str(?pubDate), \"(\\\\d*)-.*\", \"$1\") as ?pubYear) " +
+                "WHERE { \n" +
                 "    BIND(\"" + doi + "\" AS ?doi). \n" +
                 "    ?article a fabio:JournalArticle.\n" +
                 "    ?article prism:doi ?doi.\n" +
                 "    ?article dc:title ?title.\n" +
-                "    ?article prism:publicationDate ?pubDate\n" +
+                "    ?article prism:publicationDate ?pubDate.\n" +
                 "    ?article <http://purl.org/vocab/frbr/core#realizationOf> ?paper.\n" +
                 "    ?paper dc:creator ?author.\n" +
-                "    ?author <http://www.w3.org/2000/01/rdf-schema#label> ?authorName.\n"+
-                "}   GROUP BY ?article ?title ?doi ?pubDate\n" +  
-                " limit 1";
+                "    ?author <http://www.w3.org/2000/01/rdf-schema#label> ?authorName.\n" +
+                "}   GROUP BY ?article ?title ?doi ?pubDate\n" +
+                " LIMIT 1";
 
         try {
             final LabeledCSVParser parser = query(sparql, resourceService);
@@ -241,7 +242,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
 
     public static Taxon retrieveTaxonHierarchyById(String taxonId, ResourceService resourceService) throws IOException {
         final String normalizedTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "");
-       String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
+        String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
                 "PREFIX doco: <http://purl.org/spar/doco/>\n" +
                 "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
