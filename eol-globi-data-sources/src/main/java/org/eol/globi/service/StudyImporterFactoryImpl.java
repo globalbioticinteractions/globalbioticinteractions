@@ -57,6 +57,7 @@ import org.eol.globi.data.StudyImporterForTSV;
 import org.eol.globi.data.StudyImporterForWebOfLife;
 import org.eol.globi.data.StudyImporterForWood;
 import org.eol.globi.data.StudyImporterForWrast;
+import org.eol.globi.data.StudyImporterForZenodoMetadata;
 import org.globalbioticinteractions.dataset.Dataset;
 
 import java.lang.reflect.Constructor;
@@ -158,6 +159,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("batbase", StudyImporterForBatBase.class);
                 put("dbatvir", StudyImporterForDBatVir.class);
                 put("pensoft", StudyImporterForPensoft.class);
+                put("zenodo", StudyImporterForZenodoMetadata.class);
             }
         };
         Class<? extends StudyImporter> anImporter = supportedFormats.get(format);
