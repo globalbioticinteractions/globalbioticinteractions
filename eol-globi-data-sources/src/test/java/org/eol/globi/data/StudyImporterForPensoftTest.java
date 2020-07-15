@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.is;
 public class StudyImporterForPensoftTest {
 
     public static void parseRowsAndEnrich(JsonNode biodivTable, InteractionListener listener, ResourceService resourceService) throws StudyImporterException {
-        StudyImporterForPensoft.parseRowsAndEnrich(biodivTable, listener, new NullImportLogger(), resourceService);
+        StudyImporterForPensoft.parseRowsAndEnrich(biodivTable, listener, new NullImportLogger(), new OpenBiodivClient(resourceService));
     }
 
     @Test

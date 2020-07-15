@@ -64,18 +64,19 @@ public class StudyImporterForPensoftIT {
         assertThat(links.get(0), hasEntry("Family Name_taxon_pathNames", "kingdom | phylum | class | order | family"));
         assertThat(links.get(0), hasEntry("referenceUrl", "https://doi.org/10.3897/zookeys.306.5455"));
         assertThat(links.get(0), hasEntry("referenceDoi", "10.3897/zookeys.306.5455"));
-        assertThat(links.get(0), hasEntry("referenceCitation", "Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. https://doi.org/10.3897/zookeys.306.5455"));
+        assertThat(links.get(0), hasEntry("referenceCitation", "Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     @Test
     public void retrieveCitation() throws IOException {
-        String citation = StudyImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", getResourceServiceTest());
-        assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. https://doi.org/10.3897/zookeys.306.5455"));
+        final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
+        String citation = StudyImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", openBiodivClient);
+        assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     @Test
     public void retrieveTaxonFamily() throws IOException {
-        Taxon taxon = StudyImporterForPensoft.retrieveTaxonHierarchyById("4B689A17-2541-4F5F-A896-6F0C2EEA3FB4", getResourceServiceTest());
+        Taxon taxon = StudyImporterForPensoft.retrieveTaxonHierarchyById("4B689A17-2541-4F5F-A896-6F0C2EEA3FB4", new OpenBiodivClient(getResourceServiceTest()));
         assertThat(taxon.getName(), is("Acanthaceae"));
         assertThat(taxon.getRank(), is("family"));
         assertThat(taxon.getExternalId(), is("http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
@@ -85,7 +86,7 @@ public class StudyImporterForPensoftIT {
 
     @Test
     public void retrieveTaxonSpecies() throws IOException {
-        Taxon taxon = StudyImporterForPensoft.retrieveTaxonHierarchyById("6A54156A-BE5C-44D7-A9E3-3902DA4CCFAC", getResourceServiceTest());
+        Taxon taxon = StudyImporterForPensoft.retrieveTaxonHierarchyById("6A54156A-BE5C-44D7-A9E3-3902DA4CCFAC", new OpenBiodivClient(getResourceServiceTest()));
         assertThat(taxon.getName(), is("Copidothrips octarticulatus"));
         assertThat(taxon.getRank(), is(nullValue()));
         assertThat(taxon.getExternalId(), is("http://openbiodiv.net/6A54156A-BE5C-44D7-A9E3-3902DA4CCFAC"));
@@ -95,7 +96,7 @@ public class StudyImporterForPensoftIT {
 
     @Test
     public void retrieveTaxonSpecies2() throws IOException {
-        Taxon taxon = StudyImporterForPensoft.retrieveTaxonHierarchyById("22A7F215-829B-458A-AEBB-39FFEA6D4A91", getResourceServiceTest());
+        Taxon taxon = StudyImporterForPensoft.retrieveTaxonHierarchyById("22A7F215-829B-458A-AEBB-39FFEA6D4A91", new OpenBiodivClient(getResourceServiceTest()));
         assertThat(taxon.getName(), is("Bolacothrips striatopennatus"));
         assertThat(taxon.getRank(), is("species"));
         assertThat(taxon.getExternalId(), is("http://openbiodiv.net/22A7F215-829B-458A-AEBB-39FFEA6D4A91"));

@@ -15,9 +15,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.CSVTSVUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.jsoup.Jsoup;
@@ -27,7 +25,6 @@ import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
 
 import java.io.BufferedReader;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,22 +41,44 @@ import java.util.stream.Collectors;
 
 public class StudyImporterForPensoft extends StudyImporterWithListener {
     private static final Log LOG = LogFactory.getLog(StudyImporterForPensoft.class);
+    private SparqlClientFactory sparqlClientFactory = new SparqlClientCachingFactory();
 
     public StudyImporterForPensoft(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
 
+    @Override
+    public void importStudy() throws StudyImporterException {
+        try (SparqlClient sparqlClient = getSparqlClientFactory().create(getDataset())) {
+            final String url = getDataset().getOrDefault("url", null);
+            if (StringUtils.isBlank(url)) {
+                throw new StudyImporterException("please specify [url] in config");
+            }
+            final InputStream is = getDataset().retrieve(URI.create(url));
+            BufferedReader reader = IOUtils.toBufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final JsonNode biodivTable = new ObjectMapper().readTree(line);
+                parseRowsAndEnrich(biodivTable, getInteractionListener(), getLogger(), sparqlClient);
+            }
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to retrieve resource", e);
+        }
+    }
+
+
+
     public static void parseRowsAndEnrich(JsonNode biodivTable,
                                           InteractionListener listener,
                                           ImportLogger logger,
-                                          ResourceService resourceService) throws StudyImporterException {
+                                          final SparqlClient sparqlClient) throws StudyImporterException {
         final Elements tables = getTables(biodivTable);
         Elements rows = tables.get(0).select("tr");
         final List<String> columnNames = getColumnNames(tables);
 
         final Map<String, String> tableReferences;
         try {
-            tableReferences = parseTableReferences(biodivTable, resourceService);
+            tableReferences = parseTableReferences(biodivTable, sparqlClient);
         } catch (IOException e) {
             throw new StudyImporterException("failed to retrieve reference", e);
         }
@@ -106,7 +125,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                                     final String id = taxonNames.getValue().getId();
                                     put(taxonNames.getKey() + "_taxon_id", id);
                                     try {
-                                        final Taxon taxon = retrieveTaxonHierarchyById(id, resourceService);
+                                        final Taxon taxon = retrieveTaxonHierarchyById(id, sparqlClient);
                                         if (taxon != null) {
                                             collectTaxa.add(taxon);
                                             final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, taxonNames.getKey() + "_taxon_");
@@ -199,7 +218,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return new TermImpl(id, name);
     }
 
-    public static String findCitationByDoi(String doi, ResourceService resourceService) throws IOException {
+    public static String findCitationByDoi(String doi, SparqlClient openBiodivClient) throws IOException {
         String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
                 "PREFIX doco: <http://purl.org/spar/doco/>\n" +
@@ -227,7 +246,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                 " LIMIT 1";
 
         try {
-            final LabeledCSVParser parser = query(sparql, resourceService);
+            final LabeledCSVParser parser = openBiodivClient.query(sparql);
             parser.getLine();
             final String doiURIString = DOI.create(doi).toURI().toString();
             return StringUtils.join(Arrays.asList(
@@ -236,14 +255,9 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                     parser.getValueByLabel("title"),
                     parser.getValueByLabel("journalName"),
                     doiURIString), ". ");
-        } catch (URISyntaxException | MalformedDOIException e) {
+        } catch (MalformedDOIException e) {
             throw new IOException("marlformed uri", e);
         }
-    }
-
-    public static LabeledCSVParser query(String sparql, ResourceService resourceService) throws URISyntaxException, IOException {
-        URI url = createSparqlURI(sparql);
-        return CSVTSVUtil.createLabeledCSVParser(resourceService.retrieve(url));
     }
 
     public static URI createSparqlURI(String sparql) throws URISyntaxException {
@@ -251,7 +265,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return new URI(endpoint.getScheme(), endpoint.getHost(), endpoint.getPath(), "query=" + sparql, null);
     }
 
-    public static Taxon retrieveTaxonHierarchyById(String taxonId, ResourceService resourceService) throws IOException {
+    public static Taxon retrieveTaxonHierarchyById(String taxonId, SparqlClient sparqlClient) throws IOException {
         final String normalizedTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "");
         String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
@@ -283,18 +297,14 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                 "  } " +
                 "}";
 
-        try {
-            final LabeledCSVParser parser = query(sparql, resourceService);
-            Taxon taxon = null;
-            while ((taxon == null
-                    || StringUtils.isBlank(taxon.getPathNames()))
-                    && parser.getLine() != null) {
-                taxon = parseTaxon(parser);
-            }
-            return taxon;
-        } catch (URISyntaxException e) {
-            throw new IOException("marlformed uri", e);
+        final LabeledCSVParser parser = sparqlClient.query(sparql);
+        Taxon taxon = null;
+        while ((taxon == null
+                || StringUtils.isBlank(taxon.getPathNames()))
+                && parser.getLine() != null) {
+            taxon = parseTaxon(parser);
         }
+        return taxon;
     }
 
     public static TaxonImpl parseTaxon(LabeledCSVParser parser) {
@@ -322,30 +332,11 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         }
     }
 
-    @Override
-    public void importStudy() throws StudyImporterException {
-        try {
-            final String url = getDataset().getOrDefault("url", null);
-            if (StringUtils.isBlank(url)) {
-                throw new StudyImporterException("please specify [url] in config");
-            }
-            final InputStream is = getDataset().retrieve(URI.create(url));
-            BufferedReader reader = IOUtils.toBufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final JsonNode biodivTable = new ObjectMapper().readTree(line);
-                parseRowsAndEnrich(biodivTable, getInteractionListener(), getLogger(), getDataset());
-            }
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to retrieve resource", e);
-        }
-    }
-
-    private static Map<String, String> parseTableReferences(final JsonNode biodivTable, ResourceService resourceService) throws IOException {
+    private static Map<String, String> parseTableReferences(final JsonNode biodivTable, SparqlClient sparqlClient) throws IOException {
         final String table_id = biodivTable.has("table_id") ? biodivTable.get("table_id").asText() : "";
         final String referenceUrl = StringUtils.replaceAll(table_id, "[<>]", "");
         final String doi = biodivTable.has("article_doi") ? biodivTable.get("article_doi").asText() : "";
-        final String citation = findCitationByDoi(doi, resourceService);
+        final String citation = findCitationByDoi(doi, sparqlClient);
         return new TreeMap<String, String>() {
             {
                 put(StudyImporterForTSV.REFERENCE_ID, referenceUrl);
@@ -406,8 +397,17 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return combination.stream().map(Pair::getKey).distinct().count();
     }
 
+    public SparqlClientFactory getSparqlClientFactory() {
+        return sparqlClientFactory;
+    }
+
+    public void setSparqlClientFactory(SparqlClientFactory sparqlClientFactory) {
+        this.sparqlClientFactory = sparqlClientFactory;
+    }
+
 
     interface PermutationListener {
         void on(Map<String, Term> permutation);
     }
+
 }
