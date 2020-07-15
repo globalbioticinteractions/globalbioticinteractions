@@ -45,16 +45,18 @@ public class StudyImporterForZenodoMetadata extends StudyImporterWithListener {
     public void importStudy() throws StudyImporterException {
         final String zenodoSearchURI = getDataset()
                 .getOrDefault("url", "https://zenodo.org/api/records/?custom=%5Bobo%3ARO_0002453%5D%3A%5B%3A%5D");
-        final URI uri = URI.create(zenodoSearchURI);
-        try (InputStream is = getDataset().retrieve(uri)) {
-            parseSearchResults(is, getInteractionListener());
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to access Zenodo api", e);
+        URI uri = URI.create(zenodoSearchURI);
+        while (uri != null) {
+            try (InputStream is = getDataset().retrieve(uri)) {
+                uri = parseSearchResults(is, getInteractionListener());
+            } catch (IOException e) {
+                throw new StudyImporterException("failed to access Zenodo api", e);
+            }
         }
     }
 
 
-    public static void parseSearchResults(InputStream searchResultStream, InteractionListener interactionListener) throws IOException, StudyImporterException {
+    public static URI parseSearchResults(InputStream searchResultStream, InteractionListener interactionListener) throws IOException, StudyImporterException {
         final JsonNode searchResults = new ObjectMapper().readTree(searchResultStream);
         final PubListener recordListener = new MyPubListener(interactionListener);
 
@@ -67,6 +69,16 @@ public class StudyImporterForZenodoMetadata extends StudyImporterWithListener {
                 }
             }
         }
+
+        URI nextPage = null;
+        if (searchResults.has("links")) {
+            final JsonNode links = searchResults.get("links");
+            if (links.has("next")) {
+                final JsonNode next = links.get("next");
+                nextPage = URI.create(next.asText());
+            }
+        }
+        return nextPage;
     }
 
     interface PubListener {

@@ -1,0 +1,171 @@
+{
+  "aggregations": {
+    "access_right": {
+      "buckets": [
+        {
+          "doc_count": 1,
+          "key": "open"
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "communities": {
+      "buckets": [],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "file_type": {
+      "buckets": [
+        {
+          "doc_count": 1,
+          "key": "rst"
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "keywords": {
+      "buckets": [],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "type": {
+      "buckets": [
+        {
+          "doc_count": 1,
+          "key": "publication",
+          "subtype": {
+            "buckets": [
+              {
+                "doc_count": 1,
+                "key": "article"
+              }
+            ],
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0
+          }
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    }
+  },
+  "hits": {
+    "hits": [
+      {
+        "conceptrecid": "621970",
+        "created": "2020-06-11T11:53:23.793092+00:00",
+        "doi": "10.1234/testing-covid-rels",
+        "files": [
+          {
+            "bucket": "a1bc387c-c98f-4181-bf20-2d68f932a5e7",
+            "checksum": "md5:135cacf96f5479d21aa63714f3a660fe",
+            "key": "README.rst",
+            "links": {
+              "self": "https://sandbox.zenodo.org/api/files/a1bc387c-c98f-4181-bf20-2d68f932a5e7/README.rst"
+            },
+            "size": 3670,
+            "type": "rst"
+          }
+        ],
+        "id": 621971,
+        "links": {
+          "badge": "https://sandbox.zenodo.org/badge/doi/10.1234/testing-covid-rels.svg",
+          "bucket": "https://sandbox.zenodo.org/api/files/a1bc387c-c98f-4181-bf20-2d68f932a5e7",
+          "doi": "https://doi.org/10.1234/testing-covid-rels",
+          "html": "https://sandbox.zenodo.org/record/621971",
+          "latest": "https://sandbox.zenodo.org/api/records/621971",
+          "latest_html": "https://sandbox.zenodo.org/record/621971",
+          "self": "https://sandbox.zenodo.org/api/records/621971"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "creators": [
+            {
+              "name": "Li, Wendong"
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "Severe acute respiratory syndrome coronavirus",
+                  "SARS-CoV"
+                ],
+                "subject": [
+                  "Rhinolophus",
+                  "horseshoe bats"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-like coronavirus isolate Rp3",
+                  "SL-CoV Rp3"
+                ],
+                "subject": [
+                  "Rhinolophus pearsoni",
+                  "Rhinolophus pussilus",
+                  "Rhinolophus macrotis",
+                  "Rhinolophus ferrumequinum"
+                ]
+              }
+            ]
+          },
+          "description": "Severe acute respiratory syndrome (SARS)...",
+          "doi": "10.1234/testing-covid-rels",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "publication_date": "2005-11-29",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "621971"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "621970"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Bats Are Natural Reservoirs of SARS-like Coronaviruses"
+        },
+        "owners": [
+          22858
+        ],
+        "revision": 1,
+        "stats": {
+          "downloads": 1.0,
+          "unique_downloads": 1.0,
+          "unique_views": 38.0,
+          "version_downloads": 1.0,
+          "version_unique_downloads": 1.0,
+          "version_unique_views": 38.0,
+          "version_views": 44.0,
+          "version_volume": 3670.0,
+          "views": 44.0,
+          "volume": 3670.0
+        },
+        "updated": "2020-06-11T11:53:24.074605+00:00"
+      }
+    ],
+    "total": 1
+  },
+  "links": {
+    "next": "https://sandbox.zenodo.org/api/records/?sort=mostrecent&custom=%5Bobo%3ARO_0002453%5D%3A%5B%3A%5D&page=2&size=10",
+    "self": "https://sandbox.zenodo.org/api/records/?sort=mostrecent&custom=%5Bobo%3ARO_0002453%5D%3A%5B%3A%5D&page=1&size=10"
+  }
+}
