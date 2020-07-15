@@ -20,7 +20,6 @@ public class SparqlClientCachingFactory extends SparqlClientOpenBiodivFactory {
     public SparqlClient create(ResourceService resourceService) {
         DB db = getDb();
         final Map<String, String> queryCache = db.createTreeMap("queryCache").make();
-
         final ResourceService resourceServiceCaching = new ResourceServiceCaching(queryCache, resourceService);
         return new OpenBiodivClient(resourceServiceCaching) {
             @Override

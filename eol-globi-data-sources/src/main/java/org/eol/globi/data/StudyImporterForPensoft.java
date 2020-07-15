@@ -68,10 +68,10 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
 
 
 
-    public static void parseRowsAndEnrich(JsonNode biodivTable,
-                                          InteractionListener listener,
-                                          ImportLogger logger,
-                                          final SparqlClient sparqlClient) throws StudyImporterException {
+    static void parseRowsAndEnrich(JsonNode biodivTable,
+                                   InteractionListener listener,
+                                   ImportLogger logger,
+                                   final SparqlClient sparqlClient) throws StudyImporterException {
         final Elements tables = getTables(biodivTable);
         Elements rows = tables.get(0).select("tr");
         final List<String> columnNames = getColumnNames(tables);
@@ -168,7 +168,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         }
     }
 
-    public static void expandSpannedRows(Element row, Elements rowColumns) {
+    static void expandSpannedRows(Element row, Elements rowColumns) {
         for (Element rowColumn : rowColumns) {
             final String attr = rowColumn.attr("rowspan");
             final int rowSpan = NumberUtils.toInt(attr, 1);
@@ -184,7 +184,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         }
     }
 
-    public static List<Pair<String, Term>> parseRowValues(List<String> columnNames, Map<String, String> rowValue, Elements cols) {
+    static List<Pair<String, Term>> parseRowValues(List<String> columnNames, Map<String, String> rowValue, Elements cols) {
         final List<Pair<String, Term>> rowTerms = new ArrayList<>();
 
         for (int j = 0; j < cols.size(); j++) {
@@ -202,7 +202,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return rowTerms;
     }
 
-    public static List<String> getColumnNames(Elements tables) {
+    static List<String> getColumnNames(Elements tables) {
         List<String> headerNames = new ArrayList<>();
         if (tables.size() > 0) {
             Element table = tables.get(0);
@@ -214,11 +214,11 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return headerNames;
     }
 
-    public static TermImpl asTerm(String id, String name) {
+    private static TermImpl asTerm(String id, String name) {
         return new TermImpl(id, name);
     }
 
-    public static String findCitationByDoi(String doi, SparqlClient openBiodivClient) throws IOException {
+    static String findCitationByDoi(String doi, SparqlClient openBiodivClient) throws IOException {
         String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
                 "PREFIX doco: <http://purl.org/spar/doco/>\n" +
@@ -265,7 +265,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return new URI(endpoint.getScheme(), endpoint.getHost(), endpoint.getPath(), "query=" + sparql, null);
     }
 
-    public static Taxon retrieveTaxonHierarchyById(String taxonId, SparqlClient sparqlClient) throws IOException {
+    static Taxon retrieveTaxonHierarchyById(String taxonId, SparqlClient sparqlClient) throws IOException {
         final String normalizedTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "");
         String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
@@ -307,7 +307,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
         return taxon;
     }
 
-    public static TaxonImpl parseTaxon(LabeledCSVParser parser) {
+    private static TaxonImpl parseTaxon(LabeledCSVParser parser) {
         final String name = parser.getValueByLabel("name");
         final String rank = StringUtils.defaultIfBlank(parser.getValueByLabel("rank"), null);
         final String id = parser.getValueByLabel("id");
@@ -349,7 +349,7 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
     }
 
 
-    public static Elements getTables(JsonNode jsonNode) {
+    static Elements getTables(JsonNode jsonNode) {
         final JsonNode table_content = jsonNode.get("table_content");
         final String html = table_content.asText();
         final Document doc = Jsoup.parse(html);

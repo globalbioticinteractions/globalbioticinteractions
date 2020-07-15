@@ -62,7 +62,7 @@ public class StudyImporterForPensoftIT {
         assertThat(links.get(0), hasEntry("Family Name_taxon_name", "Acanthaceae"));
         assertThat(links.get(0), hasEntry("Family Name_taxon_path", "Plantae | Tracheophyta | Magnoliopsida | Lamiales | Acanthaceae"));
         assertThat(links.get(0), hasEntry("Family Name_taxon_pathNames", "kingdom | phylum | class | order | family"));
-        assertThat(links.get(0), hasEntry("referenceUrl", "https://doi.org/10.3897/zookeys.306.5455"));
+        assertThat(links.get(0), hasEntry("referenceUrl", "http://openbiodiv.net/FB706B4E-BAC2-4432-AD28-48063E7753E4"));
         assertThat(links.get(0), hasEntry("referenceDoi", "10.3897/zookeys.306.5455"));
         assertThat(links.get(0), hasEntry("referenceCitation", "Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
