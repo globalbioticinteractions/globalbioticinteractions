@@ -204,7 +204,13 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
                 "PREFIX doco: <http://purl.org/spar/doco/>\n" +
                 "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
-                "SELECT ?article ?title ?doi (group_concat(distinct ?authorName; separator=\", \") as ?authorsList)  ( REPLACE(str(?pubDate), \"(\\\\d*)-.*\", \"$1\") as ?pubYear) " +
+                "SELECT " +
+                "   ?article " +
+                "   ?title " +
+                "   ?doi " +
+                "   (group_concat(distinct ?authorName; separator=\", \") as ?authorsList)  " +
+                "   ( REPLACE(str(?pubDate), \"(\\\\d*)-.*\", \"$1\") as ?pubYear) " +
+                "   ?journalName " +
                 "WHERE { \n" +
                 "    BIND(\"" + doi + "\" AS ?doi). \n" +
                 "    ?article a fabio:JournalArticle.\n" +
@@ -213,8 +219,11 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
                 "    ?article prism:publicationDate ?pubDate.\n" +
                 "    ?article <http://purl.org/vocab/frbr/core#realizationOf> ?paper.\n" +
                 "    ?paper dc:creator ?author.\n" +
+                "    ?journal <http://purl.org/vocab/frbr/core#part> ?article.\n" +
+                "    ?journal a fabio:Journal.\n" +
+                "    ?journal <http://www.w3.org/2004/02/skos/core#prefLabel> ?journalName.\n" +
                 "    ?author <http://www.w3.org/2000/01/rdf-schema#label> ?authorName.\n" +
-                "}   GROUP BY ?article ?title ?doi ?pubDate\n" +
+                "}   GROUP BY ?article ?title ?doi ?pubDate ?journalName \n" +
                 " LIMIT 1";
 
         try {
@@ -222,8 +231,10 @@ public class StudyImporterForPensoft extends StudyImporterWithListener {
             parser.getLine();
             final String doiURIString = DOI.create(doi).toURI().toString();
             return StringUtils.join(Arrays.asList(
+                    parser.getValueByLabel("authorsList"),
+                    parser.getValueByLabel("pubYear"),
                     parser.getValueByLabel("title"),
-                    parser.getValueByLabel("article"),
+                    parser.getValueByLabel("journalName"),
                     doiURIString), ". ");
         } catch (URISyntaxException | MalformedDOIException e) {
             throw new IOException("marlformed uri", e);

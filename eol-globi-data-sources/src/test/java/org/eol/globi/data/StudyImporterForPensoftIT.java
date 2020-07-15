@@ -61,16 +61,16 @@ public class StudyImporterForPensoftIT {
         assertThat(links.get(0), hasEntry("Family Name", "Acanthaceae"));
         assertThat(links.get(0), hasEntry("Family Name_taxon_name", "Acanthaceae"));
         assertThat(links.get(0), hasEntry("Family Name_taxon_path", "Plantae | Tracheophyta | Magnoliopsida | Lamiales | Acanthaceae"));
-        assertThat(links.get(0), hasEntry("Family Name_taxon_pathNames", "kingdom | phylum | class | order | family | genus"));
-        assertThat(links.get(0), hasEntry("referenceUrl", "http://openbiodiv.net/FB706B4E-BAC2-4432-AD28-48063E7753E4"));
+        assertThat(links.get(0), hasEntry("Family Name_taxon_pathNames", "kingdom | phylum | class | order | family"));
+        assertThat(links.get(0), hasEntry("referenceUrl", "https://doi.org/10.3897/zookeys.306.5455"));
         assertThat(links.get(0), hasEntry("referenceDoi", "10.3897/zookeys.306.5455"));
-        assertThat(links.get(0), hasEntry("referenceCitation", "Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2. 10.3897/zookeys.306.5455"));
+        assertThat(links.get(0), hasEntry("referenceCitation", "Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     @Test
     public void retrieveCitation() throws IOException {
         String citation = StudyImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", getResourceServiceTest());
-        assertThat(citation, is("Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2. https://doi.org/10.3897/zookeys.306.5455"));
+        assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class StudyImporterForPensoftIT {
     }
 
     @Test
-    public void parseTableContent() throws IOException, TermLookupServiceException, StudyImporterException {
+    public void parseTableContent() throws IOException, StudyImporterException {
 
         final JsonNode tableObj = getTableObj();
 

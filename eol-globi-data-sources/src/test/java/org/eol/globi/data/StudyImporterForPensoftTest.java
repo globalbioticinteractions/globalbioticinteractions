@@ -2,7 +2,6 @@ package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -10,9 +9,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.tool.NullImportLogger;
-import org.eol.globi.util.HttpUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,7 +18,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,7 +70,7 @@ public class StudyImporterForPensoftTest {
 
 
     @Test
-    public void handleRowSpan() throws IOException, TermLookupServiceException, StudyImporterException {
+    public void handleRowSpan() throws IOException {
 
         final InputStream resourceAsStream = getClass().getResourceAsStream("pensoft/rows-with-rowspan.html");
         final Document doc = Jsoup.parseBodyFragment(IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8));
