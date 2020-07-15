@@ -73,20 +73,6 @@ public class StudyImporterForPensoftTest {
     }
 
 
-    public static ResourceService getResourceServiceTest() {
-        return new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                HttpGet req = new HttpGet(resourceName);
-                String csvString = HttpUtil.executeAndRelease(req, HttpUtil.getFailFastHttpClient());
-                return IOUtils.toInputStream(csvString, StandardCharsets.UTF_8);
-            }
-        };
-    }
-
-
-
     @Test
     public void handleRowSpan() throws IOException, TermLookupServiceException, StudyImporterException {
 
