@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -112,7 +113,25 @@ public class StudyImporterForZenodoMetadata extends StudyImporterWithListener {
             } catch (MalformedDOIException e) {
                 throw new StudyImporterException("malformed doi", e);
             }
-            String citation = StringUtils.join(Arrays.asList(StringUtils.join(creatorNames, ","), "(" + publicationYear + ")", title, "Zenodo", doi1.toURI().toString()), ". ");
+
+            String journalName = "";
+            if (metadata.has("journal")) {
+                final JsonNode journal = metadata.get("journal");
+                if (journal.has("title")) {
+                    journalName = journal.get("title").asText();
+                }
+            }
+            ;
+
+            final Stream<String> citationElements = Stream.of(
+                    StringUtils.join(creatorNames, ", "),
+                    "(" + publicationYear + ")",
+                    title,
+                    journalName,
+                    doi1.toURI().toString()
+            ).filter(StringUtils::isNotBlank);
+
+            String citation = StringUtils.join(citationElements.collect(Collectors.toList()), ". ");
 
             final JsonNode custom = metadata.get("custom");
             final Iterator<String> fieldNames = custom.getFieldNames();

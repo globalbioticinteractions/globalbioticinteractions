@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
@@ -29,6 +30,32 @@ public class StudyImporterForZenodoMetadataTest {
     public void findAnnotationsStatic() throws IOException, StudyImporterException {
         final InputStream searchResultStream = getClass().getResourceAsStream("zenodo/search-results.json");
         assertInteractionOfExamplePub(searchResultStream);
+    }
+
+    @Test
+    public void findAnnotationsStaticZenodo() throws IOException, StudyImporterException {
+        final InputStream searchResultStream = getClass().getResourceAsStream("zenodo/search-results-zenodo.json");
+        List<Map<String, String>> links = new ArrayList<>();
+        final InteractionListener interactionListener = new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> link) throws StudyImporterException {
+                links.add(link);
+            }
+        };
+
+
+        StudyImporterForZenodoMetadata.parseSearchResults(searchResultStream, interactionListener);
+
+        assertThat(links.size(), Is.is(97));
+
+        List<String> citations = new ArrayList<>();
+        for (Map<String, String> link : links) {
+            final String s = link.get(REFERENCE_CITATION);
+            assertNotNull(s);
+            citations.add(s);
+        }
+
+        assertThat(citations.get(0), Is.is("Rachel L. Graham, Ralph S. Baric. (2010). Recombination, Reservoirs, and the Modular Spike: Mechanisms of Coronavirus Cross-Species Transmission. Journal of Virology. https://doi.org/10.1128/JVI.01394-09"));
     }
 
     @Test
@@ -90,10 +117,10 @@ public class StudyImporterForZenodoMetadataTest {
         assertThat(last, hasEntry(TaxonUtil.TARGET_TAXON_NAME, "SL-CoV Rp3"));
     }
 
-    public static void assertRefenceAndInteractionType(Map<String, String> first) {
+    private static void assertRefenceAndInteractionType(Map<String, String> first) {
         assertThat(first, hasEntry(INTERACTION_TYPE_ID, HOST_OF.getIRI()));
         assertThat(first, hasEntry(INTERACTION_TYPE_NAME, HOST_OF.getLabel()));
-        assertThat(first, hasEntry(REFERENCE_CITATION, "Wendong Li. (2005). Bats Are Natural Reservoirs of SARS-like Coronaviruses. Zenodo. https://doi.org/10.1234/testing-covid-rels"));
+        assertThat(first, hasEntry(REFERENCE_CITATION, "Wendong Li. (2005). Bats Are Natural Reservoirs of SARS-like Coronaviruses. https://doi.org/10.1234/testing-covid-rels"));
         assertThat(first, hasEntry(REFERENCE_DOI, "10.1234/testing-covid-rels"));
         assertThat(first, hasEntry(REFERENCE_ID, "10.1234/testing-covid-rels"));
         assertThat(first, hasEntry(REFERENCE_URL, "https://doi.org/10.1234/testing-covid-rels"));

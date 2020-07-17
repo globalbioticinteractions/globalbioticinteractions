@@ -1,0 +1,2128 @@
+{
+  "aggregations": {
+    "access_right": {
+      "buckets": [
+        {
+          "doc_count": 160,
+          "key": "open"
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "communities": {
+      "buckets": [
+        {
+          "doc_count": 160,
+          "key": "biosyslit"
+        },
+        {
+          "doc_count": 160,
+          "key": "coviho"
+        },
+        {
+          "doc_count": 160,
+          "key": "globalbioticinteractions"
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "file_type": {
+      "buckets": [
+        {
+          "doc_count": 160,
+          "key": "pdf"
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "keywords": {
+      "buckets": [
+        {
+          "doc_count": 160,
+          "key": "CETAF-taskforce"
+        },
+        {
+          "doc_count": 160,
+          "key": "Coronaviridae"
+        },
+        {
+          "doc_count": 160,
+          "key": "Viridae"
+        },
+        {
+          "doc_count": 160,
+          "key": "biotic associations"
+        },
+        {
+          "doc_count": 160,
+          "key": "biotic interaction"
+        },
+        {
+          "doc_count": 160,
+          "key": "biotic relations"
+        },
+        {
+          "doc_count": 160,
+          "key": "corona viruses"
+        },
+        {
+          "doc_count": 160,
+          "key": "covid"
+        },
+        {
+          "doc_count": 160,
+          "key": "covid-19"
+        },
+        {
+          "doc_count": 160,
+          "key": "pathogen-host"
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 1135
+    },
+    "type": {
+      "buckets": [
+        {
+          "doc_count": 160,
+          "key": "publication",
+          "subtype": {
+            "buckets": [
+              {
+                "doc_count": 159,
+                "key": "article"
+              },
+              {
+                "doc_count": 1,
+                "key": "preprint"
+              }
+            ],
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0
+          }
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    }
+  },
+  "hits": {
+    "hits": [
+      {
+        "conceptrecid": "3949287",
+        "created": "2020-07-17T00:54:53.459982+00:00",
+        "doi": "10.1128/JVI.01394-09",
+        "files": [
+          {
+            "bucket": "0f531b37-8224-49de-a5c4-a62ddeaeff38",
+            "checksum": "md5:ea3fc192960d4e20439646d7f5d5cab8",
+            "key": "JVirol.84.7.3134\u20133146.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/0f531b37-8224-49de-a5c4-a62ddeaeff38/JVirol.84.7.3134%E2%80%933146.pdf"
+            },
+            "size": 2021761,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949288,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1128/JVI.01394-09.svg",
+          "bucket": "https://zenodo.org/api/files/0f531b37-8224-49de-a5c4-a62ddeaeff38",
+          "doi": "https://doi.org/10.1128/JVI.01394-09",
+          "html": "https://zenodo.org/record/3949288",
+          "latest": "https://zenodo.org/api/records/3949288",
+          "latest_html": "https://zenodo.org/record/3949288",
+          "self": "https://zenodo.org/api/records/3949288"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Graham, Rachel L."
+            },
+            {
+              "name": "Baric, Ralph S."
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "SARS-CoV"
+                ],
+                "subject": [
+                  "Nyctereutes procyonoides",
+                  "raccoon dogs"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-CoV"
+                ],
+                "subject": [
+                  "Paguma larvata",
+                  "himalayan palm civets"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome",
+                  "SARS"
+                ],
+                "subject": [
+                  "Rhinolophus",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "bovine coronavirus",
+                  "BCoV"
+                ],
+                "subject": [
+                  "bovine"
+                ]
+              },
+              {
+                "object": [
+                  "canine coronavirus",
+                  "CCoV"
+                ],
+                "subject": [
+                  "canine"
+                ]
+              },
+              {
+                "object": [
+                  "feline coronavirus",
+                  "FCoV"
+                ],
+                "subject": [
+                  "feline"
+                ]
+              },
+              {
+                "object": [
+                  "Murine coronavirus",
+                  "MHV"
+                ],
+                "subject": [
+                  "murine"
+                ]
+              },
+              {
+                "object": [
+                  "porcine coronavirus",
+                  "PCoV"
+                ],
+                "subject": [
+                  "porcine"
+                ]
+              }
+            ]
+          },
+          "description": "Over the past 30 years, several cross-species transmission events, as well as changes in virus tropism, have mediated significant animal and human diseases. Most notable is severe acute respiratory syndrome (SARS), a lower respiratory tract disease of humans that was first reported in late 2002 in Guangdong Province, China. The disease, which quickly spread worldwide over a period of 4 months spanning late 2002 and early 2003, infected over 8,000 individuals and killed nearly 800 before it was successfully contained by aggressive public health intervention strategies. A coronavirus (SARS-CoV) was identified as the etiological agent of SARS, and initial assessments determined that the virus crossed to human hosts from zoonotic reservoirs, including bats, Himalayan palm civets (Paguma larvata), and raccoon dogs (Nyctereutes procyonoides), sold in exotic animal markets in Guangdong Province. In this review, we discuss the molecular mechanisms that govern coronavirus cross-species transmission both in vitro and in vivo, using the emergence of SARS-CoV as a model. We pay particular attention to how changes in the Spike attachment protein, both within and outside of the receptor binding domain, mediate the emergence of coronaviruses in new host populations.",
+          "doi": "10.1128/JVI.01394-09",
+          "journal": {
+            "issue": "7",
+            "pages": "3134--3146",
+            "title": "Journal of Virology",
+            "volume": "84"
+          },
+          "keywords": [
+            "covid",
+            "virus-host",
+            "covid-19",
+            "biotic associations",
+            "pathogen-host",
+            "CETAF-taskforce",
+            "pathogens",
+            "Viridae",
+            "Coronaviridae",
+            "biotic interaction",
+            "corona viruses",
+            "biotic relations"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2010-04-30",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949288"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949287"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Recombination, Reservoirs, and the Modular Spike: Mechanisms of Coronavirus Cross-Species Transmission"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:03.515202+00:00"
+      },
+      {
+        "conceptrecid": "3949283",
+        "created": "2020-07-17T00:54:49.683586+00:00",
+        "doi": "10.1111/ele.12491",
+        "files": [
+          {
+            "bucket": "e80cbbd8-0ab5-4b6c-b554-552a15ba96d9",
+            "checksum": "md5:bbf84982f0f4986f4a17fc67b44f02e4",
+            "key": "EcolLett.18.1153\u20131162.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/e80cbbd8-0ab5-4b6c-b554-552a15ba96d9/EcolLett.18.1153%E2%80%931162.pdf"
+            },
+            "size": 19325810,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949284,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1111/ele.12491.svg",
+          "bucket": "https://zenodo.org/api/files/e80cbbd8-0ab5-4b6c-b554-552a15ba96d9",
+          "doi": "https://doi.org/10.1111/ele.12491",
+          "html": "https://zenodo.org/record/3949284",
+          "latest": "https://zenodo.org/api/records/3949284",
+          "latest_html": "https://zenodo.org/record/3949284",
+          "self": "https://zenodo.org/api/records/3949284"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Luis, Angela D."
+            },
+            {
+              "name": "O'Shea, Thomas J."
+            },
+            {
+              "name": "Hayman, David T. S."
+            },
+            {
+              "name": "Wood, James L. N."
+            },
+            {
+              "name": "Cunningham, Andrew A."
+            },
+            {
+              "name": "Gilbert, Amy T."
+            },
+            {
+              "name": "Mills, James N."
+            },
+            {
+              "name": "Webb, Colleen T."
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "SARS-like coronavirus"
+                ],
+                "subject": [
+                  "Rhinolophus ferrumequinum",
+                  "bat"
+                ]
+              }
+            ]
+          },
+          "description": "Bats are natural reservoirs of several important emerging viruses. Cross-species transmission appears to be quite common among bats, which may contribute to their unique reservoir potential. Therefore, understanding the importance of bats as reservoirs requires examining them in a community context rather than concentrating on individual species. Here, we use a network approach to identify ecological and biological correlates of cross-species virus transmission in bats and rodents, another important host group. We show that given our current knowledge the bat viral sharing network is more connected than the rodent network, suggesting viruses may pass more easily between bat species. We identify host traits associated with important reservoir species: gregarious bats are more likely to share more viruses and bats which migrate regionally are important for spreading viruses through the network. We identify multiple communities of viral sharing within bats and rodents and highlight potential species traits that can help guide studies of novel pathogen emergence.",
+          "doi": "10.1111/ele.12491",
+          "journal": {
+            "issue": "11",
+            "pages": "1153--1162",
+            "title": "Ecology Letters",
+            "volume": "18"
+          },
+          "keywords": [
+            "covid",
+            "virus-host",
+            "ecological networks",
+            "covid-19",
+            "biotic associations",
+            "pathogen-host",
+            "CETAF-taskforce",
+            "Chiroptera",
+            "pathogens",
+            "emerging infectious disease",
+            "zoonoses",
+            "Coronaviridae",
+            "Viridae",
+            "biotic interaction",
+            "Rodentia",
+            "corona viruses",
+            "biotic relations"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2015-01-01",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949284"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949283"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Network analysis of host\u2013virus communities in bats and rodents reveals determinants of cross-species transmission"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:04.675242+00:00"
+      },
+      {
+        "conceptrecid": "3949281",
+        "created": "2020-07-17T00:54:45.940134+00:00",
+        "doi": "10.1093/infdis/jiv476",
+        "files": [
+          {
+            "bucket": "a9571862-d397-4709-a867-d700549ed47d",
+            "checksum": "md5:7c6ffecc2c101cb7746c35a90d279eaa",
+            "key": "JInfectDis.213.4.579-583.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/a9571862-d397-4709-a867-d700549ed47d/JInfectDis.213.4.579-583.pdf"
+            },
+            "size": 1076838,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949282,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1093/infdis/jiv476.svg",
+          "bucket": "https://zenodo.org/api/files/a9571862-d397-4709-a867-d700549ed47d",
+          "doi": "https://doi.org/10.1093/infdis/jiv476",
+          "html": "https://zenodo.org/record/3949282",
+          "latest": "https://zenodo.org/api/records/3949282",
+          "latest_html": "https://zenodo.org/record/3949282",
+          "self": "https://zenodo.org/api/records/3949282"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Wu, Zhiqiang"
+            },
+            {
+              "name": "Yang, Li"
+            },
+            {
+              "name": "Ren, Xianwen"
+            },
+            {
+              "name": "Zhang, Junpeng"
+            },
+            {
+              "name": "Yang, Fan"
+            },
+            {
+              "name": "Zhang, Shuyi"
+            },
+            {
+              "name": "Jin, Qi"
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Chaerephon plicata",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-CoVs"
+                ],
+                "subject": [
+                  "Chaerephon",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus affinis",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus ferrumequinum",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus macrotis",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus pusillus",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus sinicus",
+                  "Chinese horseshoe bats"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus sinicus",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)\u2013like CoVs",
+                  "SL-CoVs"
+                ],
+                "subject": [
+                  "Rhinolophus",
+                  "bat"
+                ]
+              }
+            ]
+          },
+          "description": "Several lineage B betacoronaviruses termed severe acute respiratory syndrome (SARS)-like CoVs (SL-CoVs) were identified from Rhinolophus bats in China. These viruses are characterized by a set of unique accessory open reading frames (ORFs) that are located between the M and N genes. Among unique accessory ORFs, ORF8 is most hypervariable. In this study, the ORF8s of all SL-CoVs were classified into 3 types, and, for the first time, it was found that very few SL-CoVs from Rhinolophus sinicus have ORF8s that are identical to that of human SARS-CoV. This finding provides new genetic evidence for Chinese horseshoe bats as the source of human SARS-CoV.",
+          "doi": "10.1093/infdis/jiv476",
+          "journal": {
+            "issue": "4",
+            "pages": "579--583",
+            "title": "The Journal of Infectious Diseases",
+            "volume": "213"
+          },
+          "keywords": [
+            "ORF8",
+            "Evolution",
+            "Sequence Analysis",
+            "bats",
+            "corona viruses",
+            "Genotype",
+            "virus-host",
+            "Molecular",
+            "SARS Virus",
+            "biotic associations",
+            "China",
+            "Humans",
+            "Sequence Homology",
+            "pathogen-host",
+            "Chiroptera",
+            "CETAF-taskforce",
+            "biotic interaction",
+            "DNA",
+            "Viral",
+            "severe acute respiratory syndrome coronavirus",
+            "Molecular Sequence Data",
+            "Coronaviridae",
+            "Cluster Analysis",
+            "covid",
+            "covid-19",
+            "RNA",
+            "pathogens",
+            "Viridae",
+            "origin",
+            "Viral Matrix Proteins",
+            "biotic relations",
+            "Animals"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2016-02-29",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949282"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949281"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "ORF8-Related Genetic Evidence for Chinese Horseshoe Bats as the Source of Human Severe Acute Respiratory Syndrome Coronavirus"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:06.161256+00:00"
+      },
+      {
+        "conceptrecid": "3949279",
+        "created": "2020-07-17T00:54:42.045806+00:00",
+        "doi": "10.1016/j.ijppaw.2014.06.003",
+        "files": [
+          {
+            "bucket": "92a3b7ea-ae35-4aa3-966c-3dc739fef3a4",
+            "checksum": "md5:d13beb1f74e064ee98aa934faf4cacff",
+            "key": "IntJParasitolParasitesWildl.3.2.161-170.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/92a3b7ea-ae35-4aa3-966c-3dc739fef3a4/IntJParasitolParasitesWildl.3.2.161-170.pdf"
+            },
+            "size": 689538,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949280,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1016/j.ijppaw.2014.06.003.svg",
+          "bucket": "https://zenodo.org/api/files/92a3b7ea-ae35-4aa3-966c-3dc739fef3a4",
+          "doi": "https://doi.org/10.1016/j.ijppaw.2014.06.003",
+          "html": "https://zenodo.org/record/3949280",
+          "latest": "https://zenodo.org/api/records/3949280",
+          "latest_html": "https://zenodo.org/record/3949280",
+          "self": "https://zenodo.org/api/records/3949280"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Gay, Noellie"
+            },
+            {
+              "name": "Olival, Kevin J."
+            },
+            {
+              "name": "Bumrungsri, Sara"
+            },
+            {
+              "name": "Siriaroonrat, Boripat"
+            },
+            {
+              "name": "Bourgarel, Mathieu"
+            },
+            {
+              "name": "Morand, Serge"
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "bat-SARS-like Coronaviruses"
+                ],
+                "subject": [
+                  "Rhinolophus",
+                  "bat"
+                ]
+              }
+            ]
+          },
+          "description": "Interest in bat-borne diseases and parasites has grown in the past decade over concerns for human health. However, the drivers of parasite diversity among bat host species are understudied as are the links between parasite richness and emerging risks. Thus, we aimed at exploring factors that explain macro and microparasite species richness in bats from Southeast Asia, a hotspot of emerging infectious diseases. First, we identified bat species that need increased sampling effort for pathogen discovery. Our approach highlights pathogen investigation disparities among species within the same genus, such as Rhinolophus and Pteropus. Secondly, comparative analysis using independent contrasts method allowed the identification of likely factors explaining parasite and viral diversity of bats. Our results showed a key role of bat distribution shape, an index of the fragmentation of bat distribution, on parasite diversity, linked to a decrease for both viral and endoparasite species richness. We discuss how our study may contribute to a better understanding of the link between parasite species richness and emergence.",
+          "doi": "10.1016/j.ijppaw.2014.06.003",
+          "journal": {
+            "issue": "2",
+            "pages": "161--170",
+            "title": "International Journal for Parasitology. Parasites and Wildlife",
+            "volume": "3"
+          },
+          "keywords": [
+            "Helminths",
+            "Parasite diversity",
+            "corona viruses",
+            "virus-host",
+            "biotic associations",
+            "pathogen-host",
+            "Asia",
+            "Chiroptera",
+            "CETAF-taskforce",
+            "biotic interaction",
+            "Distribution range",
+            "Coronaviridae",
+            "Ectoparasites",
+            "Fragmentation",
+            "covid",
+            "Virus",
+            "covid-19",
+            "pathogens",
+            "Viridae",
+            "biotic relations"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2014-08-31",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949280"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949279"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Parasite and viral species richness of Southeast Asian bats: Fragmentation of area distribution matters"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 1.0,
+          "unique_downloads": 1.0,
+          "unique_views": 2.0,
+          "version_downloads": 1.0,
+          "version_unique_downloads": 1.0,
+          "version_unique_views": 2.0,
+          "version_views": 2.0,
+          "version_volume": 689538.0,
+          "views": 2.0,
+          "volume": 689538.0
+        },
+        "updated": "2020-07-17T12:27:07.470775+00:00"
+      },
+      {
+        "conceptrecid": "3949277",
+        "created": "2020-07-17T00:54:37.885636+00:00",
+        "doi": "10.1371/journal.pone.0052752",
+        "files": [
+          {
+            "bucket": "fd008b55-80ae-4ae5-bf38-4a0e440dbc1c",
+            "checksum": "md5:6ff0a7d790cfa17271135b0ce430011b",
+            "key": "PLoSOne.8.1.e52752.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/fd008b55-80ae-4ae5-bf38-4a0e440dbc1c/PLoSOne.8.1.e52752.pdf"
+            },
+            "size": 569933,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949278,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1371/journal.pone.0052752.svg",
+          "bucket": "https://zenodo.org/api/files/fd008b55-80ae-4ae5-bf38-4a0e440dbc1c",
+          "doi": "https://doi.org/10.1371/journal.pone.0052752",
+          "html": "https://zenodo.org/record/3949278",
+          "latest": "https://zenodo.org/api/records/3949278",
+          "latest_html": "https://zenodo.org/record/3949278",
+          "self": "https://zenodo.org/api/records/3949278"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Borucki, Monica K."
+            },
+            {
+              "name": "Allen, Jonathan E."
+            },
+            {
+              "name": "Chen-Harris, Haiyin"
+            },
+            {
+              "name": "Zemla, Adam"
+            },
+            {
+              "name": "Vanier, Gilda"
+            },
+            {
+              "name": "Mabery, Shalini"
+            },
+            {
+              "name": "Torres, Clinton"
+            },
+            {
+              "name": "Hullinger, Pamela"
+            },
+            {
+              "name": "Slezak, Tom"
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "bovine coronavirus",
+                  "BCoV"
+                ],
+                "subject": [
+                  "cattle"
+                ]
+              }
+            ]
+          },
+          "description": "The high mutation rate of RNA viruses enables a diverse genetic population of viral genotypes to exist within a single infected host. In-host genetic diversity could better position the virus population to respond and adapt to a diverse array of selective pressures such as host-switching events. Multiple new coronaviruses, including SARS, have been identified in human samples just within the last ten years, demonstrating the potential of coronaviruses as emergent human pathogens. Deep sequencing was used to characterize genomic changes in coronavirus quasispecies during simulated host-switching. Three bovine nasal samples infected with bovine coronavirus were used to infect human and bovine macrophage and lung cell lines. The virus reproduced relatively well in macrophages, but the lung cell lines were not infected efficiently enough to allow passage of non lab-adapted samples. Approximately 12 kb of the genome was amplified before and after passage and sequenced at average coverages of nearly 950\u00d7(454 sequencing) and 38,000\u00d7(Illumina). The consensus sequence of many of the passaged samples had a 12 nucleotide insert in the consensus sequence of the spike gene, and multiple point mutations were associated with the presence of the insert. Deep sequencing revealed that the insert was present but very rare in the unpassaged samples and could quickly shift to dominate the population when placed in a different environment. The insert coded for three arginine residues, occurred in a region associated with fusion entry into host cells, and may allow infection of new cell types via heparin sulfate binding. Analysis of the deep sequencing data indicated that two distinct genotypes circulated at different frequency levels in each sample, and support the hypothesis that the mutations present in passaged strains were \"selected\" from a pre-existing pool rather than through de novo mutation and subsequent population fixation.",
+          "doi": "10.1371/journal.pone.0052752",
+          "journal": {
+            "issue": "1",
+            "pages": "e52752",
+            "title": "PloS One",
+            "volume": "8"
+          },
+          "keywords": [
+            "Genetic Variation",
+            "Consensus Sequence",
+            "Viral Proteins",
+            "Phylogeny",
+            "Protein Structure",
+            "Coronavirus",
+            "Virus Internalization",
+            "Cattle",
+            "High-Throughput Nucleotide Sequencing",
+            "Tertiary",
+            "Sequence Alignment",
+            "corona viruses",
+            "virus-host",
+            "Molecular",
+            "Genome",
+            "Humans",
+            "biotic associations",
+            "pathogen-host",
+            "CETAF-taskforce",
+            "biotic interaction",
+            "Coronavirus Infections",
+            "Amino Acid Sequence",
+            "Viral",
+            "Models",
+            "Coronaviridae",
+            "Bovine",
+            "Mutation Rate",
+            "covid",
+            "covid-19",
+            "Point Mutation",
+            "pathogens",
+            "Viridae",
+            "Molecular Sequence Data",
+            "Cell Line",
+            "biotic relations",
+            "Animals"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2013-01-01",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949278"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949277"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "The role of viral population diversity in adaptation of bovine coronavirus to new host environments"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:08.989408+00:00"
+      },
+      {
+        "conceptrecid": "3949275",
+        "created": "2020-07-17T00:54:33.888811+00:00",
+        "doi": "10.1038/s41598-017-11384-w",
+        "files": [
+          {
+            "bucket": "726e149c-4bd5-4601-b40a-d0a314f2f784",
+            "checksum": "md5:b5cd0a1607111c928fc5e55bdb64b06a",
+            "key": "SciRep.7.1.10917.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/726e149c-4bd5-4601-b40a-d0a314f2f784/SciRep.7.1.10917.pdf"
+            },
+            "size": 2394847,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949276,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1038/s41598-017-11384-w.svg",
+          "bucket": "https://zenodo.org/api/files/726e149c-4bd5-4601-b40a-d0a314f2f784",
+          "doi": "https://doi.org/10.1038/s41598-017-11384-w",
+          "html": "https://zenodo.org/record/3949276",
+          "latest": "https://zenodo.org/api/records/3949276",
+          "latest_html": "https://zenodo.org/record/3949276",
+          "self": "https://zenodo.org/api/records/3949276"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Hu, Dan"
+            },
+            {
+              "name": "Zhu, Changqiang"
+            },
+            {
+              "name": "Wang, Yi"
+            },
+            {
+              "name": "Ai, Lele"
+            },
+            {
+              "name": "Yang, Lu"
+            },
+            {
+              "name": "Ye, Fuqiang"
+            },
+            {
+              "name": "Ding, Chenxi"
+            },
+            {
+              "name": "Chen, Jiafeng"
+            },
+            {
+              "name": "He, Biao"
+            },
+            {
+              "name": "Zhu, Jin"
+            },
+            {
+              "name": "Qian, Hui"
+            },
+            {
+              "name": "Xu, Wenrong"
+            },
+            {
+              "name": "Feng, Youjun"
+            },
+            {
+              "name": "Tan, Weilong"
+            },
+            {
+              "name": "Wang, Changjun"
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "coronavirus"
+                ],
+                "subject": [
+                  "Rhinolophus ferrumequinum"
+                ]
+              },
+              {
+                "object": [
+                  "coronavirus"
+                ],
+                "subject": [
+                  "Rhinolophus pusillus"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-CoV"
+                ],
+                "subject": [
+                  "Chinese horseshoe bats"
+                ]
+              },
+              {
+                "object": [
+                  "Middle East respiratory syndrome (MERS)-associated coronavirus"
+                ],
+                "subject": [
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "severe acute respiratory syndrome (SARS)-like coronavirus",
+                  "SL-CoV"
+                ],
+                "subject": [
+                  "bat"
+                ]
+              }
+            ]
+          },
+          "description": "Bats have been shown as important mammal resevoirs to carry a variety of zoonotic pathogens. To analyze pathogenic species in bats from southeast coastal regions of China, we performed metagenomic sequencing technology for high throughput sequencing of six sentinels from southeast coastal area of China. We obtained 5,990,261 high quality reads from intestine and lung tissue of 235 bats, including 2,975,371 assembled sequences. 631,490 reads predicted overlapping sequences for the open reading frame (ORF), which accounts for 2.37\\% of all the sequences (15,012/631,490). Further, the acquired virus sequences were classified into 25 viral families, including 16 vertebrate viruses, four plant viruses and five insect viruses. All bat samples were screened by specific PCR and phylogenetic analysis. Using these techniques, we discovered many novel bat viruses and some bat viruses closely-related to known human/animal pathogens, including coronavirus, norovirus, adenovirus, bocavirus, astrovirus, and circovirus. In summary, this study extended our understanding of bats as the viral reservoirs. Additionally, it also provides a basis for furher studying the transmission of viruses from bats to humans.",
+          "doi": "10.1038/s41598-017-11384-w",
+          "journal": {
+            "issue": "1",
+            "pages": "10917",
+            "title": "Scientific Reports",
+            "volume": "7"
+          },
+          "keywords": [
+            "Phylogeny",
+            "Zoonoses",
+            "Sequence Analysis",
+            "Virus Diseases",
+            "Lung",
+            "corona viruses",
+            "virus-host",
+            "Viruses",
+            "biotic associations",
+            "China",
+            "pathogen-host",
+            "Chiroptera",
+            "CETAF-taskforce",
+            "biotic interaction",
+            "DNA",
+            "Polymerase Chain Reaction",
+            "Coronaviridae",
+            "covid",
+            "covid-19",
+            "pathogens",
+            "Viridae",
+            "Intestines",
+            "Metagenomics",
+            "biotic relations",
+            "Animals"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2017-09-30",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949276"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949275"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Virome analysis for identification of novel mammalian viruses in bats from Southeast China"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:10.097528+00:00"
+      },
+      {
+        "conceptrecid": "3949271",
+        "created": "2020-07-17T00:54:29.812386+00:00",
+        "doi": "10.1016/j.cub.2020.03.022",
+        "files": [
+          {
+            "bucket": "9826e7f1-a343-4bd7-afd7-fa18207cec1e",
+            "checksum": "md5:cd00742113959075f3baaed5aa778154",
+            "key": "CurrBiol.30.1-6.extended.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/9826e7f1-a343-4bd7-afd7-fa18207cec1e/CurrBiol.30.1-6.extended.pdf"
+            },
+            "size": 2238642,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949272,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1016/j.cub.2020.03.022.svg",
+          "bucket": "https://zenodo.org/api/files/9826e7f1-a343-4bd7-afd7-fa18207cec1e",
+          "doi": "https://doi.org/10.1016/j.cub.2020.03.022",
+          "html": "https://zenodo.org/record/3949272",
+          "latest": "https://zenodo.org/api/records/3949272",
+          "latest_html": "https://zenodo.org/record/3949272",
+          "self": "https://zenodo.org/api/records/3949272"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Zhang, Tao"
+            },
+            {
+              "name": "Wu, Qunfu"
+            },
+            {
+              "name": "Zhang, Zhigang"
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "BatCoV-RatG13"
+                ],
+                "subject": [
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "MERS-CoV"
+                ],
+                "subject": [
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-CoV-2"
+                ],
+                "subject": [
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-CoV"
+                ],
+                "subject": [
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "Pangolin-CoV"
+                ],
+                "subject": [
+                  "pangolin lung"
+                ]
+              },
+              {
+                "object": [
+                  "SARS-CoV-2-like CoV"
+                ],
+                "subject": [
+                  "pangolin lung"
+                ]
+              }
+            ]
+          },
+          "description": "No abstract found",
+          "doi": "10.1016/j.cub.2020.03.022",
+          "journal": {
+            "issue": "0",
+            "pages": "1--6",
+            "title": "Current Biology",
+            "volume": "30"
+          },
+          "keywords": [
+            "covid",
+            "virus-host",
+            "covid-19",
+            "biotic associations",
+            "pathogen-host",
+            "COVID-19",
+            "CETAF-taskforce",
+            "pathogens",
+            "Coronaviridae",
+            "origin",
+            "Viridae",
+            "biotic interaction",
+            "SARS-CoV-2",
+            "corona viruses",
+            "biotic relations",
+            "pangolin"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2020-03-31",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949272"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949271"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Probable Pangolin Origin of SARS-CoV-2 Associated with the COVID-19 Outbreak"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:11.312473+00:00"
+      },
+      {
+        "conceptrecid": "3949269",
+        "created": "2020-07-17T00:54:25.810879+00:00",
+        "doi": "10.1073/pnas.1310744110",
+        "files": [
+          {
+            "bucket": "dda2d27e-1589-42fe-8e31-1fa297fd0efc",
+            "checksum": "md5:694587d4c95e593c94899838f219e802",
+            "key": "PNAS.110.41.16598-603.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/dda2d27e-1589-42fe-8e31-1fa297fd0efc/PNAS.110.41.16598-603.pdf"
+            },
+            "size": 1692132,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949270,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1073/pnas.1310744110.svg",
+          "bucket": "https://zenodo.org/api/files/dda2d27e-1589-42fe-8e31-1fa297fd0efc",
+          "doi": "https://doi.org/10.1073/pnas.1310744110",
+          "html": "https://zenodo.org/record/3949270",
+          "latest": "https://zenodo.org/api/records/3949270",
+          "latest_html": "https://zenodo.org/record/3949270",
+          "self": "https://zenodo.org/api/records/3949270"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Wit, Emmie de"
+            },
+            {
+              "name": "Rasmussen, Angela L."
+            },
+            {
+              "name": "Falzarano, Darryl"
+            },
+            {
+              "name": "Bushmaker, Trenton"
+            },
+            {
+              "name": "Feldmann, Friederike"
+            },
+            {
+              "name": "Brining, Douglas L."
+            },
+            {
+              "name": "Fischer, Elizabeth R."
+            },
+            {
+              "name": "Martellaro, Cynthia"
+            },
+            {
+              "name": "Okumura, Atsushi"
+            },
+            {
+              "name": "Chang, Jean"
+            },
+            {
+              "name": "Scott, Dana"
+            },
+            {
+              "name": "Benecke, Arndt G."
+            },
+            {
+              "name": "Katze, Michael G."
+            },
+            {
+              "name": "Feldmann, Heinz"
+            },
+            {
+              "name": "Munster, Vincent J."
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "Middle East respiratory syndrome coronavirus",
+                  "MERSCoV"
+                ],
+                "subject": [
+                  "rhesus macaques"
+                ]
+              }
+            ]
+          },
+          "description": "In 2012, a novel betacoronavirus, designated Middle East respiratory syndrome coronavirus or MERS-CoV and associated with severe respiratory disease in humans, emerged in the Arabian Peninsula. To date, 108 human cases have been reported, including cases of human-to-human transmission. The availability of an animal disease model is essential for understanding pathogenesis and developing effective countermeasures. Upon a combination of intratracheal, ocular, oral, and intranasal inoculation with 7 \u00d7 106 50\\% tissue culture infectious dose of the MERS-CoV isolate HCoV-EMC/2012, rhesus macaques developed a transient lower respiratory tract infection. Clinical signs, virus shedding, virus replication in respiratory tissues, gene expression, and cytokine and chemokine profiles peaked early in infection and decreased over time. MERS-CoV caused a multifocal, mild to marked interstitial pneumonia, with virus replication occurring mainly in alveolar pneumocytes. This tropism of MERS-CoV for the lower respiratory tract may explain the severity of the disease observed in humans and the, up to now, limited human-to-human transmission.",
+          "doi": "10.1073/pnas.1310744110",
+          "journal": {
+            "issue": "41",
+            "pages": "16598--16603",
+            "title": "Proceedings of the National Academy of Sciences",
+            "volume": "110"
+          },
+          "keywords": [
+            "covid",
+            "virus-host",
+            "covid-19",
+            "biotic associations",
+            "pathogen-host",
+            "pathogens",
+            "emerging infectious disease",
+            "CETAF-taskforce",
+            "Coronaviridae",
+            "Viridae",
+            "biotic interaction",
+            "DPP4",
+            "corona viruses",
+            "biotic relations"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2013-10-31",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949270"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949269"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Middle East respiratory syndrome coronavirus (MERS-CoV) causes transient lower respiratory tract infection in rhesus macaques"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:12.371784+00:00"
+      },
+      {
+        "conceptrecid": "3949267",
+        "created": "2020-07-17T00:54:21.544705+00:00",
+        "doi": "10.1093/infdis/jiy018",
+        "files": [
+          {
+            "bucket": "d82377d0-70e0-45b0-abde-424b688b47c2",
+            "checksum": "md5:8fb295be32dbc43d5c4aad1c8c651857",
+            "key": "JInfectDis.218.2.197-207.pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/d82377d0-70e0-45b0-abde-424b688b47c2/JInfectDis.218.2.197-207.pdf"
+            },
+            "size": 8235781,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949268,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1093/infdis/jiy018.svg",
+          "bucket": "https://zenodo.org/api/files/d82377d0-70e0-45b0-abde-424b688b47c2",
+          "doi": "https://doi.org/10.1093/infdis/jiy018",
+          "html": "https://zenodo.org/record/3949268",
+          "latest": "https://zenodo.org/api/records/3949268",
+          "latest_html": "https://zenodo.org/record/3949268",
+          "self": "https://zenodo.org/api/records/3949268"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Lau, Susanna K. P."
+            },
+            {
+              "name": "Zhang, Libiao"
+            },
+            {
+              "name": "Luk, Hayes K. H."
+            },
+            {
+              "name": "Xiong, Lifeng"
+            },
+            {
+              "name": "Peng, Xingwen"
+            },
+            {
+              "name": "Li, Kenneth S. M."
+            },
+            {
+              "name": "He, Xiangyang"
+            },
+            {
+              "name": "Zhao, Pyrear Su-Hui"
+            },
+            {
+              "name": "Fan, Rachel Y. Y."
+            },
+            {
+              "name": "Wong, Antonio C. P."
+            },
+            {
+              "name": "Ahmed, Syed Shakeel"
+            },
+            {
+              "name": "Cai, Jian-Piao"
+            },
+            {
+              "name": "Chan, Jasper F. W."
+            },
+            {
+              "name": "Sun, Yinyan"
+            },
+            {
+              "name": "Jin, Dongyan"
+            },
+            {
+              "name": "Chen, Honglin"
+            },
+            {
+              "name": "Lau, Terrence C. K."
+            },
+            {
+              "name": "Kok, Raven K. H."
+            },
+            {
+              "name": "Li, Wenhui"
+            },
+            {
+              "name": "Yuen, Kwok-Yung"
+            },
+            {
+              "name": "Woo, Patrick C. Y."
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "Pipistrellus bat CoV HKU5",
+                  "Pi-BatCoV HKU5"
+                ],
+                "subject": [
+                  "Pipistrellus abramus",
+                  "Japanese pipistrelle"
+                ]
+              },
+              {
+                "object": [
+                  "Pipistrellus bat CoV HKU5",
+                  "Pi-BatCoV HKU5"
+                ],
+                "subject": [
+                  "Pipistrellus",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "Tylonycteris bat CoV HKU4",
+                  "Ty-BatCoV HKU4"
+                ],
+                "subject": [
+                  "Tylonycteris pachypus",
+                  "Lesser bamboo bat"
+                ]
+              },
+              {
+                "object": [
+                  "Tylonycteris bat CoV HKU4",
+                  "Ty-BatCoV HKU4"
+                ],
+                "subject": [
+                  "Tylonycteris",
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "Hp-BatCoV HKU25"
+                ],
+                "subject": [
+                  "Chinese pipistrelle bats"
+                ]
+              },
+              {
+                "object": [
+                  "Middle East Respiratory Syndrome coronavirus",
+                  "MERS-CoV"
+                ],
+                "subject": [
+                  "bat"
+                ]
+              },
+              {
+                "object": [
+                  "Middle East Respiratory Syndrome coronavirus",
+                  "MERS-CoV"
+                ],
+                "subject": [
+                  "dromedaries"
+                ]
+              }
+            ]
+          },
+          "description": "Although bats are known to harbor Middle East Respiratory Syndrome coronavirus (MERS-CoV)-related viruses, the role of bats in the evolutionary origin and pathway remains obscure. We identified a novel MERS-CoV-related betacoronavirus, Hp-BatCoV HKU25, from Chinese pipistrelle bats. Although it is closely related to MERS-CoV in most genome regions, its spike protein occupies a phylogenetic position between that of Ty-BatCoV HKU4 and Pi-BatCoV HKU5. Because Ty-BatCoV HKU4 but not Pi-BatCoV HKU5 can use the MERS-CoV receptor human dipeptidyl peptidase 4 (hDPP4) for cell entry, we tested the ability of Hp-BatCoV HKU25 to bind and use hDPP4. The HKU25-receptor binding domain (RBD) can bind to hDPP4 protein and hDPP4-expressing cells, but it does so with lower efficiency than that of MERS-RBD. Pseudovirus assays showed that HKU25-spike can use hDPP4 for entry to hDPP4-expressing cells, although with lower efficiency than that of MERS-spike and HKU4-spike. Our findings support a bat origin of MERS-CoV and suggest that bat CoV spike proteins may have evolved in a stepwise manner for binding to hDPP4.",
+          "doi": "10.1093/infdis/jiy018",
+          "journal": {
+            "issue": "2",
+            "pages": "197--207",
+            "title": "The Journal of Infectious Diseases",
+            "volume": "218"
+          },
+          "keywords": [
+            "Phylogeny",
+            "Evolution",
+            "Coronavirus",
+            "Virus Internalization",
+            "Sequence Analysis",
+            "corona viruses",
+            "virus-host",
+            "Molecular",
+            "biotic associations",
+            "Humans",
+            "pathogen-host",
+            "Chiroptera",
+            "CETAF-taskforce",
+            "biotic interaction",
+            "Betacoronavirus",
+            "DNA",
+            "HEK293 Cells",
+            "Dipeptidyl Peptidase 4",
+            "Protein Binding",
+            "Spike Glycoprotein",
+            "Coronaviridae",
+            "covid",
+            "Virus",
+            "covid-19",
+            "pathogens",
+            "Viridae",
+            "Receptors",
+            "biotic relations",
+            "Animals"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2018-06-30",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949268"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949267"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Receptor Usage of a Novel Bat Lineage C Betacoronavirus Reveals Evolution of Middle East Respiratory Syndrome-Related Coronavirus Spike Proteins for Human Dipeptidyl Peptidase 4 Binding"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:13.940782+00:00"
+      },
+      {
+        "conceptrecid": "3949265",
+        "created": "2020-07-17T00:54:17.503510+00:00",
+        "doi": "10.1007/s00705-013-1659-x",
+        "files": [
+          {
+            "bucket": "fad8bf1a-afc6-4ed1-b49e-f79f6870ea30",
+            "checksum": "md5:fdf63f756fad1c8200a27abdb49dae9d",
+            "key": "ArchVirol.158.1631\u20131636 .pdf",
+            "links": {
+              "self": "https://zenodo.org/api/files/fad8bf1a-afc6-4ed1-b49e-f79f6870ea30/ArchVirol.158.1631%E2%80%931636%20.pdf"
+            },
+            "size": 365131,
+            "type": "pdf"
+          }
+        ],
+        "id": 3949266,
+        "links": {
+          "badge": "https://zenodo.org/badge/doi/10.1007/s00705-013-1659-x.svg",
+          "bucket": "https://zenodo.org/api/files/fad8bf1a-afc6-4ed1-b49e-f79f6870ea30",
+          "doi": "https://doi.org/10.1007/s00705-013-1659-x",
+          "html": "https://zenodo.org/record/3949266",
+          "latest": "https://zenodo.org/api/records/3949266",
+          "latest_html": "https://zenodo.org/record/3949266",
+          "self": "https://zenodo.org/api/records/3949266"
+        },
+        "metadata": {
+          "access_right": "open",
+          "access_right_category": "success",
+          "communities": [
+            {
+              "id": "biosyslit"
+            },
+            {
+              "id": "coviho"
+            },
+            {
+              "id": "globalbioticinteractions"
+            }
+          ],
+          "contributors": [
+            {
+              "name": "Plazi",
+              "type": "DataCurator"
+            }
+          ],
+          "creators": [
+            {
+              "name": "Zhang, Qian"
+            },
+            {
+              "name": "Hu, Ruiming"
+            },
+            {
+              "name": "Tang, Xibiao"
+            },
+            {
+              "name": "Wu, Chenglong"
+            },
+            {
+              "name": "He, Qigai"
+            },
+            {
+              "name": "Zhao, Zhanqin"
+            },
+            {
+              "name": "Chen, Huanchun"
+            },
+            {
+              "name": "Wu, Bin"
+            }
+          ],
+          "custom": {
+            "obo:RO_0002453": [
+              {
+                "object": [
+                  "Porcine epidemic diarrhea virus",
+                  "PEDV"
+                ],
+                "subject": [
+                  "pig"
+                ]
+              }
+            ]
+          },
+          "description": "Between February 2011 and February 2012, 985 and 324 samples were collected from diarrheal and healthy pigs, respectively, to detect porcine epidemic diarrhea virus (PEDV), porcine kobuvirus (PKoV), porcine bocavirus (PBoV), porcine group A rotavirus (GARV), and transmissible gastroenteritis virus (TGEV). PEDV and PKoV clearly predominated in diarrheal pigs. Compared to healthy pigs, a substantial prevalence of mixed infections was observed in diarrheal pigs (72.3\u00a0\\%) (P {\\textless} 0.001). All of the coinfections were grouped into 13 patterns. The results of quantitative PCR showed PEDV in diarrheal pigs had a slightly higher mean viral load than that in healthy pigs (7.9 \u00d7 10(6) versus 2.0 \u00d710(5) copies/g of stool), while similar mean viral loads were observed for PKoV and PBoV. These findings reveal the severity of coinfections in diarrheal disease and suggest that attention should be paid to synthetic administration and vaccination for its prevention and control.",
+          "doi": "10.1007/s00705-013-1659-x",
+          "journal": {
+            "issue": "8",
+            "pages": "1631--1636",
+            "title": "Archives of Virology",
+            "volume": "158"
+          },
+          "keywords": [
+            "Real-Time Polymerase Chain Reaction",
+            "Virus Diseases",
+            "corona viruses",
+            "Swine",
+            "virus-host",
+            "Viruses",
+            "biotic associations",
+            "China",
+            "pathogen-host",
+            "CETAF-taskforce",
+            "biotic interaction",
+            "Viral Load",
+            "Coronaviridae",
+            "Swine Diseases",
+            "covid",
+            "covid-19",
+            "Diarrhea",
+            "Prevalence",
+            "pathogens",
+            "Viridae",
+            "Coinfection",
+            "biotic relations",
+            "Animals"
+          ],
+          "language": "eng",
+          "license": {
+            "id": "CC-BY-4.0"
+          },
+          "part_of": {
+            "pages": "",
+            "title": ""
+          },
+          "publication_date": "2013-08-31",
+          "relations": {
+            "version": [
+              {
+                "count": 1,
+                "index": 0,
+                "is_last": true,
+                "last_child": {
+                  "pid_type": "recid",
+                  "pid_value": "3949266"
+                },
+                "parent": {
+                  "pid_type": "recid",
+                  "pid_value": "3949265"
+                }
+              }
+            ]
+          },
+          "resource_type": {
+            "subtype": "article",
+            "title": "Journal article",
+            "type": "publication"
+          },
+          "title": "Occurrence and investigation of enteric viral infections in pigs with diarrhea in China"
+        },
+        "owners": [
+          1161
+        ],
+        "revision": 3,
+        "stats": {
+          "downloads": 0.0,
+          "unique_downloads": 0.0,
+          "unique_views": 0.0,
+          "version_downloads": 0.0,
+          "version_unique_downloads": 0.0,
+          "version_unique_views": 0.0,
+          "version_views": 0.0,
+          "version_volume": 0.0,
+          "views": 0.0,
+          "volume": 0.0
+        },
+        "updated": "2020-07-17T12:27:15.328188+00:00"
+      }
+    ],
+    "total": 160
+  },
+  "links": {
+    "next": "https://zenodo.org/api/records/?sort=mostrecent&custom=%5Bobo%3ARO_0002453%5D%3A%5B%3A%5D&page=2&size=10",
+    "self": "https://zenodo.org/api/records/?sort=mostrecent&custom=%5Bobo%3ARO_0002453%5D%3A%5B%3A%5D&page=1&size=10"
+  }
+}
