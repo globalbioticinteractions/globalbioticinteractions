@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum TaxonomyProvider {
-    ITIS("ITIS:"),
+    ITIS("ITIS:", "https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value="),
     NBN("NBN:"),
     WORMS("WORMS:"),
     NCBI("NCBI:"),
@@ -14,7 +14,7 @@ public enum TaxonomyProvider {
     GEONAMES("GEONAMES:"),
     WIKIPEDIA("W:"),
     ENVO("ENVO:"),
-    GBIF("GBIF:", "https://www.gbif.org/species/"),
+    GBIF("GBIF:", "https://www.gbif.org/species/", "http://www.gbif.org/species/"),
     ATLAS_OF_LIVING_AUSTRALIA("ALATaxon:"),
     AUSTRALIAN_FAUNAL_DIRECTORY("AFD:"),
     BIODIVERSITY_AUSTRALIA("urn:lsid:biodiversity.org.au:apni.taxon:"),

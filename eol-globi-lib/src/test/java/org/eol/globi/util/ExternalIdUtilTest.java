@@ -47,7 +47,25 @@ public class ExternalIdUtilTest {
     @Test
     public void gbifTaxon() {
         assertThat(ExternalIdUtil.taxonomyProviderFor("https://www.gbif.org/species/5110848"), is(TaxonomyProvider.GBIF));
+    }
+
+    @Test
+    public void stripIdPrefix() {
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.GBIF, "https://www.gbif.org/species/5110848"), is("5110848"));
+    }
+
+    @Test
+    public void itisTaxon() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=535920"),
+                is(TaxonomyProvider.ITIS)
+        );
+    }
+
+    @Test
+    public void stripITISIdPrefix() {
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.ITIS, "https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=535920"),
+                is("535920"));
     }
 
     @Test
