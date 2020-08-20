@@ -361,7 +361,7 @@ public class StudyImporterForMetaTableTest {
         final StudyImporterForMetaTable.Column column = new StudyImporterForMetaTable.Column("foo", "string");
         column.setValueUrl("http://purl.obolibrary.org/obo/NCBITaxon_{foo}");
         final String parsedValue = StudyImporterForMetaTable.parseValue("123", column);
-        assertThat(parsedValue, is("NCBITaxon:123"));
+        assertThat(parsedValue, is("NCBI:123"));
     }
 
     @Test
@@ -460,9 +460,9 @@ public class StudyImporterForMetaTableTest {
 
         assertThat(links.size(), is(9));
 
-        assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_ID), is("NCBITaxon:5499"));
+        assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_ID), is("NCBI:5499"));
         assertThat(links.get(1).get(StudyImporterForTSV.INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002556"));
-        assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_ID), is("NCBITaxon:4081"));
+        assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_ID), is("NCBI:4081"));
     }
 
     @Test

@@ -361,8 +361,8 @@ public class StudyImporterForMetaTable extends StudyImporterWithListener {
     private static String populateValueUrlOrNull(String value, Column column, String convertedValue) {
         if (StringUtils.isNotBlank(column.getValueUrl())) {
             String replaced = column.getValueUrl().replaceFirst("\\{" + column.getName() + "}", "");
-            String prefix = ExternalIdUtil.prefixForUrl(replaced);
-            convertedValue = (StringUtils.isBlank(prefix) ? replaced : prefix) + value;
+            TaxonomyProvider provider = ExternalIdUtil.taxonomyProviderFor(replaced);
+            convertedValue = (provider == null ? replaced : provider.getIdPrefix()) + value;
         }
         return convertedValue;
     }

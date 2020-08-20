@@ -38,7 +38,6 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.ID_PREFIX_BIODIVERSITY_AUSTRALIA, "http://id.biodiversity.org.au/apni.taxon/");
         put(TaxonomyProvider.ID_PREFIX_INDEX_FUNGORUM, "http://www.indexfungorum.org/names/NamesRecord.asp?RecordID=");
         put(TaxonomyProvider.ID_PREFIX_NCBI, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=");
-        put(TaxonomyProvider.NCBITaxon.getIdPrefix(), "http://purl.obolibrary.org/obo/NCBITaxon_");
         put(TaxonomyProvider.ID_PREFIX_NBN, "https://data.nbn.org.uk/Taxa/");
         put("doi:", "https://doi.org/");
         put("DOI:", "https://doi.org/");
