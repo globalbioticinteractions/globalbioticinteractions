@@ -213,11 +213,14 @@ public class ExternalIdUtil {
     }
 
     public static String stripPrefix(TaxonomyProvider provider, String externalId) {
-        String stripped = externalId;
+        String strippedShortest = externalId;
         for (String idPrefix : provider.getIdPrefixes()) {
-            stripped = StringUtils.replace(stripped, idPrefix, "");
+            String stripped = StringUtils.replace(externalId, idPrefix, "");
+            if (StringUtils.length(stripped) < StringUtils.length(strippedShortest)) {
+                strippedShortest = stripped;
+            }
         }
-        return stripped;
+        return strippedShortest;
     }
 
     public static String prefixForUrl(String url) {

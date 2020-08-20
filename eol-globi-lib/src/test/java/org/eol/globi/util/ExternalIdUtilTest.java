@@ -63,6 +63,30 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void ncbiTaxon() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("NCBI:txid9606"),
+                is(TaxonomyProvider.NCBI)
+        );
+    }
+
+    @Test
+    public void ncbiTaxonStripPrefix() {
+        assertThat(
+                ExternalIdUtil.stripPrefix(TaxonomyProvider.NCBI, "NCBI:txid9606"),
+                is("9606")
+        );
+    }
+
+    @Test
+    public void ncbiOBOTaxon() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("http://purl.obolibrary.org/obo/NCBITaxon_9606"),
+                is(TaxonomyProvider.NCBI)
+        );
+    }
+
+    @Test
     public void stripITISIdPrefix() {
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.ITIS, "https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=535920"),
                 is("535920"));
