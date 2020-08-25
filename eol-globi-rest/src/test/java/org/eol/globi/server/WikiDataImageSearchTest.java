@@ -153,6 +153,7 @@ public class WikiDataImageSearchTest {
             put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA, "10857762");
             put(TaxonomyProvider.INATURALIST_TAXON, "43584");
             put(TaxonomyProvider.WIKIDATA, "Q15978631");
+            put(TaxonomyProvider.MSW, "12100795");
         }}));
     }
 
@@ -170,6 +171,7 @@ public class WikiDataImageSearchTest {
             put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA, "10857762");
             put(TaxonomyProvider.INATURALIST_TAXON, "43584");
             put(TaxonomyProvider.WIKIDATA, "Q15978631");
+            put(TaxonomyProvider.MSW, "12100795");
         }}));
     }
 

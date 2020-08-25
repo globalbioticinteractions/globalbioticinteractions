@@ -47,6 +47,7 @@ public class WikiDataImageSearch implements ImageSearch {
         put(TaxonomyProvider.GBIF, "P846");
         put(TaxonomyProvider.INATURALIST_TAXON, "P3151");
         put(TaxonomyProvider.NBN, "P3240");
+        put(TaxonomyProvider.MSW, "P959");
     }};
 
     public static final Map<String, TaxonomyProvider> WIKIDATA_TO_PROVIDER = new TreeMap<String, TaxonomyProvider>() {{
@@ -60,6 +61,7 @@ public class WikiDataImageSearch implements ImageSearch {
         put("P846", TaxonomyProvider.GBIF);
         put("P3151", TaxonomyProvider.INATURALIST_TAXON);
         put("P3240", TaxonomyProvider.NBN);
+        put("P959", TaxonomyProvider.MSW);
     }};
 
     @Override
