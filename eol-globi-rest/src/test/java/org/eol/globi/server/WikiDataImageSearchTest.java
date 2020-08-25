@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.SearchContext;
+import org.eol.globi.service.WikidataUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class WikiDataImageSearchTest {
 
     @Test
     public void createITISLionQuery() {
-        String sparqlQuery = WikiDataImageSearch.createSparqlQuery("ITIS:183803", "en");
+        String sparqlQuery = WikidataUtil.createSparqlQuery("ITIS:183803", "en");
         assertThat(sparqlQuery, is("SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
                 "  ?wdpage wdt:P18 ?pic .\n" +
                 "  ?wdpage wdt:P815 \"183803\" .\n" +
@@ -56,7 +57,7 @@ public class WikiDataImageSearchTest {
 
     @Test
     public void createWikiDataLionQuery() {
-        String sparqlQuery = WikiDataImageSearch.createSparqlQuery("WD:Q140", "en");
+        String sparqlQuery = WikidataUtil.createSparqlQuery("WD:Q140", "en");
         assertThat(sparqlQuery, is("SELECT ?item ?pic ?name WHERE {\n" +
                 "  wd:Q140 wdt:P18 ?pic .\n" +
                 "  SERVICE wikibase:label {\n" +
@@ -124,56 +125,5 @@ public class WikiDataImageSearchTest {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("foo:bar");
         assertNull(taxonImage);
     }
-
-    @Test
-    public void lookupProviders() throws IOException, URISyntaxException {
-        Collection<String> providers = new WikiDataImageSearch().findTaxonIdProviders();
-        final Collection<String> properties = WikiDataImageSearch.PROVIDER_TO_WIKIDATA.values();
-        assertThat(properties, everyItem(isIn(providers)));
-    }
-
-    @Test
-    public void lookupWikiDataToProviders() throws IOException, URISyntaxException {
-        Collection<String> providers = new WikiDataImageSearch().findTaxonIdProviders();
-        final Collection<String> properties = WikiDataImageSearch.WIKIDATA_TO_PROVIDER.keySet();
-        assertThat(properties, everyItem(isIn(providers)));
-    }
-
-    @Test
-    public void lookupTaxonLinks() throws IOException, URISyntaxException {
-        Map<TaxonomyProvider, String> relatedTaxonIds =
-                new WikiDataImageSearch().findRelatedTaxonIds("NCBI:9606");
-
-        assertThat(relatedTaxonIds, is(new TreeMap<TaxonomyProvider, String>() {{
-            put(TaxonomyProvider.ITIS,"180092");
-            put(TaxonomyProvider.NBN, "NHMSYS0000376773");
-            put(TaxonomyProvider.NCBI, "9606");
-            put(TaxonomyProvider.EOL, "327955");
-            put(TaxonomyProvider.GBIF, "2436436");
-            put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA, "10857762");
-            put(TaxonomyProvider.INATURALIST_TAXON, "43584");
-            put(TaxonomyProvider.WIKIDATA, "Q15978631");
-            put(TaxonomyProvider.MSW, "12100795");
-        }}));
-    }
-
-    @Test
-    public void lookupTaxonLinksByWDEntry() throws IOException, URISyntaxException {
-        Map<TaxonomyProvider, String> relatedTaxonIds =
-                new WikiDataImageSearch().findRelatedTaxonIds("WD:Q15978631");
-
-        assertThat(relatedTaxonIds, is(new TreeMap<TaxonomyProvider, String>() {{
-            put(TaxonomyProvider.ITIS,"180092");
-            put(TaxonomyProvider.NBN, "NHMSYS0000376773");
-            put(TaxonomyProvider.NCBI, "9606");
-            put(TaxonomyProvider.EOL, "327955");
-            put(TaxonomyProvider.GBIF, "2436436");
-            put(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA, "10857762");
-            put(TaxonomyProvider.INATURALIST_TAXON, "43584");
-            put(TaxonomyProvider.WIKIDATA, "Q15978631");
-            put(TaxonomyProvider.MSW, "12100795");
-        }}));
-    }
-
 
 }
