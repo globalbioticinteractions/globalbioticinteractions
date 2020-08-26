@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -56,7 +57,8 @@ public final class WikidataUtil {
         URI url = new URI("https", "query.wikidata.org", "/sparql", "query=" + sparql, null);
         LOG.info("executing sparql [" + url + "]");
         HttpGet httpGet = HttpUtil.httpGetJson(url);
-        return HttpUtil.executeAndRelease(httpGet, HttpUtil.getFailFastHttpClient());
+        final HttpClient failFastHttpClient = HttpUtil.getFailFastHttpClient();
+        return HttpUtil.executeAndRelease(httpGet, failFastHttpClient);
     }
 
     public static List<String> findTaxonIdProviders() throws IOException, URISyntaxException {
@@ -87,11 +89,8 @@ public final class WikidataUtil {
 
     public static Map<TaxonomyProvider, String> findRelatedTaxonIds(String externalId) throws IOException, URISyntaxException {
         Map<TaxonomyProvider, String> relatedIds = new TreeMap<>();
-        String sparql = "SELECT ?scheme ?urlScheme ?idRegex WHERE { " +
-                "?scheme wdt:P31 wd:Q42396390 . " +
-                //"?scheme wdt:P1630 ?urlScheme . " +
-                //"?scheme wdt:P1793 ?idRegex . " +
-                "} ";
+        String sparql
+                ;
         final TaxonomyProvider taxonomyProvider = ExternalIdUtil.taxonomyProviderFor(externalId);
         if (taxonomyProvider != null) {
             final String taxonId = ExternalIdUtil.stripPrefix(taxonomyProvider, externalId);
