@@ -79,6 +79,14 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void ncbiTaxonStripPrefixWhitespace() {
+        assertThat(
+                ExternalIdUtil.stripPrefix(TaxonomyProvider.NCBI, "NCBI:txid9606 "),
+                is("9606")
+        );
+    }
+
+    @Test
     public void ncbiOBOTaxon() {
         assertThat(
                 ExternalIdUtil.taxonomyProviderFor("http://purl.obolibrary.org/obo/NCBITaxon_9606"),

@@ -150,21 +150,6 @@ public class ExternalIdUtil {
         return provider;
     }
 
-    public static String taxonIdFor(String externalId) {
-        String taxonId = null;
-        if (StringUtils.isNotBlank(externalId)) {
-            for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
-                for (String idPrefix : prefix.getIdPrefixes()) {
-                    if (StringUtils.startsWith(externalId, idPrefix)) {
-                        taxonId = StringUtils.replace(externalId, idPrefix, "");
-                        break;
-                    }
-                }
-            }
-        }
-        return taxonId;
-    }
-
     public static String getUrlFromExternalId(String jsonString) {
         String externalId = null;
         try {
@@ -220,7 +205,7 @@ public class ExternalIdUtil {
                 strippedShortest = stripped;
             }
         }
-        return strippedShortest;
+        return StringUtils.trim(strippedShortest);
     }
 
     public static String prefixForUrl(String url) {
