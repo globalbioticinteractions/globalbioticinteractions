@@ -51,6 +51,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
         put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
         put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
+        put(TaxonomyProvider.MSW.getIdPrefix(), "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=");
     }};
 
     private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{

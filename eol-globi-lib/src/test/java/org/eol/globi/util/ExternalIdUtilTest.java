@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 
@@ -104,6 +105,18 @@ public class ExternalIdUtilTest {
     public void fishBaseMapping() {
         assertThat(ExternalIdUtil.urlForExternalId("FBC:SLB:SpecCode:69195"), is("http://sealifebase.org/Summary/SpeciesSummary.php?id=69195"));
         assertThat(ExternalIdUtil.urlForExternalId("FBC:FB:SpecCode:947"), is("http://fishbase.org/summary/947"));
+    }
+
+    @Test
+    public void mammalSpeciesOfTheWorldUrl() {
+        assertThat(ExternalIdUtil.urlForExternalId("MSW:12100795"), is("http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=12100795"));
+    }
+
+    @Test
+    public void mammalSpeciesOfTheWorldId() {
+        String url = "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=12100795";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.MSW));
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.MSW, url), is("12100795"));
     }
 
     @Test
