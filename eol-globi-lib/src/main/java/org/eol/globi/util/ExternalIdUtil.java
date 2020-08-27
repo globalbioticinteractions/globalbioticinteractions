@@ -24,7 +24,7 @@ public class ExternalIdUtil {
     private static final Map<String, String> PREFIX_MAP = new HashMap<String, String>() {{
         put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
         put(TaxonomyProvider.EOL_V2.getIdPrefix(), "https://doi.org/10.5281/zenodo.1495266#");
-        put(TaxonomyProvider.ID_PREFIX_WORMS, "http://www.marinespecies.org/aphia.php?p=taxdetails&id=");
+        put(TaxonomyProvider.ID_PREFIX_WORMS, "https://www.marinespecies.org/aphia.php?p=taxdetails&id=");
         put(TaxonomyProvider.ID_PREFIX_ENVO, "http://purl.obolibrary.org/obo/ENVO_");
         put(TaxonomyProvider.ID_PREFIX_WIKIPEDIA, "http://wikipedia.org/wiki/");
         put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
@@ -62,7 +62,8 @@ public class ExternalIdUtil {
     }};
 
     private static final Log LOG = LogFactory.getLog(ExternalIdUtil.class);
-    public static final Pattern LIKELY_ID_PATTERN = Pattern.compile(".*[:-].*");
+
+    private static final Pattern LIKELY_ID_PATTERN = Pattern.compile(".*[:-].*");
 
     public static String urlForExternalId(String externalId) {
         URI uri = null;
