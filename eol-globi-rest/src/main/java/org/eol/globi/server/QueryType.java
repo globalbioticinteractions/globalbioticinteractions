@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.collections4.list.TreeList;
 import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.server.util.ResultField;
@@ -64,7 +65,7 @@ public enum QueryType {
         }
         return argumentTypeValues.size() == 0
                 ? Collections.singletonList(RelTypes.COLLECTED)
-                : new ArrayList<>(argumentTypes);
+                : new TreeList<>(argumentTypes);
     }
 
     private static boolean isTaxonQueryOnly(Map parameterMap) {
