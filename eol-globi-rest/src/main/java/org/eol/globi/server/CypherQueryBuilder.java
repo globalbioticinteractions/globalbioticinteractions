@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.RequestHelper;
@@ -365,7 +365,7 @@ public class CypherQueryBuilder {
         final List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
         if (accordingTo.size() > 0) {
             appendStartClause2(parameterMap, Collections.<String>emptyList(), Collections.<String>emptyList(), query);
-            query.append(" MATCH study-[:" + createStudyRel(parameterMap) + "]->specimen-[:COLLECTED_AT]->location");
+            query.append(" MATCH study-[:" + createArgumentSelector(parameterMap) + "]->specimen-[:COLLECTED_AT]->location");
             query.append(" WITH DISTINCT(location) as loc");
         } else {
             query.append("START " + ALL_LOCATIONS_INDEX_SELECTOR);
@@ -579,15 +579,19 @@ public class CypherQueryBuilder {
     }
 
     protected static StringBuilder appendMatchAndWhereClause(List<String> interactionTypes, Map parameterMap, StringBuilder query, QueryType queryType) {
-        String interactionMatch = getInteractionMatch(createInteractionTypeSelector(interactionTypes), createStudyRel(parameterMap));
+        String interactionMatch = getInteractionMatch(createInteractionTypeSelector(interactionTypes), createArgumentSelector(parameterMap));
         query.append(" ")
                 .append(interactionMatch);
         addLocationClausesIfNecessary(query, parameterMap, queryType);
         return query;
     }
 
-    private static String createStudyRel(Map parameterMap) {
-        return QueryType.refutes(parameterMap) ? RelTypes.REFUTES.name() : RelTypes.COLLECTED.name();
+    private static String createArgumentSelector(Map parameterMap) {
+        final List<RelType> argumentTypes = QueryType.argumentTypes(parameterMap);
+        return argumentTypes
+                .stream()
+                .map(RelType::name)
+                .collect(Collectors.joining("|"));
     }
 
     private static String getInteractionMatch(String interactionTypeSelector, String studyRel) {
@@ -731,7 +735,7 @@ public class CypherQueryBuilder {
         }
 
         query.append("MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:")
-                .append(createStudyRel(parameterMap))
+                .append(createArgumentSelector(parameterMap))
                 .append("]-study-[:IN_DATASET]->dataset")
                 .append(", sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon");
         if (RequestHelper.isSpatialSearch(parameterMap)) {

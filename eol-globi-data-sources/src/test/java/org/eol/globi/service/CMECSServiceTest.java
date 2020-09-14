@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CMECSService;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.ExternalIdUtil;
@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -38,7 +39,15 @@ public class CMECSServiceTest {
         return new CMECSService(new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, in -> in);
+                if (!StringUtils.endsWith(resourceName.toString(), "cmecs4.accdb")) {
+                    throw new IOException("unexpected resource [" + resourceName + "]");
+                } else {
+                    try {
+                        return ResourceUtil.asInputStream(getClass().getResource("/org/eol/globi/service/cmecs4.accdb").toURI(), in -> in);
+                    } catch (URISyntaxException e) {
+                        throw new IOException("unexpected error", e);
+                    }
+                }
             }
 
         });

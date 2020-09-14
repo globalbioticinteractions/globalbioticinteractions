@@ -1,11 +1,22 @@
 package org.eol.globi.server;
 
 import org.eol.globi.domain.TaxonImage;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.SearchContext;
+import org.eol.globi.service.WikidataUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -33,7 +44,7 @@ public class WikiDataImageSearchTest {
 
     @Test
     public void createITISLionQuery() {
-        String sparqlQuery = new WikiDataImageSearch().createSparqlQuery("ITIS:183803", "en");
+        String sparqlQuery = WikidataUtil.createSparqlQuery("ITIS:183803", "en");
         assertThat(sparqlQuery, is("SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
                 "  ?wdpage wdt:P18 ?pic .\n" +
                 "  ?wdpage wdt:P815 \"183803\" .\n" +
@@ -46,7 +57,7 @@ public class WikiDataImageSearchTest {
 
     @Test
     public void createWikiDataLionQuery() {
-        String sparqlQuery = new WikiDataImageSearch().createSparqlQuery("WD:Q140", "en");
+        String sparqlQuery = WikidataUtil.createSparqlQuery("WD:Q140", "en");
         assertThat(sparqlQuery, is("SELECT ?item ?pic ?name WHERE {\n" +
                 "  wd:Q140 wdt:P18 ?pic .\n" +
                 "  SERVICE wikibase:label {\n" +

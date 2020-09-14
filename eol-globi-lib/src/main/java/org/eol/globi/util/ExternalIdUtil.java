@@ -24,7 +24,7 @@ public class ExternalIdUtil {
     private static final Map<String, String> PREFIX_MAP = new HashMap<String, String>() {{
         put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
         put(TaxonomyProvider.EOL_V2.getIdPrefix(), "https://doi.org/10.5281/zenodo.1495266#");
-        put(TaxonomyProvider.ID_PREFIX_WORMS, "http://www.marinespecies.org/aphia.php?p=taxdetails&id=");
+        put(TaxonomyProvider.ID_PREFIX_WORMS, "https://www.marinespecies.org/aphia.php?p=taxdetails&id=");
         put(TaxonomyProvider.ID_PREFIX_ENVO, "http://purl.obolibrary.org/obo/ENVO_");
         put(TaxonomyProvider.ID_PREFIX_WIKIPEDIA, "http://wikipedia.org/wiki/");
         put(TaxonomyProvider.ID_PREFIX_GULFBASE, "http://gulfbase.org/biogomx/biospecies.php?species=");
@@ -51,6 +51,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
         put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
         put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
+        put(TaxonomyProvider.MSW.getIdPrefix(), "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=");
     }};
 
     private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{
@@ -61,7 +62,8 @@ public class ExternalIdUtil {
     }};
 
     private static final Log LOG = LogFactory.getLog(ExternalIdUtil.class);
-    public static final Pattern LIKELY_ID_PATTERN = Pattern.compile(".*[:-].*");
+
+    private static final Pattern LIKELY_ID_PATTERN = Pattern.compile(".*[:-].*");
 
     public static String urlForExternalId(String externalId) {
         URI uri = null;
@@ -150,21 +152,6 @@ public class ExternalIdUtil {
         return provider;
     }
 
-    public static String taxonIdFor(String externalId) {
-        String taxonId = null;
-        if (StringUtils.isNotBlank(externalId)) {
-            for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
-                for (String idPrefix : prefix.getIdPrefixes()) {
-                    if (StringUtils.startsWith(externalId, idPrefix)) {
-                        taxonId = StringUtils.replace(externalId, idPrefix, "");
-                        break;
-                    }
-                }
-            }
-        }
-        return taxonId;
-    }
-
     public static String getUrlFromExternalId(String jsonString) {
         String externalId = null;
         try {
@@ -213,11 +200,14 @@ public class ExternalIdUtil {
     }
 
     public static String stripPrefix(TaxonomyProvider provider, String externalId) {
-        String stripped = externalId;
+        String strippedShortest = externalId;
         for (String idPrefix : provider.getIdPrefixes()) {
-            stripped = StringUtils.replace(stripped, idPrefix, "");
+            String stripped = StringUtils.replace(externalId, idPrefix, "");
+            if (StringUtils.length(stripped) < StringUtils.length(strippedShortest)) {
+                strippedShortest = stripped;
+            }
         }
-        return stripped;
+        return StringUtils.trim(strippedShortest);
     }
 
     public static String prefixForUrl(String url) {

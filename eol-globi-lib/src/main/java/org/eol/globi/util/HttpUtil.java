@@ -1,30 +1,22 @@
 package org.eol.globi.util;
 
 import com.Ostermiller.util.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.eol.globi.Version;
 
@@ -55,16 +47,13 @@ public class HttpUtil {
                     .setConnectTimeout(FIVE_SECONDS)
                     .build();
 
-            HttpClientBuilder httpClientBuilder = HttpClientBuilder
-                    .create();
-            failFastHttpClient = httpClientBuilder
-                    .setDefaultRequestConfig(config).build();
+            failFastHttpClient = HttpClientBuilder
+                    .create()
+                    .disableCookieManagement()
+                    .setDefaultRequestConfig(config)
+                    .build();
         }
         return failFastHttpClient;
-    }
-
-    public static CloseableHttpClient getHttpClientNoSSLCheck() {
-        return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier()).build();
     }
 
     // should only be called once
@@ -105,6 +94,7 @@ public class HttpUtil {
                 .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
                 .setUserAgent("globalbioticinteractions/" + Version.getVersion() + " (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)")
                 .setServiceUnavailableRetryStrategy(new CustomServiceUnavailableStrategy())
+                .disableCookieManagement()
                 .setDefaultRequestConfig(config);
     }
 

@@ -1,10 +1,18 @@
 package org.eol.globi.server;
 
+import org.apache.commons.collections4.list.TreeList;
+import org.eol.globi.domain.RelType;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.server.util.ResultField;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public enum QueryType {
@@ -42,7 +50,22 @@ public enum QueryType {
 
     public static boolean refutes(Map parameterMap) {
         return nonEmptyOrTrue(parameterMap, ParamName.REFUTES);
+    }
 
+    public static List<RelType> argumentTypes(Map parameterMap) {
+        List<String> argumentTypeValues = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.REFUTES);
+
+        Set<RelType> argumentTypes = new HashSet<>();
+        for (String argumentType : argumentTypeValues) {
+            if ("t".equalsIgnoreCase(argumentType) || "true".equalsIgnoreCase(argumentType)) {
+                argumentTypes.add(RelTypes.REFUTES);
+            } else if ("f".equalsIgnoreCase(argumentType) || "false".equalsIgnoreCase(argumentType)) {
+                argumentTypes.add(RelTypes.COLLECTED);
+            }
+        }
+        return argumentTypeValues.size() == 0
+                ? Collections.singletonList(RelTypes.COLLECTED)
+                : new TreeList<>(argumentTypes);
     }
 
     private static boolean isTaxonQueryOnly(Map parameterMap) {

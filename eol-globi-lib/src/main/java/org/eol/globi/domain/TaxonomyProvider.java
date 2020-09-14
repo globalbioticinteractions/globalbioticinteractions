@@ -5,14 +5,14 @@ import java.util.List;
 
 public enum TaxonomyProvider {
     ITIS("ITIS:", "https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value="),
-    NBN("NBN:"),
-    WORMS("WORMS:"),
+    NBN("NBN:", "https://data.nbn.org.uk/Taxa/"),
+    WORMS("WORMS:", "https://www.marinespecies.org/aphia.php?p=taxdetails&id="),
     NCBI("NCBI:", "NCBITaxon:", "NCBI:txid", "http://purl.obolibrary.org/obo/NCBITaxon_"),
     EOL("EOL:", "http://eol.org/pages/", "https://eol.org/pages/"),
     EOL_V2("EOL_V2:"),
-    GEONAMES("GEONAMES:"),
-    WIKIPEDIA("W:"),
-    ENVO("ENVO:"),
+    GEONAMES("GEONAMES:", "http://www.geonames.org/"),
+    WIKIPEDIA("W:", "http://wikipedia.org/wiki/"),
+    ENVO("ENVO:", "http://purl.obolibrary.org/obo/ENVO_"),
     GBIF("GBIF:", "https://www.gbif.org/species/", "http://www.gbif.org/species/"),
     ATLAS_OF_LIVING_AUSTRALIA("ALATaxon:"),
     AUSTRALIAN_FAUNAL_DIRECTORY("AFD:"),
@@ -21,13 +21,14 @@ public enum TaxonomyProvider {
     INDEX_FUNGORUM("IF:"),
     OPEN_TREE_OF_LIFE("OTT:"),
     NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:"),
-    INATURALIST_TAXON("INAT_TAXON:"),
-    WIKIDATA("WD:"),
+    INATURALIST_TAXON("INAT_TAXON:", "https://inaturalist.org/taxa/"),
+    WIKIDATA("WD:", "http://www.wikidata.org/entity/"),
     FISHBASE_CACHE("FBC:"),
-    FISHBASE_SPECCODE("FBC:FB:SpecCode:"),
-    SEALIFEBASE_SPECCODE("FBC:SLB:SpecCode:"),
+    FISHBASE_SPECCODE("FBC:FB:SpecCode:", "http://fishbase.org/summary/"),
+    SEALIFEBASE_SPECCODE("FBC:SLB:SpecCode:", "http://sealifebase.org/Summary/SpeciesSummary.php?id="),
     BATPLANT("batbase:taxon:"),
     OPEN_BIODIV("http://openbiodiv.net/"),
+    MSW("MSW:", "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id="),
     GULFBASE("BioGoMx:");
 
     private final List<String> idPrefixes;
