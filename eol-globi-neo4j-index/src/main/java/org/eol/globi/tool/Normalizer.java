@@ -14,9 +14,9 @@ import org.eol.globi.Version;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactoryLocal;
-import org.eol.globi.data.StudyImporter;
+import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterForRegistry;
+import org.eol.globi.data.DatasetImporterForRegistry;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.export.GraphExporterImpl;
@@ -248,12 +248,12 @@ public class Normalizer {
 
             LOG.info("found dataset namespaces: {" + namespacelist + "}");
 
-            StudyImporter importer = new StudyImporterForRegistry(new ParserFactoryLocal(), factory, registry);
+            DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), factory, registry);
             importer.setDataset(new DatasetLocal(inStream -> inStream));
             importer.setLogger(new NullImportLogger());
             importer.importStudy();
         } catch (StudyImporterException | DatasetRegistryException e) {
-            LOG.error("problem encountered while importing [" + StudyImporterForRegistry.class.getName() + "]", e);
+            LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
         }
         EcoregionFinder regionFinder = getEcoregionFinder();
         if (regionFinder != null) {

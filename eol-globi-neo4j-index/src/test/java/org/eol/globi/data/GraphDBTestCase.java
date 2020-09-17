@@ -110,7 +110,7 @@ public abstract class GraphDBTestCase {
         return graphDb;
     }
 
-    protected void importStudy(StudyImporter importer) throws StudyImporterException {
+    protected void importStudy(DatasetImporter importer) throws StudyImporterException {
         importer.importStudy();
         resolveNames();
     }

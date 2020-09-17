@@ -1,5 +1,5 @@
 package org.eol.globi.data;
 
 public interface StudyImporterConfigurator {
-    void configure(StudyImporter studyImporter);
+    void configure(DatasetImporter datasetImporter);
 }

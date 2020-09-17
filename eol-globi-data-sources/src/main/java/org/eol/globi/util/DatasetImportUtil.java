@@ -8,12 +8,12 @@ import org.eol.globi.data.InteractionListener;
 import org.eol.globi.data.LogUtil;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
-import org.eol.globi.data.StudyImporter;
+import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterConfigurator;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterForRSS;
-import org.eol.globi.data.StudyImporterForTSV;
-import org.eol.globi.data.StudyImporterWithListener;
+import org.eol.globi.data.DatasetImporterForRSS;
+import org.eol.globi.data.DatasetImporterForTSV;
+import org.eol.globi.data.DatasetImporterWithListener;
 import org.eol.globi.service.StudyImporterFactoryImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -30,13 +30,13 @@ public class DatasetImportUtil {
     public static void importDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset, NodeFactory nodeFactory, ImportLogger logger) throws StudyImporterException {
         nodeFactory.getOrCreateDataset(dataset);
         NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
-        StudyImporter studyImporter = new StudyImporterFactoryImpl(nodeFactoryForDataset).createImporter(dataset);
-        studyImporter.setDataset(dataset);
+        DatasetImporter datasetImporter = new StudyImporterFactoryImpl(nodeFactoryForDataset).createImporter(dataset);
+        datasetImporter.setDataset(dataset);
         if (logger != null) {
-            studyImporter.setLogger(logger);
+            datasetImporter.setLogger(logger);
         }
-        studyImporterConfigurator.configure(studyImporter);
-        studyImporter.importStudy();
+        studyImporterConfigurator.configure(datasetImporter);
+        datasetImporter.importStudy();
     }
 
     public static void resolveAndImportDatasets(List<Dataset> datasetDependencies,
@@ -62,11 +62,11 @@ public class DatasetImportUtil {
         for (Dataset dataset : datasets) {
             try {
                 importDataset(studyImporter -> {
-                    if (studyImporter instanceof StudyImporterWithListener) {
+                    if (studyImporter instanceof DatasetImporterWithListener) {
                         final EnrichingInteractionListener interactionListener = new EnrichingInteractionListener(
                                 interactionsWithUnresolvedOccurrenceIds,
-                                ((StudyImporterWithListener) studyImporter).getInteractionListener());
-                        ((StudyImporterWithListener) studyImporter).setInteractionListener(interactionListener);
+                                ((DatasetImporterWithListener) studyImporter).getInteractionListener());
+                        ((DatasetImporterWithListener) studyImporter).setInteractionListener(interactionListener);
                     }
 
                 }, dataset, nodeFactory, logger);
@@ -84,8 +84,8 @@ public class DatasetImportUtil {
                 try {
                     importDataset(studyImporter -> {
                         studyImporter.setLogger(logger);
-                        if (studyImporter instanceof StudyImporterWithListener) {
-                            ((StudyImporterWithListener) studyImporter)
+                        if (studyImporter instanceof DatasetImporterWithListener) {
+                            ((DatasetImporterWithListener) studyImporter)
                                     .setInteractionListener(indexingListener);
                         }
                     }, dataset, nodeFactory, logger);
@@ -97,7 +97,7 @@ public class DatasetImportUtil {
     }
 
     public static boolean needsIndexing(Dataset dataset) {
-        return StringUtils.equals(dataset.getOrDefault(StudyImporterForRSS.HAS_DEPENDENCIES, null), "true");
+        return StringUtils.equals(dataset.getOrDefault(DatasetImporterForRSS.HAS_DEPENDENCIES, null), "true");
     }
 
     public static class EnrichingInteractionListener implements InteractionListener {
@@ -112,17 +112,17 @@ public class DatasetImportUtil {
         @Override
         public void newLink(Map<String, String> link) throws StudyImporterException {
             Map<String, String> enrichedProperties = null;
-            if (link.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)) {
-                String targetOccurrenceId = link.get(StudyImporterForTSV.TARGET_OCCURRENCE_ID);
+            if (link.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)) {
+                String targetOccurrenceId = link.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
                 Map<String, String> targetProperties = interactionsWithUnresolvedOccurrenceIds.get(targetOccurrenceId);
                 if (targetProperties != null) {
                     TreeMap<String, String> enrichedMap = new TreeMap<>(link);
                     enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_NAME, TaxonUtil.TARGET_TAXON_NAME);
                     enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_ID, TaxonUtil.TARGET_TAXON_ID);
-                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME, StudyImporterForTSV.TARGET_LIFE_STAGE_NAME);
-                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_LIFE_STAGE_ID, StudyImporterForTSV.TARGET_LIFE_STAGE_ID);
-                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_BODY_PART_NAME, StudyImporterForTSV.TARGET_BODY_PART_NAME);
-                    enrichProperties(targetProperties, enrichedMap, StudyImporterForTSV.SOURCE_BODY_PART_ID, StudyImporterForTSV.TARGET_BODY_PART_ID);
+                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME);
+                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID, DatasetImporterForTSV.TARGET_LIFE_STAGE_ID);
+                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_BODY_PART_NAME, DatasetImporterForTSV.TARGET_BODY_PART_NAME);
+                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_BODY_PART_ID, DatasetImporterForTSV.TARGET_BODY_PART_ID);
                     enrichedProperties = enrichedMap;
                 }
             }
@@ -147,9 +147,9 @@ public class DatasetImportUtil {
         @Override
         public void newLink(Map<String, String> link) throws StudyImporterException {
 
-            if (link.containsKey(StudyImporterForTSV.TARGET_OCCURRENCE_ID)
-                    && link.containsKey(StudyImporterForTSV.SOURCE_OCCURRENCE_ID)) {
-                String value = link.get(StudyImporterForTSV.SOURCE_OCCURRENCE_ID);
+            if (link.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)
+                    && link.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID)) {
+                String value = link.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
 
                 if (StringUtils.startsWith(value, "http://arctos.database.museum/guid/")) {
                     String[] splitValue = StringUtils.split(value, "?");

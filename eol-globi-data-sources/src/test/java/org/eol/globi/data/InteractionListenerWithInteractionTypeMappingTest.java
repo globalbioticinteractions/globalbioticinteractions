@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID_VERBATIM;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME_VERBATIM;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID_VERBATIM;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME_VERBATIM;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;

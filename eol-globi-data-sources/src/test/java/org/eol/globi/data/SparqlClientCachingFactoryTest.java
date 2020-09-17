@@ -1,9 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -25,7 +23,7 @@ public class SparqlClientCachingFactoryTest {
     }
 
     public void assertCitation(SparqlClient openBiodivClient) throws IOException {
-        assertThat(StudyImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", openBiodivClient), is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
+        assertThat(DatasetImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", openBiodivClient), is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     public static ResourceService singleRequestResourceService() {

@@ -7,10 +7,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.StudyImporter;
+import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
-import org.eol.globi.data.StudyImporterForSimons;
+import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.domain.Study;
 import org.eol.globi.geo.Ecoregion;
 import org.eol.globi.geo.EcoregionFinder;
@@ -60,7 +60,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImport() throws StudyImporterException {
-        importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
+        importData(DatasetImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
         Study study = getStudySingleton(graphService);
@@ -112,15 +112,15 @@ public class NormalizerTest extends GraphDBTestCase {
         dataNormalizationTool.exportData(graphService, baseDir);
     }
 
-    private static void importData(Class<? extends StudyImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
-        StudyImporter studyImporter = createStudyImporter(importer, factory);
+    private static void importData(Class<? extends DatasetImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
+        DatasetImporter datasetImporter = createStudyImporter(importer, factory);
         LOG.info("[" + importer + "] importing ...");
-        studyImporter.importStudy();
+        datasetImporter.importStudy();
         LOG.info("[" + importer + "] imported.");
     }
 
-    private static StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
-        StudyImporter importer = new StudyImporterTestFactory(factory).instantiateImporter(studyImporter);
+    private static DatasetImporter createStudyImporter(Class<? extends DatasetImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
+        DatasetImporter importer = new StudyImporterTestFactory(factory).instantiateImporter(studyImporter);
         importer.setLogger(new NullImportLogger());
         return importer;
     }

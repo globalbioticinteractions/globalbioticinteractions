@@ -19,7 +19,7 @@ public class OpenBiodivClient implements SparqlClient {
     @Override
     public LabeledCSVParser query(String sparql) throws IOException {
         try {
-            URI url = StudyImporterForPensoft.createSparqlURI(sparql);
+            URI url = DatasetImporterForPensoft.createSparqlURI(sparql);
             return CSVTSVUtil.createLabeledCSVParser(resourceService.retrieve(url));
         } catch (URISyntaxException | IOException e) {
             throw new IOException("failed to execute query [" + sparql + "]", e);

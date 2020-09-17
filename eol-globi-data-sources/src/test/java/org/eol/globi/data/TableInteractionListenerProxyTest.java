@@ -2,11 +2,7 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.LogContext;
-import org.eol.globi.util.InteractTypeMapper;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -37,8 +33,8 @@ public class TableInteractionListenerProxyTest {
         listener.newLink(new HashMap<>());
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
-        assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
+        assertThat(links.get(0).get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
+        assertThat(links.get(0).get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
     }
 
     @Test
@@ -55,13 +51,13 @@ public class TableInteractionListenerProxyTest {
         });
         listener.newLink(new HashMap<String, String>() {
             {
-                put(StudyImporterForTSV.REFERENCE_CITATION, "some ref");
+                put(DatasetImporterForTSV.REFERENCE_CITATION, "some ref");
             }
         });
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(StudyImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
-        assertThat(links.get(0).get(StudyImporterForTSV.REFERENCE_CITATION), startsWith("some ref"));
+        assertThat(links.get(0).get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
+        assertThat(links.get(0).get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("some ref"));
     }
 
 

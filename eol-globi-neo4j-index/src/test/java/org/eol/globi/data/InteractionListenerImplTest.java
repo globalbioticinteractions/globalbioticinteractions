@@ -30,44 +30,43 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_COLLECTION_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_COLLECTION_ID;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_IDS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_RANK;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
-import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
-import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_CATALOG_NUMBER;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_INSTITUTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.ARGUMENT_TYPE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LATITUDE;
+import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LONGITUDE;
+import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_BODY_PART_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_CATALOG_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_COLLECTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_INSTITUTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_NAMES;
-import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_CATALOG_NUMBER;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_INSTITUTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_COLLECTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_INSTITUTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
@@ -111,10 +110,10 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(TARGET_TAXON_ID, "mouse");
         link.put(TARGET_BODY_PART_ID, "bla:345");
         link.put(TARGET_BODY_PART_NAME, "tail");
-        link.put(StudyImporterForMetaTable.EVENT_DATE, "20160404T21:31:40Z");
-        link.put(StudyImporterForMetaTable.LATITUDE, "12.1");
-        link.put(StudyImporterForMetaTable.LONGITUDE, "13.2");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(DatasetImporterForMetaTable.EVENT_DATE, "20160404T21:31:40Z");
+        link.put(DatasetImporterForMetaTable.LATITUDE, "12.1");
+        link.put(DatasetImporterForMetaTable.LONGITUDE, "13.2");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
@@ -197,7 +196,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_ID, "mouse");
         link.put(ARGUMENT_TYPE_ID, "https://en.wiktionary.org/wiki/refute");
@@ -225,7 +224,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_TAXON_ID, "duck");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_ID, "mouse");
         link.put(LOCALITY_ID, "back:yard");
@@ -262,7 +261,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(SOURCE_TAXON_NAME, "donald");
         link.put(SOURCE_SEX_NAME, "female");
         link.put(SOURCE_SEX_ID, "some:female");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_SEX_NAME, "male");
         link.put(TARGET_SEX_ID, "some:male");
@@ -302,7 +301,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(SOURCE_TAXON_PATH_IDS, "AvesId | DonaldId | DonaldId duckId");
         link.put(SOURCE_TAXON_PATH_NAMES, "class | genus | species");
         link.put(SOURCE_TAXON_SPECIFIC_EPITHET, "duck");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_RANK, "species");
         link.put(TARGET_TAXON_PATH_IDS, "miniId");
@@ -363,7 +362,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(SOURCE_TAXON_PATH, "Aves | Donald | Donald duck");
         link.put(SOURCE_TAXON_PATH_NAMES, "class | genus | species");
         link.put(SOURCE_TAXON_SPECIFIC_EPITHET, "duck");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
         link.put(TARGET_OCCURRENCE_ID, "occurrenceId123");
         link.put(TARGET_INSTITUTION_CODE, "institutionCode123");
         link.put(TARGET_COLLECTION_CODE, "collectionCode123");
@@ -415,7 +414,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         });
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(TARGET_TAXON_NAME, "Donald duck");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
         link.put(SOURCE_OCCURRENCE_ID, "occurrenceId123");
         link.put(SOURCE_INSTITUTION_CODE, "institutionCode123");
         link.put(SOURCE_COLLECTION_CODE, "collectionCode123");
@@ -470,9 +469,9 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         final InteractionListenerImpl listener = getAssertingListener();
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
-        link.put(StudyImporterForMetaTable.EVENT_DATE, symbiotaTime);
+        link.put(DatasetImporterForMetaTable.EVENT_DATE, symbiotaTime);
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
@@ -522,7 +521,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 InteractionListenerImpl.createInteractionTypePredicate(null);
 
         assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
-            put(StudyImporterForTSV.INTERACTION_TYPE_ID, "bla");
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "bla");
         }}), is(false));
     }
 
@@ -532,7 +531,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 InteractionListenerImpl.createInteractionTypePredicate(null);
 
         assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
-            put(StudyImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
         }}), is(true));
     }
 
@@ -559,7 +558,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(LOCALITY_ID, "bla:123");
         link.put(LOCALITY_NAME, "my back yard");
@@ -599,7 +598,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
@@ -639,13 +638,13 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "donald");
-        link.put(StudyImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(REFERENCE_ID, "123");
         link.put(STUDY_SOURCE_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "10.12/123");
-        link.put(StudyImporterForMetaTable.EVENT_DATE, "2009-09/2003-09");
+        link.put(DatasetImporterForMetaTable.EVENT_DATE, "2009-09/2003-09");
         try {
             interactionListener.newLink(link);
             assertThat(msgs.size(), is(2));
