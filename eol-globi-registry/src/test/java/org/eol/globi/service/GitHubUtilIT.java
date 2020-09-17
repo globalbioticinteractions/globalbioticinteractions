@@ -37,7 +37,7 @@ public class GitHubUtilIT {
 
     @Test
     public void checkInvalidAuth() throws URISyntaxException {
-        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
 
         try {
             GitHubUtil.doHttpGetWithBasicAuthIfCredentialsIfAvailable(
@@ -58,7 +58,7 @@ public class GitHubUtilIT {
     @Ignore("replace with valid auth keys")
     @Test
     public void checkValidAuth() throws URISyntaxException, IOException {
-        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
 
         GitHubUtil.doHttpGetWithBasicAuthIfCredentialsIfAvailable(
                 "/repos/globalbioticinteractions/scan/commits",

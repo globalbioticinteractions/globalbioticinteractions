@@ -27,15 +27,15 @@ import java.nio.charset.StandardCharsets;
 public class HttpUtil {
     private static final Log LOG = LogFactory.getLog(HttpUtil.class);
 
-    public static final int FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+    public static final int TIMEOUT_DEFAULT = 60 * 1000;
     protected static final String APPLICATION_JSON = "application/json;charset=UTF-8";
-    public static final int FIVE_SECONDS = 5000;
+    public static final int TIMEOUT_SHORT = 5000;
     private static CloseableHttpClient httpClient = null;
     private static CloseableHttpClient failFastHttpClient = null;
 
     public static HttpClient getHttpClient() {
         if (httpClient == null) {
-            httpClient = createHttpClient(FIVE_MINUTES_IN_MS);
+            httpClient = createHttpClient(TIMEOUT_DEFAULT);
         }
         return httpClient;
     }
@@ -43,8 +43,8 @@ public class HttpUtil {
     public static HttpClient getFailFastHttpClient() {
         if (failFastHttpClient == null) {
             RequestConfig config = RequestConfig.custom()
-                    .setSocketTimeout(FIVE_SECONDS)
-                    .setConnectTimeout(FIVE_SECONDS)
+                    .setSocketTimeout(TIMEOUT_SHORT)
+                    .setConnectTimeout(TIMEOUT_SHORT)
                     .build();
 
             failFastHttpClient = HttpClientBuilder

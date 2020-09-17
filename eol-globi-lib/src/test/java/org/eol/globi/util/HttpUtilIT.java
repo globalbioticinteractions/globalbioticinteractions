@@ -68,7 +68,7 @@ public class HttpUtilIT {
 
     @Test
     public void withBasicAuthHeaders() throws IOException {
-        HttpClientBuilder builder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        HttpClientBuilder builder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
         CloseableHttpClient httpClient = builder.build();
         String username = "aladdin";
         String password = "opensesame";
