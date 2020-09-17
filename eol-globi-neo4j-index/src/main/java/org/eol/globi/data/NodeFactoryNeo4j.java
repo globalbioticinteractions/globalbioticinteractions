@@ -404,13 +404,10 @@ public class NodeFactoryNeo4j implements NodeFactory {
             throw new NodeFactoryException("null or empty study source");
         }
 
-        Transaction transaction = getGraphDb().beginTx();
         StudyNode studyNode;
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             studyNode = findStudy(study);
             transaction.success();
-        } finally {
-            transaction.close();
         }
 
         return studyNode == null
