@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,6 +200,11 @@ public class StudyImporterForRSS extends NodeBasedImporter {
             public URI getArchiveURI() {
                 return embeddedArchiveURI;
             }
+
+            @Override
+            public Iterable<Dataset> isPartOf() {
+                return Collections.singletonList(datasetOrig);
+            };
         };
         dataset.setConfig(config);
         return dataset;

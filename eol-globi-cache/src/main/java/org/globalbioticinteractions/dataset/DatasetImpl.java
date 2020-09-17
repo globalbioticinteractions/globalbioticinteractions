@@ -12,6 +12,7 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 
 public class DatasetImpl implements Dataset {
     private static final Log LOG = LogFactory.getLog(DatasetImpl.class);
@@ -82,6 +83,11 @@ public class DatasetImpl implements Dataset {
 
     public void setConfigURI(URI configURI) {
         this.configURI = configURI;
+    }
+
+    @Override
+    public Iterable<Dataset> isPartOf() {
+        return Collections.emptyList();
     }
 
     @Override

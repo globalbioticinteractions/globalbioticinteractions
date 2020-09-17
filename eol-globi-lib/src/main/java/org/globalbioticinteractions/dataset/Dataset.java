@@ -5,6 +5,8 @@ import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.doi.DOI;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
 
 public interface Dataset extends ResourceService {
 
@@ -27,4 +29,6 @@ public interface Dataset extends ResourceService {
     void setConfig(JsonNode config);
 
     void setConfigURI(URI configURI);
+
+    Iterable<Dataset> isPartOf();
 }
