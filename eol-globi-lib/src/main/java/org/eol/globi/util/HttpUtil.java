@@ -91,7 +91,7 @@ public class HttpUtil {
                 .build();
 
         return HttpClientBuilder.create()
-                .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
+                .setRetryHandler(new DefaultHttpRequestRetryHandler())
                 .setUserAgent("globalbioticinteractions/" + Version.getVersion() + " (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)")
                 .setServiceUnavailableRetryStrategy(new CustomServiceUnavailableStrategy())
                 .disableCookieManagement()
