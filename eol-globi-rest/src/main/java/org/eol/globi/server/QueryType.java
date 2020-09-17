@@ -48,24 +48,30 @@ public enum QueryType {
                 && ("t".equalsIgnoreCase(includeObservations.get(0)) || "true".equalsIgnoreCase(includeObservations.get(0)));
     }
 
-    public static boolean refutes(Map parameterMap) {
-        return nonEmptyOrTrue(parameterMap, ParamName.REFUTES);
-    }
-
     public static List<RelType> argumentTypes(Map parameterMap) {
         List<String> argumentTypeValues = CypherQueryBuilder.collectParamValues(parameterMap, ParamName.REFUTES);
 
-        Set<RelType> argumentTypes = new HashSet<>();
+        List<RelType> argumentTypes = new TreeList<>();
         for (String argumentType : argumentTypeValues) {
-            if ("t".equalsIgnoreCase(argumentType) || "true".equalsIgnoreCase(argumentType)) {
-                argumentTypes.add(RelTypes.REFUTES);
-            } else if ("f".equalsIgnoreCase(argumentType) || "false".equalsIgnoreCase(argumentType)) {
+            RelType argumentRel = argumentTypeFor(argumentType);
+
+            if (argumentRel != null && !argumentTypes.contains(argumentRel)) {
                 argumentTypes.add(RelTypes.COLLECTED);
             }
         }
         return argumentTypeValues.size() == 0
                 ? Collections.singletonList(RelTypes.COLLECTED)
-                : new TreeList<>(argumentTypes);
+                : argumentTypes;
+    }
+
+    public static RelType argumentTypeFor(String argumentType) {
+        RelType argumentRel = null;
+        if ("t".equalsIgnoreCase(argumentType) || "true".equalsIgnoreCase(argumentType)) {
+            argumentRel = RelTypes.REFUTES;
+        } else if ("f".equalsIgnoreCase(argumentType) || "false".equalsIgnoreCase(argumentType)) {
+            argumentRel = RelTypes.COLLECTED;
+        }
+        return argumentRel;
     }
 
     private static boolean isTaxonQueryOnly(Map parameterMap) {

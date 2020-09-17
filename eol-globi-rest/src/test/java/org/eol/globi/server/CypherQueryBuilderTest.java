@@ -1,7 +1,6 @@
 package org.eol.globi.server;
 
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
