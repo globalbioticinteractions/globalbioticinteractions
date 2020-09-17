@@ -86,8 +86,4 @@ public class DatasetProxy implements Dataset {
         datasetProxied.setConfigURI(configURI);
     }
 
-    @Override
-    public Iterable<Dataset> isPartOf() {
-        return Collections.emptyList();
-    }
 }

@@ -100,8 +100,4 @@ public class DatasetNode extends NodeBacked implements Dataset {
 
     }
 
-    @Override
-    public Iterable<Dataset> isPartOf() {
-        return Collections.emptyList();
-    }
 }

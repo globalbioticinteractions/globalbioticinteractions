@@ -200,10 +200,6 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
                 return embeddedArchiveURI;
             }
 
-            @Override
-            public Iterable<Dataset> isPartOf() {
-                return Collections.singletonList(datasetOrig);
-            };
         };
         dataset.setConfig(config);
         return dataset;

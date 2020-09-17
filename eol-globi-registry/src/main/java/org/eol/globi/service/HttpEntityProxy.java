@@ -60,6 +60,8 @@ public class HttpEntityProxy implements HttpEntity {
 
     @Override
     public void consumeContent() throws IOException {
-        entity.consumeContent();
+        try (InputStream content = entity.getContent()) {
+            //
+        }
     }
 }

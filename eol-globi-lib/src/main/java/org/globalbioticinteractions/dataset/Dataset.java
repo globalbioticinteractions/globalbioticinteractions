@@ -30,5 +30,4 @@ public interface Dataset extends ResourceService {
 
     void setConfigURI(URI configURI);
 
-    Iterable<Dataset> isPartOf();
 }

@@ -50,12 +50,6 @@ public class DatasetImporterForRSSTest {
         List<Dataset> datasets = DatasetImporterForRSS.getDatasetsForFeed(dataset);
         assertThat(datasets.size(), is(3));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
-        final Iterable<Dataset> partOf = datasets.get(0).isPartOf();
-        assertThat(partOf.iterator().hasNext(), is(true));
-        for (Dataset dataset1 : partOf) {
-            assertThat(dataset1.getNamespace(), is("some/namespace"));
-        }
-
 
     }
 

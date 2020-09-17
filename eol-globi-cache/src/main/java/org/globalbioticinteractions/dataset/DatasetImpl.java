@@ -86,11 +86,6 @@ public class DatasetImpl implements Dataset {
     }
 
     @Override
-    public Iterable<Dataset> isPartOf() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public URI getConfigURI() {
         return configURI;
     }

@@ -132,11 +132,6 @@ public class DatasetWithCache implements Dataset {
         getDatasetCached().setConfigURI(configURI);
     }
 
-    @Override
-    public Iterable<Dataset> isPartOf() {
-        return Collections.emptyList();
-    }
-
     private Dataset getDatasetCached() {
         return datasetCached;
     }
