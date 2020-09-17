@@ -11,11 +11,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.util.DatasetImportUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.globalbioticinteractions.dataset.DatasetUtil;
-import org.eol.globi.service.TaxonUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -191,7 +190,7 @@ public class StudyImporterForRSS extends NodeBasedImporter {
         String hasDependencies = datasetOrig.getOrDefault("hasDependencies", "false");
         ObjectNode config = new ObjectMapper().createObjectNode();
         config.put("citation", embeddedCitation);
-        config.put("format", "application/dwca");
+        config.put("format", PropertyAndValueDictionary.MIME_TYPE_DWCA);
         config.put("url", embeddedArchiveURI.toString());
         config.put(HAS_DEPENDENCIES, hasDependencies);
 

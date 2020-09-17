@@ -58,11 +58,14 @@ import org.eol.globi.data.StudyImporterForWebOfLife;
 import org.eol.globi.data.StudyImporterForWood;
 import org.eol.globi.data.StudyImporterForWrast;
 import org.eol.globi.data.StudyImporterForZenodoMetadata;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.globalbioticinteractions.dataset.Dataset;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+
+import static org.eol.globi.domain.PropertyAndValueDictionary.MIME_TYPE_DWCA;
 
 public class StudyImporterFactoryImpl implements StudyImporterFactory {
 
@@ -151,7 +154,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("web-of-life", StudyImporterForWebOfLife.class);
                 put("saproxylic", StudyImporterForSaproxylic.class);
                 put("globalwebdb", StudyImporterForGlobalWebDb.class);
-                put("application/dwca", StudyImporterForDwCA.class);
+                put(MIME_TYPE_DWCA, StudyImporterForDwCA.class);
                 put("dwca", StudyImporterForDwCA.class);
                 put("rss", StudyImporterForRSS.class);
                 put("mangal", StudyImporterForMangal.class);
