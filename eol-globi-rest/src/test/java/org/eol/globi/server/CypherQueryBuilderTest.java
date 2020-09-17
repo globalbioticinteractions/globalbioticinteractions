@@ -43,7 +43,7 @@ public class CypherQueryBuilderTest {
     private static final String EXPECTED_MATCH_CLAUSE_ALL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, true);
     private static final String EXPECTED_MATCH_CLAUSE_DISTINCT = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false);
     private static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, true);
-    private static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, "COLLECTED|REFUTES");
+    private static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, "REFUTES|COLLECTED");
     private static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
     private static final String EXPECTED_ACCORDING_TO_START_CLAUSE = CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study ";
     private static final String EXTERNAL_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");

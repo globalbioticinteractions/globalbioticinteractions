@@ -56,7 +56,7 @@ public enum QueryType {
             RelType argumentRel = argumentTypeFor(argumentType);
 
             if (argumentRel != null && !argumentTypes.contains(argumentRel)) {
-                argumentTypes.add(RelTypes.COLLECTED);
+                argumentTypes.add(argumentRel);
             }
         }
         return argumentTypeValues.size() == 0
