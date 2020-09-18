@@ -26,8 +26,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         createTestData(null);
         resolveNames();
 
-        String expected = "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tdata source description\t\t\tglobi:ref:X\n" +
-                "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tdata source description\t\t\tglobi:ref:X\n";
+        String expected = "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X\n" +
+                "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X\n";
 
 
         StringWriter row = new StringWriter();

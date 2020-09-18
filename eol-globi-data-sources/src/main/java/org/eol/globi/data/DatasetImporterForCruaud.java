@@ -38,7 +38,7 @@ public class DatasetImporterForCruaud extends NodeBasedImporter {
         }
         try {
             Study study = getNodeFactory().getOrCreateStudy(
-                    new StudyImpl("cruaud", new DOI("1093", "sysbio/sys068"), null));
+                    new StudyImpl("cruaud", new DOI("1093", "sysbio/sys068"), SOURCE));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {

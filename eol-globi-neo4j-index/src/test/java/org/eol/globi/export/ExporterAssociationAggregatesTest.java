@@ -56,8 +56,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
         String expected1 = "associationID\toccurrenceID\tassociationType\ttargetOccurrenceID\tmeasurementDeterminedDate\tmeasurementDeterminedBy\tmeasurementMethod\tmeasurementRemarks\tsource\tbibliographicCitation\tcontributor\treferenceID";
-        String expected2 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:X";
-        String expected3 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:X";
+        String expected2 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X";
+        String expected3 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X";
         String actual = row.getBuffer().toString();
         assertThat(actual, startsWith(expected1));
         ExportTestUtil.assertSameAsideFromNodeIds(actual.split("\\n"), new String[] {expected1, expected2, expected3});
@@ -85,7 +85,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         assertThat(row.getBuffer().toString(), equalTo(""));
     }
 
-    private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
+    private void createTestData(Double length, String studyTitle) throws NodeFactoryException {
         Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, setPathAndId(new TaxonImpl("Homo sapiens", null)));
         specimen.setStomachVolumeInMilliLiter(666.0);
