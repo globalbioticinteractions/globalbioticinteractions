@@ -3,20 +3,15 @@ package org.eol.globi.export;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
-import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +22,7 @@ public class ExportTaxonCacheTest extends GraphDBTestCase {
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(null, getGraphDb());
-        nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
+        nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens");
         taxon.setExternalId("homoSapiensId");
         taxon.setPath("one\ttwo three");

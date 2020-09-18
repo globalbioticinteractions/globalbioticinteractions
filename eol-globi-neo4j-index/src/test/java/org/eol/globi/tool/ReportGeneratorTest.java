@@ -11,7 +11,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.CacheService;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,14 +45,12 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("az/source", URI.create("http://example.com"), inStream -> inStream));
-        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
-        study1.setSourceId("globi:az/source");
+        StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
 
 
-        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
-        study2.setSourceId("globi:az/source");
+        StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDataset1);
         createStudy(study2);
 
@@ -62,8 +59,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
                 new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
 
 
-        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
-        study3.setSourceId("globi:zother/source");
+        StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
         createStudy(study3);
         resolveNames();
@@ -110,24 +106,21 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("az/source1", URI.create("http://example.com"), inStream -> inStream));
 
-        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
-        study1.setSourceId("globi:az/source1");
+        StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
 
         Dataset originatingDataset2 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("az/source2", URI.create("http://example.com"), inStream -> inStream));
 
-        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
-        study2.setSourceId("globi:az/source2");
+        StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDataset2);
         createStudy(study2);
 
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
 
-        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
-        study3.setSourceId("globi:zother/source");
+        StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
         createStudy(study3);
         resolveNames();
@@ -172,11 +165,11 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     public void generateCollectionReport() throws NodeFactoryException {
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         Dataset originatingDatasetNode = nodeFactory.getOrCreateDataset(originatingDataset);
-        StudyImpl study1 = new StudyImpl("a title", "source", null, "citation");
+        StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDatasetNode);
         createStudy(study1);
 
-        StudyImpl study2 = new StudyImpl("another title", "another source", null, "citation");
+        StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDatasetNode);
         createStudy(study2);
         resolveNames();

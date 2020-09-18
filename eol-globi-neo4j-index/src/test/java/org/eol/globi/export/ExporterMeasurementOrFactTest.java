@@ -43,7 +43,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
 
     @Test
     public void noMatchNames() throws IOException, NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
         nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_NAME, "externalId1"));
         nodeFactory.createSpecimen(myStudy, new TaxonImpl("Some namus", PropertyAndValueDictionary.NO_MATCH));
 
@@ -68,7 +68,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String targetTaxonName, String sourceTaxonName) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(sourceTaxonName, "externalId1"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));

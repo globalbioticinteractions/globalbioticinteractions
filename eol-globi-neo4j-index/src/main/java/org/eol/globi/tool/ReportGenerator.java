@@ -14,6 +14,7 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.mapdb.DB;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -163,8 +164,9 @@ public class ReportGenerator {
                     StudyNode study = new StudyNode(studyInDataset.getStartNode());
                     countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                     studyCounter.count();
-                    distinctSources.add(study.getSourceId());
-                    distinctDatasets.add(study.getSourceId());
+                    final String namespace = dataset.getNamespace();
+                    distinctSources.add(namespace);
+                    distinctDatasets.add(namespace);
                 }
             }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup));
 
@@ -212,8 +214,12 @@ public class ReportGenerator {
         NodeUtil.findStudies(getGraphDb(), study -> {
             countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
             studyCounter.count();
-            distinctSources.add(study.getSourceId());
-            distinctDatasets.add(study.getSourceId());
+            final Dataset originatingDataset = study.getOriginatingDataset();
+            if (originatingDataset != null) {
+                final String namespace = originatingDataset.getNamespace();
+                distinctSources.add(namespace);
+                distinctDatasets.add(namespace);
+            }
         });
 
         try (Transaction tx = getGraphDb().beginTx()) {

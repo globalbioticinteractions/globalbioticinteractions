@@ -73,7 +73,7 @@ public class DatasetImporterForBell extends NodeBasedImporter {
                         collectionId = "";
                     }
 
-                    Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("bell-" + collectionId, sourceCitation, DOI.create("10.1654/4756.1"), ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null)));
+                    Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("bell-" + collectionId, DOI.create("10.1654/4756.1"), ExternalIdUtil.toCitation(null, sourceCitation + " " + description, null)));
 
                     String genus = parser.getValueByLabel("Genus");
                     String species = parser.getValueByLabel("Species");

@@ -71,7 +71,7 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
                     throw new StudyImporterException("failed to query author URI [" + authorURI + "]");
                 }
                 final String source1 = author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + CitationUtil.createLastAccessedString(getResourceURI().toString());
-                Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(getResourceURI() + subj, source1, null, subj));
+                Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(getResourceURI() + subj, null, subj));
                 study.setExternalId(subj);
                 Specimen source = createSpecimen(solution, study, "subjTaxon");
                 Specimen target = createSpecimen(solution, study, "targetTaxon");

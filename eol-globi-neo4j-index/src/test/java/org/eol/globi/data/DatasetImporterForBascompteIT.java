@@ -32,7 +32,6 @@ public class DatasetImporterForBascompteIT extends GraphDBTestCase {
         List<String> references = new ArrayList<String>();
         Set<String> referenceSet = new HashSet<String>();
         for (Study allStudy : allStudies) {
-            assertThat(allStudy.getSource(), startsWith("Web of Life. Accessed at http://www.web-of-life.es/"));
             references.add(allStudy.getCitation());
             referenceSet.add(allStudy.getCitation());
         }

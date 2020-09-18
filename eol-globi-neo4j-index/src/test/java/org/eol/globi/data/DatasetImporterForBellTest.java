@@ -25,7 +25,6 @@ public class DatasetImporterForBellTest extends GraphDBTestCase {
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(6));
         for (Study study : allStudies) {
-            assertThat(study.getSource(), is("Bell, K. C., Matek, D., Demboski, J. R., & Cook, J. A. (2015). Expanded Host Range of Sucking Lice and Pinworms of Western North American Chipmunks. Comparative Parasitology, 82(2), 312–321. doi:10.1654/4756.1 . Data provided by Kayce C. Bell."));
             assertThat(study.getDOI().toString(), is("10.1654/4756.1"));
             assertThat(study.getCitation(), startsWith("Bell, K. C., Matek, D., Demboski, J. R., & Cook, J. A. (2015). Expanded Host Range of Sucking Lice and Pinworms of Western North American Chipmunks. Comparative Parasitology, 82(2), 312–321. doi:10.1654/4756.1 . Data provided by Kayce C. Bell."));
         }

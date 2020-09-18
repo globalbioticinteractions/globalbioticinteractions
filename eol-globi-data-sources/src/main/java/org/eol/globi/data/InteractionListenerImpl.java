@@ -387,7 +387,6 @@ class InteractionListenerImpl implements InteractionListener {
             }
         }
         StudyImpl study1 = new StudyImpl(l.get(REFERENCE_ID),
-                l.get(STUDY_SOURCE_CITATION),
                 doi,
                 referenceCitation);
 

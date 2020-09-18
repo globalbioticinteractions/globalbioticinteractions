@@ -104,7 +104,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
                     if (!networkTempFileMap.containsKey(networkId)) {
                         throw new StudyImporterException("found network id [" + networkId + "], but no associated data.");
                     }
-                    final Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("bascompte:" + citation, sourceCitation, null, citation));
+                    final Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("bascompte:" + citation, null, citation));
                     importNetwork(parseInteractionType(parser),
                             parseLocation(parser), study, networkTempFileMap.get(networkId));
                 }

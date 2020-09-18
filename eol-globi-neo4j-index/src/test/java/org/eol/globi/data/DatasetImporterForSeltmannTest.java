@@ -35,7 +35,6 @@ public class DatasetImporterForSeltmannTest extends GraphDBTestCase {
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         for (StudyNode allStudy : allStudies) {
-            assertThat(allStudy.getSource(), startsWith("Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
             assertThat(allStudy.getCitation(), is("Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
 
             AtomicBoolean success = new AtomicBoolean(false);

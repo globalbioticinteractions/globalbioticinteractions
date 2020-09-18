@@ -26,7 +26,7 @@ public class DatasetImporterForICES extends NodeBasedImporter {
 
 
         Study study = getNodeFactory().getOrCreateStudy(
-                new StudyImpl("ICES", "International Council for the Exploration of the Sea. Available at http://www.ices.dk/products/cooperative.asp .", null, "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES"));
+                new StudyImpl("ICES", null, "Cooperative Research Report No. 164; Cooperative Research Report No. 219, ICES Stomach DatasetImpl, ICES"));
         study.setExternalId("http://ecosystemdata.ices.dk/stomachdata/");
         try {
             Specimen predator = null;

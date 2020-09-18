@@ -230,7 +230,7 @@ public class DatasetImporterForAkin extends NodeBasedImporter {
         Study study;
         try {
             DOI doi = new DOI("1007", "bf02784282");
-            StudyImpl study1 = new StudyImpl("Akin et al 2006", DatasetImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, doi, ExternalIdUtil.toCitation("Senol Akin", "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
+            StudyImpl study1 = new StudyImpl("Akin et al 2006", doi, ExternalIdUtil.toCitation("Senol Akin", "S. Akin, K. O. Winemiller, Seasonal variation in food web composition and structure in a temperate tidal estuary, Estuaries and Coasts" +
                     "; August 2006, Volume 29, Issue 4, pp 552-567", "2006"));
             study = getNodeFactory().getOrCreateStudy(
                     study1);

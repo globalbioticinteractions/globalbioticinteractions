@@ -61,7 +61,7 @@ public class DatasetImporterForBarnes extends NodeBasedImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BARNES-" + shortReference, SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
+            localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BARNES-" + shortReference, null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String predatorName = parser.getValueByLabel("Predator");
             if (StringUtils.isBlank(predatorName)) {

@@ -34,7 +34,6 @@ public class DatasetImporterForStronaIT extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Acanthocephaloides incrassatus"), is(notNullValue()));
 
         Study study = allStudies.get(0);
-        assertThat(study.getSource(), containsString(" Accessed at"));
         assertThat(study.getCitation(), containsString("https://doi.org/10.1890/12-1419.1"));
         assertThat(study.getCitation(), containsString("Strona"));
     }

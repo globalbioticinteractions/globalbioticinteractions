@@ -36,10 +36,10 @@ public class NameResolverTest extends GraphDBTestCase {
     }
 
     private void assertResolveNames(RelTypes relTypes) throws NodeFactoryException {
-        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"), relTypes);
-        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Animalia", "WORMS:2"), relTypes);
+        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"), relTypes);
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Animalia", "WORMS:2"), relTypes);
         human.ate(animal);
-        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", "WORMS:158711"), relTypes);
+        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Arius felis", "WORMS:158711"), relTypes);
         human.ate(fish);
 
         assertNull(taxonIndex.findTaxonById("NCBI:9606"));
@@ -65,8 +65,8 @@ public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void iNaturalistTaxon() throws NodeFactoryException {
-        Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Blaus bla", "INAT_TAXON:58831"));
-        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Redus rha", "INAT_TAXON:126777"));
+        Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Blaus bla", "INAT_TAXON:58831"));
+        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Redus rha", "INAT_TAXON:126777"));
         someOtherOrganism.ate(someOtherOrganism2);
 
         final NameResolver nameResolver = new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb()));

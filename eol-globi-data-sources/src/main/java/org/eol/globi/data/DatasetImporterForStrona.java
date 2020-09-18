@@ -31,7 +31,7 @@ public class DatasetImporterForStrona extends NodeBasedImporter {
         }
         try {
             Study study = getNodeFactory().getOrCreateStudy(
-                    new StudyImpl("strona2013", SOURCE + " . " + CitationUtil.createLastAccessedString(RESOURCE_PATH), new DOI("1890", "12-1419.1"), SOURCE));
+                    new StudyImpl("strona2013", new DOI("1890", "12-1419.1"), SOURCE));
             while (dataParser.getLine() != null) {
                 if (importFilter.shouldImportRecord((long) dataParser.getLastLineNumber())) {
                     try {

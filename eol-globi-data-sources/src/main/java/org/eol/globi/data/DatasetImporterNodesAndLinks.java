@@ -23,7 +23,7 @@ public abstract class DatasetImporterNodesAndLinks extends NodeBasedImporter {
     }
 
     Study createStudy() throws NodeFactoryException {
-        return getNodeFactory().getOrCreateStudy(new StudyImpl(getNamespace(), getSourceCitation(), getSourceDOI(), null));
+        return getNodeFactory().getOrCreateStudy(new StudyImpl(getNamespace(), getSourceDOI(), null));
     }
 
     public URI getLinksResourceName() {

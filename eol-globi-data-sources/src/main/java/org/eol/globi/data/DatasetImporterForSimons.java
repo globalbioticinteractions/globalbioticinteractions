@@ -66,7 +66,7 @@ public class DatasetImporterForSimons extends NodeBasedImporter {
 
     private Study importStudy(ParserFactory parserFactory, URI studyResource) throws StudyImporterException {
         Study study = getNodeFactory().getOrCreateStudy(
-                new StudyImpl("Simons 1997", DatasetImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997")));
+                new StudyImpl("Simons 1997", null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997")));
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
             Map<String, String> columnMapper = COLUMN_MAPPER;

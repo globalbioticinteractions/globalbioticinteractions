@@ -15,10 +15,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.ParseException;
 import java.util.Date;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class ExporterAssociationsTest extends GraphDBTestCase {
@@ -40,7 +38,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException {
-        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "data\tsource description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));

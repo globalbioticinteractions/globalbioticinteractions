@@ -52,7 +52,7 @@ public class ExporterAssociations extends ExporterAssociationsBase {
         }
     }
 
-    private void writeRow(Study study, ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship interactRel, Node targetSpecimen) throws IOException {
+    private void writeRow(StudyNode study, ExportUtil.Appender writer, Map<String, String> properties, Node specimenNode, Relationship interactRel, Node targetSpecimen) throws IOException {
         properties.put(EOLDictionary.ASSOCIATION_TYPE, getEOLTermFor(interactRel.getType().name()));
         properties.put(EOLDictionary.ASSOCIATION_ID, "globi:assoc:" + interactRel.getId());
         properties.put(EOLDictionary.OCCURRENCE_ID, toOccurrenceId(specimenNode));

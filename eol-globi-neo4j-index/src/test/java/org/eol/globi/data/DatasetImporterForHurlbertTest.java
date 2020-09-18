@@ -30,11 +30,9 @@ public class DatasetImporterForHurlbertTest extends GraphDBTestCase {
         assertThat(allStudies.size(), is(2));
 
         Study study = allStudies.get(0);
-        assertThat(study.getSource(), startsWith("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at <AvianDietDatabase.txt>"));
         assertThat(study.getCitation(), is("Brown, B. T., W. C. Leibfried, T. R. Huels, and J. A. Olivera. 1991. Prey remains from Bald Eagle nests in Sonora, Mexico. Southwestern Naturalist 36:259-262."));
 
         study = allStudies.get(1);
-        assertThat(study.getSource(), startsWith("Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). Accessed at <AvianDietDatabase.txt>"));
         assertThat(study.getCitation(), containsString("Cash, K. J., J. P. Austin-Smith"));
 
         assertThat(taxonIndex.findTaxonByName("Haliaeetus leucocephalus"), is(notNullValue()));

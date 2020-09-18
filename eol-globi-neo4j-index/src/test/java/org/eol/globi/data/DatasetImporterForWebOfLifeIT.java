@@ -31,7 +31,6 @@ public class DatasetImporterForWebOfLifeIT extends GraphDBTestCase {
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         List<String> references = new ArrayList<>();
         for (Study allStudy : allStudies) {
-            assertThat(allStudy.getSource(), startsWith("Web of Life. Accessed at <http://www.web-of-life.es/>"));
             references.add(allStudy.getCitation());
         }
 

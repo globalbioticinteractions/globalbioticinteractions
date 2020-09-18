@@ -125,7 +125,7 @@ public class DatasetImporterForPlanque extends NodeBasedImporter {
 
         for (String longReference : longReferences) {
             String studyId = "PLANQUE-" + StringUtils.abbreviate(longReference, 20) + MD5.getHashString(longReference);
-            Study localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl(studyId, getSourceCitation(), null, ExternalIdUtil.toCitation(null, longReference, null)));
+            Study localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl(studyId, null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String predatorName = parser.getValueByLabel("PREDATOR");
             if (StringUtils.isBlank(predatorName)) {

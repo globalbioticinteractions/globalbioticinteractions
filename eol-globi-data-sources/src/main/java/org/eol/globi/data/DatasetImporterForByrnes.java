@@ -62,7 +62,6 @@ public class DatasetImporterForByrnes extends NodeBasedImporter {
                 String longRef = refMap.get(singleShortRef);
                 String citation = StringUtils.isBlank(longRef) ? singleShortRef : longRef;
                 localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BYRNES-" + StringUtils.abbreviate(citation, 32),
-                        SOURCE,
                         null,
                         citation));
                 String predatorName = parser.getValueByLabel("Predator");

@@ -111,8 +111,6 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         assertThat(interactions, CoreMatchers.hasItem("bioinfo:taxon:160260 has_vector bioinfo:taxon:162065"));
 
         assertThat(study.getTitle(), is("bioinfo:ref:60527"));
-        assertThat(study.getSource(), is("Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from http://bioinfo.org.uk."));
-
 
         assertThat("found unexpected log messages: [" + StringUtils.join(msgs, "\n") + "]", msgs.size(), is(1));
         assertThat(msgs.get(0), is("empty/no taxon name for bioinfo taxon id [149359] on line [4171]"));

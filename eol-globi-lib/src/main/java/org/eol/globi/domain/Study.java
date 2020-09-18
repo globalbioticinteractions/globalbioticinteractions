@@ -10,9 +10,5 @@ public interface Study extends Named, LogContext {
 
     String getCitation();
 
-    String getSource();
-
-    String getSourceId();
-
     Dataset getOriginatingDataset();
 }

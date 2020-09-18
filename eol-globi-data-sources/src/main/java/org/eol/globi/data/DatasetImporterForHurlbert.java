@@ -83,7 +83,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
 
     private void importRecords(Set<String> regions, Set<String> locales, Set<String> habitats, Record record, String sourceCitation) throws StudyImporterException {
         String namespace = getDataset() == null ? "" : getDataset().getNamespace();
-        StudyImpl study1 = new StudyImpl(namespace + sourceCitation, "Allen Hurlbert. Avian Diet Database (https://github.com/hurlbertlab/dietdatabase/). " + CitationUtil.createLastAccessedString(RESOURCE.toString()), null, sourceCitation);
+        StudyImpl study1 = new StudyImpl(namespace + sourceCitation, null, sourceCitation);
         study1.setOriginatingDataset(getDataset());
         Study study = getNodeFactory().getOrCreateStudy(study1);
 

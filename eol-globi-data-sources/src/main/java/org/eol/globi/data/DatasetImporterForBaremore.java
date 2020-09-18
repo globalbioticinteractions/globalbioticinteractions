@@ -37,7 +37,7 @@ public class DatasetImporterForBaremore extends NodeBasedImporter {
             String[] line;
 
             study = getNodeFactory().getOrCreateStudy(
-                    new StudyImpl("Baremore 2010", DatasetImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION, new DOI("3354", "ab00214"), ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010")));
+                    new StudyImpl("Baremore 2010", new DOI("3354", "ab00214"), ExternalIdUtil.toCitation("Ivy E. Baremore", "Prey Selection By The Atlantic Angel Shark Squatina Dumeril In The Northeastern Gulf Of Mexico.", "2010")));
             Location collectionLocation = getNodeFactory().getOrCreateLocation(new LocationImpl(29.219302, -87.06665, null, null));
 
             Map<Integer, Specimen> specimenMap = new TreeMap<Integer, Specimen>();

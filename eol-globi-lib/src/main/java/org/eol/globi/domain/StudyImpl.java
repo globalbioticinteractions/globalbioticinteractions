@@ -8,19 +8,16 @@ public class StudyImpl implements Study {
 
     private String externalId;
     private String title;
-    private String source;
     private DOI doi;
     private String citation;
-    private String sourceId;
     private Dataset originatingDataset;
 
     public StudyImpl(String title) {
-        this(title, null, null, null);
+        this(title, null, null);
     }
 
-    public StudyImpl(String title, String source, DOI doi, String citation) {
+    public StudyImpl(String title, DOI doi, String citation) {
         this.title = title;
-        this.source = source;
         this.doi = doi;
         this.citation = citation;
     }
@@ -46,11 +43,6 @@ public class StudyImpl implements Study {
     }
 
     @Override
-    public String getSource() {
-        return this.source;
-    }
-
-    @Override
     public DOI getDOI() {
         return this.doi;
     }
@@ -62,14 +54,6 @@ public class StudyImpl implements Study {
     @Override
     public String getCitation() {
         return citation;
-    }
-    
-    public String getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
     }
 
     public void setOriginatingDataset(Dataset originatingDataset) {

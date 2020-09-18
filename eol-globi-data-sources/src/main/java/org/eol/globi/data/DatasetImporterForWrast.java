@@ -76,7 +76,7 @@ public class DatasetImporterForWrast extends NodeBasedImporter {
     @Override
     public void importStudy() throws StudyImporterException {
         String citation = "Wrast JL. Spatiotemporal And Habitat-mediated Food Web Dynamics in Lavaca Bay, Texas. 2008. Master Thesis.";
-        StudyImpl study1 = new StudyImpl("Wrast 2008", DatasetImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION,
+        StudyImpl study1 = new StudyImpl("Wrast 2008",
                 null,
                 citation);
         study1.setExternalId("http://www.fisheries.tamucc.edu/people_files/FINAL%20WRAST%20THESIS.pdf");

@@ -85,7 +85,7 @@ public class DatasetImporterForBrose extends NodeBasedImporter {
                 throw new StudyImporterException("failed to find ref [" + shortReference + "] on line [" + parser.lastLineNumber() + "]");
             }
             String longReference = refMap.get(shortReference);
-            localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BROSE-" + StringUtils.abbreviate(longReference, 20), SOURCE, null, ExternalIdUtil.toCitation(null, longReference, null)));
+            localStudy = getNodeFactory().getOrCreateStudy(new StudyImpl("BROSE-" + StringUtils.abbreviate(longReference, 20), null, ExternalIdUtil.toCitation(null, longReference, null)));
 
             String name = getName(parser, "Taxonomy consumer", "Common name(s) consumer");
             if (StringUtils.isBlank(name)) {

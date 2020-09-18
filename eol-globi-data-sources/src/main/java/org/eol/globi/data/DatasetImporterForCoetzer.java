@@ -122,7 +122,7 @@ public class DatasetImporterForCoetzer extends NodeBasedImporter {
                         final String reference = refMap.get(taxonId);
                         final String sourceTaxonName = taxonMap.get(taxonId);
                         if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(sourceTaxonName)) {
-                            final Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, getSourceCitationLastAccessed(), null, reference));
+                            final Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(getSourceCitation() + reference, null, reference));
                             final Specimen source = getNodeFactory().createSpecimen(study, new TaxonImpl(StringUtils.trim(sourceTaxonName), null));
                             final Specimen target = getNodeFactory().createSpecimen(study, new TaxonImpl(StringUtils.trim(targetTaxonName), null));
                             final InteractType relType = interactTypeMap.get(interactionString);

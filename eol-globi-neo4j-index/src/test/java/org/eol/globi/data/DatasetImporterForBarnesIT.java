@@ -37,7 +37,6 @@ public class DatasetImporterForBarnesIT extends GraphDBTestCase {
         assertTrue(studies.size() > 0);
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));
-            assertThat(study.getSource(), is(notNullValue()));
             assertThat(StringUtils.isBlank(study.getCitation()), is(false));
         }
     }

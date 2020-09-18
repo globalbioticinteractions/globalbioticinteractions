@@ -13,7 +13,7 @@ public class NodeFactoryIT extends GraphDBTestCase {
 
     @Test
     public void createStudy() throws NodeFactoryException {
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bla", "source", new DOI("1111", "j.1469-7998.1966.tb02907.x"), ExternalIdUtil.toCitation(null, "descr", null)));
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("bla", new DOI("1111", "j.1469-7998.1966.tb02907.x"), ExternalIdUtil.toCitation(null, "descr", null)));
         assertThat(study.getDOI().toURI().toString(), is("https://doi.org/10.1111/j.1469-7998.1966.tb02907.x"));
         assertThat(study.getCitation(), is("descr"));
     }

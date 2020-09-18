@@ -342,7 +342,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         try (Transaction transaction = graphDb.beginTx()) {
             Node node = graphDb.createNode();
             studyNode = new StudyNode(node, study.getTitle());
-            studyNode.setSource(study.getSource());
             studyNode.setCitation(study.getCitation());
             studyNode.setDOI(study.getDOI());
             if (StringUtils.isBlank(study.getExternalId()) && null != study.getDOI()) {
@@ -350,7 +349,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
             } else {
                 studyNode.setExternalId(study.getExternalId());
             }
-            studyNode.setSourceId(study.getSourceId());
 
             Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
             if (dataset instanceof DatasetNode) {
@@ -399,9 +397,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
     public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
         if (StringUtils.isBlank(study.getTitle())) {
             throw new NodeFactoryException("null or empty study title");
-        }
-        if (StringUtils.isBlank(study.getSource())) {
-            throw new NodeFactoryException("null or empty study source");
         }
 
         StudyNode studyNode;

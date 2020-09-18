@@ -90,7 +90,7 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
     @Override
     public void importStudy() throws StudyImporterException {
         Study study = getNodeFactory().getOrCreateStudy(
-                new StudyImpl("GoMexSI", GOMEXI_SOURCE_DESCRIPTION, null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null)));
+                new StudyImpl("GoMexSI", null, ExternalIdUtil.toCitation("James D. Simons", "<a href=\"http://www.ingentaconnect.com/content/umrsmas/bullmar/2013/00000089/00000001/art00009\">Building a Fisheries Trophic Interaction Database for Management and Modeling Research in the Gulf of Mexico Large Marine Ecosystem.</a>", null)));
         final Map<String, Map<String, String>> predatorIdToPredatorNames = new HashMap<String, Map<String, String>>();
         final Map<String, List<Map<String, String>>> predatorIdToPreyNames = new HashMap<String, List<Map<String, String>>>();
         Map<String, Study> referenceIdToStudy = new HashMap<String, Study>();
@@ -161,7 +161,7 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
         String publicationYear = getMandatoryValue(referenceResource, parser, "YEAR_PUB");
 
         study = getNodeFactory().getOrCreateStudy(
-                new StudyImpl(refTag, getSourceCitation(), null, ExternalIdUtil.toCitation(contributors, description, publicationYear)));
+                new StudyImpl(refTag, null, ExternalIdUtil.toCitation(contributors, description, publicationYear)));
         if (isNotBlank(externalId)) {
             study.setExternalId(ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_GAME + externalId));
         }

@@ -35,7 +35,6 @@ public class DatasetImporterForBlewett extends NodeBasedImporter {
         String citation = "Blewett DA, Hensley RA, and Stevens PW, Feeding Habits of Common Snook, Centropomus Undecimalis, in Charlotte Harbor, Florida, Gulf and Caribbean Research Vol 18, 1–13, 2006. doi:10.18785/gcr.1801.01 ";
         Study study = getNodeFactory().getOrCreateStudy(
                 new StudyImpl("Blewett 2006",
-                        DatasetImporterForGoMexSI2.GOMEXI_SOURCE_DESCRIPTION,
                         null,
                         citation));
         try {

@@ -30,7 +30,6 @@ public class DatasetImporterForBroseIT extends GraphDBTestCase {
         assertThat(studies.size(), is(20));
         for (Study study : studies) {
             assertThat(study.getTitle(), is(notNullValue()));
-            assertThat(study.getSource(), is(notNullValue()));
             assertThat(StringUtils.isBlank(study.getCitation()), is(false));
         }
     }

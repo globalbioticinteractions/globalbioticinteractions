@@ -23,7 +23,6 @@ import java.text.ParseException;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
@@ -69,7 +68,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         String[] studyTitles = {"myStudy1", "myStudy2"};
 
         for (String studyTitle : studyTitles) {
-            Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+            Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
             Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, null));
             specimen.ate(nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, null)));
         }
@@ -87,7 +86,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, setPathAndId(new TaxonImpl("Homo sapiens", null)));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new TermImpl("GlOBI:JUVENILE", "JUVENILE"));

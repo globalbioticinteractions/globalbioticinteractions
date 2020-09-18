@@ -39,15 +39,6 @@ public class StudyNode extends NodeBacked implements Study {
     }
 
 
-    @Override
-    public String getSource() {
-        return getProperty(StudyConstant.SOURCE);
-    }
-
-    public void setSource(String source) {
-        setPropertyIfNotNull(StudyConstant.SOURCE, source);
-    }
-
     public void setDOI(DOI doi) {
         if (doi != null) {
             setPropertyIfNotNull(StudyConstant.DOI, doi.toString());
@@ -87,18 +78,9 @@ public class StudyNode extends NodeBacked implements Study {
     }
 
     @Override
-    public String getSourceId() {
-        return getProperty(StudyConstant.SOURCE_ID);
-    }
-
-    @Override
     public Dataset getOriginatingDataset() {
         Node datasetNode = NodeUtil.getDataSetForStudy(this);
         return datasetNode == null ? null : new DatasetNode(datasetNode);
-    }
-
-    public void setSourceId(String sourceId) {
-        setPropertyWithTx(StudyConstant.SOURCE_ID, sourceId);
     }
 
 }

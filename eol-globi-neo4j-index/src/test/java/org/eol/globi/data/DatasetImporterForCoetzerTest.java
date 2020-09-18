@@ -28,8 +28,7 @@ public class DatasetImporterForCoetzerTest extends GraphDBTestCase {
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         for (Study allStudy : allStudies) {
-            assertThat(allStudy.getSource(), startsWith("source citation"));
-            assertThat(allStudy.getSource(), containsString("Accessed at"));
+            assertThat(allStudy.getCitation(), is(notNullValue()));
         }
 
         assertThat(taxonIndex.findTaxonByName("Agrostis tremula"), is(notNullValue()));

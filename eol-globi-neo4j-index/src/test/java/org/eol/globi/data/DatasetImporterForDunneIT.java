@@ -80,7 +80,7 @@ public class DatasetImporterForDunneIT extends GraphDBTestCase {
 
         assertThat(study, is(notNullValue()));
 
-        assertThat(study.getSource(), containsString("Accessed at "));
+        assertThat(study.getCitation(), is(notNullValue()));
 
         assertThat(getSpecimenCount(study), is(6774 * 2));
 

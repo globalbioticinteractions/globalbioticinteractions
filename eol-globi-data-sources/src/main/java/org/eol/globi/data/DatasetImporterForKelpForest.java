@@ -33,7 +33,7 @@ public class DatasetImporterForKelpForest extends NodeBasedImporter {
     public void importStudy() throws StudyImporterException {
         try {
             String source = "Beas-Luna, R., Novak, M., Carr, M. H., Tinker, M. T., Black, A., Caselle, J. E., … Iles, A. (2014). An Online Database for Informing Ecological Network Models: http://kelpforest.ucsc.edu. PLoS ONE, 9(10), e109356. doi:10.1371/journal.pone.0109356";
-            Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(source, source, new DOI("1371", "journal.pone.0109356"), source));
+            Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(source, new DOI("1371", "journal.pone.0109356"), source));
             LabeledCSVParser parser = getParserFactory().createParser(NODES, "UTF-8");
             String line[];
             Map<String, Long> nameToId = new HashMap<String, Long>();

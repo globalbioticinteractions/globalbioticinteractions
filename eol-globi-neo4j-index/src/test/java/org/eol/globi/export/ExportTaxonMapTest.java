@@ -47,7 +47,7 @@ public class ExportTaxonMapTest extends GraphDBTestCase {
             }
         };
         taxonIndex = ExportTestUtil.taxonIndexWithEnricher(taxonEnricher, getGraphDb());
-        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", null, "citation"));
+        StudyNode study = (StudyNode) nodeFactory.getOrCreateStudy(new StudyImpl("title", null, "citation"));
         Taxon taxon = new TaxonImpl("Homo sapiens");
         taxon.setExternalId("homoSapiensId");
         taxon.setPath("one two three");

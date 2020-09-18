@@ -158,7 +158,7 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
 
     private void importValidLink(Map<String, String> properties) throws NodeFactoryException {
         Study study = getNodeFactory().getOrCreateStudy(
-                new StudyImpl(properties.get(StudyConstant.TITLE), SOURCE_SPIRE, null, properties.get(StudyConstant.DESCRIPTION)));
+                new StudyImpl(properties.get(StudyConstant.TITLE), null, properties.get(StudyConstant.DESCRIPTION)));
         try {
             Specimen predator = createSpecimen(properties.get(PREDATOR_NAME), study);
             String locality = properties.get(LOCALITY_ORIGINAL);

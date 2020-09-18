@@ -38,6 +38,6 @@ public class DatasetImporterForCruaudTest extends GraphDBTestCase {
         assertThat(taxonIndex.findTaxonByName("Agaon sp."), is(notNullValue()));
         assertThat(taxonIndex.findTaxonByName("Ficus chapaensis"), is(notNullValue()));
 
-        assertThat(allStudies.get(0).getSource(), is(notNullValue()));
+        assertThat(allStudies.get(0).getCitation(), is(notNullValue()));
     }
 }

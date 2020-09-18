@@ -234,7 +234,7 @@ public class DatasetImporterForBioInfo extends NodeBasedImporter implements Data
     protected Study createStudy(String refId, String citation) throws NodeFactoryException {
         String sourceCitation = "Food Webs and Species Interactions in the Biodiversity of UK and Ireland (Online). 2015. Data provided by Malcolm Storey. Also available from " + BIOINFO_URL + ".";
         String bioInfoId = TaxonomyProvider.BIO_INFO + "ref:" + refId;
-        StudyImpl study1 = new StudyImpl(bioInfoId, sourceCitation, null, citation);
+        StudyImpl study1 = new StudyImpl(bioInfoId, null, citation);
         study1.setExternalId(ExternalIdUtil.urlForExternalId(bioInfoId));
         return getNodeFactory().getOrCreateStudy(study1);
     }

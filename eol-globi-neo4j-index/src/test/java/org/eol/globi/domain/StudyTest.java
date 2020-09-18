@@ -20,7 +20,7 @@ public class StudyTest extends GraphDBTestCase {
 
     @Test
     public void populateStudy() throws NodeFactoryException {
-        Study study = nodeFactory.createStudy(new StudyImpl("Our first study", null, null, null));
+        Study study = nodeFactory.createStudy(new StudyImpl("Our first study", null, null));
 
         taxonIndex.getOrCreateTaxon(new TaxonImpl(CARCHARODON_CARCHARIAS, null));
 

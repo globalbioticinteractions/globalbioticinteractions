@@ -208,7 +208,7 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         String url = ExternalIdUtil.urlForExternalId(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId);
         citation.append(CitationUtil.createLastAccessedString(url));
 
-        StudyImpl study1 = new StudyImpl(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, getSourceString(), null, citation.toString());
+        StudyImpl study1 = new StudyImpl(TaxonomyProvider.ID_PREFIX_INATURALIST + observationId, null, citation.toString());
         study1.setExternalId(url);
 
         Study study = getNodeFactory().getOrCreateStudy(study1);

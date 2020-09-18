@@ -89,7 +89,7 @@ public class DatasetImporterForSIAD extends NodeBasedImporter {
                 String ref = labeledCSVParser.getValueByLabel("source");
                 String title = "SIAD-" + ref;
                 String citation = "ABRS 2009. Australian Faunal Directory. " + name + ". Australian Biological Resources StudyNode, Canberra. " + CitationUtil.createLastAccessedString(ref);
-                StudyImpl study1 = new StudyImpl(title, source, null, citation);
+                StudyImpl study1 = new StudyImpl(title, null, citation);
                 study1.setExternalId(ref);
                 Study study = getNodeFactory().getOrCreateStudy(study1);
 

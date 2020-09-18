@@ -89,7 +89,7 @@ public class DatasetImporterForSeltmann extends NodeBasedImporter {
             occurrence.changeDelimiter('\t');
             while (occurrence.getLine() != null) {
                 String references = occurrence.getValueByLabel("dcterms:references");
-                Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("seltmann" + references, CitationUtil.sourceCitationLastAccessed(this.getDataset(), references), null, references));
+                Study study = getNodeFactory().getOrCreateStudy(new StudyImpl("seltmann" + references, null, references));
                 String recordId = occurrence.getValueByLabel(FIELD_IDIGBIO_RECORD_ID);
                 Map<String, String> assoc = assocMap.get(recordId);
                 if (assoc != null) {
