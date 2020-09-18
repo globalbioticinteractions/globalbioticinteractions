@@ -45,7 +45,13 @@ public class CypherQueryBuilderTest {
     private static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, true);
     private static final String EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, false, false, "REFUTES|COLLECTED");
     private static final String EXPECTED_MATCH_CLAUSE_SPATIAL = expectedMatchClause(EXPECTED_INTERACTION_CLAUSE_ALL_INTERACTIONS, true, true);
-    private static final String EXPECTED_ACCORDING_TO_START_CLAUSE = CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study ";
+    private static final String EXPECTED_ACCORDING_TO_START_CLAUSE = CYPHER_VERSION +
+            "START study = node:studies('*:*') " +
+            "MATCH study-[:IN_DATASET]->dataset " +
+            "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+            "OR (exists(study.citation) AND study.citation =~ {accordingTo}) " +
+            "OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) " +
+            "WITH study ";
     private static final String EXTERNAL_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");
     private static final String HAS_TARGET_TAXON_PLANTAE = hasTargetTaxon("Plantae");
 
@@ -270,7 +276,7 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') MATCH study-[:IN_DATASET]->dataset WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
@@ -290,7 +296,9 @@ public class CypherQueryBuilderTest {
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
-                "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
                 "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
@@ -312,6 +320,7 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
                 "WHERE (exists(study.doi) AND study.doi =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
@@ -333,7 +342,11 @@ public class CypherQueryBuilderTest {
 
         query = buildInteractionQuery(params, QueryType.forParams(params));
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
-                "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) WITH study MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|HAS_VECTOR|VECTOR_OF|VISITED_BY|VISITS|FLOWERS_VISITED_BY|VISITS_FLOWERS_OF|INHABITED_BY|INHABITS|ADJACENT_TO|CREATES_HABITAT_FOR|IS_HABITAT_OF|LIVED_ON_BY|LIVES_ON|LIVED_INSIDE_OF_BY|LIVES_INSIDE_OF|LIVED_NEAR_BY|LIVES_NEAR|LIVED_UNDER_BY|LIVES_UNDER|LIVES_WITH|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|HYPERPARASITOID_OF|HAS_HYPERPARASITOID|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|GUEST_OF|HAS_GUEST_OF|FARMED_BY|FARMS|DAMAGED_BY|DAMAGES|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|KILLED_BY|KILLS|EPIPHITE_OF|HAS_EPIPHITE|LAYS_EGGS_ON|HAS_EGGS_LAYED_ON_BY|CO_OCCURS_WITH|COMMENSALIST_OF|MUTUALIST_OF|RELATED_TO]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc RETURN sourceTaxon.name as source_taxon_name,sourceSpecimen.sexLabel as source_specimen_sex"));
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "WITH study " +
+                "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|HAS_VECTOR|VECTOR_OF|VISITED_BY|VISITS|FLOWERS_VISITED_BY|VISITS_FLOWERS_OF|INHABITED_BY|INHABITS|ADJACENT_TO|CREATES_HABITAT_FOR|IS_HABITAT_OF|LIVED_ON_BY|LIVES_ON|LIVED_INSIDE_OF_BY|LIVES_INSIDE_OF|LIVED_NEAR_BY|LIVES_NEAR|LIVED_UNDER_BY|LIVES_UNDER|LIVES_WITH|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|HYPERPARASITOID_OF|HAS_HYPERPARASITOID|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|GUEST_OF|HAS_GUEST_OF|FARMED_BY|FARMS|DAMAGED_BY|DAMAGES|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|KILLED_BY|KILLS|EPIPHITE_OF|HAS_EPIPHITE|LAYS_EGGS_ON|HAS_EGGS_LAYED_ON_BY|CO_OCCURS_WITH|COMMENSALIST_OF|MUTUALIST_OF|RELATED_TO]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc RETURN sourceTaxon.name as source_taxon_name,sourceSpecimen.sexLabel as source_specimen_sex"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i)(\\\\Qhttp://arctos.database.museum/guid/MSB:Mamm:79902\\\\E)}")));
 
     }
@@ -352,7 +365,9 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START study = node:studies('*:*') " +
-                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
@@ -447,13 +462,14 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START dataset = node:datasets({accordingTo}) " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START dataset = node:datasets({accordingTo}) " +
                 "MATCH study-[:IN_DATASET]->dataset " +
                 "WITH study " +
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
                 "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
-                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source)) as sourceCount " +
+                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(dataset.citation)) as sourceCount " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
@@ -473,15 +489,25 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START dataset = node:datasets({accordingTo}) " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START dataset = node:datasets({accordingTo}) " +
                 "MATCH study-[:IN_DATASET]->dataset " +
                 "WITH study " +
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
                 "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
-                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source)) as sourceCount " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
+                "WITH " +
+                "distinct targetTaxon, interaction.label as iType, " +
+                "sourceTaxon, count(interaction) as interactionCount, " +
+                "count(distinct(id(study))) as studyCount, " +
+                "count(distinct(dataset.citation)) as sourceCount " +
+                "RETURN " +
+                "sourceTaxon.name as source_taxon_name," +
+                "targetTaxon.name as target_taxon_name," +
+                "interactionCount as number_of_interactions," +
+                "studyCount as number_of_studies," +
+                "sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
             put("accordingTo", "namespace:(some/namespace)");
@@ -501,15 +527,28 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') " +
-                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) " +
                 "WITH study " +
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + createInteractionTypeSelector(Collections.emptyList()) + "]" +
                 "->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE (exists(targetTaxon.externalIds) AND ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['Arthropoda'])) " +
-                "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(study.source)) as sourceCount " +
-                "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
+                "WITH " +
+                "distinct targetTaxon, " +
+                "interaction.label as iType, " +
+                "sourceTaxon, " +
+                "count(interaction) as interactionCount, " +
+                "count(distinct(id(study))) as studyCount, " +
+                "count(distinct(dataset.citation)) as sourceCount " +
+                "RETURN " +
+                "sourceTaxon.name as source_taxon_name," +
+                "targetTaxon.name as target_taxon_name," +
+                "interactionCount as number_of_interactions," +
+                "studyCount as number_of_studies," +
+                "sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
             put("accordingTo", "(?i).*(\\\\QsomeSource\\\\E).*");
@@ -611,7 +650,11 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
@@ -631,7 +674,8 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START study = node:studies('*:*') " +
-                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) " +
                 "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE " + hasTaxon("Arthropoda", "source") +
@@ -651,7 +695,10 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING +
                 "WHERE " + hasTaxon("Arthropoda", "source") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
@@ -670,7 +717,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "OR (exists(study.citation) AND study.citation =~ {accordingTo}) " +
+                "OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING +
                 "WHERE " + hasTaxon("Arthropoda", "source") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
@@ -689,7 +742,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "OR (exists(study.citation) AND study.citation =~ {accordingTo}) " +
+                "OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (exists(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda']) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
@@ -708,7 +767,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "OR (exists(study.citation) AND study.citation =~ {accordingTo}) " +
+                "OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WHERE (exists(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda']) " +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
@@ -839,7 +904,13 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "OR (exists(study.citation) AND study.citation =~ {accordingTo}) " +
+                "OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) " +
+                "WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E).*}")));
@@ -855,7 +926,12 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START study = node:studies('*:*') WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo}) WITH study " +
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START study = node:studies('*:*') " +
+                "MATCH study-[:IN_DATASET]->dataset " +
+                "WHERE (exists(study.externalId) AND study.externalId =~ {accordingTo}) " +
+                "OR (exists(study.citation) AND study.citation =~ {accordingTo}) " +
+                "OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo}) WITH study " +
                 EXPECTED_MATCH_CLAUSE_DISTINCT +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{accordingTo=(?i).*(\\\\Qinaturalist\\\\E|\\\\Qgomexsi.edu\\\\E).*}")));
@@ -1505,7 +1581,9 @@ public class CypherQueryBuilderTest {
 
         query = locations(params);
 
-        assertThat(query.getVersionedQuery(), is(EXPECTED_ACCORDING_TO_START_CLAUSE + "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH DISTINCT(location) as loc RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT as footprintWKT"));
+        assertThat(query.getVersionedQuery(), is(EXPECTED_ACCORDING_TO_START_CLAUSE +
+                "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH " +
+                "DISTINCT(location) as loc RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT as footprintWKT"));
         assertThat(query.getParams().toString(), is("{accordingTo=(?i).*(\\\\Qsome source\\\\E).*}"));
     }
 

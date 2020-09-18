@@ -163,7 +163,7 @@ public class ReportGenerator {
                     StudyNode study = new StudyNode(studyInDataset.getStartNode());
                     countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
                     studyCounter.count();
-                    distinctSources.add(study.getSource());
+                    distinctSources.add(study.getSourceId());
                     distinctDatasets.add(study.getSourceId());
                 }
             }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup));
@@ -212,7 +212,7 @@ public class ReportGenerator {
         NodeUtil.findStudies(getGraphDb(), study -> {
             countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
             studyCounter.count();
-            distinctSources.add(study.getSource());
+            distinctSources.add(study.getSourceId());
             distinctDatasets.add(study.getSourceId());
         });
 

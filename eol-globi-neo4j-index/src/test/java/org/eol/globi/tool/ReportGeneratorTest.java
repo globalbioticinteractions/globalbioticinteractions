@@ -8,19 +8,38 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.CacheService;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class ReportGeneratorTest extends GraphDBTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+    private CacheService cacheService;
+
+    @Before
+    public void init() throws IOException {
+        final CacheService cacheService = new CacheService();
+        cacheService.setCacheDir(folder.newFolder());
+        this.cacheService = cacheService;
+    }
+
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException {
@@ -49,7 +68,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb()).generateReportForSourceIndividuals();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceIndividuals();
 
         Transaction transaction = getGraphDb().beginTx();
 
@@ -113,7 +132,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb()).generateReportForSourceOrganizations();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceOrganizations();
 
         Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> reports = getGraphDb()
@@ -124,7 +143,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         Node reportNode = reports.getSingle();
         assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az"));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
@@ -162,7 +181,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study2);
         resolveNames();
 
-        new ReportGenerator(getGraphDb()).generateReportForCollection();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForCollection();
 
         Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> reports = getGraphDb()
@@ -172,7 +191,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(2));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));

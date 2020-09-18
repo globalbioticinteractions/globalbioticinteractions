@@ -513,9 +513,9 @@ public class CypherQueryBuilder {
             } else if (hasAtLeastOneURL(accordingToParams)) {
                 whereClause = "(exists(study.externalId) AND study.externalId =~ {accordingTo})";
             } else {
-                whereClause = "(exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(study.source) AND study.source =~ {accordingTo})";
+                whereClause = "(exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo})";
             }
-            query.append(" study = node:studies('*:*') WHERE ")
+            query.append(" study = node:studies('*:*') MATCH study-[:IN_DATASET]->dataset WHERE ")
                     .append(whereClause)
                     .append(" WITH study");
         }
