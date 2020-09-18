@@ -19,6 +19,7 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import java.io.IOException;
 import java.util.Date;
@@ -52,7 +53,6 @@ import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_NAME;
-import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
@@ -414,11 +414,8 @@ class InteractionListenerImpl implements InteractionListener {
                     logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] is in the future");
                 } else if (dateTime.getYear() < 100) {
                     logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
-                } else if (StringUtils.split(eventDate, "/").length > 1) {
-                    DateTime endDate = DateUtil.parseDateUTC(StringUtils.split(eventDate, "/")[1]);
-                    if (dateTime.isAfter(endDate)) {
-                        logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
-                    }
+                } else if (hasStartDateAfterEndDate(eventDate)) {
+                    logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
             } catch (IllegalArgumentException ex) {
@@ -429,6 +426,32 @@ class InteractionListenerImpl implements InteractionListener {
 
         }
 
+    }
+
+    static boolean hasStartDateAfterEndDate(String eventDate) {
+        boolean hasStartedAfterFinishing = false;
+        final String[] split = StringUtils.split(eventDate, "/");
+        if (split.length > 1) {
+            try {
+                Interval actual = Interval.parse(eventDate);
+                hasStartedAfterFinishing = actual.getStart().isAfter(actual.getEnd());
+            } catch (IllegalArgumentException ex) {
+                final int diff = StringUtils.length(split[0]) - StringUtils.length(split[1]);
+                if (diff > 0) {
+                    final String prefix = StringUtils.substring(split[0], 0, diff);
+                    final String attemptWorkaround = StringUtils.join(split[0], "/", prefix + split[1]);
+                    try {
+                        Interval actual = Interval.parse(attemptWorkaround);
+                        hasStartedAfterFinishing = actual.getStart().isAfter(actual.getEnd());
+                    } catch (IllegalArgumentException e) {
+                        hasStartedAfterFinishing = true;
+                    }
+                } else {
+                    hasStartedAfterFinishing = true;
+                }
+            }
+        }
+        return hasStartedAfterFinishing;
     }
 
     private static String applySymbiotaDateTimeFix(String eventDate) {

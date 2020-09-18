@@ -14,6 +14,8 @@ import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -653,6 +655,26 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         } catch (StudyImporterException ex) {
             fail("should not throw on failing geoname lookup");
         }
+    }
+
+    @Test
+    public void startDateEndDateYearMonth() {
+        assertFalse(InteractionListenerImpl.hasStartDateAfterEndDate("2006-07/08"));
+    }
+
+    @Test
+    public void startedMonthAfterEnding() {
+        assertTrue(InteractionListenerImpl.hasStartDateAfterEndDate("2006-09/08"));
+    }
+
+    @Test
+    public void startDateEndDateYearMonth2() {
+        assertFalse(InteractionListenerImpl.hasStartDateAfterEndDate("2006-07/2006-08"));
+    }
+
+    @Test
+    public void startAfterEnding() {
+        assertTrue(InteractionListenerImpl.hasStartDateAfterEndDate("2008-07/2006-08"));
     }
 
 }

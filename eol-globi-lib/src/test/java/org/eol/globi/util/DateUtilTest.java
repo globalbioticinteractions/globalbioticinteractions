@@ -29,6 +29,12 @@ public class DateUtilTest {
     }
 
     @Test
+    public void parseDateYearMonthRange2() {
+        String text = "2006-07/08";
+        assertThat(DateUtil.parseYearMonthUTC(text).toString(), is("2006-07-01T00:00:00.000Z"));
+    }
+
+    @Test
     public void parseYear() {
         String text1 = "2018";
         assertThat(DateUtil.parseYearUTC(text1).toString(), is("2018-01-01T00:00:00.000Z"));
