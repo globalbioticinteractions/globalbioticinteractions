@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -69,7 +70,7 @@ public class ReportGenerator {
 
             @Override
             public String datasetQueryFor(String namespace) {
-                return namespace;
+                return QueryParser.escape(namespace);
             }
 
             @Override
@@ -88,7 +89,7 @@ public class ReportGenerator {
 
             @Override
             public String datasetQueryFor(String namespace) {
-                return namespace + "/*";
+                return QueryParser.escape(namespace + "/") + "*";
             }
 
             @Override
