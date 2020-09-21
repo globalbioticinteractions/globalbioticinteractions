@@ -6,10 +6,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.PhraseQuery;
@@ -17,7 +17,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 
@@ -111,27 +110,27 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);
                     Taxon term = new TaxonImpl();
-                    Fieldable idField = foundDoc.getFieldable(FIELD_ID);
+                    IndexableField idField = foundDoc.getField(FIELD_ID);
                     if (idField != null) {
                         term.setExternalId(idField.stringValue());
                     }
-                    Fieldable rankPathField = foundDoc.getFieldable(FIELD_RANK_PATH);
+                    IndexableField rankPathField = foundDoc.getField(FIELD_RANK_PATH);
                     if (rankPathField != null) {
                         term.setPath(rankPathField.stringValue());
                     }
-                    Fieldable rankPathIdsField = foundDoc.getFieldable(FIELD_RANK_PATH_IDS);
+                    IndexableField rankPathIdsField = foundDoc.getField(FIELD_RANK_PATH_IDS);
                     if (rankPathIdsField != null) {
                         term.setPathIds(rankPathIdsField.stringValue());
                     }
-                    Fieldable rankPathNamesField = foundDoc.getFieldable(FIELD_RANK_PATH_NAMES);
+                    IndexableField rankPathNamesField = foundDoc.getField(FIELD_RANK_PATH_NAMES);
                     if (rankPathNamesField != null) {
                         term.setPathNames(rankPathNamesField.stringValue());
                     }
-                    Fieldable commonNamesFields = foundDoc.getFieldable(FIELD_COMMON_NAMES);
+                    IndexableField commonNamesFields = foundDoc.getField(FIELD_COMMON_NAMES);
                     if (commonNamesFields != null) {
                         term.setCommonNames(commonNamesFields.stringValue());
                     }
-                    Fieldable fieldName = foundDoc.getFieldable(FIELD_RECOMMENDED_NAME);
+                    IndexableField fieldName = foundDoc.getField(FIELD_RECOMMENDED_NAME);
                     if (fieldName != null) {
                         term.setName(fieldName.stringValue());
                     }
@@ -174,10 +173,9 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
                 indexPath = new File(FileUtils.getTempDirectoryPath() + "/taxon" + System.currentTimeMillis());
                 LOG.info("index directory at [" + indexPath + "] created.");
                 //FileUtils.forceDeleteOnExit(indexPath);
-                indexDir = new SimpleFSDirectory(indexPath);
+                indexDir = new SimpleFSDirectory(indexPath.toPath());
             }
-            IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, null);
-            indexWriter = new IndexWriter(indexDir, config);
+            indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(null));
         } catch (IOException e) {
             throw new RuntimeException("failed to create indexWriter, cannot continue", e);
         }
@@ -189,7 +187,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
             try {
                 indexWriter.close();
                 indexWriter = null;
-                indexSearcher = new IndexSearcher(IndexReader.open(indexDir));
+                indexSearcher = new IndexSearcher(DirectoryReader.open(indexDir));
             } catch (IOException e) {
                 throw new RuntimeException("failed to successfully finish taxon import", e);
             }
