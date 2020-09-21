@@ -4,7 +4,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -547,8 +546,7 @@ public class CypherQueryBuilder {
     private static List<String> getNamespaces(List<String> accordingToParams) {
         Stream<String> namespaces = accordingToParams.stream()
                 .filter(accordingTo -> StringUtils.startsWith(accordingTo, "globi:"))
-                .map(accordingTo -> StringUtils.replaceOnce(accordingTo, "globi:", ""))
-                .map(x -> StringUtils.replace(x, "/", "\\/"));
+                .map(accordingTo -> StringUtils.replaceOnce(accordingTo, "globi:", ""));
         return namespaces.collect(Collectors.toList());
     }
 

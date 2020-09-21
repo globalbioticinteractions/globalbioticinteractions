@@ -22,14 +22,14 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
+import org.globalbioticinteractions.dataset.Dataset;
+import org.globalbioticinteractions.dataset.DatasetConstant;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetConstant;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,6 +37,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
 import java.net.URI;
@@ -458,6 +459,64 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         this.taxonIndex = new NonResolvingTaxonIndex(
                 getGraphDb()
         );
+    }
+
+
+    @Test
+    public void createEcoRegion() throws NodeFactoryException {
+        Location locationA = getNodeFactory().getOrCreateLocation(new LocationImpl(37.689254, -122.295799, null, null));
+        // ensure that no duplicate node are created ...
+        getNodeFactory().getOrCreateLocation(new LocationImpl(37.689255, -122.295798, null, null));
+        assertEcoRegions(locationA);
+        getNodeFactory().enrichLocationWithEcoRegions(locationA);
+        assertEcoRegions(locationA);
+
+        // check that multiple locations are associated to single eco region
+        Location locationB = getNodeFactory().getOrCreateLocation(new LocationImpl(37.689255, -122.295799, null, null));
+        assertEcoRegions(locationB);
+
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            IndexHits<Node> hits = getNodeFactory().findCloseMatchesForEcoregion("some elo egion");
+            assertThat(hits.size(), is(1));
+            assertThat((String) hits.iterator().next().getProperty(PropertyAndValueDictionary.NAME), is("some eco region"));
+
+            hits = getNodeFactory().findCloseMatchesForEcoregion("mickey mouse goes shopping");
+            assertThat(hits.size(), is(0));
+            hits = getNodeFactory().findCloseMatchesForEcoregionPath("mickey mouse goes shopping");
+            assertThat(hits.size(), is(0));
+
+            hits = getNodeFactory().findCloseMatchesForEcoregionPath("path");
+            assertThat(hits.size(), is(1));
+            hits = getNodeFactory().findCloseMatchesForEcoregionPath("some");
+            assertThat(hits.size(), is(1));
+
+            hits = getNodeFactory().suggestEcoregionByName("some eco region");
+            assertThat(hits.size(), is(1));
+            hits = getNodeFactory().suggestEcoregionByName("path");
+            assertThat(hits.size(), is(1));
+            transaction.success();
+        } finally {
+            transaction.close();
+        }
+
+    }
+
+    private void assertEcoRegions(Location location) {
+        Transaction transaction = getGraphDb().beginTx();
+        try {
+            Iterable<Relationship> relationships = ((NodeBacked) location).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
+            int count = 0;
+            for (Relationship relationship : relationships) {
+                Node associatedEcoRegion = relationship.getEndNode();
+                assertThat(associatedEcoRegion.getProperty("name"), is("some eco region"));
+                count++;
+            }
+            assertThat(count, is(1));
+            transaction.success();
+        } finally {
+            transaction.close();
+        }
     }
 
 
