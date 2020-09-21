@@ -73,6 +73,7 @@ public class Normalizer {
                 new Normalizer().run(cmdLine);
             } catch (Throwable th) {
                 LOG.error("failed to run GloBI indexer with [" + StringUtils.join(args) + "]", th);
+                throw th;
             }
         }
     }
