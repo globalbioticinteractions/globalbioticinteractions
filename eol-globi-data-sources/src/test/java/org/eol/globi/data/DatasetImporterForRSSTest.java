@@ -271,11 +271,6 @@ public class DatasetImporterForRSSTest {
             }
 
             @Override
-            public EcoregionFinder getEcoregionFinder() {
-                return null;
-            }
-
-            @Override
             public AuthorIdResolver getAuthorResolver() {
                 return null;
             }

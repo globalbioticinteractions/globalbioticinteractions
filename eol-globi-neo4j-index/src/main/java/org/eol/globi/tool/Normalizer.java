@@ -245,7 +245,6 @@ public class Normalizer {
 
     void importData(GraphDatabaseService graphService, String cacheDir) {
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
-        factory.setEcoregionFinder(getEcoregionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         try {
             DatasetRegistry registry = getDatasetRegistry(cacheDir);

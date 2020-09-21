@@ -125,11 +125,6 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     }
 
     @Override
-    public EcoregionFinder getEcoregionFinder() {
-        return factory.getEcoregionFinder();
-    }
-
-    @Override
     public AuthorIdResolver getAuthorResolver() {
         return factory.getAuthorResolver();
     }

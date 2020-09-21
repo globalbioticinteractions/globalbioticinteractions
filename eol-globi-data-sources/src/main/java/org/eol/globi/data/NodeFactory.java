@@ -46,8 +46,6 @@ public interface NodeFactory {
 
     TermLookupService getTermLookupService();
 
-    EcoregionFinder getEcoregionFinder();
-
     AuthorIdResolver getAuthorResolver();
 
     Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException;

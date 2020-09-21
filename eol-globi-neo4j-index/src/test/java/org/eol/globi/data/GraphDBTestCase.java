@@ -120,27 +120,8 @@ public abstract class GraphDBTestCase {
     }
 
 
-    NodeFactory createNodeFactory() {
+    private NodeFactory createNodeFactory() {
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
-        nodeFactoryNeo4j.setEcoregionFinder(new EcoregionFinder() {
-
-            @Override
-            public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-                final Ecoregion ecoregion = new Ecoregion();
-                ecoregion.setName("some eco region");
-                ecoregion.setPath("some | eco | region | path");
-                ecoregion.setId("some:id");
-                ecoregion.setGeometry("POINT(0,0)");
-                return new ArrayList<Ecoregion>() {{
-                    add(ecoregion);
-                }};
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        });
         nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
         return nodeFactoryNeo4j;
