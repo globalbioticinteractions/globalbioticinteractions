@@ -1,11 +1,18 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.domain.*;
-import org.eol.globi.geo.EcoregionFinder;
+import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Interaction;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Season;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.AuthorIdResolver;
-import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.TermLookupService;
+import org.globalbioticinteractions.dataset.Dataset;
 
 import java.util.Date;
 import java.util.List;
@@ -122,11 +129,6 @@ public class NodeFactoryWithDatasetContext implements NodeFactory {
     @Override
     public TermLookupService getTermLookupService() {
         return factory.getTermLookupService();
-    }
-
-    @Override
-    public EcoregionFinder getEcoregionFinder() {
-        return factory.getEcoregionFinder();
     }
 
     @Override

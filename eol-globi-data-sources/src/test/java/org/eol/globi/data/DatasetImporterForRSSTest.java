@@ -12,7 +12,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
-import org.eol.globi.geo.EcoregionFinder;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.util.DatasetImportUtil;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -267,11 +266,6 @@ public class DatasetImporterForRSSTest {
 
             @Override
             public TermLookupService getTermLookupService() {
-                return null;
-            }
-
-            @Override
-            public EcoregionFinder getEcoregionFinder() {
                 return null;
             }
 

@@ -3,13 +3,6 @@ package org.eol.globi.data;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetRegistryException;
-import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
@@ -17,6 +10,10 @@ import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.dataset.Dataset;
+import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.junit.After;
 import org.junit.Before;
@@ -122,25 +119,6 @@ public abstract class GraphDBTestCase {
 
     NodeFactory createNodeFactory() {
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
-        nodeFactoryNeo4j.setEcoregionFinder(new EcoregionFinder() {
-
-            @Override
-            public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-                final Ecoregion ecoregion = new Ecoregion();
-                ecoregion.setName("some eco region");
-                ecoregion.setPath("some | eco | region | path");
-                ecoregion.setId("some:id");
-                ecoregion.setGeometry("POINT(0,0)");
-                return new ArrayList<Ecoregion>() {{
-                    add(ecoregion);
-                }};
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        });
         nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
         return nodeFactoryNeo4j;

@@ -5,29 +5,23 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.data.DatasetImporter;
+import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
-import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.domain.Study;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
 
-import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class NormalizerTest extends GraphDBTestCase {
@@ -74,30 +68,11 @@ public class NormalizerTest extends GraphDBTestCase {
     }
 
     private Normalizer createNormalizer() {
-        Normalizer dataNormalizationTool = new Normalizer();
-        dataNormalizationTool.setEcoregionFinder(new EcoregionFinder() {
-            @Override
-            public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-                final Ecoregion ecoregion = new Ecoregion();
-                ecoregion.setName("some name");
-                ecoregion.setPath("some | path");
-                ecoregion.setId("someId");
-                ecoregion.setGeometry("POINT(1,2)");
-                return new ArrayList<Ecoregion>() {{
-                    add(ecoregion);
-                }};
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        });
-        return dataNormalizationTool;
+        return new Normalizer();
     }
 
     @Test
-    public void doSingleImportExport() throws IOException, StudyImporterException, URISyntaxException {
+    public void doSingleImportExport() throws StudyImporterException, URISyntaxException {
         Normalizer dataNormalizationTool = createNormalizer();
 
         GraphDatabaseService graphService = getGraphDb();

@@ -12,22 +12,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.DatasetImporter;
+import org.eol.globi.data.DatasetImporterForRegistry;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactoryLocal;
-import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.DatasetImporterForRegistry;
 import org.eol.globi.db.GraphService;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.export.GraphExporterImpl;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
-import org.globalbioticinteractions.dataset.DatasetRegistryException;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.taxon.ResolvingTaxonIndex;
@@ -35,6 +30,8 @@ import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.HttpUtil;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
+import org.globalbioticinteractions.dataset.DatasetRegistry;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryLocal;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -42,8 +39,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class Normalizer {
@@ -58,8 +53,6 @@ public class Normalizer {
     private static final String OPTION_SKIP_REPORT = "skipReport";
     private static final String OPTION_DATASET_DIR = "datasetDir";
     private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
-
-    private EcoregionFinder ecoregionFinder = null;
 
     public static void main(final String[] args) throws StudyImporterException, ParseException {
         String o = Version.getVersionInfo(Normalizer.class);
@@ -216,28 +209,6 @@ public class Normalizer {
         }
     }
 
-    private EcoregionFinder getEcoregionFinder() {
-        if (null == ecoregionFinder) {
-            //ecoregionFinder = new EcoregionFinderProxy(new EcoregionFinderFactoryImpl().createAll());
-            ecoregionFinder = new EcoregionFinder() {
-                @Override
-                public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-                    return Collections.emptyList();
-                }
-
-                @Override
-                public void shutdown() {
-
-                }
-            };
-        }
-        return ecoregionFinder;
-    }
-
-    void setEcoregionFinder(EcoregionFinder finder) {
-        this.ecoregionFinder = finder;
-    }
-
     void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         new GraphExporterImpl().export(graphService, baseDir);
     }
@@ -245,7 +216,6 @@ public class Normalizer {
 
     void importData(GraphDatabaseService graphService, String cacheDir) {
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
-        factory.setEcoregionFinder(getEcoregionFinder());
         factory.setDoiResolver(new DOIResolverImpl());
         try {
             DatasetRegistry registry = getDatasetRegistry(cacheDir);
@@ -259,10 +229,6 @@ public class Normalizer {
             importer.importStudy();
         } catch (StudyImporterException | DatasetRegistryException e) {
             LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
-        }
-        EcoregionFinder regionFinder = getEcoregionFinder();
-        if (regionFinder != null) {
-            regionFinder.shutdown();
         }
     }
 
