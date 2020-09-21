@@ -69,7 +69,11 @@ public class Normalizer {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("java -jar eol-globi-data-tool-[VERSION]-jar-with-dependencies.jar", getOptions());
         } else {
-            new Normalizer().run(cmdLine);
+            try {
+                new Normalizer().run(cmdLine);
+            } catch (Throwable th) {
+                LOG.error("failed to run GloBI indexer with [" + StringUtils.join(args) + "]", th);
+            }
         }
     }
 
