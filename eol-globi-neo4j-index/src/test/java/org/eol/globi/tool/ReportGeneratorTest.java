@@ -64,8 +64,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb(), cacheService)
-                .generateReportForSourceIndividuals();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceIndividuals();
 
         Transaction transaction = getGraphDb().beginTx();
 
@@ -126,8 +125,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb(), cacheService)
-                .generateReportForSourceOrganizations();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceOrganizations();
 
         Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> reports = getGraphDb()
