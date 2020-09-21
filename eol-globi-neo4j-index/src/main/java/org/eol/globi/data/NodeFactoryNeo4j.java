@@ -32,7 +32,6 @@ import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.ORCIDResolverImpl;
-import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
@@ -47,8 +46,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
@@ -71,9 +68,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
     private final Index<Node> seasons;
     private final Index<Node> locations;
     private final Index<Node> environments;
-    private final Index<Node> ecoregions;
-    private final Index<Node> ecoregionSuggestions;
-    private final Index<Node> ecoregionPaths;
 
     private TermLookupService termLookupService;
     private TermLookupService envoLookupService;
@@ -92,10 +86,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         this.seasons = NodeUtil.forNodes(graphDb, "seasons");
         this.locations = NodeUtil.forNodes(graphDb, "locations");
         this.environments = NodeUtil.forNodes(graphDb, "environments");
-
-        this.ecoregions = NodeUtil.forNodes(graphDb, "ecoregions");
-        this.ecoregionPaths = NodeUtil.forNodes(graphDb, "ecoregionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-        this.ecoregionSuggestions = NodeUtil.forNodes(graphDb, "ecoregionSuggestions");
     }
 
     public GraphDatabaseService getGraphDb() {
@@ -597,18 +587,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     @Deprecated
     public void setDoiResolver(DOIResolver doiResolver) {
-    }
-
-    IndexHits<Node> findCloseMatchesForEcoregion(String ecoregionName) {
-        return QueryUtil.query(ecoregionName, PropertyAndValueDictionary.NAME, ecoregions);
-    }
-
-    IndexHits<Node> findCloseMatchesForEcoregionPath(String ecoregionPath) {
-        return QueryUtil.query(ecoregionPath, PropertyAndValueDictionary.PATH, ecoregionPaths);
-    }
-
-    IndexHits<Node> suggestEcoregionByName(String wholeOrPartialEcoregionNameOrPath) {
-        return ecoregionSuggestions.query("name:\"" + wholeOrPartialEcoregionNameOrPath + "\"");
     }
 
     @Override
