@@ -12,7 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.db.GraphService;
+import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.db.GraphServiceFactoryImpl;
 import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
@@ -78,12 +79,12 @@ public class Normalizer {
     }
 
     public void run(CommandLine cmdLine) throws StudyImporterException {
-        final GraphDatabaseService graphService = GraphService.getGraphService("./");
+        final GraphServiceFactory graphService = new GraphServiceFactoryImpl("./");
         try {
             importDatasets(cmdLine, graphService);
             resolveAndLinkTaxa(cmdLine, graphService);
             generateReports(cmdLine, graphService);
-            exportData(cmdLine, graphService);
+            exportData(cmdLine, graphService.getGraphService());
         } finally {
             graphService.shutdown();
             HttpUtil.shutdown();
@@ -99,15 +100,15 @@ public class Normalizer {
         }
     }
 
-    private void generateReports(CommandLine cmdLine, GraphDatabaseService graphService) {
+    private void generateReports(CommandLine cmdLine, GraphServiceFactory graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
-            new ReportGenerator(graphService).run();
+            new ReportGenerator(graphService.getGraphService()).run();
         } else {
             LOG.info("skipping report generation ...");
         }
     }
 
-    private void importDatasets(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
+    private void importDatasets(CommandLine cmdLine, GraphServiceFactory graphService) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
             String cacheDir = cmdLine == null
                     ? "target/datasets"
@@ -121,7 +122,7 @@ public class Normalizer {
         }
     }
 
-    private void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
+    private void resolveAndLinkTaxa(CommandLine cmdLine, GraphServiceFactory graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
             new LinkerDOI(new DOIResolverCache()).index(graphService);
@@ -141,7 +142,8 @@ public class Normalizer {
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-            final IndexerNeo4j nameResolver = new NameResolver(new NonResolvingTaxonIndex(graphService));
+            final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(graphService.getGraphService());
+            final IndexerNeo4j nameResolver = new NameResolver(taxonIndex);
             final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer();
 
             Arrays.asList(nameResolver, taxonInteractionIndexer)

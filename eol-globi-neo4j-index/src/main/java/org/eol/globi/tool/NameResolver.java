@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
@@ -23,8 +24,6 @@ import org.neo4j.graphdb.index.IndexHits;
 public class NameResolver implements IndexerNeo4j {
     private static final Log LOG = LogFactory.getLog(NameResolver.class);
 
-    private final GraphDatabaseService graphService;
-
     private final TaxonIndex taxonIndex;
     private final TaxonFilter taxonFilter;
 
@@ -35,21 +34,12 @@ public class NameResolver implements IndexerNeo4j {
     private Long batchSize = 10000L;
 
     public NameResolver(TaxonIndex index) {
-        this(null, index, new KnownBadNameFilter());
-    }
-    public NameResolver(GraphDatabaseService graphService, TaxonIndex index) {
-        this(graphService, index, new KnownBadNameFilter());
+        this(index, new KnownBadNameFilter());
     }
 
-    public NameResolver(GraphDatabaseService graphService, TaxonIndex index, TaxonFilter taxonFilter) {
-        this.graphService = graphService;
+    public NameResolver(TaxonIndex index, TaxonFilter taxonFilter) {
         this.taxonIndex = index;
         this.taxonFilter = taxonFilter;
-    }
-
-    public void resolve() {
-        final GraphDatabaseService graphService = this.graphService;
-        index(graphService);
     }
 
     public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
@@ -118,9 +108,9 @@ public class NameResolver implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphDatabaseService graphService) {
+    public void index(GraphServiceFactory graphService) {
         LOG.info("name resolving started...");
-        resolveNames(batchSize, graphService);
+        resolveNames(batchSize, graphService.getGraphService());
         LOG.info("name resolving complete.");
 
     }

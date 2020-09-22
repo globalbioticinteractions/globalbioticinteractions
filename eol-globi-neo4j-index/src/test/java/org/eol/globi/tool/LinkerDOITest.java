@@ -5,6 +5,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
@@ -33,7 +34,7 @@ public class LinkerDOITest extends GraphDBTestCase {
     @Test
     public void doLink() throws NodeFactoryException, PropertyEnricherException {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", null, "some citation"));
-        new LinkerDOI().index(getGraphDb());
+        new LinkerDOI().index(new GraphServiceFactoryProxy(getGraphDb()));
         Study studyResolved = nodeFactory.getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(nullValue()));
         assertThat(study.getDOI(), is(nullValue()));
@@ -89,7 +90,7 @@ public class LinkerDOITest extends GraphDBTestCase {
             public DOI resolveDoiFor(String reference) throws IOException {
                 return new DOI("123", "456");
             }
-        }).index(getGraphDb());
+        }).index(new GraphServiceFactoryProxy(getGraphDb()));
         StudyNode studyResolved = getNodeFactory().getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(new DOI("123", "456")));
     }

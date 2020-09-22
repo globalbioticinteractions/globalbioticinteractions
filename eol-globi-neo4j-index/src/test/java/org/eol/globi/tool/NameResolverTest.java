@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
@@ -10,6 +11,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.junit.Test;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
@@ -45,9 +47,22 @@ public class NameResolverTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("NCBI:9606"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        final NameResolver nameResolver = new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb()));
+        final NameResolver nameResolver = new NameResolver(new NonResolvingTaxonIndex(getGraphDb()));
         nameResolver.setBatchSize(1L);
-        nameResolver.resolve();
+
+        final GraphServiceFactory factory = new GraphServiceFactory() {
+
+            @Override
+            public GraphDatabaseService getGraphService() {
+                return getGraphDb();
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        };
+        nameResolver.index(factory);
 
         assertAnimalia(taxonIndex.findTaxonById("WORMS:2"));
 
@@ -69,9 +84,19 @@ public class NameResolverTest extends GraphDBTestCase {
         Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Redus rha", "INAT_TAXON:126777"));
         someOtherOrganism.ate(someOtherOrganism2);
 
-        final NameResolver nameResolver = new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb()));
+        final NameResolver nameResolver = new NameResolver(new NonResolvingTaxonIndex(getGraphDb()));
         nameResolver.setBatchSize(1L);
-        nameResolver.resolve();
+        nameResolver.index(new GraphServiceFactory() {
+            @Override
+            public GraphDatabaseService getGraphService() {
+                return getGraphDb();
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        });
 
         Taxon resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:58831");
         assertThat(resolvedTaxon, is(notNullValue()));

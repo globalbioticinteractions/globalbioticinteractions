@@ -2,6 +2,7 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -12,7 +13,6 @@ import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.LinkerTaxonIndex;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -118,7 +118,7 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
         }
 
         LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex();
-        linkerTaxonIndex.index(getGraphDb());
+        linkerTaxonIndex.index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction ignored = getGraphDb().beginTx()) {
             Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,

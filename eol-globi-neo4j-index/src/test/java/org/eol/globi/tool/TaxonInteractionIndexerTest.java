@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -20,11 +21,11 @@ import org.neo4j.graphdb.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
 
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
@@ -41,7 +42,9 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("WORMS:2"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb())).resolve();
+        new NameResolver(new NonResolvingTaxonIndex(getGraphDb()))
+                .index(new GraphServiceFactoryProxy(getGraphDb()));
+
         new TaxonInteractionIndexer().index(getGraphDb());
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
@@ -79,7 +82,8 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb())).resolve();
+        new NameResolver(new NonResolvingTaxonIndex(getGraphDb()))
+                .index(new GraphServiceFactoryProxy(getGraphDb()));
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));

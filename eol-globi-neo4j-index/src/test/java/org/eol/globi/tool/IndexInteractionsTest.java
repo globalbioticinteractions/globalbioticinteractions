@@ -5,6 +5,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -55,7 +56,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
 
         donald.ate(mickey);
 
-        new IndexInteractions().index(getGraphDb());
+        new IndexInteractions().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
         StudyImpl study1 = new StudyImpl("some study", null, "come citation");

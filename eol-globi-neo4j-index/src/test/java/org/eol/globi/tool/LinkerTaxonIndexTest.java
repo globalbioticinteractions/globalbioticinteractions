@@ -6,6 +6,7 @@ import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -45,7 +46,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
-        new LinkerTaxonIndex().index(getGraphDb());
+        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
@@ -84,7 +85,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
         resolveNames();
 
-        new LinkerTaxonIndex().index(getGraphDb());
+        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
@@ -104,7 +105,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonIndex.getOrCreateTaxon(taxonFound);
         resolveNames();
 
-        new LinkerTaxonIndex().index(getGraphDb());
+        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
@@ -126,7 +127,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         resolveNames();
-        new LinkerTaxonIndex().index(getGraphDb());
+        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         Transaction transaction = getGraphDb().beginTx();
         assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));

@@ -9,6 +9,7 @@ import org.eol.globi.data.DatasetImporterForRegistry;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
@@ -25,8 +26,8 @@ public class IndexerDataset implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphDatabaseService graphService) {
-        indexDatasets(graphService, this.registry);
+    public void index(GraphServiceFactory graphService) {
+        indexDatasets(graphService.getGraphService(), this.registry);
     }
 
     private static void indexDatasets(GraphDatabaseService graphService, DatasetRegistry registry) {

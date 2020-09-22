@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -28,7 +29,8 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
 
 
     @Override
-    public void index(GraphDatabaseService graphDb) {
+    public void index(GraphServiceFactory factory) {
+        GraphDatabaseService graphDb = factory.getGraphService();
         Transaction tx = graphDb.beginTx();
         try {
             Index<Node> taxons = graphDb.index().forNodes("taxons");

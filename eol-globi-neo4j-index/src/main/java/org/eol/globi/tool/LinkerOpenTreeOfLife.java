@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
@@ -34,7 +35,8 @@ public class LinkerOpenTreeOfLife implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphDatabaseService graphDb) {
+    public void index(GraphServiceFactory factory) {
+        final GraphDatabaseService graphDb = factory.getGraphService();
         Transaction transaction = graphDb.beginTx();
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");

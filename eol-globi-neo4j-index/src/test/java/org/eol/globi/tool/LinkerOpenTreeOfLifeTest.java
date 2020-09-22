@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
@@ -45,8 +46,8 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
                 for (Term term : terms) {
                     termMatchListener.foundTaxonForTerm(nodeID, term, taxon, NameType.SAME_AS);
                 }
-            }).index(getGraphDb());
-            new LinkerOpenTreeOfLife(index).index(getGraphDb());
+            }).index(new GraphServiceFactoryProxy(getGraphDb()));
+            new LinkerOpenTreeOfLife(index).index(new GraphServiceFactoryProxy(getGraphDb()));
 
             Transaction transaction = getGraphDb().beginTx();
             Collection<String> externalIds = LinkerTestUtil.assertHasOther(taxon.getName(), expectedCount, taxonIndex, RelTypes.SAME_AS);

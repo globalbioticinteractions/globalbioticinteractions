@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
@@ -21,7 +22,8 @@ public class IndexInteractions implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphDatabaseService graphDb) {
+    public void index(GraphServiceFactory factory) {
+        final GraphDatabaseService graphDb = factory.getGraphService();
         LinkProgress progress = new LinkProgress(LOG::info, 10);
         progress.start();
 

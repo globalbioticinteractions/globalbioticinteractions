@@ -1,9 +1,9 @@
 package org.eol.globi.tool;
 
-import org.neo4j.graphdb.GraphDatabaseService;
+import org.eol.globi.db.GraphServiceFactory;
 
 public interface IndexerNeo4j {
 
-    void index(GraphDatabaseService graphService);
+    void index(GraphServiceFactory graphServiceFactory);
 
 }

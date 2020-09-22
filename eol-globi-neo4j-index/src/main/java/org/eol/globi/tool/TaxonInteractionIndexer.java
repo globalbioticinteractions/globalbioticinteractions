@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
@@ -28,6 +29,7 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
         indexInteractions(graphService);
         LOG.info("indexing interactions complete.");
     }
+
 
     public void indexInteractions(GraphDatabaseService graphService) {
         DB db = DBMaker
@@ -137,5 +139,10 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
 
     public static String getProgressMsg(long count, long duration) {
         return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
+    }
+
+    @Override
+    public void index(GraphServiceFactory graphServiceFactory) {
+        indexInteractions(graphServiceFactory.getGraphService());
     }
 }

@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 public class IndexerTimed implements IndexerNeo4j {
@@ -14,7 +15,7 @@ public class IndexerTimed implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphDatabaseService graphService) {
+    public void index(GraphServiceFactory graphService) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String linkName = indexer.getClass().getSimpleName();

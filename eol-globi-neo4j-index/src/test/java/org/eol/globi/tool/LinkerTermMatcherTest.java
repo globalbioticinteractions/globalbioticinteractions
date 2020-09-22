@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -60,7 +61,7 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
                 "/org/eol/globi/taxon/taxonMapHolorchis.tsv");
 
         new LinkerTermMatcher(taxonCacheService)
-                .index(getGraphDb());
+                .index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);

@@ -11,6 +11,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.Study;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -81,7 +82,7 @@ public class NormalizerTest extends GraphDBTestCase {
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
         final IndexerDataset indexerDataset = new IndexerDataset(DatasetRegistryUtil.getDatasetRegistry(datasetDirTest));
-        indexerDataset.index(getGraphDb());
+        indexerDataset.index(new GraphServiceFactoryProxy(getGraphDb()));
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));

@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
@@ -113,7 +115,7 @@ public abstract class GraphDBTestCase {
     }
 
     protected void resolveNames() {
-        new NameResolver(getOrCreateTaxonIndex()).index(getGraphDb());
+        new NameResolver(getOrCreateTaxonIndex()).index(new GraphServiceFactoryProxy(getGraphDb()));
     }
 
 

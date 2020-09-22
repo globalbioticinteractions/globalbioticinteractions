@@ -3,11 +3,11 @@ package org.eol.globi.tool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonCacheService;
-import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -24,10 +24,10 @@ public class IndexerTaxa implements IndexerNeo4j {
         this.taxonCacheService = taxonCacheService;
     }
 
-    public static void indexTaxa(GraphDatabaseService graphService, TaxonCacheService taxonCacheService) {
+    public static void indexTaxa(GraphServiceFactory graphService, TaxonCacheService taxonCacheService) {
         LOG.info("resolving names with taxon cache ...");
         try {
-            ResolvingTaxonIndex index = new ResolvingTaxonIndex(taxonCacheService, graphService);
+            ResolvingTaxonIndex index = new ResolvingTaxonIndex(taxonCacheService, graphService.getGraphService());
             index.setIndexResolvedTaxaOnly(true);
 
             TaxonFilter taxonCacheFilter = new TaxonFilter() {
@@ -41,7 +41,7 @@ public class IndexerTaxa implements IndexerNeo4j {
                 }
             };
 
-            new NameResolver(graphService, index, taxonCacheFilter).resolve();
+            new NameResolver(index, taxonCacheFilter).index(graphService);
 
             LOG.info("adding same and similar terms for resolved taxa...");
             List<IndexerNeo4j> linkers = new ArrayList<>();
@@ -69,7 +69,7 @@ public class IndexerTaxa implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphDatabaseService graphService) {
+    public void index(GraphServiceFactory graphService) {
         indexTaxa(graphService, taxonCacheService);
     }
 }

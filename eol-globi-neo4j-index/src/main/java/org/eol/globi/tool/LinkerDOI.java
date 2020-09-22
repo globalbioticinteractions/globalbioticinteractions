@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphService;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
@@ -41,7 +43,8 @@ public class LinkerDOI implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphDatabaseService graphDb) {
+    public void index(GraphServiceFactory factory) {
+        GraphDatabaseService graphDb = factory.getGraphService();
         Transaction transaction = graphDb.beginTx();
         try {
             Index<Node> taxons = graphDb.index().forNodes("studies");
