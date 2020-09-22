@@ -17,7 +17,6 @@ import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;
-import java.util.function.Predicate;
 
 public class IndexerDataset implements IndexerNeo4j {
     private static final Log LOG = LogFactory.getLog(IndexerDataset.class);
@@ -40,25 +39,16 @@ public class IndexerDataset implements IndexerNeo4j {
             String namespacelist = StringUtils.join(namespaces, CharsetConstant.SEPARATOR);
             LOG.info("found dataset namespaces: {" + namespacelist + "}");
 
-            for (String namespace : namespaces) {
-                final GraphDatabaseService graphService1 = factory.getGraphService();
-                try {
-                    Predicate<String> filter = x -> StringUtils.equals(x, namespace);
-                    final DatasetRegistry datasetRegistry = new DatasetRegistryFiltered(filter, registry);
+            final GraphDatabaseService graphService1 = factory.getGraphService();
+            NodeFactoryNeo4j nodeFactory = new NodeFactoryNeo4j(graphService1);
+            nodeFactory.setDoiResolver(new DOIResolverImpl());
 
-                    NodeFactoryNeo4j nodeFactory = new NodeFactoryNeo4j(graphService1);
-                    nodeFactory.setDoiResolver(new DOIResolverImpl());
-                    DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), nodeFactory, datasetRegistry);
-                    importer.setDataset(new DatasetLocal(inStream -> inStream));
-                    importer.setLogger(new NullImportLogger());
-                    importer.importStudy();
-                } catch (StudyImporterException e) {
-                    LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
-                } finally {
-                    factory.clear();
-                }
-            }
-        } catch (DatasetRegistryException e) {
+            DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), nodeFactory, registry);
+            importer.setDataset(new DatasetLocal(inStream -> inStream));
+            importer.setLogger(new NullImportLogger());
+            importer.importStudy();
+
+        } catch (DatasetRegistryException | StudyImporterException e) {
             LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
         }
     }
