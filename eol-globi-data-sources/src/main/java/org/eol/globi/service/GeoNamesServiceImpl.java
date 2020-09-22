@@ -268,7 +268,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         }
         if (point == null) {
             if (!IGNORED_LOCALES.contains(geoNameTermOrLocale)) {
-                LOG.warn("failed to query (lat,lng) for term [" + geoNameTermOrLocale + "]");
+                LOG.warn("failed find (lat,lng) for term/locale [" + geoNameTermOrLocale + "]");
             }
         } else {
             pointCache.put(geoNameTermOrLocale, point);
