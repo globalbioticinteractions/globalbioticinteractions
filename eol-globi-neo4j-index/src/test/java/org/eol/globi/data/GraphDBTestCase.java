@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
+import org.eol.globi.db.GraphServiceUtil;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
@@ -36,7 +37,7 @@ import static org.junit.Assert.assertThat;
 
 public abstract class GraphDBTestCase {
 
-    private GraphDatabaseService graphDb;
+    private GraphServiceFactory graphFactory;
 
     protected NodeFactory nodeFactory;
 
@@ -87,7 +88,7 @@ public abstract class GraphDBTestCase {
 
     @After
     public void shutdownGraphDb() {
-        graphDb.shutdown();
+        graphFactory.shutdown();
     }
 
     protected NodeFactoryNeo4j getNodeFactory() {
@@ -103,10 +104,36 @@ public abstract class GraphDBTestCase {
     }
 
     protected GraphDatabaseService getGraphDb() {
-        if (graphDb == null) {
-            graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+        if (graphFactory == null) {
+            graphFactory = getGraphFactory();
         }
-        return graphDb;
+        return graphFactory.getGraphService();
+    }
+
+    protected GraphServiceFactory getGraphFactory() {
+        return new GraphServiceFactory() {
+
+            private GraphDatabaseService graphDb = null;
+
+            @Override
+            public GraphDatabaseService getGraphService() {
+                GraphDatabaseService graphDb = this.graphDb;
+                GraphServiceUtil.verifyState(graphDb);
+
+                if (this.graphDb == null) {
+                    this.graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+                }
+                return this.graphDb;
+            }
+
+            @Override
+            public void shutdown() {
+                if (graphDb != null) {
+                    graphDb.shutdown();
+                    graphDb = null;
+                }
+            }
+        };
     }
 
     protected void importStudy(DatasetImporter importer) throws StudyImporterException {

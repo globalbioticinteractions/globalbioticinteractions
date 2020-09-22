@@ -76,17 +76,15 @@ public class NormalizerTest extends GraphDBTestCase {
     public void doSingleImportExport() throws StudyImporterException, URISyntaxException {
         Normalizer dataNormalizationTool = createNormalizer();
 
-        GraphDatabaseService graphService = getGraphDb();
-
         URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
         final IndexerDataset indexerDataset = new IndexerDataset(DatasetRegistryUtil.getDatasetRegistry(datasetDirTest));
-        indexerDataset.index(new GraphServiceFactoryProxy(getGraphDb()));
+        indexerDataset.index(getGraphFactory());
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));
-        dataNormalizationTool.exportData(graphService, baseDir);
+        dataNormalizationTool.exportData(getGraphDb(), baseDir);
     }
 
     private static void importData(Class<? extends DatasetImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {

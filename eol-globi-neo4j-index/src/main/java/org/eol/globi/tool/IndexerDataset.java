@@ -16,6 +16,9 @@ import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.util.Collection;
+import java.util.function.Predicate;
+
 public class IndexerDataset implements IndexerNeo4j {
     private static final Log LOG = LogFactory.getLog(IndexerDataset.class);
 
@@ -27,22 +30,35 @@ public class IndexerDataset implements IndexerNeo4j {
 
     @Override
     public void index(GraphServiceFactory graphService) {
-        indexDatasets(graphService.getGraphService(), this.registry);
+        indexDatasets(graphService, this.registry);
     }
 
-    private static void indexDatasets(GraphDatabaseService graphService, DatasetRegistry registry) {
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
-        factory.setDoiResolver(new DOIResolverImpl());
+    private static void indexDatasets(GraphServiceFactory factory, DatasetRegistry registry) {
         try {
-            String namespacelist = StringUtils.join(registry.findNamespaces(), CharsetConstant.SEPARATOR);
+            final Collection<String> namespaces = registry.findNamespaces();
 
+            String namespacelist = StringUtils.join(namespaces, CharsetConstant.SEPARATOR);
             LOG.info("found dataset namespaces: {" + namespacelist + "}");
 
-            DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), factory, registry);
-            importer.setDataset(new DatasetLocal(inStream -> inStream));
-            importer.setLogger(new NullImportLogger());
-            importer.importStudy();
-        } catch (StudyImporterException | DatasetRegistryException e) {
+            for (String namespace : namespaces) {
+                final GraphDatabaseService graphService1 = factory.getGraphService();
+                try {
+                    Predicate<String> filter = x -> StringUtils.equals(x, namespace);
+                    final DatasetRegistry datasetRegistry = new DatasetRegistryFiltered(filter, registry);
+
+                    NodeFactoryNeo4j nodeFactory = new NodeFactoryNeo4j(graphService1);
+                    nodeFactory.setDoiResolver(new DOIResolverImpl());
+                    DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), nodeFactory, datasetRegistry);
+                    importer.setDataset(new DatasetLocal(inStream -> inStream));
+                    importer.setLogger(new NullImportLogger());
+                    importer.importStudy();
+                } catch (StudyImporterException e) {
+                    LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
+                } finally {
+                    factory.shutdown();
+                }
+            }
+        } catch (DatasetRegistryException e) {
             LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
         }
     }

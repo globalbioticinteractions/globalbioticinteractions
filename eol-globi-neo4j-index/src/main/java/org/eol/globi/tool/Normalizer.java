@@ -79,14 +79,14 @@ public class Normalizer {
     }
 
     public void run(CommandLine cmdLine) throws StudyImporterException {
-        final GraphServiceFactory graphService = new GraphServiceFactoryImpl("./");
+        final GraphServiceFactory factory = new GraphServiceFactoryImpl("./");
         try {
-            importDatasets(cmdLine, graphService);
-            resolveAndLinkTaxa(cmdLine, graphService);
-            generateReports(cmdLine, graphService);
-            exportData(cmdLine, graphService.getGraphService());
+            importDatasets(cmdLine, factory);
+            resolveAndLinkTaxa(cmdLine, factory);
+            generateReports(cmdLine, factory);
+            exportData(cmdLine, factory.getGraphService());
         } finally {
-            graphService.shutdown();
+            factory.shutdown();
             HttpUtil.shutdown();
         }
 
@@ -108,15 +108,14 @@ public class Normalizer {
         }
     }
 
-    private void importDatasets(CommandLine cmdLine, GraphServiceFactory graphService) throws StudyImporterException {
+    private void importDatasets(CommandLine cmdLine, GraphServiceFactory factory) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
             String cacheDir = cmdLine == null
                     ? "target/datasets"
                     : cmdLine.getOptionValue(OPTION_DATASET_DIR, "target/datasets");
 
-
             DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(cacheDir);
-            new IndexerDataset(registry).index(graphService);
+            new IndexerDataset(registry).index(factory);
         } else {
             LOG.info("skipping data import...");
         }
