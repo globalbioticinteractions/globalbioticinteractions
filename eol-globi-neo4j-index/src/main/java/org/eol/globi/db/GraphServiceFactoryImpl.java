@@ -38,7 +38,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
 
     private static GraphDatabaseService startNeo4j(String baseDir) {
         String storePath = baseDir + "graph.db";
-        System.out.println("neo4j starting using [" + storePath + "]...");
+        System.out.print("neo4j starting at [" + storePath + "]...");
 
         final GraphDatabaseService graphService = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(new File(storePath))
@@ -47,15 +47,14 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
                 .setConfig(GraphDatabaseSettings.check_point_interval_tx, "100000")
                 .newGraphDatabase();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (graphService.isAvailable(0)) {
                 System.out.print("neo4j stopping...");
                 graphService.shutdown();
                 System.out.println("done.");
             }
-        });
-        System.out.println("neo4j started (" + storePath + ").");
+        }));
+        System.out.print("done");
         return graphService;
     }
 
