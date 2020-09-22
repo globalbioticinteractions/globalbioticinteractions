@@ -86,7 +86,7 @@ public class Normalizer {
             generateReports(cmdLine, factory);
             exportData(cmdLine, factory.getGraphService());
         } finally {
-            factory.shutdown();
+            factory.clear();
             HttpUtil.shutdown();
         }
 

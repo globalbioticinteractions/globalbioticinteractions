@@ -55,7 +55,7 @@ public class IndexerDataset implements IndexerNeo4j {
                 } catch (StudyImporterException e) {
                     LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
                 } finally {
-                    factory.shutdown();
+                    factory.clear();
                 }
             }
         } catch (DatasetRegistryException e) {

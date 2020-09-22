@@ -16,7 +16,7 @@ public class GraphServiceFactoryProxy implements GraphServiceFactory {
     }
 
     @Override
-    public void shutdown() {
+    public void clear() {
         service.shutdown();
     }
 }

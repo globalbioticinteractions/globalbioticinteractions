@@ -10,6 +10,9 @@ public interface GraphServiceFactory {
 
     GraphDatabaseService getGraphService();
 
-    void shutdown();
+    /**
+     * clear existing cached graph database services if present
+     */
+    void clear();
 
 }

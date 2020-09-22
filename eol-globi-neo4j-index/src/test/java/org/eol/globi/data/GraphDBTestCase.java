@@ -88,7 +88,7 @@ public abstract class GraphDBTestCase {
 
     @After
     public void shutdownGraphDb() {
-        graphFactory.shutdown();
+        graphFactory.clear();
     }
 
     protected NodeFactoryNeo4j getNodeFactory() {
@@ -127,7 +127,7 @@ public abstract class GraphDBTestCase {
             }
 
             @Override
-            public void shutdown() {
+            public void clear() {
                 if (graphDb != null) {
                     graphDb.shutdown();
                     graphDb = null;

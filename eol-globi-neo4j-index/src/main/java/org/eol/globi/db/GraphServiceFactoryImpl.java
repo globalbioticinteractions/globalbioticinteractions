@@ -12,6 +12,9 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
     private static GraphDatabaseService graphDb;
 
     public GraphServiceFactoryImpl(String baseDir) {
+        if (graphDb != null) {
+            throw new IllegalStateException("only one graph service factory allowed, but another is already instantiated");
+        }
         this.baseDir = baseDir;
     }
 
@@ -26,7 +29,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
     }
 
     @Override
-    public void shutdown() {
+    public void clear() {
         if (graphDb != null) {
             graphDb.shutdown();
             graphDb = null;

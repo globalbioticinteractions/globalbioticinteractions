@@ -58,7 +58,7 @@ public class NameResolverTest extends GraphDBTestCase {
             }
 
             @Override
-            public void shutdown() {
+            public void clear() {
 
             }
         };
@@ -93,7 +93,7 @@ public class NameResolverTest extends GraphDBTestCase {
             }
 
             @Override
-            public void shutdown() {
+            public void clear() {
 
             }
         });
