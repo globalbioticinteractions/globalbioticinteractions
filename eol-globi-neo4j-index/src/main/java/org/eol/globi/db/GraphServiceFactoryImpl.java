@@ -50,9 +50,9 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                System.out.println("neo4j stopping...");
+                System.out.print("neo4j stopping...");
                 graphService.shutdown();
-                System.out.println("neo4j stopped.");
+                System.out.println("done.");
             }
         });
         System.out.println("neo4j started (" + storePath + ").");

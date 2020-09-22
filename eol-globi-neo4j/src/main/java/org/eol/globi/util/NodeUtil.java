@@ -154,38 +154,29 @@ public class NodeUtil {
     }
 
     public static Node getDataSetForStudy(StudyNode study) {
-        Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
+        try (Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx()) {
             Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
             Iterator<Relationship> iterator = rels.iterator();
             Node datasetNode = iterator.hasNext() ? iterator.next().getEndNode() : null;
             tx.success();
             return datasetNode;
-        } finally {
-            tx.close();
         }
     }
 
     public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName) {
         Index<Node> index;
-        Transaction tx = graphDb.beginTx();
-        try {
+        try (Transaction tx = graphDb.beginTx()) {
             index = graphDb.index().forNodes(indexName);
             tx.success();
-        } finally {
-            tx.close();
         }
         return index;
     }
 
     public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName, Map properties) {
         Index<Node> index;
-        Transaction tx = graphDb.beginTx();
-        try {
+        try (Transaction tx = graphDb.beginTx()) {
             index = graphDb.index().forNodes(indexName, properties);
             tx.success();
-        } finally {
-            tx.close();
         }
         return index;
     }

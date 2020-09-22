@@ -121,10 +121,10 @@ public class Normalizer {
         }
     }
 
-    private void resolveAndLinkTaxa(CommandLine cmdLine, GraphServiceFactory graphService) {
+    private void resolveAndLinkTaxa(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
-            new LinkerDOI(new DOIResolverCache()).index(graphService);
+            new LinkerDOI(new DOIResolverCache()).index(graphServiceFactory);
             //new LinkerDOI(graphService).link();
         } else {
             LOG.info("skipping citation resolving ...");
@@ -135,18 +135,18 @@ public class Normalizer {
                     "/taxa/taxonCache.tsv.gz",
                     "/taxa/taxonMap.tsv.gz");
             IndexerNeo4j taxonIndexer = new IndexerTaxa(taxonCacheService);
-            taxonIndexer.index(graphService);
+            taxonIndexer.index(graphServiceFactory);
         } else {
             LOG.info("skipping taxon cache ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-            final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(graphService.getGraphService());
+            final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(graphServiceFactory.getGraphService());
             final IndexerNeo4j nameResolver = new NameResolver(taxonIndex);
             final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer();
 
             Arrays.asList(nameResolver, taxonInteractionIndexer)
-                    .forEach(x -> x.index(graphService));
+                    .forEach(x -> x.index(graphServiceFactory));
         } else {
             LOG.info("skipping taxa resolving ...");
         }
@@ -155,7 +155,7 @@ public class Normalizer {
             List<IndexerNeo4j> linkers = new ArrayList<>();
             linkers.add(new LinkerTaxonIndex());
             linkers.forEach(x -> new IndexerTimed(x)
-                    .index(graphService));
+                    .index(graphServiceFactory));
         } else {
             LOG.info("skipping linking ...");
         }
