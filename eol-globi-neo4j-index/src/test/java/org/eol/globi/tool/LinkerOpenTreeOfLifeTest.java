@@ -11,13 +11,10 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.PropertyEnricherException;
-import org.eol.globi.taxon.TermMatchListener;
-import org.eol.globi.taxon.TermMatcher;
 import org.junit.Test;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.Collection;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.Is.is;
@@ -44,16 +41,12 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
             Taxon createdTaxon = taxonIndex.getOrCreateTaxon(taxon);
             long nodeID = ((NodeBacked) createdTaxon).getNodeID();
 
-            new LinkerTermMatcher(getGraphDb(), new TermMatcher() {
-
-                @Override
-                public void match(List<Term> terms, TermMatchListener termMatchListener) throws PropertyEnricherException {
-                    for (Term term : terms) {
-                        termMatchListener.foundTaxonForTerm(nodeID, term, taxon, NameType.SAME_AS);
-                    }
+            new LinkerTermMatcher((terms, termMatchListener) -> {
+                for (Term term : terms) {
+                    termMatchListener.foundTaxonForTerm(nodeID, term, taxon, NameType.SAME_AS);
                 }
-            }).link();
-            new LinkerOpenTreeOfLife(getGraphDb(), index).link();
+            }).index(getGraphDb());
+            new LinkerOpenTreeOfLife(index).index(getGraphDb());
 
             Transaction transaction = getGraphDb().beginTx();
             Collection<String> externalIds = LinkerTestUtil.assertHasOther(taxon.getName(), expectedCount, taxonIndex, RelTypes.SAME_AS);

@@ -20,22 +20,16 @@ import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.Map;
 
-public class TaxonInteractionIndexer {
+public class TaxonInteractionIndexer implements IndexerNeo4j {
     private static final Log LOG = LogFactory.getLog(TaxonInteractionIndexer.class);
 
-    private final GraphDatabaseService graphService;
-
-    public TaxonInteractionIndexer(GraphDatabaseService graphService) {
-        this.graphService = graphService;
-    }
-
-    public void index() {
+    public void index(GraphDatabaseService graphService) {
         LOG.info("indexing interactions started...");
-        indexInteractions();
+        indexInteractions(graphService);
         LOG.info("indexing interactions complete.");
     }
 
-    public void indexInteractions() {
+    public void indexInteractions(GraphDatabaseService graphService) {
         DB db = DBMaker
                 .newMemoryDirectDB()
                 .compressionEnable()
@@ -45,13 +39,13 @@ public class TaxonInteractionIndexer {
                 .createTreeMap("ottIdMap")
                 .make();
 
-        collectTaxonInteractions(taxonInteractions);
-        createTaxonInteractions(taxonInteractions);
+        collectTaxonInteractions(taxonInteractions, graphService);
+        createTaxonInteractions(taxonInteractions, graphService);
 
         db.close();
     }
 
-    public void createTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions) {
+    public void createTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions, GraphDatabaseService graphService) {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
 
@@ -91,7 +85,7 @@ public class TaxonInteractionIndexer {
         }
     }
 
-    public void collectTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions) {
+    public void collectTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions, GraphDatabaseService graphService) {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
         StopWatch watchForBatch = new StopWatch();

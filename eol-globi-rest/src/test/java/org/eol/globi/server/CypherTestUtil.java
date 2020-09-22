@@ -30,7 +30,7 @@ public class CypherTestUtil {
         GraphDatabaseService graphDatabaseService = testGraphDatabaseFactory.newImpermanentDatabase();
         new NodeFactoryNeo4j(graphDatabaseService);
         new NonResolvingTaxonIndex(graphDatabaseService);
-        new LinkerTaxonIndex(graphDatabaseService).link();
+        new LinkerTaxonIndex().index(graphDatabaseService);
         CacheService cacheService = new CacheService();
         File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
         cacheService.setCacheDir(cacheDir);

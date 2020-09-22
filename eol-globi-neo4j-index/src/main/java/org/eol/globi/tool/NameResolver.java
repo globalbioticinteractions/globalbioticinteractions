@@ -20,7 +20,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-public class NameResolver {
+public class NameResolver implements IndexerNeo4j {
     private static final Log LOG = LogFactory.getLog(NameResolver.class);
 
     private final GraphDatabaseService graphService;
@@ -34,6 +34,9 @@ public class NameResolver {
 
     private Long batchSize = 10000L;
 
+    public NameResolver(TaxonIndex index) {
+        this(null, index, new KnownBadNameFilter());
+    }
     public NameResolver(GraphDatabaseService graphService, TaxonIndex index) {
         this(graphService, index, new KnownBadNameFilter());
     }
@@ -45,12 +48,11 @@ public class NameResolver {
     }
 
     public void resolve() {
-        LOG.info("name resolving started...");
-        resolveNames(batchSize);
-        LOG.info("name resolving complete.");
+        final GraphDatabaseService graphService = this.graphService;
+        index(graphService);
     }
 
-    public void resolveNames(Long batchSize) {
+    public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
         StopWatch watchForBatch = new StopWatch();
@@ -115,4 +117,11 @@ public class NameResolver {
         return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
     }
 
+    @Override
+    public void index(GraphDatabaseService graphService) {
+        LOG.info("name resolving started...");
+        resolveNames(batchSize, graphService);
+        LOG.info("name resolving complete.");
+
+    }
 }

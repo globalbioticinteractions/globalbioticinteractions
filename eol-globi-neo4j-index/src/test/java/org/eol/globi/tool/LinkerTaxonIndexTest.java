@@ -45,7 +45,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
-        new LinkerTaxonIndex(getGraphDb()).link();
+        new LinkerTaxonIndex().index(getGraphDb());
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
@@ -84,7 +84,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
         resolveNames();
 
-        new LinkerTaxonIndex(getGraphDb()).link();
+        new LinkerTaxonIndex().index(getGraphDb());
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
@@ -104,7 +104,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonIndex.getOrCreateTaxon(taxonFound);
         resolveNames();
 
-        new LinkerTaxonIndex(getGraphDb()).link();
+        new LinkerTaxonIndex().index(getGraphDb());
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
@@ -126,7 +126,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         resolveNames();
-        new LinkerTaxonIndex(getGraphDb()).link();
+        new LinkerTaxonIndex().index(getGraphDb());
 
         Transaction transaction = getGraphDb().beginTx();
         assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));

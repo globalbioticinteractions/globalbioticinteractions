@@ -11,34 +11,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.Version;
-import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.DatasetImporter;
-import org.eol.globi.data.DatasetImporterForRegistry;
-import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphService;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.export.GraphExporterImpl;
-import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.DOIResolverCache;
-import org.eol.globi.service.DOIResolverImpl;
-import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.HttpUtil;
-import org.globalbioticinteractions.cache.CacheFactory;
-import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
-import org.globalbioticinteractions.dataset.DatasetRegistryException;
-import org.globalbioticinteractions.dataset.DatasetRegistryLocal;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Normalizer {
@@ -129,7 +113,9 @@ public class Normalizer {
                     ? "target/datasets"
                     : cmdLine.getOptionValue(OPTION_DATASET_DIR, "target/datasets");
 
-            importData(graphService, cacheDir);
+
+            DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(cacheDir);
+            new IndexerDataset(registry).index(graphService);
         } else {
             LOG.info("skipping data import...");
         }
@@ -138,103 +124,46 @@ public class Normalizer {
     private void resolveAndLinkTaxa(CommandLine cmdLine, GraphDatabaseService graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
-            new LinkerDOI(graphService, new DOIResolverCache()).link();
+            new LinkerDOI(new DOIResolverCache()).index(graphService);
             //new LinkerDOI(graphService).link();
         } else {
             LOG.info("skipping citation resolving ...");
         }
 
-
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
-            LOG.info("resolving names with taxon cache ...");
             final TaxonCacheService taxonCacheService = new TaxonCacheService(
                     "/taxa/taxonCache.tsv.gz",
                     "/taxa/taxonMap.tsv.gz");
-            try {
-                ResolvingTaxonIndex index = new ResolvingTaxonIndex(taxonCacheService, graphService);
-                index.setIndexResolvedTaxaOnly(true);
-
-                TaxonFilter taxonCacheFilter = new TaxonFilter() {
-
-                    private KnownBadNameFilter knownBadNameFilter = new KnownBadNameFilter();
-
-                    @Override
-                    public boolean shouldInclude(Taxon taxon) {
-                        return taxon != null
-                                && knownBadNameFilter.shouldInclude(taxon);
-                    }
-                };
-
-                new NameResolver(graphService, index, taxonCacheFilter).resolve();
-
-                LOG.info("adding same and similar terms for resolved taxa...");
-                List<Linker> linkers = new ArrayList<>();
-                appendOpenTreeTaxonLinker(graphService, linkers);
-                linkers.forEach(LinkUtil::doTimedLink);
-                LOG.info("adding same and similar terms for resolved taxa done.");
-
-            } finally {
-                taxonCacheService.shutdown();
-            }
-            LOG.info("resolving names with taxon cache done.");
+            IndexerNeo4j taxonIndexer = new IndexerTaxa(taxonCacheService);
+            taxonIndexer.index(graphService);
         } else {
             LOG.info("skipping taxon cache ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-            new NameResolver(graphService, new NonResolvingTaxonIndex(graphService)).resolve();
-            new TaxonInteractionIndexer(graphService).index();
+            final IndexerNeo4j nameResolver = new NameResolver(new NonResolvingTaxonIndex(graphService));
+            final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer();
+
+            Arrays.asList(nameResolver, taxonInteractionIndexer)
+                    .forEach(x -> x.index(graphService));
         } else {
             LOG.info("skipping taxa resolving ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-            List<Linker> linkers = new ArrayList<>();
-            linkers.add(new LinkerTaxonIndex(graphService));
-            linkers.forEach(LinkUtil::doTimedLink);
+            List<IndexerNeo4j> linkers = new ArrayList<>();
+            linkers.add(new LinkerTaxonIndex());
+            linkers.forEach(x -> new IndexerTimed(x)
+                    .index(graphService));
         } else {
             LOG.info("skipping linking ...");
         }
 
     }
 
-    public void appendOpenTreeTaxonLinker(GraphDatabaseService graphService, List<Linker> linkers) {
-        String ottUrl = System.getProperty("ott.url");
-        try {
-            if (StringUtils.isNotBlank(ottUrl)) {
-                linkers.add(new LinkerOpenTreeOfLife(graphService, new OpenTreeTaxonIndex(new URI(ottUrl).toURL())));
-            }
-        } catch (MalformedURLException | URISyntaxException e) {
-            LOG.warn("failed to link against OpenTreeOfLife", e);
-        }
-    }
-
     void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         new GraphExporterImpl().export(graphService, baseDir);
     }
 
-
-    void importData(GraphDatabaseService graphService, String cacheDir) {
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j(graphService);
-        factory.setDoiResolver(new DOIResolverImpl());
-        try {
-            DatasetRegistry registry = getDatasetRegistry(cacheDir);
-            String namespacelist = StringUtils.join(registry.findNamespaces(), CharsetConstant.SEPARATOR);
-
-            LOG.info("found dataset namespaces: {" + namespacelist + "}");
-
-            DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), factory, registry);
-            importer.setDataset(new DatasetLocal(inStream -> inStream));
-            importer.setLogger(new NullImportLogger());
-            importer.importStudy();
-        } catch (StudyImporterException | DatasetRegistryException e) {
-            LOG.error("problem encountered while importing [" + DatasetImporterForRegistry.class.getName() + "]", e);
-        }
-    }
-
-    private DatasetRegistry getDatasetRegistry(String cacheDir) {
-        CacheFactory cacheFactory = dataset -> new CacheLocalReadonly(dataset.getNamespace(), cacheDir);
-        return new DatasetRegistryLocal(cacheDir, cacheFactory);
-    }
 
 }

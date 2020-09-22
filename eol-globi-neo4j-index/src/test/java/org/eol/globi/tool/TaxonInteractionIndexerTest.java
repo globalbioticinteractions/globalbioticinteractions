@@ -42,7 +42,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb())).resolve();
-        new TaxonInteractionIndexer(getGraphDb()).index();
+        new TaxonInteractionIndexer().index(getGraphDb());
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);

@@ -22,21 +22,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LinkerTermMatcher implements Linker {
+public class LinkerTermMatcher implements IndexerNeo4j {
 
     private static final int BATCH_SIZE = 100;
 
     private static final Log LOG = LogFactory.getLog(LinkerTermMatcher.class);
-    private final GraphDatabaseService graphDb;
     private final TermMatcher termMatcher;
 
-    public LinkerTermMatcher(GraphDatabaseService graphDb, TermMatcher termMatcher) {
-        this.graphDb = graphDb;
+    public LinkerTermMatcher(TermMatcher termMatcher) {
         this.termMatcher = termMatcher;
     }
 
+
     @Override
-    public void link() {
+    public void index(GraphDatabaseService graphDb) {
         Transaction transaction = graphDb.beginTx();
         try {
             Index<Node> taxons = graphDb.index().forNodes("taxons");

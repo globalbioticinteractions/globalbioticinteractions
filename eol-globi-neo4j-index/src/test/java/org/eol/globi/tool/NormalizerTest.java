@@ -80,7 +80,8 @@ public class NormalizerTest extends GraphDBTestCase {
         URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
-        dataNormalizationTool.importData(getGraphDb(), datasetDirTest);
+        final IndexerDataset indexerDataset = new IndexerDataset(DatasetRegistryUtil.getDatasetRegistry(datasetDirTest));
+        indexerDataset.index(getGraphDb());
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));

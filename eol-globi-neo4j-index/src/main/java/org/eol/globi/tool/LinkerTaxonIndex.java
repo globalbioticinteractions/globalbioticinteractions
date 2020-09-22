@@ -22,16 +22,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LinkerTaxonIndex implements Linker {
+public class LinkerTaxonIndex implements IndexerNeo4j {
 
     public static final String INDEX_TAXON_NAMES_AND_IDS = "taxonPaths";
-    private final GraphDatabaseService graphDb;
 
-    public LinkerTaxonIndex(GraphDatabaseService graphDb) {
-        this.graphDb = graphDb;
-    }
 
-    public void link() {
+    @Override
+    public void index(GraphDatabaseService graphDb) {
         Transaction tx = graphDb.beginTx();
         try {
             Index<Node> taxons = graphDb.index().forNodes("taxons");

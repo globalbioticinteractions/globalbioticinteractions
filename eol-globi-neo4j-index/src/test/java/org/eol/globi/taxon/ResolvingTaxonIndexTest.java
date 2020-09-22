@@ -117,8 +117,8 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
             );
         }
 
-        LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex(getGraphDb());
-        linkerTaxonIndex.link();
+        LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex();
+        linkerTaxonIndex.index(getGraphDb());
 
         try (Transaction ignored = getGraphDb().beginTx()) {
             Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,

@@ -113,11 +113,11 @@ public abstract class GraphDBTestCase {
     }
 
     protected void resolveNames() {
-        new NameResolver(getGraphDb(), getOrCreateTaxonIndex()).resolve();
+        new NameResolver(getOrCreateTaxonIndex()).index(getGraphDb());
     }
 
 
-    NodeFactory createNodeFactory() {
+    protected NodeFactory createNodeFactory() {
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
         nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());

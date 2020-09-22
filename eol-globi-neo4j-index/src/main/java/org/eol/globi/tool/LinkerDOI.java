@@ -25,28 +25,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LinkerDOI implements Linker {
+public class LinkerDOI implements IndexerNeo4j {
 
     private static final Log LOG = LogFactory.getLog(LinkerDOI.class);
     public static final int BATCH_SIZE = 25;
 
     private final DOIResolver doiResolver;
-    private final GraphDatabaseService graphDb;
 
-    public LinkerDOI(GraphDatabaseService graphDb) {
-        this(graphDb, new DOIResolverImpl());
+    public LinkerDOI() {
+        this(new DOIResolverImpl());
     }
 
-    public LinkerDOI(GraphDatabaseService graphDb, DOIResolver resolver) {
-        this.graphDb = graphDb;
+    public LinkerDOI(DOIResolver resolver) {
         this.doiResolver = resolver;
     }
 
     @Override
-    public void link() {
+    public void index(GraphDatabaseService graphDb) {
         Transaction transaction = graphDb.beginTx();
         try {
-            Index<Node> taxons = this.graphDb.index().forNodes("studies");
+            Index<Node> taxons = graphDb.index().forNodes("studies");
             IndexHits<Node> hits = taxons.query("*:*");
 
             int counter = 0;
@@ -128,7 +126,7 @@ public class LinkerDOI implements Linker {
     }
 
 
-    public void linkStudy(DOIResolver doiResolver, StudyNode study) {
+    public static void linkStudy(DOIResolver doiResolver, StudyNode study) {
         if (shouldResolve(study)) {
             try {
                 DOI doiResolved = doiResolver.resolveDoiFor(study.getCitation());
@@ -139,7 +137,7 @@ public class LinkerDOI implements Linker {
         }
     }
 
-    private void setDOIForStudy(StudyNode study, DOI doiResolved) {
+    private static void setDOIForStudy(StudyNode study, DOI doiResolved) {
         if (null != doiResolved) {
             study.setPropertyWithTx(StudyConstant.DOI, doiResolved.toString());
             if (StringUtils.isBlank(study.getExternalId())) {

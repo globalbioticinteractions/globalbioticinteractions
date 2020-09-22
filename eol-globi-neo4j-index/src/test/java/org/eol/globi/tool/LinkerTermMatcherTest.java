@@ -6,7 +6,6 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Ignore;
@@ -17,7 +16,6 @@ import org.neo4j.graphdb.Transaction;
 import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class LinkerTermMatcherTest extends GraphDBTestCase {
@@ -61,7 +59,8 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
                 "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
                 "/org/eol/globi/taxon/taxonMapHolorchis.tsv");
 
-        new LinkerTermMatcher(getGraphDb(), taxonCacheService).link();
+        new LinkerTermMatcher(taxonCacheService)
+                .index(getGraphDb());
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);
