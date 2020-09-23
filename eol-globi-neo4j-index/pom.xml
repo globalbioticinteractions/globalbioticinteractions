@@ -120,6 +120,26 @@
                                         <exclude>org/neo4j/index/impl/lucene/LuceneDataSource$*.class</exclude>
                                     </excludes>
                                 </filter>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>LICENSE</exclude>
+                                        <exclude>NOTICE</exclude>
+                                        <exclude>META-INF/README.txt</exclude>
+                                        <exclude>META-INF/README.md</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/CHANGES.txt</exclude>
+                                        <exclude>META-INF/LICENSES.txt</exclude>
+                                        <exclude>META-INF/LICENSE.txt</exclude>
+                                        <exclude>META-INF/LICENSE</exclude>
+                                        <exclude>META-INF/DEPENDENCIES</exclude>
+                                        <exclude>META-INF/NOTICE.txt</exclude>
+                                        <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/ASL2.0</exclude>
+                                        <exclude>META-INF/maven/com.fasterxml.jackson.core/**/pom.*</exclude>
+                                        <exclude>META-INF/maven/com.google.guava/guava/pom.*</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
                         </configuration>
                     </execution>
