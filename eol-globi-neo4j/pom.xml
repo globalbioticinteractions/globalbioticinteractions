@@ -24,6 +24,16 @@
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
             <version>${neo4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>neo4j-cypher-compiler-1.9_2.11</artifactId>
+                    <groupId>org.neo4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>neo4j-cypher-compiler-2.2_2.11</artifactId>
+                    <groupId>org.neo4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
