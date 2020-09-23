@@ -100,7 +100,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>eol-globi-neo4j-index-${project.version}-jar-with-dependencies</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
@@ -113,13 +112,6 @@
                                 </transformer>
                             </transformers>
                             <filters>
-                                <filter>
-                                    <artifact>org.neo4j:neo4j-lucene-index</artifact>
-                                    <excludes>
-                                        <exclude>org/neo4j/index/impl/lucene/LuceneDataSource.class</exclude>
-                                        <exclude>org/neo4j/index/impl/lucene/LuceneDataSource$*.class</exclude>
-                                    </excludes>
-                                </filter>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
