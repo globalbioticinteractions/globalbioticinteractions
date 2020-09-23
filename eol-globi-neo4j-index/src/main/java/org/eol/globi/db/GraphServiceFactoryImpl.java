@@ -42,7 +42,9 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
 
         final GraphDatabaseService graphService = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(storeDir)
-                .setConfig(GraphDatabaseSettings.keep_logical_logs, "false")
+                .setConfig(GraphDatabaseSettings.keep_logical_logs, "500M size")
+                .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "250M")
+//                .setConfig(GraphDatabaseSettings.check_point_interval_tx, "100000")
                 .newGraphDatabase();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
