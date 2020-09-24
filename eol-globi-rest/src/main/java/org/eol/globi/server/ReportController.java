@@ -167,9 +167,9 @@ public class ReportController {
         String cypherQuery = "START report = node:reports('collection:*')" +
             " WHERE not(exists(report.title)) AND not(exists(report.source)) "
             + " RETURN " +
-                "report.citation as " + ResultField.STUDY_CITATION
-            + ", report.externalId as " + ResultField.STUDY_URL
-            + ", report.doi as " + ResultField.STUDY_DOI
+                "null as " + ResultField.STUDY_CITATION
+            + ", null as " + ResultField.STUDY_URL
+            + ", null as " + ResultField.STUDY_DOI
             + ", null as " + ResultField.STUDY_SOURCE_CITATION
             + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
             + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA

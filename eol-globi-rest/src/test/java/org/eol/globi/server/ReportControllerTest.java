@@ -50,6 +50,29 @@ public class ReportControllerTest {
     }
 
     @Test
+    public void collections() throws IOException {
+        CypherQuery source = new ReportController().collections();
+        assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
+                "START " +
+                "report = node:reports('collection:*') " +
+                "WHERE " +
+                "not(exists(report.title)) AND not(exists(report.source)) " +
+                "RETURN " +
+                "null as study_citation, " +
+                "null as study_url, " +
+                "null as study_doi, " +
+                "null as study_source_citation, " +
+                "report.nInteractions as number_of_interactions, " +
+                "report.nTaxa as number_of_distinct_taxa, " +
+                "report.nStudies as number_of_studies, " +
+                "report.nSources as number_of_sources, " +
+                "report.nTaxaNoMatch as number_of_distinct_taxa_no_match"));
+
+        CypherTestUtil.validate(source);
+
+    }
+
+    @Test
     public void distinctSourceOrg() throws IOException {
         CypherQuery source = new ReportController().sourceOrg("some", null);
         assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
