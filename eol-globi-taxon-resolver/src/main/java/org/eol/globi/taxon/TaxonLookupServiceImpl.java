@@ -24,7 +24,7 @@ import org.eol.globi.domain.TaxonImpl;
 import java.io.File;
 import java.io.IOException;
 
-public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupService {
+public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupService, AutoCloseable {
     private static final Log LOG = LogFactory.getLog(TaxonLookupServiceImpl.class);
 
     private static final String FIELD_ID = "id";
@@ -140,22 +140,20 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     @Override
     public void destroy() {
-        if (indexDir != null) {
-            try {
-                indexDir.close();
-            } catch (IOException e) {
-                //
-            } finally {
-                try {
-                    File indexPath1 = getIndexPath();
-                    if (indexPath1 != null) {
-                        FileUtils.deleteDirectory(indexPath1);
-                        LOG.info("index directory at [" + indexPath + "] deleted.");
-                    }
-                } catch (IOException e) {
-                    // ignore
-                }
+        try {
+            this.close();
+        } catch (IOException e) {
+            //
+        }
+
+        try {
+            File indexPath1 = getIndexPath();
+            if (indexPath1 != null) {
+                FileUtils.deleteDirectory(indexPath1);
+                LOG.info("index directory at [" + indexPath + "] deleted.");
             }
+        } catch (IOException e) {
+            // ignore
         }
     }
 
@@ -203,5 +201,20 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (indexWriter != null) {
+            indexWriter.close();
+            indexWriter = null;
+        }
+        if (indexSearcher != null) {
+            indexSearcher.close();
+            indexSearcher = null;
+        }
+        if (indexDir != null) {
+            indexDir.close();
+        }
     }
 }
