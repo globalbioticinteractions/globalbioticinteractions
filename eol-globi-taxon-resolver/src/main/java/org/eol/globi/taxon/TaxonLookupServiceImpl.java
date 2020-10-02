@@ -73,7 +73,7 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
         }
     }
 
-    public void addIfNotBlank(Document doc, String fieldName, String fieldValue) {
+    private void addIfNotBlank(Document doc, String fieldName, String fieldValue) {
         if (StringUtils.isNotBlank(fieldValue)) {
             doc.add(new Field(fieldName, fieldValue, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
         }

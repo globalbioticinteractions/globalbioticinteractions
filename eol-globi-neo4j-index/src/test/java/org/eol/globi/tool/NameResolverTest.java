@@ -8,10 +8,17 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.taxon.ResolvingTaxonIndex;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
@@ -105,6 +112,66 @@ public class NameResolverTest extends GraphDBTestCase {
         Taxon resolvedTaxon2 = taxonIndex.findTaxonByName("Blaus bla");
         assertThat(resolvedTaxon2, is(notNullValue()));
         assertThat(resolvedTaxon2.getExternalId(), is("INAT_TAXON:58831"));
+    }
+
+    @Test
+    public void literatureTaxon() throws NodeFactoryException {
+        Specimen someOtherOrganism = nodeFactory.createSpecimen(nodeFactory.createStudy(
+                new StudyImpl("bla", null, null)),
+                new TaxonImpl("foo", "foo:123"));
+
+        Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(
+                new StudyImpl("bla", null, null)),
+                new TaxonImpl("bar", "bar:456"));
+
+
+        someOtherOrganism.ate(someOtherOrganism2);
+
+        final NameResolver nameResolver = new NameResolver(new ResolvingTaxonIndex(new PropertyEnricher() {
+            @Override
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                return enrichAllMatches(properties).get(0);
+            }
+
+            @Override
+            public List<Map<String, String>> enrichAllMatches(Map<String, String> properties) throws PropertyEnricherException {
+                TaxonImpl literature = new TaxonImpl("doi:10.678/901", "doi:10.678/901");
+                literature.setPath("some | other | path");
+
+                TaxonImpl concept = new TaxonImpl("Donald duckus", "foo:XXX");
+                concept.setPath("some | path");
+
+                return Arrays.asList(TaxonUtil.taxonToMap(literature), TaxonUtil.taxonToMap(concept));
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        }, getGraphDb()));
+
+
+        nameResolver.setBatchSize(1L);
+        nameResolver.index(new GraphServiceFactory() {
+            @Override
+            public GraphDatabaseService getGraphService() {
+                return getGraphDb();
+            }
+
+            @Override
+            public void clear() {
+
+            }
+        });
+
+        Taxon resolvedTaxon = taxonIndex.findTaxonById("foo:123");
+        assertThat(resolvedTaxon, is(notNullValue()));
+        assertThat(resolvedTaxon.getExternalId(), is("foo:XXX"));
+        assertThat(resolvedTaxon.getName(), is("Donald duckus"));
+
+        Taxon resolvedTaxon2 = taxonIndex.findTaxonByName("foo");
+        assertThat(resolvedTaxon2.getExternalId(), is("foo:XXX"));
+        assertThat(resolvedTaxon2.getName(), is("Donald duckus"));
     }
 
     @Test

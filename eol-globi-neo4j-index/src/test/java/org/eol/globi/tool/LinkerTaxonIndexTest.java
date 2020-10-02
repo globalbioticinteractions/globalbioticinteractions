@@ -49,7 +49,9 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+            IndexHits<Node> hits = getGraphDb()
+                    .index()
+                    .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
                     .query("*:*");
             Node next = hits.next();
             assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
@@ -108,8 +110,11 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+            IndexHits<Node> hits = getGraphDb()
+                    .index()
+                    .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
                     .query("path:\"some id\"");
+
             assertThat(hits.hasNext(), is(true));
             Node next = hits.next();
             assertThat(new TaxonNode(next).getExternalId(), is("some id"));

@@ -70,15 +70,29 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
     }
 
     public TaxonNode indexFirstAndConnectRemaining(List<Map<String, String>> taxonMatches, Taxon origTaxon) throws NodeFactoryException {
-        Map<String, String> firstEnriched = taxonMatches.get(0);
-        Taxon taxon = TaxonUtil.mapToTaxon(firstEnriched);
-        TaxonNode indexedTaxon = findTaxon(taxon);
-        if (indexedTaxon == null) {
-            if (TaxonUtil.isResolved(taxon)) {
-                indexedTaxon = createAndIndexTaxon(origTaxon, taxon);
+        Taxon primaryTaxon = selectPrimaryTaxon(taxonMatches);
+        return indexAndConnect(taxonMatches, origTaxon, primaryTaxon);
+    }
 
-                for (int i = 1; i < taxonMatches.size(); i++) {
-                    Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatches.get(i));
+    public Taxon selectPrimaryTaxon(List<Map<String, String>> taxonMatches) {
+        Taxon primary = null;
+        for (Map<String, String> taxonMatch : taxonMatches) {
+            primary = TaxonUtil.mapToTaxon(taxonMatch);
+            if (!TaxonUtil.hasLiteratureReference(primary)) {
+                break;
+            }
+        }
+        return primary;
+    }
+
+    public TaxonNode indexAndConnect(List<Map<String, String>> taxonMatches, Taxon origTaxon, Taxon primaryTaxon) throws NodeFactoryException {
+        TaxonNode indexedTaxon = findTaxon(primaryTaxon);
+        if (indexedTaxon == null) {
+            if (TaxonUtil.isResolved(primaryTaxon)) {
+                indexedTaxon = createAndIndexTaxon(origTaxon, primaryTaxon);
+
+                for (Map<String, String> taxonMatch : taxonMatches) {
+                    Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
                     if (!TaxonUtil.likelyHomonym(indexedTaxon, sameAsTaxon)) {
                         NodeUtil.connectTaxa(
                                 sameAsTaxon,
