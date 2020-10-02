@@ -127,6 +127,41 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     }
 
     @Test
+    public void linkingWithLiteratureReference() throws NodeFactoryException {
+        indexTaxaWithLiteratureLink();
+
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> hits = getGraphDb()
+                    .index()
+                    .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                    .query("path:\"doi:10.123/456\"");
+
+            assertThat(hits.hasNext(), is(true));
+            Node next = hits.next();
+            assertThat(new TaxonNode(next).getExternalId(), is("bar:123"));
+            assertThat(hits.hasNext(), is(false));
+
+            hits.close();
+
+            transaction.success();
+        }
+    }
+
+    private void indexTaxaWithLiteratureLink() throws NodeFactoryException {
+        Taxon taxonFound = new TaxonImpl("Homo sapiens", "bar:123");
+        taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
+        Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
+        TaxonImpl taxon1 = new TaxonImpl("doi:10.123/456", "doi:10.123/456");
+        taxon1.setPath("doi:10.123/456");
+        taxon1.setPathIds("doi:10.123/456");
+        NodeUtil.connectTaxa(taxon1, (TaxonNode) taxon, getGraphDb(), RelTypes.SAME_AS);
+
+        resolveNames();
+
+        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
+    }
+
+    @Test
     public void findByStringWithWhitespaces() throws NodeFactoryException {
         NonResolvingTaxonIndex taxonService = new NonResolvingTaxonIndex(getGraphDb());
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
@@ -135,8 +170,15 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         Transaction transaction = getGraphDb().beginTx();
-        assertThat(getGraphDb().index().existsForNodes("taxonNameSuggestions"), is(true));
-        Index<Node> index = getGraphDb().index().forNodes("taxonNameSuggestions");
+        assertThat(getGraphDb()
+                        .index()
+                        .existsForNodes(TaxonFuzzySearchIndex.TAXON_NAME_SUGGESTIONS),
+                is(true));
+
+        Index<Node> index = getGraphDb()
+                .index()
+                .forNodes(TaxonFuzzySearchIndex.TAXON_NAME_SUGGESTIONS);
+
         Query query = new TermQuery(new Term("name", "name"));
         IndexHits<Node> hits = index.query(query);
         assertThat(hits.size(), is(1));
@@ -175,7 +217,10 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     protected void assertSingleHit(String query) {
         IndexHits<Node> hits;
         Node next;
-        hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS).query(query);
+        hits = getGraphDb()
+                .index()
+                .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                .query(query);
         next = hits.next();
         assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
         assertThat(hits.hasNext(), is(false));
