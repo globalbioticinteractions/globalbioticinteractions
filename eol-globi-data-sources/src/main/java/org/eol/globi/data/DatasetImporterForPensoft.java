@@ -5,10 +5,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -40,12 +40,32 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class DatasetImporterForPensoft extends DatasetImporterWithListener {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForPensoft.class);
     private SparqlClientFactory sparqlClientFactory = new SparqlClientCachingFactory();
 
     public DatasetImporterForPensoft(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
+
+    public static ObjectNode createColumnSchema(List<String> columnNames) {
+        final List<ObjectNode> columns = columnNames
+                .stream()
+                .map(x -> {
+                    final ObjectMapper objectMapper = new ObjectMapper();
+                    final ObjectNode column = objectMapper.createObjectNode();
+                    column.put("name", x);
+                    column.put("titles", x);
+                    column.put("datatype", "string");
+                    return column;
+                }).collect(Collectors.toList());
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectNode obj = objectMapper.createObjectNode();
+        final ArrayNode arrayNode = objectMapper.createArrayNode();
+        columns.forEach(arrayNode::add);
+        obj.put("columns", arrayNode);
+        return obj;
+    }
+
 
     @Override
     public void importStudy() throws StudyImporterException {
@@ -67,14 +87,13 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     }
 
 
-
     static void parseRowsAndEnrich(JsonNode biodivTable,
                                    InteractionListener listener,
                                    ImportLogger logger,
                                    final SparqlClient sparqlClient) throws StudyImporterException {
-        final Elements tables = getTables(biodivTable);
-        Elements rows = tables.get(0).select("tr");
-        final List<String> columnNames = getColumnNames(tables);
+        final Elements table = getHtmlTable(biodivTable);
+        Elements rows = table.get(0).select("tr");
+        final List<String> columnNames = getColumnNames(table);
 
         final Map<String, String> tableReferences;
         try {
@@ -86,89 +105,91 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         for (Element row : rows) {
             Elements rowColumns = row.select("td");
 
-            // expand spanned rows
             expandSpannedRows(row, rowColumns);
 
+            Map<String, String> dataContext = expandSpannedColumns(columnNames, row);
+            if (dataContext == null) {
+                final Map<String, String> rowValue = new TreeMap<>();
+                final List<Pair<String, Term>> rowTerms = parseRowValues(columnNames, rowValue, rowColumns);
 
-            final Map<String, String> rowValue = new TreeMap<>();
-            final List<Pair<String, Term>> rowTerms = parseRowValues(columnNames, rowValue, rowColumns);
+                if (!rowValue.isEmpty()) {
+                    final List<Map<String, Term>> distinctPermutations = new ArrayList<>();
+                    expandRows(rowTerms, new PermutationListener() {
+                        @Override
+                        public void on(Map<String, Term> link) {
+                            if (!distinctPermutations.contains(link) && !link.isEmpty()) {
+                                distinctPermutations.add(link);
 
-            if (!rowValue.isEmpty()) {
-                final List<Map<String, Term>> distinctPermutations = new ArrayList<>();
-                expandRows(rowTerms, new PermutationListener() {
-                    @Override
-                    public void on(Map<String, Term> link) {
-                        if (!distinctPermutations.contains(link) && !link.isEmpty()) {
-                            distinctPermutations.add(link);
-
+                            }
                         }
+                    }, distinctKeys(rowTerms));
+
+                    final TreeMap<String, String> link = new TreeMap<String, String>(rowValue) {{
+                        putAll(tableReferences);
+                    }};
+
+                    if (rowColumns.size() != columnNames.size()) {
+                        logger.warn(LogUtil.contextFor(link), "inconsistent column usage: found [" + rowColumns.size() + "] data columns, but [" + columnNames.size() + "] column definitions");
                     }
-                }, distinctKeys(rowTerms));
 
-                final TreeMap<String, String> link = new TreeMap<String, String>(rowValue) {{
-                    putAll(tableReferences);
-                }};
-
-                if (rowColumns.size() != columnNames.size()) {
-                    logger.warn(LogUtil.contextFor(link), "inconsistent column usage: found [" + rowColumns.size() + "] data columns, but [" + columnNames.size() + "] column definitions");
-                }
-
-                if (distinctPermutations.isEmpty()) {
-                    listener.newLink(link);
-                } else {
-                    for (Map<String, Term> distinctPermutation : distinctPermutations) {
-                        listener.newLink(new TreeMap<String, String>(link) {
-                            {
-                                List<Taxon> collectTaxa = new ArrayList<>();
-                                for (Map.Entry<String, Term> taxonNames : distinctPermutation.entrySet()) {
-                                    put(taxonNames.getKey() + "_taxon_name", taxonNames.getValue().getName());
-                                    final String id = taxonNames.getValue().getId();
-                                    put(taxonNames.getKey() + "_taxon_id", id);
-                                    try {
-                                        final Taxon taxon = retrieveTaxonHierarchyById(id, sparqlClient);
-                                        if (taxon != null) {
-                                            collectTaxa.add(taxon);
-                                            final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, taxonNames.getKey() + "_taxon_");
-                                            for (String s : taxonMap.keySet()) {
-                                                putIfAbsent(s, taxonMap.get(s));
+                    if (distinctPermutations.isEmpty()) {
+                        listener.newLink(link);
+                    } else {
+                        for (Map<String, Term> distinctPermutation : distinctPermutations) {
+                            listener.newLink(new TreeMap<String, String>(link) {
+                                {
+                                    List<Taxon> collectTaxa = new ArrayList<>();
+                                    for (Map.Entry<String, Term> taxonNames : distinctPermutation.entrySet()) {
+                                        String name = taxonNames.getValue().getName();
+                                        put(taxonNames.getKey() + "_taxon_name", name);
+                                        final String id = taxonNames.getValue().getId();
+                                        put(taxonNames.getKey() + "_taxon_id", id);
+                                        try {
+                                            final Taxon taxon = retrieveTaxonHierarchyById(id, sparqlClient);
+                                            if (taxon != null) {
+                                                collectTaxa.add(taxon);
+                                                final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, taxonNames.getKey() + "_taxon_");
+                                                for (String s : taxonMap.keySet()) {
+                                                    putIfAbsent(s, taxonMap.get(s));
+                                                }
                                             }
+                                        } catch (IOException e) {
+                                            // ignore
                                         }
-                                    } catch (IOException e) {
-                                        // ignore
+                                    }
+
+                                    final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(collectTaxa);
+                                    if (taxons.size() == 2) {
+                                        put(DatasetImporterForTSV.INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
+                                        put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+
+                                        final Taxon sourceTaxon = taxons.get(0);
+                                        put(TaxonUtil.SOURCE_TAXON_NAME, sourceTaxon.getName());
+                                        put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxon.getExternalId());
+                                        put(TaxonUtil.SOURCE_TAXON_RANK, sourceTaxon.getRank());
+                                        put(TaxonUtil.SOURCE_TAXON_PATH, sourceTaxon.getPath());
+                                        put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, sourceTaxon.getPathNames());
+                                        put(TaxonUtil.SOURCE_TAXON_PATH_IDS, sourceTaxon.getPathIds());
+
+                                        final Taxon targetTaxon = taxons.get(1);
+                                        put(TaxonUtil.TARGET_TAXON_NAME, targetTaxon.getName());
+                                        put(TaxonUtil.TARGET_TAXON_ID, targetTaxon.getExternalId());
+                                        put(TaxonUtil.TARGET_TAXON_RANK, targetTaxon.getRank());
+                                        put(TaxonUtil.TARGET_TAXON_PATH, targetTaxon.getPath());
+                                        put(TaxonUtil.TARGET_TAXON_PATH_NAMES, targetTaxon.getPathNames());
+                                        put(TaxonUtil.TARGET_TAXON_PATH_IDS, targetTaxon.getPathIds());
                                     }
                                 }
 
-                                final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(collectTaxa);
-                                if (taxons.size() == 2) {
-                                    put(DatasetImporterForTSV.INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                                    put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
-
-                                    final Taxon sourceTaxon = taxons.get(0);
-                                    put(TaxonUtil.SOURCE_TAXON_NAME, sourceTaxon.getName());
-                                    put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxon.getExternalId());
-                                    put(TaxonUtil.SOURCE_TAXON_RANK, sourceTaxon.getRank());
-                                    put(TaxonUtil.SOURCE_TAXON_PATH, sourceTaxon.getPath());
-                                    put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, sourceTaxon.getPathNames());
-                                    put(TaxonUtil.SOURCE_TAXON_PATH_IDS, sourceTaxon.getPathIds());
-
-                                    final Taxon targetTaxon = taxons.get(1);
-                                    put(TaxonUtil.TARGET_TAXON_NAME, targetTaxon.getName());
-                                    put(TaxonUtil.TARGET_TAXON_ID, targetTaxon.getExternalId());
-                                    put(TaxonUtil.TARGET_TAXON_RANK, targetTaxon.getRank());
-                                    put(TaxonUtil.TARGET_TAXON_PATH, targetTaxon.getPath());
-                                    put(TaxonUtil.TARGET_TAXON_PATH_NAMES, targetTaxon.getPathNames());
-                                    put(TaxonUtil.TARGET_TAXON_PATH_IDS, targetTaxon.getPathIds());
-                                }
-                            }
-
-                        });
+                            });
+                        }
                     }
                 }
             }
         }
     }
 
-    static void expandSpannedRows(Element row, Elements rowColumns) {
+    public static void expandSpannedRows(Element row, Elements rowColumns) {
         for (Element rowColumn : rowColumns) {
             final String attr = rowColumn.attr("rowspan");
             final int rowSpan = NumberUtils.toInt(attr, 1);
@@ -180,6 +201,13 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                     clone.attr("rowspan", Integer.toString(rowSpan - 1));
                     next.insertChildren(rowColumns.indexOf(rowColumn), Collections.singleton(clone));
                 }
+            }
+        }
+        for (Element rowColumn : rowColumns) {
+            final String attr = rowColumn.attr("rowspan");
+            final int rowSpan = NumberUtils.toInt(attr, 1);
+            if (rowSpan > 1) {
+                rowColumn.attr("rowspan", "1");
             }
         }
     }
@@ -196,6 +224,12 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
             for (Element name : names) {
                 final String id = TaxonomyProvider.OPEN_BIODIV.getIdPrefix() + names.attr("obkms_id");
                 final Term term = asTerm(id, name.text());
+                rowTerms.add(Pair.of(headerName, term));
+            }
+            final Elements references = element.select(new Evaluator.TagEndsWith("xref"));
+            for (Element reference : references) {
+                final String id = reference.attr("rid");
+                final Term term = asTerm(id, reference.text());
                 rowTerms.add(Pair.of(headerName, term));
             }
         }
@@ -349,7 +383,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     }
 
 
-    static Elements getTables(JsonNode jsonNode) {
+    static Elements getHtmlTable(JsonNode jsonNode) {
         final JsonNode table_content = jsonNode.get("table_content");
         final String html = table_content.asText();
         final Document doc = Jsoup.parse(html);
@@ -396,6 +430,33 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     static long distinctKeys(List<Pair<String, Term>> combination) {
         return combination.stream().map(Pair::getKey).distinct().count();
     }
+
+    static Map<String, String> expandSpannedColumns(List<String> columnNames, Element row) {
+        Map<String, String> rowContext = null;
+        Elements rowColumns = row.select("td");
+
+        if (rowColumns != null && rowColumns.size() > 0) {
+            Element rowColumn = rowColumns.get(0);
+            final String attr = rowColumn.attr("rowspan");
+            final int rowSpan = NumberUtils.toInt(attr, 1);
+            final String colAttr = rowColumn.attr("colspan");
+            final int colSpan = NumberUtils.toInt(colAttr, 1);
+            if (rowSpan == 1
+                    && colSpan > 1
+                    && colSpan == columnNames.size()
+            ) {
+                // found spanned columns in a row
+                String value = row.text();
+                if (StringUtils.isNotBlank(value)) {
+                    rowContext = new TreeMap<String, String>() {{
+                        put(columnNames.get(0), value);
+                    }};
+                }
+            }
+        }
+        return rowContext;
+    }
+
 
     public SparqlClientFactory getSparqlClientFactory() {
         return sparqlClientFactory;

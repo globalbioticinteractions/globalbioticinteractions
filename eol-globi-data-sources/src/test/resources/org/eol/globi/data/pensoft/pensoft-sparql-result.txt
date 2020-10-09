@@ -1,0 +1,2 @@
+article,title,doi,authorsList,pubYear,journalName
+http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2,"Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia",10.3897/zookeys.306.5455,"Dewi Sartiami, Laurence A. Mound",,ZooKeys

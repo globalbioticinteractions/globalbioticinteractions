@@ -175,6 +175,37 @@ public class DatasetImporterForPensoftIT {
         assertThat(rowValues.get(1), hasEntry("Family Name_taxon_name", "Acanthaceae"));
 
     }
+    @Test
+    public void parseTableContentZookeys_318_5693() throws IOException, StudyImporterException {
+
+        final JsonNode tableObj = getTableObj("pensoft/annotated-table_zookeys_318_5693.json");
+
+        List<Map<String, String>> rowValues = new ArrayList<>();
+        InteractionListener listener = new InteractionListener() {
+            @Override
+            public void newLink(Map<String, String> link) throws StudyImporterException {
+                rowValues.add(new TreeMap<>(link));
+            }
+        };
+
+        parseRowsAndEnrich(tableObj, listener, getResourceServiceTest());
+
+        assertThat(rowValues.size(), is(81));
+        assertThat(rowValues.get(0), hasEntry("Family Name", "Acanthaceae"));
+        assertThat(rowValues.get(0), hasEntry("Family Name_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
+        assertThat(rowValues.get(0), hasEntry("Family Name_taxon_name", "Acanthaceae"));
+        assertThat(rowValues.get(0), hasEntry("Host Plant", "Ruellia sp."));
+        assertThat(rowValues.get(0), hasEntry("Host Plant_taxon_id", "http://openbiodiv.net/56F59D49-725E-4BF7-8A6D-1B1A7A721231"));
+        assertThat(rowValues.get(0), hasEntry("Host Plant_taxon_name", "Ruellia"));
+        assertThat(rowValues.get(0), hasEntry("Thrips species", "Copidothrips octarticulatus<br/> Thrips parvispinus"));
+        assertThat(rowValues.get(0), hasEntry("Thrips species_taxon_id", "http://openbiodiv.net/6A54156A-BE5C-44D7-A9E3-3902DA4CCFAC"));
+        assertThat(rowValues.get(0), hasEntry("Thrips species_taxon_name", "Copidothrips octarticulatus"));
+
+        assertThat(rowValues.get(1), hasEntry("Family Name", "Acanthaceae"));
+        assertThat(rowValues.get(1), hasEntry("Family Name_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
+        assertThat(rowValues.get(1), hasEntry("Family Name_taxon_name", "Acanthaceae"));
+
+    }
 
     @Test
     public void parseTableContentWithRowSpan() throws IOException, TermLookupServiceException, StudyImporterException {

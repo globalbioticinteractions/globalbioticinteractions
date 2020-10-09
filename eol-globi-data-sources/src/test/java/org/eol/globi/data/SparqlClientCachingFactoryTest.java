@@ -13,7 +13,6 @@ import static org.hamcrest.Matchers.is;
 
 public class SparqlClientCachingFactoryTest {
 
-
     @Test
     public void expectCaching() throws IOException {
         final ResourceService resourceService = singleRequestResourceService();
