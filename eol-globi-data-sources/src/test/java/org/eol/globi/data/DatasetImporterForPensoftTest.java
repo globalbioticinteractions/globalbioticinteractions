@@ -10,12 +10,6 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.tool.NullImportLogger;
-import org.globalbioticinteractions.pensoft.ExpandColumnSpans;
-import org.globalbioticinteractions.pensoft.ExpandRowSpans;
-import org.globalbioticinteractions.pensoft.ExpandRowValues;
-import org.globalbioticinteractions.pensoft.TableProcessor;
-import org.globalbioticinteractions.pensoft.TablePreprocessor;
-import org.globalbioticinteractions.pensoft.TableRectifier;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,12 +37,10 @@ import static org.eol.globi.data.DatasetImporterForPensoft.getColumnNames;
 import static org.eol.globi.data.DatasetImporterForPensoft.getHtmlTable;
 import static org.eol.globi.data.DatasetImporterForPensoft.parseRowValues;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsNot.not;
 
 public class DatasetImporterForPensoftTest {
 
@@ -85,93 +77,6 @@ public class DatasetImporterForPensoftTest {
                 "    \"datatype\" : \"string\"\n" +
                 "  } ]\n" +
                 "}"));
-    }
-
-    @Test
-    public void rectifyTable() throws IOException {
-        TableProcessor rectifier = new TableRectifier();
-        String inputString = IOUtils.toString(getClass().getResourceAsStream("pensoft/annotated-table-provided.html"), CharsetConstant.UTF8);
-        String processed = rectifier.process(inputString);
-
-        assertThat(processed, is(IOUtils.toString(getClass().getResourceAsStream("pensoft/annotated-table-expanded-row-values.html"), CharsetConstant.UTF8)));
-    }
-
-    @Test
-    public void prepTable() throws IOException {
-        String inputString = IOUtils.toString(getClass().getResourceAsStream("pensoft/annotated-table-provided.html"), CharsetConstant.UTF8);
-        TableProcessor prep = new TablePreprocessor();
-        String processedString = prep.process(inputString);
-        assertThat(processedString,
-                is(IOUtils.toString(getClass().getResourceAsStream("pensoft/annotated-table-preprocessed.html"), CharsetConstant.UTF8)));
-    }
-
-    @Test
-    public void doExpandRows() throws IOException {
-        String preppedTable = IOUtils
-                .toString(getClass()
-                        .getResourceAsStream("pensoft/annotated-table-preprocessed.html"), CharsetConstant.UTF8);
-
-        assertThat(preppedTable, containsString("rowspan=\"2\""));
-
-        TableProcessor prep = new ExpandRowSpans();
-
-
-        String processedString = prep.process(preppedTable);
-        assertThat(processedString, not(containsString("rowspan=\"2\"")));
-
-        assertThat(processedString,
-                is(IOUtils.toString(getClass().getResourceAsStream("pensoft/annotated-table-expanded-rows.html"), CharsetConstant.UTF8)));
-    }
-
-    @Test
-    public void doExpandColumnSpans() throws IOException {
-        String preppedTable = IOUtils
-                .toString(getClass()
-                        .getResourceAsStream("pensoft/table-with-colspan-zookeys.318.5693.html"), CharsetConstant.UTF8);
-
-        assertThat(preppedTable, containsString("colspan=\"6\""));
-
-        TableProcessor prep = new ExpandColumnSpans();
-
-        String processedString = prep.process(preppedTable);
-
-        assertThat(processedString, not(containsString("colspan=\"6\"")));
-
-    }
-
-    @Test
-    public void rectifyTableWithColumnSpans() throws IOException {
-        String preppedTable = IOUtils
-                .toString(getClass()
-                        .getResourceAsStream("pensoft/table-with-colspan-zookeys.318.5693.html"), CharsetConstant.UTF8);
-
-        assertThat(preppedTable, containsString("colspan=\"6\""));
-
-        TableProcessor prep = new TableRectifier();
-
-        String processedString = prep.process(preppedTable);
-
-        assertThat(processedString, not(containsString("colspan=\"6\"")));
-
-        assertThat(processedString,
-                is(IOUtils.toString(getClass().getResourceAsStream("pensoft/table-with-colspan-zookeys.318.5693-colspan-expanded.html"), CharsetConstant.UTF8)));
-
-    }
-
-    @Test
-    public void doExpandValueLists() throws IOException {
-        String preppedTable = IOUtils
-                .toString(getClass()
-                        .getResourceAsStream("pensoft/annotated-table-expanded-rows.html"), CharsetConstant.UTF8);
-
-        TableProcessor prep = new ExpandRowValues();
-
-
-        String processedString = prep.process(preppedTable);
-        System.out.println(processedString);
-
-        assertThat(processedString,
-                is(IOUtils.toString(getClass().getResourceAsStream("pensoft/annotated-table-expanded-row-values.html"), CharsetConstant.UTF8)));
     }
 
 
@@ -213,7 +118,7 @@ public class DatasetImporterForPensoftTest {
     @Test
     public void handleRowSpan() throws IOException {
 
-        final InputStream resourceAsStream = getClass().getResourceAsStream("pensoft/rows-with-rowspan.html");
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/org/eol/globi/data/pensoft/rows-with-rowspan.html");
         final Document doc = Jsoup.parseBodyFragment(IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8));
         final Elements rows = doc.select("tr");
 
@@ -257,7 +162,7 @@ public class DatasetImporterForPensoftTest {
     @Test
     public void handleRowSpanZookeys_318_5693() throws IOException {
 
-        final InputStream resourceAsStream = getClass().getResourceAsStream("pensoft/table-with-colspan-zookeys.318.5693.html");
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/org/eol/globi/data/pensoft/table-with-colspan-zookeys.318.5693.html");
         final Document doc = Jsoup.parseBodyFragment(IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8));
         final Elements rows = doc.select("tr");
 
@@ -284,7 +189,7 @@ public class DatasetImporterForPensoftTest {
     }
 
     public static JsonNode getTableObj() throws IOException {
-        return getTableObj("pensoft/annotated-table.json");
+        return getTableObj("/org/eol/globi/data/pensoft/annotated-table.json");
     }
 
     public static JsonNode getTableObj(String jsonString) throws IOException {
