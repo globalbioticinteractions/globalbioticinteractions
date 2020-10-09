@@ -1,18 +1,29 @@
 package org.globalbioticinteractions.pensoft;
 
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.List;
 
 public class TableRectifier implements TableProcessor {
 
-    @Override
-    public String process(String input) {
-        return Stream.of(
-                new TablePreprocessor(),
+    private final List<TableProcessor> processors;
+
+    public TableRectifier() {
+        this(new TablePreprocessor(),
                 new ExpandColumnSpans(),
                 new ExpandRowSpans(),
-                new ExpandRowValues()
-        ).reduce(input,
-                (s, processor) -> processor.process(s),
-                (s, s2) -> s);
+                new ExpandRowValues());
+    }
+
+    public TableRectifier(TableProcessor... processors) {
+        this.processors = Arrays.asList(processors);
+    }
+
+    @Override
+    public String process(String input) {
+        return processors
+                .stream()
+                .reduce(input,
+                        (s, processor) -> processor.process(s),
+                        (s, s2) -> s);
     }
 }

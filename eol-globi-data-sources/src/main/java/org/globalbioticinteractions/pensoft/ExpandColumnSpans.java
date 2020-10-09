@@ -7,7 +7,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +16,7 @@ public class ExpandColumnSpans implements TableProcessor {
     public String process(String input) {
         Document doc = TableUtil.parseHtml(input);
 
-        Set<Integer> distinctRowLengths = distinctRowLengths(doc);
+        Set<Integer> distinctRowLengths = TableUtil.collectDistinctRowLengths(doc);
 
         if (distinctRowLengths.size() == 1) {
             Integer nativeRowLength = distinctRowLengths.iterator().next();
@@ -58,31 +57,4 @@ public class ExpandColumnSpans implements TableProcessor {
         return doc.select("table").toString();
     }
 
-    public Set<Integer> distinctRowLengths(Document doc) {
-        Elements rows = doc.select("tr");
-
-        Set<Integer> distinctRowLengths = new HashSet<>();
-        for (Element row : rows) {
-            countRowLengthForType(distinctRowLengths, row, "td");
-            countRowLengthForType(distinctRowLengths, row, "th");
-        }
-        return distinctRowLengths;
-    }
-
-    public void countRowLengthForType(Set<Integer> rowLengths, Element row, String cellType) {
-        Elements rowValues = row.select(cellType);
-        int rowLength = 0;
-        for (Element rowValue : rowValues) {
-            final String attr = rowValue.attr("colspan");
-            final int colSpan = NumberUtils.toInt(attr, 1);
-            if (colSpan > 1) {
-                rowLength += colSpan;
-            } else {
-                rowLength++;
-            }
-        }
-        if (rowLength > 0) {
-            rowLengths.add(rowLength);
-        }
-    }
 }

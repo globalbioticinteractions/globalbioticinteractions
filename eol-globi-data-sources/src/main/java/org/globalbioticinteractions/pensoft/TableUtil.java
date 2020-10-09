@@ -6,8 +6,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Evaluator;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TableUtil {
     public static Document parseHtml(String htmlString) {
@@ -40,5 +43,45 @@ public class TableUtil {
             }
         }
         return hasFullRowColumnSpan;
+    }
+
+    public static boolean isRectangularTable(Document doc) {
+        return collectDistinctRowLengths(doc).size() == 1;
+    }
+
+    public static Set<Integer> collectDistinctRowLengths(Document doc) {
+        Elements rows = doc.select("tr");
+
+        Set<Integer> distinctRowLengths = new HashSet<>();
+        for (Element row : rows) {
+            countRowLengthForType(distinctRowLengths, row, "td");
+            countRowLengthForType(distinctRowLengths, row, "th");
+        }
+        return distinctRowLengths;
+    }
+
+    public static void countRowLengthForType(Set<Integer> rowLengths, Element row, String cellType) {
+        Elements rowValues = row.select(cellType);
+        int rowLength = 0;
+        for (Element rowValue : rowValues) {
+            final String attr = rowValue.attr("colspan");
+            final int colSpan = NumberUtils.toInt(attr, 1);
+            if (colSpan > 1) {
+                rowLength += colSpan;
+            } else {
+                rowLength++;
+            }
+        }
+        if (rowLength > 0) {
+            rowLengths.add(rowLength);
+        }
+    }
+
+    public static Elements selectReferences(Element element) {
+        return element.select(new Evaluator.TagEndsWith("xref"));
+    }
+
+    public static Elements selectTaxonNames(Element element) {
+        return element.select(new Evaluator.TagEndsWith("tp:taxon-name"));
     }
 }

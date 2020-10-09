@@ -5,7 +5,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.jsoup.select.Evaluator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +27,12 @@ public class ExpandRowValues implements TableProcessor {
 
             for (int i = 0; i < rowColumns.size(); i++) {
                 Element rowColumn = rowColumns.get(i);
-                final Elements names = rowColumn.select(new Evaluator.TagEndsWith("tp:taxon-name"));
+                final Elements names = TableUtil.selectTaxonNames(rowColumn);
                 if (names.size() > 1) {
                     toBeExpanded.put(i, names);
                 }
 
-                final Elements references = rowColumn.select(new Evaluator.TagEndsWith("xref"));
+                final Elements references = TableUtil.selectReferences(rowColumn);
                 if (names.size() <= 1 && references.size() > 1) {
                     toBeExpanded.put(i, references);
                 }
@@ -77,4 +76,5 @@ public class ExpandRowValues implements TableProcessor {
 
         return doc.select("table").toString();
     }
+
 }

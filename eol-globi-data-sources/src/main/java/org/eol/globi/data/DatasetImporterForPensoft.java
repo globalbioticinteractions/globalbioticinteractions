@@ -18,6 +18,13 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
+import org.globalbioticinteractions.pensoft.AddColumnFromCaption;
+import org.globalbioticinteractions.pensoft.ExpandColumnSpans;
+import org.globalbioticinteractions.pensoft.ExpandRowSpans;
+import org.globalbioticinteractions.pensoft.ExpandRowValues;
+import org.globalbioticinteractions.pensoft.TablePreprocessor;
+import org.globalbioticinteractions.pensoft.TableRectifier;
+import org.globalbioticinteractions.pensoft.TableUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -91,10 +98,6 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                                    InteractionListener listener,
                                    ImportLogger logger,
                                    final SparqlClient sparqlClient) throws StudyImporterException {
-        final Elements table = getHtmlTable(biodivTable);
-        Elements rows = table.get(0).select("tr");
-        final List<String> columnNames = getColumnNames(table);
-
         final Map<String, String> tableReferences;
         try {
             tableReferences = parseTableReferences(biodivTable, sparqlClient);
@@ -102,88 +105,92 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
             throw new StudyImporterException("failed to retrieve reference", e);
         }
 
+        final JsonNode tableContent = biodivTable.get("table_content");
+        final String htmlString = tableContent.asText();
+        tableReferences.put("table_content", htmlString);
+
+        JsonNode table_id = biodivTable.get("table_id");
+        if (table_id != null && table_id.isTextual()) {
+            String tableUUID = StringUtils.replacePattern(table_id.asText(), "(<)|(>)|(http://openbiodiv.net/)", "");
+            tableReferences.put("uuid", tableUUID);
+        }
+
+        JsonNode caption_xml = biodivTable.get("caption_xml");
+        TableRectifier tableRectifier = new TableRectifier();
+        if (caption_xml != null && caption_xml.isTextual()) {
+            AddColumnFromCaption captionProcessor = new AddColumnFromCaption(caption_xml.asText());
+
+            tableRectifier = new TableRectifier(
+                    captionProcessor,
+                    new TablePreprocessor(),
+                    new ExpandColumnSpans(),
+                    new ExpandRowSpans(),
+                    new ExpandRowValues()
+            );
+        }
+
+        String rectifiedTable = tableRectifier.process(htmlString);
+        tableReferences.put("tableContentRectified", rectifiedTable);
+
+        final Document doc = Jsoup.parse(rectifiedTable);
+        if (!TableUtil.isRectangularTable(doc)) {
+            logger.warn(LogUtil.contextFor(tableReferences), "failed to make Pensoft table rectangular: [" + htmlString + "]");
+        }
+
+
+        final Elements table = doc.select("table");
+        ObjectNode columnSchema = createColumnSchema(getColumnNames(table));
+        if (columnSchema != null) {
+            try {
+                tableReferences.put("tableSchema", new ObjectMapper().writeValueAsString(columnSchema));
+            } catch (IOException e) {
+                throw new StudyImporterException("failed to write proposed table schema");
+            }
+        }
+
+        Elements rows = table.get(0).select("tr");
+        final List<String> columnNames = getColumnNames(table);
+
+
         for (Element row : rows) {
             Elements rowColumns = row.select("td");
 
-            expandSpannedRows(row, rowColumns);
+            final Map<String, String> rowValue = new TreeMap<>();
+            final List<Pair<String, Term>> rowTerms = extractTermsForRowValue(columnNames, rowValue, rowColumns);
 
-            Map<String, String> dataContext = expandSpannedColumns(columnNames, row);
-            if (dataContext == null) {
-                final Map<String, String> rowValue = new TreeMap<>();
-                final List<Pair<String, Term>> rowTerms = parseRowValues(columnNames, rowValue, rowColumns);
+            if (!rowValue.isEmpty()) {
+                final TreeMap<String, String> link = new TreeMap<String, String>(rowValue) {{
+                    putAll(tableReferences);
+                }};
 
-                if (!rowValue.isEmpty()) {
-                    final List<Map<String, Term>> distinctPermutations = new ArrayList<>();
-                    expandRows(rowTerms, new PermutationListener() {
-                        @Override
-                        public void on(Map<String, Term> link) {
-                            if (!distinctPermutations.contains(link) && !link.isEmpty()) {
-                                distinctPermutations.add(link);
+                if (rowColumns.size() != columnNames.size()) {
+                    logger.warn(LogUtil.contextFor(link), "inconsistent column usage: found [" + rowColumns.size() + "] data columns, but [" + columnNames.size() + "] column definitions");
+                }
 
-                            }
-                        }
-                    }, distinctKeys(rowTerms));
-
-                    final TreeMap<String, String> link = new TreeMap<String, String>(rowValue) {{
-                        putAll(tableReferences);
-                    }};
-
-                    if (rowColumns.size() != columnNames.size()) {
-                        logger.warn(LogUtil.contextFor(link), "inconsistent column usage: found [" + rowColumns.size() + "] data columns, but [" + columnNames.size() + "] column definitions");
-                    }
-
-                    if (distinctPermutations.isEmpty()) {
-                        listener.newLink(link);
-                    } else {
-                        for (Map<String, Term> distinctPermutation : distinctPermutations) {
-                            listener.newLink(new TreeMap<String, String>(link) {
-                                {
-                                    List<Taxon> collectTaxa = new ArrayList<>();
-                                    for (Map.Entry<String, Term> taxonNames : distinctPermutation.entrySet()) {
-                                        String name = taxonNames.getValue().getName();
-                                        put(taxonNames.getKey() + "_taxon_name", name);
-                                        final String id = taxonNames.getValue().getId();
-                                        put(taxonNames.getKey() + "_taxon_id", id);
-                                        try {
-                                            final Taxon taxon = retrieveTaxonHierarchyById(id, sparqlClient);
-                                            if (taxon != null) {
-                                                collectTaxa.add(taxon);
-                                                final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, taxonNames.getKey() + "_taxon_");
-                                                for (String s : taxonMap.keySet()) {
-                                                    putIfAbsent(s, taxonMap.get(s));
-                                                }
-                                            }
-                                        } catch (IOException e) {
-                                            // ignore
+                for (Pair<String, Term> terms : rowTerms) {
+                    listener.newLink(new TreeMap<String, String>(link) {
+                        {
+                            if (StringUtils.startsWith(TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), terms.getValue().getId())) {
+                                String name = terms.getValue().getName();
+                                put(terms.getKey() + "_taxon_name", name);
+                                final String id = terms.getValue().getId();
+                                put(terms.getKey() + "_taxon_id", id);
+                                try {
+                                    final Taxon taxon = retrieveTaxonHierarchyById(id, sparqlClient);
+                                    if (taxon != null) {
+                                        final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, terms.getKey() + "_taxon_");
+                                        for (String s : taxonMap.keySet()) {
+                                            putIfAbsent(s, taxonMap.get(s));
                                         }
                                     }
-
-                                    final List<Taxon> taxons = TaxonUtil.determineNonOverlappingTaxa(collectTaxa);
-                                    if (taxons.size() == 2) {
-                                        put(DatasetImporterForTSV.INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                                        put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
-
-                                        final Taxon sourceTaxon = taxons.get(0);
-                                        put(TaxonUtil.SOURCE_TAXON_NAME, sourceTaxon.getName());
-                                        put(TaxonUtil.SOURCE_TAXON_ID, sourceTaxon.getExternalId());
-                                        put(TaxonUtil.SOURCE_TAXON_RANK, sourceTaxon.getRank());
-                                        put(TaxonUtil.SOURCE_TAXON_PATH, sourceTaxon.getPath());
-                                        put(TaxonUtil.SOURCE_TAXON_PATH_NAMES, sourceTaxon.getPathNames());
-                                        put(TaxonUtil.SOURCE_TAXON_PATH_IDS, sourceTaxon.getPathIds());
-
-                                        final Taxon targetTaxon = taxons.get(1);
-                                        put(TaxonUtil.TARGET_TAXON_NAME, targetTaxon.getName());
-                                        put(TaxonUtil.TARGET_TAXON_ID, targetTaxon.getExternalId());
-                                        put(TaxonUtil.TARGET_TAXON_RANK, targetTaxon.getRank());
-                                        put(TaxonUtil.TARGET_TAXON_PATH, targetTaxon.getPath());
-                                        put(TaxonUtil.TARGET_TAXON_PATH_NAMES, targetTaxon.getPathNames());
-                                        put(TaxonUtil.TARGET_TAXON_PATH_IDS, targetTaxon.getPathIds());
-                                    }
+                                } catch (IOException e) {
+                                    // ignore
                                 }
+                            }
+                            listener.newLink(link);
 
-                            });
                         }
-                    }
+                    });
                 }
             }
         }
@@ -212,7 +219,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         }
     }
 
-    static List<Pair<String, Term>> parseRowValues(List<String> columnNames, Map<String, String> rowValue, Elements cols) {
+    static List<Pair<String, Term>> extractTermsForRowValue(List<String> columnNames, Map<String, String> rowValue, Elements cols) {
         final List<Pair<String, Term>> rowTerms = new ArrayList<>();
 
         for (int j = 0; j < cols.size(); j++) {
@@ -383,92 +390,12 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     }
 
 
-    static Elements getHtmlTable(JsonNode jsonNode) {
-        final JsonNode table_content = jsonNode.get("table_content");
-        final String html = table_content.asText();
-        final Document doc = Jsoup.parse(html);
-
-        return doc.select("table");
-    }
-
-    public static void expandRows(List<Pair<String, Term>> remaining, PermutationListener listener, long distinctHeaders) throws StudyImporterException {
-        if (!remaining.isEmpty()) {
-            permutation(Collections.emptyList(), remaining, listener, distinctHeaders);
-        }
-    }
-
-    private static void permutation(List<Pair<String, Term>> combination, List<Pair<String, Term>> remaining, PermutationListener listener, long distinctHeaders) throws StudyImporterException {
-        int n = remaining.size();
-
-        if (n == 0) {
-            listener.on(new TreeMap<String, Term>() {{
-                final long uniqueHeaders = distinctKeys(combination);
-                if (distinctHeaders == uniqueHeaders) {
-                    for (Pair<String, Term> pair : combination) {
-                        put(pair.getKey(), pair.getValue());
-                    }
-                }
-            }});
-        } else {
-            for (int i = 0; i < n; i++) {
-                final Pair<String, Term> selected = remaining.get(i);
-                List<Pair<String, Term>> newRemaining = new ArrayList<>();
-                newRemaining.addAll(remaining.subList(0, i));
-                newRemaining.addAll(remaining.subList(i + 1, n));
-
-                final List<Pair<String, Term>> newRemainingWithSelectedKeyValues = newRemaining.stream()
-                        .filter(x -> !StringUtils.equals(selected.getKey(), x.getKey()))
-                        .collect(Collectors.toList());
-
-                List<Pair<String, Term>> newCombination = new ArrayList<>(combination);
-                newCombination.add(selected);
-                permutation(newCombination, newRemainingWithSelectedKeyValues, listener, distinctHeaders);
-            }
-        }
-    }
-
-    static long distinctKeys(List<Pair<String, Term>> combination) {
-        return combination.stream().map(Pair::getKey).distinct().count();
-    }
-
-    static Map<String, String> expandSpannedColumns(List<String> columnNames, Element row) {
-        Map<String, String> rowContext = null;
-        Elements rowColumns = row.select("td");
-
-        if (rowColumns != null && rowColumns.size() > 0) {
-            Element rowColumn = rowColumns.get(0);
-            final String attr = rowColumn.attr("rowspan");
-            final int rowSpan = NumberUtils.toInt(attr, 1);
-            final String colAttr = rowColumn.attr("colspan");
-            final int colSpan = NumberUtils.toInt(colAttr, 1);
-            if (rowSpan == 1
-                    && colSpan > 1
-                    && colSpan == columnNames.size()
-            ) {
-                // found spanned columns in a row
-                String value = row.text();
-                if (StringUtils.isNotBlank(value)) {
-                    rowContext = new TreeMap<String, String>() {{
-                        put(columnNames.get(0), value);
-                    }};
-                }
-            }
-        }
-        return rowContext;
-    }
-
-
     public SparqlClientFactory getSparqlClientFactory() {
         return sparqlClientFactory;
     }
 
     public void setSparqlClientFactory(SparqlClientFactory sparqlClientFactory) {
         this.sparqlClientFactory = sparqlClientFactory;
-    }
-
-
-    interface PermutationListener {
-        void on(Map<String, Term> permutation);
     }
 
 }
