@@ -19,7 +19,7 @@ public class ExpandRowValues implements TableProcessor {
 
         Elements rows = doc.select("tr");
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
-            List<Node> toBeRemoved = new ArrayList<>();
+            boolean shouldRemoveRow = false;
 
             Map<Integer, Elements> toBeExpanded = new TreeMap<>();
             Element row = rows.get(rowIndex);
@@ -37,9 +37,7 @@ public class ExpandRowValues implements TableProcessor {
                     toBeExpanded.put(i, references);
                 }
 
-                if (names.size() > 1 || references.size() > 1) {
-                    toBeRemoved.add(row);
-                }
+                shouldRemoveRow = shouldRemoveRow || names.size() > 1 || references.size() > 1;
             }
 
             for (Map.Entry<Integer, Elements> expandedValues : toBeExpanded.entrySet()) {
@@ -69,8 +67,9 @@ public class ExpandRowValues implements TableProcessor {
 
             }
 
-
-            toBeRemoved.forEach(Node::remove);
+            if (shouldRemoveRow) {
+                row.remove();
+            }
         }
 
 
