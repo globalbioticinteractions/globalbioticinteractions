@@ -107,7 +107,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
 
         final JsonNode tableContent = biodivTable.get("table_content");
         final String htmlString = tableContent.asText();
-        tableReferences.put("table_content", htmlString);
+        //tableReferences.put("table_content", htmlString);
 
         JsonNode table_id = biodivTable.get("table_id");
         if (table_id != null && table_id.isTextual()) {
@@ -130,7 +130,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         }
 
         String rectifiedTable = tableRectifier.process(htmlString);
-        tableReferences.put("tableContentRectified", rectifiedTable);
+        //tableReferences.put("tableContentRectified", rectifiedTable);
 
         final Document doc = Jsoup.parse(rectifiedTable);
         if (!TableUtil.isRectangularTable(doc)) {
