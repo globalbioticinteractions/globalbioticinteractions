@@ -206,7 +206,10 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                 if (next != null) {
                     final Element clone = rowColumn.clone();
                     clone.attr("rowspan", Integer.toString(rowSpan - 1));
-                    next.insertChildren(rowColumns.indexOf(rowColumn), Collections.singleton(clone));
+                    int index = rowColumns.indexOf(rowColumn);
+                    if (index < next.children().size()) {
+                        next.insertChildren(index, Collections.singleton(clone));
+                    }
                 }
             }
         }
