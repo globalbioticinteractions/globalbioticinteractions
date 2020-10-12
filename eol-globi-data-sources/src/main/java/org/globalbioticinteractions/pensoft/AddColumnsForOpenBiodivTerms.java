@@ -92,15 +92,17 @@ public class AddColumnsForOpenBiodivTerms implements TableProcessor {
             Elements tableDataHeaders = row.select("th");
             if (tableDataHeaders.size() > 0) {
                 for (Integer columnIndex : distinctColumnsToBeAdded) {
-                    Element header = tableDataHeaders.get(columnIndex);
+                    Element header = columnIndex < tableDataHeaders.size()
+                            ? tableDataHeaders.get(columnIndex)
+                            : new Element("th");
 
                     Element headerIdClone = header.clone();
                     headerIdClone.append("_expanded_" + headerSuffix + "_id");
-                    header.siblingElements().last().after(headerIdClone);
+                    row.select("th").last().after(headerIdClone);
 
                     Element headerLabelClone = header.clone();
                     headerLabelClone.append("_expanded_" + headerSuffix + "_name");
-                    header.siblingElements().last().after(headerLabelClone);
+                    row.select("th").last().after(headerLabelClone);
                 }
             }
         }
