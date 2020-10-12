@@ -32,7 +32,7 @@ public class AddColumnFromCaption implements TableProcessor {
             for (Element row : rows) {
                 Elements columnHeaders = row.select("th");
                 if (columnHeaders.size() > 0) {
-                    columnHeaders.first().before("<th>nameInCaption</th>");
+                    columnHeaders.first().before("<th>taxonNameInTableCaption</th>");
                 } else {
                     toBeRemoved.add(row);
                     for (Element nameElement : nameElements) {

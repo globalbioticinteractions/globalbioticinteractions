@@ -22,8 +22,6 @@ public class AddColumnFromCaptionTest {
 
         String processedString = prep.process(preppedTable);
 
-        System.out.println(processedString);
-
         assertThat(processedString,
                 is(IOUtils
                         .toString(getClass()
