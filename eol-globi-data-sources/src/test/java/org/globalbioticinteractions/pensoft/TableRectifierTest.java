@@ -26,18 +26,26 @@ public class TableRectifierTest {
     public void rectifyTableWithColumnSpans() throws IOException {
         String preppedTable = IOUtils
                 .toString(getClass()
-                        .getResourceAsStream("/org/eol/globi/data/pensoft/table-with-colspan-zookeys.318.5693.html"), CharsetConstant.UTF8);
+                                .getResourceAsStream(
+                                        "/org/eol/globi/data/pensoft/table-with-colspan-zookeys.318.5693.html"),
+                        CharsetConstant.UTF8);
 
         assertThat(preppedTable, containsString("colspan=\"6\""));
 
         TableProcessor prep = new TableRectifier();
 
-        String processedString = prep.process(preppedTable);
+        String processed = prep.process(preppedTable);
 
-        assertThat(processedString, not(containsString("colspan=\"6\"")));
+        assertThat(processed, not(containsString("colspan=\"6\"")));
 
-        assertThat(processedString,
-                is(IOUtils.toString(getClass().getResourceAsStream("/org/eol/globi/data/pensoft/table-with-colspan-zookeys.318.5693-colspan-expanded.html"), CharsetConstant.UTF8)));
+        System.out.println(processed);
+
+        String resourcePrefix = "/org/eol/globi/data/pensoft/";
+        assertThat(processed,
+                is(IOUtils.toString(getClass()
+                                .getResourceAsStream(resourcePrefix +
+                                        "table-with-colspan-zookeys.318.5693-colspan-expanded.html"),
+                        CharsetConstant.UTF8)));
 
     }
 
