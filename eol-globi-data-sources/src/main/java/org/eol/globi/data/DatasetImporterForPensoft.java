@@ -148,49 +148,24 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         }
 
         Elements rows = table.get(0).select("tr");
-        final List<String> columnNames = getColumnNames(table);
+        List<DatasetImporterForMetaTable.Column> columns = DatasetImporterForMetaTable.columnNamesForSchema(columnSchema);
 
 
         for (Element row : rows) {
             Elements rowColumns = row.select("td");
 
-            final Map<String, String> rowValue = new TreeMap<>();
-            final List<Pair<String, Term>> rowTerms = extractTermsForRowValue(columnNames, rowValue, rowColumns);
-
-            if (!rowValue.isEmpty()) {
-                final TreeMap<String, String> link = new TreeMap<String, String>(rowValue) {{
+            if (columns.size() != rowColumns.size()) {
+                logger.warn(LogUtil.contextFor(tableReferences), "found [" + columns.size() + "] column definitions, but [" + rowColumns.size() + "] data values");
+            } else {
+                final TreeMap<String, String> link = new TreeMap<String, String>() {{
                     putAll(tableReferences);
                 }};
 
-                if (rowColumns.size() != columnNames.size()) {
-                    logger.warn(LogUtil.contextFor(link), "inconsistent column usage: found [" + rowColumns.size() + "] data columns, but [" + columnNames.size() + "] column definitions");
+                for (int i = 0; i < rowColumns.size(); i++) {
+                    link.put(columns.get(i).getName(), rowColumns.get(i).text());
                 }
+                listener.newLink(link);
 
-                for (Pair<String, Term> terms : rowTerms) {
-                    listener.newLink(new TreeMap<String, String>(link) {
-                        {
-                            if (StringUtils.startsWith(TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), terms.getValue().getId())) {
-                                String name = terms.getValue().getName();
-                                put(terms.getKey() + "_taxon_name", name);
-                                final String id = terms.getValue().getId();
-                                put(terms.getKey() + "_taxon_id", id);
-                                try {
-                                    final Taxon taxon = retrieveTaxonHierarchyById(id, sparqlClient);
-                                    if (taxon != null) {
-                                        final Map<String, String> taxonMap = TaxonUtil.taxonToMap(taxon, terms.getKey() + "_taxon_");
-                                        for (String s : taxonMap.keySet()) {
-                                            putIfAbsent(s, taxonMap.get(s));
-                                        }
-                                    }
-                                } catch (IOException e) {
-                                    // ignore
-                                }
-                            }
-                            listener.newLink(link);
-
-                        }
-                    });
-                }
             }
         }
     }
@@ -222,27 +197,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     }
 
     static List<Pair<String, Term>> extractTermsForRowValue(List<String> columnNames, Map<String, String> rowValue, Elements cols) {
-        final List<Pair<String, Term>> rowTerms = new ArrayList<>();
-
-        for (int j = 0; j < cols.size(); j++) {
-            final Element element = cols.get(j);
-            final String headerName = j < columnNames.size() ? columnNames.get(j) : ("column" + j);
-            rowValue.put(headerName, element.text());
-
-            final Elements names = element.select(new Evaluator.TagEndsWith("tp:taxon-name"));
-            for (Element name : names) {
-                final String id = TaxonomyProvider.OPEN_BIODIV.getIdPrefix() + names.attr("obkms_id");
-                final Term term = asTerm(id, name.text());
-                rowTerms.add(Pair.of(headerName, term));
-            }
-            final Elements references = element.select(new Evaluator.TagEndsWith("xref"));
-            for (Element reference : references) {
-                final String id = reference.attr("rid");
-                final Term term = asTerm(id, reference.text());
-                rowTerms.add(Pair.of(headerName, term));
-            }
-        }
-        return rowTerms;
+        return new ArrayList<>();
     }
 
     static List<String> getColumnNames(Elements tables) {

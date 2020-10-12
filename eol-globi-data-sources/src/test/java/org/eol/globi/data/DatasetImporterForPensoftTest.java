@@ -97,7 +97,7 @@ public class DatasetImporterForPensoftTest {
             }
         });
 
-        assertThat(links.size(), is(1350));
+        assertThat(links.size(), is(121));
 
         for (Map<String, String> link : links) {
             link.forEach((x, y) ->
@@ -106,53 +106,6 @@ public class DatasetImporterForPensoftTest {
             assertThat(link.get("tableSchema"), is("{\"columns\":[{\"name\":\"Family Name\",\"titles\":\"Family Name\",\"datatype\":\"string\"},{\"name\":\"Host Plant\",\"titles\":\"Host Plant\",\"datatype\":\"string\"},{\"name\":\"Thrips species\",\"titles\":\"Thrips species\",\"datatype\":\"string\"},{\"name\":\"Family Name_expanded_taxon_id\",\"titles\":\"Family Name_expanded_taxon_id\",\"datatype\":\"string\"},{\"name\":\"Family Name_expanded_taxon_name\",\"titles\":\"Family Name_expanded_taxon_name\",\"datatype\":\"string\"},{\"name\":\"Host Plant_expanded_taxon_id\",\"titles\":\"Host Plant_expanded_taxon_id\",\"datatype\":\"string\"},{\"name\":\"Host Plant_expanded_taxon_name\",\"titles\":\"Host Plant_expanded_taxon_name\",\"datatype\":\"string\"},{\"name\":\"Thrips species_expanded_taxon_id\",\"titles\":\"Thrips species_expanded_taxon_id\",\"datatype\":\"string\"},{\"name\":\"Thrips species_expanded_taxon_name\",\"titles\":\"Thrips species_expanded_taxon_name\",\"datatype\":\"string\"}]}"));
         }
 
-
-
-    }
-
-
-    @Test
-    public void handleRowSpan() throws IOException {
-
-        final InputStream resourceAsStream = getClass().getResourceAsStream("/org/eol/globi/data/pensoft/rows-with-rowspan.html");
-        final Document doc = Jsoup.parseBodyFragment(IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8));
-        final Elements rows = doc.select("tr");
-
-
-        final Element firstRow = rows.get(0);
-        Elements rowColumns = firstRow.select("td");
-
-        expandSpannedRows(firstRow, rowColumns);
-
-        final TreeMap<String, String> rowValue = new TreeMap<>();
-
-        extractTermsForRowValue(
-                Arrays.asList("one", "two", "three"),
-                rowValue,
-                rowColumns);
-
-        assertThat(rowValue, hasEntry("one", "Apiaceae"));
-
-        Elements cols2 = rows.get(1).select("td");
-
-
-        final TreeMap<String, String> rowValue2 = new TreeMap<>();
-        extractTermsForRowValue(
-                Arrays.asList("one", "two", "three"),
-                rowValue2,
-                cols2);
-
-        assertThat(rowValue2, hasEntry("one", "Apiaceae"));
-
-        Elements cols3 = rows.get(2).select("td");
-
-        final TreeMap<String, String> rowValue3 = new TreeMap<>();
-        extractTermsForRowValue(
-                Arrays.asList("one", "two", "three"),
-                rowValue3,
-                cols3);
-
-        assertThat(rowValue3, hasEntry("one", "Apocynaceae"));
     }
 
     public static JsonNode getTableObj() throws IOException {
