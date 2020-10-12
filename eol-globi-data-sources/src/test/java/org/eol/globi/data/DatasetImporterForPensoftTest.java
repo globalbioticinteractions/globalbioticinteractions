@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -9,32 +8,26 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.tool.NullImportLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static org.eol.globi.data.DatasetImporterForPensoft.createColumnSchema;
-import static org.eol.globi.data.DatasetImporterForPensoft.expandSpannedRows;
-import static org.eol.globi.data.DatasetImporterForPensoft.extractTermsForRowValue;
 import static org.eol.globi.data.DatasetImporterForPensoft.getColumnNames;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 
 public class DatasetImporterForPensoftTest {
 
     public static void parseRowsAndEnrich(JsonNode biodivTable, InteractionListener listener, ResourceService resourceService) throws StudyImporterException {
-        DatasetImporterForPensoft.parseRowsAndEnrich(biodivTable, listener, new NullImportLogger(), new OpenBiodivClient(resourceService));
+        DatasetImporterForPensoft datasetImporterForPensoft = new DatasetImporterForPensoft(null, null);
+        datasetImporterForPensoft.parseRowsAndEnrich(biodivTable, listener, new NullImportLogger(), new OpenBiodivClient(resourceService));
     }
 
     @Test

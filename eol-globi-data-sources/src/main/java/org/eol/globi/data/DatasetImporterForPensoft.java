@@ -9,6 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -93,10 +94,10 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     }
 
 
-    static void parseRowsAndEnrich(JsonNode biodivTable,
-                                   InteractionListener listener,
-                                   ImportLogger logger,
-                                   final SparqlClient sparqlClient) throws StudyImporterException {
+    void parseRowsAndEnrich(JsonNode biodivTable,
+                            InteractionListener listener,
+                            ImportLogger logger,
+                            final SparqlClient sparqlClient) throws StudyImporterException {
         final Map<String, String> tableReferences;
         try {
             tableReferences = parseTableReferences(biodivTable, sparqlClient);
@@ -108,9 +109,11 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         final String htmlString = tableContent.asText();
         //tableReferences.put("table_content", htmlString);
 
-        JsonNode table_id = biodivTable.get("table_id");
-        if (table_id != null && table_id.isTextual()) {
-            String tableUUID = StringUtils.replacePattern(table_id.asText(), "(<)|(>)|(http://openbiodiv.net/)", "");
+        String tableUUID = getTableUUID(biodivTable);
+
+        if (StringUtils.isBlank(tableUUID)) {
+            logger.warn(LogUtil.contextFor(tableReferences), "no table uuid found");
+        } else {
             tableReferences.put("uuid", tableUUID);
         }
 
@@ -136,9 +139,29 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
             logger.warn(LogUtil.contextFor(tableReferences), "failed to make Pensoft table rectangular: [" + htmlString + "]");
         }
 
+        JsonNode columnSchema = null;
+        if (StringUtils.isNotBlank(tableUUID)) {
+            try {
+                InputStream retrieve = getDataset() == null ? null : getDataset().retrieve(URI.create(tableUUID + "-schema.json"));
+                if (retrieve == null) {
+                    logger.warn(LogUtil.contextFor(tableReferences), "no schema found for openbiodiv table [" + tableUUID + "]");
+                } else {
+                    columnSchema = new ObjectMapper().readTree(retrieve);
+                }
+            } catch (IOException ex) {
+                logger.warn(LogUtil.contextFor(tableReferences), "failed to read schema for openbiodiv table [" + tableUUID + "]");
+            }
+        }
+
+        if (columnSchema == null) {
+            logger.warn(LogUtil.contextFor(tableReferences), "using generated schema for openbiodiv table [" + tableUUID + "]");
+            columnSchema = generateColumnSchema(doc);
+        }
 
         final Elements table = doc.select("table");
-        ObjectNode columnSchema = createColumnSchema(getColumnNames(table));
+
+
+
         if (columnSchema != null) {
             try {
                 tableReferences.put("tableSchema", new ObjectMapper().writeValueAsString(columnSchema));
@@ -168,6 +191,20 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
 
             }
         }
+    }
+
+    private String getTableUUID(JsonNode biodivTable) {
+        JsonNode table_id = biodivTable.get("table_id");
+        String tableUUID = null;
+        if (table_id != null && table_id.isTextual()) {
+            tableUUID = StringUtils.replacePattern(table_id.asText(), "(<)|(>)|(http://openbiodiv.net/)", "");
+        }
+        return tableUUID;
+    }
+
+    private ObjectNode generateColumnSchema(Document doc) {
+        final Elements table = doc.select("table");
+        return createColumnSchema(getColumnNames(table));
     }
 
     public static void expandSpannedRows(Element row, Elements rowColumns) {
