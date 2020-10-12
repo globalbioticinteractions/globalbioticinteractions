@@ -9,7 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.domain.LogContext;
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -29,7 +29,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.jsoup.select.Evaluator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -71,6 +70,23 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         columns.forEach(arrayNode::add);
         obj.put("columns", arrayNode);
         return obj;
+    }
+
+    public static String parseInteractionType(JsonNode jsonNode) throws IOException {
+        String interactionType = null;
+        if (jsonNode.has("annotations")) {
+            JsonNode annotations = jsonNode.get("annotations");
+            for (JsonNode annotation : annotations) {
+                if (annotation.has("id")) {
+                    for (JsonNode id : annotation.get("id")) {
+                        if (id.isTextual()) {
+                            interactionType = id.asText();
+                        }
+                    }
+                }
+            }
+        }
+        return interactionType;
     }
 
 
@@ -144,7 +160,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
             try {
                 InputStream retrieve = getDataset() == null ? null : getDataset().retrieve(URI.create(tableUUID + "-schema.json"));
                 if (retrieve == null) {
-                    logger.warn(LogUtil.contextFor(tableReferences), "no schema found for openbiodiv table [" + tableUUID + "]");
+                    logger.info(LogUtil.contextFor(tableReferences), "no schema found for openbiodiv table [" + tableUUID + "]");
                 } else {
                     columnSchema = new ObjectMapper().readTree(retrieve);
                 }
@@ -154,15 +170,15 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         }
 
         if (columnSchema == null) {
-            logger.warn(LogUtil.contextFor(tableReferences), "using generated schema for openbiodiv table [" + tableUUID + "]");
+            logger.info(LogUtil.contextFor(tableReferences), "using generated schema for openbiodiv table [" + tableUUID + "]");
             columnSchema = generateColumnSchema(doc);
         }
 
         final Elements table = doc.select("table");
 
-
-
-        if (columnSchema != null) {
+        if (columnSchema == null) {
+            throw new StudyImporterException("failed to generate proposed table schema");
+        } else {
             try {
                 tableReferences.put("tableSchema", new ObjectMapper().writeValueAsString(columnSchema));
             } catch (IOException e) {
@@ -173,7 +189,6 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         Elements rows = table.get(0).select("tr");
         List<DatasetImporterForMetaTable.Column> columns = DatasetImporterForMetaTable.columnNamesForSchema(columnSchema);
 
-
         for (Element row : rows) {
             Elements rowColumns = row.select("td");
 
@@ -181,6 +196,12 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                 logger.warn(LogUtil.contextFor(tableReferences), "found [" + columns.size() + "] column definitions, but [" + rowColumns.size() + "] data values");
             } else {
                 final TreeMap<String, String> link = new TreeMap<String, String>() {{
+                    try {
+                        put(DatasetImporterForTSV.INTERACTION_TYPE_ID, parseInteractionType((biodivTable)));
+                    } catch (IOException e) {
+                        logger.warn(LogUtil.contextFor(tableReferences), "failed to extract interactionType from table context, using default instead");
+                        put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+                    }
                     putAll(tableReferences);
                 }};
 

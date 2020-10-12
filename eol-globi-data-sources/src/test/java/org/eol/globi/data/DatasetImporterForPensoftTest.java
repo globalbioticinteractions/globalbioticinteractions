@@ -114,5 +114,15 @@ public class DatasetImporterForPensoftTest {
                 .readTree(is);
     }
 
+    @Test
+    public void extractInteractionType() throws IOException {
+        String jsonSnippet = "{\"annotations\":[{\"id\":[\"http://purl.obolibrary.org/obo/RO_0002453\",\"http://purl.obolibrary.org/obo/RO_0002453\"],\"lbl\":[\"host\",\"host\"],\"length\":[4.0,4.0],\"possition\":[0.0,0.0],\"ontology\":[\"custom\",\"custom\"],\"type\":[\"PROPERTY\",\"PROPERTY\"],\"context\":[\"host plant\",\"host plant\"],\"is_synonym\":[true,true],\"is_word\":[true,true],\"row\":[\"1\"],\"col\":[\"2\"]}]}";
+
+        String interactionType = DatasetImporterForPensoft.parseInteractionType(new ObjectMapper().readTree(jsonSnippet));
+
+        assertThat(interactionType, is("http://purl.obolibrary.org/obo/RO_0002453"));
+
+    }
+
 
 }
