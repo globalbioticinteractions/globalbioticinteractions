@@ -11,7 +11,7 @@ public class TableRectifier implements TableProcessor {
         this(new TablePreprocessor(),
                 new ExpandColumnSpans(),
                 new ExpandRowSpans(),
-                new ExpandRowValues());
+                new AddColumnsForOpenBiodivTerms());
     }
 
     public TableRectifier(TableProcessor... processors) {

@@ -9,7 +9,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -21,7 +20,7 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.globalbioticinteractions.pensoft.AddColumnFromCaption;
 import org.globalbioticinteractions.pensoft.ExpandColumnSpans;
 import org.globalbioticinteractions.pensoft.ExpandRowSpans;
-import org.globalbioticinteractions.pensoft.ExpandRowValues;
+import org.globalbioticinteractions.pensoft.AddColumnsForOpenBiodivTerms;
 import org.globalbioticinteractions.pensoft.TablePreprocessor;
 import org.globalbioticinteractions.pensoft.TableRectifier;
 import org.globalbioticinteractions.pensoft.TableUtil;
@@ -125,7 +124,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                     new TablePreprocessor(),
                     new ExpandColumnSpans(),
                     new ExpandRowSpans(),
-                    new ExpandRowValues()
+                    new AddColumnsForOpenBiodivTerms()
             );
         }
 
