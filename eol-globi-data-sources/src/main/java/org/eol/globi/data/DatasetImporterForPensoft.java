@@ -159,7 +159,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         if (TableUtil.isRectangularTable(doc)) {
             logger.info(LogUtil.contextFor(tableReferences), "pre-processed Pensoft table is rectangular.");
         } else {
-            logger.warn(LogUtil.contextFor(tableReferences), "pre-processed Pensoft table is not rectangular: [" + htmlString + "]");
+            logger.warn(LogUtil.contextFor(tableReferences), "pre-processed Pensoft table is not rectangular.");
         }
 
         JsonNode columnSchema = null;
