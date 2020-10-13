@@ -147,12 +147,20 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
             );
         }
 
+        if (TableUtil.isRectangularTable(Jsoup.parse(htmlString))) {
+            logger.info(LogUtil.contextFor(tableReferences), "original Pensoft table is rectangular.");
+        } else {
+            logger.warn(LogUtil.contextFor(tableReferences), "original Pensoft table is not rectangular.");
+        }
+
         String rectifiedTable = tableRectifier.process(htmlString);
         //tableReferences.put("tableContentRectified", rectifiedTable);
 
         final Document doc = Jsoup.parse(rectifiedTable);
-        if (!TableUtil.isRectangularTable(doc)) {
-            logger.warn(LogUtil.contextFor(tableReferences), "failed to make Pensoft table rectangular: [" + htmlString + "]");
+        if (TableUtil.isRectangularTable(doc)) {
+            logger.info(LogUtil.contextFor(tableReferences), "pre-processed Pensoft table is rectangular.");
+        } else {
+            logger.warn(LogUtil.contextFor(tableReferences), "pre-processed Pensoft table is not rectangular: [" + htmlString + "]");
         }
 
         JsonNode columnSchema = null;
@@ -162,6 +170,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                 if (retrieve == null) {
                     logger.info(LogUtil.contextFor(tableReferences), "no schema found for openbiodiv table [" + tableUUID + "]");
                 } else {
+                    logger.info(LogUtil.contextFor(tableReferences), "found custom schema for openbiodiv table [" + tableUUID + "]");
                     columnSchema = new ObjectMapper().readTree(retrieve);
                 }
             } catch (IOException ex) {
