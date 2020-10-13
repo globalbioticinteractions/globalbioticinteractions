@@ -317,15 +317,20 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                 " LIMIT 1";
 
         try {
+            String citation = null;
             final LabeledCSVParser parser = openBiodivClient.query(sparql);
             parser.getLine();
-            final String doiURIString = DOI.create(parser.getValueByLabel("doi")).toURI().toString();
-            return StringUtils.join(Arrays.asList(
-                    parser.getValueByLabel("authorsList"),
-                    parser.getValueByLabel("pubYear"),
-                    parser.getValueByLabel("title"),
-                    parser.getValueByLabel("journalName"),
-                    doiURIString), ". ");
+            String doi = parser.getValueByLabel("doi");
+            if (StringUtils.isNotBlank(doi)) {
+                final String doiURIString = DOI.create(doi).toURI().toString();
+                citation = StringUtils.join(Arrays.asList(
+                        parser.getValueByLabel("authorsList"),
+                        parser.getValueByLabel("pubYear"),
+                        parser.getValueByLabel("title"),
+                        parser.getValueByLabel("journalName"),
+                        doiURIString), ". ");
+            }
+            return citation;
         } catch (MalformedDOIException e) {
             throw new IOException("marlformed uri", e);
         }
@@ -411,13 +416,17 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         if (StringUtils.isBlank(articleURI)) {
             throw new IOException("missing mandatory articleURI for table with id [" + tableURI + "]");
         }
-        final String citation = findCitationById(articleURI, sparqlClient);
+        String citation = findCitationById(articleURI, sparqlClient);
+        if (StringUtils.isBlank(citation)) {
+            citation = findCitationByDoi(doi, sparqlClient);
+        }
+        final String finalCitation = citation;
         return new TreeMap<String, String>() {
             {
                 put(DatasetImporterForTSV.REFERENCE_ID, referenceUrl);
                 put(DatasetImporterForTSV.REFERENCE_URL, referenceUrl);
                 put(DatasetImporterForTSV.REFERENCE_DOI, doi);
-                put(DatasetImporterForTSV.REFERENCE_CITATION, citation);
+                put(DatasetImporterForTSV.REFERENCE_CITATION, StringUtils.isBlank(finalCitation) ? referenceUrl : finalCitation);
                 put("tableCaption", biodivTable.has("caption") ? biodivTable.get("caption").asText() : "");
             }
         };

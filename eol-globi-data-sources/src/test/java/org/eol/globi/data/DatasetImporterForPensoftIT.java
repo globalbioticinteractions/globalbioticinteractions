@@ -86,6 +86,20 @@ public class DatasetImporterForPensoftIT {
     }
 
     @Test
+    public void retrieveCitationById3() throws IOException {
+        final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
+        String citation = DatasetImporterForPensoft.findCitationById("http://openbiodiv.net/222C9E1B135454BEB7144BD7794FA01C", openBiodivClient);
+        assertThat(citation, is(nullValue()));
+    }
+
+    @Test
+    public void retrieveCitationById3ByDOI() throws IOException {
+        final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
+        String citation = DatasetImporterForPensoft.findCitationByDoi("10.3897/zookeys.875.35748", openBiodivClient);
+        assertThat(citation, is("bla"));
+    }
+
+    @Test
     public void retrieveTaxonFamily() throws IOException {
         Taxon taxon = DatasetImporterForPensoft.retrieveTaxonHierarchyById("4B689A17-2541-4F5F-A896-6F0C2EEA3FB4", new OpenBiodivClient(getResourceServiceTest()));
         assertThat(taxon.getName(), is("Acanthaceae"));
