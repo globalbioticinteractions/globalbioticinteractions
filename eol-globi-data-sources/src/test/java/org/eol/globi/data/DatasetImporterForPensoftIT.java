@@ -24,13 +24,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static junit.framework.TestCase.assertNotNull;
-import static org.eol.globi.data.TestUtil.getResourceServiceTest;
 import static org.eol.globi.data.DatasetImporterForPensoftTest.getTableObj;
 import static org.eol.globi.data.DatasetImporterForPensoftTest.parseRowsAndEnrich;
+import static org.eol.globi.data.TestUtil.getResourceServiceTest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -56,12 +54,11 @@ public class DatasetImporterForPensoftIT {
         });
         importer.importStudy();
 
-        assertThat(links.size(), is(146));
+        assertThat(links.size(), is(121));
 
         assertThat(links.get(0), hasEntry("Family Name", "Acanthaceae"));
-        assertThat(links.get(0), hasEntry("Family Name_taxon_name", "Acanthaceae"));
-        assertThat(links.get(0), hasEntry("Family Name_taxon_path", "Plantae | Tracheophyta | Magnoliopsida | Lamiales | Acanthaceae"));
-        assertThat(links.get(0), hasEntry("Family Name_taxon_pathNames", "kingdom | phylum | class | order | family"));
+        assertThat(links.get(0), hasEntry("Family Name_expanded_taxon_name", "Acanthaceae"));
+        assertThat(links.get(0), hasEntry("Family Name_expanded_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
         assertThat(links.get(0), hasEntry("referenceUrl", "http://openbiodiv.net/FB706B4E-BAC2-4432-AD28-48063E7753E4"));
         assertThat(links.get(0), hasEntry("referenceDoi", "10.3897/zookeys.306.5455"));
         assertThat(links.get(0), hasEntry("referenceCitation", "Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
@@ -71,6 +68,20 @@ public class DatasetImporterForPensoftIT {
     public void retrieveCitation() throws IOException {
         final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", openBiodivClient);
+        assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
+    }
+
+    @Test
+    public void retrieveCitationById() throws IOException {
+        final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
+        String citation = DatasetImporterForPensoft.findCitationById("<http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2>", openBiodivClient);
+        assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
+    }
+
+    @Test
+    public void retrieveCitationById2() throws IOException {
+        final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
+        String citation = DatasetImporterForPensoft.findCitationById("http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2", openBiodivClient);
         assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
@@ -161,18 +172,18 @@ public class DatasetImporterForPensoftIT {
 
         assertThat(rowValues.size(), is(121));
         assertThat(rowValues.get(0), hasEntry("Family Name", "Acanthaceae"));
-        assertThat(rowValues.get(0), hasEntry("Family Name_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
-        assertThat(rowValues.get(0), hasEntry("Family Name_taxon_name", "Acanthaceae"));
+        assertThat(rowValues.get(0), hasEntry("Family Name_expanded_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
+        assertThat(rowValues.get(0), hasEntry("Family Name_expanded_taxon_name", "Acanthaceae"));
         assertThat(rowValues.get(0), hasEntry("Host Plant", "Ruellia sp."));
-        assertThat(rowValues.get(0), hasEntry("Host Plant_taxon_id", "http://openbiodiv.net/56F59D49-725E-4BF7-8A6D-1B1A7A721231"));
-        assertThat(rowValues.get(0), hasEntry("Host Plant_taxon_name", "Ruellia"));
-        assertThat(rowValues.get(0), hasEntry("Thrips species", "Copidothrips octarticulatus<br/> Thrips parvispinus"));
-        assertThat(rowValues.get(0), hasEntry("Thrips species_taxon_id", "http://openbiodiv.net/6A54156A-BE5C-44D7-A9E3-3902DA4CCFAC"));
-        assertThat(rowValues.get(0), hasEntry("Thrips species_taxon_name", "Copidothrips octarticulatus"));
+        assertThat(rowValues.get(0), hasEntry("Host Plant_expanded_taxon_id", "http://openbiodiv.net/56F59D49-725E-4BF7-8A6D-1B1A7A721231"));
+        assertThat(rowValues.get(0), hasEntry("Host Plant_expanded_taxon_name", "Ruellia"));
+        assertThat(rowValues.get(0), hasEntry("Thrips species", "Copidothrips octarticulatusThrips parvispinus"));
+        assertThat(rowValues.get(0), hasEntry("Thrips species_expanded_taxon_id", "http://openbiodiv.net/6A54156A-BE5C-44D7-A9E3-3902DA4CCFAC"));
+        assertThat(rowValues.get(0), hasEntry("Thrips species_expanded_taxon_name", "Copidothrips octarticulatus"));
 
         assertThat(rowValues.get(1), hasEntry("Family Name", "Acanthaceae"));
-        assertThat(rowValues.get(1), hasEntry("Family Name_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
-        assertThat(rowValues.get(1), hasEntry("Family Name_taxon_name", "Acanthaceae"));
+        assertThat(rowValues.get(1), hasEntry("Family Name_expanded_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
+        assertThat(rowValues.get(1), hasEntry("Family Name_expanded_taxon_name", "Acanthaceae"));
 
     }
     @Test
@@ -190,25 +201,23 @@ public class DatasetImporterForPensoftIT {
 
         parseRowsAndEnrich(tableObj, listener, getResourceServiceTest());
 
-        assertThat(rowValues.size(), is(81));
-        assertThat(rowValues.get(0), hasEntry("Family Name", "Acanthaceae"));
-        assertThat(rowValues.get(0), hasEntry("Family Name_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
-        assertThat(rowValues.get(0), hasEntry("Family Name_taxon_name", "Acanthaceae"));
-        assertThat(rowValues.get(0), hasEntry("Host Plant", "Ruellia sp."));
-        assertThat(rowValues.get(0), hasEntry("Host Plant_taxon_id", "http://openbiodiv.net/56F59D49-725E-4BF7-8A6D-1B1A7A721231"));
-        assertThat(rowValues.get(0), hasEntry("Host Plant_taxon_name", "Ruellia"));
-        assertThat(rowValues.get(0), hasEntry("Thrips species", "Copidothrips octarticulatus<br/> Thrips parvispinus"));
-        assertThat(rowValues.get(0), hasEntry("Thrips species_taxon_id", "http://openbiodiv.net/6A54156A-BE5C-44D7-A9E3-3902DA4CCFAC"));
-        assertThat(rowValues.get(0), hasEntry("Thrips species_taxon_name", "Copidothrips octarticulatus"));
+        assertThat(rowValues.size(), is(3));
+        assertThat(rowValues.get(0), hasEntry("Aphidura species Host plant", "Silene fruticosa"));
+        assertThat(rowValues.get(0), hasEntry("Aphidura species Host plant_expanded_taxon_id", "http://openbiodiv.net/9A18EF6D-F508-4649-B290-89A0C5216050"));
+        assertThat(rowValues.get(0), hasEntry("Aphidura species Host plant_expanded_taxon_name", "Silene fruticosa"));
+        assertThat(rowValues.get(0), hasEntry("_expanded_taxon_id", "http://openbiodiv.net/F260B0E2-2B48-435E-A34F-26090046EA31"));
+        assertThat(rowValues.get(0), hasEntry("_expanded_taxon_name", "Aphidura picta"));
 
-        assertThat(rowValues.get(1), hasEntry("Family Name", "Acanthaceae"));
-        assertThat(rowValues.get(1), hasEntry("Family Name_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
-        assertThat(rowValues.get(1), hasEntry("Family Name_taxon_name", "Acanthaceae"));
+        assertThat(rowValues.get(1), hasEntry("Aphidura species Host plant", "Silene italica"));
+        assertThat(rowValues.get(1), hasEntry("Aphidura species Host plant_expanded_taxon_id", "http://openbiodiv.net/5BE202E0-3DA3-422B-B7DD-00EECE8F99CC"));
+        assertThat(rowValues.get(1), hasEntry("Aphidura species Host plant_expanded_taxon_name", "Silene italica"));
+        assertThat(rowValues.get(1), hasEntry("_expanded_taxon_id", "http://openbiodiv.net/F260B0E2-2B48-435E-A34F-26090046EA31"));
+        assertThat(rowValues.get(1), hasEntry("_expanded_taxon_name", "Aphidura picta"));
 
     }
 
     @Test
-    public void parseTableContentWithRowSpan() throws IOException, TermLookupServiceException, StudyImporterException {
+    public void parseTableContentWithRowSpan() throws IOException, StudyImporterException {
 
         final String tableContent = IOUtils.toString(getClass().getResourceAsStream("pensoft/table-with-rowspan.html"), StandardCharsets.UTF_8);
 
@@ -216,6 +225,7 @@ public class DatasetImporterForPensoftIT {
         tableObj.put("table_id", "<http://openbiodiv.net/FB706B4E-BAC2-4432-AD28-48063E7753E4>");
         tableObj.put("caption", "a caption");
         tableObj.put("article_doi", "10.12/34");
+        tableObj.put("article_id", "<http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2>");
         tableObj.put("table_content", tableContent);
 
         List<Map<String, String>> rowValues = new ArrayList<>();
@@ -230,13 +240,13 @@ public class DatasetImporterForPensoftIT {
 
         assertThat(rowValues.size(), is(8));
         assertThat(rowValues.get(0), hasEntry("Family Name", "Apiaceae"));
-        assertThat(rowValues.get(0), hasEntry("Thrips species_taxon_name", "Thrips parvispinus"));
+        assertThat(rowValues.get(0), hasEntry("Thrips species_expanded_taxon_name", "Thrips parvispinus"));
         assertThat(rowValues.get(1), hasEntry("Family Name", "Apiaceae"));
-        assertThat(rowValues.get(1), hasEntry("Thrips species_taxon_name", "Thrips nigropilosus"));
+        assertThat(rowValues.get(1), hasEntry("Thrips species_expanded_taxon_name", "Thrips nigropilosus"));
         assertThat(rowValues.get(2), hasEntry("Family Name", "Apiaceae"));
-        assertThat(rowValues.get(2), hasEntry("Thrips species_taxon_name", "Thrips parvispinus"));
+        assertThat(rowValues.get(2), hasEntry("Thrips species_expanded_taxon_name", "Thrips parvispinus"));
         assertThat(rowValues.get(7), hasEntry("Family Name", "Apocynaceae"));
-        assertThat(rowValues.get(7), hasEntry("Thrips species_taxon_name", "Thrips malloti"));
+        assertThat(rowValues.get(7), hasEntry("Thrips species_expanded_taxon_name", "Thrips malloti"));
 
     }
 

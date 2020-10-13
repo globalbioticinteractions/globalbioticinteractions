@@ -14,7 +14,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
@@ -279,11 +278,18 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         return headerNames;
     }
 
-    private static TermImpl asTerm(String id, String name) {
-        return new TermImpl(id, name);
+    static String findCitationByDoi(String doi, SparqlClient openBiodivClient) throws IOException {
+        String bindStatement = "    BIND(\"" + doi + "\" AS ?doi). \n";
+        return findCitation(openBiodivClient, bindStatement);
     }
 
-    static String findCitationByDoi(String doi, SparqlClient openBiodivClient) throws IOException {
+    static String findCitationById(String articleId, SparqlClient openBiodivClient) throws IOException {
+        String articleURI = StringUtils.replacePattern(articleId, "[<>]", "");
+        String bindStatement = "    BIND(<" + articleURI + "> AS ?article). \n";
+        return findCitation(openBiodivClient, bindStatement);
+    }
+
+    private static String findCitation(SparqlClient openBiodivClient, String bindStatement) throws IOException {
         String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
                 "PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>\n" +
                 "PREFIX doco: <http://purl.org/spar/doco/>\n" +
@@ -296,7 +302,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
                 "   ( REPLACE(str(?pubDate), \"(\\\\d*)-.*\", \"$1\") as ?pubYear) " +
                 "   ?journalName " +
                 "WHERE { \n" +
-                "    BIND(\"" + doi + "\" AS ?doi). \n" +
+                bindStatement +
                 "    ?article a fabio:JournalArticle.\n" +
                 "    ?article prism:doi ?doi.\n" +
                 "    ?article dc:title ?title.\n" +
@@ -313,7 +319,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         try {
             final LabeledCSVParser parser = openBiodivClient.query(sparql);
             parser.getLine();
-            final String doiURIString = DOI.create(doi).toURI().toString();
+            final String doiURIString = DOI.create(parser.getValueByLabel("doi")).toURI().toString();
             return StringUtils.join(Arrays.asList(
                     parser.getValueByLabel("authorsList"),
                     parser.getValueByLabel("pubYear"),
@@ -398,10 +404,14 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     }
 
     private static Map<String, String> parseTableReferences(final JsonNode biodivTable, SparqlClient sparqlClient) throws IOException {
-        final String table_id = biodivTable.has("table_id") ? biodivTable.get("table_id").asText() : "";
-        final String referenceUrl = StringUtils.replaceAll(table_id, "[<>]", "");
+        final String tableURI = biodivTable.has("table_id") ? biodivTable.get("table_id").asText() : "";
+        final String referenceUrl = StringUtils.replaceAll(tableURI, "[<>]", "");
         final String doi = biodivTable.has("article_doi") ? biodivTable.get("article_doi").asText() : "";
-        final String citation = findCitationByDoi(doi, sparqlClient);
+        final String articleURI = biodivTable.has("article_id") ? biodivTable.get("article_id").asText() : "";
+        if (StringUtils.isBlank(articleURI)) {
+            throw new IOException("missing mandatory articleURI for table with id [" + tableURI + "]");
+        }
+        final String citation = findCitationById(articleURI, sparqlClient);
         return new TreeMap<String, String>() {
             {
                 put(DatasetImporterForTSV.REFERENCE_ID, referenceUrl);

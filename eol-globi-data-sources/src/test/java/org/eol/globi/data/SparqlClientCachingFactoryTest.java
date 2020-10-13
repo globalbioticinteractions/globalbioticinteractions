@@ -21,11 +21,11 @@ public class SparqlClientCachingFactoryTest {
         assertCitation(openBiodivClient);
     }
 
-    public void assertCitation(SparqlClient openBiodivClient) throws IOException {
-        assertThat(DatasetImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", openBiodivClient), is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
+    private void assertCitation(SparqlClient openBiodivClient) throws IOException {
+        assertThat(DatasetImporterForPensoft.findCitationById("http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2", openBiodivClient), is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
-    public static ResourceService singleRequestResourceService() {
+    static ResourceService singleRequestResourceService() {
         AtomicInteger counter = new AtomicInteger(0);
         return resourceName -> {
             if (counter.getAndIncrement() == 0) {
