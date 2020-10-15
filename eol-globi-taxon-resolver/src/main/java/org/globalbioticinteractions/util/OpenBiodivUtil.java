@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OpenBiodivUtil {
+
     public static Taxon retrieveTaxonHierarchyById(String taxonId, SparqlClient sparqlClient) throws IOException {
         final String normalizedTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "");
         String sparql = "PREFIX fabio: <http://purl.org/spar/fabio/>\n" +
