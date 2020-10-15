@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.collections4.list.TreeList;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetImporterForGlobalWebDbTest {
 

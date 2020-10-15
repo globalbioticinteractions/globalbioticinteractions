@@ -5,6 +5,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URI;
@@ -12,7 +13,7 @@ import java.net.URI;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetImporterFactoryImplTest {
 

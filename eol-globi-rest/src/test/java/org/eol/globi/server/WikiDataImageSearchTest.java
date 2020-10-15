@@ -4,6 +4,7 @@ import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.SearchContext;
 import org.eol.globi.service.WikidataUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,14 +21,14 @@ import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class WikiDataImageSearchTest {
 
     @Test
     public void lookupLion() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140");
-        assertNotNull(taxonImage);
+        Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
         assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
@@ -36,7 +37,7 @@ public class WikiDataImageSearchTest {
     @Test
     public void lookupLionByNCBI() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("NCBI:9689");
-        assertNotNull(taxonImage);
+        Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
         assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
@@ -83,7 +84,7 @@ public class WikiDataImageSearchTest {
     @Test
     public void lookupLionByITIS() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("ITIS:183803");
-        assertNotNull(taxonImage);
+        Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
         assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
@@ -92,7 +93,7 @@ public class WikiDataImageSearchTest {
     @Test
     public void lookupRedVole() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q608821");
-        assertNotNull(taxonImage);
+        Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getCommonName(), is("Northern Red-backed Vole, Red Vole @en"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q608821"));
     }
@@ -100,7 +101,7 @@ public class WikiDataImageSearchTest {
     @Test
     public void northernBat() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("NBN:NHMSYS0000528007");
-        assertNotNull(taxonImage);
+        Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getCommonName(), is("Northern Bat @en"));
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q300941"));
     }
@@ -113,7 +114,7 @@ public class WikiDataImageSearchTest {
                 return "ja";
             }
         });
-        assertNotNull(taxonImage);
+        Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
         assertThat(taxonImage.getCommonName(), is("ライオン (raion) @ja"));
@@ -127,7 +128,7 @@ public class WikiDataImageSearchTest {
                 return "foo";
             }
         });
-        assertNotNull(taxonImage);
+        Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
         assertThat(taxonImage.getCommonName(), is(nullValue()));
@@ -136,7 +137,7 @@ public class WikiDataImageSearchTest {
     @Test
     public void lookupUnsupported() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("foo:bar");
-        assertNull(taxonImage);
+        Assert.assertNull(taxonImage);
     }
 
 }

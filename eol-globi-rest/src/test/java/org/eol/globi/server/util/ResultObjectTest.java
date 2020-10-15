@@ -1,16 +1,17 @@
 package org.eol.globi.server.util;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ResultObjectTest {
 
     @Test
     public void resultObjectsForFields() {
         for (ResultField field : ResultField.values()) {
-            assertNotNull("failed to find result object for [" + field.getLabel() + "]"
+            Assert.assertNotNull("failed to find result object for [" + field.getLabel() + "]"
                     , ResultObject.forField(field));
         }
     }

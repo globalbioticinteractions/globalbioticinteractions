@@ -1,12 +1,13 @@
 package org.eol.globi.server;
 
 import org.eol.globi.util.CypherQuery;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ReportControllerTest {
 

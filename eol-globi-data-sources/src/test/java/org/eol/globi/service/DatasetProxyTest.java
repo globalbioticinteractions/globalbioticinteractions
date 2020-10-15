@@ -6,6 +6,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetProxyTest {
 

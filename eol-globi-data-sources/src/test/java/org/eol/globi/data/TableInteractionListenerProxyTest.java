@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TableInteractionListenerProxyTest {
 

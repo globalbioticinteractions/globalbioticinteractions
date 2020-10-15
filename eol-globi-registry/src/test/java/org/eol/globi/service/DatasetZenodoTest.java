@@ -1,11 +1,12 @@
 package org.eol.globi.service;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetZenodoTest {
 
