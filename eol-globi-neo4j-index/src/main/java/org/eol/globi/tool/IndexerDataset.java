@@ -41,7 +41,6 @@ public class IndexerDataset implements IndexerNeo4j {
 
             final GraphDatabaseService graphService1 = factory.getGraphService();
             NodeFactoryNeo4j nodeFactory = new NodeFactoryNeo4j(graphService1);
-            nodeFactory.setDoiResolver(new DOIResolverImpl());
 
             DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), nodeFactory, registry);
             importer.setDataset(new DatasetLocal(inStream -> inStream));

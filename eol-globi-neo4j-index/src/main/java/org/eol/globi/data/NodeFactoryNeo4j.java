@@ -29,7 +29,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.AuthorIdResolver;
-import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.ORCIDResolverImpl;
 import org.eol.globi.service.TermLookupService;
@@ -583,10 +582,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     public void setTermLookupService(TermLookupService termLookupService) {
         this.termLookupService = termLookupService;
-    }
-
-    @Deprecated
-    public void setDoiResolver(DOIResolver doiResolver) {
     }
 
     @Override
