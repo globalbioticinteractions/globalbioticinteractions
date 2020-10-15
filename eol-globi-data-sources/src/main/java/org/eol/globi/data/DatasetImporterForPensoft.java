@@ -20,6 +20,8 @@ import org.globalbioticinteractions.pensoft.ExpandRowSpans;
 import org.globalbioticinteractions.pensoft.TablePreprocessor;
 import org.globalbioticinteractions.pensoft.TableRectifier;
 import org.globalbioticinteractions.pensoft.TableUtil;
+import org.globalbioticinteractions.util.SparqlClient;
+import org.globalbioticinteractions.util.SparqlUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,6 +43,7 @@ import java.util.stream.Collectors;
 
 public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     private SparqlClientFactory sparqlClientFactory = new SparqlClientCachingFactory();
+    public static final URI OPEN_BIODIV_SPARQL_ENDPOINT = URI.create("http://graph.openbiodiv.net/repositories/OpenBiodiv2020");
 
     public DatasetImporterForPensoft(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -329,11 +332,6 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         } catch (MalformedDOIException e) {
             throw new IOException("marlformed uri", e);
         }
-    }
-
-    public static URI createSparqlURI(String sparql) throws URISyntaxException {
-        final URI endpoint = URI.create("http://graph.openbiodiv.net/repositories/OpenBiodiv2020");
-        return new URI(endpoint.getScheme(), endpoint.getHost(), endpoint.getPath(), "query=" + sparql, null);
     }
 
 

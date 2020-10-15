@@ -1,4 +1,4 @@
-package org.eol.globi.data;
+package org.globalbioticinteractions.util;
 
 import com.Ostermiller.util.LabeledCSVParser;
 

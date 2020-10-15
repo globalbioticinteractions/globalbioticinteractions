@@ -2,8 +2,6 @@ package org.globalbioticinteractions.util;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.DatasetImporterForPensoft;
-import org.eol.globi.data.SparqlClient;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;

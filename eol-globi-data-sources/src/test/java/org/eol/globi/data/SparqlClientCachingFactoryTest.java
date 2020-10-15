@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.service.ResourceService;
+import org.globalbioticinteractions.util.SparqlClient;
 import org.junit.Test;
 
 import java.io.IOException;
