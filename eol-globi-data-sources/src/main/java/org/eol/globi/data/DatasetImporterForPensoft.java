@@ -411,25 +411,39 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     private static Map<String, String> parseTableReferences(final JsonNode biodivTable, SparqlClient sparqlClient) throws IOException {
         final String tableURI = biodivTable.has("table_id") ? biodivTable.get("table_id").asText() : "";
         final String referenceUrl = StringUtils.replaceAll(tableURI, "[<>]", "");
-        final String doi = biodivTable.has("article_doi") ? biodivTable.get("article_doi").asText() : "";
+        final String doiString = biodivTable.has("article_doi") ? biodivTable.get("article_doi").asText() : "";
         final String articleURI = biodivTable.has("article_id") ? biodivTable.get("article_id").asText() : "";
         if (StringUtils.isBlank(articleURI)) {
             throw new IOException("missing mandatory articleURI for table with id [" + tableURI + "]");
         }
         String citation = findCitationById(articleURI, sparqlClient);
         if (StringUtils.isBlank(citation)) {
-            citation = findCitationByDoi(doi, sparqlClient);
+            citation = findCitationByDoi(doiString, sparqlClient);
         }
         final String finalCitation = citation;
-        return new TreeMap<String, String>() {
+
+        TreeMap<String, String> references = new TreeMap<String, String>() {
             {
-                put(DatasetImporterForTSV.REFERENCE_ID, referenceUrl);
-                put(DatasetImporterForTSV.REFERENCE_URL, referenceUrl);
-                put(DatasetImporterForTSV.REFERENCE_DOI, doi);
+                put(DatasetImporterForTSV.REFERENCE_ID, tableURI);
+                put(DatasetImporterForTSV.REFERENCE_URL, tableURI);
                 put(DatasetImporterForTSV.REFERENCE_CITATION, StringUtils.isBlank(finalCitation) ? referenceUrl : finalCitation);
                 put("tableCaption", biodivTable.has("caption") ? biodivTable.get("caption").asText() : "");
             }
         };
+
+        addDOIReferenceIfAvailable(doiString, references);
+
+        return references;
+    }
+
+    private static void addDOIReferenceIfAvailable(String doiString, TreeMap<String, String> references) {
+        try {
+            final DOI doiObj = DOI.create(doiString);
+            references.put(DatasetImporterForTSV.REFERENCE_DOI, doiString);
+            references.put(DatasetImporterForTSV.REFERENCE_URL, doiObj.toURI().toString());
+        } catch (MalformedDOIException e) {
+            // ignore
+        }
     }
 
 

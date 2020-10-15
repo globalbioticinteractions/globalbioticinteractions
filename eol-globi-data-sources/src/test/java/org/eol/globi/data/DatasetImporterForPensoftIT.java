@@ -59,7 +59,7 @@ public class DatasetImporterForPensoftIT {
         assertThat(links.get(0), hasEntry("Family Name", "Acanthaceae"));
         assertThat(links.get(0), hasEntry("Family Name_expanded_taxon_name", "Acanthaceae"));
         assertThat(links.get(0), hasEntry("Family Name_expanded_taxon_id", "http://openbiodiv.net/4B689A17-2541-4F5F-A896-6F0C2EEA3FB4"));
-        assertThat(links.get(0), hasEntry("referenceUrl", "http://openbiodiv.net/FB706B4E-BAC2-4432-AD28-48063E7753E4"));
+        assertThat(links.get(0), hasEntry("referenceUrl", "https://doi.org/10.3897/zookeys.306.5455"));
         assertThat(links.get(0), hasEntry("referenceDoi", "10.3897/zookeys.306.5455"));
         assertThat(links.get(0), hasEntry("referenceCitation", "Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
@@ -89,14 +89,14 @@ public class DatasetImporterForPensoftIT {
     public void retrieveCitationById3() throws IOException {
         final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationById("http://openbiodiv.net/222C9E1B135454BEB7144BD7794FA01C", openBiodivClient);
-        assertThat(citation, is(nullValue()));
+        assertThat(citation, is("Marko Prous, Andrew Liston, Katja Kramp, Henri Savina, Hege Vårdal, Andreas Taeger. 2019. The West Palaearctic genera of Nematinae (Hymenoptera, Tenthredinidae). ZooKeys. https://doi.org/10.3897/zookeys.875.35748"));
     }
 
     @Test
     public void retrieveCitationById3ByDOI() throws IOException {
         final OpenBiodivClient openBiodivClient = new OpenBiodivClient(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationByDoi("10.3897/zookeys.875.35748", openBiodivClient);
-        assertThat(citation, is("bla"));
+        assertThat(citation, is("Marko Prous, Andrew Liston, Katja Kramp, Henri Savina, Hege Vårdal, Andreas Taeger. 2019. The West Palaearctic genera of Nematinae (Hymenoptera, Tenthredinidae). ZooKeys. https://doi.org/10.3897/zookeys.875.35748"));
     }
 
     @Test
