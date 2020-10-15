@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.tool.NullImportLogger;
+import org.globalbioticinteractions.util.OpenBiodivClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;

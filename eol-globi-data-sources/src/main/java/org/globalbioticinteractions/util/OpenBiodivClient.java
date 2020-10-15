@@ -1,6 +1,8 @@
-package org.eol.globi.data;
+package org.globalbioticinteractions.util;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.eol.globi.data.DatasetImporterForPensoft;
+import org.eol.globi.data.SparqlClient;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.CSVTSVUtil;
 

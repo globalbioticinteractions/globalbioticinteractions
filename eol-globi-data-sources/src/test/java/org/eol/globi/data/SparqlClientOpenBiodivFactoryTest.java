@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.service.ResourceService;
+import org.globalbioticinteractions.util.OpenBiodivClient;
 import org.junit.Test;
 
 import java.io.IOException;
