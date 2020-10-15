@@ -16,8 +16,7 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class LinkerTestUtil {
     public static Collection<String> assertHasOther(String name, int expectedCount, TaxonIndex taxonIndex, RelTypes relType) throws NodeFactoryException {
 

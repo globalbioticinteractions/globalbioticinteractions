@@ -49,8 +49,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     public static final DOI SOME_DOI = new DOI("some", "doi");

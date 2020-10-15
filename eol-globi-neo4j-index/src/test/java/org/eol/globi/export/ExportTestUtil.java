@@ -26,8 +26,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportTestUtil {
     public static StudyNode createTestData(NodeFactory factory) throws NodeFactoryException, ParseException {
         return createTestData(123.4, factory);

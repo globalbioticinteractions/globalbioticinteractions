@@ -9,8 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class VersionTest {
 
     @Test

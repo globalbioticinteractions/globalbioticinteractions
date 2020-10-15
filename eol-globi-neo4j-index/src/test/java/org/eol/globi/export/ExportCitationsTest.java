@@ -10,8 +10,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportCitationsTest extends GraphDBTestCase {
 
     @Test

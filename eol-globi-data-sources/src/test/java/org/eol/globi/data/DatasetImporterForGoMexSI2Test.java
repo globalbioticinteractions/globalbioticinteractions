@@ -16,8 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForGoMexSI2Test {
 
     public static final String WKT_FOOTPRINT = "POLYGON((-92.6729107838999 29.3941413332999,-92.5604838626999 29.2066775354,-92.7326173694 29.1150784684999,-92.9638307704999 29.1171045174,-93.3169089704999 29.3616452463,-93.4007435505999 29.5222620776999,-93.3169089704999 29.6243402981,-93.1045280342 29.6340566488,-92.6729107838999 29.3941413332999))";

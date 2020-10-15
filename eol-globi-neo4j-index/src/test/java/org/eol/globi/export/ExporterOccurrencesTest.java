@@ -17,8 +17,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test

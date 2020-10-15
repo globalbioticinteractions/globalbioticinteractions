@@ -9,8 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.hamcrest.Matchers.endsWith;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetFinderUtilTest {
 
     @Test

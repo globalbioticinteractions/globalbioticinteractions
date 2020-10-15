@@ -18,8 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
 
     @Test

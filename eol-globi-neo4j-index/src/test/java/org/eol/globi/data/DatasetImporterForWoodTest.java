@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.eol.globi.data.DatasetImporterForTSV.*;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 public class DatasetImporterForWoodTest extends GraphDBTestCase {

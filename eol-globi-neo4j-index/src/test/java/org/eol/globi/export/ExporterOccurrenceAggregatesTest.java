@@ -19,8 +19,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
 
     private String[] getExpectedData() {

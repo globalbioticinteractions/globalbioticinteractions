@@ -21,7 +21,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 public class DatasetImporterForGrayTest extends GraphDBTestCase {

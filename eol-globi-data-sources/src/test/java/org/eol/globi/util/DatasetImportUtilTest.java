@@ -14,8 +14,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImportUtilTest {
 
     public static List<Dataset> getReferences(Dataset dataset) {

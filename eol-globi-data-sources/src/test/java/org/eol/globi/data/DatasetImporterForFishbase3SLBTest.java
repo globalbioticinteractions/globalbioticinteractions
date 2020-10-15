@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForFishbase3SLBTest {
 
     private Map<String, Map<String, String>> countries;

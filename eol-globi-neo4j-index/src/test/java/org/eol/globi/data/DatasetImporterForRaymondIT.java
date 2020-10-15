@@ -11,8 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForRaymondIT extends GraphDBTestCase {
 
     @Test

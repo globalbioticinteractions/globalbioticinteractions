@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetUtilTest {
 
     @Test

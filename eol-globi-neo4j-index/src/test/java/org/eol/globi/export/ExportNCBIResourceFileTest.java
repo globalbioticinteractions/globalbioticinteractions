@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.hasItem;
 
 public class ExportNCBIResourceFileTest extends GraphDBTestCase {

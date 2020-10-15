@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class PingControllerTest extends SpringTestBase {
 
     @Autowired

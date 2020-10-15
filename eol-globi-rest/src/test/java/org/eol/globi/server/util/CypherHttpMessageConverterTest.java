@@ -7,8 +7,7 @@ import org.springframework.http.MediaType;
 
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class CypherHttpMessageConverterTest {
 
     @Test

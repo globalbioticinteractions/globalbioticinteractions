@@ -24,8 +24,7 @@ import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     private Taxon setPathAndId(TaxonImpl taxon) {
