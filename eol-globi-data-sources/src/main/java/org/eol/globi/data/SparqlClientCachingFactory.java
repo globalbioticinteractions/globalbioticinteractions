@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.service.ResourceService;
+import org.globalbioticinteractions.util.OpenBiodivClientImpl;
 import org.globalbioticinteractions.util.SparqlClientImpl;
 import org.globalbioticinteractions.util.SparqlClient;
 import org.mapdb.DB;
@@ -23,7 +24,7 @@ public class SparqlClientCachingFactory extends SparqlClientOpenBiodivFactory {
         DB db = getDb();
         final Map<String, String> queryCache = db.createTreeMap("queryCache").make();
         final ResourceService resourceServiceCaching = new ResourceServiceCaching(queryCache, resourceService);
-        return new SparqlClientImpl(resourceServiceCaching) {
+        return new OpenBiodivClientImpl(resourceServiceCaching) {
             @Override
             public void close() throws IOException {
                 db.close();

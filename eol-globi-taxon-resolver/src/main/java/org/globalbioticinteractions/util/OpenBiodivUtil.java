@@ -12,8 +12,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.eol.globi.data.DatasetImporterForPensoft.add;
-
 public class OpenBiodivUtil {
     public static Taxon retrieveTaxonHierarchyById(String taxonId, SparqlClient sparqlClient) throws IOException {
         final String normalizedTaxonId = StringUtils.replace(taxonId, TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "");
@@ -74,5 +72,13 @@ public class OpenBiodivUtil {
         taxon.setPathNames(TaxonUtil.generateTaxonPathNames(nameMap));
         return taxon;
     }
+
+    public static void add(LabeledCSVParser parser, Map<String, String> nameMap, String rankName) {
+        final String valueByLabel = parser.getValueByLabel(rankName);
+        if (StringUtils.isNotBlank(valueByLabel)) {
+            nameMap.put(rankName, valueByLabel);
+        }
+    }
+
 
 }

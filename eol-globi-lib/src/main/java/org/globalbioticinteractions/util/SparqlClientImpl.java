@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.util;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.eol.globi.data.DatasetImporterForPensoft;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.CSVTSVUtil;
 
@@ -13,10 +12,6 @@ public class SparqlClientImpl implements SparqlClient {
 
     private final ResourceService resourceService;
     private final URI endpoint;
-
-    public SparqlClientImpl(ResourceService resourceService) {
-        this(resourceService, DatasetImporterForPensoft.OPEN_BIODIV_SPARQL_ENDPOINT);
-    }
 
     public SparqlClientImpl(ResourceService resourceService, URI endpoint) {
         this.endpoint = endpoint;

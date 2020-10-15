@@ -21,7 +21,6 @@ import org.globalbioticinteractions.pensoft.TablePreprocessor;
 import org.globalbioticinteractions.pensoft.TableRectifier;
 import org.globalbioticinteractions.pensoft.TableUtil;
 import org.globalbioticinteractions.util.SparqlClient;
-import org.globalbioticinteractions.util.SparqlUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +41,6 @@ import java.util.stream.Collectors;
 
 public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     private SparqlClientFactory sparqlClientFactory = new SparqlClientCachingFactory();
-    public static final URI OPEN_BIODIV_SPARQL_ENDPOINT = URI.create("http://graph.openbiodiv.net/repositories/OpenBiodiv2020");
 
     public DatasetImporterForPensoft(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -334,13 +331,6 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         }
     }
 
-
-    public static void add(LabeledCSVParser parser, Map<String, String> nameMap, String rankName) {
-        final String valueByLabel = parser.getValueByLabel(rankName);
-        if (StringUtils.isNotBlank(valueByLabel)) {
-            nameMap.put(rankName, valueByLabel);
-        }
-    }
 
     private static Map<String, String> parseTableReferences(final JsonNode biodivTable, SparqlClient sparqlClient) throws IOException {
         final String tableURI = biodivTable.has("table_id") ? biodivTable.get("table_id").asText() : "";

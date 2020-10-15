@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.tool.NullImportLogger;
+import org.globalbioticinteractions.util.OpenBiodivClientImpl;
 import org.globalbioticinteractions.util.SparqlClientImpl;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +29,7 @@ public class DatasetImporterForPensoftTest {
 
     public static void parseRowsAndEnrich(JsonNode biodivTable, InteractionListener listener, ResourceService resourceService) throws StudyImporterException {
         DatasetImporterForPensoft datasetImporterForPensoft = new DatasetImporterForPensoft(null, null);
-        datasetImporterForPensoft.parseRowsAndEnrich(biodivTable, listener, new NullImportLogger(), new SparqlClientImpl(resourceService));
+        datasetImporterForPensoft.parseRowsAndEnrich(biodivTable, listener, new NullImportLogger(), new OpenBiodivClientImpl(resourceService));
     }
 
     @Test

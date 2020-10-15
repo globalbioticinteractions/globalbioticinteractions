@@ -1,5 +1,7 @@
 package org.eol.globi.domain;
 
+import java.net.URI;
+
 public class PropertyAndValueDictionary {
     public static final String NO_MATCH = "no:match";
     public static final String NAME = "name";
@@ -46,6 +48,7 @@ public class PropertyAndValueDictionary {
     // see also http://purl.obolibrary.org/obo/SEPIO_0000007 from https://github.com/monarch-initiative/SEPIO-ontology
     public static final String SUPPORTS = "https://en.wiktionary.org/wiki/support";
 
+    public static final URI SPARQL_ENDPOINT_OPEN_BIODIV = URI.create("http://graph.openbiodiv.net/repositories/OpenBiodiv2020");
 
 
 }

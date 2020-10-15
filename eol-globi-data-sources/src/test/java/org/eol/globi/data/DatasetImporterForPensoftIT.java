@@ -10,7 +10,8 @@ import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.globalbioticinteractions.util.SparqlClientImpl;
+import org.globalbioticinteractions.util.OpenBiodivClientImpl;
+import org.globalbioticinteractions.util.SparqlClient;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ import static org.eol.globi.data.TestUtil.getResourceServiceTest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 public class DatasetImporterForPensoftIT {
 
@@ -66,35 +66,35 @@ public class DatasetImporterForPensoftIT {
 
     @Test
     public void retrieveCitation() throws IOException {
-        final SparqlClientImpl sparqlClientImpl = new SparqlClientImpl(getResourceServiceTest());
+        final SparqlClient sparqlClientImpl = new OpenBiodivClientImpl(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationByDoi("10.3897/zookeys.306.5455", sparqlClientImpl);
         assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     @Test
     public void retrieveCitationById() throws IOException {
-        final SparqlClientImpl sparqlClientImpl = new SparqlClientImpl(getResourceServiceTest());
+        final SparqlClient sparqlClientImpl = new OpenBiodivClientImpl(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationById("<http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2>", sparqlClientImpl);
         assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     @Test
     public void retrieveCitationById2() throws IOException {
-        final SparqlClientImpl sparqlClientImpl = new SparqlClientImpl(getResourceServiceTest());
+        final SparqlClient sparqlClientImpl = new OpenBiodivClientImpl(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationById("http://openbiodiv.net/D37E8D1A-221B-FFA6-FFE7-4458FFA0FFC2", sparqlClientImpl);
         assertThat(citation, is("Dewi Sartiami, Laurence A. Mound. 2013. Identification of the terebrantian thrips (Insecta, Thysanoptera) associated with cultivated plants in Java, Indonesia. ZooKeys. https://doi.org/10.3897/zookeys.306.5455"));
     }
 
     @Test
     public void retrieveCitationById3() throws IOException {
-        final SparqlClientImpl sparqlClientImpl = new SparqlClientImpl(getResourceServiceTest());
+        final SparqlClient sparqlClientImpl = new OpenBiodivClientImpl(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationById("http://openbiodiv.net/222C9E1B135454BEB7144BD7794FA01C", sparqlClientImpl);
         assertThat(citation, is("Marko Prous, Andrew Liston, Katja Kramp, Henri Savina, Hege Vårdal, Andreas Taeger. 2019. The West Palaearctic genera of Nematinae (Hymenoptera, Tenthredinidae). ZooKeys. https://doi.org/10.3897/zookeys.875.35748"));
     }
 
     @Test
     public void retrieveCitationById3ByDOI() throws IOException {
-        final SparqlClientImpl sparqlClientImpl = new SparqlClientImpl(getResourceServiceTest());
+        final SparqlClient sparqlClientImpl = new OpenBiodivClientImpl(getResourceServiceTest());
         String citation = DatasetImporterForPensoft.findCitationByDoi("10.3897/zookeys.875.35748", sparqlClientImpl);
         assertThat(citation, is("Marko Prous, Andrew Liston, Katja Kramp, Henri Savina, Hege Vårdal, Andreas Taeger. 2019. The West Palaearctic genera of Nematinae (Hymenoptera, Tenthredinidae). ZooKeys. https://doi.org/10.3897/zookeys.875.35748"));
     }
