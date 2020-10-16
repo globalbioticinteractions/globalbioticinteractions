@@ -6,17 +6,16 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 public class InteractTypeMapperFactoryForROTest {
 
     @Test
-    public void defaultMapping() throws TermLookupServiceException, IOException {
+    public void defaultMapping() throws TermLookupServiceException {
 
         InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryForRO().create();
