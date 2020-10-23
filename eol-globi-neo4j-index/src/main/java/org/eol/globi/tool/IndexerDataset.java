@@ -14,6 +14,7 @@ import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
+import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;
@@ -42,7 +43,8 @@ public class IndexerDataset implements IndexerNeo4j {
             final GraphDatabaseService graphService1 = factory.getGraphService();
             NodeFactoryNeo4j nodeFactory = new NodeFactoryNeo4j(graphService1);
 
-            DatasetImporter importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), nodeFactory, registry);
+            DatasetImporterForRegistry importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), nodeFactory, registry);
+            importer.setDatasetFilter(x -> !DatasetUtil.isDeprecated(x));
             importer.setDataset(new DatasetLocal(inStream -> inStream));
             importer.setLogger(new NullImportLogger());
             importer.importStudy();

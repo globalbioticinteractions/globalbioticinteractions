@@ -1,13 +1,18 @@
 package org.eol.globi.data;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -31,12 +36,40 @@ public class DatasetImporterForRegistryTest {
 
         try {
             importer.importStudy();
-        } catch(StudyImporterException ex) {
+        } catch (StudyImporterException ex) {
             assertThat(ex.getMessage(), Is.is("failed to import one or more repositories: [some/namespace]"));
             throw ex;
         }
     }
 
+    @Test
+    public void filteredDatasets() throws StudyImporterException {
+        DatasetImporterForRegistry importer = new DatasetImporterForRegistry(
+                null,
+                null,
+                new DatasetRegistry() {
+                    @Override
+                    public Collection<String> findNamespaces() throws DatasetRegistryException {
+                        return Collections.singletonList("some/namespace");
+                    }
 
+                    @Override
+                    public Dataset datasetFor(String namespace) throws DatasetRegistryException {
+                        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), in -> in) {
+                            @Override
+                            public InputStream retrieve(URI resource) throws IOException {
+                                if (!StringUtils.endsWith(resource.toString(), "globi.json")) {
+                                    throw new IOException();
+                                }
+                                return IOUtils.toInputStream("{\"some\":\"thing\"}", StandardCharsets.UTF_8);
+                            }
+                        };
+                        return dataset;
+                    }
+                });
+
+        importer.setDatasetFilter(x -> false);
+        importer.importStudy();
+    }
 
 }

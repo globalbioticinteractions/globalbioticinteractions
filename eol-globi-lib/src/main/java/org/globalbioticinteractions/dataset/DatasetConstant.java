@@ -3,6 +3,7 @@ package org.globalbioticinteractions.dataset;
 public final class DatasetConstant {
 
     public static final String SHOULD_RESOLVE_REFERENCES = "shouldResolveReferences";
+    public static final String DEPRECATED = "deprecated";
     public static final String LAST_SEEN_AT = "lastSeenAt";
     public static final String CONTENT_HASH = "contentHash";
     public static final String CITATION = "citation";

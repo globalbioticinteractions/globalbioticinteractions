@@ -12,11 +12,13 @@ import org.eol.globi.service.StudyImporterFactoryImpl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class DatasetImporterForRegistry extends NodeBasedImporter {
     private static final Log LOG = LogFactory.getLog(DatasetImporterForRegistry.class);
 
     private final DatasetRegistry registry;
+    private Predicate<Dataset> datasetFilter = x -> true;
 
     public DatasetImporterForRegistry(ParserFactory parserFactory, NodeFactory nodeFactory, DatasetRegistry registry) {
         super(parserFactory, nodeFactory);
@@ -49,11 +51,16 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
 
     private void importData(String namespace) throws StudyImporterException {
         try {
-            LOG.info("importing github repo [" + namespace + "]...");
+            LOG.info("retrieving dataset from [" + namespace + "]...");
             Dataset dataset = new DatasetFactory(getRegistry()).datasetFor(namespace);
-            getNodeFactory().getOrCreateDataset(dataset);
-            importData(dataset);
-            LOG.info("importing github repo [" + namespace + "] done.");
+            if (datasetFilter.test(dataset)) {
+                LOG.info("importing dataset from [" + namespace + "]...");
+                getNodeFactory().getOrCreateDataset(dataset);
+                importData(dataset);
+                LOG.info("importing github repo [" + namespace + "] done.");
+            } else {
+                LOG.info("skipping (deprecated) dataset from [" + namespace + "]...");
+            }
         } catch (StudyImporterException | DatasetRegistryException ex) {
             String msg = "failed to import data from repo [" + namespace + "]";
             LOG.error(msg, ex);
@@ -78,4 +85,7 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
         }
     }
 
+    public void setDatasetFilter(Predicate<Dataset> datasetFilter) {
+        this.datasetFilter = datasetFilter;
+    }
 }
