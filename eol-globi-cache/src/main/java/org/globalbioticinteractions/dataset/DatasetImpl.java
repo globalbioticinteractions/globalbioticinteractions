@@ -90,4 +90,13 @@ public class DatasetImpl implements Dataset {
         return configURI;
     }
 
+    @Override
+    public void setExternalId(String externalId) {
+        //
+    }
+
+    @Override
+    public String getExternalId() {
+        return getArchiveURI().toString();
+    }
 }

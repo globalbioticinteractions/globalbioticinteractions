@@ -28,6 +28,13 @@ public class DatasetUtilTest {
     }
 
     @Test
+    public void isDeprecatedQuoted() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        dataset.setConfig(new ObjectMapper().readTree("{\"deprecated\":\"true\"}"));
+        assertTrue(DatasetUtil.isDeprecated(dataset));
+    }
+
+    @Test
     public void isNotDeprecated() throws IOException {
         Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         dataset.setConfig(new ObjectMapper().readTree("{\"deprecated\":false}"));

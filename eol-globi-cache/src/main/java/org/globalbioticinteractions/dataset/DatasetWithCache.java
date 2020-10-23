@@ -136,4 +136,13 @@ public class DatasetWithCache implements Dataset {
         return datasetCached;
     }
 
+    @Override
+    public void setExternalId(String externalId) {
+        //
+    }
+
+    @Override
+    public String getExternalId() {
+        return getArchiveURI().toString();
+    }
 }

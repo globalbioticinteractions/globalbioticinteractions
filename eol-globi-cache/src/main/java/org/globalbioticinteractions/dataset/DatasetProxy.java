@@ -86,4 +86,13 @@ public class DatasetProxy implements Dataset {
         datasetProxied.setConfigURI(configURI);
     }
 
+    @Override
+    public void setExternalId(String externalId) {
+        datasetProxied.setExternalId(externalId);
+    }
+
+    @Override
+    public String getExternalId() {
+        return datasetProxied.getExternalId();
+    }
 }
