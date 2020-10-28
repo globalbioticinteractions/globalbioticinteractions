@@ -26,3 +26,5 @@ damagedBy
 damages
 dispersalVectorOf
 hasDispersalVector
+aggressorOf
+hasAggressor

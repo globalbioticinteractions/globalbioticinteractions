@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class GraphExporterImplTest extends GraphDBTestCase {
 
     @Test
@@ -25,7 +24,7 @@ public class GraphExporterImplTest extends GraphDBTestCase {
         File tmpDirPath = new File(tmpDir, "test" + new Random().nextLong());
         FileUtils.forceMkdir(tmpDirPath);
         assertThat(tmpDirPath.list().length, is(0));
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("a study", "a source", new DOI("12345","123"), null));
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("a study", new DOI("12345","123"), null));
 
         Specimen human = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", "NCBI:123"));
         human.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", "BLA:444")));

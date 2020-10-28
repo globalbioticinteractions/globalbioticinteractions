@@ -28,14 +28,9 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
 import org.eol.globi.service.AuthorIdResolver;
-import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.ORCIDResolverImpl;
-import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
@@ -50,15 +45,12 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -75,16 +67,11 @@ public class NodeFactoryNeo4j implements NodeFactory {
     private final Index<Node> seasons;
     private final Index<Node> locations;
     private final Index<Node> environments;
-    private final Index<Node> ecoregions;
-    private final Index<Node> ecoregionSuggestions;
-    private final Index<Node> ecoregionPaths;
 
     private TermLookupService termLookupService;
     private TermLookupService envoLookupService;
     private final TermLookupService lifeStageLookupService;
     private final TermLookupService bodyPartLookupService;
-
-    private EcoregionFinder ecoregionFinder;
 
     public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
@@ -98,10 +85,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         this.seasons = NodeUtil.forNodes(graphDb, "seasons");
         this.locations = NodeUtil.forNodes(graphDb, "locations");
         this.environments = NodeUtil.forNodes(graphDb, "environments");
-
-        this.ecoregions = NodeUtil.forNodes(graphDb, "ecoregions");
-        this.ecoregionPaths = NodeUtil.forNodes(graphDb, "ecoregionPaths", MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-        this.ecoregionSuggestions = NodeUtil.forNodes(graphDb, "ecoregionSuggestions");
     }
 
     public GraphDatabaseService getGraphDb() {
@@ -342,7 +325,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         try (Transaction transaction = graphDb.beginTx()) {
             Node node = graphDb.createNode();
             studyNode = new StudyNode(node, study.getTitle());
-            studyNode.setSource(study.getSource());
             studyNode.setCitation(study.getCitation());
             studyNode.setDOI(study.getDOI());
             if (StringUtils.isBlank(study.getExternalId()) && null != study.getDOI()) {
@@ -350,7 +332,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
             } else {
                 studyNode.setExternalId(study.getExternalId());
             }
-            studyNode.setSourceId(study.getSourceId());
 
             Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
             if (dataset instanceof DatasetNode) {
@@ -400,17 +381,11 @@ public class NodeFactoryNeo4j implements NodeFactory {
         if (StringUtils.isBlank(study.getTitle())) {
             throw new NodeFactoryException("null or empty study title");
         }
-        if (StringUtils.isBlank(study.getSource())) {
-            throw new NodeFactoryException("null or empty study source");
-        }
 
-        Transaction transaction = getGraphDb().beginTx();
         StudyNode studyNode;
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             studyNode = findStudy(study);
             transaction.success();
-        } finally {
-            transaction.close();
         }
 
         return studyNode == null
@@ -465,13 +440,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         LocationNode locationNode = findLocation(location);
         if (null == locationNode) {
             locationNode = createLocation(location);
-            if (hasLatLng(location)) {
-                try {
-                    enrichLocationWithEcoRegions(locationNode);
-                } catch (NodeFactoryException e) {
-                    LOG.error("failed to create eco region for location (" + locationNode.getLatitude() + ", " + locationNode.getLongitude() + ")", e);
-                }
-            }
         }
         return locationNode;
     }
@@ -565,86 +533,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return normalizedEnvironments;
     }
 
-    private List<Ecoregion> getEcoRegions(Node locationNode) {
-        List<Ecoregion> ecoregions = null;
-        try (Transaction ignored = getGraphDb().beginTx()) {
-            Iterable<Relationship> relationships = locationNode.getRelationships(NodeUtil.asNeo4j(RelTypes.IN_ECOREGION), Direction.OUTGOING);
-            for (Relationship relationship : relationships) {
-                Node ecoregionNode = relationship.getEndNode();
-                Ecoregion ecoregion = new Ecoregion();
-                ecoregion.setGeometry(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "geometry", null));
-                ecoregion.setName(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.NAME, null));
-                ecoregion.setId(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, PropertyAndValueDictionary.EXTERNAL_ID, null));
-                ecoregion.setPath(NodeUtil.getPropertyStringValueOrDefault(ecoregionNode, "path", null));
-                if (ecoregions == null) {
-                    ecoregions = new ArrayList<>();
-                }
-                ecoregions.add(ecoregion);
-            }
-        }
-        return ecoregions;
-    }
-
-    List<Ecoregion> enrichLocationWithEcoRegions(Location location) throws NodeFactoryException {
-        LocationNode locationNode = (LocationNode) location;
-        List<Ecoregion> associatedEcoregions = getEcoRegions(locationNode.getUnderlyingNode());
-        return associatedEcoregions == null ? associateWithEcoRegions(locationNode) : associatedEcoregions;
-    }
-
-    private List<Ecoregion> associateWithEcoRegions(Location location) throws NodeFactoryException {
-        List<Ecoregion> associatedEcoregions = new ArrayList<Ecoregion>();
-        try {
-            EcoregionFinder finder = getEcoregionFinder();
-            if (finder != null) {
-                Collection<Ecoregion> ecoregions = finder.findEcoregion(location.getLatitude(), location.getLongitude());
-                for (Ecoregion ecoregion : ecoregions) {
-                    associateLocationWithEcoRegion(location, ecoregion);
-                    associatedEcoregions.add(ecoregion);
-                }
-            }
-        } catch (EcoregionFinderException e) {
-            throw new NodeFactoryException("problem finding eco region for location (lat,lng):(" + location.getLatitude() + "," + location.getLongitude() + ")");
-        }
-        return associatedEcoregions;
-    }
-
-    private void associateLocationWithEcoRegion(Location location, Ecoregion ecoregion) {
-        Node ecoregionNode = findEcoRegion(ecoregion);
-        try (Transaction tx = graphDb.beginTx()) {
-            if (ecoregionNode == null) {
-                ecoregionNode = addAndIndexEcoRegion(ecoregion);
-            }
-            ((NodeBacked) location).getUnderlyingNode().createRelationshipTo(ecoregionNode, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
-            tx.success();
-        }
-    }
-
-    private Node findEcoRegion(Ecoregion ecoregion) {
-        String query = "name:\"" + ecoregion.getName() + "\"";
-        try (Transaction ignored = getGraphDb().beginTx()) {
-            try (IndexHits<Node> hits = this.ecoregions.query(query)) {
-                return hits.hasNext() ? hits.next() : null;
-            }
-        }
-    }
-
-    private Node addAndIndexEcoRegion(Ecoregion ecoregion) {
-        Node node = graphDb.createNode();
-        node.setProperty(PropertyAndValueDictionary.NAME, ecoregion.getName());
-        node.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, ecoregion.getId());
-        node.setProperty("path", ecoregion.getPath());
-        node.setProperty("geometry", ecoregion.getGeometry());
-        ecoregions.add(node, PropertyAndValueDictionary.NAME, ecoregion.getName());
-        ecoregionPaths.add(node, "path", ecoregion.getPath());
-        ecoregionSuggestions.add(node, PropertyAndValueDictionary.NAME, StringUtils.lowerCase(ecoregion.getName()));
-        if (StringUtils.isNotBlank(ecoregion.getPath())) {
-            for (String part : ecoregion.getPath().split(CharsetConstant.SEPARATOR)) {
-                ecoregionSuggestions.add(node, PropertyAndValueDictionary.NAME, StringUtils.lowerCase(part));
-            }
-        }
-        return node;
-    }
-
     protected EnvironmentNode findEnvironment(String name) {
         EnvironmentNode firstMatchingEnvironment = null;
         String query = "name:\"" + name + "\"";
@@ -694,31 +582,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
 
     public void setTermLookupService(TermLookupService termLookupService) {
         this.termLookupService = termLookupService;
-    }
-
-    @Deprecated
-    public void setDoiResolver(DOIResolver doiResolver) {
-    }
-
-    public void setEcoregionFinder(EcoregionFinder ecoregionFinder) {
-        this.ecoregionFinder = ecoregionFinder;
-    }
-
-    @Override
-    public EcoregionFinder getEcoregionFinder() {
-        return ecoregionFinder;
-    }
-
-    IndexHits<Node> findCloseMatchesForEcoregion(String ecoregionName) {
-        return QueryUtil.query(ecoregionName, PropertyAndValueDictionary.NAME, ecoregions);
-    }
-
-    IndexHits<Node> findCloseMatchesForEcoregionPath(String ecoregionPath) {
-        return QueryUtil.query(ecoregionPath, PropertyAndValueDictionary.PATH, ecoregionPaths);
-    }
-
-    IndexHits<Node> suggestEcoregionByName(String wholeOrPartialEcoregionNameOrPath) {
-        return ecoregionSuggestions.query("name:\"" + wholeOrPartialEcoregionNameOrPath + "\"");
     }
 
     @Override

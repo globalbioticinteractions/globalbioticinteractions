@@ -10,13 +10,12 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest {
 
     @Test
     public void writeSiteMapWithCitations() throws StudyImporterException, IOException {
-        final Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", "source", new DOI("some", "doi"), "citation123&bla"));
+        final Study study = nodeFactory.getOrCreateStudy(new StudyImpl("title", new DOI("some", "doi"), "citation123&bla"));
         assertThat(study.getExternalId(), is("https://doi.org/10.some/doi"));
 
         final File baseDirCitations = createBaseDir("target/sitemap/citations");

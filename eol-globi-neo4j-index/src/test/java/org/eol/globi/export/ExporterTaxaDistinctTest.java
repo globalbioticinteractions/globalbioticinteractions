@@ -4,7 +4,6 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
@@ -16,7 +15,7 @@ import java.text.ParseException;
 
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
 public class ExporterTaxaDistinctTest extends GraphDBTestCase {
@@ -47,7 +46,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
 
     @Test
     public void excludeNoMatchNames() throws NodeFactoryException, IOException {
-        StudyNode study = (StudyNode) nodeFactory.createStudy(new StudyImpl("bla", null, null, null));
+        StudyNode study = (StudyNode) nodeFactory.createStudy(new StudyImpl("bla", null, null));
         Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
         Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);

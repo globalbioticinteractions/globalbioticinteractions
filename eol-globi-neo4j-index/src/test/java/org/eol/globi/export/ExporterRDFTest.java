@@ -6,7 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterForSPIRE;
+import org.eol.globi.data.DatasetImporterForSPIRE;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
@@ -31,7 +31,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -44,7 +44,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
 
     @Test
     public void exportSPIRE() throws IOException, StudyImporterException {
-        StudyImporterForSPIRE importer = new StudyImporterForSPIRE(null, nodeFactory);
+        DatasetImporterForSPIRE importer = new DatasetImporterForSPIRE(null, nodeFactory);
         importer.setFilter(recordNumber -> recordNumber < 5);
         importer.setDataset(new DatasetLocal(inStream -> inStream));
         importStudy(importer);

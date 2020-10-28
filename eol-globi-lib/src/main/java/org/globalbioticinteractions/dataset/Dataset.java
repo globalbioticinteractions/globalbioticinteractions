@@ -1,12 +1,12 @@
 package org.globalbioticinteractions.dataset;
 
 import org.codehaus.jackson.JsonNode;
+import org.eol.globi.domain.Citable;
 import org.eol.globi.service.ResourceService;
-import org.globalbioticinteractions.doi.DOI;
 
 import java.net.URI;
 
-public interface Dataset extends ResourceService {
+public interface Dataset extends Citable, ResourceService {
 
     URI getArchiveURI();
 
@@ -14,17 +14,14 @@ public interface Dataset extends ResourceService {
 
     JsonNode getConfig();
 
-    String getCitation();
-
     String getFormat();
 
     String getOrDefault(String key, String defaultValue);
-
-    DOI getDOI();
 
     URI getConfigURI();
 
     void setConfig(JsonNode config);
 
     void setConfigURI(URI configURI);
+
 }

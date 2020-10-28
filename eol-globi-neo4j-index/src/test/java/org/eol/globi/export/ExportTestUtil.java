@@ -6,7 +6,6 @@ import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
@@ -27,15 +26,14 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportTestUtil {
     public static StudyNode createTestData(NodeFactory factory) throws NodeFactoryException, ParseException {
         return createTestData(123.4, factory);
     }
 
     public static StudyNode createTestData(Double length, NodeFactory factory) throws NodeFactoryException, ParseException {
-        StudyNode myStudy = (StudyNode) factory.createStudy(new StudyImpl("myStudy", null, null, null));
+        StudyNode myStudy = (StudyNode) factory.createStudy(new StudyImpl("myStudy", null, null));
         Specimen specimen1 = factory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:45634"));
         specimen1.setStomachVolumeInMilliLiter(666.0);
         specimen1.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));

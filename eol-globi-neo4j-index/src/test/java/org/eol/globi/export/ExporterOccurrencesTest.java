@@ -4,6 +4,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -16,9 +17,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
@@ -39,7 +38,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private String getExpectedData() {
-        return "globi:occur:X\tEOL:327955\t\t\t\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE\n" +
+        return "some:occur:id\tEOL:327955\tBAR\tFOO\tc678\t\tJUVENILE\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\tDIGESTATE\tBONE\n" +
                 "globi:occur:X\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n" +
                 "globi:occur:X\tEOL:328607\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1992-03-30T08:00:00Z\t\t\t12.0\t-1.0\t\t\t-60.0 m\t\t\n";
     }
@@ -86,7 +85,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
 
     @Test
     public void dontExportToCSVSpecimenEmptyStomach() throws NodeFactoryException, IOException {
-        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        StudyNode myStudy = (StudyNode) nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setBasisOfRecord(new TermImpl("test:123", "aBasisOfRecord"));
         resolveNames();
@@ -103,12 +102,16 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Study myStudy = nodeFactory.createStudy(new StudyImpl("myStudy", null, null));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:327955"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));
         specimen.setPhysiologicalState(new TermImpl("GLOBI:DIGESTATE", "DIGESTATE"));
         specimen.setBodyPart(new TermImpl("GLOBI:BONE", "BONE"));
+        specimen.setProperty(PropertyAndValueDictionary.OCCURRENCE_ID, "some:occur:id");
+        specimen.setProperty(PropertyAndValueDictionary.CATALOG_NUMBER, "c678");
+        specimen.setProperty(PropertyAndValueDictionary.COLLECTION_CODE, "FOO");
+        specimen.setProperty(PropertyAndValueDictionary.INSTITUTION_CODE, "BAR");
         nodeFactory.setUnixEpochProperty(specimen, ExportTestUtil.utcTestDate());
         if (null != length) {
             specimen.setLengthInMm(length);

@@ -29,7 +29,8 @@ public enum TaxonomyProvider {
     BATPLANT("batbase:taxon:"),
     OPEN_BIODIV("http://openbiodiv.net/"),
     MSW("MSW:", "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id="),
-    GULFBASE("BioGoMx:");
+    GULFBASE("BioGoMx:"),
+    PLAZI("PLAZI:", "http://treatment.plazi.org/id/");
 
     private final List<String> idPrefixes;
 

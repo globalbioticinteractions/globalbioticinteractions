@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
@@ -22,21 +23,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LinkerTermMatcher implements Linker {
+public class LinkerTermMatcher implements IndexerNeo4j {
 
     private static final int BATCH_SIZE = 100;
 
     private static final Log LOG = LogFactory.getLog(LinkerTermMatcher.class);
-    private final GraphDatabaseService graphDb;
     private final TermMatcher termMatcher;
 
-    public LinkerTermMatcher(GraphDatabaseService graphDb, TermMatcher termMatcher) {
-        this.graphDb = graphDb;
+    public LinkerTermMatcher(TermMatcher termMatcher) {
         this.termMatcher = termMatcher;
     }
 
+
     @Override
-    public void link() {
+    public void index(GraphServiceFactory factory) {
+        final GraphDatabaseService graphDb = factory.getGraphService();
         Transaction transaction = graphDb.beginTx();
         try {
             Index<Node> taxons = graphDb.index().forNodes("taxons");

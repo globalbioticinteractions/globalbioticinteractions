@@ -10,10 +10,11 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 public class TaxonFuzzySearchIndex {
+    public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
     private final Index<Node> taxonNameSuggestions;
 
     public TaxonFuzzySearchIndex(GraphDatabaseService graphDbService) {
-        this.taxonNameSuggestions = graphDbService.index().forNodes("taxonNameSuggestions");
+        this.taxonNameSuggestions = graphDbService.index().forNodes(TAXON_NAME_SUGGESTIONS);
     }
 
     public IndexHits<Node> query(String luceneQueryString) {

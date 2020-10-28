@@ -1,12 +1,13 @@
 package org.eol.globi.server;
 
 import org.eol.globi.util.CypherQuery;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ReportControllerTest {
 
@@ -45,6 +46,29 @@ public class ReportControllerTest {
                 "WHERE ('globi:' + dataset.namespace) = report.sourceId " +
                 "RETURN report.citation as study_citation, report.externalId as study_url, report.doi as study_doi, dataset.citation as study_source_citation, report.nInteractions as number_of_interactions, report.nTaxa as number_of_distinct_taxa, report.nStudies as number_of_studies, report.nSources as number_of_sources, report.nTaxaNoMatch as number_of_distinct_taxa_no_match, report.sourceId as study_source_id, dataset.doi as study_source_doi, dataset.format as study_source_format, dataset.archiveURI as study_source_archive_uri, dataset.lastSeenAt as study_source_last_seen_at SKIP 0 LIMIT 1024"));
         assertThat(source.getParams().get("namespace"), is("some/name"));
+        CypherTestUtil.validate(source);
+
+    }
+
+    @Test
+    public void collections() throws IOException {
+        CypherQuery source = new ReportController().collections();
+        assertThat(source.getVersionedQuery(), is(CYPHER_VERSION +
+                "START " +
+                "report = node:reports('collection:*') " +
+                "WHERE " +
+                "not(exists(report.title)) AND not(exists(report.source)) " +
+                "RETURN " +
+                "null as study_citation, " +
+                "null as study_url, " +
+                "null as study_doi, " +
+                "null as study_source_citation, " +
+                "report.nInteractions as number_of_interactions, " +
+                "report.nTaxa as number_of_distinct_taxa, " +
+                "report.nStudies as number_of_studies, " +
+                "report.nSources as number_of_sources, " +
+                "report.nTaxaNoMatch as number_of_distinct_taxa_no_match"));
+
         CypherTestUtil.validate(source);
 
     }

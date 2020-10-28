@@ -9,6 +9,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.util.TreeSet;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class InteractUtilTest {
 
@@ -130,7 +131,7 @@ public class InteractUtilTest {
         for (String unlikelyInteractionType : unlikelyInteractionTypeNames) {
             boolean condition = new InteractTypeMapperFactoryImpl().create()
                     .shouldIgnoreInteractionType(unlikelyInteractionType);
-            assertTrue("failed to ignore [" + unlikelyInteractionType + "]", condition);
+            Assert.assertTrue("failed to ignore [" + unlikelyInteractionType + "]", condition);
         }
     }
 

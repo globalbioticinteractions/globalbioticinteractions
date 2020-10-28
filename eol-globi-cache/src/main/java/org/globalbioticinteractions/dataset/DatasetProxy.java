@@ -10,6 +10,7 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 
 public class DatasetProxy implements Dataset {
 
@@ -83,5 +84,15 @@ public class DatasetProxy implements Dataset {
     @Override
     public void setConfigURI(URI configURI) {
         datasetProxied.setConfigURI(configURI);
+    }
+
+    @Override
+    public void setExternalId(String externalId) {
+        datasetProxied.setExternalId(externalId);
+    }
+
+    @Override
+    public String getExternalId() {
+        return datasetProxied.getExternalId();
     }
 }

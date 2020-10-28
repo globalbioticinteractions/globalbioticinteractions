@@ -7,6 +7,8 @@ import org.eol.globi.util.ResourceUtil;
 import java.io.IOException;
 import java.net.URI;
 
+import static org.globalbioticinteractions.dataset.DatasetConstant.DEPRECATED;
+
 public final class DatasetUtil {
 
     public static URI getNamedResourceURI(Dataset dataset, URI resourceName) throws IOException {
@@ -44,5 +46,10 @@ public final class DatasetUtil {
     public static URI mapResourceForDataset(Dataset dataset, URI resourceName) throws IOException {
         URI mappedResource = getNamedResourceURI(dataset, resourceName);
         return ResourceUtil.getAbsoluteResourceURI(dataset.getArchiveURI(), mappedResource);
+    }
+
+    public static boolean isDeprecated(Dataset dataset) {
+        return dataset == null
+                || StringUtils.equalsIgnoreCase("true", dataset.getOrDefault(DEPRECATED, "false"));
     }
 }

@@ -1,6 +1,7 @@
 target/
 .project
 .classpath
+**/dependency-reduced-pom.xml
 .settings/
 test-output/
 *.iml

@@ -8,33 +8,48 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.CacheService;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ReportGeneratorTest extends GraphDBTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+    private CacheService cacheService;
+
+    @Before
+    public void init() throws IOException {
+        final CacheService cacheService = new CacheService();
+        cacheService.setCacheDir(folder.newFolder());
+        this.cacheService = cacheService;
+    }
+
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException {
 
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("az/source", URI.create("http://example.com"), inStream -> inStream));
-        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
-        study1.setSourceId("globi:az/source");
+        StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
 
 
-        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
-        study2.setSourceId("globi:az/source");
+        StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDataset1);
         createStudy(study2);
 
@@ -43,13 +58,12 @@ public class ReportGeneratorTest extends GraphDBTestCase {
                 new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
 
 
-        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
-        study3.setSourceId("globi:zother/source");
+        StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb()).generateReportForSourceIndividuals();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceIndividuals();
 
         Transaction transaction = getGraphDb().beginTx();
 
@@ -91,29 +105,26 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("az/source1", URI.create("http://example.com"), inStream -> inStream));
 
-        StudyImpl study1 = new StudyImpl("a title", "az source", null, "citation");
-        study1.setSourceId("globi:az/source1");
+        StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
 
         Dataset originatingDataset2 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("az/source2", URI.create("http://example.com"), inStream -> inStream));
 
-        StudyImpl study2 = new StudyImpl("another title", "az source", null, "citation");
-        study2.setSourceId("globi:az/source2");
+        StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDataset2);
         createStudy(study2);
 
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
 
-        StudyImpl study3 = new StudyImpl("yet another title", "zother source", null, null);
-        study3.setSourceId("globi:zother/source");
+        StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb()).generateReportForSourceOrganizations();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceOrganizations();
 
         Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> reports = getGraphDb()
@@ -124,7 +135,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         Node reportNode = reports.getSingle();
         assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az"));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
@@ -153,16 +164,16 @@ public class ReportGeneratorTest extends GraphDBTestCase {
     public void generateCollectionReport() throws NodeFactoryException {
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
         Dataset originatingDatasetNode = nodeFactory.getOrCreateDataset(originatingDataset);
-        StudyImpl study1 = new StudyImpl("a title", "source", null, "citation");
+        StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDatasetNode);
         createStudy(study1);
 
-        StudyImpl study2 = new StudyImpl("another title", "another source", null, "citation");
+        StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDatasetNode);
         createStudy(study2);
         resolveNames();
 
-        new ReportGenerator(getGraphDb()).generateReportForCollection();
+        new ReportGenerator(getGraphDb(), cacheService).generateReportForCollection();
 
         Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> reports = getGraphDb()
@@ -172,7 +183,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(2));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));

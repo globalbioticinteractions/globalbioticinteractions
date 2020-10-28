@@ -10,8 +10,7 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ParserFactoryLocalTest {
 
     @Test
@@ -28,7 +27,7 @@ public class ParserFactoryLocalTest {
             public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
                 return CSVTSVUtil.createLabeledCSVParser(new StringReader(createString()));
             }
-        }.createParser(StudyImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
+        }.createParser(DatasetImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
 
         lcsvp.getLine();
         assertFirstLine(lcsvp);
@@ -41,7 +40,7 @@ public class ParserFactoryLocalTest {
     public void parseCompressedDataSet() throws IOException {
         LabeledCSVParser labeledCSVParser = null;
         try {
-            labeledCSVParser = new ParserFactoryLocal().createParser(StudyImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
+            labeledCSVParser = new ParserFactoryLocal().createParser(DatasetImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
             labeledCSVParser.getLine();
             assertFirstLine(labeledCSVParser);
             labeledCSVParser.getLine();

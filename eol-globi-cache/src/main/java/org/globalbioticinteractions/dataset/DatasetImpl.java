@@ -12,6 +12,7 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 
 public class DatasetImpl implements Dataset {
     private static final Log LOG = LogFactory.getLog(DatasetImpl.class);
@@ -89,4 +90,13 @@ public class DatasetImpl implements Dataset {
         return configURI;
     }
 
+    @Override
+    public void setExternalId(String externalId) {
+        //
+    }
+
+    @Override
+    public String getExternalId() {
+        return getArchiveURI().toString();
+    }
 }

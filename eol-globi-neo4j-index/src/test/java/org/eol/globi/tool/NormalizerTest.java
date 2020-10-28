@@ -5,31 +5,25 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.data.DatasetImporter;
+import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.StudyImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
-import org.eol.globi.data.StudyImporterForSimons;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.Study;
-import org.eol.globi.geo.Ecoregion;
-import org.eol.globi.geo.EcoregionFinder;
-import org.eol.globi.geo.EcoregionFinderException;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
 
-import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
 public class NormalizerTest extends GraphDBTestCase {
 
     private final static Log LOG = LogFactory.getLog(NormalizerTest.class);
@@ -60,7 +54,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImport() throws StudyImporterException {
-        importData(StudyImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
+        importData(DatasetImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
         Study study = getStudySingleton(graphService);
@@ -74,53 +68,33 @@ public class NormalizerTest extends GraphDBTestCase {
     }
 
     private Normalizer createNormalizer() {
-        Normalizer dataNormalizationTool = new Normalizer();
-        dataNormalizationTool.setEcoregionFinder(new EcoregionFinder() {
-            @Override
-            public Collection<Ecoregion> findEcoregion(double lat, double lng) throws EcoregionFinderException {
-                final Ecoregion ecoregion = new Ecoregion();
-                ecoregion.setName("some name");
-                ecoregion.setPath("some | path");
-                ecoregion.setId("someId");
-                ecoregion.setGeometry("POINT(1,2)");
-                return new ArrayList<Ecoregion>() {{
-                    add(ecoregion);
-                }};
-            }
-
-            @Override
-            public void shutdown() {
-
-            }
-        });
-        return dataNormalizationTool;
+        return new Normalizer();
     }
 
     @Test
-    public void doSingleImportExport() throws IOException, StudyImporterException, URISyntaxException {
+    public void doSingleImportExport() throws StudyImporterException, URISyntaxException {
         Normalizer dataNormalizationTool = createNormalizer();
-
-        GraphDatabaseService graphService = getGraphDb();
 
         URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
-        dataNormalizationTool.importData(getGraphDb(), datasetDirTest);
+        final IndexerDataset indexerDataset = new IndexerDataset(DatasetRegistryUtil.getDatasetRegistry(datasetDirTest));
+        indexerDataset.index(getGraphFactory());
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));
-        dataNormalizationTool.exportData(graphService, baseDir);
+        dataNormalizationTool.exportData(getGraphDb(), baseDir);
     }
 
-    private static void importData(Class<? extends StudyImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
-        StudyImporter studyImporter = createStudyImporter(importer, factory);
+    private static void importData(Class<? extends DatasetImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
+        DatasetImporter datasetImporter = createStudyImporter(importer, factory);
         LOG.info("[" + importer + "] importing ...");
-        studyImporter.importStudy();
+        datasetImporter.importStudy();
         LOG.info("[" + importer + "] imported.");
     }
 
-    private static StudyImporter createStudyImporter(Class<? extends StudyImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
-        StudyImporter importer = new StudyImporterTestFactory(factory).instantiateImporter(studyImporter);
+    private static DatasetImporter createStudyImporter(Class<? extends DatasetImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
+        DatasetImporter importer = new StudyImporterTestFactory(factory).instantiateImporter(studyImporter);
         importer.setLogger(new NullImportLogger());
         return importer;
     }

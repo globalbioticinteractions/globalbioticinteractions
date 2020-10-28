@@ -15,8 +15,7 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class GitHubUtilIT {
 
     public static final String TEMPLATE_DATA_REPOSITORY_TSV = "globalbioticinteractions/template-dataset";
@@ -37,7 +36,7 @@ public class GitHubUtilIT {
 
     @Test
     public void checkInvalidAuth() throws URISyntaxException {
-        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
 
         try {
             GitHubUtil.doHttpGetWithBasicAuthIfCredentialsIfAvailable(
@@ -58,7 +57,7 @@ public class GitHubUtilIT {
     @Ignore("replace with valid auth keys")
     @Test
     public void checkValidAuth() throws URISyntaxException, IOException {
-        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
 
         GitHubUtil.doHttpGetWithBasicAuthIfCredentialsIfAvailable(
                 "/repos/globalbioticinteractions/scan/commits",

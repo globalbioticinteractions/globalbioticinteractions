@@ -24,7 +24,7 @@ import org.eol.globi.domain.TaxonImpl;
 import java.io.File;
 import java.io.IOException;
 
-public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupService {
+public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupService, AutoCloseable {
     private static final Log LOG = LogFactory.getLog(TaxonLookupServiceImpl.class);
 
     private static final String FIELD_ID = "id";
@@ -34,16 +34,13 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     private static final String FIELD_RANK_PATH_IDS = "rank_path_ids";
     private static final String FIELD_RANK_PATH_NAMES = "rank_path_names";
     private static final String FIELD_RECOMMENDED_NAME = "recommended_name";
+    private static final String FIELD_RANK = "rank";
 
     private Directory indexDir;
     private IndexWriter indexWriter;
     private IndexSearcher indexSearcher;
     private File indexPath;
     private int maxHits = Integer.MAX_VALUE;
-
-    public TaxonLookupServiceImpl() {
-        this(null);
-    }
 
     public TaxonLookupServiceImpl(Directory indexDir) {
         this.indexDir = indexDir;
@@ -55,35 +52,30 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
     }
 
     @Override
-    public void addTerm(String key, Taxon value) {
+    public void addTerm(String key, Taxon taxon) {
         if (hasStarted()) {
             Document doc = new Document();
             doc.add(new Field(FIELD_NAME, key, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            if (value.getName() != null) {
-                doc.add(new Field(FIELD_RECOMMENDED_NAME, value.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            }
-            doc.add(new Field(FIELD_ID, value.getExternalId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            String rankPath = value.getPath();
-            if (rankPath != null) {
-                doc.add(new Field(FIELD_RANK_PATH, rankPath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            }
-            String rankPathIds = value.getPathIds();
-            if (rankPathIds != null) {
-                doc.add(new Field(FIELD_RANK_PATH_IDS, rankPathIds, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            }
-            String rankPathNames = value.getPathNames();
-            if (rankPathNames != null) {
-                doc.add(new Field(FIELD_RANK_PATH_NAMES, rankPathNames, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            }
-            String commonNames = value.getCommonNames();
-            if (commonNames != null) {
-                doc.add(new Field(FIELD_COMMON_NAMES, commonNames, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            }
+            doc.add(new Field(FIELD_ID, taxon.getExternalId(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+
+            addIfNotBlank(doc, FIELD_RECOMMENDED_NAME, taxon.getName());
+            addIfNotBlank(doc, FIELD_RANK, taxon.getRank());
+            addIfNotBlank(doc, FIELD_RANK_PATH, taxon.getPath());
+            addIfNotBlank(doc, FIELD_RANK_PATH_IDS, taxon.getPathIds());
+            addIfNotBlank(doc, FIELD_RANK_PATH_NAMES, taxon.getPathNames());
+            addIfNotBlank(doc, FIELD_COMMON_NAMES, taxon.getCommonNames());
+
             try {
                 indexWriter.addDocument(doc);
             } catch (IOException e) {
-                throw new RuntimeException("failed to add document for term with name [" + value.getName() + "]");
+                throw new RuntimeException("failed to add document for term with name [" + taxon.getName() + "]");
             }
+        }
+    }
+
+    private void addIfNotBlank(Document doc, String fieldName, String fieldValue) {
+        if (StringUtils.isNotBlank(fieldValue)) {
+            doc.add(new Field(fieldName, fieldValue, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
         }
     }
 
@@ -135,6 +127,10 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
                     if (fieldName != null) {
                         term.setName(fieldName.stringValue());
                     }
+                    Fieldable fieldRank = foundDoc.getFieldable(FIELD_RANK);
+                    if (fieldRank != null) {
+                        term.setRank(fieldRank.stringValue());
+                    }
                     terms[i] = term;
                 }
             }
@@ -144,22 +140,20 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     @Override
     public void destroy() {
-        if (indexDir != null) {
-            try {
-                indexDir.close();
-            } catch (IOException e) {
-                //
-            } finally {
-                try {
-                    File indexPath1 = getIndexPath();
-                    if (indexPath1 != null) {
-                        FileUtils.deleteDirectory(indexPath1);
-                        LOG.info("index directory at [" + indexPath + "] deleted.");
-                    }
-                } catch (IOException e) {
-                    // ignore
-                }
+        try {
+            this.close();
+        } catch (IOException e) {
+            //
+        }
+
+        try {
+            File indexPath1 = getIndexPath();
+            if (indexPath1 != null) {
+                FileUtils.deleteDirectory(indexPath1);
+                LOG.info("index directory at [" + indexPath + "] deleted.");
             }
+        } catch (IOException e) {
+            // ignore
         }
     }
 
@@ -207,5 +201,20 @@ public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupS
 
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (indexWriter != null) {
+            indexWriter.close();
+            indexWriter = null;
+        }
+        if (indexSearcher != null) {
+            indexSearcher.close();
+            indexSearcher = null;
+        }
+        if (indexDir != null) {
+            indexDir.close();
+        }
     }
 }

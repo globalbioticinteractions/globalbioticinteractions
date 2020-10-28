@@ -3,6 +3,7 @@ package org.eol.globi.taxon;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.CSVTSVUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -14,7 +15,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TaxonCacheParserTest {
 

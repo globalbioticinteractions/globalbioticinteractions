@@ -1,18 +1,20 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.net.URI;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
@@ -24,13 +26,12 @@ public class NodeFactoryWithDatasetContextTest {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
 
-        StudyImpl study = new StudyImpl("some title", "some source", new DOI("123", "abc"), "some citation");
+        StudyImpl study = new StudyImpl("some title", new DOI("123", "abc"), "some citation");
         study.setExternalId("some:id");
         factoryWithDS.createStudy(study);
 
         ArgumentCaptor<Study> argument = ArgumentCaptor.forClass(Study.class);
         verify(factory).createStudy(argument.capture());
-        assertEquals("globi:some/namespace", argument.getValue().getSourceId());
         assertEquals("some title", argument.getValue().getTitle());
         assertEquals("some citation", argument.getValue().getCitation());
         assertEquals("10.123/abc", argument.getValue().getDOI().toString());
@@ -52,11 +53,10 @@ public class NodeFactoryWithDatasetContextTest {
 
         ArgumentCaptor<Study> argument = ArgumentCaptor.forClass(Study.class);
         verify(factory).getOrCreateStudy(argument.capture());
-        assertEquals("globi:some/namespace", argument.getValue().getSourceId());
         assertEquals("some title", argument.getValue().getTitle());
 
         String sourceCitation = CitationUtil.sourceCitationLastAccessed(dataset);
-        assertEquals(sourceCitation, argument.getValue().getSource());
+        assertThat(StringUtils.contains(sourceCitation,"<some:uri>. Accessed at <some:uri> on"), Is.is(true));
     }
 
     @Test
@@ -69,7 +69,6 @@ public class NodeFactoryWithDatasetContextTest {
 
         ArgumentCaptor<Study> argument = ArgumentCaptor.forClass(Study.class);
         verify(factory).getOrCreateStudy(argument.capture());
-        assertEquals("globi:some/namespace", argument.getValue().getSourceId());
         assertEquals("some title", argument.getValue().getTitle());
     }
 

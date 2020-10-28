@@ -34,7 +34,7 @@ public class GitHubUtil {
     public static final String GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_SECRET";
 
     static String httpGet(String path, String query, ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
-        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
         return doHttpGetWithBasicAuthIfCredentialsIfAvailable(
                 path,
                 query,

@@ -22,14 +22,14 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetConstant;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.Dataset;
+import org.globalbioticinteractions.dataset.DatasetConstant;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +37,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,8 +49,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     public static final DOI SOME_DOI = new DOI("some", "doi");
@@ -63,7 +61,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createInteraction() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null, null));
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
         specimen.interactsWith(specimen1, InteractType.ATE);
@@ -72,7 +70,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createPassiveInteraction() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null, null));
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null));
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null));
         specimen1.interactsWith(specimen, InteractType.EATEN_BY);
@@ -123,7 +121,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createRefutingInteraction() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null, null));
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
         SpecimenNode specimen = getNodeFactory().createSpecimen(study, new TaxonImpl("Donalda duckus", null), RelTypes.REFUTES);
         SpecimenNode specimen1 = getNodeFactory().createSpecimen(study, new TaxonImpl("Mickeya mouseus", null), RelTypes.REFUTES);
         specimen.interactsWith(specimen1, InteractType.ATE);
@@ -250,7 +248,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createStudyWithExternalIdNoDOI() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", null, "some citation");
+        StudyImpl study1 = new StudyImpl("my title", null, "some citation");
         study1.setExternalId("some:id");
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
@@ -292,7 +290,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void addDatasetToStudy() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
+        StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
@@ -320,7 +318,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             tx.close();
         }
 
-        StudyImpl otherStudy = new StudyImpl("my other title", "some source", SOME_DOI, "some citation");
+        StudyImpl otherStudy = new StudyImpl("my other title", SOME_DOI, "some citation");
         otherStudy.setOriginatingDataset(dataset);
         StudyNode studySameDataset = getNodeFactory().getOrCreateStudy(otherStudy);
         Node datasetNodeOther = NodeUtil.getDataSetForStudy(studySameDataset);
@@ -330,7 +328,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void sameStudyDifferentDataset() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
+        StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
         study1.setOriginatingDataset(datasetWithNamespace("some/namespace"));
 
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
@@ -347,7 +345,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void sameStudyNoDataset() throws NodeFactoryException, IOException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
+        StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
 
         StudyNode studyNoDataset1 = getNodeFactory().getOrCreateStudy(study1);
         StudyNode studyNoDataset2 = getNodeFactory().getOrCreateStudy(study1);
@@ -366,7 +364,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void addDatasetToStudyNulls() throws NodeFactoryException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
+        StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
         DatasetImpl dataset = new DatasetImpl(null, null, inStream -> inStream);
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
@@ -376,7 +374,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void addDatasetToStudyNulls2() throws NodeFactoryException {
-        StudyImpl study1 = new StudyImpl("my title", "some source", SOME_DOI, "some citation");
+        StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
         DatasetImpl dataset = new DatasetImpl("some/namespace", null, inStream -> inStream);
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
@@ -396,14 +394,14 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     @Test
     public void createStudy() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("myTitle", "mySource", new DOI("myDoi", "123"), null));
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("myTitle", new DOI("myDoi", "123"), null));
         assertThat(study.getDOI().toString(), is("10.myDoi/123"));
         assertThat(study.getExternalId(), is("https://doi.org/10.myDoi/123"));
     }
 
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl(null, "bla:123"));
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl(null, "bla:123"));
         Transaction transaction = getGraphDb().beginTx();
         try {
             assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
@@ -416,7 +414,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void specimenWithLifeStageInName() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("mickey eggs scales", null));
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("mickey eggs scales", null));
         assertThat(specimen.getLifeStage().getName(), is("egg"));
         assertThat(specimen.getLifeStage().getId(), is("UBERON:0007379"));
         assertThat(specimen.getBodyPart().getName(), is("scale"));
@@ -426,7 +424,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void specimenWithLifeStageInName2() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("CALANUS SPP (NAUPLII)", null));
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("CALANUS SPP (NAUPLII)", null));
         assertThat(specimen.getLifeStage().getName(), is("nauplius stage"));
         assertThat(specimen.getLifeStage().getId(), is("UBERON:0014406"));
     }
@@ -434,7 +432,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void specimenWithBasisOfRecord() throws NodeFactoryException {
         initTaxonService();
-        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("mickey mouse", null));
+        Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("mickey mouse", null));
         specimen.setBasisOfRecord(getNodeFactory().getOrCreateBasisOfRecord("something:123", "theBasis"));
         assertThat(specimen.getBasisOfRecord().getName(), is("theBasis"));
         assertThat(specimen.getBasisOfRecord().getId(), is("TEST:theBasis"));
@@ -443,7 +441,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void interactionWithParticipants() throws NodeFactoryException {
         initTaxonService();
-        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", "some source", null, null));
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
         Interaction interaction = getNodeFactory().createInteraction(study);
 
         assertThat(interaction.getParticipants().size(), is(0));
@@ -455,69 +453,10 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     }
 
-    protected void initTaxonService() {
+    private void initTaxonService() {
         this.taxonIndex = new NonResolvingTaxonIndex(
                 getGraphDb()
         );
     }
-
-
-    @Test
-    public void createEcoRegion() throws NodeFactoryException {
-        Location locationA = getNodeFactory().getOrCreateLocation(new LocationImpl(37.689254, -122.295799, null, null));
-        // ensure that no duplicate node are created ...
-        getNodeFactory().getOrCreateLocation(new LocationImpl(37.689255, -122.295798, null, null));
-        assertEcoRegions(locationA);
-        getNodeFactory().enrichLocationWithEcoRegions(locationA);
-        assertEcoRegions(locationA);
-
-        // check that multiple locations are associated to single eco region
-        Location locationB = getNodeFactory().getOrCreateLocation(new LocationImpl(37.689255, -122.295799, null, null));
-        assertEcoRegions(locationB);
-
-        Transaction transaction = getGraphDb().beginTx();
-        try {
-            IndexHits<Node> hits = getNodeFactory().findCloseMatchesForEcoregion("some elo egion");
-            assertThat(hits.size(), is(1));
-            assertThat((String) hits.iterator().next().getProperty(PropertyAndValueDictionary.NAME), is("some eco region"));
-
-            hits = getNodeFactory().findCloseMatchesForEcoregion("mickey mouse goes shopping");
-            assertThat(hits.size(), is(0));
-            hits = getNodeFactory().findCloseMatchesForEcoregionPath("mickey mouse goes shopping");
-            assertThat(hits.size(), is(0));
-
-            hits = getNodeFactory().findCloseMatchesForEcoregionPath("path");
-            assertThat(hits.size(), is(1));
-            hits = getNodeFactory().findCloseMatchesForEcoregionPath("some");
-            assertThat(hits.size(), is(1));
-
-            hits = getNodeFactory().suggestEcoregionByName("some eco region");
-            assertThat(hits.size(), is(1));
-            hits = getNodeFactory().suggestEcoregionByName("path");
-            assertThat(hits.size(), is(1));
-            transaction.success();
-        } finally {
-            transaction.close();
-        }
-
-    }
-
-    private void assertEcoRegions(Location location) {
-        Transaction transaction = getGraphDb().beginTx();
-        try {
-            Iterable<Relationship> relationships = ((NodeBacked) location).getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.IN_ECOREGION));
-            int count = 0;
-            for (Relationship relationship : relationships) {
-                Node associatedEcoRegion = relationship.getEndNode();
-                assertThat(associatedEcoRegion.getProperty("name"), is("some eco region"));
-                count++;
-            }
-            assertThat(count, is(1));
-            transaction.success();
-        } finally {
-            transaction.close();
-        }
-    }
-
 
 }

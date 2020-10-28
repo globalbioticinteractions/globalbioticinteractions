@@ -40,6 +40,7 @@ public final class WikidataUtil {
         put(TaxonomyProvider.INATURALIST_TAXON, "P3151");
         put(TaxonomyProvider.NBN, "P3240");
         put(TaxonomyProvider.MSW, "P959");
+        put(TaxonomyProvider.PLAZI, "P1992");
     }};
     public static final Map<String, TaxonomyProvider> WIKIDATA_TO_PROVIDER = new TreeMap<String, TaxonomyProvider>() {{
         put("P815", TaxonomyProvider.ITIS);
@@ -53,6 +54,7 @@ public final class WikidataUtil {
         put("P3151", TaxonomyProvider.INATURALIST_TAXON);
         put("P3240", TaxonomyProvider.NBN);
         put("P959", TaxonomyProvider.MSW);
+        put("P1992", TaxonomyProvider.PLAZI);
     }};
 
     public static String executeQuery(String sparql) throws URISyntaxException, IOException {

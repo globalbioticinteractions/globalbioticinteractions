@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import static org.eol.globi.data.StudyImporterForTSV.ASSOCIATED_TAXA;
+import static org.eol.globi.data.DatasetImporterForTSV.ASSOCIATED_TAXA;
 
 public final class AssociatedTaxaUtil {
 
@@ -28,7 +28,7 @@ public final class AssociatedTaxaUtil {
     }
 
     private static List<Map<String, String>> expand(Map<String, String> properties, String associatedTaxa) {
-        List<Map<String, String>> maps = StudyImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
+        List<Map<String, String>> maps = DatasetImporterForDwCA.parseAssociatedTaxa(associatedTaxa);
         return maps.stream().map(x -> new TreeMap<String, String>(properties) {{
             putAll(x);
         }}).collect(Collectors.toList());

@@ -6,8 +6,7 @@ import java.util.TreeSet;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class OpenTreeTaxonIndexIT {
 
     @Test

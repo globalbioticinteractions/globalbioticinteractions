@@ -10,15 +10,14 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportCitationsTest extends GraphDBTestCase {
 
     @Test
     public void exportCitations() throws IOException, NodeFactoryException {
         StringWriter writer = new StringWriter();
-        getNodeFactory().getOrCreateStudy(new StudyImpl("some title", "some source", new DOI("some", "doi"), "some citation"));
-        getNodeFactory().getOrCreateStudy(new StudyImpl("some other title", "some other source", new DOI("some", "otherdoi"), "some other citation"));
+        getNodeFactory().getOrCreateStudy(new StudyImpl("some title", new DOI("some", "doi"), "some citation"));
+        getNodeFactory().getOrCreateStudy(new StudyImpl("some other title", new DOI("some", "otherdoi"), "some other citation"));
         ExportUtil.export(ExportUtil.AppenderWriter.of(writer), getGraphDb(), ExportCitations.CYPHER_QUERY);
 
         assertThat(writer.toString(), Is.is("doi\tcitation" +

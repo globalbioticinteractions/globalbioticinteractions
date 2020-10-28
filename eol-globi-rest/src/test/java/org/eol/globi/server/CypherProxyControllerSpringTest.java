@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class CypherProxyControllerSpringTest extends SpringTestBase {
 
     @Autowired

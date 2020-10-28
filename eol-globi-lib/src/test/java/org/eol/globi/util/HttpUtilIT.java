@@ -15,8 +15,7 @@ import java.io.IOException;
 
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class HttpUtilIT {
 
     @Test(expected = ConnectTimeoutException.class)
@@ -68,7 +67,7 @@ public class HttpUtilIT {
 
     @Test
     public void withBasicAuthHeaders() throws IOException {
-        HttpClientBuilder builder = HttpUtil.createHttpClientBuilder(HttpUtil.FIVE_SECONDS);
+        HttpClientBuilder builder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
         CloseableHttpClient httpClient = builder.build();
         String username = "aladdin";
         String password = "opensesame";

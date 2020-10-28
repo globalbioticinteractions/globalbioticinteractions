@@ -23,10 +23,8 @@ import java.text.ParseException;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     private Taxon setPathAndId(TaxonImpl taxon) {
@@ -57,8 +55,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         exporter.exportStudy(myStudy1, ExportUtil.AppenderWriter.of(row), true);
 
         String expected1 = "associationID\toccurrenceID\tassociationType\ttargetOccurrenceID\tmeasurementDeterminedDate\tmeasurementDeterminedBy\tmeasurementMethod\tmeasurementRemarks\tsource\tbibliographicCitation\tcontributor\treferenceID";
-        String expected2 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:X";
-        String expected3 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tdata source description\t\t\tglobi:ref:X";
+        String expected2 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X";
+        String expected3 = "globi:assoc:X-Homo sapiensid-ATE-Canis lupusid\tglobi:occur:source:X-Homo sapiensid-ATE\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:target:X-Homo sapiensid-ATE-Canis lupusid\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X";
         String actual = row.getBuffer().toString();
         assertThat(actual, startsWith(expected1));
         ExportTestUtil.assertSameAsideFromNodeIds(actual.split("\\n"), new String[] {expected1, expected2, expected3});
@@ -69,7 +67,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         String[] studyTitles = {"myStudy1", "myStudy2"};
 
         for (String studyTitle : studyTitles) {
-            Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+            Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
             Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, null));
             specimen.ate(nodeFactory.createSpecimen(myStudy, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, null)));
         }
@@ -86,8 +84,8 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
         assertThat(row.getBuffer().toString(), equalTo(""));
     }
 
-    private void createTestData(Double length, String studyTitle) throws NodeFactoryException, ParseException {
-        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, "data source description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+    private void createTestData(Double length, String studyTitle) throws NodeFactoryException {
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl(studyTitle, null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, setPathAndId(new TaxonImpl("Homo sapiens", null)));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new TermImpl("GlOBI:JUVENILE", "JUVENILE"));

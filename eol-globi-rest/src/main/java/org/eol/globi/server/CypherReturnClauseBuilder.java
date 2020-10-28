@@ -188,8 +188,8 @@ public class CypherReturnClauseBuilder {
         }
 
         if (requestedFields.contains(ResultField.NUMBER_OF_SOURCES.getLabel())) {
-            query.append(", count(distinct(").append(ResultObject.STUDY.getLabel())
-                    .append(".source)) as ")
+            query.append(", count(distinct(").append(ResultObject.DATASET.getLabel())
+                    .append(".citation)) as ")
                     .append(ResultObject.STUDY_SOURCE_COUNT.getLabel());
         }
     }

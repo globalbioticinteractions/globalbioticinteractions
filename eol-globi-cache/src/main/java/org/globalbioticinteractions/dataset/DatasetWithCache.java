@@ -12,6 +12,7 @@ import org.globalbioticinteractions.doi.DOI;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -135,4 +136,13 @@ public class DatasetWithCache implements Dataset {
         return datasetCached;
     }
 
+    @Override
+    public void setExternalId(String externalId) {
+        //
+    }
+
+    @Override
+    public String getExternalId() {
+        return getArchiveURI().toString();
+    }
 }

@@ -8,8 +8,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ResultFormatterCSVTest {
 
     public static final String CSV_WITH_TEXT_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"one\", \"two\" ], [ \"three\", \"four\" ] ]}";

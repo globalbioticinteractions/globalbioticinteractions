@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DatasetUtilTest {
 
@@ -16,6 +18,34 @@ public class DatasetUtilTest {
         Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         dataset.setConfig(new ObjectMapper().readTree("{\"resources\": { \"previous/path.txt\": \"current/path.txt\" } }"));
         assertThat(DatasetUtil.mapResourceForDataset(dataset, URI.create("previous/path.txt")).toString(), is("some:uri/current/path.txt"));
+    }
+
+    @Test
+    public void isDeprecated() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        dataset.setConfig(new ObjectMapper().readTree("{\"deprecated\":true}"));
+        assertTrue(DatasetUtil.isDeprecated(dataset));
+    }
+
+    @Test
+    public void isDeprecatedQuoted() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        dataset.setConfig(new ObjectMapper().readTree("{\"deprecated\":\"true\"}"));
+        assertTrue(DatasetUtil.isDeprecated(dataset));
+    }
+
+    @Test
+    public void isNotDeprecated() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        dataset.setConfig(new ObjectMapper().readTree("{\"deprecated\":false}"));
+        assertFalse(DatasetUtil.isDeprecated(dataset));
+    }
+
+    @Test
+    public void isDeprecatedNotSpecified() throws IOException {
+        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        dataset.setConfig(new ObjectMapper().readTree("{\"deprecated\":false}"));
+        assertFalse(DatasetUtil.isDeprecated(dataset));
     }
 
     @Test

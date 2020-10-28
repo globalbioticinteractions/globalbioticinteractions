@@ -4,6 +4,7 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.globalbioticinteractions.dataset.Dataset;
 
 import java.util.Map;
 
@@ -30,14 +31,15 @@ public abstract class ExporterAssociationsBase extends ExporterBase {
         return "http://eol.org/schema/Association";
     }
 
-    protected void addStudyInfo(Study study, Map<String, String> properties) {
-        properties.put(EOLDictionary.SOURCE, study.getSource());
-        properties.put(EOLDictionary.REFERENCE_ID, "globi:ref:" + ((StudyNode)study).getNodeID());
+    protected void addStudyInfo(StudyNode study, Map<String, String> properties) {
+        final Dataset originatingDataset = study.getOriginatingDataset();
+        properties.put(EOLDictionary.SOURCE, originatingDataset == null ? study.getCitation() : originatingDataset.getCitation());
+        properties.put(EOLDictionary.REFERENCE_ID, "globi:ref:" + study.getNodeID());
     }
 
     protected String getEOLTermFor(String interactionType) {
         InteractType interactType = InteractType.valueOf(interactionType);
-        return (interactType == null || PropertyAndValueDictionary.NO_MATCH.equals(interactType.getIRI()))
+        return PropertyAndValueDictionary.NO_MATCH.equals(interactType.getIRI())
                 ? InteractType.INTERACTS_WITH.getIRI()
                 : interactType.getIRI();
     }

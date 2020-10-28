@@ -9,8 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class TaxonLookupServiceImplTest {
 
     @Test
@@ -28,6 +27,7 @@ public class TaxonLookupServiceImplTest {
 
         service.start();
         TaxonImpl term = new TaxonImpl("Homo sapiens", "1234");
+        term.setRank("species");
         term.setPath("one | two | three");
         term.setPathIds("1 | 2 | 3");
         term.setPathNames("name1 | name2 | name3");
@@ -48,6 +48,7 @@ public class TaxonLookupServiceImplTest {
         assertThat(ids.length, Is.is(1));
         assertThat(ids[0].getExternalId(), Is.is("1234"));
         assertThat(ids[0].getName(), Is.is("Homo sapiens"));
+        assertThat(ids[0].getRank(), Is.is("species"));
         assertThat(ids[0].getCommonNames(), Is.is("Mensch"));
         assertThat(ids[0].getPathIds(), Is.is("1 | 2 | 3"));
         assertThat(ids[0].getPath(), Is.is("one | two | three"));

@@ -9,8 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class TestHashUtil {
     public static void assertContentHash(InputStream retrieve, String expectedHash) throws IOException {
         try {

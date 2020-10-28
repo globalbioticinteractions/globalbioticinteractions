@@ -15,6 +15,7 @@ import org.neo4j.graphdb.Node;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 
 public class DatasetNode extends NodeBacked implements Dataset {
 
@@ -98,4 +99,5 @@ public class DatasetNode extends NodeBacked implements Dataset {
     public void setConfigURI(URI configURI) {
 
     }
+
 }

@@ -2,11 +2,11 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Ignore;
@@ -17,9 +17,7 @@ import org.neo4j.graphdb.Transaction;
 import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class LinkerTermMatcherTest extends GraphDBTestCase {
 
     @Ignore
@@ -61,7 +59,8 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
                 "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
                 "/org/eol/globi/taxon/taxonMapHolorchis.tsv");
 
-        new LinkerTermMatcher(getGraphDb(), taxonCacheService).link();
+        new LinkerTermMatcher(taxonCacheService)
+                .index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction transaction = getGraphDb().beginTx()) {
             Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);

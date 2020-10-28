@@ -24,8 +24,7 @@ import java.util.Date;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportFlatInteractionsTest extends GraphDBTestCase {
 
     private NodeFactoryWithDatasetContext factory;
@@ -57,13 +56,13 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException, ParseException {
-        Study myStudy = factory.createStudy(new StudyImpl("myStudy", null, null, null));
+        Study myStudy = factory.createStudy(new StudyImpl("myStudy", null, null));
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333", RelTypes.COLLECTED, RelTypes.SUPPORTS);
         specimenEatCatAndDog(length, myStudy, "Homo sapiens", "EOL:333", RelTypes.REFUTES);
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123", RelTypes.COLLECTED, RelTypes.SUPPORTS);
         specimenEatCatAndDog(length, myStudy, "Homo erectus", "EOL:123", RelTypes.COLLECTED, RelTypes.SUPPORTS);
-        specimenEatCatAndDog(length, factory.createStudy(new StudyImpl("yourStudy", null, null, null)), "Homo erectus", "EOL:888", RelTypes.COLLECTED, RelTypes.SUPPORTS);
-        specimenEatCatAndDog(length, factory.createStudy(new StudyImpl("yourStudy2", null, null, null)), "Homo erectus", "EOL:888", RelTypes.COLLECTED, RelTypes.SUPPORTS);
+        specimenEatCatAndDog(length, factory.createStudy(new StudyImpl("yourStudy", null, null)), "Homo erectus", "EOL:888", RelTypes.COLLECTED, RelTypes.SUPPORTS);
+        specimenEatCatAndDog(length, factory.createStudy(new StudyImpl("yourStudy2", null, null)), "Homo erectus", "EOL:888", RelTypes.COLLECTED, RelTypes.SUPPORTS);
         specimenEatCatAndDog(length, myStudy, "Blo blaaus", PropertyAndValueDictionary.NO_MATCH, RelTypes.COLLECTED, RelTypes.SUPPORTS);
     }
 

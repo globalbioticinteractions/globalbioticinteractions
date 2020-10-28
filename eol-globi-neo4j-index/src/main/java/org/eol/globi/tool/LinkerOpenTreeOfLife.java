@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
@@ -24,18 +25,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class LinkerOpenTreeOfLife implements Linker {
+public class LinkerOpenTreeOfLife implements IndexerNeo4j {
 
     private static final Log LOG = LogFactory.getLog(LinkerOpenTreeOfLife.class);
-    private final GraphDatabaseService graphDb;
     private final OpenTreeTaxonIndex index;
 
-    public LinkerOpenTreeOfLife(GraphDatabaseService graphDb, OpenTreeTaxonIndex index) {
-        this.graphDb = graphDb;
+    public LinkerOpenTreeOfLife(OpenTreeTaxonIndex index) {
         this.index = index;
     }
 
-    public void link() {
+    @Override
+    public void index(GraphServiceFactory factory) {
+        final GraphDatabaseService graphDb = factory.getGraphService();
         Transaction transaction = graphDb.beginTx();
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");
@@ -52,8 +53,6 @@ public class LinkerOpenTreeOfLife implements Linker {
         hits.close();
         transaction.success();
         transaction.close();
-
-
     }
 
     protected void validate(Map<String, Long> ottIds) {

@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class TaxonUtilTest {
@@ -237,6 +237,24 @@ public class TaxonUtilTest {
         taxonA.setPathIds("1 | 2 | 3");
         taxonA.setPathNames("kingdom | family | genus");
         taxonA.setPath("Animalia | Hominidae | Homo");
+        final Map<String, String> nameMap = TaxonUtil.toPathNameMap(taxonA);
+        assertThat(nameMap, hasEntry("genus", "Homo"));
+        assertThat(nameMap, hasEntry("family", "Hominidae"));
+        assertThat(nameMap, hasEntry("kingdom", "Animalia"));
+
+        final String path = TaxonUtil.generateTaxonPath(nameMap);
+        assertThat(path, is("Animalia | Hominidae | Homo"));
+
+        final String pathNames = TaxonUtil.generateTaxonPathNames(nameMap);
+        assertThat(pathNames, is("kingdom | family | genus"));
+    }
+
+    @Test
+    public void toPathNameSubSpecific() {
+        final TaxonImpl taxonA = new TaxonImpl("a", "b");
+        taxonA.setPathIds("1 | 2 | 3 | 4 | 5");
+        taxonA.setPathNames("kingdom | family | genus | specificEpithet | subspecificEpithet");
+        taxonA.setPath("Animalia | Hominidae | Homo | sapiens | ferus");
         final Map<String, String> nameMap = TaxonUtil.toPathNameMap(taxonA);
         assertThat(nameMap, hasEntry("genus", "Homo"));
         assertThat(nameMap, hasEntry("family", "Hominidae"));

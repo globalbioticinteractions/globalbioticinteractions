@@ -18,12 +18,12 @@ public class StudyImporterTestFactory {
         this.nodeFactory = nodeFactory;
     }
 
-    public StudyImporter instantiateImporter(Class<? extends StudyImporter> clazz) throws StudyImporterException {
+    public DatasetImporter instantiateImporter(Class<? extends DatasetImporter> clazz) throws StudyImporterException {
         try {
-            Constructor<? extends StudyImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
-            StudyImporter studyImporter = aConstructor.newInstance(parserFactory, nodeFactory);
-            studyImporter.setDataset(new DatasetLocal(inStream -> inStream));
-            return studyImporter;
+            Constructor<? extends DatasetImporter> aConstructor = clazz.getConstructor(ParserFactory.class, NodeFactory.class);
+            DatasetImporter datasetImporter = aConstructor.newInstance(parserFactory, nodeFactory);
+            datasetImporter.setDataset(new DatasetLocal(inStream -> inStream));
+            return datasetImporter;
         } catch (Exception ex) {
             throw new StudyImporterException("failed to create study importer for [" + clazz.toString() + "]", ex);
         }

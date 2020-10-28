@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URI;
@@ -8,7 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetFactoryTest {
 

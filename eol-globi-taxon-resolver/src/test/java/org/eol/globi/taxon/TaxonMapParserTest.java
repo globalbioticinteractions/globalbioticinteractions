@@ -14,8 +14,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class TaxonMapParserTest {
 
     public static void parse(BufferedReader reader, TaxonMapListener listener) throws IOException {

@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 public class UberonLookupServiceTest {
 
     private UberonLookupService uberonLookupService = new UberonLookupService();
@@ -16,57 +18,57 @@ public class UberonLookupServiceTest {
     @Test
     public void bodyPartMapping() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("scales");
-        Assert.assertThat(scales.size(), Is.is(1));
-        Assert.assertThat(scales.get(0).getId(), Is.is("UBERON:0002542"));
-        Assert.assertThat(scales.get(0).getName(), Is.is("scale"));
+        assertThat(scales.size(), Is.is(1));
+        assertThat(scales.get(0).getId(), Is.is("UBERON:0002542"));
+        assertThat(scales.get(0).getName(), Is.is("scale"));
     }
 
     @Test
     public void physiologicalStateMapping() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("remains");
-        Assert.assertThat(scales.size(), Is.is(1));
-        Assert.assertThat(scales.get(0).getId(), Is.is("GLOBI:REMAINS"));
-        Assert.assertThat(scales.get(0).getName(), Is.is("REMAINS"));
+        assertThat(scales.size(), Is.is(1));
+        assertThat(scales.get(0).getId(), Is.is("GLOBI:REMAINS"));
+        assertThat(scales.get(0).getName(), Is.is("REMAINS"));
     }
 
     @Test
     public void lifeStageMapping() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("newborn");
-        Assert.assertThat(scales.size(), Is.is(1));
-        Assert.assertThat(scales.get(0).getId(), Is.is("GLOBI:NEWBORN"));
-        Assert.assertThat(scales.get(0).getName(), Is.is("NEWBORN"));
+        assertThat(scales.size(), Is.is(1));
+        assertThat(scales.get(0).getId(), Is.is("GLOBI:NEWBORN"));
+        assertThat(scales.get(0).getName(), Is.is("NEWBORN"));
     }
 
     @Test
     public void lifeStageMapping2() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("NAUPLII");
-        Assert.assertThat(scales.size(), Is.is(1));
-        Assert.assertThat(scales.get(0).getId(), Is.is("UBERON:0014406"));
-        Assert.assertThat(scales.get(0).getName(), Is.is("nauplius stage"));
+        assertThat(scales.size(), Is.is(1));
+        assertThat(scales.get(0).getId(), Is.is("UBERON:0014406"));
+        assertThat(scales.get(0).getName(), Is.is("nauplius stage"));
     }
 
     @Test
     public void lifeStageMappingCapitalized() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("Nauplii");
-        Assert.assertThat(scales.size(), Is.is(1));
-        Assert.assertThat(scales.get(0).getId(), Is.is("UBERON:0014406"));
-        Assert.assertThat(scales.get(0).getName(), Is.is("nauplius stage"));
+        assertThat(scales.size(), Is.is(1));
+        assertThat(scales.get(0).getId(), Is.is("UBERON:0014406"));
+        assertThat(scales.get(0).getName(), Is.is("nauplius stage"));
     }
 
     @Test
     public void donaldDuck() throws TermLookupServiceException {
         List<Term> scales = uberonLookupService.lookupTermByName("donald duck");
-        Assert.assertThat(scales.size(), Is.is(1));
-        Assert.assertThat(scales.get(0).getId(), Is.is("no:match"));
-        Assert.assertThat(scales.get(0).getName(), Is.is("donald duck"));
+        assertThat(scales.size(), Is.is(1));
+        assertThat(scales.get(0).getId(), Is.is("no:match"));
+        assertThat(scales.get(0).getName(), Is.is("donald duck"));
     }
 
     @Test
     public void noHeader() throws TermLookupServiceException {
         // ensure that header is not used as value
         List<Term> scales = uberonLookupService.lookupTermByName("original_name");
-        Assert.assertThat(scales.size(), Is.is(1));
-        Assert.assertThat(scales.get(0).getId(), Is.is("no:match"));
-        Assert.assertThat(scales.get(0).getName(), Is.is("original_name"));
+        assertThat(scales.size(), Is.is(1));
+        assertThat(scales.get(0).getId(), Is.is("no:match"));
+        assertThat(scales.get(0).getName(), Is.is("original_name"));
     }
 }

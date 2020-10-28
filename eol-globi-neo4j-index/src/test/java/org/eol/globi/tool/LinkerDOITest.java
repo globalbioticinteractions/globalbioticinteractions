@@ -5,14 +5,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
-import org.globalbioticinteractions.dataset.DatasetConstant;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.dataset.DatasetConstant;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 
@@ -22,18 +23,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 public class LinkerDOITest extends GraphDBTestCase {
 
     @Test
     public void doLink() throws NodeFactoryException, PropertyEnricherException {
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, "some citation"));
-        new LinkerDOI(getGraphDb()).link();
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", null, "some citation"));
+        new LinkerDOI().index(new GraphServiceFactoryProxy(getGraphDb()));
         Study studyResolved = nodeFactory.getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(nullValue()));
         assertThat(study.getDOI(), is(nullValue()));
@@ -41,19 +42,19 @@ public class LinkerDOITest extends GraphDBTestCase {
 
     @Test
     public void shouldResolveStudy() {
-        StudyImpl study = new StudyImpl("some title", "some source", new DOI("some", "doi"), "some citation");
+        StudyImpl study = new StudyImpl("some title", new DOI("some", "doi"), "some citation");
         assertFalse(LinkerDOI.shouldResolve(study));
     }
 
     @Test
     public void shouldResolveStudyEmptyCitation() {
-        StudyImpl study = new StudyImpl("some title", "some source", null, "");
+        StudyImpl study = new StudyImpl("some title", null, "");
         assertFalse(LinkerDOI.shouldResolve(study));
     }
 
     @Test
     public void shouldResolveStudyHttps() {
-        StudyImpl study = new StudyImpl("some title", "some source", null, "http://example.com");
+        StudyImpl study = new StudyImpl("some title", null, "http://example.com");
         assertFalse(LinkerDOI.shouldResolve(study));
     }
 
@@ -68,14 +69,14 @@ public class LinkerDOITest extends GraphDBTestCase {
     }
 
     private void assertLinkMany(int numberOfStudies) throws NodeFactoryException {
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, "HOCKING"));
-        getNodeFactory().getOrCreateStudy(new StudyImpl("title1", "some source", null, "MEDAN"));
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", null, "HOCKING"));
+        getNodeFactory().getOrCreateStudy(new StudyImpl("title1", null, "MEDAN"));
         assertThat(study.getDOI(), is(nullValue()));
         for (int i = 0; i< numberOfStudies; i++) {
-            getNodeFactory().getOrCreateStudy(new StudyImpl("id" + i, "some source", null, "foo bar this is not a citation" + i));
+            getNodeFactory().getOrCreateStudy(new StudyImpl("id" + i, null, "foo bar this is not a citation" + i));
 
         }
-        new LinkerDOI(getGraphDb(), new DOIResolver() {
+        new LinkerDOI(new DOIResolver() {
             @Override
             public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
                 Map<String, DOI> resolved = new HashMap<>();
@@ -89,32 +90,29 @@ public class LinkerDOITest extends GraphDBTestCase {
             public DOI resolveDoiFor(String reference) throws IOException {
                 return new DOI("123", "456");
             }
-        }).link();
+        }).index(new GraphServiceFactoryProxy(getGraphDb()));
         StudyNode studyResolved = getNodeFactory().getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(new DOI("123", "456")));
     }
 
     @Test
     public void createStudyDOIlookup() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, "some citation"));
-        new LinkerDOI(getGraphDb()).linkStudy(new DOIResolverThatExplodes(), study);
-        assertThat(study.getSource(), is("some source"));
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", null, "some citation"));
+        LinkerDOI.linkStudy(new DOIResolverThatExplodes(), study);
         assertThat(study.getCitation(), is("some citation"));
         assertThat(study.getTitle(), is("title"));
     }
 
     @Test
     public void createStudyDOIlookupCitationWithURL() throws NodeFactoryException {
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", "some source", null, "http://bla"));
-        new LinkerDOI(getGraphDb()).linkStudy(new DOIResolverThatFails(), study);
-        assertThat(study.getSource(), is("some source"));
-        assertThat(study.getCitation(), is("http://bla"));
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", null, "http://bla"));
+        LinkerDOI.linkStudy(new DOIResolverThatFails(), study);
         assertThat(study.getTitle(), is("title"));
     }
 
     @Test
     public void createStudyDOIlookupCitationEnabled() throws NodeFactoryException {
-        StudyImpl title = new StudyImpl("title", "some source", null, "some citation");
+        StudyImpl title = new StudyImpl("title", null, "some citation");
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, true);
@@ -122,8 +120,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         title.setOriginatingDataset(originatingDataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(title);
 
-        new LinkerDOI(getGraphDb()).linkStudy(new TestDOIResolver(), study);
-        assertThat(study.getSource(), is("some source"));
+        LinkerDOI.linkStudy(new TestDOIResolver(), study);
         assertThat(study.getDOI().toString(), is("10.some/some citation"));
         assertThat(study.getExternalId(), is("https://doi.org/10.some/some%20citation"));
         assertThat(study.getCitation(), is("some citation"));
@@ -132,7 +129,7 @@ public class LinkerDOITest extends GraphDBTestCase {
 
     @Test
     public void createStudyDOIlookupCitationDisabled() throws NodeFactoryException {
-        StudyImpl study1 = new StudyImpl("title", "some source", null, "some citation");
+        StudyImpl study1 = new StudyImpl("title", null, "some citation");
         study1.setExternalId("some:id");
         DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
@@ -140,7 +137,6 @@ public class LinkerDOITest extends GraphDBTestCase {
         originatingDataset.setConfig(objectNode);
         study1.setOriginatingDataset(originatingDataset);
         Study study = getNodeFactory().getOrCreateStudy(study1);
-        assertThat(study.getSource(), is("some source"));
         assertThat(study.getDOI(), is(nullValue()));
         assertThat(study.getCitation(), is("some citation"));
         assertThat(study.getTitle(), is("title"));
@@ -164,17 +160,17 @@ public class LinkerDOITest extends GraphDBTestCase {
                 return new DOI("1234", "567");
             }
         };
-        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
-        new LinkerDOI(getGraphDb()).linkStudy(doiResolver, study);
+        StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("my title", null, ExternalIdUtil.toCitation("my contr", "some description", null)));
+        LinkerDOI.linkStudy(doiResolver, study);
         assertThat(study.getDOI().toString(), is("10.1234/567"));
         assertThat(study.getExternalId(), is("https://doi.org/10.1234/567"));
         assertThat(study.getCitation(), is("my contr. some description"));
 
-        StudyImpl study1 = new StudyImpl("my other title", "some source", null, ExternalIdUtil.toCitation("my contr", "some description", null));
+        StudyImpl study1 = new StudyImpl("my other title", null, ExternalIdUtil.toCitation("my contr", "some description", null));
         assertThat(study1.getExternalId(), nullValue());
         study = getNodeFactory().getOrCreateStudy(study1);
         assertThat(study.getExternalId(), nullValue());
-        new LinkerDOI(getGraphDb()).linkStudy(new DOIResolverThatExplodes(), study);
+        LinkerDOI.linkStudy(new DOIResolverThatExplodes(), study);
         assertThat(study.getDOI(), nullValue());
         assertThat(study.getExternalId(), nullValue());
         assertThat(study.getCitation(), is("my contr. some description"));

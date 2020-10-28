@@ -21,15 +21,15 @@ public class TableInteractionListenerProxy implements InteractionListener {
         final Map<String, String> enrichedProperties = new TreeMap<String, String>() {
             {
                 putAll(link);
-                put(StudyImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
+                put(DatasetImporterForTSV.STUDY_SOURCE_CITATION, dataSourceCitation);
 
                 final String referenceCitation =
-                        StringUtils.isBlank(link.get(StudyImporterForTSV.REFERENCE_CITATION))
-                        ? StudyImporterForMetaTable.generateReferenceCitation(link)
-                        : link.get(StudyImporterForTSV.REFERENCE_CITATION);
+                        StringUtils.isBlank(link.get(DatasetImporterForTSV.REFERENCE_CITATION))
+                        ? DatasetImporterForMetaTable.generateReferenceCitation(link)
+                        : link.get(DatasetImporterForTSV.REFERENCE_CITATION);
 
-                put(StudyImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
-                put(StudyImporterForTSV.REFERENCE_CITATION,
+                put(DatasetImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
+                put(DatasetImporterForTSV.REFERENCE_CITATION,
                         StringUtils.isBlank(referenceCitation)
                         ? dataSourceCitation :
                         referenceCitation);

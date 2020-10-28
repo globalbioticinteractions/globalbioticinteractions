@@ -15,12 +15,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.ParseException;
 import java.util.Date;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class ExporterAssociationsTest extends GraphDBTestCase {
 
     @Test
@@ -28,8 +25,8 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
         createTestData(null);
         resolveNames();
 
-        String expected = "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tdata source description\t\t\tglobi:ref:X\n" +
-                "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tdata source description\t\t\tglobi:ref:X\n";
+        String expected = "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X\n" +
+                "globi:assoc:X\tglobi:occur:X\thttp://purl.obolibrary.org/obo/RO_0002470\tglobi:occur:X\t\t\t\t\tcontributor. pubYear. description\t\t\tglobi:ref:X\n";
 
 
         StringWriter row = new StringWriter();
@@ -40,7 +37,7 @@ public class ExporterAssociationsTest extends GraphDBTestCase {
     }
 
     private void createTestData(Double length) throws NodeFactoryException {
-        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", "data\tsource description", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
+        Study myStudy = nodeFactory.getOrCreateStudy(new StudyImpl("myStudy", null, ExternalIdUtil.toCitation("contributor", "description", "pubYear")));
         Specimen specimen = nodeFactory.createSpecimen(myStudy, new TaxonImpl("Homo sapiens", "EOL:123"));
         specimen.setStomachVolumeInMilliLiter(666.0);
         specimen.setLifeStage(new TermImpl("GLOBI:JUVENILE", "JUVENILE"));

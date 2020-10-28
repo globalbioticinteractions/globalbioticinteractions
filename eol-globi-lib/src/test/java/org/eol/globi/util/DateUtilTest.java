@@ -7,8 +7,7 @@ import java.util.Date;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class DateUtilTest {
 
     @Test
@@ -26,6 +25,12 @@ public class DateUtilTest {
     public void parseDateYearMonthRange() {
         String text = "2018-12/2019-01";
         assertThat(DateUtil.parseYearMonthUTC(text).toString(), is("2018-12-01T00:00:00.000Z"));
+    }
+
+    @Test
+    public void parseDateYearMonthRange2() {
+        String text = "2006-07/08";
+        assertThat(DateUtil.parseYearMonthUTC(text).toString(), is("2006-07-01T00:00:00.000Z"));
     }
 
     @Test

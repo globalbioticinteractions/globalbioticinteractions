@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.ResourceService;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -21,6 +22,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 
 public class EMLUtil {
 
@@ -46,7 +49,7 @@ public class EMLUtil {
                     .collect(Collectors.joining(". "));
 
             objectNode.put("citation", datasetCitation + ".");
-            objectNode.put("format", "application/dwca");
+            objectNode.put("format", MIME_TYPE_DWCA);
 
 
             String string = new ObjectMapper().writeValueAsString(objectNode);

@@ -2,10 +2,11 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.taxon.TaxonFuzzySearchIndex;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -22,16 +23,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LinkerTaxonIndex implements Linker {
+public class LinkerTaxonIndex implements IndexerNeo4j {
 
     public static final String INDEX_TAXON_NAMES_AND_IDS = "taxonPaths";
-    private final GraphDatabaseService graphDb;
 
-    public LinkerTaxonIndex(GraphDatabaseService graphDb) {
-        this.graphDb = graphDb;
-    }
 
-    public void link() {
+    @Override
+    public void index(GraphServiceFactory factory) {
+        GraphDatabaseService graphDb = factory.getGraphService();
         Transaction tx = graphDb.beginTx();
         try {
             Index<Node> taxons = graphDb.index().forNodes("taxons");

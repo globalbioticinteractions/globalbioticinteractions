@@ -1,10 +1,17 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.*;
-import org.eol.globi.geo.EcoregionFinder;
+import org.eol.globi.domain.Environment;
+import org.eol.globi.domain.Interaction;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.RelTypes;
+import org.eol.globi.domain.Season;
+import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.Study;
+import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.Term;
 import org.eol.globi.service.AuthorIdResolver;
-import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.TermLookupService;
+import org.globalbioticinteractions.dataset.Dataset;
 
 import java.util.Date;
 import java.util.List;
@@ -45,8 +52,6 @@ public interface NodeFactory {
     Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException;
 
     TermLookupService getTermLookupService();
-
-    EcoregionFinder getEcoregionFinder();
 
     AuthorIdResolver getAuthorResolver();
 

@@ -2,6 +2,7 @@ package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -12,7 +13,6 @@ import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.LinkerTaxonIndex;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
@@ -117,8 +117,8 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
             );
         }
 
-        LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex(getGraphDb());
-        linkerTaxonIndex.link();
+        LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex();
+        linkerTaxonIndex.index(new GraphServiceFactoryProxy(getGraphDb()));
 
         try (Transaction ignored = getGraphDb().beginTx()) {
             Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,

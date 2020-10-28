@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-public abstract class NodeBasedImporter extends BaseStudyImporter {
+public abstract class NodeBasedImporter extends BaseDatasetImporter {
     protected ParserFactory parserFactory;
     private NodeFactory nodeFactory;
 

@@ -2,28 +2,28 @@ package org.eol.globi.tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.helpers.collection.MapUtil;
 
-public class IndexInteractions implements Linker {
+public class IndexInteractions implements IndexerNeo4j {
     private static final Log LOG = LogFactory.getLog(IndexInteractions.class);
 
-    private final GraphDatabaseService graphDb;
     private Integer batchSize;
 
-    public IndexInteractions(GraphDatabaseService graphDb) {
-        this(graphDb, 10000);
+    public IndexInteractions() {
+        this(10000);
     }
 
-    public IndexInteractions(GraphDatabaseService graphDb, int batchSize) {
-        this.graphDb = graphDb;
+    public IndexInteractions(int batchSize) {
         this.batchSize = batchSize;
     }
 
     @Override
-    public void link() {
+    public void index(GraphServiceFactory factory) {
+        final GraphDatabaseService graphDb = factory.getGraphService();
         LinkProgress progress = new LinkProgress(LOG::info, 10);
         progress.start();
 

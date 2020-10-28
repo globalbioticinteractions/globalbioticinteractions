@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
@@ -20,10 +21,8 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
-public class NameResolver {
+public class NameResolver implements IndexerNeo4j {
     private static final Log LOG = LogFactory.getLog(NameResolver.class);
-
-    private final GraphDatabaseService graphService;
 
     private final TaxonIndex taxonIndex;
     private final TaxonFilter taxonFilter;
@@ -34,23 +33,16 @@ public class NameResolver {
 
     private Long batchSize = 10000L;
 
-    public NameResolver(GraphDatabaseService graphService, TaxonIndex index) {
-        this(graphService, index, new KnownBadNameFilter());
+    public NameResolver(TaxonIndex index) {
+        this(index, new KnownBadNameFilter());
     }
 
-    public NameResolver(GraphDatabaseService graphService, TaxonIndex index, TaxonFilter taxonFilter) {
-        this.graphService = graphService;
+    public NameResolver(TaxonIndex index, TaxonFilter taxonFilter) {
         this.taxonIndex = index;
         this.taxonFilter = taxonFilter;
     }
 
-    public void resolve() {
-        LOG.info("name resolving started...");
-        resolveNames(batchSize);
-        LOG.info("name resolving complete.");
-    }
-
-    public void resolveNames(Long batchSize) {
+    public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
         StopWatch watchForBatch = new StopWatch();
@@ -115,4 +107,11 @@ public class NameResolver {
         return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
     }
 
+    @Override
+    public void index(GraphServiceFactory graphService) {
+        LOG.info("name resolving started...");
+        resolveNames(batchSize, graphService.getGraphService());
+        LOG.info("name resolving complete.");
+
+    }
 }

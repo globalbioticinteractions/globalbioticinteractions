@@ -6,63 +6,65 @@ import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.ParserFactory;
 import org.eol.globi.data.ParserFactoryForDataset;
-import org.eol.globi.data.StudyImporter;
+import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.StudyImporterForAkin;
-import org.eol.globi.data.StudyImporterForBatBase;
-import org.eol.globi.data.StudyImporterForBatPlant;
-import org.eol.globi.data.StudyImporterForDBatVir;
-import org.eol.globi.data.StudyImporterForDwCA;
-import org.eol.globi.data.StudyImporterForGlobalWebDb;
-import org.eol.globi.data.StudyImporterForMangal;
-import org.eol.globi.data.StudyImporterForPensoft;
-import org.eol.globi.data.StudyImporterForSaproxylic;
-import org.eol.globi.data.StudyImporterForRSS;
-import org.eol.globi.data.StudyImporterForBaremore;
-import org.eol.globi.data.StudyImporterForBarnes;
-import org.eol.globi.data.StudyImporterForBell;
-import org.eol.globi.data.StudyImporterForBioInfo;
-import org.eol.globi.data.StudyImporterForBlewett;
-import org.eol.globi.data.StudyImporterForBrose;
-import org.eol.globi.data.StudyImporterForByrnes;
-import org.eol.globi.data.StudyImporterForCoetzer;
-import org.eol.globi.data.StudyImporterForCook;
-import org.eol.globi.data.StudyImporterForCruaud;
-import org.eol.globi.data.StudyImporterForDunne;
-import org.eol.globi.data.StudyImporterForFishbase3;
-import org.eol.globi.data.StudyImporterForGemina;
-import org.eol.globi.data.StudyImporterForGoMexSI2;
-import org.eol.globi.data.StudyImporterForGray;
-import org.eol.globi.data.StudyImporterForHafner;
-import org.eol.globi.data.StudyImporterForHechinger;
-import org.eol.globi.data.StudyImporterForHurlbert;
-import org.eol.globi.data.StudyImporterForICES;
-import org.eol.globi.data.StudyImporterForINaturalist;
-import org.eol.globi.data.StudyImporterForJRFerrerParis;
-import org.eol.globi.data.StudyImporterForJSONLD;
-import org.eol.globi.data.StudyImporterForKelpForest;
-import org.eol.globi.data.StudyImporterForLifeWatchGreece;
-import org.eol.globi.data.StudyImporterForMetaTable;
-import org.eol.globi.data.StudyImporterForPlanque;
-import org.eol.globi.data.StudyImporterForRaymond;
-import org.eol.globi.data.StudyImporterForRobledo;
-import org.eol.globi.data.StudyImporterForRoopnarine;
-import org.eol.globi.data.StudyImporterForSIAD;
-import org.eol.globi.data.StudyImporterForSPIRE;
-import org.eol.globi.data.StudyImporterForSeltmann;
-import org.eol.globi.data.StudyImporterForSimons;
-import org.eol.globi.data.StudyImporterForStrona;
-import org.eol.globi.data.StudyImporterForSzoboszlai;
-import org.eol.globi.data.StudyImporterForTSV;
-import org.eol.globi.data.StudyImporterForWebOfLife;
-import org.eol.globi.data.StudyImporterForWood;
-import org.eol.globi.data.StudyImporterForWrast;
-import org.eol.globi.data.StudyImporterForZenodoMetadata;
+import org.eol.globi.data.DatasetImporterForAkin;
+import org.eol.globi.data.DatasetImporterForBatBase;
+import org.eol.globi.data.DatasetImporterForBatPlant;
+import org.eol.globi.data.DatasetImporterForDBatVir;
+import org.eol.globi.data.DatasetImporterForDwCA;
+import org.eol.globi.data.DatasetImporterForGlobalWebDb;
+import org.eol.globi.data.DatasetImporterForMangal;
+import org.eol.globi.data.DatasetImporterForPensoft;
+import org.eol.globi.data.DatasetImporterForSaproxylic;
+import org.eol.globi.data.DatasetImporterForRSS;
+import org.eol.globi.data.DatasetImporterForBaremore;
+import org.eol.globi.data.DatasetImporterForBarnes;
+import org.eol.globi.data.DatasetImporterForBell;
+import org.eol.globi.data.DatasetImporterForBioInfo;
+import org.eol.globi.data.DatasetImporterForBlewett;
+import org.eol.globi.data.DatasetImporterForBrose;
+import org.eol.globi.data.DatasetImporterForByrnes;
+import org.eol.globi.data.DatasetImporterForCoetzer;
+import org.eol.globi.data.DatasetImporterForCook;
+import org.eol.globi.data.DatasetImporterForCruaud;
+import org.eol.globi.data.DatasetImporterForDunne;
+import org.eol.globi.data.DatasetImporterForFishbase3;
+import org.eol.globi.data.DatasetImporterForGemina;
+import org.eol.globi.data.DatasetImporterForGoMexSI2;
+import org.eol.globi.data.DatasetImporterForGray;
+import org.eol.globi.data.DatasetImporterForHafner;
+import org.eol.globi.data.DatasetImporterForHechinger;
+import org.eol.globi.data.DatasetImporterForHurlbert;
+import org.eol.globi.data.DatasetImporterForICES;
+import org.eol.globi.data.DatasetImporterForINaturalist;
+import org.eol.globi.data.DatasetImporterForJRFerrerParis;
+import org.eol.globi.data.DatasetImporterForJSONLD;
+import org.eol.globi.data.DatasetImporterForKelpForest;
+import org.eol.globi.data.DatasetImporterForLifeWatchGreece;
+import org.eol.globi.data.DatasetImporterForMetaTable;
+import org.eol.globi.data.DatasetImporterForPlanque;
+import org.eol.globi.data.DatasetImporterForRaymond;
+import org.eol.globi.data.DatasetImporterForRobledo;
+import org.eol.globi.data.DatasetImporterForRoopnarine;
+import org.eol.globi.data.DatasetImporterForSIAD;
+import org.eol.globi.data.DatasetImporterForSPIRE;
+import org.eol.globi.data.DatasetImporterForSeltmann;
+import org.eol.globi.data.DatasetImporterForSimons;
+import org.eol.globi.data.DatasetImporterForStrona;
+import org.eol.globi.data.DatasetImporterForSzoboszlai;
+import org.eol.globi.data.DatasetImporterForTSV;
+import org.eol.globi.data.DatasetImporterForWebOfLife;
+import org.eol.globi.data.DatasetImporterForWood;
+import org.eol.globi.data.DatasetImporterForWrast;
+import org.eol.globi.data.DatasetImporterForZenodoMetadata;
 import org.globalbioticinteractions.dataset.Dataset;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+
+import static org.eol.globi.domain.PropertyAndValueDictionary.MIME_TYPE_DWCA;
 
 public class StudyImporterFactoryImpl implements StudyImporterFactory {
 
@@ -72,33 +74,33 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
         this.nodeFactory = nodeFactory;
     }
 
-    public static StudyImporter createImporter(Dataset dataset, final NodeFactory nodeFactory) throws StudyImporterException {
-        Class<? extends StudyImporter> anImporter = findImporterFor(dataset);
+    public static DatasetImporter createImporter(Dataset dataset, final NodeFactory nodeFactory) throws StudyImporterException {
+        Class<? extends DatasetImporter> anImporter = findImporterFor(dataset);
         try {
-            Constructor<? extends StudyImporter> constructor = anImporter.getConstructor(ParserFactory.class, NodeFactory.class);
+            Constructor<? extends DatasetImporter> constructor = anImporter.getConstructor(ParserFactory.class, NodeFactory.class);
             ParserFactoryForDataset parserFactory = new ParserFactoryForDataset(dataset);
-            StudyImporter studyImporter = constructor.newInstance(parserFactory,
+            DatasetImporter datasetImporter = constructor.newInstance(parserFactory,
                     new NodeFactoryWithDatasetContext(nodeFactory, dataset));
-            studyImporter.setDataset(dataset);
-            return studyImporter;
+            datasetImporter.setDataset(dataset);
+            return datasetImporter;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new StudyImporterException("failed to instantiate importer for [" + dataset.getNamespace() + "]", e);
         }
     }
 
-    private static Class<? extends StudyImporter> findImporterFor(Dataset dataset) throws StudyImporterException {
-        Class<? extends StudyImporter> anImporter;
+    private static Class<? extends DatasetImporter> findImporterFor(Dataset dataset) throws StudyImporterException {
+        Class<? extends DatasetImporter> anImporter;
         if (dataset.getConfigURI() != null && dataset.getConfigURI().toString().endsWith(".jsonld")) {
-            anImporter = StudyImporterForJSONLD.class;
+            anImporter = DatasetImporterForJSONLD.class;
         } else if (isMetaTableImporter(dataset.getConfig())) {
-            anImporter = StudyImporterForMetaTable.class;
+            anImporter = DatasetImporterForMetaTable.class;
         } else {
             anImporter = lookupImporterByFormat(dataset);
         }
         return anImporter;
     }
 
-    private static Class<? extends StudyImporter> lookupImporterByFormat(Dataset dataset) throws StudyImporterException {
+    private static Class<? extends DatasetImporter> lookupImporterByFormat(Dataset dataset) throws StudyImporterException {
         final String format = dataset.getFormat();
         if (StringUtils.isBlank(format)) {
             throw new StudyImporterException("provide specify format for [" + dataset.getConfigURI() + "]");
@@ -107,62 +109,62 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
         return importerForFormat(format);
     }
 
-    static Class<? extends StudyImporter> importerForFormat(String format) throws StudyImporterException {
-        HashMap<String, Class<? extends StudyImporter>> supportedFormats = new HashMap<String, Class<? extends StudyImporter>>() {
+    static Class<? extends DatasetImporter> importerForFormat(String format) throws StudyImporterException {
+        HashMap<String, Class<? extends DatasetImporter>> supportedFormats = new HashMap<String, Class<? extends DatasetImporter>>() {
             {
-                put("globi", StudyImporterForTSV.class);
-                put("gomexsi", StudyImporterForGoMexSI2.class);
-                put("hechinger", StudyImporterForHechinger.class);
-                put("dunne", StudyImporterForDunne.class);
-                put("seltmann", StudyImporterForSeltmann.class);
-                put("arthropodEasyCapture", StudyImporterForRSS.class);
-                put("coetzer", StudyImporterForCoetzer.class);
-                put("wood", StudyImporterForWood.class);
-                put("szoboszlai", StudyImporterForSzoboszlai.class);
-                put("planque", StudyImporterForPlanque.class);
-                put("gray", StudyImporterForGray.class);
-                put("akin", StudyImporterForAkin.class);
-                put("baremore", StudyImporterForBaremore.class);
-                put("barnes", StudyImporterForBarnes.class);
-                put("bell", StudyImporterForBell.class);
-                put("bioinfo", StudyImporterForBioInfo.class);
-                put("blewett", StudyImporterForBlewett.class);
-                put("brose", StudyImporterForBrose.class);
-                put("byrnes", StudyImporterForByrnes.class);
-                put("cook", StudyImporterForCook.class);
-                put("cruaud", StudyImporterForCruaud.class);
-                put("ferrer-paris", StudyImporterForJRFerrerParis.class);
-                put("fishbase", StudyImporterForFishbase3.class);
-                put("gemina", StudyImporterForGemina.class);
-                put("hafner", StudyImporterForHafner.class);
-                put("hurlbert", StudyImporterForHurlbert.class);
-                put("ices", StudyImporterForICES.class);
-                put("inaturalist", StudyImporterForINaturalist.class);
-                put("kelpforest", StudyImporterForKelpForest.class);
-                put("life-watch-greece", StudyImporterForLifeWatchGreece.class);
-                put("raymond", StudyImporterForRaymond.class);
-                put("robledo", StudyImporterForRobledo.class);
-                put("roopnarine", StudyImporterForRoopnarine.class);
-                put("simons", StudyImporterForSimons.class);
-                put("siad", StudyImporterForSIAD.class);
-                put("spire", StudyImporterForSPIRE.class);
-                put("strona", StudyImporterForStrona.class);
-                put("wrast", StudyImporterForWrast.class);
-                put("web-of-life", StudyImporterForWebOfLife.class);
-                put("saproxylic", StudyImporterForSaproxylic.class);
-                put("globalwebdb", StudyImporterForGlobalWebDb.class);
-                put("application/dwca", StudyImporterForDwCA.class);
-                put("dwca", StudyImporterForDwCA.class);
-                put("rss", StudyImporterForRSS.class);
-                put("mangal", StudyImporterForMangal.class);
-                put("batplant", StudyImporterForBatPlant.class);
-                put("batbase", StudyImporterForBatBase.class);
-                put("dbatvir", StudyImporterForDBatVir.class);
-                put("pensoft", StudyImporterForPensoft.class);
-                put("zenodo", StudyImporterForZenodoMetadata.class);
+                put("globi", DatasetImporterForTSV.class);
+                put("gomexsi", DatasetImporterForGoMexSI2.class);
+                put("hechinger", DatasetImporterForHechinger.class);
+                put("dunne", DatasetImporterForDunne.class);
+                put("seltmann", DatasetImporterForSeltmann.class);
+                put("arthropodEasyCapture", DatasetImporterForRSS.class);
+                put("coetzer", DatasetImporterForCoetzer.class);
+                put("wood", DatasetImporterForWood.class);
+                put("szoboszlai", DatasetImporterForSzoboszlai.class);
+                put("planque", DatasetImporterForPlanque.class);
+                put("gray", DatasetImporterForGray.class);
+                put("akin", DatasetImporterForAkin.class);
+                put("baremore", DatasetImporterForBaremore.class);
+                put("barnes", DatasetImporterForBarnes.class);
+                put("bell", DatasetImporterForBell.class);
+                put("bioinfo", DatasetImporterForBioInfo.class);
+                put("blewett", DatasetImporterForBlewett.class);
+                put("brose", DatasetImporterForBrose.class);
+                put("byrnes", DatasetImporterForByrnes.class);
+                put("cook", DatasetImporterForCook.class);
+                put("cruaud", DatasetImporterForCruaud.class);
+                put("ferrer-paris", DatasetImporterForJRFerrerParis.class);
+                put("fishbase", DatasetImporterForFishbase3.class);
+                put("gemina", DatasetImporterForGemina.class);
+                put("hafner", DatasetImporterForHafner.class);
+                put("hurlbert", DatasetImporterForHurlbert.class);
+                put("ices", DatasetImporterForICES.class);
+                put("inaturalist", DatasetImporterForINaturalist.class);
+                put("kelpforest", DatasetImporterForKelpForest.class);
+                put("life-watch-greece", DatasetImporterForLifeWatchGreece.class);
+                put("raymond", DatasetImporterForRaymond.class);
+                put("robledo", DatasetImporterForRobledo.class);
+                put("roopnarine", DatasetImporterForRoopnarine.class);
+                put("simons", DatasetImporterForSimons.class);
+                put("siad", DatasetImporterForSIAD.class);
+                put("spire", DatasetImporterForSPIRE.class);
+                put("strona", DatasetImporterForStrona.class);
+                put("wrast", DatasetImporterForWrast.class);
+                put("web-of-life", DatasetImporterForWebOfLife.class);
+                put("saproxylic", DatasetImporterForSaproxylic.class);
+                put("globalwebdb", DatasetImporterForGlobalWebDb.class);
+                put(MIME_TYPE_DWCA, DatasetImporterForDwCA.class);
+                put("dwca", DatasetImporterForDwCA.class);
+                put("rss", DatasetImporterForRSS.class);
+                put("mangal", DatasetImporterForMangal.class);
+                put("batplant", DatasetImporterForBatPlant.class);
+                put("batbase", DatasetImporterForBatBase.class);
+                put("dbatvir", DatasetImporterForDBatVir.class);
+                put("pensoft", DatasetImporterForPensoft.class);
+                put("zenodo", DatasetImporterForZenodoMetadata.class);
             }
         };
-        Class<? extends StudyImporter> anImporter = supportedFormats.get(format);
+        Class<? extends DatasetImporter> anImporter = supportedFormats.get(format);
         if (anImporter == null) {
             throw new StudyImporterException("unsupported format [" + format + "]");
         }
@@ -198,7 +200,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
     }
 
     @Override
-    public StudyImporter createImporter(Dataset dataset) throws StudyImporterException {
+    public DatasetImporter createImporter(Dataset dataset) throws StudyImporterException {
         return createImporter(dataset, this.nodeFactory);
     }
 }

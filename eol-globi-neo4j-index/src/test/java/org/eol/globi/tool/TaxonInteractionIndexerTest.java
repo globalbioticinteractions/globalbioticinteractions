@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -20,29 +21,30 @@ import org.neo4j.graphdb.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
     @Test
     public void buildTaxonInterIndex() throws NodeFactoryException, PropertyEnricherException {
-        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"));
-        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Canis lupus", "WORMS:2"));
+        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"));
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Canis lupus", "WORMS:2"));
         human.ate(animal);
         for (int i = 0; i < 10; i++) {
-            Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", "WORMS:158711"));
+            Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Arius felis", "WORMS:158711"));
             human.ate(fish);
         }
 
         assertNull(taxonIndex.findTaxonById("WORMS:2"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb())).resolve();
-        new TaxonInteractionIndexer(getGraphDb()).index();
+        new NameResolver(new NonResolvingTaxonIndex(getGraphDb()))
+                .index(new GraphServiceFactoryProxy(getGraphDb()));
+
+        new TaxonInteractionIndexer().index(getGraphDb());
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
@@ -68,18 +70,19 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
     @Test
     public void indexNoNameNoMatch() throws NodeFactoryException {
-        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Homo sapiens", PropertyAndValueDictionary.NO_MATCH));
-        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Canis lupus", PropertyAndValueDictionary.NO_MATCH));
+        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Homo sapiens", PropertyAndValueDictionary.NO_MATCH));
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Canis lupus", PropertyAndValueDictionary.NO_MATCH));
         human.ate(animal);
         for (int i = 0; i < 10; i++) {
-            Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null, null)), new TaxonImpl("Arius felis", null));
+            Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Arius felis", null));
             human.ate(fish);
         }
 
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(getGraphDb(), new NonResolvingTaxonIndex(getGraphDb())).resolve();
+        new NameResolver(new NonResolvingTaxonIndex(getGraphDb()))
+                .index(new GraphServiceFactoryProxy(getGraphDb()));
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));

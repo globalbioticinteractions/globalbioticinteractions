@@ -5,6 +5,7 @@ import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.TaxonIndex;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class IndexInteractionsTest extends GraphDBTestCase {
@@ -41,7 +42,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
     public void indexInteractions() throws NodeFactoryException {
         TaxonIndex taxonIndex = getOrCreateTaxonIndex();
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
-        StudyImpl study = new StudyImpl("some study", "some source", new DOI("123.23", "222"), "some study citation");
+        StudyImpl study = new StudyImpl("some study", new DOI("123.23", "222"), "some study citation");
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetImpl("some/namespace", URI.create("https://some.uri"), inStream -> inStream));
         Study interaction = factory.getOrCreateStudy(study);
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
@@ -55,10 +56,10 @@ public class IndexInteractionsTest extends GraphDBTestCase {
 
         donald.ate(mickey);
 
-        new IndexInteractions(getGraphDb()).link();
+        new IndexInteractions().index(new GraphServiceFactoryProxy(getGraphDb()));
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j(getGraphDb());
-        StudyImpl study1 = new StudyImpl("some study", "some source", null, "come citation");
+        StudyImpl study1 = new StudyImpl("some study", null, "come citation");
         study1.setOriginatingDataset(new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream));
         StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
 

@@ -1,34 +1,17 @@
 package org.globalbioticinteractions.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.CustomServiceUnavailableStrategy;
 import org.eol.globi.util.HttpUtil;
-import org.eol.globi.util.InputStreamFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GitClient {
     private static CloseableHttpClient gitClient;
@@ -60,8 +43,8 @@ public class GitClient {
 
     private static CloseableHttpClient createGitHttpClient() {
         RequestConfig config = RequestConfig.custom()
-                .setSocketTimeout(HttpUtil.FIVE_SECONDS)
-                .setConnectTimeout(HttpUtil.FIVE_SECONDS)
+                .setSocketTimeout(HttpUtil.TIMEOUT_SHORT)
+                .setConnectTimeout(HttpUtil.TIMEOUT_SHORT)
                 .build();
 
         HttpClientBuilder clientBuilder = HttpClientBuilder.create()

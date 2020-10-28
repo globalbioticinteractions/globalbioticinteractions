@@ -74,7 +74,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
             }
         }
         if (configPair == null) {
-            throw new DatasetRegistryException("failed to valid dataset configuration in [" + StringUtils.join(datasetHandlers.keySet() + "]"));
+            throw new DatasetRegistryException("failed to valid find dataset configuration in [" + StringUtils.join(datasetHandlers.keySet() + "]"));
         }
 
         return configPair;

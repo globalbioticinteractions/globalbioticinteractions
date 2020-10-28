@@ -19,6 +19,7 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import java.io.IOException;
 import java.util.Date;
@@ -28,42 +29,41 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.eol.globi.data.StudyImporterForTSV.ARGUMENT_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_ID;
-import static org.eol.globi.data.StudyImporterForTSV.BASIS_OF_RECORD_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LATITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.DECIMAL_LONGITUDE;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.INTERACTION_TYPE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_ID;
-import static org.eol.globi.data.StudyImporterForTSV.LOCALITY_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_DOI;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_BODY_PART_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_CATALOG_NUMBER;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_COLLECTION_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_INSTITUTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_LIFE_STAGE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_OCCURRENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_ID;
-import static org.eol.globi.data.StudyImporterForTSV.SOURCE_SEX_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.STUDY_SOURCE_CITATION;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_BODY_PART_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_CATALOG_NUMBER;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_COLLECTION_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_INSTITUTION_CODE;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_LIFE_STAGE_NAME;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_OCCURRENCE_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_ID;
-import static org.eol.globi.data.StudyImporterForTSV.TARGET_SEX_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.ARGUMENT_TYPE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LATITUDE;
+import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LONGITUDE;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_BODY_PART_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_CATALOG_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_COLLECTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_COLLECTION_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_INSTITUTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_COLLECTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_COLLECTION_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_INSTITUTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_LIFE_STAGE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.domain.PropertyAndValueDictionary.CATALOG_NUMBER;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_CODE;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COLLECTION_ID;
@@ -387,7 +387,6 @@ class InteractionListenerImpl implements InteractionListener {
             }
         }
         StudyImpl study1 = new StudyImpl(l.get(REFERENCE_ID),
-                l.get(STUDY_SOURCE_CITATION),
                 doi,
                 referenceCitation);
 
@@ -400,7 +399,7 @@ class InteractionListenerImpl implements InteractionListener {
     }
 
     private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
-        final String eventDate = link.get(StudyImporterForMetaTable.EVENT_DATE);
+        final String eventDate = link.get(DatasetImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
                 final DateTime dateTime = DateUtil
@@ -415,11 +414,8 @@ class InteractionListenerImpl implements InteractionListener {
                     logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] is in the future");
                 } else if (dateTime.getYear() < 100) {
                     logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
-                } else if (StringUtils.split(eventDate, "/").length > 1) {
-                    DateTime endDate = DateUtil.parseDateUTC(StringUtils.split(eventDate, "/")[1]);
-                    if (dateTime.isAfter(endDate)) {
-                        logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
-                    }
+                } else if (hasStartDateAfterEndDate(eventDate)) {
+                    logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
                 }
                 nodeFactory.setUnixEpochProperty(target, date);
             } catch (IllegalArgumentException ex) {
@@ -430,6 +426,32 @@ class InteractionListenerImpl implements InteractionListener {
 
         }
 
+    }
+
+    static boolean hasStartDateAfterEndDate(String eventDate) {
+        boolean hasStartedAfterFinishing = false;
+        final String[] split = StringUtils.split(eventDate, "/");
+        if (split.length > 1) {
+            try {
+                Interval actual = Interval.parse(eventDate);
+                hasStartedAfterFinishing = actual.getStart().isAfter(actual.getEnd());
+            } catch (IllegalArgumentException ex) {
+                final int diff = StringUtils.length(split[0]) - StringUtils.length(split[1]);
+                if (diff > 0) {
+                    final String prefix = StringUtils.substring(split[0], 0, diff);
+                    final String attemptWorkaround = StringUtils.join(split[0], "/", prefix + split[1]);
+                    try {
+                        Interval actual = Interval.parse(attemptWorkaround);
+                        hasStartedAfterFinishing = actual.getStart().isAfter(actual.getEnd());
+                    } catch (IllegalArgumentException e) {
+                        hasStartedAfterFinishing = true;
+                    }
+                } else {
+                    hasStartedAfterFinishing = true;
+                }
+            }
+        }
+        return hasStartedAfterFinishing;
     }
 
     private static String applySymbiotaDateTimeFix(String eventDate) {
@@ -461,10 +483,10 @@ class InteractionListenerImpl implements InteractionListener {
 
     private Location getOrCreateLocation(Map<String, String> link) throws NodeFactoryException {
         LatLng centroid = null;
-        String[] latitudes = {DECIMAL_LATITUDE, StudyImporterForMetaTable.LATITUDE};
+        String[] latitudes = {DECIMAL_LATITUDE, DatasetImporterForMetaTable.LATITUDE};
         String latitude = getFirstValueForTerms(link, latitudes);
 
-        String[] longitudes = {DECIMAL_LONGITUDE, StudyImporterForMetaTable.LONGITUDE};
+        String[] longitudes = {DECIMAL_LONGITUDE, DatasetImporterForMetaTable.LONGITUDE};
         String longitude = getFirstValueForTerms(link, longitudes);
 
         if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
