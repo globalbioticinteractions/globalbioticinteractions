@@ -11,8 +11,11 @@ import org.joda.time.DateTime;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -90,20 +93,20 @@ public class CitationUtil {
 
     static String citationOrDefaultFor(Dataset dataset, String defaultCitation) {
         JsonNode config = dataset.getConfig();
-        Stream<String> secondaryCitations = Stream.of(
-                CITATION_TERMS)
-                .map(key -> {
-                            Optional<String> citation = Optional.empty();
-                            if (config != null && config.has("tables")) {
-                                JsonNode tables = config.get("tables");
-                                for (JsonNode table : tables) {
-                                    citation = addSecondaryCitation(table, key);
-                                }
-                            }
-                            return citation;
-                        }
-                ).filter(Optional::isPresent)
-                .map(Optional::get)
+
+        List<String> secondaryCitations2 = new ArrayList<>();
+        if (config != null && config.has("tables")) {
+            JsonNode tables = config.get("tables");
+            for (JsonNode table : tables) {
+                for (String citationTerm : CITATION_TERMS) {
+                    Optional<String> citation1 = addSecondaryCitation(table, citationTerm);
+                    citation1.ifPresent(secondaryCitations2::add);
+
+                }
+            }
+        }
+
+        Stream<String> secondaryCitations = secondaryCitations2.stream()
                 .distinct()
                 .sorted();
 
