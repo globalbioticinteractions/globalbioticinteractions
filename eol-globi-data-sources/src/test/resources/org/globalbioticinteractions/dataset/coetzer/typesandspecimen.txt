@@ -1,0 +1,1 @@
+id	typeStatus	typeDesignationType	typeDesignatedBy	scientificName	taxonRank	bibliographicCitation	collectionCode	locality	sex

@@ -1,0 +1,113 @@
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+         xmlns:dc="http://purl.org/dc/terms/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.1/eml.xsd"
+         packageId="da38f103-4410-43d1-b716-ea6b1b92bbac/v1.6" system="http://gbif.org" scope="system"
+         xml:lang="eng">
+
+    <dataset>
+        <alternateIdentifier>da38f103-4410-43d1-b716-ea6b1b92bbac</alternateIdentifier>
+        <alternateIdentifier>http://ipt.saiab.ac.za/resource?r=catalogueofafrotropicalbees</alternateIdentifier>
+        <title xml:lang="eng">Catalogue of Afrotropical Bees</title>
+        <creator>
+            <individualName>
+                <givenName>Connal</givenName>
+                <surName>Eardley</surName>
+            </individualName>
+            <organizationName>Agricultural Research Council</organizationName>
+            <address>
+                <city>Pretoria</city>
+                <country>ZA</country>
+            </address>
+            <phone>+27128088250</phone>
+            <electronicMailAddress>eardleyc@arc.agric.za</electronicMailAddress>
+            <onlineUrl>http://www.arc.agric.za</onlineUrl>
+        </creator>
+        <metadataProvider>
+            <individualName>
+                <givenName>Willem</givenName>
+                <surName>Coetzer</surName>
+            </individualName>
+            <organizationName>South African Institute for Aquatic Biodiversity</organizationName>
+            <address>
+                <deliveryPoint>Somerset Street</deliveryPoint>
+                <city>Grahamstown</city>
+                <administrativeArea>Eastern cape</administrativeArea>
+                <postalCode>6139</postalCode>
+                <country>ZA</country>
+            </address>
+            <phone>+27466035841</phone>
+            <electronicMailAddress>w.coetzer@saiab.ac.za</electronicMailAddress>
+        </metadataProvider>
+        <pubDate>
+            2016-07-06
+        </pubDate>
+        <language>eng</language>
+        <abstract>
+            <para>The purpose of this catalogue is to list the valid names, nomenclatorial history of, and references citing, the described bees of sub-saharan Africa and the western Indian Ocean islands, excluding the honey bee (Apis mellifera Linnaeus). The countries in which species occur are listed, as well as the type specimens/species of species/genera. Some ecological information is provided, namely flowers visited, plants used as nests, parasitic bees and host bees.</para>
+        </abstract>
+        <keywordSet>
+            <keyword>Checklist</keyword>
+            <keywordThesaurus>GBIF Dataset Type Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_type.xml</keywordThesaurus>
+        </keywordSet>
+        <intellectualRights>
+            <para>This work is licensed under a <ulink url="http://creativecommons.org/licenses/by/4.0/legalcode"><citetitle>Creative Commons Attribution (CC-BY) 4.0 License</citetitle></ulink>.</para>
+        </intellectualRights>
+        <coverage>
+            <geographicCoverage>
+                <geographicDescription>Afrotropical Region</geographicDescription>
+                <boundingCoordinates>
+                    <westBoundingCoordinate>-20.55</westBoundingCoordinate>
+                    <eastBoundingCoordinate>53.95</eastBoundingCoordinate>
+                    <northBoundingCoordinate>22.14</northBoundingCoordinate>
+                    <southBoundingCoordinate>-35.91</southBoundingCoordinate>
+                </boundingCoordinates>
+            </geographicCoverage>
+            <taxonomicCoverage>
+                <generalTaxonomicCoverage>Bees</generalTaxonomicCoverage>
+                <taxonomicClassification>
+                    <taxonRankName>superfamily</taxonRankName>
+                    <taxonRankValue>Apoidea</taxonRankValue>
+                </taxonomicClassification>
+            </taxonomicCoverage>
+        </coverage>
+        <maintenance>
+            <description>
+                <para></para>
+            </description>
+            <maintenanceUpdateFrequency>unkown</maintenanceUpdateFrequency>
+        </maintenance>
+
+        <contact>
+            <individualName>
+                <givenName>Willem</givenName>
+                <surName>Coetzer</surName>
+            </individualName>
+            <organizationName>South African Institute for Aquatic Biodiversity</organizationName>
+            <address>
+                <deliveryPoint>Somerset Street</deliveryPoint>
+                <city>Grahamstown</city>
+                <administrativeArea>Eastern cape</administrativeArea>
+                <postalCode>6139</postalCode>
+                <country>ZA</country>
+            </address>
+            <phone>+27466035841</phone>
+        </contact>
+        <methods>
+            <methodStep>
+                <description>
+                    <para></para>
+                </description>
+            </methodStep>
+        </methods>
+    </dataset>
+    <additionalMetadata>
+        <metadata>
+            <gbif>
+                <dateStamp>2016-02-20T12:38:51.085+02:00</dateStamp>
+                <hierarchyLevel>dataset</hierarchyLevel>
+                <dc:replaces>da38f103-4410-43d1-b716-ea6b1b92bbac/v1.6.xml</dc:replaces>
+            </gbif>
+        </metadata>
+    </additionalMetadata>
+</eml:eml>

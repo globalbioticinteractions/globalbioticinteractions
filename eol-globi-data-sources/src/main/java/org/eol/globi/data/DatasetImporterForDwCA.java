@@ -12,7 +12,6 @@ import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
-import org.gbif.dwc.extensions.ExtensionProperty;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
@@ -101,6 +100,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex.+\\W.*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
     public static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
+    public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -139,6 +139,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         new InteractionListenerWithContext(),
                         InteractUtil.createInteractionTypeMapperForImporter(getDataset()),
                         getLogger());
+
+                importDescriptionExtension(archive, listenerProxy);
 
                 importResourceRelationExtension(archive, listenerProxy);
 
@@ -433,8 +435,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener) {
-        if (hasAssociatedTaxaExtension(archive)) {
-            ArchiveFile extension = archive.getExtension(new ExtensionProperty(EXTENSION_ASSOCIATED_TAXA));
+        ArchiveFile extension = findResourceExtension(archive, EXTENSION_ASSOCIATED_TAXA);
+        if (extension != null) {
             ArchiveFile core = archive.getCore();
 
             DB db = DBMaker
@@ -464,6 +466,46 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         mapCoreProperties(coreRecord, interaction);
 
                         interactionListener.newLink(interaction);
+                    } catch (StudyImporterException e) {
+                        //
+                    }
+                }
+            }
+        }
+    }
+
+    private static void importDescriptionExtension(Archive archive, InteractionListener interactionListener) {
+        ArchiveFile extension = findResourceExtension(archive, EXTENSION_DESCRIPTION);
+        if (extension != null) {
+            ArchiveFile core = archive.getCore();
+
+            DB db = DBMaker
+                    .newMemoryDirectDB()
+                    .compressionEnable()
+                    .transactionDisable()
+                    .make();
+            final HTreeMap<String, Map<String, String>> associationsMap = db
+                    .createHashMap("assocMap")
+                    .make();
+
+            for (Record record : extension) {
+                Map<String, String> props = new TreeMap<>();
+                termsToMap(record, props);
+                associationsMap.put(record.id(), props);
+            }
+
+            for (Record coreRecord : core) {
+                String id = coreRecord.id();
+                if (associationsMap.containsKey(id)) {
+                    try {
+                        Map<String, String> targetProperties = associationsMap.get(id);
+                        List<Map<String, String>> maps = parseAssociatedTaxa(targetProperties.get("http://purl.org/dc/terms/description"));
+                        for (Map<String, String> map : maps) {
+                            TreeMap<String, String> interaction = new TreeMap<>(map);
+                            mapCoreProperties(coreRecord, interaction);
+                            interactionListener.newLink(interaction);
+                        }
+
                     } catch (StudyImporterException e) {
                         //
                     }
@@ -674,7 +716,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return findResourceExtension(archive, EXTENSION_RESOURCE_RELATIONSHIP);
     }
 
-    private static ArchiveFile findResourceExtension(Archive archive, String extensionType) {
+    static ArchiveFile findResourceExtension(Archive archive, String extensionType) {
         ArchiveFile resourceRelationExtension = null;
         Set<ArchiveFile> extensions = archive.getExtensions();
         for (ArchiveFile extension : extensions) {
@@ -734,27 +776,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 DatasetImporterForTSV.INTERACTION_TYPE_NAME,
                 targetProperties.get("http://purl.org/NET/aec/associatedRelationshipTerm")
         );
-    }
-
-    static boolean hasExtension(Archive archive, String extensionQualitfiedName) {
-        boolean hasExtension = false;
-        Set<ArchiveFile> extensions = archive.getExtensions();
-        for (ArchiveFile extension : extensions) {
-            Term rowType = extension.getRowType();
-            if (rowType != null && StringUtils.equals(extensionQualitfiedName, rowType.qualifiedName())) {
-                hasExtension = true;
-            }
-        }
-        return hasExtension;
-
-    }
-
-    static boolean hasAssociatedTaxaExtension(Archive archive) {
-        return hasExtension(archive, EXTENSION_ASSOCIATED_TAXA);
-    }
-
-    static boolean hasResourceRelationships(Archive archive) {
-        return hasExtension(archive, EXTENSION_RESOURCE_RELATIONSHIP);
     }
 
     private class InteractionListenerWithContext implements InteractionListener {
