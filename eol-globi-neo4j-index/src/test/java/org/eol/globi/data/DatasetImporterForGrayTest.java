@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
-import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -73,8 +73,8 @@ public class DatasetImporterForGrayTest extends GraphDBTestCase {
     }
 
     private void assertStaticInfo(Map<String, String> firstLink) {
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. https://doi.org/10.5281/zenodo.13751."));
-        assertThat(firstLink.get(STUDY_SOURCE_CITATION), containsString(" Accessed at <http://example.com>"));
+        assertThat(firstLink.get(DATASET_CITATION), containsString("Gray C, Ma A, Perkins D, Hudson L, Figueroa D, Woodward G (2015). Database of trophic interactions. Zenodo. https://doi.org/10.5281/zenodo.13751."));
+        assertThat(firstLink.get(DATASET_CITATION), containsString(" Accessed at <http://example.com>"));
         assertThat(firstLink.get(REFERENCE_CITATION), containsString("Ledger"));
         assertThat(firstLink.get(INTERACTION_TYPE_ID), is("RO:0002470"));
         assertThat(firstLink.get(INTERACTION_TYPE_NAME), is("eats"));

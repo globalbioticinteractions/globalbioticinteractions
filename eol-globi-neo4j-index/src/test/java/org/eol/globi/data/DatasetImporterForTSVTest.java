@@ -27,7 +27,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.hamcrest.CoreMatchers.not;
@@ -303,7 +303,7 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
     @Test
     public void generateReferenceIdFromCitation() throws StudyImporterException {
         String id = DatasetImporterForTSV.generateReferenceId(new TreeMap<String, String>() {{
-            put(STUDY_SOURCE_CITATION, "http://source");
+            put(DATASET_CITATION, "http://source");
             put(REFERENCE_CITATION, "http://bla");
         }});
 

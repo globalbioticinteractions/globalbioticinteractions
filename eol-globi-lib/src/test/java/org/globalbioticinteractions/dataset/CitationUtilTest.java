@@ -8,6 +8,9 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 public class CitationUtilTest {
@@ -35,6 +38,36 @@ public class CitationUtilTest {
 
         String citation = CitationUtil.citationOrDefaultFor(dataset, "foo");
         assertThat(citation, Is.is("Gandhi, K. J. K., & Herms, D. A. (2009). North American arthropods at risk due to widespread Fraxinus mortality caused by the Alien Emerald ash borer. Biological Invasions, 12(6), 1839–1846. doi:10.1007/s10530-009-9594-1."));
+    }
+
+    @Test
+    public void citationDefaultFullIRI() throws IOException {
+
+        Dataset dataset = Mockito.mock(Dataset.class);
+        when(dataset.getOrDefault(eq("dcterms:bibliographicCitation"), anyObject()))
+                .thenReturn("citation3");
+        when(dataset.getOrDefault(eq("http://purl.org/dc/terms/bibliographicCitation"), anyObject()))
+                .thenReturn("citation1");
+        when(dataset.getOrDefault(eq("citation"), anyObject()))
+                .thenReturn("citation2");
+
+
+        String citation = CitationUtil.citationOrDefaultFor(dataset, "foo");
+        assertThat(citation, Is.is("citation1; citation2; citation3"));
+    }
+
+    @Test
+    public void citationDefaultFullIRI2() throws IOException {
+
+        Dataset dataset = Mockito.mock(Dataset.class);
+        when(dataset.getOrDefault(eq("http://purl.org/dc/terms/bibliographicCitation"), anyObject()))
+                .thenReturn("citation1");
+        when(dataset.getOrDefault(eq("citation"), anyObject()))
+                .thenReturn("citation2");
+
+
+        String citation = CitationUtil.citationOrDefaultFor(dataset, "foo");
+        assertThat(citation, Is.is("citation1; citation2"));
     }
 
 }

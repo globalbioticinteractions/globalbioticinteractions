@@ -46,7 +46,7 @@ public class DatasetImporterForWood extends DatasetImporterWithListener {
         link.put(TaxonUtil.SOURCE_TAXON_NAME, parser.getValueByLabel("PredName"));
         addTSN(parser, link, "PreyTSN", TaxonUtil.TARGET_TAXON_ID);
         link.put(TaxonUtil.TARGET_TAXON_NAME, parser.getValueByLabel("PreyName"));
-        link.put(DatasetImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
+        link.put(DatasetImporterForTSV.DATASET_CITATION, getSourceCitationLastAccessed());
         link.put(DatasetImporterForTSV.REFERENCE_CITATION, getSourceCitation());
         link.put(DatasetImporterForTSV.REFERENCE_ID, getSourceDOI().toPrintableDOI());
         link.put(DatasetImporterForTSV.REFERENCE_DOI, getSourceDOI().toString());

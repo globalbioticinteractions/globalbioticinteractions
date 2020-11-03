@@ -67,7 +67,7 @@ public class DatasetImporterForGlobalWebDb extends DatasetImporterWithListener {
                     put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
                     put(DatasetImporterForTSV.REFERENCE_ID, MD5.getHashString(citation));
                     put(DatasetImporterForTSV.REFERENCE_CITATION, citation);
-                    put(DatasetImporterForTSV.STUDY_SOURCE_CITATION, sourceCitation);
+                    put(DatasetImporterForTSV.DATASET_CITATION, sourceCitation);
                 }};
 
                 List<String> sourceTaxa = Arrays.asList(headerColumns).subList(1, headerColumns.length);

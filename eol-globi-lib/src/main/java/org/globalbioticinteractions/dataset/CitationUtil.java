@@ -11,14 +11,26 @@ import org.joda.time.DateTime;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.eol.globi.domain.PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION;
+import static org.eol.globi.domain.PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION_IRI;
 
 public class CitationUtil {
     static final String ZENODO_URL_PREFIX = "https://zenodo.org/record/";
+
+
     private static final Log LOG = LogFactory.getLog(CitationUtil.class);
+
+    public static final String[] CITATION_TERMS = new String[]{
+            DCTERMS_BIBLIOGRAPHIC_CITATION,
+            DCTERMS_BIBLIOGRAPHIC_CITATION_IRI,
+            "citation"
+    };
 
     public static String createLastAccessedString(URI reference) {
         return createLastAccessedString(reference.toString());
@@ -56,6 +68,7 @@ public class CitationUtil {
         return separator;
     }
 
+
     public static String citationFor(Dataset dataset) {
         String fallbackCitation = dataset.getArchiveURI() == null
                 ? dataset.getNamespace()
@@ -75,34 +88,55 @@ public class CitationUtil {
         return StringUtils.trim(citation);
     }
 
-    public static String citationOrDefaultFor(Dataset dataset, String defaultCitation) {
-        Set<String> secondaryCitations = new TreeSet<>();
+    static String citationOrDefaultFor(Dataset dataset, String defaultCitation) {
         JsonNode config = dataset.getConfig();
-        if (config != null && config.has("tables")) {
-            JsonNode tables = config.get("tables");
-            for (JsonNode table : tables) {
-                if (table.has(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION)) {
-                    String secondaryCitation = table
-                            .get(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION)
-                            .getTextValue();
-                    if (StringUtils.isNotBlank(secondaryCitation)) {
-                        secondaryCitations.add(secondaryCitation);
-                    }
-                }
-            }
-        }
-        String secondaryCitationsJoin = StringUtils.join(secondaryCitations, "; ");
+        Stream<String> secondaryCitations = Stream.of(
+                CITATION_TERMS)
+                .map(key -> {
+                            Optional<String> citation = Optional.empty();
+                            if (config != null && config.has("tables")) {
+                                JsonNode tables = config.get("tables");
+                                for (JsonNode table : tables) {
+                                    citation = addSecondaryCitation(table, key);
+                                }
+                            }
+                            return citation;
+                        }
+                ).filter(Optional::isPresent)
+                .map(Optional::get)
+                .distinct()
+                .sorted();
+
+        String secondaryCitationsJoin = secondaryCitations.collect(Collectors.joining("; "));
         String fallbackCitation = StringUtils.isBlank(secondaryCitationsJoin)
                 ? defaultCitation
                 : secondaryCitationsJoin;
 
-        String primaryCitation = dataset
-                .getOrDefault(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION,
-                        dataset.getOrDefault("citation", fallbackCitation));
+        String primaryCitation = Stream.of(
+                CITATION_TERMS)
+                .map(x -> dataset.getOrDefault(x, ""))
+                .filter(StringUtils::isNotBlank)
+                .distinct()
+                .sorted()
+                .collect(Collectors.joining("; "));
 
-        return StringUtils.trim(StringUtils.isBlank(primaryCitation)
-                ? secondaryCitationsJoin
-                : primaryCitation);
+        return Stream.of(secondaryCitationsJoin, primaryCitation)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .orElse(fallbackCitation);
+    }
+
+    private static Optional<String> addSecondaryCitation(JsonNode table, String citationKey) {
+        Optional<String> citation = Optional.empty();
+        if (table.has(citationKey)) {
+            String secondaryCitation = table
+                    .get(citationKey)
+                    .getTextValue();
+            if (StringUtils.isNotBlank(secondaryCitation)) {
+                citation = Optional.of(secondaryCitation);
+            }
+        }
+        return citation;
     }
 
     public static DOI getDOI(Dataset dataset) {
@@ -123,5 +157,12 @@ public class CitationUtil {
 
         }
         return doiObj;
+    }
+
+    public static String citationFor(Map<String, String> props) {
+        return Stream.of(CITATION_TERMS)
+                .map(x -> props.getOrDefault(x, ""))
+                .filter(StringUtils::isNoneBlank)
+                .collect(Collectors.joining("; "));
     }
 }

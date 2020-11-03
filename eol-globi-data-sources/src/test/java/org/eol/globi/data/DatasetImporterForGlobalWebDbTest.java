@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import org.apache.commons.collections4.list.TreeList;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -75,7 +74,7 @@ public class DatasetImporterForGlobalWebDbTest {
         assertThat(first.get(DatasetImporterForTSV.LOCALITY_NAME), is("New England, U.S.A."));
         assertThat(first.get(DatasetImporterForTSV.REFERENCE_ID), is("df06df18abafa63a6f0473d6d0e6ce68"));
         assertThat(first.get(DatasetImporterForTSV.REFERENCE_CITATION), is("B.A. Menge and J.P. Sutherland. Species Diversity Gradients: Synthesis of the Roles of Predation, Competition, and Temporal Heterogeneity. The American Naturalist, 110(973), pp. 351-369."));
-        assertThat(first.get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), is("some source citation"));
+        assertThat(first.get(DatasetImporterForTSV.DATASET_CITATION), is("some source citation"));
 
         Map<String, String> last = interactions.get(5);
         assertThat(last.get(TaxonUtil.SOURCE_TAXON_NAME), is("Thais lapillus"));
@@ -86,7 +85,7 @@ public class DatasetImporterForGlobalWebDbTest {
         assertThat(last.get(DatasetImporterForTSV.LOCALITY_NAME), is("New England, U.S.A."));
         assertThat(last.get(DatasetImporterForTSV.REFERENCE_ID), is("df06df18abafa63a6f0473d6d0e6ce68"));
         assertThat(last.get(DatasetImporterForTSV.REFERENCE_CITATION), is("B.A. Menge and J.P. Sutherland. Species Diversity Gradients: Synthesis of the Roles of Predation, Competition, and Temporal Heterogeneity. The American Naturalist, 110(973), pp. 351-369."));
-        assertThat(last.get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), is("some source citation"));
+        assertThat(last.get(DatasetImporterForTSV.DATASET_CITATION), is("some source citation"));
     }
 
 }

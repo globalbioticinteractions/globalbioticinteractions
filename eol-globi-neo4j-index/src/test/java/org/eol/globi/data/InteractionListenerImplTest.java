@@ -14,8 +14,6 @@ import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
-import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -60,7 +58,7 @@ import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_NAMES;
-import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
@@ -117,7 +115,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DatasetImporterForMetaTable.LONGITUDE, "13.2");
         link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "doi:1234");
         listener.newLink(link);
@@ -203,7 +201,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(TARGET_TAXON_ID, "mouse");
         link.put(ARGUMENT_TYPE_ID, "https://en.wiktionary.org/wiki/refute");
         link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "doi:10.12/34");
         listener.newLink(link);
@@ -234,7 +232,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DECIMAL_LATITUDE, "12.2");
         link.put(DECIMAL_LONGITUDE, "13.2");
         link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "doi:10.12/34");
         listener.newLink(link);
@@ -267,7 +265,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_SEX_NAME, "male");
         link.put(TARGET_SEX_ID, "some:male");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
         listener.newLink(link);
@@ -307,7 +305,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(TARGET_TAXON_RANK, "species");
         link.put(TARGET_TAXON_PATH_IDS, "miniId");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
         listener.newLink(link);
@@ -370,7 +368,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(TARGET_COLLECTION_CODE, "collectionCode123");
         link.put(TARGET_COLLECTION_ID, "collectionId123");
         link.put(TARGET_CATALOG_NUMBER, "catalogNumber123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
 
@@ -422,7 +420,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(SOURCE_COLLECTION_CODE, "collectionCode123");
         link.put(SOURCE_COLLECTION_ID, "collectionId123");
         link.put(SOURCE_CATALOG_NUMBER, "catalogNumber123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
 
@@ -475,7 +473,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(DatasetImporterForMetaTable.EVENT_DATE, symbiotaTime);
         link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         listener.newLink(link);
 
@@ -565,7 +563,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(LOCALITY_ID, "bla:123");
         link.put(LOCALITY_NAME, "my back yard");
         link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         try {
             interactionListener.newLink(link);
@@ -603,7 +601,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "bla:XXX");
         try {
@@ -643,7 +641,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
         link.put(TARGET_TAXON_NAME, "mini");
         link.put(REFERENCE_ID, "123");
-        link.put(STUDY_SOURCE_CITATION, "some source ref");
+        link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "10.12/123");
         link.put(DatasetImporterForMetaTable.EVENT_DATE, "2009-09/2003-09");

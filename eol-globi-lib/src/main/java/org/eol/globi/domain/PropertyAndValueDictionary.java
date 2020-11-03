@@ -17,6 +17,7 @@ public class PropertyAndValueDictionary {
     public static final String STATUS_ID = "statusId";
     public static final String STATUS_LABEL = "statusLabel";
     public static final String DCTERMS_BIBLIOGRAPHIC_CITATION = "dcterms:bibliographicCitation";
+    public static final String DCTERMS_BIBLIOGRAPHIC_CITATION_IRI = "http://purl.org/dc/terms/bibliographicCitation";
     public static final String OCCURRENCE_ID = "occurrenceId";
     public static final String CATALOG_NUMBER = "catalogNumber";
     public static final String COLLECTION_CODE = "collectionCode";

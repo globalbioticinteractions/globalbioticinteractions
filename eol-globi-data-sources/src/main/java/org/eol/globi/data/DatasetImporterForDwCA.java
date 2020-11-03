@@ -60,7 +60,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_NAME;
-import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
@@ -101,6 +101,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
     public static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
     public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
+    public static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
+    public static final String DWC_COREID = "dwc:coreid";
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -140,11 +142,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         InteractUtil.createInteractionTypeMapperForImporter(getDataset()),
                         getLogger());
 
-                importDescriptionExtension(archive, listenerProxy);
+                InteractionListener referencingListener = createReferenceEnricher(archive, listenerProxy);
 
-                importResourceRelationExtension(archive, listenerProxy);
+                importDescriptionExtension(archive, referencingListener);
 
-                importAssociatedTaxaExtension(archive, listenerProxy);
+                importResourceRelationExtension(archive, referencingListener);
+
+                importAssociatedTaxaExtension(archive, referencingListener);
 
                 int i = importCore(archive, listenerProxy);
                 getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
@@ -228,6 +232,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         for (Map<String, String> interactionProperties : interactionCandidates) {
             interactionProperties.putAll(interaction);
+            interactionProperties.put(DWC_COREID, rec.id());
             mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
             mapCoreProperties(rec, interactionProperties);
             interactionListener.newLink(interactionProperties);
@@ -502,6 +507,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         List<Map<String, String>> maps = parseAssociatedTaxa(targetProperties.get("http://purl.org/dc/terms/description"));
                         for (Map<String, String> map : maps) {
                             TreeMap<String, String> interaction = new TreeMap<>(map);
+                            interaction.put(DWC_COREID, id);
                             mapCoreProperties(coreRecord, interaction);
                             interactionListener.newLink(interaction);
                         }
@@ -512,6 +518,52 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 }
             }
         }
+    }
+
+    private static InteractionListener createReferenceEnricher(Archive archive, final InteractionListener interactionListener) {
+        return new InteractionListener() {
+            private Map<String, Map<String, String>> referenceMap = null;
+
+            private void initIfNeeded() {
+                if (referenceMap == null) {
+                    referenceMap = Collections.emptyMap();
+
+                    ArchiveFile extension = findResourceExtension(archive, EXTENSION_REFERENCE);
+                    if (extension != null) {
+                        DB db = DBMaker
+                                .newMemoryDirectDB()
+                                .compressionEnable()
+                                .transactionDisable()
+                                .make();
+                        referenceMap = db
+                                .createHashMap("referenceMap")
+                                .make();
+
+                        for (Record record : extension) {
+                            Map<String, String> props = new TreeMap<>();
+                            termsToMap(record, props);
+                            props.put(REFERENCE_CITATION, CitationUtil.citationFor(props));
+                            referenceMap.put(record.id(), props);
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void newLink(Map<String, String> link) throws StudyImporterException {
+                initIfNeeded();
+
+                String s = link.get(DWC_COREID);
+                Map<String, String> enrichedLink = referenceMap.containsKey(s)
+                        ? new TreeMap(link) {{
+                    putAll(referenceMap.get(s));
+                }}
+                        : link;
+                interactionListener.newLink(enrichedLink);
+            }
+        };
+
     }
 
     static void importResourceRelationExtension(Archive archive, InteractionListener interactionListener) {
@@ -792,7 +844,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     put(DatasetConstant.CONTENT_HASH, getDataset().getOrDefault(DatasetConstant.CONTENT_HASH, ""));
 
                     String sourceCitationTrimmed = CitationUtil.sourceCitationLastAccessed(getDataset());
-                    DatasetImporterForDwCA.putIfAbsentAndNotBlank(this, STUDY_SOURCE_CITATION, sourceCitationTrimmed);
+                    DatasetImporterForDwCA.putIfAbsentAndNotBlank(this, DATASET_CITATION, sourceCitationTrimmed);
                     DatasetImporterForDwCA.putIfAbsentAndNotBlank(this, REFERENCE_CITATION, sourceCitationTrimmed);
                     DatasetImporterForDwCA.putIfAbsentAndNotBlank(this, REFERENCE_ID, sourceCitationTrimmed);
 

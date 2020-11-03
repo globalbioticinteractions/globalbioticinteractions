@@ -45,6 +45,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
@@ -83,7 +84,6 @@ public class DatasetImporterForDwCATest {
     public void importTaxonDescriptionsFromDir() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
-        AtomicInteger recordCounter = new AtomicInteger(0);
         List<Map<String, String>> links = new ArrayList<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
@@ -96,6 +96,8 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.importStudy();
 
         assertThat(links.size() > 0, is(true));
+        assertThat(links.get(0).get(DATASET_CITATION), containsString("org/globalbioticinteractions/dataset/coetzer/"));
+        assertThat(links.get(0).get(REFERENCE_CITATION), is("Cockerell, T.D.A. 1937. African bees of the genera Ceratina, Halictus and Megachile. 254 pp. William Clowes and Sons, London"));
         assertThat(links.get(0).get(TARGET_TAXON_NAME), is("Chaetodactylus leleupi"));
         assertThat(links.get(0).get(SOURCE_TAXON_NAME), is("Ceratina ruwenzorica Cockerell, 1937"));
         assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("Parasite"));
@@ -251,9 +253,9 @@ public class DatasetImporterForDwCATest {
                 assertThat(link.get(SOURCE_TAXON_NAME), is(not(nullValue())));
                 assertThat(link.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(link.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
-                assertThat(link.get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), containsString("some citation"));
-                assertThat(link.get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), containsString("Accessed at"));
-                assertThat(link.get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), containsString("dataset/dwca.zip"));
+                assertThat(link.get(DatasetImporterForTSV.DATASET_CITATION), containsString("some citation"));
+                assertThat(link.get(DatasetImporterForTSV.DATASET_CITATION), containsString("Accessed at"));
+                assertThat(link.get(DatasetImporterForTSV.DATASET_CITATION), containsString("dataset/dwca.zip"));
                 assertThat(link.get(REFERENCE_ID), is(not(nullValue())));
                 assertThat(link.get(DatasetImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
                 assertThat(link.get(REFERENCE_URL), is(not(nullValue())));
@@ -333,7 +335,7 @@ public class DatasetImporterForDwCATest {
                 assertThat(link.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(link.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
                 assertThat(link.get(INTERACTION_TYPE_ID), is(not(nullValue())));
-                assertThat(link.get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), containsString(expectedCitation));
+                assertThat(link.get(DatasetImporterForTSV.DATASET_CITATION), containsString(expectedCitation));
                 assertThat(link.get(REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(link.get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(link.get(REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));

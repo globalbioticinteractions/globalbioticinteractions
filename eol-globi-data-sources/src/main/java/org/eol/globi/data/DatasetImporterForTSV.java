@@ -21,7 +21,12 @@ import java.util.stream.Stream;
 public class DatasetImporterForTSV extends DatasetImporterWithListener {
     public static final String INTERACTION_TYPE_ID = "interactionTypeId";
     public static final String INTERACTION_TYPE_ID_VERBATIM = INTERACTION_TYPE_ID + "Verbatim";
-    public static final String STUDY_SOURCE_CITATION = "studySourceCitation";
+
+    public static final String DATASET_CITATION = "studySourceCitation";
+
+    @Deprecated
+    public static final String STUDY_SOURCE_CITATION = DATASET_CITATION;
+
     public static final String REFERENCE_ID = "studyTitle";
     public static final String REFERENCE_DOI = "referenceDoi";
     public static final String REFERENCE_CITATION = "referenceCitation";
@@ -120,7 +125,7 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
             InteractUtil.putNotBlank(link, REFERENCE_DOI, referenceDoi);
             InteractUtil.putNotBlank(link, REFERENCE_CITATION, CSVTSVUtil.valueOrNull(parser, REFERENCE_CITATION));
             InteractUtil.putNotBlank(link, REFERENCE_URL, CSVTSVUtil.valueOrNull(parser, REFERENCE_URL));
-            InteractUtil.putNotBlank(link, STUDY_SOURCE_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
+            InteractUtil.putNotBlank(link, DATASET_CITATION, CitationUtil.sourceCitationLastAccessed(getDataset(), sourceCitation == null ? "" : sourceCitation + ". "));
 
             InteractUtil.putNotBlank(link, TaxonUtil.SOURCE_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.SOURCE_TAXON_ID)));
             InteractUtil.putNotBlank(link, TaxonUtil.TARGET_TAXON_ID, StringUtils.trimToNull(parser.getValueByLabel(TaxonUtil.TARGET_TAXON_ID)));
@@ -196,7 +201,7 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
     }
 
     protected static String generateReferenceId(Map<String, String> props) {
-        String[] candidateIdsInIncreasingPreference = {STUDY_SOURCE_CITATION,
+        String[] candidateIdsInIncreasingPreference = {DATASET_CITATION,
                 REFERENCE_CITATION,
                 REFERENCE_URL,
                 REFERENCE_DOI,
@@ -206,7 +211,7 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
 
     protected static String generateReferenceCitation(Map<String, String> props) {
         String[] candidateIdsInIncreasingPreference = {
-                STUDY_SOURCE_CITATION,
+                DATASET_CITATION,
                 REFERENCE_ID,
                 REFERENCE_URL,
                 REFERENCE_DOI,

@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class TableInteractionListenerProxyTest {
         listener.newLink(new HashMap<>());
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
+        assertThat(links.get(0).get(DatasetImporterForTSV.DATASET_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
         assertThat(links.get(0).get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
     }
 
@@ -57,7 +56,7 @@ public class TableInteractionListenerProxyTest {
         });
 
         assertThat(links.size(), is(1));
-        assertThat(links.get(0).get(DatasetImporterForTSV.STUDY_SOURCE_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
+        assertThat(links.get(0).get(DatasetImporterForTSV.DATASET_CITATION), startsWith("some citation. Accessed at <https://example.org/someResource> on "));
         assertThat(links.get(0).get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("some ref"));
     }
 

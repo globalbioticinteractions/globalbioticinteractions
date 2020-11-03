@@ -45,7 +45,7 @@ public class DatasetImporterForGray extends DatasetImporterWithListener {
         link.put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, nonNAValueOrNull(parser.getValueByLabel("consumer.lifestage")));
         link.put(TaxonUtil.TARGET_TAXON_NAME, parser.getValueByLabel("resource"));
         link.put(DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME, nonNAValueOrNull(parser.getValueByLabel("resource.lifestage")));
-        link.put(DatasetImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
+        link.put(DatasetImporterForTSV.DATASET_CITATION, getSourceCitationLastAccessed());
         link.put(DatasetImporterForTSV.REFERENCE_CITATION, parser.getValueByLabel("full.source"));
         link.put(DatasetImporterForTSV.REFERENCE_ID, getSourceDOI() + "/source.id/" + parser.getValueByLabel("source.id"));
         link.put(DatasetImporterForTSV.BASIS_OF_RECORD_NAME, parser.getValueByLabel("link.evidence"));

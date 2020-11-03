@@ -47,7 +47,7 @@ public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
                 @Override
                 public void newLink(Map<String, String> link) throws StudyImporterException {
                     listener.newLink(new TreeMap<String, String>(link) {{
-                        put(DatasetImporterForTSV.STUDY_SOURCE_CITATION, getSourceCitationLastAccessed());
+                        put(DatasetImporterForTSV.DATASET_CITATION, getSourceCitationLastAccessed());
                     }});
                 }
             };

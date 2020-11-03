@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.eol.globi.data.DatasetImporterForTSV.STUDY_SOURCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 
 public class DatasetImporterForMangal extends DatasetImporterWithListener {
     private static final Log LOG = LogFactory.getLog(DatasetImporterForMangal.class);
@@ -228,7 +228,7 @@ public class DatasetImporterForMangal extends DatasetImporterWithListener {
                 @Override
                 public void onNode(JsonNode node) throws StudyImporterException {
                     Map<String, String> interaction = parseInteraction(node, nodeMap, networkMap);
-                    interaction.put(STUDY_SOURCE_CITATION, getDataset().getCitation() + " " + CitationUtil.createLastAccessedString(MANGAL_API_ENDPOINT + "/network/" + interaction.get("mangal:network:id")));
+                    interaction.put(DATASET_CITATION, getDataset().getCitation() + " " + CitationUtil.createLastAccessedString(MANGAL_API_ENDPOINT + "/network/" + interaction.get("mangal:network:id")));
 
                     String interactionTypeName = interaction.get(DatasetImporterForTSV.INTERACTION_TYPE_NAME);
                     if (INTERACTION_TYPE_MAP.containsKey(interactionTypeName)) {

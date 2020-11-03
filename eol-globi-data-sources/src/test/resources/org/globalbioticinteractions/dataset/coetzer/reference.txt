@@ -1,1 +1,2 @@
 id	bibliographicCitation	title	date	subject
+112362	Cockerell, T.D.A. 1937. African bees of the genera Ceratina, Halictus and Megachile. 254 pp. William Clowes and Sons, London	African bees of the genera Ceratina, Halictus and Megachile	1937	Nomenclature

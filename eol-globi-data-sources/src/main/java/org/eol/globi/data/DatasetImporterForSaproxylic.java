@@ -132,7 +132,7 @@ public class DatasetImporterForSaproxylic extends DatasetImporterWithListener {
                     props.put(key, next.getLiteral(key).getString());
                 }
             }
-            props.put(DatasetImporterForTSV.STUDY_SOURCE_CITATION, getDataset().getCitation());
+            props.put(DatasetImporterForTSV.DATASET_CITATION, getDataset().getCitation());
             listener.newLink(props);
         }
     }
