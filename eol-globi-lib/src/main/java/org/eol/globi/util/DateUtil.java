@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.Date;
@@ -28,12 +29,29 @@ public final class DateUtil {
     }
 
     public static DateTime parsePatternUTC(String dateString, String pattern) {
-        return DateTimeFormat.forPattern(pattern).withZoneUTC().parseDateTime(dateString);
+        return DateTimeFormat
+                .forPattern(pattern)
+                .withZoneUTC()
+                .parseDateTime(dateString);
     }
 
     public static DateTime parseDateUTC(String eventDate) {
         String firstInRange = splitPossibleRange(eventDate);
-        return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(firstInRange);
+
+        DateTimeFormatter formatter = null;
+        if (StringUtils.contains(firstInRange, "T")) {
+            formatter = StringUtils.containsAny(firstInRange, "-", ":")
+                    ? ISODateTimeFormat.dateTimeParser()
+                    : ISODateTimeFormat.basicDateTimeNoMillis();
+        } else {
+            formatter = StringUtils.containsAny(firstInRange, "-", ":")
+                    ? ISODateTimeFormat.dateParser()
+                    : ISODateTimeFormat.basicDate();
+        }
+
+        return formatter
+                .withZoneUTC()
+                .parseDateTime(firstInRange);
     }
 
     public static String splitPossibleRange(String eventDate) {

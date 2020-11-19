@@ -61,4 +61,24 @@ public class DateUtilTest {
         assertThat(dateTime.getMonthOfYear(), is(7));
     }
 
+    @Test
+    public void parseDateISO8601() {
+        DateTime dateTime = DateUtil.parseDateUTC("20020702");
+        assertNotNull(dateTime);
+        assertThat(dateTime.getYear(), is(2002));
+        assertThat(dateTime.getDayOfMonth(), is(2));
+        assertThat(dateTime.getMonthOfYear(), is(7));
+    }
+    @Test
+    public void parseDateISO8601DateTime() {
+        DateTime dateTime = DateUtil.parseDateUTC("20201119T221644Z");
+        assertNotNull(dateTime);
+        assertThat(dateTime.getYear(), is(2020));
+        assertThat(dateTime.getDayOfMonth(), is(19));
+        assertThat(dateTime.getMonthOfYear(), is(11));
+        assertThat(dateTime.getHourOfDay(), is(22));
+        assertThat(dateTime.getMinuteOfHour(), is(16));
+        assertThat(dateTime.getSecondOfMinute(), is(44));
+    }
+
 }
