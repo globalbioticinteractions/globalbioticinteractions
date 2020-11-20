@@ -39,6 +39,26 @@ public final class DateUtil {
         String firstInRange = splitPossibleRange(eventDate);
 
         DateTimeFormatter formatter = null;
+        if (StringUtils.containsNone(firstInRange, '-', ':')) {
+            if (StringUtils.contains(firstInRange, "T")) {
+                formatter = ISODateTimeFormat.basicDateTimeNoMillis();
+            } else {
+                if (StringUtils.length(eventDate) == 8) {
+                    formatter = ISODateTimeFormat.basicDate();
+                }
+            }
+        }
+
+
+        return (formatter == null ? ISODateTimeFormat.dateTimeParser() : formatter)
+                .withZoneUTC()
+                .parseDateTime(firstInRange);
+    }
+
+    public static DateTime parseDateUTC2(String eventDate) {
+
+        String firstInRange = splitPossibleRange(eventDate);
+        DateTimeFormatter formatter = null;
         if (StringUtils.contains(firstInRange, "T")) {
             formatter = StringUtils.containsAny(firstInRange, "-", ":")
                     ? ISODateTimeFormat.dateTimeParser()
