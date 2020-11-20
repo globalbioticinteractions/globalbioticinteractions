@@ -2,14 +2,18 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.Date;
 
 public final class DateUtil {
+    private static DateTimeFormatter basicYearDateFormatter;
+
     public static String printDate(Date date) {
         return date == null ? "" : ISODateTimeFormat.dateTimeNoMillis().withZoneUTC().print(date.getTime());
     }
@@ -45,6 +49,14 @@ public final class DateUtil {
             } else {
                 if (StringUtils.length(eventDate) == 8) {
                     formatter = ISODateTimeFormat.basicDate();
+                } else if (StringUtils.length(eventDate) == 6) {
+                    if (basicYearDateFormatter == null) {
+                        basicYearDateFormatter = new DateTimeFormatterBuilder()
+                                .appendYear(4, 4)
+                                .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
+                                .toFormatter();
+                    }
+                    formatter = basicYearDateFormatter;
                 }
             }
         }

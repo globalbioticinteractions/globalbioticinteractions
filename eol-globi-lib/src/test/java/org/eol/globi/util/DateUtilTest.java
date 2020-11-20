@@ -89,4 +89,12 @@ public class DateUtilTest {
         assertThat(dateTime.getYear(), is(2016));
     }
 
+    @Test
+    public void parseDateISO8601YearMonth() {
+        DateTime dateTime = DateUtil.parseDateUTC("201604");
+        assertNotNull(dateTime);
+        assertThat(dateTime.getYear(), is(2016));
+        assertThat(dateTime.getMonthOfYear(), is(04));
+    }
+
 }
