@@ -60,6 +60,13 @@
     </dependencies>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>net.adamcin.org.kuali.maven.wagons</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.2.2</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -168,5 +175,18 @@
         <developerConnection>scm:git:git@github.com:globalbioticinteractions/globalbioticinteractions</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>globi-release</id>
+            <name>AWS Release Repository</name>
+            <url>s3://globi/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>globi-snapshot</id>
+            <name>AWS Snapshot Repository</name>
+            <url>s3://globi/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
