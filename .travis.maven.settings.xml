@@ -13,6 +13,6 @@
             <id>globi-snapshot</id>
             <username>${env.S3_USER}</username>
             <password>${env.S3_PASSWORD}</password>
-		</server>
+	</server>
     </servers>
 </settings>
