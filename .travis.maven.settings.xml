@@ -8,11 +8,17 @@
             <id>globi-release</id>
             <username>${env.S3_USER}</username>
             <password>${env.S3_PASSWORD}</password>
+            <configuration>
+              <endpoint>https://blob.globalbioticinteractions.org</endpoint>
+            </configuration>
         </server>
         <server>
             <id>globi-snapshot</id>
             <username>${env.S3_USER}</username>
             <password>${env.S3_PASSWORD}</password>
+            <configuration>
+              <endpoint>https://blob.globalbioticinteractions.org</endpoint>
+            </configuration>
 	</server>
     </servers>
 </settings>
