@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -139,7 +139,7 @@ public class DatasetImporterForLifeWatchGreece extends NodeBasedImporter {
     }
 
     private static class ParsedInteractionListener {
-        private final Log LOG = LogFactory.getLog(ParsedInteractionListener.class);
+        private final Logger LOG = LoggerFactory.getLogger(ParsedInteractionListener.class);
         private NodeFactory nodeFactory;
 
         public ParsedInteractionListener(NodeFactory factory) {

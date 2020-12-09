@@ -1,7 +1,7 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.util.InteractUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -9,7 +9,7 @@ import org.neo4j.graphdb.Result;
 import org.neo4j.helpers.collection.MapUtil;
 
 public class IndexInteractions implements IndexerNeo4j {
-    private static final Log LOG = LogFactory.getLog(IndexInteractions.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IndexInteractions.class);
 
     private Integer batchSize;
 

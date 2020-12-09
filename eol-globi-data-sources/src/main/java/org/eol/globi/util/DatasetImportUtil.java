@@ -1,8 +1,8 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.InteractionListener;
 import org.eol.globi.data.LogUtil;
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class DatasetImportUtil {
-    private static final Log LOG = LogFactory.getLog(DatasetImportUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImportUtil.class);
 
     public static void importDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset, NodeFactory nodeFactory, ImportLogger logger) throws StudyImporterException {
         nodeFactory.getOrCreateDataset(dataset);

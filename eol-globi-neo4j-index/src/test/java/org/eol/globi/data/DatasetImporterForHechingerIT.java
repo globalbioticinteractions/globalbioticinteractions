@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.LogContext;
@@ -23,7 +23,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForHechingerIT extends GraphDBTestCase {
 
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForHechingerIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForHechingerIT.class);
 
     @Test
     public void importStudy() throws StudyImporterException, IOException {

@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DatasetImporterForBrose extends NodeBasedImporter {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForBrose.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForBrose.class);
 
     public static final String SOURCE = "Brose, U. et al., 2005. Body sizes of consumers and their resources. Ecology 86:2545. Available from doi:10.1890/05-0379 .";
     public static final URI RESOURCE_PATH = URI.create("http://www.esapubs.org/archive/ecol/E086/135/bodysizes_2008.txt");

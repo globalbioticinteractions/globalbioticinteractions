@@ -1,8 +1,8 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -36,7 +36,7 @@ import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForGoMexSI2.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForGoMexSI2.class);
     public static final String GOMEXI_SOURCE_DESCRIPTION = "http://gomexsi.tamucc.edu";
     public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
     public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";

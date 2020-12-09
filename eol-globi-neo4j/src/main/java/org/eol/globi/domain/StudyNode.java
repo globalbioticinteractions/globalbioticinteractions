@@ -1,8 +1,8 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.doi.DOI;
@@ -12,7 +12,7 @@ import org.neo4j.graphdb.Transaction;
 
 public class StudyNode extends NodeBacked implements Study {
 
-    private final static Log LOG = LogFactory.getLog(StudyNode.class);
+    private final static Logger LOG = LoggerFactory.getLogger(StudyNode.class);
 
     public StudyNode(Node node, String title) {
         this(node);

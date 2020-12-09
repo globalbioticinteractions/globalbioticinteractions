@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ReferenceUtil {
-    private static final Log LOG = LogFactory.getLog(ReferenceUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReferenceUtil.class);
 
     public static Map<String, String> buildRefMap(ParserFactory parserFactory, URI referencePath) throws StudyImporterException {
         return buildRefMap(parserFactory, referencePath, "short", "full", ',');

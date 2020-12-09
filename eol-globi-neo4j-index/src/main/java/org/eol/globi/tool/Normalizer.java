@@ -8,8 +8,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.Version;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Normalizer {
-    private static final Log LOG = LogFactory.getLog(Normalizer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Normalizer.class);
     private static final String OPTION_HELP = "h";
     private static final String OPTION_SKIP_IMPORT = "skipImport";
     private static final String OPTION_SKIP_TAXON_CACHE = "skipTaxonCache";

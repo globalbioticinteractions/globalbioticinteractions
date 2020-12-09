@@ -3,8 +3,8 @@ package org.eol.globi.tool;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.data.GraphDBTestCase;
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class NormalizerTest extends GraphDBTestCase {
 
-    private final static Log LOG = LogFactory.getLog(NormalizerTest.class);
+    private final static Logger LOG = LoggerFactory.getLogger(NormalizerTest.class);
 
     @Test
     public void handleOptions() throws ParseException {

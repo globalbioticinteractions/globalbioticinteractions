@@ -2,8 +2,8 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GitHubUtil {
-    private static final Log LOG = LogFactory.getLog(GitHubUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GitHubUtil.class);
 
     public static final String GITHUB_CLIENT_ID_JAVA_PROPERTY_NAME = "github.client.id";
     public static final String GITHUB_CLIENT_SECRET_JAVA_PROPERTY_NAME = "github.client.secret";

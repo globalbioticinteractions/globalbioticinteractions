@@ -1,8 +1,8 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.lucene.queryParser.QueryParser;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -58,7 +58,7 @@ import static org.eol.globi.domain.LocationUtil.fromLocation;
 
 public class NodeFactoryNeo4j implements NodeFactory {
 
-    private static final Log LOG = LogFactory.getLog(NodeFactoryNeo4j.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NodeFactoryNeo4j.class);
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private GraphDatabaseService graphDb;

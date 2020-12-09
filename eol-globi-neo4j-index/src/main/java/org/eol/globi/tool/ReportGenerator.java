@@ -1,8 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class ReportGenerator {
-    private static final Log LOG = LogFactory.getLog(ReportGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReportGenerator.class);
 
     public static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 

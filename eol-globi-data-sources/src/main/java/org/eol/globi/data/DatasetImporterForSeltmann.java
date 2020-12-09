@@ -4,8 +4,8 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -39,7 +39,7 @@ public class DatasetImporterForSeltmann extends NodeBasedImporter {
     public static final String FIELD_ASSOCIATED_SPECIFIC_EPITHET = "aec:associatedSpecificEpithet";
     public static final String FIELD_ASSOCIATED_SCIENTIFIC_NAME = "aec:associatedScientificName";
 
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForSeltmann.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForSeltmann.class);
     public static final String FIELD_IDIGBIO_RECORD_ID = "idigbio:recordID";
     public static final String FIELD_OCCURRENCE_ID = "occurrenceID";
     public static final String FIELD_CATALOG_NUMBER = "catalogNumber";

@@ -1,8 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IndexerTaxa implements IndexerNeo4j {
-    private static final Log LOG = LogFactory.getLog(IndexerTaxa.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IndexerTaxa.class);
 
     private final TaxonCacheService taxonCacheService;
 

@@ -1,8 +1,8 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactory;
@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.Collections;
 
 public class DatasetImpl implements Dataset {
-    private static final Log LOG = LogFactory.getLog(DatasetImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImpl.class);
 
     private final String namespace;
     private final URI archiveURI;

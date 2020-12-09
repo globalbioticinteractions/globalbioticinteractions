@@ -2,8 +2,8 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class CypherUtil {
     public static final String CYPHER_VERSION_2_3 = "2.3";
 
-    private static final Log LOG = LogFactory.getLog(CypherUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CypherUtil.class);
 
     public static String executeCypherQuery(CypherQuery query) throws IOException {
         HttpPost httpPost = getCypherRequest(query);

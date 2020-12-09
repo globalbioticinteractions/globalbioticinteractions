@@ -2,8 +2,8 @@ package org.eol.globi.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.http.HttpResponse;
@@ -26,7 +26,7 @@ import java.util.zip.GZIPInputStream;
 public class ResourceUtil {
 
     public static final String SHAPEFILES_DIR = "shapefiles.dir";
-    private final static Log LOG = LogFactory.getLog(ResourceUtil.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ResourceUtil.class);
 
     public static URI fromShapefileDir(String shapeFile) {
         return fromShapefileDir(URI.create(shapeFile));

@@ -7,8 +7,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -42,7 +42,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
 
     public static final URI RESOURCE = URI.create("AvianDietDatabase.txt");
 
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForHurlbert.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForHurlbert.class);
 
     public DatasetImporterForHurlbert(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

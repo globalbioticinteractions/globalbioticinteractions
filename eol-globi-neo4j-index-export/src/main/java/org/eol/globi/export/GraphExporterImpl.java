@@ -1,8 +1,8 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 public class GraphExporterImpl implements GraphExporter {
-    private static final Log LOG = LogFactory.getLog(GraphExporterImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GraphExporterImpl.class);
 
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {

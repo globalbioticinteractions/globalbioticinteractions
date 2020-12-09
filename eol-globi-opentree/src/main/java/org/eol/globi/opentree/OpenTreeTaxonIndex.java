@@ -1,8 +1,8 @@
 package org.eol.globi.opentree;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class OpenTreeTaxonIndex {
-    private static final Log LOG = LogFactory.getLog(OpenTreeTaxonIndex.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenTreeTaxonIndex.class);
     private final URL openTreeTaxonomyUrl;
 
     private HTreeMap<String, Long> map = null;

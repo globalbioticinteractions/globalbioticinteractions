@@ -3,8 +3,8 @@ package org.eol.globi.server;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -39,7 +39,7 @@ import static org.eol.globi.server.util.ResultField.TAXON_PATH_RANKS;
 
 @Controller
 public class TaxonSearchImpl implements TaxonSearch {
-    private static final Log LOG = LogFactory.getLog(TaxonSearchImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TaxonSearchImpl.class);
 
     public static final Map<String, String> NO_PROPERTIES = Collections.emptyMap();
 

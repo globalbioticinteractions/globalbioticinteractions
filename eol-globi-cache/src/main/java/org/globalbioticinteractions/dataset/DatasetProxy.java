@@ -1,8 +1,8 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
@@ -14,7 +14,7 @@ import java.util.Collections;
 
 public class DatasetProxy implements Dataset {
 
-    private static final Log LOG = LogFactory.getLog(DatasetProxy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetProxy.class);
     private JsonNode config;
     private final Dataset datasetProxied;
 

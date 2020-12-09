@@ -2,8 +2,8 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class TaxonLookupServiceImpl implements TaxonImportListener, TaxonLookupService, AutoCloseable {
-    private static final Log LOG = LogFactory.getLog(TaxonLookupServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TaxonLookupServiceImpl.class);
 
     private static final String FIELD_ID = "id";
     private static final String FIELD_NAME = "name";

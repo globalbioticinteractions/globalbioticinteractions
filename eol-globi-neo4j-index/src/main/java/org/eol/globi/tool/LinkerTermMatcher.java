@@ -1,8 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.RelTypes;
@@ -27,7 +27,7 @@ public class LinkerTermMatcher implements IndexerNeo4j {
 
     private static final int BATCH_SIZE = 100;
 
-    private static final Log LOG = LogFactory.getLog(LinkerTermMatcher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LinkerTermMatcher.class);
     private final TermMatcher termMatcher;
 
     public LinkerTermMatcher(TermMatcher termMatcher) {

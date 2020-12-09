@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -19,7 +19,7 @@ import java.net.URI;
 
 public class DatasetImporterForCruaud extends NodeBasedImporter {
 
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForCruaud.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForCruaud.class);
 
     public static final String SOURCE = "Cruaud, A., Ronsted, N., Chantarasuwan, B., Chou, L. S., Clement, W. L., Couloux, A., … Savolainen, V. (2012). An Extreme Case of Plant-Insect Codiversification: Figs and Fig-Pollinating Wasps. Systematic Biology, 61(6), 1029–1047. doi:10.1093/sysbio/sys068";
     public static final URI RESOURCE_PATH = URI.create( "cruaud/Cruaud_et_al2012_Appendix_S2-wasp_material.csv");

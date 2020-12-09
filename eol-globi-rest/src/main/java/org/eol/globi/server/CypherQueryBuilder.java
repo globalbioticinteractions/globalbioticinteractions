@@ -2,8 +2,8 @@ package org.eol.globi.server;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -43,7 +43,7 @@ import static org.eol.globi.server.util.ResultField.TAXON_PATH_IDS;
 import static org.eol.globi.server.util.ResultField.TAXON_PATH_RANKS;
 
 public class CypherQueryBuilder {
-    private static final Log LOG = LogFactory.getLog(CypherQueryBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CypherQueryBuilder.class);
 
     public static final String INTERACTION_PREYS_ON = InteractType.PREYS_UPON.getLabel();
     public static final String INTERACTION_PREYED_UPON_BY = InteractType.PREYED_UPON_BY.getLabel();

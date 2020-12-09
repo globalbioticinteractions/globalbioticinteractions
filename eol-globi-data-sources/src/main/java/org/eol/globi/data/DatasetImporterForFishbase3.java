@@ -4,8 +4,8 @@ import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.TaxonUtil;
@@ -21,7 +21,7 @@ import java.util.TreeMap;
 import static org.eol.globi.data.DatasetImporterForHurlbert.columnValueOrNull;
 
 public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForFishbase3.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForFishbase3.class);
     public static final String C_CODE_GLOBAL = "9999";
 
     public DatasetImporterForFishbase3(ParserFactory parserFactory, NodeFactory nodeFactory) {

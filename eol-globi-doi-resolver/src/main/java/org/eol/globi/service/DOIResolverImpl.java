@@ -2,8 +2,8 @@ package org.eol.globi.service;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -22,7 +22,7 @@ import java.util.TreeMap;
 import java.util.Map;
 
 public class DOIResolverImpl implements DOIResolver {
-    private static final Log LOG = LogFactory.getLog(DOIResolverImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DOIResolverImpl.class);
     private final String baseURL;
 
     private double minMatchScore = 100.0;

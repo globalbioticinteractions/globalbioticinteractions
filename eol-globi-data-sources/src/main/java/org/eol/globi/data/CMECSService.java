@@ -5,8 +5,8 @@ import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class CMECSService implements TermLookupService {
 
-    private static Log LOG = LogFactory.getLog(CMECSService.class);
+    private static Logger LOG = LoggerFactory.getLogger(CMECSService.class);
 
     private Map<String, Term> termMap = null;
 

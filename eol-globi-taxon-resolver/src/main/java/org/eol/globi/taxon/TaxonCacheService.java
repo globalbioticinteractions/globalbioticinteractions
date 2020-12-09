@@ -3,8 +3,8 @@ package org.eol.globi.taxon;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class TaxonCacheService extends CacheService implements PropertyEnricher, TermMatcher {
-    private static final Log LOG = LogFactory.getLog(TaxonCacheService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TaxonCacheService.class);
 
     private BTreeMap<String, Map<String, String>> resolvedIdToTaxonMap = null;
 
@@ -308,7 +308,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         logCacheLoadStats(time, numberOfItems, LOG);
     }
 
-    public static void logCacheLoadStats(long time, int numberOfItems, Log log) {
+    public static void logCacheLoadStats(long time, int numberOfItems, Logger log) {
         final double avgRate = numberOfItems * 1000.0 / time;
         final double timeElapsedInSeconds = time / 1000.0;
         final String msg = String.format("cache with [%d]" + " items built in [%.1f] s or [%.1f] items/s.",

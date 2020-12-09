@@ -9,8 +9,8 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -41,7 +41,7 @@ import java.util.zip.ZipInputStream;
 
 public class DatasetImporterForRaymond extends NodeBasedImporter {
 
-    private final static Log LOG = LogFactory.getLog(DatasetImporterForRaymond.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DatasetImporterForRaymond.class);
 
     private static final String OBSERVATION_DATE_START = "OBSERVATION_DATE_START";
     private static final String OBSERVATION_DATE_END = "OBSERVATION_DATE_END";

@@ -3,8 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVPrint;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
@@ -41,7 +41,7 @@ import static org.hamcrest.Matchers.hasItems;
 
 public class DatasetImporterForVertNetTest extends GraphDBTestCase {
 
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForVertNetTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForVertNetTest.class);
 
     @Test
     public void testResponse() throws IOException {

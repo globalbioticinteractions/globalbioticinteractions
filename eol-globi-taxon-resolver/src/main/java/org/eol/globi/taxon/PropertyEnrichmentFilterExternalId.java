@@ -1,7 +1,7 @@
 package org.eol.globi.taxon;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class PropertyEnrichmentFilterExternalId implements PropertyEnrichmentFilter {
-    private static final Log LOG = LogFactory.getLog(PropertyEnrichmentFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyEnrichmentFilter.class);
     public static final String EOL_NON_TAXON_PAGES = "http://eol.org/api/collections/1.0/6991.json?per_page=500";
 
     private final PropertyEnrichmentFilterWithPathOnly propertyEnrichmentFilterWithPathOnly = new PropertyEnrichmentFilterWithPathOnly();

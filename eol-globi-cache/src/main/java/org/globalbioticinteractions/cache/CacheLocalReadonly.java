@@ -2,12 +2,11 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,11 +16,10 @@ import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CacheLocalReadonly implements Cache {
-    private final static Log LOG = LogFactory.getLog(CacheLocalReadonly.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CacheLocalReadonly.class);
 
     private final String namespace;
     private final String cachePath;

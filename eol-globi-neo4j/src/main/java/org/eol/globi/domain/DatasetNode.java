@@ -1,8 +1,8 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -19,7 +19,7 @@ import java.util.Collections;
 
 public class DatasetNode extends NodeBacked implements Dataset {
 
-    private static final Log LOG = LogFactory.getLog(DatasetNode.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetNode.class);
 
     public DatasetNode(Node node) {
         super(node);

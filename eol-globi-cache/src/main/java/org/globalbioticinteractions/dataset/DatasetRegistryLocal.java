@@ -4,12 +4,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.cache.CacheFactory;
-import org.globalbioticinteractions.cache.ProvenanceLog;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.cache.ProvenanceLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DatasetRegistryLocal implements DatasetRegistry {
-    private final static Log LOG = LogFactory.getLog(DatasetRegistryLocal.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DatasetRegistryLocal.class);
     private final String cacheDir;
     private final CacheFactory cacheFactory;
     private final InputStreamFactory inputStreamFactory;

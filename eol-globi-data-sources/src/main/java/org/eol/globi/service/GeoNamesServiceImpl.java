@@ -1,8 +1,8 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Term;
@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
 
 public class GeoNamesServiceImpl implements GeoNamesService {
-    private static final Log LOG = LogFactory.getLog(GeoNamesServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GeoNamesServiceImpl.class);
 
     public static final TermImpl GEO_TERM_EARTH = new TermImpl(GEONAMES.getIdPrefix() + "6295630", "Earth");
 

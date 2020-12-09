@@ -1,7 +1,7 @@
 package org.globalbioticinteractions.cache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFinderUtil;
@@ -13,7 +13,7 @@ import java.net.URI;
 import java.util.Collections;
 
 public class CacheProxyForDataset extends CacheProxy {
-    private static final Log LOG = LogFactory.getLog(CacheProxyForDataset.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheProxyForDataset.class);
 
     private Dataset dataset;
 

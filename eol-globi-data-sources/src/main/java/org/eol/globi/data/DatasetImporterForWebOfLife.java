@@ -4,8 +4,8 @@ import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -35,7 +35,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DatasetImporterForWebOfLife extends NodeBasedImporter {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForWebOfLife.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForWebOfLife.class);
     public static final String WEB_OF_LIFE_BASE_URL = "http://www.web-of-life.es";
 
     public DatasetImporterForWebOfLife(ParserFactory parserFactory, NodeFactory nodeFactory) {

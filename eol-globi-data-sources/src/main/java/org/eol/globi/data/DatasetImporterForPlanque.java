@@ -4,8 +4,8 @@ import com.Ostermiller.util.LabeledCSVParser;
 import com.Ostermiller.util.MD5;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -26,7 +26,7 @@ import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.replace;
 
 public class DatasetImporterForPlanque extends NodeBasedImporter {
-    private final static Log LOG = LogFactory.getLog(DatasetImporterForPlanque.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DatasetImporterForPlanque.class);
 
     public DatasetImporterForPlanque(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);

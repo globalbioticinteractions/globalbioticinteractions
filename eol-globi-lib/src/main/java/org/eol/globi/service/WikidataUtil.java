@@ -1,8 +1,8 @@
 package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.codehaus.jackson.JsonNode;
@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.replace;
 
 public final class WikidataUtil {
 
-    private static Log LOG = LogFactory.getLog(WikidataUtil.class);
+    private static Logger LOG = LoggerFactory.getLogger(WikidataUtil.class);
 
     public static final Map<TaxonomyProvider, String> PROVIDER_TO_WIKIDATA = new TreeMap<TaxonomyProvider, String>() {{
         put(TaxonomyProvider.ITIS, "P815");

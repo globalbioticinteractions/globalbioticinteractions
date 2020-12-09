@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DatasetImporterForBarnes extends NodeBasedImporter {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForBarnes.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForBarnes.class);
 
     public static final String SOURCE = "Barnes, C. et al., 2008. PREDATOR AND PREY BODY SIZES IN MARINE FOOD WEBS. Ecology, 89(3), pp.881–881. Available at: https://doi.org/10.1890/07-1551.1 . Data provided by Carolyn Barnes. Also available at " + "http://www.esapubs.org/Archive/ecol/E089/051/" + " .";
     public static final URI RESOURCE_PATH = URI.create("http://esapubs.org/archive/ecol/E089/051/Predator_and_prey_body_sizes_in_marine_food_webs_vsn4.txt");

@@ -3,8 +3,8 @@ package org.globalbioticinteractions.cache;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 public final class CacheUtil {
 
     public static final String MIME_TYPE_GLOBI = "application/globi";
-    public static final Log LOG = LogFactory.getLog(CacheUtil.class);
+    public static final Logger LOG = LoggerFactory.getLogger(CacheUtil.class);
 
     public static Cache cacheFor(String namespace, String cacheDir, InputStreamFactory inputStreamFactory) {
         Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, inputStreamFactory);

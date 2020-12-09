@@ -2,8 +2,8 @@ package org.eol.globi.util;
 
 import com.Ostermiller.util.Base64;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -25,7 +25,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 public class HttpUtil {
-    private static final Log LOG = LogFactory.getLog(HttpUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpUtil.class);
 
     public static final int TIMEOUT_DEFAULT = 60 * 1000;
     protected static final String APPLICATION_JSON = "application/json;charset=UTF-8";

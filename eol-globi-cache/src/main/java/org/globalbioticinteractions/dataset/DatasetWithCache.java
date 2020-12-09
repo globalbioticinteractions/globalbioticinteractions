@@ -1,8 +1,8 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheProxyForDataset;
@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 public class DatasetWithCache implements Dataset {
-    private final static Log LOG = LogFactory.getLog(DatasetWithCache.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DatasetWithCache.class);
 
     private final Cache cache;
     private final Dataset datasetCached;

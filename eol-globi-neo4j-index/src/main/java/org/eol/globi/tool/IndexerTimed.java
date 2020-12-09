@@ -1,13 +1,13 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 public class IndexerTimed implements IndexerNeo4j {
-    private static final Log LOG = LogFactory.getLog(IndexerTimed.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IndexerTimed.class);
     private final IndexerNeo4j indexer;
 
     public IndexerTimed(IndexerNeo4j indexer) {

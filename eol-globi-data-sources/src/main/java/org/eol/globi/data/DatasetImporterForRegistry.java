@@ -1,8 +1,8 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFactory;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class DatasetImporterForRegistry extends NodeBasedImporter {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForRegistry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForRegistry.class);
 
     private final DatasetRegistry registry;
     private Predicate<Dataset> datasetFilter = x -> true;

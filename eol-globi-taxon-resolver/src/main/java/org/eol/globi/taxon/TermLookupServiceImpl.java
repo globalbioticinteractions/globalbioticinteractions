@@ -3,8 +3,8 @@ package org.eol.globi.taxon;
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class TermLookupServiceImpl implements TermLookupService {
-    private static final Log LOG = LogFactory.getLog(TermLookupServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TermLookupServiceImpl.class);
 
     private Map<String, List<Term>> mapping = null;
 

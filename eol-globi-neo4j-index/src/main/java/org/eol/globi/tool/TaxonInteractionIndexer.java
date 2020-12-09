@@ -1,8 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
@@ -22,7 +22,7 @@ import org.neo4j.graphdb.index.IndexHits;
 import java.util.Map;
 
 public class TaxonInteractionIndexer implements IndexerNeo4j {
-    private static final Log LOG = LogFactory.getLog(TaxonInteractionIndexer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TaxonInteractionIndexer.class);
 
     public void index(GraphDatabaseService graphService) {
         LOG.info("indexing interactions started...");

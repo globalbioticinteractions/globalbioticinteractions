@@ -1,7 +1,7 @@
 package org.globalbioticinteractions.cache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceUtil;
 
@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 public class CachePullThrough implements Cache {
-    private final static Log LOG = LogFactory.getLog(CachePullThrough.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CachePullThrough.class);
     private final String namespace;
     private final String cachePath;
     private final InputStreamFactory inputStreamFactory;

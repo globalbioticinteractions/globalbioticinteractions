@@ -7,8 +7,8 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public class DatasetImporterForRSS extends NodeBasedImporter {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForRSS.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForRSS.class);
     public static final String HAS_DEPENDENCIES = "hasDependencies";
 
     public DatasetImporterForRSS(ParserFactory parserFactory, NodeFactory nodeFactory) {

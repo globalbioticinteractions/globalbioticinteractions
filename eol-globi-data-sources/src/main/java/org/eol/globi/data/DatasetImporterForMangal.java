@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
@@ -19,7 +19,7 @@ import java.util.TreeMap;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 
 public class DatasetImporterForMangal extends DatasetImporterWithListener {
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForMangal.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForMangal.class);
     public static final String MANGAL_API_ENDPOINT = "https://mangal.io/api/v2";
     public static final Map<String, InteractType> INTERACTION_TYPE_MAP = new HashMap<String, InteractType>() {{
         put("competition", InteractType.RELATED_TO);

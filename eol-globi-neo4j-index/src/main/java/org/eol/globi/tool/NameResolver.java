@@ -1,8 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
@@ -22,7 +22,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 public class NameResolver implements IndexerNeo4j {
-    private static final Log LOG = LogFactory.getLog(NameResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NameResolver.class);
 
     private final TaxonIndex taxonIndex;
     private final TaxonFilter taxonFilter;

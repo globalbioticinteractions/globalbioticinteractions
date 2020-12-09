@@ -3,8 +3,6 @@ package org.eol.globi.tool;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.domain.LogContext;
 
-import java.util.logging.Level;
-
 public class NullImportLogger implements ImportLogger {
 
     @Override

@@ -1,8 +1,8 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.globalbioticinteractions.doi.DOI;
@@ -27,7 +27,7 @@ public class CitationUtil {
     static final String ZENODO_URL_PREFIX = "https://zenodo.org/record/";
 
 
-    private static final Log LOG = LogFactory.getLog(CitationUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CitationUtil.class);
 
     public static final String[] CITATION_TERMS = new String[]{
             DCTERMS_BIBLIOGRAPHIC_CITATION,

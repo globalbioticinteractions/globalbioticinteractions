@@ -1,7 +1,7 @@
 package org.eol.globi.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.codehaus.jackson.JsonNode;
@@ -11,7 +11,7 @@ import org.eol.globi.util.HttpUtil;
 import java.io.IOException;
 
 public class ORCIDResolverImpl implements AuthorIdResolver {
-    private static final Log LOG = LogFactory.getLog(ORCIDResolverImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ORCIDResolverImpl.class);
 
     private String baseUrl = "https://pub.orcid.org/v2.0/";
 

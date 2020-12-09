@@ -3,8 +3,8 @@ package org.eol.globi.service;
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.util.CSVTSVUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DOIResolverCache extends CacheService implements DOIResolver {
-    private static final Log LOG = LogFactory.getLog(DOIResolverCache.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DOIResolverCache.class);
 
     private final String doiCacheResource;
     private Map<String, DOI> doiCitationMap = null;

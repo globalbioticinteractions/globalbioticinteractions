@@ -1,8 +1,8 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class DatasetRegistryProxy implements DatasetRegistry {
 
-    private final static Log LOG = LogFactory.getLog(DatasetRegistryProxy.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DatasetRegistryProxy.class);
 
     private final ArrayList<DatasetRegistry> registries;
     private Map<String, DatasetRegistry> registryForNamespace = null;

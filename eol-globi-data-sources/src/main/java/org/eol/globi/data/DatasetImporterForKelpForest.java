@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class DatasetImporterForKelpForest extends NodeBasedImporter {
 
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForKelpForest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForKelpForest.class);
 
     public static final URI NODES = URI.create("http://kelpforest.ucsc.edu/exports/ExportNodesWithFunctionalGroupsCsv.php");
     public static final URI LINKS = URI.create("http://kelpforest.ucsc.edu/exports/exportCitedLinks2csv.php");

@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 
 public class DatasetImporterForBell extends NodeBasedImporter {
 
-    private static final Log LOG = LogFactory.getLog(DatasetImporterForBell.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForBell.class);
 
     public static final List<URI> RESOURCES = Stream.of("bell/Bell_GloBI_Harb.csv",
             "bell/Bell_GloBI_Hcuc.csv", "bell/Bell_GloBI_Npac.csv", "bell/Bell_GloBI_Seut.csv")
