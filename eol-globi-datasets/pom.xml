@@ -20,7 +20,6 @@
         <globi.tsv.version>1.0-SNAPSHOT</globi.tsv.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <dataset.dir>change/me/in/pom.xml</dataset.dir>
-        <globi.snapshotRepository.url>change/me/in/pom.xml</globi.snapshotRepository.url>
         <data.dir>${project.build.directory}/data</data.dir>
         <neo4j.data.dir>${data.dir}/graph.db</neo4j.data.dir>
         <wagon-maven-plugin.version>1.0</wagon-maven-plugin.version>
@@ -91,7 +90,6 @@
                 <version>${wagon-maven-plugin.version}</version>
                 <configuration>
                     <serverId>globi-snapshot</serverId>
-                    <url>${globi.snapshotRepository.url}</url>
                     <skip>${skipTests}</skip>
                     <includes>
                         **/*.nq.gz,**/sitemap/**,**/taxa/taxon*,**/tsv/interactions.tsv.gz,**/tsv/citations.tsv.gz,**/csv/interactions.csv.gz,**/csv/citations.csv.gz,**/${project.artifactId}-${project.version}*.tar.gz,**/${project.artifactId}-${project.version}*.zip
