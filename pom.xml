@@ -60,20 +60,20 @@
     <pluginRepositories>
         <pluginRepository>
             <id>globi-plugins</id>
-            <name>AWS Release Repository</name>
+            <name>Release Repository</name>
             <url>https://depot.globalbioticinteractions.org/release</url>
         </pluginRepository>
     </pluginRepositories>
 
     <distributionManagement>
         <repository>
-            <id>globi-datasets</id>
-            <name>AWS Datasets Repository</name>
-            <url>s3://globi/datasets</url>
+            <id>globi-release</id>
+            <name>Release Repository</name>
+            <url>s3://globi/release</url>
         </repository>
         <snapshotRepository>
             <id>globi-snapshot</id>
-            <name>AWS Snapshot Repository</name>
+            <name>Snapshot Repository</name>
             <url>s3://globi/snapshot</url>
         </snapshotRepository>
     </distributionManagement>
