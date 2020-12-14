@@ -5,9 +5,6 @@ install: mvn --version
 before_script: "./.travis.version_if_tag.sh"
 after_success: "./.travis.deploy_if_tag.sh"
 sudo: false
-cache:
-  directories:
-  - "$HOME/.m2"
 env:
   global:
     secure: "R2s8l44GHYEMkQnjD8MjSKLcqMgAOAleMHqzJv2SEWSsXm5RUOqmytUZkC1ojKEREUL9wn73RVs6ny6l8jtOkmtVeur9pjny8k0Pttd4m5A1ydZwSHpSx4pkqwYOJxgPVrnYzSfjf6FxnkH0HCOaU5hnRZQua1Vphwt7i0vrQJo="
