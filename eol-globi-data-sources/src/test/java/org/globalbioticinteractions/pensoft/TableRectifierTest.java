@@ -38,8 +38,6 @@ public class TableRectifierTest {
 
         assertThat(processed, not(containsString("colspan=\"6\"")));
 
-        System.out.println(processed);
-
         String resourcePrefix = "/org/eol/globi/data/pensoft/";
         assertThat(processed,
                 is(IOUtils.toString(getClass()
