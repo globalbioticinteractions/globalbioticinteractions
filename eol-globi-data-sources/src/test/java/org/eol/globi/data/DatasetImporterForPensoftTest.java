@@ -95,9 +95,6 @@ public class DatasetImporterForPensoftTest {
         assertThat(links.size(), is(121));
 
         for (Map<String, String> link : links) {
-            link.forEach((x, y) ->
-                    System.out.println("[" + x + "]: [" + StringUtils.abbreviate(y, 80) + "]")
-            );
             assertThat(link.get("tableSchema"), is("{\"columns\":[{\"name\":\"Family Name\",\"titles\":\"Family Name\",\"datatype\":\"string\"},{\"name\":\"Host Plant\",\"titles\":\"Host Plant\",\"datatype\":\"string\"},{\"name\":\"Thrips species\",\"titles\":\"Thrips species\",\"datatype\":\"string\"},{\"name\":\"Family Name_expanded_taxon_id\",\"titles\":\"Family Name_expanded_taxon_id\",\"datatype\":\"string\"},{\"name\":\"Family Name_expanded_taxon_name\",\"titles\":\"Family Name_expanded_taxon_name\",\"datatype\":\"string\"},{\"name\":\"Host Plant_expanded_taxon_id\",\"titles\":\"Host Plant_expanded_taxon_id\",\"datatype\":\"string\"},{\"name\":\"Host Plant_expanded_taxon_name\",\"titles\":\"Host Plant_expanded_taxon_name\",\"datatype\":\"string\"},{\"name\":\"Thrips species_expanded_taxon_id\",\"titles\":\"Thrips species_expanded_taxon_id\",\"datatype\":\"string\"},{\"name\":\"Thrips species_expanded_taxon_name\",\"titles\":\"Thrips species_expanded_taxon_name\",\"datatype\":\"string\"}]}"));
         }
 
