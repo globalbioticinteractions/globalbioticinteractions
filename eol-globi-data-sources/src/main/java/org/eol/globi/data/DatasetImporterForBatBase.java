@@ -326,9 +326,28 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         return taxonId;
     }
 
-    private static String appendToRanks(JsonNode taxonNode, List<String> ranks) {
-        String rankName = taxonNode.get("level").get("displayName").asText();
+    private static void appendToRanks(JsonNode taxonNode, List<String> ranks) throws IOException {
+        String rankName = getRankNameValueForLabel(taxonNode, "rank");
+
+        // try older rank label see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/576
+        if (StringUtils.isBlank(rankName)) {
+            rankName = getRankNameValueForLabel(taxonNode, "level");
+        }
+        if (StringUtils.isBlank(rankName)) {
+            throw new IOException("missing rank name in: " + taxonNode.toString() + "]");
+        }
+
         ranks.add(StringUtils.lowerCase(rankName));
+    }
+
+    private static String getRankNameValueForLabel(JsonNode taxonNode, String taxonRankLabel) {
+        String rankName = null;
+        if (taxonNode.has(taxonRankLabel)) {
+            JsonNode level = taxonNode.get(taxonRankLabel);
+            if (level.has("displayName")) {
+                rankName = level.get("displayName").asText();
+            }
+        }
         return rankName;
     }
 

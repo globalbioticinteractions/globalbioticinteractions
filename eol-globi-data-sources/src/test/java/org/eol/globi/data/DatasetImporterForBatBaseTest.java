@@ -127,11 +127,29 @@ public class DatasetImporterForBatBaseTest {
         return "{ \"taxon\": { " + someOtherTaxon + "," + someTaxon + "," + someTaxonParent + "} }";
     }
 
-    @Test
-    public void parseInteraction() throws StudyImporterException, IOException {
+    public String getTestTaxonChunkUpdatedRankLabel() {
+        String someTaxon = "\"974\": \"{\\\"id\\\":974,\\\"realm\\\":{\\\"id\\\":1,\\\"displayName\\\":\\\"Bat\\\",\\\"pluralName\\\":\\\"Bats\\\"},\\\"rank\\\":{\\\"id\\\":7,\\\"displayName\\\":\\\"Species\\\"},\\\"parent\\\":322,\\\"children\\\":[],\\\"subjectRoles\\\":[1,2,3,4,9,256,1067,2988,2989,2990,2991,2992,2993,2994,2995,2996,2997,2998,2999,3000,4052,4053,4054,4055,4056,4057,4058,4059,4060,4061,4062,4063,4064,4065,4066,4067,4068,4069],\\\"objectRoles\\\":[],\\\"displayName\\\":\\\"Micronycteris hirsuta\\\",\\\"name\\\":\\\"Micronycteris hirsuta\\\",\\\"isRealm\\\":false,\\\"serverUpdatedAt\\\":\\\"2020-02-22T02:04:15-06:00\\\"}\"";
+        String someTaxonParent = "\"322\": \"{\\\"id\\\":322,\\\"realm\\\":{\\\"id\\\":1,\\\"displayName\\\":\\\"Bat\\\",\\\"pluralName\\\":\\\"Bats\\\"},\\\"rank\\\":{\\\"id\\\":6,\\\"displayName\\\":\\\"Genus\\\"},\\\"parent\\\":5,\\\"children\\\":[974,323,983],\\\"subjectRoles\\\":[1609],\\\"objectRoles\\\":[],\\\"displayName\\\":\\\"Genus Micronycteris\\\",\\\"name\\\":\\\"Micronycteris\\\",\\\"isRealm\\\":false,\\\"serverUpdatedAt\\\":\\\"2020-02-22T02:04:15-06:00\\\"}\"";
+        String someOtherTaxon = "\"885\": \"{\\\"id\\\":885,\\\"realm\\\":{\\\"id\\\":3,\\\"displayName\\\":\\\"Arthropod\\\",\\\"pluralName\\\":\\\"Arthropods\\\"},\\\"rank\\\":{\\\"id\\\":5,\\\"displayName\\\":\\\"Family\\\"},\\\"parent\\\":814,\\\"children\\\":[2022,2023,2021,2051,2018,957,2019,959,2020],\\\"subjectRoles\\\":[],\\\"objectRoles\\\":[1,128,1978,1986,2616,4049,4067,5510,6888,7629,7838,9865],\\\"displayName\\\":\\\"Family Sphingidae\\\",\\\"name\\\":\\\"Sphingidae\\\",\\\"isRealm\\\":false,\\\"serverUpdatedAt\\\":\\\"2020-02-22T02:04:15-06:00\\\"}\"";
 
+        return "{ \"taxon\": { " + someOtherTaxon + "," + someTaxon + "," + someTaxonParent + "} }";
+    }
+
+    @Test
+    public void parseInteractionWithOldTaxonRankNotation() throws StudyImporterException, IOException {
         String taxonChunk = getTestTaxonChunk();
         Map<String, Taxon> taxa = DatasetImporterForBatPlant.parseTaxa(taxonChunk, getFooPrefixer());
+        assertInteractions(taxa);
+    }
+
+    @Test
+    public void parseInteractionWithNewTaxonRankNotation() throws StudyImporterException, IOException {
+        String taxonChunk = getTestTaxonChunkUpdatedRankLabel();
+        Map<String, Taxon> taxa = DatasetImporterForBatPlant.parseTaxa(taxonChunk, getFooPrefixer());
+        assertInteractions(taxa);
+    }
+
+    public void assertInteractions(Map<String, Taxon> taxa) throws IOException, StudyImporterException {
         Map<String, String> sources = new TreeMap<>();
         sources.put("955", "some reference");
 
