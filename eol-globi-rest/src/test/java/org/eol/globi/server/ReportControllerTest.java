@@ -21,7 +21,7 @@ public class ReportControllerTest {
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
-                "report.source as study_source_citation, " +
+                "null as study_source_citation, " +
                 "report.nInteractions as number_of_interactions, " +
                 "report.nTaxa as number_of_distinct_taxa, " +
                 "report.nStudies as number_of_studies, " +
@@ -42,7 +42,7 @@ public class ReportControllerTest {
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
-                "report.source as study_source_citation, " +
+                "null as study_source_citation, " +
                 "report.nInteractions as number_of_interactions, " +
                 "report.nTaxa as number_of_distinct_taxa, " +
                 "report.nStudies as number_of_studies, " +
@@ -91,7 +91,7 @@ public class ReportControllerTest {
                 "START " +
                 "report = node:reports('collection:*') " +
                 "WHERE " +
-                "not(exists(report.title)) AND not(exists(report.source)) " +
+                "not(exists(report.title)) " +
                 "RETURN " +
                 "null as study_citation, " +
                 "null as study_url, " +
@@ -169,7 +169,7 @@ public class ReportControllerTest {
                 "RETURN report.citation as study_citation, " +
                 "report.externalId as study_url, " +
                 "report.doi as study_doi, " +
-                "report.source as study_source_citation, " +
+                "null as study_source_citation, " +
                 "report.nInteractions as number_of_interactions, " +
                 "report.nTaxa as number_of_distinct_taxa, " +
                 "report.nStudies as number_of_studies, " +

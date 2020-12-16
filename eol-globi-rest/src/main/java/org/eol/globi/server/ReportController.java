@@ -86,7 +86,7 @@ public class ReportController {
             + " RETURN report.citation as " + ResultField.STUDY_CITATION
             + ", report.externalId as " + ResultField.STUDY_URL
             + ", report.doi as " + ResultField.STUDY_DOI
-            + ", report.source as " + ResultField.STUDY_SOURCE_CITATION
+            + ", null as " + ResultField.STUDY_SOURCE_CITATION
             + ", report.nInteractions as " + ResultField.NUMBER_OF_INTERACTIONS
             + ", report.nTaxa as " + ResultField.NUMBER_OF_DISTINCT_TAXA
             + ", report.nStudies as " + ResultField.NUMBER_OF_STUDIES
@@ -165,7 +165,7 @@ public class ReportController {
     @ResponseBody
     public CypherQuery collections() throws IOException {
         String cypherQuery = "START report = node:reports('collection:*')" +
-            " WHERE not(exists(report.title)) AND not(exists(report.source)) "
+            " WHERE not(exists(report.title))"
             + " RETURN " +
                 "null as " + ResultField.STUDY_CITATION
             + ", null as " + ResultField.STUDY_URL
