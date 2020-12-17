@@ -98,6 +98,12 @@ public class InteractionImporter implements InteractionListener {
         this.geoNamesService = geonamesService;
     }
 
+    public InteractionImporter(NodeFactory factory, GeoNamesService geonamesService, ImportLogger logger) {
+        this.logger = logger;
+        this.nodeFactory = factory;
+        this.geoNamesService = geonamesService;
+    }
+
     static boolean hasStartDateAfterEndDate(String eventDate) {
         boolean hasStartedAfterFinishing = false;
         final String[] split = StringUtils.split(eventDate, "/");
@@ -278,7 +284,7 @@ public class InteractionImporter implements InteractionListener {
         try {
             doi = StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
         } catch (MalformedDOIException e) {
-            LogUtil.logWarningIfPossible(l,  "found malformed doi [" + doiString + "]", logger);
+            LogUtil.logWarningIfPossible(l, "found malformed doi [" + doiString + "]", logger);
         }
         StudyImpl study1 = new StudyImpl(l.get(REFERENCE_ID),
                 doi,

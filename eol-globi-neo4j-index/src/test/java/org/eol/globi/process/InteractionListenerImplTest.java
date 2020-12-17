@@ -1,6 +1,5 @@
 package org.eol.globi.process;
 
-import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
@@ -26,8 +25,6 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
-import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_ID;
-import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
@@ -50,8 +47,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class InteractionListenerImplTest extends GraphDBTestCase {
@@ -67,22 +62,24 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void importWithMissingTargetTaxonButAvailableInstitutionCollectionCatalogTriple() throws StudyImporterException {
         List<String> msgs = new ArrayList<>();
-        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new NullImportLogger() {
-            @Override
-            public void info(LogContext ctx, String message) {
-                msgs.add(message);
-            }
+        final InteractionListener listener = new InteractionListenerImpl(nodeFactory,
+                null,
+                new NullImportLogger() {
+                    @Override
+                    public void info(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
 
-            @Override
-            public void warn(LogContext ctx, String message) {
-                msgs.add(message);
-            }
+                    @Override
+                    public void warn(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
 
-            @Override
-            public void severe(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-        });
+                    @Override
+                    public void severe(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
+                });
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(SOURCE_TAXON_NAME, "Donald duck");
         link.put(SOURCE_TAXON_PATH, "Aves | Donald | Donald duck");
@@ -122,22 +119,24 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void importWithMissingSourceTaxonButAvailableInstitutionCollectionCatalogTriple() throws StudyImporterException {
         List<String> msgs = new ArrayList<>();
-        final InteractionListenerImpl listener = new InteractionListenerImpl(nodeFactory, null, new NullImportLogger() {
-            @Override
-            public void info(LogContext ctx, String message) {
-                msgs.add(message);
-            }
+        final InteractionListener listener = new InteractionListenerImpl(nodeFactory,
+                null,
+                new NullImportLogger() {
+                    @Override
+                    public void info(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
 
-            @Override
-            public void warn(LogContext ctx, String message) {
-                msgs.add(message);
-            }
+                    @Override
+                    public void warn(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
 
-            @Override
-            public void severe(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-        });
+                    @Override
+                    public void severe(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
+                });
         final TreeMap<String, String> link = new TreeMap<>();
         link.put(TARGET_TAXON_NAME, "Donald duck");
         link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
@@ -177,44 +176,6 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
                 .iterator().next().getEndNode());
     }
 
-    @Test
-    public void throwingGeoNamesService() throws StudyImporterException {
-        final List<String> msgs = new ArrayList<>();
-        InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, new GeoNamesService() {
-
-            @Override
-            public boolean hasTermForLocale(String locality) {
-                return true;
-            }
-
-            @Override
-            public LatLng findLatLng(String locality) throws IOException {
-                throw new IOException("kaboom!");
-            }
-        }, new NullImportLogger() {
-            @Override
-            public void warn(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-        });
-
-        final TreeMap<String, String> link = new TreeMap<>();
-        link.put(SOURCE_TAXON_NAME, "donald");
-        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
-        link.put(TARGET_TAXON_NAME, "mini");
-        link.put(LOCALITY_ID, "bla:123");
-        link.put(LOCALITY_NAME, "my back yard");
-        link.put(REFERENCE_ID, "123");
-        link.put(DATASET_CITATION, "some source ref");
-        link.put(REFERENCE_CITATION, "");
-        try {
-            interactionListener.on(link);
-            assertThat(msgs.size(), is(1));
-            assertThat(msgs.get(0), startsWith("failed to lookup [bla:123]"));
-        } catch (StudyImporterException ex) {
-            fail("should not throw on failing geoname lookup");
-        }
-    }
 
     @Test
     public void malformedDOI() {
@@ -253,68 +214,6 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         } catch (StudyImporterException ex) {
             fail("should not throw on failing geoname lookup");
         }
-    }
-
-
-    @Test
-    public void malformedDateRange() {
-        final List<String> msgs = new ArrayList<>();
-        InteractionListenerImpl interactionListener = new InteractionListenerImpl(nodeFactory, new GeoNamesService() {
-
-            @Override
-            public boolean hasTermForLocale(String locality) {
-                return true;
-            }
-
-            @Override
-            public LatLng findLatLng(String locality) throws IOException {
-                throw new IOException("kaboom!");
-            }
-        }, new NullImportLogger() {
-            @Override
-            public void warn(LogContext ctx, String message) {
-                msgs.add(message);
-            }
-
-        });
-
-        final TreeMap<String, String> link = new TreeMap<>();
-        link.put(SOURCE_TAXON_NAME, "donald");
-        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
-        link.put(TARGET_TAXON_NAME, "mini");
-        link.put(REFERENCE_ID, "123");
-        link.put(DATASET_CITATION, "some source ref");
-        link.put(REFERENCE_CITATION, "");
-        link.put(REFERENCE_DOI, "10.12/123");
-        link.put(DatasetImporterForMetaTable.EVENT_DATE, "2009-09/2003-09");
-        try {
-            interactionListener.on(link);
-            assertThat(msgs.size(), is(2));
-            assertThat(msgs.get(0), startsWith("date range [2009-09/2003-09] appears to start after it ends."));
-            assertThat(msgs.get(1), startsWith("date range [2009-09/2003-09] appears to start after it ends."));
-        } catch (StudyImporterException ex) {
-            fail("should not throw on failing geoname lookup");
-        }
-    }
-
-    @Test
-    public void startDateEndDateYearMonth() {
-        assertFalse(InteractionImporter.hasStartDateAfterEndDate("2006-07/08"));
-    }
-
-    @Test
-    public void startedMonthAfterEnding() {
-        assertTrue(InteractionImporter.hasStartDateAfterEndDate("2006-09/08"));
-    }
-
-    @Test
-    public void startDateEndDateYearMonth2() {
-        assertFalse(InteractionImporter.hasStartDateAfterEndDate("2006-07/2006-08"));
-    }
-
-    @Test
-    public void startAfterEnding() {
-        assertTrue(InteractionImporter.hasStartDateAfterEndDate("2008-07/2006-08"));
     }
 
 }

@@ -13,6 +13,8 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.geo.LatLng;
+import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
@@ -22,6 +24,8 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -77,6 +81,7 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_RANK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -84,10 +89,93 @@ import static org.junit.Assert.fail;
 public class InteractionImporterTest extends GraphDBTestCase {
 
     @Test
+    public void malformedDateRange() {
+        final List<String> msgs = new ArrayList<>();
+        InteractionListener interactionListener = new InteractionImporter(
+                nodeFactory, new GeoNamesService() {
+
+            @Override
+            public boolean hasTermForLocale(String locality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findLatLng(String locality) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        }, new NullImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+        });
+
+        final TreeMap<String, String> link = new TreeMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(REFERENCE_ID, "123");
+        link.put(DATASET_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "10.12/123");
+        link.put(DatasetImporterForMetaTable.EVENT_DATE, "2009-09/2003-09");
+        try {
+            interactionListener.on(link);
+            assertThat(msgs.size(), is(2));
+            assertThat(msgs.get(0), startsWith("date range [2009-09/2003-09] appears to start after it ends."));
+            assertThat(msgs.get(1), startsWith("date range [2009-09/2003-09] appears to start after it ends."));
+        } catch (StudyImporterException ex) {
+            fail("should not throw on failing geoname lookup");
+        }
+    }
+
+
+    @Test
+    public void throwingGeoNamesService() {
+        final List<String> msgs = new ArrayList<>();
+        InteractionListener interactionListener = new InteractionImporter(nodeFactory, new GeoNamesService() {
+
+            @Override
+            public boolean hasTermForLocale(String locality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findLatLng(String locality) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        }, new NullImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+        });
+
+        final TreeMap<String, String> link = new TreeMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(LOCALITY_ID, "bla:123");
+        link.put(LOCALITY_NAME, "my back yard");
+        link.put(REFERENCE_ID, "123");
+        link.put(DATASET_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        try {
+            interactionListener.on(link);
+            assertThat(msgs.size(), is(1));
+            assertThat(msgs.get(0), startsWith("failed to lookup [bla:123]"));
+        } catch (StudyImporterException ex) {
+            fail("should not throw on failing geoname lookup");
+        }
+    }
+
+
+    @Test
     public void importBlankCitation() throws StudyImporterException {
         final InteractionListener listener = new InteractionImporter(
                 nodeFactory,
-                null,
+                (GeoNamesService) null,
                 null);
 
         final TreeMap<String, String> link = new TreeMap<String, String>();
