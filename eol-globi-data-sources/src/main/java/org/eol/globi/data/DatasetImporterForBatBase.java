@@ -67,14 +67,14 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         InteractionListener interactionListener = new InteractionListener() {
 
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                String interactionTypeId = link.get(DatasetImporterForTSV.INTERACTION_TYPE_ID);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                String interactionTypeId = interaction.get(DatasetImporterForTSV.INTERACTION_TYPE_ID);
                 if (!interactTypeMapper.shouldIgnoreInteractionType(interactionTypeId)) {
                     InteractType interactType = interactTypeMapper.getInteractType(interactionTypeId);
                     if (interactType == null) {
-                        getLogger().warn(LogUtil.contextFor(link), "missing interaction type mapping for [" + interactionTypeId + "] and [" + link.get(DatasetImporterForTSV.INTERACTION_TYPE_NAME) + "]");
+                        getLogger().warn(LogUtil.contextFor(interaction), "missing interaction type mapping for [" + interactionTypeId + "] and [" + interaction.get(DatasetImporterForTSV.INTERACTION_TYPE_NAME) + "]");
                     } else {
-                        getInteractionListener().newLink(new TreeMap<String, String>(link) {{
+                        getInteractionListener().on(new TreeMap<String, String>(interaction) {{
                             put(DatasetImporterForTSV.INTERACTION_TYPE_ID, interactType.getIRI());
                             put(DatasetImporterForTSV.INTERACTION_TYPE_NAME, interactType.getLabel());
                         }});
@@ -296,7 +296,7 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
                                     }
                                 }
 
-                                testListener.newLink(interactionRecord);
+                                testListener.on(interactionRecord);
                             }
 
                         }

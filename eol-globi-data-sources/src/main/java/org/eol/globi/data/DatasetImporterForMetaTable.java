@@ -201,7 +201,8 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
     public static void importAll(InteractionListener interactionListener,
                                  List<Column> columnNames,
-                                 CSVParse csvParse, JsonNode config, ImportLogger importLogger) throws StudyImporterException {
+                                 CSVParse csvParse, JsonNode config,
+                                 ImportLogger importLogger) throws StudyImporterException {
         String[] line;
         Map<String, String> defaults = new TreeMap<>();
         final Map<String, String> sameAs = new TreeMap<String, String>() {{

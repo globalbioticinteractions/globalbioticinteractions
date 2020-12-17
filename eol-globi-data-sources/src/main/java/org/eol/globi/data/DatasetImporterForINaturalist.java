@@ -84,11 +84,6 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         }
     }
 
-    protected String getSourceString() {
-        String description = "http://iNaturalist.org is a place where you can record what you see in nature, meet other nature lovers, and learn about the natural world. ";
-        return description + CitationUtil.createLastAccessedString(INATURALIST_URL);
-    }
-
     private void retrieveDataParseResults() throws StudyImporterException {
         TermLookupService termLookupService;
         try {

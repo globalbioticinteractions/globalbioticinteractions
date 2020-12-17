@@ -234,7 +234,7 @@ public class DatasetImporterForMangal extends DatasetImporterWithListener {
                     if (INTERACTION_TYPE_MAP.containsKey(interactionTypeName)) {
                         interaction.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, INTERACTION_TYPE_MAP.get(interactionTypeName).getIRI());
                     }
-                    getInteractionListener().newLink(interaction);
+                    getInteractionListener().on(interaction);
                 }
             }, 100, 0, MANGAL_API_ENDPOINT + "/interaction");
 

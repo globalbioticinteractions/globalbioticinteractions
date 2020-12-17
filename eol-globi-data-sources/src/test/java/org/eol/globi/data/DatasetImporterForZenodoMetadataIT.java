@@ -32,8 +32,8 @@ public class DatasetImporterForZenodoMetadataIT {
         final DatasetImporterForZenodoMetadata importer = new DatasetImporterForZenodoMetadata(null, null);
         importer.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                links.add(link);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
             }
         });
         final DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:archive"), in -> in) {

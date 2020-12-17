@@ -15,7 +15,7 @@ public final class AssociatedTaxaUtil {
     public static void expandNewLinkIfNeeded(InteractionListener interactionListener, Map<String, String> mappedLine) throws StudyImporterException {
         List<Map<String, String>> links = expandIfNeeded(mappedLine);
         for (Map<String, String> link : links) {
-            interactionListener.newLink(link);
+            interactionListener.on(link);
         }
     }
 

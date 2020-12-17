@@ -110,13 +110,13 @@ public class DatasetImportUtil {
         }
 
         @Override
-        public void newLink(Map<String, String> link) throws StudyImporterException {
+        public void on(Map<String, String> interaction) throws StudyImporterException {
             Map<String, String> enrichedProperties = null;
-            if (link.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)) {
-                String targetOccurrenceId = link.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
+            if (interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)) {
+                String targetOccurrenceId = interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
                 Map<String, String> targetProperties = interactionsWithUnresolvedOccurrenceIds.get(targetOccurrenceId);
                 if (targetProperties != null) {
-                    TreeMap<String, String> enrichedMap = new TreeMap<>(link);
+                    TreeMap<String, String> enrichedMap = new TreeMap<>(interaction);
                     enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_NAME, TaxonUtil.TARGET_TAXON_NAME);
                     enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_ID, TaxonUtil.TARGET_TAXON_ID);
                     enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME);
@@ -126,7 +126,7 @@ public class DatasetImportUtil {
                     enrichedProperties = enrichedMap;
                 }
             }
-            interactionListener.newLink(enrichedProperties == null ? link : enrichedProperties);
+            interactionListener.on(enrichedProperties == null ? interaction : enrichedProperties);
         }
 
         public void enrichProperties(Map<String, String> targetProperties, TreeMap<String, String> enrichedMap, String sourceKey, String targetKey) {
@@ -145,17 +145,17 @@ public class DatasetImportUtil {
         }
 
         @Override
-        public void newLink(Map<String, String> link) throws StudyImporterException {
+        public void on(Map<String, String> interaction) throws StudyImporterException {
 
-            if (link.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)
-                    && link.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID)) {
-                String value = link.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
+            if (interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)
+                    && interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID)) {
+                String value = interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
 
                 if (StringUtils.startsWith(value, "http://arctos.database.museum/guid/")) {
                     String[] splitValue = StringUtils.split(value, "?");
                     value = splitValue.length == 1 ? value : splitValue[0];
                 }
-                interactionsWithUnresolvedOccurrenceIds.put(value, new HashMap<>(link));
+                interactionsWithUnresolvedOccurrenceIds.put(value, new HashMap<>(interaction));
             }
         }
     }

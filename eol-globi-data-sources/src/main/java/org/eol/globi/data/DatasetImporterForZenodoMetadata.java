@@ -170,7 +170,7 @@ public class DatasetImporterForZenodoMetadata extends DatasetImporterWithListene
 
             final Iterator<TreeMap<String, String>> iter = links.iterator();
             while (iter.hasNext()) {
-                listener.newLink(iter.next());
+                listener.on(iter.next());
             }
         }
     }

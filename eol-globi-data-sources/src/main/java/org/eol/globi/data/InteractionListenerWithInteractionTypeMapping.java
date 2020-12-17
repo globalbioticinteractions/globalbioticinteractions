@@ -29,18 +29,18 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
     }
 
     @Override
-    public void newLink(Map<String, String> link) throws StudyImporterException {
-        TaxonUtil.enrichTaxonNames(link);
+    public void on(Map<String, String> interaction) throws StudyImporterException {
+        TaxonUtil.enrichTaxonNames(interaction);
 
-        String interactionTypeName = link.get(INTERACTION_TYPE_NAME);
-        String interactionTypeId = link.get(INTERACTION_TYPE_ID);
+        String interactionTypeName = interaction.get(INTERACTION_TYPE_NAME);
+        String interactionTypeId = interaction.get(INTERACTION_TYPE_ID);
         if (mapper.shouldIgnoreInteractionType(interactionTypeName) || mapper.shouldIgnoreInteractionType(interactionTypeId)) {
             if (logger != null) {
-                logger.info(LogUtil.contextFor(link), "ignoring interaction record with interaction name [" + interactionTypeName + "]");
+                logger.info(LogUtil.contextFor(interaction), "ignoring interaction record with interaction name [" + interactionTypeName + "]");
             }
         } else if (mapper.shouldIgnoreInteractionType(interactionTypeId)) {
             if (logger != null) {
-                logger.info(LogUtil.contextFor(link), "ignoring interaction record with interaction id [" + interactionTypeName + "]");
+                logger.info(LogUtil.contextFor(interaction), "ignoring interaction record with interaction id [" + interactionTypeName + "]");
             }
         } else {
             InteractType mappedType = null;
@@ -52,14 +52,14 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
                 mappedType = mapper.getInteractType(interactionTypeName);
             }
 
-            HashMap<String, String> properties = new HashMap<>(link);
+            HashMap<String, String> properties = new HashMap<>(interaction);
             if (mappedType != null) {
                 InteractUtil.putNotNull(properties, INTERACTION_TYPE_ID_VERBATIM, properties.get(INTERACTION_TYPE_ID));
                 InteractUtil.putNotNull(properties, INTERACTION_TYPE_NAME_VERBATIM, properties.get(INTERACTION_TYPE_NAME));
                 properties.put(INTERACTION_TYPE_ID, mappedType.getIRI());
                 properties.put(INTERACTION_TYPE_NAME, mappedType.getLabel());
             }
-            listener.newLink(properties);
+            listener.on(properties);
             counter.incrementAndGet();
         }
     }

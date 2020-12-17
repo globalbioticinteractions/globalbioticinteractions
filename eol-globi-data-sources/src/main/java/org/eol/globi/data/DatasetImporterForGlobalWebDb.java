@@ -76,7 +76,7 @@ public class DatasetImporterForGlobalWebDb extends DatasetImporterWithListener {
                         String value = parser.getValueByLabel(sourceTaxon);
                         String targetTaxon = parser.getValueByLabel(headerColumns[0]);
                         if (NumberUtils.isDigits(value) && Integer.parseInt(value) > 0) {
-                            listener.newLink(new TreeMap<String, String>(props) {{
+                            listener.on(new TreeMap<String, String>(props) {{
                                 put(TaxonUtil.SOURCE_TAXON_NAME, org.apache.commons.lang.StringUtils.trim(sourceTaxon));
                                 put(TaxonUtil.TARGET_TAXON_NAME, org.apache.commons.lang.StringUtils.trim(targetTaxon));
                             }});

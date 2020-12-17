@@ -118,7 +118,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "doi:1234");
-        listener.newLink(link);
+        listener.on(link);
 
         final AtomicBoolean foundPair = new AtomicBoolean(false);
         NodeUtil.RelationshipListener relationshipListener = relationship -> {
@@ -204,7 +204,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "doi:10.12/34");
-        listener.newLink(link);
+        listener.on(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
         NodeUtil.RelationshipListener relHandler = relationship -> {
@@ -235,7 +235,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "doi:10.12/34");
-        listener.newLink(link);
+        listener.on(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
         NodeUtil.RelationshipListener someListener = relationship -> {
@@ -268,7 +268,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
-        listener.newLink(link);
+        listener.on(link);
 
         AtomicInteger foundSpecimen = new AtomicInteger(0);
         NodeUtil.RelationshipListener someListener = relationship -> {
@@ -308,7 +308,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
-        listener.newLink(link);
+        listener.on(link);
 
         AtomicInteger foundSpecimen = new AtomicInteger(0);
         NodeUtil.RelationshipListener someListener = relationship -> {
@@ -372,7 +372,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
 
-        listener.newLink(link);
+        listener.on(link);
         assertThat(msgs, hasItem("target taxon name missing: using institutionCode/collectionCode/collectionId/catalogNumber/occurrenceId as placeholder"));
 
         final AtomicBoolean foundPair = new AtomicBoolean(false);
@@ -424,7 +424,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_ID, "123");
         link.put(REFERENCE_CITATION, "");
 
-        listener.newLink(link);
+        listener.on(link);
         assertThat(msgs, hasItem("source taxon name missing: using institutionCode/collectionCode/collectionId/catalogNumber/occurrenceId as placeholder"));
 
         final AtomicBoolean foundPair = new AtomicBoolean(false);
@@ -475,7 +475,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_ID, "123");
         link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
-        listener.newLink(link);
+        listener.on(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
         NodeUtil.RelationshipListener someListener = relationship -> {
@@ -566,7 +566,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(DATASET_CITATION, "some source ref");
         link.put(REFERENCE_CITATION, "");
         try {
-            interactionListener.newLink(link);
+            interactionListener.on(link);
             assertThat(msgs.size(), is(1));
             assertThat(msgs.get(0), startsWith("failed to lookup [bla:123]"));
         } catch (StudyImporterException ex) {
@@ -605,7 +605,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_CITATION, "");
         link.put(REFERENCE_DOI, "bla:XXX");
         try {
-            interactionListener.newLink(link);
+            interactionListener.on(link);
             assertThat(msgs.size(), is(1));
             assertThat(msgs.get(0), startsWith("found malformed doi [bla:XXX]"));
         } catch (StudyImporterException ex) {
@@ -646,7 +646,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         link.put(REFERENCE_DOI, "10.12/123");
         link.put(DatasetImporterForMetaTable.EVENT_DATE, "2009-09/2003-09");
         try {
-            interactionListener.newLink(link);
+            interactionListener.on(link);
             assertThat(msgs.size(), is(2));
             assertThat(msgs.get(0), startsWith("date range [2009-09/2003-09] appears to start after it ends."));
             assertThat(msgs.get(1), startsWith("date range [2009-09/2003-09] appears to start after it ends."));

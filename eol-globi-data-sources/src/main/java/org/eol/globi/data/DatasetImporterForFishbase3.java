@@ -45,8 +45,8 @@ public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
                 private final InteractionListener listener = getInteractionListener();
 
                 @Override
-                public void newLink(Map<String, String> link) throws StudyImporterException {
-                    listener.newLink(new TreeMap<String, String>(link) {{
+                public void on(Map<String, String> interaction) throws StudyImporterException {
+                    listener.on(new TreeMap<String, String>(interaction) {{
                         put(DatasetImporterForTSV.DATASET_CITATION, getSourceCitationLastAccessed());
                     }});
                 }
@@ -149,7 +149,7 @@ public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
         RecordListener listener = record -> {
             Map<String, String> props = generateFoodItemInteraction(speciesMap, references, countries, namespace, record, "Foodname");
             appendTargetSpeciesInfo(record, props);
-            interactionListener.newLink(props);
+            interactionListener.on(props);
         };
         handleTsvInputStream(listener, is);
     }
@@ -157,7 +157,7 @@ public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
     protected static void importFoodItemsByFoodII(InteractionListener interactionListener, InputStream is, Map<String, Map<String, String>> speciesMap, Map<String, Map<String, String>> references, Map<String, Map<String, String>> countries, String namespace) throws StudyImporterException {
         RecordListener listener = record -> {
             Map<String, String> props = generateFoodItemInteraction(speciesMap, references, countries, namespace, record, "FoodII");
-            interactionListener.newLink(props);
+            interactionListener.on(props);
         };
         handleTsvInputStream(listener, is);
     }
@@ -259,7 +259,7 @@ public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
             InteractType interactType = InteractType.PREYS_UPON;
             props.put(DatasetImporterForTSV.INTERACTION_TYPE_NAME, interactType.getLabel());
             props.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, interactType.getIRI());
-            interactionListener.newLink(props);
+            interactionListener.on(props);
         };
 
 
@@ -283,7 +283,7 @@ public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
         RecordListener listener1 = record -> {
             Map<String, String> props = importPredator(speciesMap, references, countries, namespace, record);
             appendPreyInfo(speciesMap, namespace, record, props);
-            listener.newLink(props);
+            listener.on(props);
         };
 
 
@@ -294,7 +294,7 @@ public class DatasetImporterForFishbase3 extends DatasetImporterWithListener {
         RecordListener listener1 = record -> {
             Map<String, String> props = importPredator(speciesMap, references, countries, namespace, record);
             props.put(TaxonUtil.TARGET_TAXON_NAME, columnValueOrNull(record, "FoodII"));
-            listener.newLink(props);
+            listener.on(props);
         };
 
 

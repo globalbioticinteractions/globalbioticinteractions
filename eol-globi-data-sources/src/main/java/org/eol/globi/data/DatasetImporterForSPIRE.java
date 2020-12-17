@@ -38,8 +38,8 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
 
     private InteractionListener interactionListener = new InteractionListener() {
         @Override
-        public void newLink(Map<String, String> link) throws StudyImporterException {
-            importTrophicLink(link);
+        public void on(Map<String, String> interaction) throws StudyImporterException {
+            importTrophicLink(interaction);
         }
     };
 
@@ -104,7 +104,7 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
             if (properties.containsKey(PREDATOR_NAME)
                     && properties.containsKey(PREY_NAME)
                     && getInteractionListener() != null) {
-                getInteractionListener().newLink(properties);
+                getInteractionListener().on(properties);
             }
             subjectCounter++;
         }

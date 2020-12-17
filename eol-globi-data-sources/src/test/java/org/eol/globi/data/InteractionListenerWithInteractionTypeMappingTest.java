@@ -34,7 +34,7 @@ public class InteractionListenerWithInteractionTypeMappingTest {
                 return null;
             }
         }, new NullImportLogger());
-        listener.newLink(new HashMap<String, String>() {
+        listener.on(new HashMap<String, String>() {
             {
                 put(INTERACTION_TYPE_NAME, "eats");
                 put(TaxonUtil.TARGET_TAXON_GENUS, "Donald");
@@ -62,7 +62,7 @@ public class InteractionListenerWithInteractionTypeMappingTest {
                 return InteractType.ATE;
             }
         }, new NullImportLogger());
-        listener.newLink(new HashMap<String, String>() {
+        listener.on(new HashMap<String, String>() {
             {
                 put(INTERACTION_TYPE_NAME, "Donald");
                 put(INTERACTION_TYPE_ID, "duck");
@@ -90,7 +90,7 @@ public class InteractionListenerWithInteractionTypeMappingTest {
                 return InteractType.ATE;
             }
         }, new NullImportLogger());
-        listener.newLink(new HashMap<String, String>() {
+        listener.on(new HashMap<String, String>() {
             {
                 put(INTERACTION_TYPE_NAME, "");
                 put(INTERACTION_TYPE_ID, "");
@@ -119,7 +119,7 @@ public class InteractionListenerWithInteractionTypeMappingTest {
                 return InteractType.ATE;
             }
         }, new NullImportLogger());
-        listener.newLink(new HashMap<String, String>() {
+        listener.on(new HashMap<String, String>() {
             {
                 put(INTERACTION_TYPE_NAME, null);
                 put(INTERACTION_TYPE_ID, null);

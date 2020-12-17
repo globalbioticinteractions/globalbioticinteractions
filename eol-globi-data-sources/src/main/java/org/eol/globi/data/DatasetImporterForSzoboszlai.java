@@ -78,7 +78,7 @@ public class DatasetImporterForSzoboszlai extends DatasetImporterWithListener {
         while (parser.getLine() != null) {
             Map<String, String> e = importLink(parser, localeMap);
             if (e != null) {
-                interactionListener.newLink(e);
+                interactionListener.on(e);
             }
         }
     }

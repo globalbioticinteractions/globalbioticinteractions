@@ -17,16 +17,16 @@ public class TableInteractionListenerProxy implements InteractionListener {
     }
 
     @Override
-    public void newLink(final Map<String, String> link) throws StudyImporterException {
+    public void on(final Map<String, String> interaction) throws StudyImporterException {
         final Map<String, String> enrichedProperties = new TreeMap<String, String>() {
             {
-                putAll(link);
+                putAll(interaction);
                 put(DatasetImporterForTSV.DATASET_CITATION, dataSourceCitation);
 
                 final String referenceCitation =
-                        StringUtils.isBlank(link.get(DatasetImporterForTSV.REFERENCE_CITATION))
-                        ? DatasetImporterForMetaTable.generateReferenceCitation(link)
-                        : link.get(DatasetImporterForTSV.REFERENCE_CITATION);
+                        StringUtils.isBlank(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION))
+                        ? DatasetImporterForMetaTable.generateReferenceCitation(interaction)
+                        : interaction.get(DatasetImporterForTSV.REFERENCE_CITATION);
 
                 put(DatasetImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
                 put(DatasetImporterForTSV.REFERENCE_CITATION,
@@ -36,7 +36,7 @@ public class TableInteractionListenerProxy implements InteractionListener {
             }
         };
 
-        interactionListener.newLink(enrichedProperties);
+        interactionListener.on(enrichedProperties);
     }
 
 }

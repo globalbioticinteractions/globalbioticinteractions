@@ -38,8 +38,8 @@ public class DatasetImporterForZenodoMetadataTest {
         List<Map<String, String>> links = new ArrayList<>();
         final InteractionListener interactionListener = new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                links.add(link);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
             }
         };
 
@@ -65,7 +65,7 @@ public class DatasetImporterForZenodoMetadataTest {
         final DatasetImporterForZenodoMetadata studyImporterForZenodoMetadata = new DatasetImporterForZenodoMetadata(null, null);
         studyImporterForZenodoMetadata.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
+            public void on(Map<String, String> interaction) throws StudyImporterException {
             }
         });
 
@@ -98,8 +98,8 @@ public class DatasetImporterForZenodoMetadataTest {
         List<Map<String, String>> links = new ArrayList<>();
         final InteractionListener interactionListener = new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                links.add(link);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
             }
         };
 

@@ -235,7 +235,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interactionProperties.put(DWC_COREID, rec.id());
             mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
             mapCoreProperties(rec, interactionProperties);
-            interactionListener.newLink(interactionProperties);
+            interactionListener.on(interactionProperties);
         }
     }
 
@@ -470,7 +470,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                         mapCoreProperties(coreRecord, interaction);
 
-                        interactionListener.newLink(interaction);
+                        interactionListener.on(interaction);
                     } catch (StudyImporterException e) {
                         //
                     }
@@ -509,7 +509,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                             TreeMap<String, String> interaction = new TreeMap<>(map);
                             interaction.put(DWC_COREID, id);
                             mapCoreProperties(coreRecord, interaction);
-                            interactionListener.newLink(interaction);
+                            interactionListener.on(interaction);
                         }
 
                     } catch (StudyImporterException e) {
@@ -551,16 +551,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
 
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
+            public void on(Map<String, String> interaction) throws StudyImporterException {
                 initIfNeeded();
 
-                String s = link.get(DWC_COREID);
+                String s = interaction.get(DWC_COREID);
                 Map<String, String> enrichedLink = referenceMap.containsKey(s)
-                        ? new TreeMap(link) {{
+                        ? new TreeMap(interaction) {{
                     putAll(referenceMap.get(s));
                 }}
-                        : link;
-                interactionListener.newLink(enrichedLink);
+                        : interaction;
+                interactionListener.on(enrichedLink);
             }
         };
 
@@ -676,7 +676,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     }
 
                     try {
-                        interactionListener.newLink(props);
+                        interactionListener.on(props);
                     } catch (StudyImporterException e) {
                         //
                     }
@@ -833,11 +833,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private class InteractionListenerWithContext implements InteractionListener {
 
         @Override
-        public void newLink(Map<String, String> link) throws StudyImporterException {
+        public void on(Map<String, String> interaction) throws StudyImporterException {
             if (getDataset() == null) {
-                getInteractionListener().newLink(link);
+                getInteractionListener().on(interaction);
             } else {
-                getInteractionListener().newLink(new TreeMap<String, String>(link) {{
+                getInteractionListener().on(new TreeMap<String, String>(interaction) {{
                     if (getDataset().getArchiveURI() != null) {
                         put(DatasetConstant.ARCHIVE_URI, getDataset().getArchiveURI().toString());
                     }

@@ -3,5 +3,5 @@ package org.eol.globi.data;
 import java.util.Map;
 
 public interface InteractionListener {
-    void newLink(Map<String, String> link) throws StudyImporterException;
+    void on(Map<String, String> interaction) throws StudyImporterException;
 }

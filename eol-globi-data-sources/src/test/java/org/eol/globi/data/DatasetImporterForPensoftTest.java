@@ -74,8 +74,8 @@ public class DatasetImporterForPensoftTest {
 
         parseRowsAndEnrich(getTableObj(), new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                links.add(link);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
             }
         }, new ResourceService() {
             @Override

@@ -50,8 +50,8 @@ public class DatasetImporterForGrayTest extends GraphDBTestCase {
         gray.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), new InteractionListener() {
 
             @Override
-            public void newLink(final Map<String, String> link) {
-                maps.add(link);
+            public void on(final Map<String, String> interaction) {
+                maps.add(interaction);
             }
         }, null);
         resolveNames();

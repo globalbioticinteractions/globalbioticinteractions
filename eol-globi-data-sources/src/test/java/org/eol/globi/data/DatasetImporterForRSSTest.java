@@ -146,7 +146,7 @@ public class DatasetImporterForRSSTest {
         DatasetImportUtil.IndexingInteractionListener indexingInteractionListener
                 = new DatasetImportUtil.IndexingInteractionListener(index);
 
-        indexingInteractionListener.newLink(new TreeMap<String, String>() {{
+        indexingInteractionListener.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
         }});
@@ -163,7 +163,7 @@ public class DatasetImporterForRSSTest {
         DatasetImportUtil.IndexingInteractionListener indexingInteractionListener
                 = new DatasetImportUtil.IndexingInteractionListener(index);
 
-        indexingInteractionListener.newLink(new TreeMap<String, String>() {{
+        indexingInteractionListener.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
         }});
@@ -299,8 +299,8 @@ public class DatasetImporterForRSSTest {
         final List<Map<String, String>> receivedLinks = new ArrayList<>();
         studyImporter.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                receivedLinks.add(link);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                receivedLinks.add(interaction);
             }
         });
         TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<String, Map<String, String>>() {{
@@ -318,7 +318,7 @@ public class DatasetImporterForRSSTest {
         }};
         DatasetImportUtil.EnrichingInteractionListener listener = new DatasetImportUtil.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
-        listener.newLink(new TreeMap<String, String>() {{
+        listener.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
         }});
 

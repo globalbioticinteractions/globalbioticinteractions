@@ -133,7 +133,7 @@ public class DatasetImporterForSaproxylic extends DatasetImporterWithListener {
                 }
             }
             props.put(DatasetImporterForTSV.DATASET_CITATION, getDataset().getCitation());
-            listener.newLink(props);
+            listener.on(props);
         }
     }
 

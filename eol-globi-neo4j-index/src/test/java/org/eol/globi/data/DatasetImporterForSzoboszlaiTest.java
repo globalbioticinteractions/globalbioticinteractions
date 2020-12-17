@@ -34,8 +34,8 @@ public class DatasetImporterForSzoboszlaiTest extends GraphDBTestCase {
         localeMap.put(2361, new LatLng(34.00824202376044, -120.72716166720323));
         studyImporterForSzoboszlai.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) {
-                maps.add(link);
+            public void on(Map<String, String> interaction) {
+                maps.add(interaction);
             }
         }, localeMap);
         assertThat(maps.size(), is(4));

@@ -34,7 +34,7 @@ public class DatasetImporterForWood extends DatasetImporterWithListener {
         while ((filter == null || filter.shouldImportRecord((long) parser.lastLineNumber())) && parser.getLine() != null) {
             Map<String, String> e = importLink(parser);
             if (e != null) {
-                interactionListener.newLink(e);
+                interactionListener.on(e);
             }
         }
     }

@@ -233,7 +233,7 @@ public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
                 link.put(INTERACTION_TYPE_ID, InteractType.HOST_OF.getIRI());
                 link.put(INTERACTION_TYPE_NAME, InteractType.HOST_OF.getLabel());
 
-                interactionListener.newLink(link);
+                interactionListener.on(link);
             }
         }
     }

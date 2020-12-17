@@ -48,8 +48,8 @@ public class DatasetImporterForPensoftIT {
         importer.setDataset(dataset);
         importer.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                links.add(link);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
             }
         });
         importer.importStudy();
@@ -130,8 +130,8 @@ public class DatasetImporterForPensoftIT {
         List<Map<String, String>> rowValues = new ArrayList<>();
         InteractionListener listener = new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                rowValues.add(link);
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                rowValues.add(interaction);
             }
         };
 
@@ -147,8 +147,8 @@ public class DatasetImporterForPensoftIT {
         List<Map<String, String>> rowValues = new ArrayList<>();
         InteractionListener listener = new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                rowValues.add(new TreeMap<>(link));
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                rowValues.add(new TreeMap<>(interaction));
             }
         };
 
@@ -178,8 +178,8 @@ public class DatasetImporterForPensoftIT {
         List<Map<String, String>> rowValues = new ArrayList<>();
         InteractionListener listener = new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                rowValues.add(new TreeMap<>(link));
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                rowValues.add(new TreeMap<>(interaction));
             }
         };
 
@@ -215,8 +215,8 @@ public class DatasetImporterForPensoftIT {
         List<Map<String, String>> rowValues = new ArrayList<>();
         InteractionListener listener = new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) throws StudyImporterException {
-                rowValues.add(new TreeMap<>(link));
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                rowValues.add(new TreeMap<>(interaction));
             }
         };
 

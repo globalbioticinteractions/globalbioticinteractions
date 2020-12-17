@@ -154,9 +154,9 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
         final List<String> predators = new ArrayList<String>();
         importer.setInteractionListener(new InteractionListener() {
             @Override
-            public void newLink(Map<String, String> link) {
-                if (!DatasetImporterForSPIRE.isValid(link)) {
-                    predators.add(link.get(DatasetImporterForSPIRE.PREDATOR_NAME));
+            public void on(Map<String, String> interaction) {
+                if (!DatasetImporterForSPIRE.isValid(interaction)) {
+                    predators.add(interaction.get(DatasetImporterForSPIRE.PREDATOR_NAME));
                 }
             }
         });
@@ -369,31 +369,31 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
         List<String> publicationYears = new ArrayList<String>();
 
         @Override
-        public void newLink(Map<String, String> link) {
-            if (link.containsKey(DatasetImporterForSPIRE.LOCALITY_ORIGINAL)) {
-                localities.add(link.get(DatasetImporterForSPIRE.LOCALITY_ORIGINAL));
+        public void on(Map<String, String> interaction) {
+            if (interaction.containsKey(DatasetImporterForSPIRE.LOCALITY_ORIGINAL)) {
+                localities.add(interaction.get(DatasetImporterForSPIRE.LOCALITY_ORIGINAL));
             }
 
-            if (link.containsKey(StudyConstant.DESCRIPTION)) {
-                descriptions.add(link.get(StudyConstant.DESCRIPTION));
+            if (interaction.containsKey(StudyConstant.DESCRIPTION)) {
+                descriptions.add(interaction.get(StudyConstant.DESCRIPTION));
             }
-            if (link.containsKey(StudyConstant.TITLE)) {
-                titles.add(link.get(StudyConstant.TITLE));
-            }
-
-            if (link.containsKey(StudyConstant.TITLE)) {
-                titles.add(link.get(StudyConstant.TITLE));
-            }
-            if (link.containsKey(DatasetImporterForSPIRE.OF_HABITAT)) {
-                environments.add(link.get(DatasetImporterForSPIRE.OF_HABITAT));
-            }
-            if (link.containsKey(StudyConstant.PUBLICATION_YEAR)) {
-                publicationYears.add(link.get(StudyConstant.PUBLICATION_YEAR));
+            if (interaction.containsKey(StudyConstant.TITLE)) {
+                titles.add(interaction.get(StudyConstant.TITLE));
             }
 
+            if (interaction.containsKey(StudyConstant.TITLE)) {
+                titles.add(interaction.get(StudyConstant.TITLE));
+            }
+            if (interaction.containsKey(DatasetImporterForSPIRE.OF_HABITAT)) {
+                environments.add(interaction.get(DatasetImporterForSPIRE.OF_HABITAT));
+            }
+            if (interaction.containsKey(StudyConstant.PUBLICATION_YEAR)) {
+                publicationYears.add(interaction.get(StudyConstant.PUBLICATION_YEAR));
+            }
 
-            if (!DatasetImporterForSPIRE.isValid(link)) {
-                invalidInteractions.add(new TreeMap<String, String>(link));
+
+            if (!DatasetImporterForSPIRE.isValid(interaction)) {
+                invalidInteractions.add(new TreeMap<String, String>(interaction));
             }
 
             count++;

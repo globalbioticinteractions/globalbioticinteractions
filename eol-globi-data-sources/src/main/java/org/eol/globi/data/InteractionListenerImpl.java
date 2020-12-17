@@ -97,9 +97,9 @@ class InteractionListenerImpl implements InteractionListener {
     }
 
     @Override
-    public void newLink(Map<String, String> link) throws StudyImporterException {
+    public void on(Map<String, String> interaction) throws StudyImporterException {
         try {
-            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(link);
+            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(interaction);
             for (Map<String, String> expandedLink : propertiesList) {
                 addPlaceholderNamesIfNeeded(expandedLink);
 
@@ -109,7 +109,7 @@ class InteractionListenerImpl implements InteractionListener {
                 }
             }
         } catch (NodeFactoryException e) {
-            throw new StudyImporterException("failed to import: " + link, e);
+            throw new StudyImporterException("failed to import: " + interaction, e);
         }
     }
 
