@@ -24,7 +24,7 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
     private final ImportLogger logger;
     private final AtomicInteger counter = new AtomicInteger(0);
 
-    InteractionListenerWithInteractionTypeMapping(InteractionListener listener,
+    public InteractionListenerWithInteractionTypeMapping(InteractionListener listener,
                                                   InteractTypeMapper mapper,
                                                   ImportLogger logger) {
         this.listener = listener;

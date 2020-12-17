@@ -113,10 +113,24 @@ public class InteractionListenerImpl implements InteractionListener {
             for (Map<String, String> expandedLink : propertiesList) {
                 addPlaceholderNamesIfNeeded(expandedLink);
 
-                if (expandedLink != null && validLink(expandedLink)) {
-                    logIfPossible(expandedLink, "biotic interaction found");
-                    importValidLink(expandedLink);
-                }
+                InteractionListener importer = this::importValidLink;
+
+                InteractionProcessor validator = new InteractionProcessor() {
+
+                    @Override
+                    public void on(Map<String, String> interaction) throws StudyImporterException {
+                        if (interaction != null && validLink(interaction)) {
+                            logIfPossible(interaction, "biotic interaction found");
+                            emit(interaction);
+                        }
+                    }
+
+                    @Override
+                    public void emit(Map<String, String> interaction) throws StudyImporterException {
+                        importer.on(interaction);
+                    }
+                };
+                validator.on(expandedLink);
             }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import: " + interaction, e);
@@ -167,7 +181,7 @@ public class InteractionListenerImpl implements InteractionListener {
         return validLink(link, getLogger());
     }
 
-    static boolean validLink(Map<String, String> link, ImportLogger logger) {
+    public static boolean validLink(Map<String, String> link, ImportLogger logger) {
         Predicate<Map<String, String>> hasSourceTaxon = createSourceTaxonPredicate(logger);
 
         Predicate<Map<String, String>> hasTargetTaxon = createTargetTaxonPredicate(logger);
