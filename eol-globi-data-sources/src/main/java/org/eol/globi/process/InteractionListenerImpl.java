@@ -1,8 +1,6 @@
 package org.eol.globi.process;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.AssociatedTaxaUtil;
-import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.LocationUtil;
@@ -32,10 +30,7 @@ import org.joda.time.Interval;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.eol.globi.data.DatasetImporterForTSV.ARGUMENT_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_ID;
@@ -107,7 +102,7 @@ public class InteractionListenerImpl implements InteractionListener {
                         new InteractionValidator(
                                 new InteractionImporter(),
                                 logger
-                        )
+                        ), logger
                 );
     }
 
@@ -118,234 +113,6 @@ public class InteractionListenerImpl implements InteractionListener {
         } catch (StudyImporterException e) {
             throw new StudyImporterException("failed to import: " + interaction, e);
         }
-    }
-
-    public void addPlaceholderNamesIfNeeded(Map<String, String> expandedLink) {
-        if (InteractionValidator.createSourceTaxonPredicate(null).negate().test(expandedLink)) {
-            Stream<String> placeholderNames = Stream.of(
-                    SOURCE_INSTITUTION_CODE,
-                    SOURCE_COLLECTION_CODE,
-                    SOURCE_COLLECTION_ID,
-                    SOURCE_CATALOG_NUMBER,
-                    SOURCE_OCCURRENCE_ID);
-            addPlaceholderNamesIfPossible(expandedLink, placeholderNames, "source", SOURCE_TAXON_NAME);
-        }
-        if (InteractionValidator.createTargetTaxonPredicate(null).negate().test(expandedLink)) {
-            Stream<String> placeholderNames = Stream.of(
-                    TARGET_INSTITUTION_CODE,
-                    TARGET_COLLECTION_CODE,
-                    TARGET_COLLECTION_ID,
-                    TARGET_CATALOG_NUMBER,
-                    TARGET_OCCURRENCE_ID);
-            addPlaceholderNamesIfPossible(expandedLink, placeholderNames, "target", TARGET_TAXON_NAME);
-        }
-    }
-
-    public void addPlaceholderNamesIfPossible(Map<String, String> expandedLink, Stream<String> placeholderNames, String sourceOrTarget, String nameToBeFilled) {
-        final String placeholderMessage = " using institutionCode/collectionCode/collectionId/catalogNumber/occurrenceId as placeholder";
-
-        String targetNamePlaceholder = placeholderNames
-                .map(expandedLink::get)
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
-        if (StringUtils.isNotBlank(targetNamePlaceholder)) {
-            expandedLink.putIfAbsent(nameToBeFilled, targetNamePlaceholder);
-            logWarningIfPossible(expandedLink, sourceOrTarget + " taxon name missing:" + placeholderMessage);
-        }
-    }
-
-    private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(studyOf(interaction));
-
-        Specimen source = createSpecimen(
-                interaction,
-                study,
-                SOURCE_TAXON_NAME,
-                SOURCE_TAXON_ID,
-                SOURCE_BODY_PART_NAME,
-                SOURCE_BODY_PART_ID,
-                SOURCE_LIFE_STAGE_NAME,
-                SOURCE_LIFE_STAGE_ID,
-                SOURCE_TAXON_PATH,
-                SOURCE_TAXON_PATH_NAMES,
-                SOURCE_SEX_NAME,
-                SOURCE_SEX_ID,
-                SOURCE_TAXON_RANK,
-                SOURCE_TAXON_PATH_IDS);
-
-        setExternalIdNotBlank(interaction, SOURCE_OCCURRENCE_ID, source);
-        setPropertyIfAvailable(interaction, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(interaction, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(interaction, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
-
-        Specimen target = createSpecimen(
-                interaction,
-                study,
-                TARGET_TAXON_NAME,
-                TARGET_TAXON_ID,
-                TARGET_BODY_PART_NAME,
-                TARGET_BODY_PART_ID,
-                TARGET_LIFE_STAGE_NAME,
-                TARGET_LIFE_STAGE_ID,
-                TARGET_TAXON_PATH,
-                TARGET_TAXON_PATH_NAMES,
-                TARGET_SEX_NAME,
-                TARGET_SEX_ID,
-                TARGET_TAXON_RANK,
-                TARGET_TAXON_PATH_IDS);
-
-        setExternalIdNotBlank(interaction, TARGET_OCCURRENCE_ID, target);
-        setPropertyIfAvailable(interaction, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(interaction, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(interaction, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
-
-
-        String interactionTypeId = interaction.get(INTERACTION_TYPE_ID);
-        InteractType type = InteractType.typeOf(interactionTypeId);
-
-        source.interactsWith(target, type, getOrCreateLocation(interaction));
-    }
-
-    private void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
-        String value = link.get(key);
-        if (StringUtils.isNotBlank(value)) {
-            source.setProperty(propertyKey, value);
-        }
-    }
-
-    private void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
-        String s = link.get(sourceOccurrenceId);
-        if (StringUtils.isNotBlank(s)) {
-            source1.setExternalId(s);
-        }
-    }
-
-    private Specimen createSpecimen(Map<String, String> link,
-                                    Study study,
-                                    String taxonNameLabel,
-                                    String taxonIdLabel,
-                                    String bodyPartName,
-                                    String bodyPartId,
-                                    String lifeStageName,
-                                    String lifeStageId,
-                                    String taxonPathLabel,
-                                    String taxonPathNamesLabel,
-                                    String sexLabel,
-                                    String sexId, String taxonRankLabel, String taxonPathIdsLabel) throws StudyImporterException {
-        String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
-        RelTypes[] argumentType = refutes(argumentTypeId)
-                ? new RelTypes[]{RelTypes.REFUTES}
-                : new RelTypes[]{RelTypes.COLLECTED, RelTypes.SUPPORTS};
-
-        String sourceTaxonName = link.get(taxonNameLabel);
-        String sourceTaxonId = link.get(taxonIdLabel);
-        TaxonImpl taxon = new TaxonImpl(sourceTaxonName, sourceTaxonId);
-
-        String taxonRank = link.get(taxonRankLabel);
-        if (StringUtils.isNotBlank(taxonRank)) {
-            taxon.setRank(taxonRank);
-        }
-
-
-        String taxonPath = link.get(taxonPathLabel);
-        if (StringUtils.isNotBlank(taxonPath)) {
-            taxon.setPath(taxonPath);
-        }
-
-        String taxonPathIds = link.get(taxonPathIdsLabel);
-        if (StringUtils.isNotBlank(taxonPathIds)) {
-            taxon.setPathIds(taxonPathIds);
-        }
-
-        String taxonPathNames = link.get(taxonPathNamesLabel);
-        if (StringUtils.isNotBlank(taxonPathNames)) {
-            taxon.setPathNames(taxonPathNames);
-        }
-
-        Specimen source = nodeFactory.createSpecimen(study, taxon, argumentType);
-        setBasisOfRecordIfAvailable(link, source);
-        setDateTimeIfAvailable(link, source);
-        setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
-        setLifeStageIfAvailable(link, source, lifeStageName, lifeStageId);
-        setSexIfAvailable(link, source, sexLabel, sexId);
-        return source;
-    }
-
-    private boolean refutes(String argumentTypeId) {
-        return StringUtils.equalsIgnoreCase(argumentTypeId, PropertyAndValueDictionary.REFUTES);
-    }
-
-    private void setLifeStageIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
-        final String lifeStageName = link.get(name);
-        final String lifeStageId = link.get(id);
-        if (StringUtils.isNotBlank(lifeStageName) || StringUtils.isNotBlank(lifeStageId)) {
-            source.setLifeStage(new TermImpl(lifeStageId, lifeStageName));
-        }
-    }
-
-    private void setSexIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
-        final String sexName = link.get(name);
-        final String sexId = link.get(id);
-        if (StringUtils.isNotBlank(sexName) || StringUtils.isNotBlank(sexId)) {
-            source.setSex(new TermImpl(sexId, sexName));
-        }
-    }
-
-    private StudyImpl studyOf(Map<String, String> l) {
-        String referenceCitation = l.get(REFERENCE_CITATION);
-        DOI doi = null;
-        String doiString = l.get(REFERENCE_DOI);
-        try {
-            doi = StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
-        } catch (MalformedDOIException e) {
-            if (logger != null) {
-                logger.warn(LogUtil.contextFor(l), "found malformed doi [" + doiString + "]");
-            }
-        }
-        StudyImpl study1 = new StudyImpl(l.get(REFERENCE_ID),
-                doi,
-                referenceCitation);
-
-        final String referenceUrl = l.get(REFERENCE_URL);
-        if (StringUtils.isBlank(study1.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
-            study1.setExternalId(referenceUrl);
-        }
-
-        return study1;
-    }
-
-    private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
-        final String eventDate = link.get(DatasetImporterForMetaTable.EVENT_DATE);
-        if (StringUtils.isNotBlank(eventDate)) {
-            try {
-                final DateTime dateTime = DateUtil
-                        .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
-                Date date = dateTime.toDate();
-                if (dateTime.getYear() == 8888) {
-                    // 8888 is a magic number used by Arctos
-                    // see http://handbook.arctosdb.org/documentation/dates.html#restricted-data
-                    // https://github.com/ArctosDB/arctos/issues/2426
-                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] appears to be restricted, see http://handbook.arctosdb.org/documentation/dates.html#restricted-data");
-                } else if (date.after(new Date())) {
-                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] is in the future");
-                } else if (dateTime.getYear() < 100) {
-                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
-                } else if (hasStartDateAfterEndDate(eventDate)) {
-                    logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
-                }
-                nodeFactory.setUnixEpochProperty(target, date);
-            } catch (IllegalArgumentException ex) {
-                logWarningIfPossible(link, "invalid date string [" + eventDate + "]");
-            } catch (NodeFactoryException e) {
-                throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
-            }
-
-        }
-
     }
 
     static boolean hasStartDateAfterEndDate(String eventDate) {
@@ -374,101 +141,6 @@ public class InteractionListenerImpl implements InteractionListener {
         return hasStartedAfterFinishing;
     }
 
-    private static String applySymbiotaDateTimeFix(String eventDate) {
-        String eventDateCorrected = eventDate;
-        if (StringUtils.contains(eventDate, "-00")) {
-            // see https://github.com/globalbioticinteractions/scan/issues/2
-            // see http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#eventDate
-            String[] parts = StringUtils.splitByWholeSeparator(eventDate, "-00");
-            eventDateCorrected = parts[0];
-        }
-        return eventDateCorrected;
-    }
-
-    private void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
-        final String basisOfRecordName = link.get(BASIS_OF_RECORD_NAME);
-        final String basisOfRecordId = link.get(BASIS_OF_RECORD_ID);
-        if (StringUtils.isNotBlank(basisOfRecordName) || StringUtils.isNotBlank(basisOfRecordId)) {
-            specimen.setBasisOfRecord(new TermImpl(basisOfRecordId, basisOfRecordName));
-        }
-    }
-
-    private void setBodyPartIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
-        final String bodyPartName = link.get(name);
-        final String bodyPartId = link.get(id);
-        if (StringUtils.isNotBlank(bodyPartName) || StringUtils.isNotBlank(bodyPartId)) {
-            specimen.setBodyPart(new TermImpl(bodyPartId, bodyPartName));
-        }
-    }
-
-    private Location getOrCreateLocation(Map<String, String> link) throws NodeFactoryException {
-        LatLng centroid = null;
-        String[] latitudes = {DECIMAL_LATITUDE, DatasetImporterForMetaTable.LATITUDE};
-        String latitude = getFirstValueForTerms(link, latitudes);
-
-        String[] longitudes = {DECIMAL_LONGITUDE, DatasetImporterForMetaTable.LONGITUDE};
-        String longitude = getFirstValueForTerms(link, longitudes);
-
-        if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
-            try {
-                centroid = LocationUtil.parseLatLng(latitude, longitude);
-            } catch (InvalidLocationException e) {
-                logWarningIfPossible(link, "found invalid location: [" + e.getMessage() + "]");
-            }
-        }
-        String localityId = getFirstValueForTerms(link, LOCALITY_ID_TERMS);
-
-        if (centroid == null) {
-            if (StringUtils.isNotBlank(localityId)) {
-                try {
-                    centroid = getGeoNamesService().findLatLng(localityId);
-                } catch (IOException ex) {
-                    String message = "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]";
-                    logWarningIfPossible(link, message);
-                }
-            }
-        }
-
-        LocationImpl location = null;
-        if (centroid != null) {
-            location = new LocationImpl(centroid.getLat(),
-                    centroid.getLng(), null, null);
-        } else if (StringUtils.isNotBlank(localityId) || StringUtils.isNotBlank(LOCALITY_NAME)) {
-            location = new LocationImpl(null,
-                    null, null, null);
-        }
-
-        if (location != null) {
-            if (StringUtils.isNotBlank(localityId)) {
-                location.setLocalityId(localityId);
-            }
-            String localityName = getFirstValueForTerms(link, LOCALITY_NAME_TERMS);
-            if (StringUtils.isNotBlank(localityName)) {
-                location.setLocality(localityName);
-            }
-        }
-        return location == null ? null : nodeFactory.getOrCreateLocation(location);
-    }
-
-    private void logWarningIfPossible(Map<String, String> link, String message) {
-        logWarningIfPossible(link, message, getLogger());
-    }
-
-    private static void logWarningIfPossible(Map<String, String> link, String message, ImportLogger logger) {
-        if (logger != null) {
-            logger.warn(LogUtil.contextFor(link), message);
-        }
-    }
-
-    private String getFirstValueForTerms(Map<String, String> link, String[] latitudes) {
-        String latitude = null;
-        for (String latitudeTerm : latitudes) {
-            if (StringUtils.isBlank(latitude)) {
-                latitude = link.get(latitudeTerm);
-            }
-        }
-        return latitude;
-    }
 
     public GeoNamesService getGeoNamesService() {
         return geoNamesService;
@@ -484,28 +156,293 @@ public class InteractionListenerImpl implements InteractionListener {
         public void on(Map<String, String> interaction) throws StudyImporterException {
             importInteraction(interaction);
         }
-    }
 
-    public class InteractionExpander implements InteractionProcessor {
 
-        private final InteractionListener listener;
+        private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
+            Study study = nodeFactory.getOrCreateStudy(studyOf(interaction));
 
-        public InteractionExpander(InteractionListener listener) {
-            this.listener = listener;
+            Specimen source = createSpecimen(
+                    interaction,
+                    study,
+                    SOURCE_TAXON_NAME,
+                    SOURCE_TAXON_ID,
+                    SOURCE_BODY_PART_NAME,
+                    SOURCE_BODY_PART_ID,
+                    SOURCE_LIFE_STAGE_NAME,
+                    SOURCE_LIFE_STAGE_ID,
+                    SOURCE_TAXON_PATH,
+                    SOURCE_TAXON_PATH_NAMES,
+                    SOURCE_SEX_NAME,
+                    SOURCE_SEX_ID,
+                    SOURCE_TAXON_RANK,
+                    SOURCE_TAXON_PATH_IDS);
+
+            setExternalIdNotBlank(interaction, SOURCE_OCCURRENCE_ID, source);
+            setPropertyIfAvailable(interaction, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
+            setPropertyIfAvailable(interaction, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
+            setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
+            setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
+            setPropertyIfAvailable(interaction, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
+
+            Specimen target = createSpecimen(
+                    interaction,
+                    study,
+                    TARGET_TAXON_NAME,
+                    TARGET_TAXON_ID,
+                    TARGET_BODY_PART_NAME,
+                    TARGET_BODY_PART_ID,
+                    TARGET_LIFE_STAGE_NAME,
+                    TARGET_LIFE_STAGE_ID,
+                    TARGET_TAXON_PATH,
+                    TARGET_TAXON_PATH_NAMES,
+                    TARGET_SEX_NAME,
+                    TARGET_SEX_ID,
+                    TARGET_TAXON_RANK,
+                    TARGET_TAXON_PATH_IDS);
+
+            setExternalIdNotBlank(interaction, TARGET_OCCURRENCE_ID, target);
+            setPropertyIfAvailable(interaction, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
+            setPropertyIfAvailable(interaction, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
+            setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
+            setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_ID, COLLECTION_ID);
+            setPropertyIfAvailable(interaction, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
+
+
+            String interactionTypeId = interaction.get(INTERACTION_TYPE_ID);
+            InteractType type = InteractType.typeOf(interactionTypeId);
+
+            source.interactsWith(target, type, getOrCreateLocation(interaction));
         }
 
-        @Override
-        public void on(Map<String, String> interaction) throws StudyImporterException {
-            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(interaction);
-            for (Map<String, String> expandedLink : propertiesList) {
-                addPlaceholderNamesIfNeeded(expandedLink);
-                emit(expandedLink);
+        private void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
+            String value = link.get(key);
+            if (StringUtils.isNotBlank(value)) {
+                source.setProperty(propertyKey, value);
             }
         }
 
-        @Override
-        public void emit(Map<String, String> interaction) throws StudyImporterException {
-            listener.on(interaction);
+        private void setExternalIdNotBlank(Map<String, String> link, String sourceOccurrenceId, Specimen source1) {
+            String s = link.get(sourceOccurrenceId);
+            if (StringUtils.isNotBlank(s)) {
+                source1.setExternalId(s);
+            }
         }
+
+        private Specimen createSpecimen(Map<String, String> link,
+                                        Study study,
+                                        String taxonNameLabel,
+                                        String taxonIdLabel,
+                                        String bodyPartName,
+                                        String bodyPartId,
+                                        String lifeStageName,
+                                        String lifeStageId,
+                                        String taxonPathLabel,
+                                        String taxonPathNamesLabel,
+                                        String sexLabel,
+                                        String sexId, String taxonRankLabel, String taxonPathIdsLabel) throws StudyImporterException {
+            String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
+            RelTypes[] argumentType = refutes(argumentTypeId)
+                    ? new RelTypes[]{RelTypes.REFUTES}
+                    : new RelTypes[]{RelTypes.COLLECTED, RelTypes.SUPPORTS};
+
+            String sourceTaxonName = link.get(taxonNameLabel);
+            String sourceTaxonId = link.get(taxonIdLabel);
+            TaxonImpl taxon = new TaxonImpl(sourceTaxonName, sourceTaxonId);
+
+            String taxonRank = link.get(taxonRankLabel);
+            if (StringUtils.isNotBlank(taxonRank)) {
+                taxon.setRank(taxonRank);
+            }
+
+
+            String taxonPath = link.get(taxonPathLabel);
+            if (StringUtils.isNotBlank(taxonPath)) {
+                taxon.setPath(taxonPath);
+            }
+
+            String taxonPathIds = link.get(taxonPathIdsLabel);
+            if (StringUtils.isNotBlank(taxonPathIds)) {
+                taxon.setPathIds(taxonPathIds);
+            }
+
+            String taxonPathNames = link.get(taxonPathNamesLabel);
+            if (StringUtils.isNotBlank(taxonPathNames)) {
+                taxon.setPathNames(taxonPathNames);
+            }
+
+            Specimen source = nodeFactory.createSpecimen(study, taxon, argumentType);
+            setBasisOfRecordIfAvailable(link, source);
+            setDateTimeIfAvailable(link, source);
+            setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
+            setLifeStageIfAvailable(link, source, lifeStageName, lifeStageId);
+            setSexIfAvailable(link, source, sexLabel, sexId);
+            return source;
+        }
+
+        private boolean refutes(String argumentTypeId) {
+            return StringUtils.equalsIgnoreCase(argumentTypeId, PropertyAndValueDictionary.REFUTES);
+        }
+
+        private void setLifeStageIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
+            final String lifeStageName = link.get(name);
+            final String lifeStageId = link.get(id);
+            if (StringUtils.isNotBlank(lifeStageName) || StringUtils.isNotBlank(lifeStageId)) {
+                source.setLifeStage(new TermImpl(lifeStageId, lifeStageName));
+            }
+        }
+
+        private void setSexIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
+            final String sexName = link.get(name);
+            final String sexId = link.get(id);
+            if (StringUtils.isNotBlank(sexName) || StringUtils.isNotBlank(sexId)) {
+                source.setSex(new TermImpl(sexId, sexName));
+            }
+        }
+
+        private StudyImpl studyOf(Map<String, String> l) {
+            String referenceCitation = l.get(REFERENCE_CITATION);
+            DOI doi = null;
+            String doiString = l.get(REFERENCE_DOI);
+            try {
+                doi = StringUtils.isBlank(doiString) ? null : DOI.create(doiString);
+            } catch (MalformedDOIException e) {
+                if (logger != null) {
+                    logger.warn(LogUtil.contextFor(l), "found malformed doi [" + doiString + "]");
+                }
+            }
+            StudyImpl study1 = new StudyImpl(l.get(REFERENCE_ID),
+                    doi,
+                    referenceCitation);
+
+            final String referenceUrl = l.get(REFERENCE_URL);
+            if (StringUtils.isBlank(study1.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
+                study1.setExternalId(referenceUrl);
+            }
+
+            return study1;
+        }
+
+        private void setDateTimeIfAvailable(Map<String, String> link, Specimen target) throws StudyImporterException {
+            final String eventDate = link.get(DatasetImporterForMetaTable.EVENT_DATE);
+            if (StringUtils.isNotBlank(eventDate)) {
+                try {
+                    final DateTime dateTime = DateUtil
+                            .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
+                    Date date = dateTime.toDate();
+                    if (dateTime.getYear() == 8888) {
+                        // 8888 is a magic number used by Arctos
+                        // see http://handbook.arctosdb.org/documentation/dates.html#restricted-data
+                        // https://github.com/ArctosDB/arctos/issues/2426
+                        logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] appears to be restricted, see http://handbook.arctosdb.org/documentation/dates.html#restricted-data");
+                    } else if (date.after(new Date())) {
+                        logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] is in the future");
+                    } else if (dateTime.getYear() < 100) {
+                        logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
+                    } else if (hasStartDateAfterEndDate(eventDate)) {
+                        logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
+                    }
+                    nodeFactory.setUnixEpochProperty(target, date);
+                } catch (IllegalArgumentException ex) {
+                    logWarningIfPossible(link, "invalid date string [" + eventDate + "]");
+                } catch (NodeFactoryException e) {
+                    throw new StudyImporterException("failed to set time for [" + eventDate + "]", e);
+                }
+
+            }
+
+        }
+
+
+        private String applySymbiotaDateTimeFix(String eventDate) {
+            String eventDateCorrected = eventDate;
+            if (StringUtils.contains(eventDate, "-00")) {
+                // see https://github.com/globalbioticinteractions/scan/issues/2
+                // see http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#eventDate
+                String[] parts = StringUtils.splitByWholeSeparator(eventDate, "-00");
+                eventDateCorrected = parts[0];
+            }
+            return eventDateCorrected;
+        }
+
+        private void setBasisOfRecordIfAvailable(Map<String, String> link, Specimen specimen) {
+            final String basisOfRecordName = link.get(BASIS_OF_RECORD_NAME);
+            final String basisOfRecordId = link.get(BASIS_OF_RECORD_ID);
+            if (StringUtils.isNotBlank(basisOfRecordName) || StringUtils.isNotBlank(basisOfRecordId)) {
+                specimen.setBasisOfRecord(new TermImpl(basisOfRecordId, basisOfRecordName));
+            }
+        }
+
+        private void setBodyPartIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
+            final String bodyPartName = link.get(name);
+            final String bodyPartId = link.get(id);
+            if (StringUtils.isNotBlank(bodyPartName) || StringUtils.isNotBlank(bodyPartId)) {
+                specimen.setBodyPart(new TermImpl(bodyPartId, bodyPartName));
+            }
+        }
+
+        private Location getOrCreateLocation(Map<String, String> link) throws NodeFactoryException {
+            LatLng centroid = null;
+            String[] latitudes = {DECIMAL_LATITUDE, DatasetImporterForMetaTable.LATITUDE};
+            String latitude = getFirstValueForTerms(link, latitudes);
+
+            String[] longitudes = {DECIMAL_LONGITUDE, DatasetImporterForMetaTable.LONGITUDE};
+            String longitude = getFirstValueForTerms(link, longitudes);
+
+            if (StringUtils.isNotBlank(latitude) && StringUtils.isNotBlank(longitude)) {
+                try {
+                    centroid = LocationUtil.parseLatLng(latitude, longitude);
+                } catch (InvalidLocationException e) {
+                    logWarningIfPossible(link, "found invalid location: [" + e.getMessage() + "]");
+                }
+            }
+            String localityId = getFirstValueForTerms(link, LOCALITY_ID_TERMS);
+
+            if (centroid == null) {
+                if (StringUtils.isNotBlank(localityId)) {
+                    try {
+                        centroid = getGeoNamesService().findLatLng(localityId);
+                    } catch (IOException ex) {
+                        String message = "failed to lookup [" + localityId + "] because of: [" + ex.getMessage() + "]";
+                        logWarningIfPossible(link, message);
+                    }
+                }
+            }
+
+            LocationImpl location = null;
+            if (centroid != null) {
+                location = new LocationImpl(centroid.getLat(),
+                        centroid.getLng(), null, null);
+            } else if (StringUtils.isNotBlank(localityId) || StringUtils.isNotBlank(LOCALITY_NAME)) {
+                location = new LocationImpl(null,
+                        null, null, null);
+            }
+
+            if (location != null) {
+                if (StringUtils.isNotBlank(localityId)) {
+                    location.setLocalityId(localityId);
+                }
+                String localityName = getFirstValueForTerms(link, LOCALITY_NAME_TERMS);
+                if (StringUtils.isNotBlank(localityName)) {
+                    location.setLocality(localityName);
+                }
+            }
+            return location == null ? null : nodeFactory.getOrCreateLocation(location);
+        }
+
+        private void logWarningIfPossible(Map<String, String> link, String message) {
+            org.eol.globi.process.LogUtil.logWarningIfPossible(link, message, getLogger());
+        }
+
+        private String getFirstValueForTerms(Map<String, String> link, String[] latitudes) {
+            String latitude = null;
+            for (String latitudeTerm : latitudes) {
+                if (StringUtils.isBlank(latitude)) {
+                    latitude = link.get(latitudeTerm);
+                }
+            }
+            return latitude;
+        }
+
     }
+
 }

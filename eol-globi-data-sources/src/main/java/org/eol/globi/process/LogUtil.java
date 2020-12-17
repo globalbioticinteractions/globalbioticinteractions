@@ -10,4 +10,12 @@ public class LogUtil {
             logger.info(org.eol.globi.data.LogUtil.contextFor(interaction), msg);
         }
     }
+
+    public static void logWarningIfPossible(Map<String, String> interaction, String msg, ImportLogger logger) {
+        if (logger != null) {
+            logger.warn(org.eol.globi.data.LogUtil.contextFor(interaction), msg);
+        }
+    }
+
+
 }
