@@ -14,7 +14,6 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.process.InteractionListenerImpl;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.DateUtil;
@@ -516,7 +515,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void interactionTypePredicateMissing() {
         Predicate<Map<String, String>> interactionTypePredicate =
-                InteractionListenerImpl.createInteractionTypePredicate(null);
+                InteractionValidator.createInteractionTypePredicate(null);
 
         assertThat(interactionTypePredicate.test(new TreeMap<String, String>()), is(false));
     }
@@ -524,7 +523,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void interactionTypePredicateInvalid() {
         Predicate<Map<String, String>> interactionTypePredicate =
-                InteractionListenerImpl.createInteractionTypePredicate(null);
+                InteractionValidator.createInteractionTypePredicate(null);
 
         assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "bla");
@@ -534,7 +533,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     @Test
     public void interactionTypePredicateValid() {
         Predicate<Map<String, String>> interactionTypePredicate =
-                InteractionListenerImpl.createInteractionTypePredicate(null);
+                InteractionValidator.createInteractionTypePredicate(null);
 
         assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());

@@ -21,7 +21,6 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
-import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,7 +43,6 @@ import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LATITUDE;
 import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LONGITUDE;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
@@ -99,46 +96,32 @@ public class InteractionListenerImpl implements InteractionListener {
     private final GeoNamesService geoNamesService;
 
     private final ImportLogger logger;
+    private final InteractionListener processor;
 
     public InteractionListenerImpl(NodeFactory nodeFactory, GeoNamesService geoNamesService, ImportLogger logger) {
         this.nodeFactory = nodeFactory;
         this.geoNamesService = geoNamesService;
         this.logger = logger;
+        this.processor =
+                new InteractionExpander(
+                        new InteractionValidator(
+                                new InteractionImporter(),
+                                logger
+                        )
+                );
     }
 
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         try {
-            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(interaction);
-            for (Map<String, String> expandedLink : propertiesList) {
-                addPlaceholderNamesIfNeeded(expandedLink);
-
-                InteractionListener importer = this::importValidLink;
-
-                InteractionProcessor validator = new InteractionProcessor() {
-
-                    @Override
-                    public void on(Map<String, String> interaction) throws StudyImporterException {
-                        if (interaction != null && validLink(interaction)) {
-                            logIfPossible(interaction, "biotic interaction found");
-                            emit(interaction);
-                        }
-                    }
-
-                    @Override
-                    public void emit(Map<String, String> interaction) throws StudyImporterException {
-                        importer.on(interaction);
-                    }
-                };
-                validator.on(expandedLink);
-            }
-        } catch (NodeFactoryException e) {
+            processor.on(interaction);
+        } catch (StudyImporterException e) {
             throw new StudyImporterException("failed to import: " + interaction, e);
         }
     }
 
     public void addPlaceholderNamesIfNeeded(Map<String, String> expandedLink) {
-        if (createSourceTaxonPredicate(null).negate().test(expandedLink)) {
+        if (InteractionValidator.createSourceTaxonPredicate(null).negate().test(expandedLink)) {
             Stream<String> placeholderNames = Stream.of(
                     SOURCE_INSTITUTION_CODE,
                     SOURCE_COLLECTION_CODE,
@@ -147,7 +130,7 @@ public class InteractionListenerImpl implements InteractionListener {
                     SOURCE_OCCURRENCE_ID);
             addPlaceholderNamesIfPossible(expandedLink, placeholderNames, "source", SOURCE_TAXON_NAME);
         }
-        if (createTargetTaxonPredicate(null).negate().test(expandedLink)) {
+        if (InteractionValidator.createTargetTaxonPredicate(null).negate().test(expandedLink)) {
             Stream<String> placeholderNames = Stream.of(
                     TARGET_INSTITUTION_CODE,
                     TARGET_COLLECTION_CODE,
@@ -171,98 +154,11 @@ public class InteractionListenerImpl implements InteractionListener {
         }
     }
 
-    private void logIfPossible(Map<String, String> expandedProperties, String msg) {
-        if (logger != null) {
-            logger.info(LogUtil.contextFor(expandedProperties), msg);
-        }
-    }
-
-    private boolean validLink(Map<String, String> link) {
-        return validLink(link, getLogger());
-    }
-
-    public static boolean validLink(Map<String, String> link, ImportLogger logger) {
-        Predicate<Map<String, String>> hasSourceTaxon = createSourceTaxonPredicate(logger);
-
-        Predicate<Map<String, String>> hasTargetTaxon = createTargetTaxonPredicate(logger);
-
-        Predicate<Map<String, String>> hasInteractionType = createInteractionTypePredicate(logger);
-
-        Predicate<Map<String, String>> hasReferenceId = createReferencePredicate(logger);
-
-        return hasSourceTaxon
-                .and(hasTargetTaxon)
-                .and(hasInteractionType)
-                .and(hasReferenceId)
-                .test(link);
-    }
-
-    private static Predicate<Map<String, String>> createSourceTaxonPredicate(ImportLogger logger) {
-        return (Map<String, String> l) -> {
-            String sourceTaxonName = l.get(SOURCE_TAXON_NAME);
-            String sourceTaxonId = l.get(SOURCE_TAXON_ID);
-            boolean isValid = StringUtils.isNotBlank(sourceTaxonName) || StringUtils.isNotBlank(sourceTaxonId);
-            if (!isValid && logger != null) {
-                logger.warn(LogUtil.contextFor(l), "source taxon name missing");
-            }
-            return isValid;
-        };
-    }
-
-    private static Predicate<Map<String, String>> createTargetTaxonPredicate(ImportLogger logger) {
-        return (Map<String, String> l) -> {
-            String targetTaxonName = l.get(TARGET_TAXON_NAME);
-            String targetTaxonId = l.get(TARGET_TAXON_ID);
-
-            boolean isValid = StringUtils.isNotBlank(targetTaxonName) || StringUtils.isNotBlank(targetTaxonId);
-            if (!isValid && logger != null) {
-                logger.warn(LogUtil.contextFor(l), "target taxon name missing");
-            }
-            return isValid;
-        };
-    }
-
-    private static Predicate<Map<String, String>> createReferencePredicate(ImportLogger logger) {
-        return (Map<String, String> l) -> {
-            boolean isValid = StringUtils.isNotBlank(l.get(REFERENCE_ID));
-            if (!isValid && logger != null) {
-                logger.warn(LogUtil.contextFor(l), "missing [" + REFERENCE_ID + "]");
-            }
-            return isValid;
-        };
-    }
-
-    static Predicate<Map<String, String>> createInteractionTypePredicate(ImportLogger logger) {
-        return (Map<String, String> l) -> {
-            String interactionTypeId = l.get(INTERACTION_TYPE_ID);
-            boolean hasValidId = false;
-            if (StringUtils.isBlank(interactionTypeId) && logger != null) {
-                if (StringUtils.isBlank(l.get(INTERACTION_TYPE_NAME))) {
-                    logger.warn(LogUtil.contextFor(l), "missing interaction type");
-                } else {
-                    logger.warn(LogUtil.contextFor(l), "found unsupported interaction type with name: [" + l.get(INTERACTION_TYPE_NAME) + "]");
-                }
-            } else {
-                hasValidId = InteractType.typeOf(interactionTypeId) != null;
-                if (!hasValidId && logger != null) {
-                    StringBuilder msg = new StringBuilder("found unsupported interaction type with id: [" + interactionTypeId + "]");
-                    if (StringUtils.isNotBlank(l.get(INTERACTION_TYPE_NAME))) {
-                        msg.append(" and name: [")
-                                .append(l.get(INTERACTION_TYPE_NAME))
-                                .append("]");
-                    }
-                    logger.warn(LogUtil.contextFor(l), msg.toString());
-                }
-            }
-            return hasValidId;
-        };
-    }
-
-    private void importValidLink(Map<String, String> link) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(studyFromLink(link));
+    private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
+        Study study = nodeFactory.getOrCreateStudy(studyOf(interaction));
 
         Specimen source = createSpecimen(
-                link,
+                interaction,
                 study,
                 SOURCE_TAXON_NAME,
                 SOURCE_TAXON_ID,
@@ -277,15 +173,15 @@ public class InteractionListenerImpl implements InteractionListener {
                 SOURCE_TAXON_RANK,
                 SOURCE_TAXON_PATH_IDS);
 
-        setExternalIdNotBlank(link, SOURCE_OCCURRENCE_ID, source);
-        setPropertyIfAvailable(link, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(link, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(link, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(link, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(link, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
+        setExternalIdNotBlank(interaction, SOURCE_OCCURRENCE_ID, source);
+        setPropertyIfAvailable(interaction, source, SOURCE_OCCURRENCE_ID, OCCURRENCE_ID);
+        setPropertyIfAvailable(interaction, source, SOURCE_CATALOG_NUMBER, CATALOG_NUMBER);
+        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_CODE, COLLECTION_CODE);
+        setPropertyIfAvailable(interaction, source, SOURCE_COLLECTION_ID, COLLECTION_ID);
+        setPropertyIfAvailable(interaction, source, SOURCE_INSTITUTION_CODE, INSTITUTION_CODE);
 
         Specimen target = createSpecimen(
-                link,
+                interaction,
                 study,
                 TARGET_TAXON_NAME,
                 TARGET_TAXON_ID,
@@ -300,18 +196,18 @@ public class InteractionListenerImpl implements InteractionListener {
                 TARGET_TAXON_RANK,
                 TARGET_TAXON_PATH_IDS);
 
-        setExternalIdNotBlank(link, TARGET_OCCURRENCE_ID, target);
-        setPropertyIfAvailable(link, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
-        setPropertyIfAvailable(link, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
-        setPropertyIfAvailable(link, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
-        setPropertyIfAvailable(link, target, TARGET_COLLECTION_ID, COLLECTION_ID);
-        setPropertyIfAvailable(link, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
+        setExternalIdNotBlank(interaction, TARGET_OCCURRENCE_ID, target);
+        setPropertyIfAvailable(interaction, target, TARGET_OCCURRENCE_ID, OCCURRENCE_ID);
+        setPropertyIfAvailable(interaction, target, TARGET_CATALOG_NUMBER, CATALOG_NUMBER);
+        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_CODE, COLLECTION_CODE);
+        setPropertyIfAvailable(interaction, target, TARGET_COLLECTION_ID, COLLECTION_ID);
+        setPropertyIfAvailable(interaction, target, TARGET_INSTITUTION_CODE, INSTITUTION_CODE);
 
 
-        String interactionTypeId = link.get(INTERACTION_TYPE_ID);
+        String interactionTypeId = interaction.get(INTERACTION_TYPE_ID);
         InteractType type = InteractType.typeOf(interactionTypeId);
 
-        source.interactsWith(target, type, getOrCreateLocation(link));
+        source.interactsWith(target, type, getOrCreateLocation(interaction));
     }
 
     private void setPropertyIfAvailable(Map<String, String> link, Specimen source, String key, String propertyKey) {
@@ -399,7 +295,7 @@ public class InteractionListenerImpl implements InteractionListener {
         }
     }
 
-    private StudyImpl studyFromLink(Map<String, String> l) {
+    private StudyImpl studyOf(Map<String, String> l) {
         String referenceCitation = l.get(REFERENCE_CITATION);
         DOI doi = null;
         String doiString = l.get(REFERENCE_DOI);
@@ -583,4 +479,33 @@ public class InteractionListenerImpl implements InteractionListener {
     }
 
 
+    public class InteractionImporter implements InteractionListener {
+        @Override
+        public void on(Map<String, String> interaction) throws StudyImporterException {
+            importInteraction(interaction);
+        }
+    }
+
+    public class InteractionExpander implements InteractionProcessor {
+
+        private final InteractionListener listener;
+
+        public InteractionExpander(InteractionListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void on(Map<String, String> interaction) throws StudyImporterException {
+            List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(interaction);
+            for (Map<String, String> expandedLink : propertiesList) {
+                addPlaceholderNamesIfNeeded(expandedLink);
+                emit(expandedLink);
+            }
+        }
+
+        @Override
+        public void emit(Map<String, String> interaction) throws StudyImporterException {
+            listener.on(interaction);
+        }
+    }
 }
