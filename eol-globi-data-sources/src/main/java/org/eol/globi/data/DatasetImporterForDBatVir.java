@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.util.JSONUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;

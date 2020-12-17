@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.eol.globi.process.InteractionListener;
+import org.eol.globi.process.InteractionListenerImpl;
 import org.eol.globi.service.GeoNamesService;
 
 public abstract class DatasetImporterWithListener extends NodeBasedImporter {
@@ -11,7 +13,7 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
         this.interactionListener = initListener(nodeFactory);
     }
 
-    public InteractionListenerImpl initListener(NodeFactory nodeFactory) {
+    private InteractionListener initListener(NodeFactory nodeFactory) {
         return new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
     }
 

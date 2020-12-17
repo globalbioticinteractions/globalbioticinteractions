@@ -7,6 +7,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.process.InteractionListener;
+import org.eol.globi.process.InteractionListenerWithInteractionTypeMapping;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.InteractUtil;

@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.ImportLogger;
-import org.eol.globi.data.InteractionListener;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.data.LogUtil;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;

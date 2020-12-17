@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;

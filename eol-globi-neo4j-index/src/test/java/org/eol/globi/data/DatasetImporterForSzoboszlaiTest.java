@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.process.InteractionListener;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;

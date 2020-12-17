@@ -11,6 +11,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Term;
+import org.eol.globi.process.InteractionListener;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.globalbioticinteractions.pensoft.AddColumnFromCaption;

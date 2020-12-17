@@ -1,6 +1,15 @@
-package org.eol.globi.data;
+package org.eol.globi.process;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.AssociatedTaxaUtil;
+import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.DatasetImporterForMetaTable;
+import org.eol.globi.data.ImportLogger;
+import org.eol.globi.data.LocationUtil;
+import org.eol.globi.data.LogUtil;
+import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -12,6 +21,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InvalidLocationException;
@@ -82,7 +92,7 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_IDS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_NAMES;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_RANK;
 
-class InteractionListenerImpl implements InteractionListener {
+public class InteractionListenerImpl implements InteractionListener {
     private static final String[] LOCALITY_ID_TERMS = {LOCALITY_ID, DwcTerm.locationID.normQName};
     private static final String[] LOCALITY_NAME_TERMS = {LOCALITY_NAME, DwcTerm.locality.normQName, DwcTerm.verbatimLocality.normQName};
     private final NodeFactory nodeFactory;

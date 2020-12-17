@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.process.InteractionListener;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 

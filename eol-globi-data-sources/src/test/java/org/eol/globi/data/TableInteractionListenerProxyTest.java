@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.process.InteractionListener;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 

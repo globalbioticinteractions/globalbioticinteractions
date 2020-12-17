@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.domain.LogContext;
+import org.eol.globi.process.InteractionListenerImpl;
 import org.eol.globi.tool.NullImportLogger;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;

@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.process.InteractionListener;
 
 import java.util.Collections;
 import java.util.List;

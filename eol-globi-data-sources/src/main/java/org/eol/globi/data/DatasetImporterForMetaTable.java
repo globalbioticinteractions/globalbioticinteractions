@@ -8,6 +8,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.process.InteractionListener;
+import org.eol.globi.process.InteractionListenerWithInteractionTypeMapping;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractTypeMapper;

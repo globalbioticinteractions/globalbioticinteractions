@@ -4,6 +4,7 @@ import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.process.InteractionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;

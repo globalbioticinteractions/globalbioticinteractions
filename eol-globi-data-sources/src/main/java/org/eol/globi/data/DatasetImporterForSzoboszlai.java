@@ -6,6 +6,7 @@ import com.Ostermiller.util.MD5;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.util.CSVTSVUtil;
 
 import java.io.IOException;

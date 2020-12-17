@@ -17,6 +17,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.process.InteractionListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;

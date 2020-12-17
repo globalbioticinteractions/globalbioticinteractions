@@ -1,4 +1,6 @@
-package org.eol.globi.data;
+package org.eol.globi.process;
+
+import org.eol.globi.data.StudyImporterException;
 
 import java.util.Map;
 

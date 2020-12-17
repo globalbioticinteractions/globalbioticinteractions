@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.collections4.list.TreeList;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;

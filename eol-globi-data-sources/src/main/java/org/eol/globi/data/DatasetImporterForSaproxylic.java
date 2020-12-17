@@ -15,6 +15,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.util.CSVTSVUtil;
 import org.mapdb.DBMaker;
 

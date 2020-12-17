@@ -1,6 +1,9 @@
-package org.eol.globi.data;
+package org.eol.globi.process;
 
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.process.InteractionListener;
+import org.eol.globi.process.InteractionListenerWithInteractionTypeMapping;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.InteractTypeMapper;

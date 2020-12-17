@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;

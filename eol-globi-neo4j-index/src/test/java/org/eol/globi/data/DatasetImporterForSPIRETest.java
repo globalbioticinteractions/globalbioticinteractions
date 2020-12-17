@@ -10,6 +10,7 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
