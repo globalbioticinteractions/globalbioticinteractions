@@ -44,7 +44,6 @@ public class InteractTypeMapperFactoryForROTest {
             } else {
                 InteractType interactTypeByName = interactTypeMapper.getInteractType(value.getLabel());
                 InteractType interactTypeById = interactTypeMapper.getInteractType(value.getIRI());
-                //System.out.println(value.getLabel() + "," + value.getIRI());
                 InteractType expectedType = InteractType.typeOf(value.getIRI());
                 assertThat(interactTypeById, is(expectedType));
                 assertThat(interactTypeByName, is(expectedType));

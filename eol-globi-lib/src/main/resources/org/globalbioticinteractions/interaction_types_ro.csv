@@ -30,7 +30,7 @@ hasHyperparasitoid,http://purl.obolibrary.org/obo/RO_0002554
 ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 hasEctoparasite,http://purl.obolibrary.org/obo/RO_0002633
 kleptoparasiteOf,http://purl.obolibrary.org/obo/RO_0008503
-hasKleptoparasite,http://purl.obolibrary.org/obo/RO_0008503
+hasKleptoparasite,http://purl.obolibrary.org/obo/RO_0008504
 parasitoidOf,http://purl.obolibrary.org/obo/RO_0002208
 hasParasitoid,http://purl.obolibrary.org/obo/RO_0002209
 killedBy,http://purl.obolibrary.org/obo/RO_0002627
