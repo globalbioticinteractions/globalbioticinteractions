@@ -25,8 +25,8 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
     private final ImportLogger logger;
 
     public InteractionListenerWithInteractionTypeMapping(InteractionListener listener,
-                                                  InteractTypeMapper mapper,
-                                                  ImportLogger logger) {
+                                                         InteractTypeMapper mapper,
+                                                         ImportLogger logger) {
         this.listener = listener;
         this.mapper = mapper;
         this.logger = logger;

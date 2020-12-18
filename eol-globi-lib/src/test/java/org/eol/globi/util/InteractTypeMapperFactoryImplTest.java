@@ -177,6 +177,31 @@ public class InteractTypeMapperFactoryImplTest {
     }
 
     @Test
+    public void createDrinkingMapping() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(null);
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
+                "drinking,http://purl.obolibrary.org/obo/OMIT_0005582,eats,http://purl.obolibrary.org/obo/RO_0002470\n";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory
+                .create();
+
+        assertThat(interactTypeMapper
+                        .getInteractType("http://purl.obolibrary.org/obo/OMIT_0005582"),
+                is(InteractType.ATE));
+
+        assertThat(interactTypeMapper
+                        .getInteractType("drinking"),
+                is(InteractType.ATE));
+    }
+
+    @Test
     public void nonMatchingBlankMapping() throws TermLookupServiceException, IOException {
         ResourceService resourceService = Mockito.mock(ResourceService.class);
         when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
