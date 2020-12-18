@@ -77,7 +77,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
 
-        Dataset dataset = new DatasetImpl("bla", URI.create("foo:bar"), resourceService);
+        Dataset dataset = new DatasetImpl("bla", resourceService, URI.create("foo:bar"));
 
 
         InteractionListenerImpl interactionListener = new InteractionListenerImpl(
@@ -108,7 +108,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(getTestMap(), StandardCharsets.UTF_8));
 
-        Dataset dataset = new DatasetImpl("bla", URI.create("foo:bar"), resourceService);
+        Dataset dataset = new DatasetImpl("bla", resourceService, URI.create("foo:bar"));
 
 
         InteractionListenerImpl interactionListener = new InteractionListenerImpl(
