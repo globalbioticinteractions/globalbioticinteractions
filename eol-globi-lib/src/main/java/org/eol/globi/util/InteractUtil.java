@@ -41,9 +41,9 @@ public class InteractUtil {
                 .create();
     }
 
-    public static InteractTypeMapper createInteractionTypeMapperForImporter(ResourceService dataset) throws StudyImporterException {
+    public static InteractTypeMapper createInteractionTypeMapperForImporter(ResourceService resourceService) throws StudyImporterException {
         try {
-            return createInteractionTypeMapper(dataset);
+            return createInteractionTypeMapper(resourceService);
         } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed to create interaction type mapper", e);
         }

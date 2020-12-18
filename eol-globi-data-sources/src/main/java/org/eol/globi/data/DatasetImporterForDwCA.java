@@ -139,12 +139,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 }
 
 
-                InteractionListenerWithInteractionTypeMapping listenerProxy = new InteractionListenerWithInteractionTypeMapping(
-                        new InteractionListenerWithContext(),
-                        InteractUtil.createInteractionTypeMapperForImporter(getDataset()),
-                        getLogger());
+                InteractionListenerWithContext listenerWithContext = new InteractionListenerWithContext();
 
-                InteractionListener referencingListener = createReferenceEnricher(archive, listenerProxy);
+                InteractionListener referencingListener = createReferenceEnricher(archive, listenerWithContext);
 
                 importDescriptionExtension(archive, referencingListener);
 
@@ -152,9 +149,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                 importAssociatedTaxaExtension(archive, referencingListener);
 
-                int i = importCore(archive, listenerProxy);
+                int i = importCore(archive, listenerWithContext);
                 getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
-                getLogger().info(null, "[" + archiveURL + "]: detected [" + listenerProxy.getNumberOfSubmittedLinks() + "] interaction record(s)");
             } finally {
                 if (dwcaFile != null && dwcaFile.exists() && dwcaFile.isFile()) {
                     FileUtils.deleteQuietly(dwcaFile);

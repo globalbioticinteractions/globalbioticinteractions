@@ -14,7 +14,11 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
     }
 
     private InteractionListener initListener(NodeFactory nodeFactory) {
-        return new InteractionListenerImpl(nodeFactory, getGeoNamesService(), getLogger());
+        return new InteractionListenerImpl(
+                nodeFactory,
+                getGeoNamesService(),
+                getLogger(),
+                getDataset());
     }
 
     public InteractionListener getInteractionListener() {

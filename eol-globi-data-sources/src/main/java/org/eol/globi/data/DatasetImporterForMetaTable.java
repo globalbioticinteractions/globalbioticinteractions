@@ -10,6 +10,7 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerWithInteractionTypeMapping;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractTypeMapper;
@@ -61,11 +62,11 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 Dataset datasetProxy = new DatasetProxy(dataset);
                 datasetProxy.setConfig(tableConfig);
 
-                InteractionListener interactionListener = new InteractionListenerWithInteractionTypeMapping(
-                        getInteractionListener(),
-                        createInteractionTypeMapperForImporter(datasetProxy),
-                        getLogger());
-                final InteractionListener listener = new TableInteractionListenerProxy(datasetProxy, interactionListener);
+                InteractionListener interactionListener = getInteractionListener();
+
+                final InteractionListener listener =
+                        new TableInteractionListenerProxy(datasetProxy, interactionListener);
+
                 importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy, getLogger());
             }
         } catch (IOException | NodeFactoryException e) {

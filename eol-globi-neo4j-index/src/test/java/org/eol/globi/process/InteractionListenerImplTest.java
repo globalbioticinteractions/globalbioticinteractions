@@ -22,6 +22,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         InteractionListenerImpl interactionListener = new InteractionListenerImpl(
                 nodeFactory,
                 null,
+                null,
                 null
         );
         HashMap<String, String> interaction = new HashMap<>();
@@ -35,6 +36,7 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
     public void processCompleteMessage() throws StudyImporterException {
         InteractionListenerImpl interactionListener = new InteractionListenerImpl(
                 nodeFactory,
+                null,
                 null,
                 null);
         HashMap<String, String> interaction = new HashMap<>();

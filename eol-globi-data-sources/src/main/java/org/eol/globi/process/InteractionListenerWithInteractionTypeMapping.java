@@ -20,7 +20,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME_VER
 
 public class InteractionListenerWithInteractionTypeMapping implements InteractionListener {
     private final InteractTypeMapper mapper;
-    final InteractionListener listener;
+    private final InteractionListener listener;
     private final ImportLogger logger;
     private final AtomicInteger counter = new AtomicInteger(0);
 

@@ -4,6 +4,9 @@ import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.util.InteractTypeMapperFactory;
+import org.eol.globi.util.InteractUtil;
+import org.globalbioticinteractions.dataset.Dataset;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,18 +21,30 @@ public class InteractionListenerImpl implements InteractionListener {
 
     public InteractionListenerImpl(NodeFactory nodeFactory,
                                    GeoNamesService geoNamesService,
-                                   ImportLogger logger) {
+                                   ImportLogger logger,
+                                   Dataset dataset) {
         this.queue = interaction -> {
             if (interaction != null) {
                 interactions.add(interaction);
             }
         };
-        this.processors =
-                Arrays.asList(
-                        new InteractionExpander(queue, logger),
-                        new InteractionValidator(queue, logger),
-                        new InteractionImporter(nodeFactory, logger, geoNamesService)
-                );
+        try {
+
+            InteractionListener mappingListener =
+                    dataset == null
+                            ? queue
+                            : new InteractionListenerWithInteractionTypeMapping(queue, InteractUtil.createInteractionTypeMapperForImporter(dataset), logger);
+
+            this.processors =
+                    Arrays.asList(
+                            new InteractionExpander(queue, logger),
+                            mappingListener,
+                            new InteractionValidator(queue, logger),
+                            new InteractionImporter(nodeFactory, logger, geoNamesService)
+                    );
+        } catch (StudyImporterException e) {
+            throw new IllegalArgumentException("failed to instantiate interaction processor for [" + (dataset == null ? "some dataset" : dataset.getNamespace()) + "]", e);
+        }
     }
 
     @Override

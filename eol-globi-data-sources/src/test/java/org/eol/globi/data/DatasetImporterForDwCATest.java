@@ -166,7 +166,6 @@ public class DatasetImporterForDwCATest {
         String joinedMsgs = StringUtils.join(msgs, "\n");
         assertThat(joinedMsgs, containsString("]: indexing interaction records"));
         assertThat(joinedMsgs, containsString("]: scanned [1] record(s)"));
-        assertThat(joinedMsgs, containsString("]: detected [0] interaction record(s)"));
     }
 
     @Test
@@ -335,7 +334,6 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(SOURCE_TAXON_NAME), is(not(nullValue())));
                 assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
                 assertThat(interaction.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
-                assertThat(interaction.get(INTERACTION_TYPE_ID), is(not(nullValue())));
                 assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString(expectedCitation));
                 assertThat(interaction.get(REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
