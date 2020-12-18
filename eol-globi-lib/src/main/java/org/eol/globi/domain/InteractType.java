@@ -75,7 +75,7 @@ public enum InteractType implements RelType {
     HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633", "hasEctoparasite", OBJECT, SUBJECT),
 
     KLEPTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0008503", "kleptoparasiteOf", SUBJECT, OBJECT),
-    HAS_KLEPTOPARASITE("http://purl.obolibrary.org/obo/RO_0008503", "hasKleptoparasite", OBJECT, SUBJECT),
+    HAS_KLEPTOPARASITE("http://purl.obolibrary.org/obo/RO_0008504", "hasKleptoparasite", OBJECT, SUBJECT),
 
     PARASITOID_OF("http://purl.obolibrary.org/obo/RO_0002208", "parasitoidOf", SUBJECT, OBJECT),
     HAS_PARASITOID("http://purl.obolibrary.org/obo/RO_0002209", "hasParasitoid", OBJECT, SUBJECT),
@@ -131,7 +131,7 @@ public enum InteractType implements RelType {
     InteractionRole sourceRole;
     InteractionRole targetRole;
 
-    private static final Map<String, InteractType> SYNONYMS_OR_HYPORNYMS = new HashMap<String, InteractType>() {{
+    private static final Map<String, InteractType> SYNONYMS_OR_HYPONYMS = new HashMap<String, InteractType>() {{
         put("http://eol.org/schema/terms/HasDispersalVector", HAS_VECTOR);
         put("http://eol.org/schema/terms/DispersalVector", VECTOR_OF);
         put("http://eol.org/schema/terms/FlowersVisitedBy", FLOWERS_VISITED_BY);
@@ -140,6 +140,7 @@ public enum InteractType implements RelType {
         put("http://eol.org/schema/terms/isKilledBy", KILLED_BY);
         put("http://eol.org/schema/terms/emergedFrom", INTERACTS_WITH);
         put("http://purl.obolibrary.org/obo/RO_0001025", INTERACTS_WITH);
+        put("http://purl.obolibrary.org/obo/RO_0002574", INTERACTS_WITH);
     }};
 
 
@@ -176,7 +177,7 @@ public enum InteractType implements RelType {
                 return interactType;
             }
         }
-        return SYNONYMS_OR_HYPORNYMS.get(iri);
+        return SYNONYMS_OR_HYPONYMS.get(iri);
     }
 
     public static Collection<InteractType> hasTypes(InteractType type) {

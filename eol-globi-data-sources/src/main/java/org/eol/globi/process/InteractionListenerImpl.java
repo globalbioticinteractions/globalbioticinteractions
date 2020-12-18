@@ -4,7 +4,6 @@ import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.service.GeoNamesService;
-import org.eol.globi.util.InteractTypeMapperFactory;
 import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 
@@ -16,16 +15,16 @@ import java.util.Map;
 public class InteractionListenerImpl implements InteractionListener {
 
     private final List<InteractionListener> processors;
-    private final InteractionListener queue;
-    private List<Map<String, String>> interactions = new ArrayList<>();
+    private final List<Map<String, String>> outbox = new ArrayList<>();
+    private final List<Map<String, String>> inbox = new ArrayList<>();
 
     public InteractionListenerImpl(NodeFactory nodeFactory,
                                    GeoNamesService geoNamesService,
                                    ImportLogger logger,
                                    Dataset dataset) {
-        this.queue = interaction -> {
+        InteractionListener queue = interaction -> {
             if (interaction != null) {
-                interactions.add(interaction);
+                outbox.add(interaction);
             }
         };
         try {
@@ -48,17 +47,19 @@ public class InteractionListenerImpl implements InteractionListener {
 
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
-        queue.on(interaction);
+        outbox.add(interaction);
         try {
             for (InteractionListener processor : processors) {
-                if (interactions.isEmpty()) {
+                if (outbox.isEmpty()) {
                     break;
+                } else {
+                    inbox.addAll(outbox);
+                    outbox.clear();
                 }
-                ArrayList<Map<String, String>> incoming = new ArrayList<>(interactions);
-                interactions.clear();
-                for (Map<String, String> incomingInteractions : incoming) {
+                for (Map<String, String> incomingInteractions : inbox) {
                     processor.on(incomingInteractions);
                 }
+                inbox.clear();
             }
         } catch (StudyImporterException e) {
             throw new StudyImporterException("failed to import: " + interaction, e);
