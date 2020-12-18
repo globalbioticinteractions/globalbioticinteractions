@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -74,8 +75,10 @@ public class DatasetImporterForZenodoMetadataTest {
         final DatasetImpl dataset = new DatasetImpl("name/space", URI.create("some:uri"), in -> in) {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
-                counter.incrementAndGet();
-                InputStream is = null;
+                if (StringUtils.contains(resourceName.getHost(), "zenodo.org")) {
+                    counter.incrementAndGet();
+                }
+                InputStream is;
                 if (URI.create("https://sandbox.zenodo.org/api/records/?sort=mostrecent&custom=%5Bobo%3ARO_0002453%5D%3A%5B%3A%5D&page=2&size=10")
                         .equals(resourceName)) {
                     is = DatasetImporterForZenodoMetadataTest.class.getResourceAsStream("zenodo/search-results-page-2.json");
