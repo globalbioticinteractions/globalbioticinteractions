@@ -137,7 +137,7 @@ public class InteractionImporter implements InteractionListener {
 
 
     private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
-        Study study = this.nodeFactory.getOrCreateStudy(studyOf(interaction));
+        Study study = nodeFactory.getOrCreateStudy(studyOf(interaction));
 
         Specimen source = createSpecimen(
                 interaction,

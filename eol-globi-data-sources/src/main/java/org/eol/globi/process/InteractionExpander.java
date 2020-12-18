@@ -45,10 +45,12 @@ public class InteractionExpander implements InteractionProcessor {
 
     @Override
     public void emit(Map<String, String> interaction) throws StudyImporterException {
-        listener.on(interaction);
+        if (listener != null) {
+            listener.on(interaction);
+        }
     }
 
-    void addPlaceholderNamesIfNeeded(Map<String, String> expandedLink) {
+    private void addPlaceholderNamesIfNeeded(Map<String, String> expandedLink) {
         if (InteractionValidator.createSourceTaxonPredicate(null).negate().test(expandedLink)) {
             Stream<String> placeholderNames = Stream.of(
                     SOURCE_INSTITUTION_CODE,

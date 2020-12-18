@@ -16,7 +16,9 @@ public class InteractionListenerImpl implements InteractionListener {
     private final InteractionListener queue;
     private List<Map<String, String>> interactions = new ArrayList<>();
 
-    public InteractionListenerImpl(NodeFactory nodeFactory, GeoNamesService geoNamesService, ImportLogger logger) {
+    public InteractionListenerImpl(NodeFactory nodeFactory,
+                                   GeoNamesService geoNamesService,
+                                   ImportLogger logger) {
         this.queue = interaction -> {
             if (interaction != null) {
                 interactions.add(interaction);

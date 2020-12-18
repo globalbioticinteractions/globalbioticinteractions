@@ -89,6 +89,45 @@ import static org.junit.Assert.fail;
 public class InteractionImporterTest extends GraphDBTestCase {
 
     @Test
+    public void malformedDOI() {
+        final List<String> msgs = new ArrayList<>();
+        InteractionListener interactionListener = new InteractionImporter(nodeFactory, new GeoNamesService() {
+
+            @Override
+            public boolean hasTermForLocale(String locality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findLatLng(String locality) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        }, new NullImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+        });
+
+        final TreeMap<String, String> link = new TreeMap<>();
+        link.put(SOURCE_TAXON_NAME, "donald");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "http://purl.obolibrary.org/obo/RO_0002470");
+        link.put(TARGET_TAXON_NAME, "mini");
+        link.put(REFERENCE_ID, "123");
+        link.put(DATASET_CITATION, "some source ref");
+        link.put(REFERENCE_CITATION, "");
+        link.put(REFERENCE_DOI, "bla:XXX");
+        try {
+            interactionListener.on(link);
+            assertThat(msgs.size(), is(1));
+            assertThat(msgs.get(0), startsWith("found malformed doi [bla:XXX]"));
+        } catch (StudyImporterException ex) {
+            fail("should not throw on failing geoname lookup");
+        }
+    }
+
+    @Test
     public void malformedDateRange() {
         final List<String> msgs = new ArrayList<>();
         InteractionListener interactionListener = new InteractionImporter(
