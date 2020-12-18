@@ -46,7 +46,6 @@ public class DatasetImporterForRSSTest {
     public void readRSS() throws StudyImporterException, IOException {
         final Dataset dataset = getDatasetGroup();
 
-
         List<Dataset> datasets = DatasetImporterForRSS.getDatasetsForFeed(dataset);
         assertThat(datasets.size(), is(3));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));

@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class InteractionListenerWithInteractionTypeMappingTest {
 
     @Test
-    public void withTaxonHierachy() throws StudyImporterException {
+    public void withTaxonHierarchy() throws StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         InteractionListener listener = new InteractionListenerWithInteractionTypeMapping(links::add, new InteractTypeMapper() {
             @Override

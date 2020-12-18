@@ -23,6 +23,12 @@ public class DatasetImpl implements Dataset {
     private JsonNode config;
     private URI configURI;
 
+    public DatasetImpl(String namespace, URI archiveURI, ResourceService service) {
+        this.namespace = namespace;
+        this.archiveURI = archiveURI;
+        this.resourceService = service;
+    }
+
     public DatasetImpl(String namespace, URI archiveURI, final InputStreamFactory factory) {
         this.namespace = namespace;
         this.archiveURI = archiveURI;

@@ -29,7 +29,6 @@ public class InteractionListenerImpl implements InteractionListener {
             }
         };
         try {
-
             InteractionListener mappingListener =
                     dataset == null
                             ? queue

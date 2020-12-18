@@ -11,6 +11,7 @@ import org.eol.globi.util.InteractUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
@@ -22,7 +23,6 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
     private final InteractTypeMapper mapper;
     private final InteractionListener listener;
     private final ImportLogger logger;
-    private final AtomicInteger counter = new AtomicInteger(0);
 
     public InteractionListenerWithInteractionTypeMapping(InteractionListener listener,
                                                   InteractTypeMapper mapper,
@@ -56,7 +56,7 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
                 mappedType = mapper.getInteractType(interactionTypeName);
             }
 
-            HashMap<String, String> properties = new HashMap<>(interaction);
+            Map<String, String> properties = new TreeMap<>(interaction);
             if (mappedType != null) {
                 InteractUtil.putNotNull(properties, INTERACTION_TYPE_ID_VERBATIM, properties.get(INTERACTION_TYPE_ID));
                 InteractUtil.putNotNull(properties, INTERACTION_TYPE_NAME_VERBATIM, properties.get(INTERACTION_TYPE_NAME));
@@ -64,13 +64,7 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
                 properties.put(INTERACTION_TYPE_NAME, mappedType.getLabel());
             }
             listener.on(properties);
-            counter.incrementAndGet();
         }
     }
-
-    public int getNumberOfSubmittedLinks() {
-        return counter.get();
-    }
-
 
 }
