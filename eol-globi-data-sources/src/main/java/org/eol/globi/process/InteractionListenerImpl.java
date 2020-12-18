@@ -1,6 +1,7 @@
 package org.eol.globi.process;
 
 import org.eol.globi.data.ImportLogger;
+import org.eol.globi.data.LogUtil;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.service.GeoNamesService;
@@ -27,22 +28,28 @@ public class InteractionListenerImpl implements InteractionListener {
                 outbox.add(interaction);
             }
         };
+
+        this.processors =
+                Arrays.asList(
+                        new InteractionExpander(queue, logger),
+                        createMappingListener(logger, dataset, queue),
+                        new InteractionValidator(queue, logger),
+                        new InteractionImporter(nodeFactory, logger, geoNamesService)
+                );
+    }
+
+    public InteractionListener createMappingListener(ImportLogger logger, Dataset dataset, InteractionListener queue) {
+        InteractionListener mappingListener = queue;
+
         try {
-            InteractionListener mappingListener =
+            mappingListener =
                     dataset == null
                             ? queue
                             : new InteractionListenerWithInteractionTypeMapping(queue, InteractUtil.createInteractionTypeMapperForImporter(dataset), logger);
-
-            this.processors =
-                    Arrays.asList(
-                            new InteractionExpander(queue, logger),
-                            mappingListener,
-                            new InteractionValidator(queue, logger),
-                            new InteractionImporter(nodeFactory, logger, geoNamesService)
-                    );
-        } catch (StudyImporterException e) {
-            throw new IllegalArgumentException("failed to instantiate interaction processor for [" + dataset.getNamespace() + "]", e);
+        } catch (StudyImporterException ex) {
+            LogUtil.logError(logger, "custom translation mapper not enabled, because the mapper for [" + dataset.getNamespace() + "] failed to initialize", ex);
         }
+        return mappingListener;
     }
 
     @Override
