@@ -2,6 +2,7 @@ package org.eol.globi.util;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.service.TermLookupServiceConfigurationException;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -102,16 +103,30 @@ public class InteractTypeMapperFactoryWithFallbackTest {
 
     }
 
+    @Test(expected = TermLookupServiceConfigurationException.class)
+    public void throwOnConfigurationIssueForFirstMapper() throws TermLookupServiceException {
+
+        InteractTypeMapperFactory secondFactory = Mockito.mock(InteractTypeMapperFactory.class);
+        InteractTypeMapper mapper = Mockito.mock(InteractTypeMapper.class);
+        when(secondFactory.create()).thenReturn(mapper);
+
+        InteractTypeMapperFactory firstFactory = Mockito.mock(InteractTypeMapperFactory.class);
+        when(firstFactory.create()).thenThrow(new TermLookupServiceConfigurationException("kaboom!"));
+
+        InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryWithFallback(firstFactory, secondFactory).create();
+
+        assertThat(interactTypeMapper, is(mapper));
+
+    }
+
     @Test(expected = TermLookupServiceException.class)
     public void createAndThrow() throws TermLookupServiceException {
 
         InteractTypeMapperFactory factory1 = Mockito.mock(InteractTypeMapperFactory.class);
         when(factory1.create()).thenThrow(new TermLookupServiceException("kaboom!"));
 
-
-        InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryWithFallback(factory1).create();
-
+        new InteractTypeMapperFactoryWithFallback(factory1).create();
     }
 
 

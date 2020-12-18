@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceConfigurationException;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -12,7 +13,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -199,6 +202,53 @@ public class InteractTypeMapperFactoryImplTest {
         assertThat(interactTypeMapper
                         .getInteractType("drinking"),
                 is(InteractType.ATE));
+    }
+
+    @Test(expected = TermLookupServiceException.class)
+    public void throwOnDuplicateMapping() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(null);
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
+                "drinking,http://purl.obolibrary.org/obo/OMIT_0005582,eats,http://purl.obolibrary.org/obo/RO_0002470\n" +
+                "drinking,http://purl.obolibrary.org/obo/OMIT_0005582,eats,http://purl.obolibrary.org/obo/RO_0002470\n";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        try {
+            interactTypeMapperFactory.create();
+        } catch (TermLookupServiceException ex) {
+            assertThat(ex, is(instanceOf(TermLookupServiceConfigurationException.class)));
+            assertThat(ex.getMessage(), is("provided id [http://purl.obolibrary.org/obo/omit_0005582] already mapped"));
+            throw ex;
+        }
+
+    }
+
+    @Test(expected = TermLookupServiceException.class)
+    public void throwOnMappingToUnsupportedInteractionType() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(null);
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
+                "drinking,http://purl.obolibrary.org/obo/OMIT_0005582,eats,http://purl.obolibrary.org/obo/RO_000XXXX\n";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        try {
+            interactTypeMapperFactory.create();
+        } catch (TermLookupServiceException ex) {
+            assertThat(ex, is(instanceOf(TermLookupServiceConfigurationException.class)));
+            assertThat(ex.getMessage(), is("failed to map interaction type to [http://purl.obolibrary.org/obo/ro_000xxxx] on line [1]: interaction type unknown to GloBI"));
+            throw ex;
+        }
+
     }
 
     @Test

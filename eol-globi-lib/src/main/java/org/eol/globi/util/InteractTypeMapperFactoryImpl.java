@@ -9,6 +9,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
+import org.eol.globi.service.TermLookupServiceConfigurationException;
 import org.eol.globi.service.TermLookupServiceException;
 
 import java.io.IOException;
@@ -122,11 +123,11 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
             String interactionTypeId = InteractUtil.normalizeInteractionNameOrId(labeledCSVParser.getValueByLabel(mappedInteractionTypeIdColumnName));
             InteractType interactType = InteractType.typeOf(interactionTypeId);
             if (interactType == null) {
-                throw new TermLookupServiceException("failed to map interaction type to [" + interactionTypeId + "] on line [" + labeledCSVParser.lastLineNumber() + "]: interaction type unknown to GloBI");
+                throw new TermLookupServiceConfigurationException("failed to map interaction type to [" + interactionTypeId + "] on line [" + labeledCSVParser.lastLineNumber() + "]: interaction type unknown to GloBI");
             } else {
                 if (StringUtils.isBlank(providedInteractionId) && StringUtils.isBlank(providedInteractionName)) {
                     if (typeMap.containsKey("")) {
-                        throw new TermLookupServiceException("only one default/blank interaction type can be defined, but found duplicate on line [" + labeledCSVParser.lastLineNumber() + "]: [" + StringUtils.join(labeledCSVParser.getLine(), "|") + "]");
+                        throw new TermLookupServiceConfigurationException("only one default/blank interaction type can be defined, but found duplicate on line [" + labeledCSVParser.lastLineNumber() + "]: [" + StringUtils.join(labeledCSVParser.getLine(), "|") + "]");
                     }
                     typeMap.put("", interactType);
                 } else {
@@ -144,19 +145,19 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     }
 
     private static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, String providedInteractionName, InteractType interactType) throws TermLookupServiceException {
-        InteractType interactType1 = typeMap.get(providedInteractionName);
-        if (interactType1 == null) {
+        InteractType mappedInteractionType = typeMap.get(providedInteractionName);
+        if (mappedInteractionType == null) {
             typeMap.put(providedInteractionName, interactType);
         } else {
             if (StringUtils.isBlank(providedInteractionId)) {
-                throw new TermLookupServiceException("provided name [" + providedInteractionName + "] already mapped: please provide unique interaction type name/id");
+                throw new TermLookupServiceConfigurationException("provided name [" + providedInteractionName + "] already mapped: please provide unique interaction type name/id");
             }
         }
     }
 
     private static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, InteractType interactType) throws TermLookupServiceException {
         if (typeMap.containsKey(providedInteractionId)) {
-            throw new TermLookupServiceException("provided id [" + providedInteractionId + "] already mapped");
+            throw new TermLookupServiceConfigurationException("provided id [" + providedInteractionId + "] already mapped");
         }
         typeMap.put(providedInteractionId, interactType);
     }

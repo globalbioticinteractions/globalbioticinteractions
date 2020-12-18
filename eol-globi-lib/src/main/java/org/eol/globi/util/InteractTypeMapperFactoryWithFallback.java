@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.eol.globi.service.TermLookupServiceConfigurationException;
 import org.eol.globi.service.TermLookupServiceException;
 
 import java.util.Arrays;
@@ -23,6 +24,8 @@ public class InteractTypeMapperFactoryWithFallback implements InteractTypeMapper
                 if (mapper != null) {
                     break;
                 }
+            } catch (TermLookupServiceConfigurationException ex) {
+                throw ex;
             } catch (TermLookupServiceException ex) {
                 lastException = ex;
             }
