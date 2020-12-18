@@ -6,8 +6,6 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
 import org.hamcrest.core.Is;
 import org.junit.Test;
-import org.neo4j.cypher.ExecutionEngine;
-import org.neo4j.cypher.ExtendedExecutionResult;
 import org.neo4j.graphdb.Result;
 
 import java.util.HashMap;
@@ -21,14 +19,20 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
     @Test
     public void processIncompleteMessage() throws StudyImporterException {
-        InteractionListenerImpl interactionListener = new InteractionListenerImpl(null, null, null);
+        InteractionListenerImpl interactionListener = new InteractionListenerImpl(
+                nodeFactory,
+                null,
+                null
+        );
         HashMap<String, String> interaction = new HashMap<>();
         interaction.put("ping", "pong");
+        assertStudyCount(0L);
         interactionListener.on(interaction);
+        assertStudyCount(0L);
     }
 
     @Test
-    public void processMessage() throws StudyImporterException {
+    public void processCompleteMessage() throws StudyImporterException {
         InteractionListenerImpl interactionListener = new InteractionListenerImpl(
                 nodeFactory,
                 null,
