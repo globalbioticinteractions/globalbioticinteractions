@@ -222,7 +222,7 @@ public class InteractTypeMapperFactoryImplTest {
             interactTypeMapperFactory.create();
         } catch (TermLookupServiceException ex) {
             assertThat(ex, is(instanceOf(TermLookupServiceConfigurationException.class)));
-            assertThat(ex.getMessage(), is("provided id [http://purl.obolibrary.org/obo/omit_0005582] already mapped"));
+            assertThat(ex.getMessage(), is("multiple mappings for [id]: [http://purl.obolibrary.org/obo/omit_0005582] were found, but only one unambiguous mapping is allowed"));
             throw ex;
         }
 

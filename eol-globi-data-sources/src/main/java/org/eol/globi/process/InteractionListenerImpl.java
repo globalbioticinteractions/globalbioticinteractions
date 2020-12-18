@@ -41,7 +41,7 @@ public class InteractionListenerImpl implements InteractionListener {
                             new InteractionImporter(nodeFactory, logger, geoNamesService)
                     );
         } catch (StudyImporterException e) {
-            throw new IllegalArgumentException("failed to instantiate interaction processor for [" + (dataset == null ? "some dataset" : dataset.getNamespace()) + "]", e);
+            throw new IllegalArgumentException("failed to instantiate interaction processor for [" + dataset.getNamespace() + "]", e);
         }
     }
 

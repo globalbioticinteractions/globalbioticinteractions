@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory {
 
@@ -150,21 +149,25 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
             typeMap.put(providedInteractionName, interactType);
         } else {
             if (StringUtils.isBlank(providedInteractionId)) {
-                throw new TermLookupServiceConfigurationException("provided name [" + providedInteractionName + "] already mapped: please provide unique interaction type name/id");
+                throwAmbiguousMappingException(providedInteractionName, "name");
             }
         }
     }
 
+    private static void throwAmbiguousMappingException(String providedValue, String providedKey) throws TermLookupServiceConfigurationException {
+        throw new TermLookupServiceConfigurationException("multiple mappings for [" + providedKey + "]: [" + providedValue + "] were found, but only one unambiguous mapping is allowed");
+    }
+
     private static void setOrThrow(Map<String, InteractType> typeMap, String providedInteractionId, InteractType interactType) throws TermLookupServiceException {
         if (typeMap.containsKey(providedInteractionId)) {
-            throw new TermLookupServiceConfigurationException("provided id [" + providedInteractionId + "] already mapped");
+            throwAmbiguousMappingException(providedInteractionId, "id");
         }
         typeMap.put(providedInteractionId, interactType);
     }
 
     private static void assertColumnNamePresent(List<String> columnNames, String columnNameToCheck) throws TermLookupServiceException {
         if (!columnNames.contains(columnNameToCheck)) {
-            throw new TermLookupServiceException("missing column [" + columnNameToCheck + "] in mapping file");
+            throw new TermLookupServiceConfigurationException("missing column [" + columnNameToCheck + "] in mapping file");
         }
     }
 
