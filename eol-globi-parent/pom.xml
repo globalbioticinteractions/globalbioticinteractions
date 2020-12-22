@@ -23,6 +23,8 @@
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>
+        <globi.snapshot.repo.url>s3://globi/snapshot</globi.snapshot.repo.url>
+        <globi.release.repo.url>s3://globi/snapshot</globi.release.repo.url>
     </properties>
 
     <dependencies>
@@ -189,13 +191,13 @@
     <distributionManagement>
         <repository>
             <id>globi-release</id>
-            <name>AWS Release Repository</name>
-            <url>s3://globi/release</url>
+            <name>Release Repository</name>
+            <url>${globi.release.repo.url}</url>
         </repository>
         <snapshotRepository>
             <id>globi-snapshot</id>
-            <name>AWS Snapshot Repository</name>
-            <url>s3://globi/snapshot</url>
+            <name>Snapshot Repository</name>
+            <url>${globi.snapshot.repo.url}</url>
         </snapshotRepository>
     </distributionManagement>
 
