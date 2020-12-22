@@ -44,7 +44,7 @@
             <extension>
                 <groupId>org.globalbioticinteractions</groupId>
                 <artifactId>maven-s3-wagon</artifactId>
-                <version>0.0.1</version>
+                <version>0.0.2</version>
             </extension>
         </extensions>
     </build>
