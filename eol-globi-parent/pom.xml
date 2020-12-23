@@ -67,7 +67,7 @@
             <extension>
                 <groupId>org.globalbioticinteractions</groupId>
                 <artifactId>maven-s3-wagon</artifactId>
-                <version>0.0.2</version>
+                <version>0.0.3</version>
             </extension>
         </extensions>
         <plugins>
@@ -179,14 +179,6 @@
         </developerConnection>
         <tag>HEAD</tag>
     </scm>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>globi-plugins</id>
-            <name>AWS Release Repository</name>
-            <url>https://depot.globalbioticinteractions.org/release</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <distributionManagement>
         <repository>
