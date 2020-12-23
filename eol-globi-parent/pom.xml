@@ -24,7 +24,7 @@
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>
         <globi.snapshot.repo.url>s3://globi/snapshot</globi.snapshot.repo.url>
-        <globi.release.repo.url>s3://globi/snapshot</globi.release.repo.url>
+        <globi.release.repo.url>s3://globi/release</globi.release.repo.url>
     </properties>
 
     <dependencies>
