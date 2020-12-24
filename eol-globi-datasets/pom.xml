@@ -99,7 +99,7 @@
                 <executions>
                     <execution>
                         <id>upload-datasets</id>
-                        <phase>deploy</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>upload</goal>
                         </goals>
