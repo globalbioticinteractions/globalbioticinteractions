@@ -116,6 +116,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public void importStudy() throws StudyImporterException {
         URI archiveURI = getDataset().getArchiveURI();
         Path tmpDwA = null;
+        Thread deleteOnShutdownHook = null;
         try {
             if (getDataset() == null) {
                 throw new IllegalArgumentException("no dataset found");
@@ -128,6 +129,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             try {
                 URI dwcaURI = URI.create(archiveURL);
                 tmpDwA = Files.createTempDirectory("dwca");
+                final File tmpDir = tmpDwA.toFile();
+                deleteOnShutdownHook = addDeleteOnShutdownHook(tmpDir);
                 Archive archive;
                 if (CacheUtil.isLocalDir(dwcaURI)) {
                     archive = DwCAUtil.archiveFor(dwcaURI, tmpDwA.toString());
@@ -152,6 +155,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 int i = importCore(archive, listenerWithContext);
                 getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
             } finally {
+                removeDeleteOnShutdownHook(deleteOnShutdownHook);
                 if (dwcaFile != null && dwcaFile.exists() && dwcaFile.isFile()) {
                     FileUtils.deleteQuietly(dwcaFile);
                 }
@@ -166,6 +170,25 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 org.apache.commons.io.FileUtils.deleteQuietly(tmpDwA.toFile());
             }
         }
+    }
+
+    public void removeDeleteOnShutdownHook(Thread deleteOnShutdownHook) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/577
+        if (deleteOnShutdownHook != null) {
+            Runtime.getRuntime().removeShutdownHook(deleteOnShutdownHook);
+        }
+    }
+
+    private Thread addDeleteOnShutdownHook(File tmpDir) {
+        Thread deleteOnShutdownHook = new Thread(() -> {
+            try {
+                FileUtils.deleteDirectory(tmpDir);
+            } catch (IOException ex) {
+                //
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(deleteOnShutdownHook);
+        return deleteOnShutdownHook;
     }
 
     public int importCore(Archive archive, InteractionListener interactionListener) throws StudyImporterException {
