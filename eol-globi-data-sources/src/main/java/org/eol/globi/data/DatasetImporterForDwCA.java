@@ -179,10 +179,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private Thread addDeleteOnShutdownHook(File tmpDir) {
+    private Thread addDeleteOnShutdownHook(final File tmpDir) {
         Thread deleteOnShutdownHook = new Thread(() -> {
             try {
-                FileUtils.deleteDirectory(tmpDir);
+                if (tmpDir != null) {
+                    FileUtils.deleteDirectory(tmpDir);
+                }
             } catch (IOException ex) {
                 //
             }
@@ -191,7 +193,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return deleteOnShutdownHook;
     }
 
-    public int importCore(Archive archive, InteractionListener interactionListener) throws StudyImporterException {
+    private int importCore(Archive archive, InteractionListener interactionListener) throws StudyImporterException {
         AtomicInteger recordCounter = new AtomicInteger(0);
         ClosableIterator<Record> iterator = archive.getCore().iterator();
         while (true) {
@@ -210,7 +212,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }
 
-    public void handleRecord(InteractionListener interactionListener, Record rec) throws StudyImporterException {
+    private void handleRecord(InteractionListener interactionListener, Record rec) throws StudyImporterException {
         List<Map<String, String>> interactionCandidates = new ArrayList<>();
 
 
@@ -260,14 +262,14 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    public static void addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
+    private static void addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
         Map<String, String> properties = parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
             interactionCandidates.add(properties);
         }
     }
 
-    public static Map<String, String> parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(String occurrenceRemarks) {
+    static Map<String, String> parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(String occurrenceRemarks) {
         Map<String, String> properties = Collections.emptyMap();
 
         Matcher matcher = Pattern.compile("^(found in)(.*)(pellet).*", Pattern.CASE_INSENSITIVE).matcher(StringUtils.trim(occurrenceRemarks));
@@ -283,19 +285,19 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
-    public void addUSNMStyleHostOccurrenceRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
+    private void addUSNMStyleHostOccurrenceRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
         Map<String, String> properties = parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
             interactionCandidates.add(properties);
         }
     }
 
-    public static void mapCoreProperties(Record rec, Map<String, String> interactionProperties) {
+    private static void mapCoreProperties(Record rec, Map<String, String> interactionProperties) {
         mapSourceProperties(rec, interactionProperties);
         mapLocationAndReferenceInfo(rec, interactionProperties);
     }
 
-    public static void mapLocationAndReferenceInfo(Record rec, Map<String, String> interactionProperties) {
+    private static void mapLocationAndReferenceInfo(Record rec, Map<String, String> interactionProperties) {
         mapIfAvailable(rec, interactionProperties, LOCALITY_NAME, DwcTerm.locality);
         mapIfAvailable(rec, interactionProperties, LOCALITY_ID, DwcTerm.locationID);
         mapIfAvailable(rec, interactionProperties, DECIMAL_LONGITUDE, DwcTerm.decimalLongitude);
@@ -304,7 +306,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         mapReferenceInfo(rec, interactionProperties);
     }
 
-    public static void mapSourceProperties(Record rec, Map<String, String> interactionProperties) {
+    private static void mapSourceProperties(Record rec, Map<String, String> interactionProperties) {
         mapIfAvailable(rec, interactionProperties, SOURCE_OCCURRENCE_ID, DwcTerm.occurrenceID);
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_COLLECTION_CODE, DwcTerm.collectionCode);
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_COLLECTION_ID, DwcTerm.collectionID);
@@ -341,12 +343,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    public static void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, Term term) {
+    private static void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, Term term) {
         String value = rec.value(term);
         mapIfAvailable(interactionProperties, key, value);
     }
 
-    public static void mapIfAvailable(Map<String, String> interactionProperties, String key, String value) {
+    private static void mapIfAvailable(Map<String, String> interactionProperties, String key, String value) {
         if ((StringUtils.isNotBlank(value))) {
             interactionProperties.put(key, value);
         }
