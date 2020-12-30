@@ -70,7 +70,9 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy, getLogger());
             }
         } catch (IOException | NodeFactoryException e) {
-            throw new StudyImporterException("problem importing from [" + getBaseUrl() + "]", e);
+            String msg = "problem importing from [" + getBaseUrl() + "]";
+            LogUtil.logError(getLogger(), msg, e);
+            throw new StudyImporterException(msg, e);
         }
     }
 
