@@ -8,6 +8,7 @@ reared ex,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 reared ex.,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 host to,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
 host,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
+host plant,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 h,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 larval foodplant,,eats,http://purl.obolibrary.org/obo/RO_0002470
 ectoparasite of,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
