@@ -8,10 +8,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
-import org.eol.globi.process.InteractionListenerWithInteractionTypeMapping;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
-import org.eol.globi.util.InteractUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
 import org.gbif.dwc.record.Record;
@@ -218,7 +216,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
         if (StringUtils.isNotBlank(associatedTaxa)) {
-            interactionCandidates.addAll(parseAssociatedTaxa(associatedTaxa));
+            interactionCandidates.addAll(AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa));
         }
 
         String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
@@ -354,72 +352,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    static List<Map<String, String>> parseAssociatedTaxa(String s) {
-        List<Map<String, String>> properties = new ArrayList<>();
-        String[] parts = StringUtils.split(s, "|;,");
-        for (String part : parts) {
-            String trimmedPart = StringUtils.trim(part);
-            Matcher matcher = PATTERN_ASSOCIATED_TAXA_IDEA.matcher(trimmedPart);
-            if (matcher.find()) {
-                String genus = StringUtils.trim(matcher.group(1));
-                String specificEpithet = StringUtils.trim(matcher.group(2));
-                addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet);
-            } else {
-                Matcher matcher1 = PATTERN_ASSOCIATED_TAXA_EAE.matcher(trimmedPart);
-                if (matcher1.find()) {
-                    String genus = StringUtils.trim(matcher1.group(2));
-                    String specificEpithet = StringUtils.trim(matcher1.group(3));
-                    addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet);
-                } else {
-                    String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
-                    if (verbTaxon.length == 2) {
-                        addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
-                    } else {
-                        addDefaultInteractionForAssociatedTaxon(properties, trimmedPart);
-                    }
-
-                }
-
-            }
-
-
-        }
-        return properties;
-    }
-
-    private static void addSpecificInteractionForAssociatedTaxon(List<Map<String, String>> properties, String[] verbTaxon) {
-        HashMap<String, String> e = new HashMap<>();
-        String interactionTypeName = trimAndRemoveQuotes(verbTaxon[0]);
-        e.put(INTERACTION_TYPE_NAME, interactionTypeName);
-        e.put(TARGET_TAXON_NAME, trimAndRemoveQuotes(verbTaxon[1]));
-        properties.add(e);
-    }
-
-    private static String trimAndRemoveQuotes(String verbatimTerm) {
-        return StringUtils.trim(InteractUtil.removeQuotesAndBackslashes(verbatimTerm));
-    }
-
-    private static void addDefaultInteractionForAssociatedTaxon(List<Map<String, String>> properties, String part) {
-        if (StringUtils.isNotBlank(part)) {
-            if (EX_NOTATION.matcher(StringUtils.trim(part)).matches()) {
-                properties.add(new HashMap<String, String>() {{
-                    put(TARGET_TAXON_NAME, part);
-                    put(INTERACTION_TYPE_NAME, "ex");
-                }});
-            } else if (REARED_EX_NOTATION.matcher(StringUtils.trim(part)).matches()) {
-                properties.add(new HashMap<String, String>() {{
-                    put(TARGET_TAXON_NAME, part);
-                    put(INTERACTION_TYPE_NAME, "reared ex");
-                }});
-            } else {
-                properties.add(new HashMap<String, String>() {{
-                    put(TARGET_TAXON_NAME, part);
-                    put(INTERACTION_TYPE_NAME, "");
-                }});
-            }
-        }
-    }
-
     static List<Map<String, String>> parseAssociatedOccurrences(String s) {
         List<Map<String, String>> propertyList = new ArrayList<>();
 
@@ -527,7 +459,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 if (associationsMap.containsKey(id)) {
                     try {
                         Map<String, String> targetProperties = associationsMap.get(id);
-                        List<Map<String, String>> maps = parseAssociatedTaxa(targetProperties.get("http://purl.org/dc/terms/description"));
+                        List<Map<String, String>> maps = AssociatedTaxaUtil.parseAssociatedTaxa(targetProperties.get("http://purl.org/dc/terms/description"));
                         for (Map<String, String> map : maps) {
                             TreeMap<String, String> interaction = new TreeMap<>(map);
                             interaction.put(DWC_COREID, id);
