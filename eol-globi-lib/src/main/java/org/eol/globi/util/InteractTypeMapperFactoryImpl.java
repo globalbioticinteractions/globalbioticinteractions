@@ -60,14 +60,11 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
                 ignoredInteractionTypeColumnName,
                 ignoredTypeListURI);
 
-        return new TermLookupService() {
-            @Override
-            public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
-                final String nameNorm = InteractUtil.normalizeInteractionNameOrId(name);
-                return StringUtils.isNotBlank(nameNorm) && typesIgnored.contains(nameNorm)
-                        ? Collections.singletonList(new TermImpl(name, name))
-                        : Collections.emptyList();
-            }
+        return name -> {
+            final String nameNorm = InteractUtil.normalizeInteractionNameOrId(name);
+            return StringUtils.isNotBlank(nameNorm) && typesIgnored.contains(nameNorm)
+                    ? Collections.singletonList(new TermImpl(name, name))
+                    : Collections.emptyList();
         };
     }
 
@@ -249,21 +246,18 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
 
     public static TermLookupService getTermLookupService
             (List<String> typesIgnored, Map<String, InteractType> typeMap) {
-        return new TermLookupService() {
-            @Override
-            public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
-                List<Term> matchingTerms = Collections.emptyList();
-                String nameNormalized = InteractUtil.normalizeInteractionNameOrId(name);
-                if (!typesIgnored.contains(nameNormalized)) {
-                    final InteractType interactType = typeMap.get(nameNormalized);
-                    if (interactType != null) {
-                        matchingTerms = new ArrayList<Term>() {{
-                            add(new TermImpl(interactType.getIRI(), interactType.getLabel()));
-                        }};
-                    }
+        return name -> {
+            List<Term> matchingTerms = Collections.emptyList();
+            String nameNormalized = InteractUtil.normalizeInteractionNameOrId(name);
+            if (!typesIgnored.contains(nameNormalized)) {
+                final InteractType interactType = typeMap.get(nameNormalized);
+                if (interactType != null) {
+                    matchingTerms = new ArrayList<Term>() {{
+                        add(new TermImpl(interactType.getIRI(), interactType.getLabel()));
+                    }};
                 }
-                return matchingTerms;
             }
+            return matchingTerms;
         };
     }
 

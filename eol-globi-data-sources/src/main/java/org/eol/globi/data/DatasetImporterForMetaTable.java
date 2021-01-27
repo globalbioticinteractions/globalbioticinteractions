@@ -9,8 +9,6 @@ import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.process.InteractionListener;
-import org.eol.globi.process.InteractionListenerWithInteractionTypeMapping;
-import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractTypeMapper;
@@ -32,7 +30,6 @@ import java.util.Map;
 
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.util.InteractUtil.*;
 
 public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
@@ -271,7 +268,10 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                     msgs.forEach(x -> importLogger.warn(LogUtil.contextFor(mappedLine), x));
                 }
 
-                AssociatedTaxaUtil.expandNewLinkIfNeeded(interactionListener, mappedLine);
+                List<Map<String, String>> links = AssociatedTaxaUtil.expandIfNeeded(mappedLine);
+                for (Map<String, String> link : links) {
+                    interactionListener.on(link);
+                }
             }
         } catch (IOException e) {
             throw new StudyImporterException(e);

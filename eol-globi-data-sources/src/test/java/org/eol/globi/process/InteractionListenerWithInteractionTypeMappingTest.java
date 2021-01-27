@@ -2,8 +2,6 @@ package org.eol.globi.process;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.process.InteractionListener;
-import org.eol.globi.process.InteractionListenerWithInteractionTypeMapping;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.InteractTypeMapper;
@@ -18,9 +16,9 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID_VERBATIM;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME_VERBATIM;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 public class InteractionListenerWithInteractionTypeMappingTest {
 
     @Test

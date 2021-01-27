@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.InteractUtil;
 
 import java.util.ArrayList;
@@ -19,19 +21,35 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
 public final class AssociatedTaxaUtil {
 
-    public static void expandNewLinkIfNeeded(InteractionListener interactionListener, Map<String, String> mappedLine) throws StudyImporterException {
-        List<Map<String, String>> links = expandIfNeeded(mappedLine);
-        for (Map<String, String> link : links) {
-            interactionListener.on(link);
-        }
-    }
-
     public static List<Map<String, String>> expandIfNeeded(Map<String, String> properties) {
-        List<Map<String, String>> expandedList = Collections.singletonList(properties);
-        String associatedTaxa = properties.get(ASSOCIATED_TAXA);
-        return StringUtils.isNotBlank(associatedTaxa)
-                ? expand(properties, associatedTaxa)
-                : expandedList;
+        try {
+            return new PropertyEnricher() {
+
+                @Override
+                public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                    List<Map<String, String>> enrichedMatches = enrichAllMatches(properties);
+                    return enrichedMatches == null || enrichedMatches.size() == 0
+                            ? properties
+                            : enrichedMatches.get(0);
+                }
+
+                @Override
+                public List<Map<String, String>> enrichAllMatches(Map<String, String> properties) throws PropertyEnricherException {
+                    List<Map<String, String>> expandedList = Collections.singletonList(properties);
+                    String associatedTaxa = properties.get(ASSOCIATED_TAXA);
+                    return StringUtils.isNotBlank(associatedTaxa)
+                            ? expand(properties, associatedTaxa)
+                            : expandedList;
+                }
+
+                @Override
+                public void shutdown() {
+
+                }
+            }.enrichAllMatches(properties);
+        } catch (PropertyEnricherException e) {
+            return Collections.singletonList(properties);
+        }
     }
 
     private static List<Map<String, String>> expand(Map<String, String> properties, String associatedTaxa) {
