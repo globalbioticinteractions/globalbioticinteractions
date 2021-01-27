@@ -37,13 +37,24 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     }
 
     private static ResourceService getResourceServiceForDefaultInteractionTypeMapping() {
+        return getResourceServiceForDefaultInteractionTypeMapping(new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return resourceName == null
+                        ? null
+                        : ResourceUtil.asInputStream(resourceName.toString());
+            }
+        });
+    }
+
+    public static ResourceService getResourceServiceForDefaultInteractionTypeMapping(ResourceService service) {
         return new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 URI supportedURI = getSupportedURI(resourceName);
-                return supportedURI == null
+                return supportedURI == null || service == null
                         ? null
-                        : ResourceUtil.asInputStream(supportedURI.toString());
+                        : service.retrieve(supportedURI);
             }
 
             URI getSupportedURI(URI resourceName) {

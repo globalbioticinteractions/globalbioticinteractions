@@ -37,7 +37,7 @@ public class InteractUtil {
     private static InteractTypeMapper createInteractionTypeMapper(ResourceService resourceService) throws TermLookupServiceException {
         return new InteractTypeMapperFactoryWithFallback(
                 new InteractTypeMapperFactoryImpl(resourceService),
-                new InteractTypeMapperFactoryImpl())
+                new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(resourceService)))
                 .create();
     }
 
