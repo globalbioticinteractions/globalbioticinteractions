@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
@@ -14,10 +13,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class TaxonUtilTest {
@@ -35,6 +34,23 @@ public class TaxonUtilTest {
         otherTaxon.setExternalId("some:otherid");
         otherTaxon.setPath("Mammalia|Mesonychidae|Lestes");
         otherTaxon.setPathNames("class|family|genus");
+
+        assertTrue(TaxonUtil.likelyHomonym(taxon, otherTaxon));
+    }
+
+    @Test
+    public void homonymVenturia() {
+        TaxonImpl taxon = new TaxonImpl();
+        taxon.setName("Venturia");
+        taxon.setExternalId("some:id");
+        taxon.setPath("Ichneumonidae|Venturia");
+        taxon.setPathNames("family|genus");
+
+        TaxonImpl otherTaxon = new TaxonImpl();
+        otherTaxon.setName("Venturia");
+        otherTaxon.setExternalId("some:otherid");
+        otherTaxon.setPath("Fungi | Ascomycota | Dothideomycetes | Venturiales | Venturiaceae | Venturia");
+        otherTaxon.setPathNames("kingdom | phylum | class | order | family | genus");
 
         assertTrue(TaxonUtil.likelyHomonym(taxon, otherTaxon));
     }

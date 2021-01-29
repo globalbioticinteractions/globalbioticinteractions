@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
@@ -232,6 +233,66 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
+    }
+
+    @Test
+    public void associatedTaxaVisiting() {
+        String associatedTaxa = "Caught after visiting Calopogon pallidus";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Caught after visiting Calopogon pallidus"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.VISITS));
+    }
+
+    @Test
+    public void associatedTaxaCaughtOn() {
+        String associatedTaxa = "Caught on Aletris farinosa";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Caught on Aletris farinosa"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH));
+    }
+
+    @Test
+    public void associatedTaxaVisiting2() {
+        String associatedTaxa = "Visiting Pogonia ophioglossoides";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Visiting Pogonia ophioglossoides"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.VISITS));
+    }
+
+    @Test
+    public void associatedTaxaVisiting3() {
+        String associatedTaxa = "Visitiing Baptisia tinctoria";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Visitiing Baptisia tinctoria"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.VISITS));
+    }
+
+    @Test
+    public void associatedTaxaVisiting4() {
+        String associatedTaxa = "Visited by Hyles lineata hawkmoths.";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Visited by Hyles lineata hawkmoths."));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.VISITED_BY));
+    }
+
+    @Test
+    public void associatedTaxaVisiting5() {
+        String associatedTaxa = "visited by Hyles lineata hawkmoths.";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("visited by Hyles lineata hawkmoths."));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(InteractType.VISITED_BY));
     }
 
 
