@@ -78,7 +78,7 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
         Taxon primary = null;
         for (Map<String, String> taxonMatch : taxonMatches) {
             Taxon matchedTaxon = TaxonUtil.mapToTaxon(taxonMatch);
-            if (TaxonUtil.likelyHomonym(origTaxon, matchedTaxon)) {
+            if (!TaxonUtil.likelyHomonym(origTaxon, matchedTaxon)) {
                 primary = matchedTaxon;
             }
             if (!TaxonUtil.hasLiteratureReference(primary)) {
