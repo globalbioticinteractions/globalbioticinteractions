@@ -235,7 +235,7 @@ public class TaxonUtil {
     }
 
     public static boolean likelyHomonym(Taxon taxonA, Taxon taxonB) {
-        if (isResolved(taxonA) && isResolved(taxonB)) {
+        if (hasPath(taxonA) && hasPath(taxonB)) {
             Map<String, String> pathMapA = toPathNameMap(taxonA);
             Map<String, String> pathMapB = toPathNameMap(taxonB);
             return hasHigherOrderTaxaMismatch(pathMapA, pathMapB)
@@ -407,10 +407,14 @@ public class TaxonUtil {
     }
 
     public static boolean isResolved(Taxon taxon) {
-        return taxon != null
-                && isNotBlank(taxon.getPath())
+        return hasPath(taxon)
                 && isNotBlank(taxon.getName())
                 && isNotBlank(taxon.getExternalId());
+    }
+
+    private static boolean hasPath(Taxon taxon) {
+        return taxon != null
+                && isNotBlank(taxon.getPath());
     }
 
     public static boolean isResolved(Map<String, String> properties) {
