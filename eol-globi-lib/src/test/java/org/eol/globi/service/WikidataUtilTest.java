@@ -39,7 +39,7 @@ public class WikidataUtilTest {
                 .map(Taxon::getExternalId)
                 .sorted()
                 .collect(Collectors.joining("|"));
-        assertThat(ids, is("EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|WD:Q15978631"));
+        assertThat(ids, is("EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|WD:Q15978631|WORMS:1455977"));
 
         final String names = relatedTaxonIds.stream().map(Taxon::getName).distinct().collect(Collectors.joining("|"));
         assertThat(names, is("Homo sapiens"));
@@ -51,7 +51,7 @@ public class WikidataUtilTest {
                 WikidataUtil.findRelatedTaxonIds("WD:Q15978631");
 
         final String ids = relatedTaxonIds.stream().map(Taxon::getExternalId).sorted().collect(Collectors.joining("|"));
-        assertThat(ids, is("EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|WD:Q15978631"));
+        assertThat(ids, is("EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|WD:Q15978631|WORMS:1455977"));
 
         final String names = relatedTaxonIds.stream().map(Taxon::getName).distinct().collect(Collectors.joining("|"));
         assertThat(names, is("Homo sapiens"));
