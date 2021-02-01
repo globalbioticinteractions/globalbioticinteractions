@@ -99,13 +99,13 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         }
     }
 
-    protected boolean isNonEmptyTaxonNameOrId(String name) {
+    private boolean isNonEmptyTaxonNameOrId(String name) {
         return StringUtils.isNotBlank(name)
                 && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, name)
                 && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, name);
     }
 
-    protected void indexOriginalExternalIdForTaxon(String externalId, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
+    private void indexOriginalExternalIdForTaxon(String externalId, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxon.getExternalId(), externalId)) {
             if (isNonEmptyTaxonNameOrId(externalId) && findTaxonById(externalId) == null) {
                 indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
@@ -113,20 +113,14 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         }
     }
 
-    public IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
+    IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
         return QueryUtil.query(taxonName, PropertyAndValueDictionary.NAME, taxons);
     }
 
     private void indexTaxonByProperty(TaxonNode taxonNode, String propertyName, String propertyValue) {
-        Transaction tx = null;
-        try {
-            tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx();
+        try (Transaction tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx()) {
             taxons.add(taxonNode.getUnderlyingNode(), propertyName, propertyValue);
             tx.success();
-        } finally {
-            if (tx != null) {
-                tx.close();
-            }
         }
     }
 
@@ -203,7 +197,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
     private static class ExcludeHomonyms implements Predicate<Taxon> {
         private final Taxon taxon;
 
-        public ExcludeHomonyms(Taxon taxon) {
+        ExcludeHomonyms(Taxon taxon) {
             this.taxon = taxon;
         }
 

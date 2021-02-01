@@ -28,8 +28,6 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         this.taxonService = createTaxonService(getGraphDb());
     }
 
-
-
     @Test
     public final void createTaxon() throws NodeFactoryException {
         Taxon taxon1 = new TaxonImpl("bla bla", null);
