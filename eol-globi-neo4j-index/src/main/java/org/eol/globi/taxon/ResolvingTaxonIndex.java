@@ -81,7 +81,7 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
             if (!TaxonUtil.likelyHomonym(origTaxon, matchedTaxon)) {
                 primary = matchedTaxon;
             }
-            if (!TaxonUtil.hasLiteratureReference(primary)) {
+            if (primary != null && !TaxonUtil.hasLiteratureReference(primary)) {
                 break;
             }
         }

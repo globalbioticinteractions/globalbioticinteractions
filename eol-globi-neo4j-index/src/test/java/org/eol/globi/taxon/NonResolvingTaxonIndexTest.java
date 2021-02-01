@@ -21,7 +21,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
-    NonResolvingTaxonIndex taxonService;
+    private NonResolvingTaxonIndex taxonService;
 
     @Before
     public void init() {
@@ -81,14 +81,11 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(propertyOf(taxon, "speciesId"), is("a species id"));
     }
 
-    private Object propertyOf(TaxonNode taxon, String propertyName) {
-        Transaction transaction = taxon.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
+    static Object propertyOf(TaxonNode taxon, String propertyName) {
+        try (Transaction transaction = taxon.getUnderlyingNode().getGraphDatabase().beginTx()) {
             Object value = taxon.getUnderlyingNode().getProperty(propertyName);
             transaction.success();
             return value;
-        } finally {
-            transaction.close();
         }
     }
 

@@ -1,6 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -39,7 +40,10 @@ import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
-public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
+public class ResolvingTaxonIndexTest extends GraphDBTestCase {
+    private NonResolvingTaxonIndex taxonService;
+
+
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
 
     @Before
@@ -244,7 +248,33 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
 
             }
         });
-        super.createTaxonWithExplicitRanks();
+        Taxon taxon1 = new TaxonImpl("foo", "foo:123");
+        taxon1.setPath("a kingdom name | a phylum name | boo name | a class name | an order name | a family name | a genus name | a species name");
+        taxon1.setPathIds("a kingdom id | a phylum id | boo id | a class id | an order id | a family id | a genus id | a species id");
+        taxon1.setPathNames("kingdom | phylum | boo | class | order | family | genus | species");
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+
+        assertThat(propertyOf(taxon, "kingdomName"), is("a kingdom name"));
+        assertThat(propertyOf(taxon, "kingdomId"), is("a kingdom id"));
+        assertThat(propertyOf(taxon, "phylumName"), is("a phylum name"));
+        assertThat(propertyOf(taxon, "phylumId"), is("a phylum id"));
+
+        assertThat(propertyOf(taxon, "orderName"), is("an order name"));
+        assertThat(propertyOf(taxon, "orderId"), is("an order id"));
+
+        assertThat(propertyOf(taxon, "className"), is("a class name"));
+        assertThat(propertyOf(taxon, "classId"), is("a class id"));
+        assertThat(propertyOf(taxon, "familyName"), is("a family name"));
+        assertThat(propertyOf(taxon, "familyId"), is("a family id"));
+        assertThat(propertyOf(taxon, "genusName"), is("a genus name"));
+        assertThat(propertyOf(taxon, "genusId"), is("a genus id"));
+        assertThat(propertyOf(taxon, "speciesName"), is("a species name"));
+        assertThat(propertyOf(taxon, "speciesId"), is("a species id"));
+
+    }
+
+    private Object propertyOf(TaxonNode taxon, String kingdomName) {
+        return NonResolvingTaxonIndexTest.propertyOf(taxon, kingdomName);
     }
 
     public ResolvingTaxonIndex getIndex() {
