@@ -39,6 +39,24 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void anotherHomonym() {
+        TaxonImpl taxon = new TaxonImpl();
+
+        taxon.setName("Hymenolepis");
+        taxon.setExternalId("some:id");
+        taxon.setPath("Plantae | Tracheophyta | Magnoliopsida | Asterales | Asteraceae | Hymenolepis");
+        taxon.setPathNames("kingdom | phylum | class | order | family | genus");
+
+        TaxonImpl otherTaxon = new TaxonImpl();
+        otherTaxon.setName("Hymenolepis");
+        otherTaxon.setExternalId("some:otherid");
+        otherTaxon.setPath("Animalia | Platyhelminthes | Cestoda | Cyclophyllidea | Hymenolepididae | Hymenolepis");
+        otherTaxon.setPathNames("kingdom | phylum | class | order | family | genus");
+
+        assertTrue(TaxonUtil.likelyHomonym(taxon, otherTaxon));
+    }
+
+    @Test
     public void homonymVenturia() {
         TaxonImpl taxon = new TaxonImpl();
         taxon.setName("Venturia");
