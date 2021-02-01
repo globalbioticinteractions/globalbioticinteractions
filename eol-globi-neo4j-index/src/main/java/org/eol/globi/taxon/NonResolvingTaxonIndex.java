@@ -17,6 +17,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class NonResolvingTaxonIndex implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
@@ -42,25 +43,29 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
 
     @Override
     public TaxonNode findTaxonById(String externalId) {
-        return findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+        return findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, subj -> true);
     }
 
     @Override
     public TaxonNode findTaxonByName(String name) throws NodeFactoryException {
-        return findTaxonByKey(PropertyAndValueDictionary.NAME, name);
+        return findTaxonByKey(PropertyAndValueDictionary.NAME, name, subj -> true);
     }
 
-    private TaxonNode findTaxonByKey(String key, String value) {
+    private TaxonNode findTaxonByKey(String key, String value, Predicate<Taxon> selector) {
         TaxonNode firstMatchingTaxon = null;
         if (StringUtils.isNotBlank(value)) {
             String query = key + ":\"" + QueryParser.escape(value) + "\"";
             try (Transaction transaction = graphDbService.beginTx()) {
                 IndexHits<Node> matchingTaxa = taxons.query(query);
                 Node matchingTaxon;
-                if (matchingTaxa.hasNext()) {
+                while (matchingTaxa.hasNext()) {
                     matchingTaxon = matchingTaxa.next();
                     if (matchingTaxon != null) {
-                        firstMatchingTaxon = new TaxonNode(matchingTaxon);
+                        TaxonNode taxonCandidate = new TaxonNode(matchingTaxon);
+                        if (selector.test(taxonCandidate)) {
+                            firstMatchingTaxon = taxonCandidate;
+                            break;
+                        }
                     }
                 }
                 matchingTaxa.close();
@@ -76,10 +81,10 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         TaxonNode taxon1 = null;
         if (StringUtils.isBlank(externalId)) {
             if (StringUtils.length(name) > 1) {
-                taxon1 = findTaxonByName(name);
+                taxon1 = findTaxonByKey(PropertyAndValueDictionary.NAME, name, new ExcludeHomonyms(taxon));
             }
         } else {
-            taxon1 = findTaxonById(externalId);
+            taxon1 = findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, new ExcludeHomonyms(taxon));
         }
         return taxon1;
     }
@@ -195,4 +200,16 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
     }
 
 
+    private static class ExcludeHomonyms implements Predicate<Taxon> {
+        private final Taxon taxon;
+
+        public ExcludeHomonyms(Taxon taxon) {
+            this.taxon = taxon;
+        }
+
+        @Override
+        public boolean test(Taxon subj) {
+            return !TaxonUtil.likelyHomonym(taxon, subj);
+        }
+    }
 }

@@ -30,6 +30,7 @@ import java.util.TreeMap;
 
 import static org.eol.globi.tool.LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -328,5 +329,43 @@ public class ResolvingTaxonIndexTest extends NonResolvingTaxonIndexTest {
         assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
         foundTaxon = this.taxonService.findTaxonByName("preferred");
         assertThat(foundTaxon.getNodeID(), is(first.getNodeID()));
+    }
+
+    @Test
+    public final void doNotMatchHomonyms() throws NodeFactoryException {
+        ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
+        taxonService.setEnricher(new PropertyEnricherSingle() {
+            @Override
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                return TaxonUtil.taxonToMap(TaxonUtil.mapToTaxon(properties));
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        });
+        this.taxonService = taxonService;
+
+        Taxon taxon2 = new TaxonImpl("some name", "some:id");
+
+        taxon2.setPath("one | two | three | some name");
+        taxon2.setPathNames("kingdom | family | genus | species");
+
+        TaxonNode first = this.taxonService.getOrCreateTaxon(taxon2);
+        assertThat(first.getName(), is("some name"));
+        assertThat(first.getPath(), is("one | two | three | some name"));
+
+        Taxon taxon1 = new TaxonImpl("some name", "some:id");
+        taxon1.setPath("four | five | six | some name");
+        taxon1.setPathNames("kingdom | family | genus | species");
+
+        TaxonNode second = this.taxonService.getOrCreateTaxon(taxon1);
+        assertThat(second.getName(), is("some name"));
+        assertThat(second.getPath(), is("four | five | six | some name"));
+
+
+        assertThat(second.getNodeID(), is(not(first.getNodeID())));
+
     }
 }

@@ -14,11 +14,12 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     NonResolvingTaxonIndex taxonService;
 
@@ -26,6 +27,8 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     public void init() {
         this.taxonService = createTaxonService(getGraphDb());
     }
+
+
 
     @Test
     public final void createTaxon() throws NodeFactoryException {
@@ -131,6 +134,65 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertNull(taxonService.findTaxonByName(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxonService.findTaxonByName(PropertyAndValueDictionary.NO_NAME));
     }
+
+    @Test
+    public final void indexTwoHomonymsSeparately() throws NodeFactoryException {
+        Taxon taxon1 = new TaxonImpl("some name 4567", null);
+        taxon1.setPath("one | two | three | some name 4567");
+        taxon1.setPathNames("kingdom | family | genus | species");
+        assertThat(taxonService.findTaxon(taxon1), is(nullValue()));
+
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+        assertThat(taxon, is(notNullValue()));
+        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+
+        assertThat(taxonService.findTaxonByName("some name 4567"), is(notNullValue()));
+
+        Taxon taxon2 = new TaxonImpl("some name 4567", null);
+        taxon2.setPath("four | five | six | some name 4567");
+        taxon2.setPathNames("kingdom | family | genus | species");
+        assertThat(taxonService.findTaxon(taxon2), is(nullValue()));
+    }
+
+    @Test
+    public final void indexTwoHomonymsSeparately2() throws NodeFactoryException {
+        Taxon taxon1 = new TaxonImpl("some name", "foo:123");
+        taxon1.setPath("seven | eight | nine | some name");
+        taxon1.setPathNames("kingdom | family | genus | species");
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+        assertThat(taxon.getPath(), is("seven | eight | nine | some name"));
+        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+
+        assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
+
+        Taxon taxon2 = new TaxonImpl("some name", "foo:123");
+        taxon2.setPath("ten | eleven | twelve | some name");
+        taxon2.setPathNames("kingdom | family | genus | species");
+        TaxonNode homonym = taxonService.getOrCreateTaxon(taxon2);
+        assertThat(homonym.getNodeID(), is(not(taxon.getNodeID())));
+
+        Taxon taxon3 = new TaxonImpl("some name");
+
+        assertThat(taxonService.findTaxon(taxon3).getPath(), is("seven | eight | nine | some name"));
+    }
+
+    @Test
+    public final void indexHomonymExplicitly() throws NodeFactoryException {
+        Taxon taxon1 = new TaxonImpl("some name", "foo:123");
+        taxon1.setPath("one | two | three | some name");
+        taxon1.setPathNames("kingdom | family | genus | species");
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+        assertThat(taxon, is(notNullValue()));
+        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+
+        assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
+
+        Taxon taxon2 = new TaxonImpl("some name", "foo:123");
+        taxon2.setPath("some name");
+        taxon2.setPathNames("species");
+        assertThat(taxonService.findTaxon(taxon2), is(not(nullValue())));
+    }
+
 
     private static NonResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
         return new NonResolvingTaxonIndex(graphDb);
