@@ -45,7 +45,7 @@ public class IndexerTaxa implements IndexerNeo4j {
 
             LOG.info("adding same and similar terms for resolved taxa...");
             List<IndexerNeo4j> linkers = new ArrayList<>();
-            appendOpenTreeTaxonLinker(linkers);
+            //appendOpenTreeTaxonLinker(linkers);
 
             linkers.forEach(x -> new IndexerTimed(x)
                     .index(graphService));
@@ -57,7 +57,7 @@ public class IndexerTaxa implements IndexerNeo4j {
         LOG.info("resolving names with taxon cache done.");
     }
 
-    public static void appendOpenTreeTaxonLinker(List<IndexerNeo4j> linkers) {
+    private static void appendOpenTreeTaxonLinker(List<IndexerNeo4j> linkers) {
         String ottUrl = System.getProperty("ott.url");
         try {
             if (StringUtils.isNotBlank(ottUrl)) {
