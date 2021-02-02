@@ -102,6 +102,7 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
                             && !TaxonUtil.likelyHomonym(origTaxon, sameAsTaxon)) {
                         Taxon ambiguousTaxon = TaxonUtil.copy(origTaxon, new TaxonImpl());
                         ambiguousTaxon.setExternalId(PropertyAndValueDictionary.AMBIGUOUS_MATCH);
+                        selector = subj -> false;
                         indexedTaxon = createAndIndexTaxon(origTaxon, ambiguousTaxon);
                         break;
                     }
@@ -110,7 +111,6 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
                         selector = new ExcludeHomonyms(sameAsTaxon);
                         break;
                     }
-
                 }
 
                 if (indexedTaxon == null) {
