@@ -47,6 +47,11 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     }
 
     @Test
+    public final void getOrCreateNullTaxon() throws NodeFactoryException {
+        assertThat(taxonService.getOrCreateTaxon(null), is(nullValue()));
+    }
+
+    @Test
     public final void createTaxonExternalIdIndex() throws NodeFactoryException {
         Taxon taxon1 = new TaxonImpl(null, "foo:123");
         taxon1.setPath(null);
@@ -93,6 +98,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     public final void doNotIndexMagicValuesTaxon() throws NodeFactoryException {
         assertNotIndexed(PropertyAndValueDictionary.NO_NAME);
         assertNotIndexed(PropertyAndValueDictionary.NO_MATCH);
+        assertNotIndexed(PropertyAndValueDictionary.AMBIGUOUS_MATCH);
     }
 
     private final void assertNotIndexed(String magicValue) throws NodeFactoryException {

@@ -91,45 +91,50 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
     }
 
     private TaxonNode indexAndConnect(List<Map<String, String>> taxonMatches, Taxon origTaxon, Taxon primaryTaxon) throws NodeFactoryException {
-        TaxonNode indexedTaxon = findTaxon(primaryTaxon);
+        TaxonNode indexedTaxon = primaryTaxon == null ? null : findTaxon(primaryTaxon);
         if (indexedTaxon == null) {
             if (TaxonUtil.isResolved(primaryTaxon)) {
-                Predicate<Taxon> selector = subj -> true;
+                indexedTaxon = indexAndConnect(taxonMatches, origTaxon, primaryTaxon, indexedTaxon);
 
-                for (Map<String, String> taxonMatch : taxonMatches) {
-                    Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
-                    if (TaxonUtil.likelyHomonym(primaryTaxon, sameAsTaxon)
-                            && !TaxonUtil.likelyHomonym(origTaxon, sameAsTaxon)) {
-                        Taxon ambiguousTaxon = TaxonUtil.copy(origTaxon, new TaxonImpl());
-                        ambiguousTaxon.setExternalId(PropertyAndValueDictionary.AMBIGUOUS_MATCH);
-                        selector = subj -> false;
-                        indexedTaxon = createAndIndexTaxon(origTaxon, ambiguousTaxon);
-                        break;
-                    }
-                    if (StringUtils.equals(sameAsTaxon.getExternalId(), origTaxon.getExternalId())) {
-                        indexedTaxon = createAndIndexTaxon(origTaxon, sameAsTaxon);
-                        selector = new ExcludeHomonyms(sameAsTaxon);
-                        break;
-                    }
-                }
+            }
+        }
+        return indexedTaxon;
+    }
 
-                if (indexedTaxon == null) {
-                    indexedTaxon = createAndIndexTaxon(origTaxon, primaryTaxon);
-                    selector = new ExcludeHomonyms(indexedTaxon);
-                }
+    private TaxonNode indexAndConnect(List<Map<String, String>> taxonMatches, Taxon origTaxon, Taxon primaryTaxon, TaxonNode indexedTaxon) throws NodeFactoryException {
+        Predicate<Taxon> selector = subj -> true;
 
-                for (Map<String, String> taxonMatch : taxonMatches) {
-                    Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
-                    if (selector.test(sameAsTaxon)) {
-                        NodeUtil.connectTaxa(
-                                sameAsTaxon,
-                                indexedTaxon,
-                                getGraphDbService(),
-                                RelTypes.SAME_AS
-                        );
-                    }
-                }
+        for (Map<String, String> taxonMatch : taxonMatches) {
+            Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
+            if (TaxonUtil.likelyHomonym(primaryTaxon, sameAsTaxon)
+                    && !TaxonUtil.likelyHomonym(origTaxon, sameAsTaxon)) {
+                Taxon ambiguousTaxon = TaxonUtil.copy(origTaxon, new TaxonImpl());
+                ambiguousTaxon.setExternalId(PropertyAndValueDictionary.AMBIGUOUS_MATCH);
+                selector = subj -> false;
+                indexedTaxon = createAndIndexTaxon(origTaxon, ambiguousTaxon);
+                break;
+            }
+            if (StringUtils.equals(sameAsTaxon.getExternalId(), origTaxon.getExternalId())) {
+                indexedTaxon = createAndIndexTaxon(origTaxon, sameAsTaxon);
+                selector = new ExcludeHomonyms(sameAsTaxon);
+                break;
+            }
+        }
 
+        if (indexedTaxon == null) {
+            indexedTaxon = createAndIndexTaxon(origTaxon, primaryTaxon);
+            selector = new ExcludeHomonyms(indexedTaxon);
+        }
+
+        for (Map<String, String> taxonMatch : taxonMatches) {
+            Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
+            if (selector.test(sameAsTaxon)) {
+                NodeUtil.connectTaxa(
+                        sameAsTaxon,
+                        indexedTaxon,
+                        getGraphDbService(),
+                        RelTypes.SAME_AS
+                );
             }
         }
         return indexedTaxon;

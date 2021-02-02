@@ -43,8 +43,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 public class ResolvingTaxonIndexTest extends GraphDBTestCase {
-    private NonResolvingTaxonIndex taxonService;
 
+    private NonResolvingTaxonIndex taxonService;
 
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
 

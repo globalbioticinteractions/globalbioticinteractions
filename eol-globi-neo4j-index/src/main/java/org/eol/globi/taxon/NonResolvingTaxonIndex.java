@@ -32,6 +32,10 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
 
     @Override
     public TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
+        return taxon == null ? null : doGetOrIndexTaxon(taxon);
+    }
+
+    private TaxonNode doGetOrIndexTaxon(Taxon taxon) throws NodeFactoryException {
         TaxonNode taxonNode = findTaxon(taxon);
         if (taxonNode == null) {
             taxonNode = TaxonUtil.isResolved(taxon)
@@ -75,16 +79,18 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         return firstMatchingTaxon;
     }
 
-    protected TaxonNode findTaxon(Taxon taxon) throws NodeFactoryException {
-        String name = taxon.getName();
-        String externalId = taxon.getExternalId();
+    TaxonNode findTaxon(Taxon taxon) throws NodeFactoryException {
         TaxonNode taxon1 = null;
-        if (StringUtils.isBlank(externalId)) {
-            if (StringUtils.length(name) > 1) {
-                taxon1 = findTaxonByKey(PropertyAndValueDictionary.NAME, name, new ExcludeHomonyms(taxon));
+        if (taxon != null) {
+            String externalId = taxon.getExternalId();
+            if (StringUtils.isBlank(externalId)) {
+                String name = taxon.getName();
+                if (StringUtils.length(name) > 1) {
+                    taxon1 = findTaxonByKey(PropertyAndValueDictionary.NAME, name, new ExcludeHomonyms(taxon));
+                }
+            } else {
+                taxon1 = findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, new ExcludeHomonyms(taxon));
             }
-        } else {
-            taxon1 = findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, new ExcludeHomonyms(taxon));
         }
         return taxon1;
     }
@@ -102,6 +108,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
     private boolean isNonEmptyTaxonNameOrId(String name) {
         return StringUtils.isNotBlank(name)
                 && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, name)
+                && !StringUtils.equals(PropertyAndValueDictionary.AMBIGUOUS_MATCH, name)
                 && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, name);
     }
 
