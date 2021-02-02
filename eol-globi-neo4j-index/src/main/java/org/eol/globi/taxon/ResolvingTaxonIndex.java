@@ -2,6 +2,7 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -14,6 +15,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
     private PropertyEnricher enricher;
@@ -92,11 +94,33 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
         TaxonNode indexedTaxon = findTaxon(primaryTaxon);
         if (indexedTaxon == null) {
             if (TaxonUtil.isResolved(primaryTaxon)) {
-                indexedTaxon = createAndIndexTaxon(origTaxon, primaryTaxon);
+                Predicate<Taxon> selector = subj -> true;
 
                 for (Map<String, String> taxonMatch : taxonMatches) {
                     Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
-                    if (!TaxonUtil.likelyHomonym(indexedTaxon, sameAsTaxon)) {
+                    if (TaxonUtil.likelyHomonym(primaryTaxon, sameAsTaxon)
+                            && !TaxonUtil.likelyHomonym(origTaxon, sameAsTaxon)) {
+                        Taxon ambiguousTaxon = TaxonUtil.copy(origTaxon, new TaxonImpl());
+                        ambiguousTaxon.setExternalId(PropertyAndValueDictionary.AMBIGUOUS_MATCH);
+                        indexedTaxon = createAndIndexTaxon(origTaxon, ambiguousTaxon);
+                        break;
+                    }
+                    if (StringUtils.equals(sameAsTaxon.getExternalId(), origTaxon.getExternalId())) {
+                        indexedTaxon = createAndIndexTaxon(origTaxon, sameAsTaxon);
+                        selector = new ExcludeHomonyms(sameAsTaxon);
+                        break;
+                    }
+
+                }
+
+                if (indexedTaxon == null) {
+                    indexedTaxon = createAndIndexTaxon(origTaxon, primaryTaxon);
+                    selector = new ExcludeHomonyms(indexedTaxon);
+                }
+
+                for (Map<String, String> taxonMatch : taxonMatches) {
+                    Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
+                    if (selector.test(sameAsTaxon)) {
                         NodeUtil.connectTaxa(
                                 sameAsTaxon,
                                 indexedTaxon,
@@ -105,6 +129,7 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
                         );
                     }
                 }
+
             }
         }
         return indexedTaxon;

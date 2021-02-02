@@ -194,16 +194,4 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
     }
 
 
-    private static class ExcludeHomonyms implements Predicate<Taxon> {
-        private final Taxon taxon;
-
-        ExcludeHomonyms(Taxon taxon) {
-            this.taxon = taxon;
-        }
-
-        @Override
-        public boolean test(Taxon subj) {
-            return !TaxonUtil.likelyHomonym(taxon, subj);
-        }
-    }
 }

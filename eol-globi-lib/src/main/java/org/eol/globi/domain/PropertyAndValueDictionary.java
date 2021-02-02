@@ -4,6 +4,7 @@ import java.net.URI;
 
 public class PropertyAndValueDictionary {
     public static final String NO_MATCH = "no:match";
+    public static final String AMBIGUOUS_MATCH = "ambiguous:match";
     public static final String NAME = "name";
     public static final String EXTERNAL_ID = "externalId";
     public static final String PATH = "path";
