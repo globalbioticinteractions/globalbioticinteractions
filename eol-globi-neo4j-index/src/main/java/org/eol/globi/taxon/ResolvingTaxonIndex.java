@@ -106,14 +106,6 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
 
         for (Map<String, String> taxonMatch : taxonMatches) {
             Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
-            if (TaxonUtil.likelyHomonym(primaryTaxon, sameAsTaxon)
-                    && !TaxonUtil.likelyHomonym(origTaxon, sameAsTaxon)) {
-                Taxon ambiguousTaxon = TaxonUtil.copy(origTaxon, new TaxonImpl());
-                ambiguousTaxon.setExternalId(PropertyAndValueDictionary.AMBIGUOUS_MATCH);
-                selector = subj -> false;
-                indexedTaxon = createAndIndexTaxon(origTaxon, ambiguousTaxon);
-                break;
-            }
             if (StringUtils.equals(sameAsTaxon.getExternalId(), origTaxon.getExternalId())) {
                 indexedTaxon = createAndIndexTaxon(origTaxon, sameAsTaxon);
                 selector = new ExcludeHomonyms(sameAsTaxon);
