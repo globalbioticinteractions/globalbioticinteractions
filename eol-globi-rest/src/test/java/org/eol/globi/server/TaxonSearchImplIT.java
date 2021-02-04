@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.util.CypherQuery;
+import org.eol.globi.util.HttpUtil;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Ignore;
@@ -24,7 +25,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
-public class TaxonSearchImplIT {
+public class TaxonSearchImplIT extends ITBase {
 
     @Test
     public void nameSuggestions() throws IOException {
@@ -150,7 +151,7 @@ public class TaxonSearchImplIT {
         assertThat(links, CoreMatchers.hasItem("WD:Q1859493"));
     }
 
-   @Test
+    @Test
     public void taxonLinksPlazi2() throws IOException {
         Map<String, String> taxon = new TaxonSearchImpl().findTaxon("http://taxon-concept.plazi.org/id/Animalia/Anguillicola_crassus_Kuwahara_1974");
         System.out.println(taxon);
@@ -264,7 +265,7 @@ public class TaxonSearchImplIT {
         Map<String, String> props = new TaxonSearchImpl().findTaxon("Ariopsis felis");
         assertThat(props.get("name"), is("Ariopsis felis"));
         assertThat(props.get("path"), StringContains.containsString("Actinopterygii"));
-        assertThat(props.get("externalId"),is(notNullValue()));
+        assertThat(props.get("externalId"), is(notNullValue()));
 
         Map<String, String> linkProps = new TaxonSearchImpl().findTaxon(props.get("externalId"));
         assertThat(linkProps.get("name"), is("Ariopsis felis"));
@@ -291,5 +292,17 @@ public class TaxonSearchImplIT {
         assertThat(props.get("path"), StringContains.containsString("Plantae"));
         assertThat(props.get("externalId"), StringContains.containsString(":"));
         assertThat(props.get("externalUrl"), StringContains.containsString(":"));
+    }
+
+    @Test
+    public void taxonLinksWebAPI() throws IOException {
+        String uri = getURLPrefix() + "taxonLinks/NCBI:9606";
+        assertThat(HttpUtil.getRemoteJson(uri), is("[\"https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606\"]"));
+    }
+
+    @Test
+    public void taxonLinksWebAPI2() throws IOException {
+        String uri = getURLPrefix() + "/taxonLinks/http%3A%2F%2Ftaxon-concept.plazi.org%2Fid%2FAnimalia%2FCARIDEA_Dana_1852";
+        assertThat(HttpUtil.getRemoteJson(uri), CoreMatchers.containsString("https://www.wikidata.org/wiki/Q80117"));
     }
 }

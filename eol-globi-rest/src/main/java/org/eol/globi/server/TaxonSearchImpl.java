@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -169,9 +170,21 @@ public class TaxonSearchImpl implements TaxonSearch {
                         CypherUtil.CYPHER_VERSION_2_3), 30);
     }
 
-    @RequestMapping(value = "/taxonLinks/{taxonPath}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/taxonLinks/**", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Collection<String> taxonLinks(@PathVariable("taxonPath") final String taxonPath, HttpServletRequest request) throws IOException {
+    public Collection<String> taxonLinks2(HttpServletRequest request) throws IOException {
+        String path = getEscapedPathFromRequest(request);
+        String taxonPath = StringUtils.replacePattern(path, "^/taxonLinks/", "");
+        return taxonLinks(taxonPath, request);
+    }
+
+    public static String getEscapedPathFromRequest(HttpServletRequest request) {
+        URI uri = URI.create("http://localhost" + request.getRequestURI());
+        return uri.getPath();
+    }
+
+    public Collection<String> taxonLinks(String taxonPath, HttpServletRequest request) throws IOException {
+        System.out.println(taxonPath);
         return TaxonSearchUtil.linksForTaxonName(taxonPath, request, new TaxonSearchUtil.LinkMapper() {
 
             @Override
