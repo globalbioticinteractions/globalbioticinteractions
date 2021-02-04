@@ -39,6 +39,8 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("BioGoMx:Spp-23-0494"), is("http://gulfbase.org/biogomx/biospecies.php?species=Spp-23-0494"));
         assertThat(ExternalIdUtil.urlForExternalId("EOL_V2:1234"), is("https://doi.org/10.5281/zenodo.1495266#1234"));
         assertThat(ExternalIdUtil.urlForExternalId("PLAZI:99915444-EC70-3196-7F2D-637F418F0730"), is("http://treatment.plazi.org/id/99915444-EC70-3196-7F2D-637F418F0730"));
+        assertThat(ExternalIdUtil.urlForExternalId("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"), is("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"));
+        assertThat(ExternalIdUtil.urlForExternalId("PLAZITaxon:Animalia/Caridae_Dana_1852"), is("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"));
     }
 
     @Test
@@ -61,6 +63,22 @@ public class ExternalIdUtilTest {
         assertThat(
                 ExternalIdUtil.taxonomyProviderFor("https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=535920"),
                 is(TaxonomyProvider.ITIS)
+        );
+    }
+
+    @Test
+    public void plaziTaxonConcept() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"),
+                is(TaxonomyProvider.PLAZI_TAXON_CONCEPT)
+        );
+    }
+
+    @Test
+    public void plaziTaxonTreatments() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("http://treatment.plazi.org/id/EA4F8781FFD5FFB3FF0C7606E774FCB3"),
+                is(TaxonomyProvider.PLAZI)
         );
     }
 

@@ -26,6 +26,14 @@ public class TaxonSearchUtilTest {
     }
 
     @Test
+    public void createQueryWithSupportedId2() {
+        CypherQuery query = TaxonSearchUtil.getCypherQuery("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852", new HashMap());
+        assertThat(query.getVersionedQuery(), Is.is("CYPHER 2.3 START someTaxon = node:taxons({pathQuery}) MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE exists(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl RETURN externalId as taxon_external_id,externalUrl as taxon_external_url"));
+        assertThat(query.getParams().toString(), Is.is("{pathQuery=externalId:\\\"http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852\\\"}"));
+        CypherTestUtil.validate(query);
+    }
+
+    @Test
     public void createQueryWithUnsupportedId() {
         CypherQuery query = TaxonSearchUtil.getCypherQuery("FOO:1", new HashMap());
         assertThat(query.getVersionedQuery(), Is.is("CYPHER 2.3 START someTaxon = node:taxons({pathQuery}) MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE exists(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl RETURN externalId as taxon_external_id,externalUrl as taxon_external_url"));

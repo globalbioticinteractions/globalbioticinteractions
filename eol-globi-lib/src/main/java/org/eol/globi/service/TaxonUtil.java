@@ -443,20 +443,20 @@ public class TaxonUtil {
                 TARGET_TAXON_SPECIES);
     }
 
-    public static String generateTaxonPath(Map<String, String> properties,
-                                           List<String> allRanks,
-                                           String genusRank,
-                                           String specificEpithetRank,
-                                           String subspecificEpithetRank) {
+    private static String generateTaxonPath(Map<String, String> properties,
+                                            List<String> allRanks,
+                                            String genusRank,
+                                            String specificEpithetRank,
+                                            String subspecificEpithetRank) {
         return generateTaxonPath(properties, allRanks, genusRank, specificEpithetRank, subspecificEpithetRank, null);
     }
 
-    public static String generateTaxonPath(Map<String, String> properties,
-                                           List<String> allRanks,
-                                           String genusRank,
-                                           String specificEpithetRank,
-                                           String subspecificEpithetRank,
-                                           String speciesRank) {
+    private static String generateTaxonPath(Map<String, String> properties,
+                                            List<String> allRanks,
+                                            String genusRank,
+                                            String specificEpithetRank,
+                                            String subspecificEpithetRank,
+                                            String speciesRank) {
         Stream<String> rankValues = allRanks
                 .stream()
                 .map(properties::get)

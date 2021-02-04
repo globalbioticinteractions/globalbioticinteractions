@@ -144,6 +144,19 @@ public class TaxonSearchImplIT {
     }
 
     @Test
+    public void taxonLinksPlazi() throws IOException {
+        Collection<String> links = new TaxonSearchImpl().findTaxonIds("http://taxon-concept.plazi.org/id/Animalia/Anguillicola_crassus_Kuwahara_1974");
+        assertThat(links, CoreMatchers.hasItem("http://treatment.plazi.org/id/038FB248FF95FF9289B9C4DD228698DA"));
+        assertThat(links, CoreMatchers.hasItem("WD:Q1859493"));
+    }
+
+   @Test
+    public void taxonLinksPlazi2() throws IOException {
+        Map<String, String> taxon = new TaxonSearchImpl().findTaxon("http://taxon-concept.plazi.org/id/Animalia/Anguillicola_crassus_Kuwahara_1974");
+        System.out.println(taxon);
+    }
+
+    @Test
     public void taxonLinks2() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Enhydra lutris nereis", null);
         assertThat(links, CoreMatchers.hasItem("http://www.marinespecies.org/aphia.php?p=taxdetails&id=242601"));

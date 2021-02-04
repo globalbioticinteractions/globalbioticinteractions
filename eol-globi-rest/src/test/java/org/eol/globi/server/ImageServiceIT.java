@@ -28,6 +28,24 @@ public class ImageServiceIT extends ITBase {
         assertThat(HttpUtil.getRemoteJson(uri), is(notNullValue()));
     }
 
+    @Test
+    public void imagesForPlaziConceptName() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=http%3A%2F%2Ftaxon-concept.plazi.org%2Fid%2FAnimalia%2FCaridae_Dana_1852";
+        assertThat(HttpUtil.getRemoteJson(uri), is(notNullValue()));
+    }
+
+    @Test
+    public void imagesForPlaziConceptName2() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=http%3A%2F%2Ftaxon-concept.plazi.org%2Fid%2FAnimalia%2FCaridae_Dana_1852";
+        assertThat(HttpUtil.getRemoteJson(uri), is(notNullValue()));
+    }
+
+    @Test
+    public void imagesForPlaziTreatmentName() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=http%3A%2F%2Ftreatment.plazi.org%2Fid%2FEA4F8781FFD5FFB3FF0C7606E774FCB3";
+        assertThat(HttpUtil.getRemoteJson(uri), is(notNullValue()));
+    }
+
     @Test(expected = HttpResponseException.class)
     public void imagesForNonExistentName() throws IOException {
         String uri = getURLPrefix() + "imagesForName/Donald%20duckus";

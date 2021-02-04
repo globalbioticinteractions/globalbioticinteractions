@@ -74,7 +74,10 @@ public class TaxonSearchUtil {
         }
 
         query.append(" MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE exists(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl ");
-        CypherReturnClauseBuilder.appendReturnClauseDistinctz(query, CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()), selectors);
+        CypherReturnClauseBuilder.appendReturnClauseDistinctz(
+                query,
+                CypherReturnClauseBuilder.actualReturnFields(requestedFields, Arrays.asList(returnFieldsCloseMatches), selectors.keySet()),
+                selectors);
         return new CypherQuery(query.toString(), new HashMap<String, String>() {
             {
                 put("pathQuery", pathQuery);
