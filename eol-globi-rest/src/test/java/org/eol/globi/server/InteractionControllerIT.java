@@ -54,7 +54,7 @@ public class InteractionControllerIT extends ITBase {
         HttpGet httpGet = new HttpGet(uri);
         HttpUtil.addJsonHeaders(httpGet);
         HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
-        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json;charset=UTF-8"));
+        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json;charset=utf-8"));
         String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         assertThat(response, is(not(nullValue())));
     }
