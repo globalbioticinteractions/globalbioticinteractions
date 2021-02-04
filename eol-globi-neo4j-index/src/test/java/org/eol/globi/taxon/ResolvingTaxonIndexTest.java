@@ -398,7 +398,7 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(second.getNodeID(), is(not(first.getNodeID())));
 
     }
-    
+
     @Test
     public final void labelUnambiguousMatchesByPath() throws NodeFactoryException {
         ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());

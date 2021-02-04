@@ -113,23 +113,23 @@ public class ResolvingTaxonIndex extends NonResolvingTaxonIndex {
             }
         }
 
-        if (indexedTaxon == null) {
-            indexedTaxon = createAndIndexTaxon(origTaxon, primaryTaxon);
-            selector = new ExcludeHomonyms(indexedTaxon);
-        }
+        final TaxonNode resolvedTaxon =
+                indexedTaxon == null
+                        ? createAndIndexTaxon(origTaxon, primaryTaxon)
+                        : indexedTaxon;
 
-        for (Map<String, String> taxonMatch : taxonMatches) {
-            Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
-            if (selector.test(sameAsTaxon)) {
-                NodeUtil.connectTaxa(
+        taxonMatches
+                .stream()
+                .map(TaxonUtil::mapToTaxon)
+                .filter(selector)
+                .forEach(sameAsTaxon -> NodeUtil.connectTaxa(
                         sameAsTaxon,
-                        indexedTaxon,
+                        resolvedTaxon,
                         getGraphDbService(),
                         RelTypes.SAME_AS
-                );
-            }
-        }
-        return indexedTaxon;
+                ));
+
+        return resolvedTaxon;
     }
 
     public void setEnricher(PropertyEnricher enricher) {
