@@ -16,6 +16,10 @@ public class CacheService {
         if (!mapdbCacheDir.exists()) {
             createCacheDir(getMapDBDir());
         }
+        return getDb(cacheName, mapdbCacheDir);
+    }
+
+    public DB getDb(String cacheName, File mapdbCacheDir) {
         File mapDBFile = new File(mapdbCacheDir, cacheName);
 
         DBMaker dbMaker = DBMaker

@@ -194,7 +194,6 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     private void initTaxonCache() throws PropertyEnricherException {
         DB db = initDb("taxonCache");
-
         String taxonCacheName = "taxonCacheById";
         if (db.exists(taxonCacheName)) {
             resolvedIdToTaxonMap = db.getTreeMap(taxonCacheName);
@@ -202,10 +201,11 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             LOG.info("local taxon cache of [" + taxonCache.getResource() + "] building...");
             StopWatch watch = new StopWatch();
             watch.start();
-
+            String tmpTaxonCacheName = "taxonCacheById" + UUID.randomUUID();
+            BTreeMap<String, Map<String, String>> tmpResolvedIdToTaxonMap = null;
             try {
-                resolvedIdToTaxonMap = db
-                        .createTreeMap(taxonCacheName)
+                tmpResolvedIdToTaxonMap = db
+                        .createTreeMap(tmpTaxonCacheName)
                         .pumpPresort(100000)
                         .pumpIgnoreDuplicates()
                         .pumpSource(taxonCacheIterator(taxonCache))
@@ -216,9 +216,16 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
             }
             watch.stop();
-            logCacheLoadStats(watch.getTime(), resolvedIdToTaxonMap.size());
-            LOG.info("local taxon cache of [" + taxonCache.getResource() + "] built.");
+            logCacheLoadStats(watch.getTime(), tmpResolvedIdToTaxonMap.size());
             watch.reset();
+            if (db.exists(taxonCacheName)) {
+                LOG.info("another local taxon cache of [" + taxonCache.getResource() + "] was created during index creation, dropping built index.");
+                db.delete(tmpTaxonCacheName);
+            } else {
+                resolvedIdToTaxonMap = tmpResolvedIdToTaxonMap;
+                db.rename(tmpTaxonCacheName, taxonCacheName);
+                LOG.info("local taxon cache of [" + taxonCache.getResource() + "] built.");
+            }
         }
     }
 
