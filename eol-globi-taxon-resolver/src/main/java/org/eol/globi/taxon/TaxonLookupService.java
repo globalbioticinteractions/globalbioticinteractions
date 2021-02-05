@@ -7,5 +7,4 @@ public interface TaxonLookupService {
 
     org.eol.globi.domain.Taxon[] lookupTermsById(String taxonId) throws IOException;
 
-    void destroy();
 }
