@@ -68,7 +68,7 @@ public class TaxonUtil {
     public static final String SOURCE_TAXON_SUBFAMILY = SOURCE_TAXON + "Subfamily";
     public static final String SOURCE_TAXON_GENUS = SOURCE_TAXON + "Genus";
     public static final String SOURCE_TAXON_SUBGENUS = SOURCE_TAXON + "Subgenus";
-    public static final String SOURCE_TAXON_SPECIFIC_EPITHET = SOURCE_TAXON + "SpecificEpithet";
+    public static final String  SOURCE_TAXON_SPECIFIC_EPITHET = SOURCE_TAXON + "SpecificEpithet";
     public static final String SOURCE_TAXON_SUBSPECIFIC_EPITHET = SOURCE_TAXON + "SubspecificEpithet";
     public static final List<String> SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
             SOURCE_TAXON_SUBGENUS,

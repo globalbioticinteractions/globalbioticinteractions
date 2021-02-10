@@ -77,6 +77,12 @@ public class AssociatedTaxaUtilTest {
     }
 
     @Test
+    public void associatedTaxaMultiple2() {
+        String associatedTaxa = "eats: Homo sapiens,Canis lupus";
+        assertTwoInteractions(associatedTaxa);
+    }
+
+    @Test
     public void associatedTaxaEx() {
         String associatedTaxa = "ex Homo sapiens";
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);

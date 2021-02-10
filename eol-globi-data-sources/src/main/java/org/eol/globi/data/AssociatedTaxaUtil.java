@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.util.InteractUtil;
@@ -62,25 +61,29 @@ public final class AssociatedTaxaUtil {
     static List<Map<String, String>> parseAssociatedTaxa(String s) {
         List<Map<String, String>> properties = new ArrayList<>();
         String[] parts = StringUtils.split(s, "|;,");
+        String lastVerb = null;
         for (String part : parts) {
             String trimmedPart = StringUtils.trim(part);
             Matcher matcher = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_IDEA.matcher(trimmedPart);
             if (matcher.find()) {
                 String genus = StringUtils.trim(matcher.group(1));
                 String specificEpithet = StringUtils.trim(matcher.group(2));
-                addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet);
+                addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, "");
             } else {
                 Matcher matcher1 = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_EAE.matcher(trimmedPart);
                 if (matcher1.find()) {
                     String genus = StringUtils.trim(matcher1.group(2));
                     String specificEpithet = StringUtils.trim(matcher1.group(3));
-                    addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet);
+                    addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, "");
                 } else {
                     String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
                     if (verbTaxon.length == 2) {
+                        lastVerb = trimAndRemoveQuotes(verbTaxon[0]);
                         addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
+                    } else if (StringUtils.isNotBlank(lastVerb)) {
+                        addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, trimAndRemoveQuotes(lastVerb));
                     } else {
-                        addDefaultInteractionForAssociatedTaxon(properties, trimmedPart);
+                        addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, "");
                     }
 
                 }
@@ -104,7 +107,7 @@ public final class AssociatedTaxaUtil {
         return StringUtils.trim(InteractUtil.removeQuotesAndBackslashes(verbatimTerm));
     }
 
-    private static void addDefaultInteractionForAssociatedTaxon(List<Map<String, String>> properties, String part) {
+    private static void addDefaultInteractionForAssociatedTaxon(List<Map<String, String>> properties, String part, final String interactionTypeNameDefault) {
         if (StringUtils.isNotBlank(part)) {
             if (DatasetImporterForDwCA.EX_NOTATION.matcher(StringUtils.trim(part)).matches()) {
                 properties.add(new HashMap<String, String>() {{
@@ -119,7 +122,7 @@ public final class AssociatedTaxaUtil {
             } else {
                 properties.add(new HashMap<String, String>() {{
                     put(TARGET_TAXON_NAME, part);
-                    put(INTERACTION_TYPE_NAME, "");
+                    put(INTERACTION_TYPE_NAME, interactionTypeNameDefault);
                 }});
             }
         }
