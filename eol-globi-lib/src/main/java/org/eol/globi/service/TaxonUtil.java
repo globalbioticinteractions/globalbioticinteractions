@@ -149,7 +149,7 @@ public class TaxonUtil {
         return taxonToMap(taxon, "");
     }
 
-    public static Map<String, String> taxonToMap(Taxon taxon, String prefix) {
+    private static Map<String, String> taxonToMap(Taxon taxon, String prefix) {
         Map<String, String> properties = new HashMap<>();
         properties.put(prefix + NAME, taxon.getName());
         properties.put(prefix + RANK, taxon.getRank());
@@ -558,7 +558,7 @@ public class TaxonUtil {
         if (isNotBlank(genusKey)
                 && properties.containsKey(genusKey)
                 && isNotBlank(specificEpithetKey)
-                && properties.containsKey(specificEpithetKey)) {
+                && isNotBlank(properties.get(specificEpithetKey))) {
             List<String> speciesNameParts = Arrays.asList(
                     properties.get(genusKey),
                     properties.get(specificEpithetKey),
