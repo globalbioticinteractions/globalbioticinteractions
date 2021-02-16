@@ -31,19 +31,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>4.1.0.Final</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>6.2.0.Final</version>
         </dependency>
 
         <dependency>
