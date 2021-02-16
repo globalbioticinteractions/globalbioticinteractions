@@ -91,6 +91,7 @@ public class TaxonLookupBuilder implements TaxonImportListener, AutoCloseable {
         }
         if (indexDir != null) {
             indexDir.close();
+            indexDir = null;
         }
     }
 }
