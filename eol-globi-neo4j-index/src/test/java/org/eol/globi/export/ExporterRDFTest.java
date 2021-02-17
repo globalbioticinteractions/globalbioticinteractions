@@ -12,8 +12,10 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EnvoLookupService;
+import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -46,7 +48,19 @@ public class ExporterRDFTest extends GraphDBTestCase {
     public void exportSPIRE() throws IOException, StudyImporterException {
         DatasetImporterForSPIRE importer = new DatasetImporterForSPIRE(null, nodeFactory);
         importer.setFilter(recordNumber -> recordNumber < 5);
-        importer.setDataset(new DatasetLocal(inStream -> inStream));
+        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+        importer.setDataset(dataset);
+        importer.setGeoNamesService(new GeoNamesService() {
+            @Override
+            public boolean hasTermForLocale(String locality) {
+                return true;
+            }
+
+            @Override
+            public LatLng findLatLng(String locality) throws IOException {
+                return new LatLng(10,10);
+            }
+        });
         importStudy(importer);
 
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
@@ -55,13 +69,10 @@ public class ExporterRDFTest extends GraphDBTestCase {
         Taxon taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("some taxon", null));
         Taxon sameAsTaxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("bugus same as taxon", "EOL:123"));
 
-        Transaction tx = getGraphDb().beginTx();
-        try {
+        try (Transaction tx = getGraphDb().beginTx()) {
             assertThat(taxon, is(notNullValue()));
-            ((NodeBacked)taxon).getUnderlyingNode().createRelationshipTo(((NodeBacked)sameAsTaxon).getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
+            ((NodeBacked) taxon).getUnderlyingNode().createRelationshipTo(((NodeBacked) sameAsTaxon).getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
             tx.success();
-        } finally {
-            tx.close();
         }
 
         File file = File.createTempFile("spire-as-light-globi", ".nq");
