@@ -41,6 +41,8 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("PLAZI:99915444-EC70-3196-7F2D-637F418F0730"), is("http://treatment.plazi.org/id/99915444-EC70-3196-7F2D-637F418F0730"));
         assertThat(ExternalIdUtil.urlForExternalId("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"), is("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"));
         assertThat(ExternalIdUtil.urlForExternalId("PLAZITaxon:Animalia/Caridae_Dana_1852"), is("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"));
+        assertThat(ExternalIdUtil.urlForExternalId("BOLDTaxon:762659"), is("http://www.boldsystems.org/index.php/Taxbrowser_Taxonpage?taxid=762659"));
+        assertThat(ExternalIdUtil.urlForExternalId("BOLD:ACM3285"), is("http://bins.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:ACM3285"));
     }
 
     @Test

@@ -55,6 +55,8 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.PLAZI.getIdPrefix(), "http://treatment.plazi.org/id/");
         put(TaxonomyProvider.PLAZI_TAXON_CONCEPT.getIdPrefix(), "http://taxon-concept.plazi.org/id/");
         put(TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "http://openbiodiv.net/");
+        put(TaxonomyProvider.BOLD_BIN.getIdPrefix(), "http://bins.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:");
+        put(TaxonomyProvider.BOLD_TAXON.getIdPrefix(), "http://www.boldsystems.org/index.php/Taxbrowser_Taxonpage?taxid=");
     }};
 
     private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{

@@ -30,6 +30,8 @@ public enum TaxonomyProvider {
     OPEN_BIODIV("http://openbiodiv.net/"),
     MSW("MSW:", "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id="),
     GULFBASE("BioGoMx:"),
+    BOLD_BIN("BOLD:", "http://bins.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:"),
+    BOLD_TAXON("BOLDTaxon:", "http://www.boldsystems.org/index.php/Taxbrowser_Taxonpage?taxid="),
     PLAZI_TAXON_CONCEPT("PLAZITaxon:", "http://taxon-concept.plazi.org/id/"),
     PLAZI("PLAZI:", "http://treatment.plazi.org/id/");
 
