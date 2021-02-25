@@ -107,6 +107,18 @@ public class WikiDataImageSearchTest {
     }
 
     @Test
+    public void plaziTreatment() throws IOException {
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("http://treatment.plazi.org/id/690487A5FFDFFF930EFFF9F0FDB6D299");
+        Assert.assertNull(taxonImage);
+    }
+
+    @Test
+    public void imageForGBIF5787545() throws IOException {
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("GBIF:5787545");
+        Assert.assertNull(taxonImage);
+    }
+
+    @Test
     public void lookupLionJapanese() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140", new SearchContext() {
             @Override

@@ -81,6 +81,13 @@ public class ExternalIdUtilTest {
                 is(TaxonomyProvider.PLAZI)
         );
     }
+    @Test
+    public void plaziTaxonTreatments2() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("http://treatment.plazi.org/id/690487A5FFDFFF930EFFF9F0FDB6D299"),
+                is(TaxonomyProvider.PLAZI)
+        );
+    }
 
     @Test
     public void ncbiTaxon() {
