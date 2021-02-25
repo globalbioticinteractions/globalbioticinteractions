@@ -25,8 +25,8 @@ public class ExportFlatInteractions implements GraphExporter {
 
     private static final List<String> CYPHER_QUERIES = Arrays.asList(
             createQuery(RelTypes.SUPPORTS, PropertyAndValueDictionary.SUPPORTS)
-            //,
-            //createQuery(RelTypes.REFUTES, PropertyAndValueDictionary.REFUTES)
+            ,
+            createQuery(RelTypes.REFUTES, PropertyAndValueDictionary.REFUTES)
     );
 
     private static String createQuery(RelTypes argumentTypeRel, String argumentTypeId) {

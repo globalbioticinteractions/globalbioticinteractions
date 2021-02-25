@@ -152,25 +152,6 @@ public class TaxonSearchImplIT extends ITBase {
     }
 
     @Test
-    public void taxonPlaziTreatment() throws IOException {
-        Map<String, String> links = new TaxonSearchImpl().findTaxon("http://treatment.plazi.org/id/690487A5FFDFFF930EFFF9F0FDB6D299");
-        assertThat(links.get("name"), is("bla"));
-    }
-
-    @Test
-    public void taxonGBIF() throws IOException {
-        Map<String, String> links = new TaxonSearchImpl().findTaxon("GBIF:5787545");
-        assertThat(links.get("name"), is("http://treatment.plazi.org/id/690487A5FFDFFF930EFFF9F0FDB6D299"));
-    }
-
-    @Test
-    public void taxonLinksPlaziTreatment() throws IOException {
-        Collection<String> links = new TaxonSearchImpl().findTaxonIds("http://treatment.plazi.org/id/690487A5FFDFFF930EFFF9F0FDB6D299");
-        assertThat(links, CoreMatchers.hasItem("GBIF:5787545"));
-        assertThat(links, CoreMatchers.hasItem("http://treatment.plazi.org/id/690487A5FFDFFF930EFFF9F0FDB6D299"));
-    }
-
-    @Test
     public void taxonLinksPlazi2() throws IOException {
         Map<String, String> taxon = new TaxonSearchImpl().findTaxon("http://taxon-concept.plazi.org/id/Animalia/Anguillicola_crassus_Kuwahara_1974");
         System.out.println(taxon);

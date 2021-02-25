@@ -1,8 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.http.client.HttpResponseException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.util.HttpUtil;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -10,10 +9,10 @@ import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
 
 public class ImageServiceIT extends ITBase {
 
@@ -33,16 +32,6 @@ public class ImageServiceIT extends ITBase {
     public void imagesForPlaziConceptName() throws IOException {
         String uri = getURLPrefix() + "imagesForName?name=http%3A%2F%2Ftaxon-concept.plazi.org%2Fid%2FAnimalia%2FCaridae_Dana_1852";
         assertThat(HttpUtil.getRemoteJson(uri), is(notNullValue()));
-    }
-
-    @Test
-    public void imagesForPlaziTreatmentName2() throws IOException {
-        String uri = getURLPrefix() + "imagesForName?name=http%3A%2F%2Ftreatment.plazi.org%2Fid%2F690487A5FFDFFF930EFFF9F0FDB6D299&lang=en";
-        String remoteJson = HttpUtil.getRemoteJson(uri);
-        assertThat(remoteJson, is(notNullValue()));
-        JsonNode jsonNode = new ObjectMapper().readTree(remoteJson);
-        assertThat(jsonNode.has("scientificName"), is(true));
-        assertThat(jsonNode.get("scientificName").asText(), is(not("http://treatment.plazi.org/id/690487A5FFDFFF930EFFF9F0FDB6D299")));
     }
 
     @Test
