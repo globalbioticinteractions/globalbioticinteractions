@@ -24,7 +24,8 @@ public class ExportFlatInteractions implements GraphExporter {
 
 
     private static final List<String> CYPHER_QUERIES = Arrays.asList(
-            createQuery(RelTypes.SUPPORTS, PropertyAndValueDictionary.SUPPORTS),
+            createQuery(RelTypes.SUPPORTS, PropertyAndValueDictionary.SUPPORTS)
+            ,
             createQuery(RelTypes.REFUTES, PropertyAndValueDictionary.REFUTES)
     );
 
@@ -60,6 +61,8 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", sourceTaxon.kingdomId as sourceTaxonKingdomId" +
                 ", sourceSpecimen.externalId as sourceId" +
                 ", sourceSpecimen.occurrenceID as sourceOccurrenceId" +
+                ", sourceSpecimen.institutionCode as sourceInstitutionCode" +
+                ", sourceSpecimen.sollectionCode as sourceCollectionCode" +
                 ", sourceSpecimen.catalogNumber as sourceCatalogNumber" +
                 ", sourceSpecimen.basisOfRecordId as sourceBasisOfRecordId" +
                 ", sourceSpecimen.basisOfRecordLabel as sourceBasisOfRecordName" +
@@ -96,6 +99,8 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", targetTaxon.kingdomId as targetTaxonKingdomId" +
                 ", targetSpecimen.externalId as targetId" +
                 ", targetSpecimen.occurrenceID as targetOccurrenceId" +
+                ", targetSpecimen.institutionCode as targetInstitutionCode" +
+                ", targetSpecimen.collectionCode as targetCollectionCode" +
                 ", targetSpecimen.catalogNumber as targetCatalogNumber" +
                 ", targetSpecimen.basisOfRecordId as targetBasisOfRecordId" +
                 ", targetSpecimen.basisOfRecordLabel as targetBasisOfRecordName" +
