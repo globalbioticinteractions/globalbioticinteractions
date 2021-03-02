@@ -636,6 +636,34 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void hasResourceRelationshipsOccurrenceToOccurrenceRemarks() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("fmnh-rr-remarks-test.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
+        importResourceRelationExtension(archive, new InteractionListener() {
+
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                numberOfFoundLinks.incrementAndGet();
+                if (1 == numberOfFoundLinks.get()) {
+                    assertThat(interaction.get(SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
+                    assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
+                    assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Ectoparasite of"));
+                    assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
+                    assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
+                    assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is("Donald duckus"));
+                    assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
+                }
+                assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
+            }
+        });
+
+        assertThat(numberOfFoundLinks.get(), is(1));
+    }
+
+    @Test
     public void hasResourceRelationshipsOccurrenceToTaxa() throws IOException, URISyntaxException {
         URI sampleArchive = getClass().getResource("inaturalist-dwca-rr.zip").toURI();
 

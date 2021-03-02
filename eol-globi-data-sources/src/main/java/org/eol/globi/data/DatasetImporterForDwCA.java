@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +47,7 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
@@ -549,10 +551,15 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             for (Record record : resourceExtension) {
                 String targetId = record.value(DwcTerm.relatedResourceID);
                 String sourceId = record.value(DwcTerm.resourceID);
-                if (StringUtils.isNotBlank(sourceId)
-                        && StringUtils.isNotBlank(targetId)) {
-                    referencedSourceIds.add(sourceId);
-                    referencedTargetIds.add(targetId);
+                String relationshipRemarks = record.value(DwcTerm.relationshipRemarks);
+                if (StringUtils.isNotBlank(sourceId)) {
+                    if (StringUtils.isNotBlank(targetId)) {
+                        referencedSourceIds.add(sourceId);
+                        referencedTargetIds.add(targetId);
+                    } else if (StringUtils.contains(relationshipRemarks, "scientificName:")) {
+                        referencedSourceIds.add(sourceId);
+                    }
+
                 }
             }
             final List<DwcTerm> idTerms = Arrays.asList(
@@ -583,6 +590,18 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 Map<String, String> props = new TreeMap<>();
                 String sourceId = record.value(DwcTerm.resourceID);
                 String relationship = record.value(DwcTerm.relationshipOfResource);
+                String relationshipRemarks = record.value(DwcTerm.relationshipRemarks);
+                String[] remarks = StringUtils.split(relationshipRemarks, CharsetConstant.SEPARATOR_CHAR);
+
+                Optional<String> targetTaxonName =
+                        remarks == null
+                                ? Optional.empty()
+                                : Arrays
+                                .stream(remarks)
+                                .map(StringUtils::trim)
+                                .filter(x -> StringUtils.startsWith(x, "scientificName:"))
+                                .findFirst()
+                                .map(x -> StringUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
 
                 Optional<Term> relationshipOfResourceIDTerm = record
                         .terms()
@@ -595,8 +614,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         .orElse(null);
                 String targetId = record.value(DwcTerm.relatedResourceID);
 
-                if (StringUtils.isNotBlank(sourceId)
-                        && StringUtils.isNotBlank(targetId)) {
+                if (StringUtils.isNotBlank(sourceId)) {
 
                     appendVerbatimResourceRelationsValues(record, props);
 
@@ -624,8 +642,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                             populatePropertiesAssociatedWithId(props, sourceId, true, sourceIdProperties, idLabelPair);
 
-                            Map<String, String> targetIdProperties = propMap.get(targetId);
-                            populatePropertiesAssociatedWithId(props, targetId, false, targetIdProperties, idLabelPair);
+                            if (StringUtils.isNotBlank(targetId)) {
+                                Map<String, String> targetIdProperties = propMap.get(targetId);
+                                populatePropertiesAssociatedWithId(props, targetId, false, targetIdProperties, idLabelPair);
+                            } else targetTaxonName.ifPresent(s -> props.put(TARGET_TAXON_NAME, s));
                         }
 
                     }
