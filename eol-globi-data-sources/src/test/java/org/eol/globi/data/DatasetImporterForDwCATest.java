@@ -618,14 +618,17 @@ public class DatasetImporterForDwCATest {
                     assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
                     assertThat(interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("10d8d814-2afc-4cf2-9843-a2b719346179"));
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("G. Heinrich"));
-                } else if (9 == numberOfFoundLinks.get()) {
-                    assertThat(interaction.get(SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
-                    assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Stomach Contents"));
-                    assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
-                    assertThat(interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
+                } else if (8 == numberOfFoundLinks.get()) {
                     assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
-                    assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
+                    assertThat(interaction.get(SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
+
+                    assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Stomach Contents of"));
+                    assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
+
+                    assertThat(interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("5c419063-682a-4b3f-8a27-9ed286717922"));
                     assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is("Thamnophis fulvus"));
+
+                    assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("C. M. Barber"));
                 }
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(notNullValue()));

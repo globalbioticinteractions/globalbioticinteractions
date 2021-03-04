@@ -1,6 +1,5 @@
 package org.eol.globi.data;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +46,6 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
@@ -535,7 +533,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     .transactionDisable()
                     .make();
 
-            final HTreeMap<String, Map<String, Map<String, String>>> termIdPropMap = db
+            final Map<String, Map<String, Map<String, String>>> termIdPropMap = db
                     .createHashMap("termIdPropMap")
                     .make();
 
@@ -548,114 +546,133 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     .make();
 
 
-            for (Record record : resourceExtension) {
-                String targetId = record.value(DwcTerm.relatedResourceID);
-                String sourceId = record.value(DwcTerm.resourceID);
-                String relationshipRemarks = record.value(DwcTerm.relationshipRemarks);
-                if (StringUtils.isNotBlank(sourceId)) {
-                    if (StringUtils.isNotBlank(targetId)) {
-                        referencedSourceIds.add(sourceId);
-                        referencedTargetIds.add(targetId);
-                    } else if (StringUtils.contains(relationshipRemarks, "scientificName:")) {
-                        referencedSourceIds.add(sourceId);
-                    }
+            collectRelatedResourceIds(resourceExtension, referencedSourceIds, referencedTargetIds);
 
-                }
-            }
-            final List<DwcTerm> idTerms = Arrays.asList(
+            final List<DwcTerm> termTypes = Arrays.asList(
                     DwcTerm.occurrenceID, DwcTerm.taxonID);
 
-            List<ArchiveFile> archiveFiles = new ArrayList<>();
-            archiveFiles.add(archive.getCore());
+            resolveLocalResourceIds(archive, termIdPropMap, referencedSourceIds, referencedTargetIds, termTypes);
 
-            ArchiveFile taxon = findResourceExtension(archive, EXTENSION_TAXON);
-            if (taxon != null) {
-                archiveFiles.add(taxon);
-            }
+            importInteractions(interactionListener, resourceExtension, termIdPropMap, termTypes);
+        }
+    }
 
-            for (ArchiveFile archiveFile : archiveFiles) {
-                for (Record record : archiveFile) {
-                    for (DwcTerm idTerm : idTerms) {
-                        attemptLinkUsingTerm(termIdPropMap,
-                                referencedSourceIds,
-                                referencedTargetIds,
-                                record,
-                                idTerm);
-                    }
+    private static void importInteractions(InteractionListener interactionListener,
+                                           ArchiveFile resourceExtension,
+                                           Map<String, Map<String, Map<String, String>>> termIdPropMap,
+                                           List<DwcTerm> idTerms) {
+        for (Record record : resourceExtension) {
+            Map<String, String> props = new TreeMap<>();
+            String sourceId = record.value(DwcTerm.resourceID);
+            String relationship = record.value(DwcTerm.relationshipOfResource);
+            String relationshipRemarks = record.value(DwcTerm.relationshipRemarks);
+            String[] remarks = StringUtils.split(relationshipRemarks, CharsetConstant.SEPARATOR_CHAR);
+
+            Optional<String> targetTaxonName =
+                    remarks == null
+                            ? Optional.empty()
+                            : Arrays
+                            .stream(remarks)
+                            .map(StringUtils::trim)
+                            .filter(x -> StringUtils.startsWith(x, "scientificName:"))
+                            .findFirst()
+                            .map(x -> StringUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
+
+            Optional<Term> relationshipOfResourceIDTerm = record
+                    .terms()
+                    .stream()
+                    .filter(x -> StringUtils.equals(x.simpleName(), "relationshipOfResourceID"))
+                    .findFirst();
+
+            String relationshipTypeIdValue = relationshipOfResourceIDTerm
+                    .map(record::value)
+                    .orElse(null);
+            String targetId = record.value(DwcTerm.relatedResourceID);
+
+            if (StringUtils.isNotBlank(sourceId)) {
+
+                appendVerbatimResourceRelationsValues(record, props);
+
+                String relationshipAccordingTo = record.value(DwcTerm.relationshipAccordingTo);
+                if (StringUtils.isNotBlank(relationshipAccordingTo)) {
+                    props.putIfAbsent(REFERENCE_CITATION, relationshipAccordingTo);
                 }
-            }
 
+                putIfAbsentAndNotBlank(props, INTERACTION_TYPE_NAME, relationship);
+                putIfAbsentAndNotBlank(props, INTERACTION_TYPE_ID, relationshipTypeIdValue);
+                putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
 
-            for (Record record : resourceExtension) {
-                Map<String, String> props = new TreeMap<>();
-                String sourceId = record.value(DwcTerm.resourceID);
-                String relationship = record.value(DwcTerm.relationshipOfResource);
-                String relationshipRemarks = record.value(DwcTerm.relationshipRemarks);
-                String[] remarks = StringUtils.split(relationshipRemarks, CharsetConstant.SEPARATOR_CHAR);
+                for (DwcTerm idTerm : idTerms) {
+                    if (termIdPropMap.containsKey(idTerm.qualifiedName())) {
+                        Map<String, Map<String, String>> propMap = termIdPropMap.get(idTerm.qualifiedName());
+                        Map<String, String> sourceIdProperties = propMap.get(sourceId);
 
-                Optional<String> targetTaxonName =
-                        remarks == null
-                                ? Optional.empty()
-                                : Arrays
-                                .stream(remarks)
-                                .map(StringUtils::trim)
-                                .filter(x -> StringUtils.startsWith(x, "scientificName:"))
-                                .findFirst()
-                                .map(x -> StringUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
+                        Pair<String, String> idLabelPair = Pair.of(
+                                SOURCE_OCCURRENCE_ID,
+                                TARGET_OCCURRENCE_ID);
 
-                Optional<Term> relationshipOfResourceIDTerm = record
-                        .terms()
-                        .stream()
-                        .filter(x -> StringUtils.equals(x.simpleName(), "relationshipOfResourceID"))
-                        .findFirst();
-
-                String relationshipTypeIdValue = relationshipOfResourceIDTerm
-                        .map(record::value)
-                        .orElse(null);
-                String targetId = record.value(DwcTerm.relatedResourceID);
-
-                if (StringUtils.isNotBlank(sourceId)) {
-
-                    appendVerbatimResourceRelationsValues(record, props);
-
-                    String relationshipAccordingTo = record.value(DwcTerm.relationshipAccordingTo);
-                    if (StringUtils.isNotBlank(relationshipAccordingTo)) {
-                        props.putIfAbsent(REFERENCE_CITATION, relationshipAccordingTo);
-                    }
-
-                    putIfAbsentAndNotBlank(props, INTERACTION_TYPE_NAME, relationship);
-                    putIfAbsentAndNotBlank(props, INTERACTION_TYPE_ID, relationshipTypeIdValue);
-                    putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
-
-                    for (DwcTerm idTerm : idTerms) {
-                        if (termIdPropMap.containsKey(idTerm.qualifiedName())) {
-                            Map<String, Map<String, String>> propMap = termIdPropMap.get(idTerm.qualifiedName());
-                            Map<String, String> sourceIdProperties = propMap.get(sourceId);
-
-                            Pair<String, String> idLabelPair = Pair.of(
-                                    SOURCE_OCCURRENCE_ID,
-                                    TARGET_OCCURRENCE_ID);
-
-                            if (idTerm.equals(DwcTerm.taxonID)) {
-                                idLabelPair = Pair.of(SOURCE_TAXON_ID, TARGET_TAXON_ID);
-                            }
-
-                            populatePropertiesAssociatedWithId(props, sourceId, true, sourceIdProperties, idLabelPair);
-
-                            if (StringUtils.isNotBlank(targetId)) {
-                                Map<String, String> targetIdProperties = propMap.get(targetId);
-                                populatePropertiesAssociatedWithId(props, targetId, false, targetIdProperties, idLabelPair);
-                            } else targetTaxonName.ifPresent(s -> props.put(TARGET_TAXON_NAME, s));
+                        if (idTerm.equals(DwcTerm.taxonID)) {
+                            idLabelPair = Pair.of(SOURCE_TAXON_ID, TARGET_TAXON_ID);
                         }
 
+                        populatePropertiesAssociatedWithId(props, sourceId, true, sourceIdProperties, idLabelPair);
+
+                        if (StringUtils.isNotBlank(targetId)) {
+                            Map<String, String> targetIdProperties = propMap.get(targetId);
+                            populatePropertiesAssociatedWithId(props, targetId, false, targetIdProperties, idLabelPair);
+                        } else targetTaxonName.ifPresent(s -> props.put(TARGET_TAXON_NAME, s));
                     }
 
-                    try {
-                        interactionListener.on(props);
-                    } catch (StudyImporterException e) {
-                        //
-                    }
                 }
+
+                try {
+                    interactionListener.on(props);
+                } catch (StudyImporterException e) {
+                    //
+                }
+            }
+        }
+    }
+
+    private static void resolveLocalResourceIds(Archive archive,
+                                                Map<String, Map<String, Map<String, String>>> termIdPropMap,
+                                                Set<String> referencedSourceIds,
+                                                Set<String> referencedTargetIds,
+                                                List<DwcTerm> termTypes) {
+        List<ArchiveFile> archiveFiles = new ArrayList<>();
+        archiveFiles.add(archive.getCore());
+
+        ArchiveFile taxon = findResourceExtension(archive, EXTENSION_TAXON);
+        if (taxon != null) {
+            archiveFiles.add(taxon);
+        }
+
+        for (ArchiveFile archiveFile : archiveFiles) {
+            for (Record record : archiveFile) {
+                for (DwcTerm termType : termTypes) {
+                    attemptLinkUsingTerm(termIdPropMap,
+                            referencedSourceIds,
+                            referencedTargetIds,
+                            record,
+                            termType);
+                }
+            }
+        }
+    }
+
+    private static void collectRelatedResourceIds(ArchiveFile resourceExtension, Set<String> referencedSourceIds, Set<String> referencedTargetIds) {
+        for (Record record : resourceExtension) {
+            String targetId = record.value(DwcTerm.relatedResourceID);
+            String sourceId = record.value(DwcTerm.resourceID);
+            String relationshipRemarks = record.value(DwcTerm.relationshipRemarks);
+            if (StringUtils.isNotBlank(sourceId)) {
+                if (StringUtils.isNotBlank(targetId)) {
+                    referencedSourceIds.add(sourceId);
+                    referencedTargetIds.add(targetId);
+                } else if (StringUtils.contains(relationshipRemarks, "scientificName:")) {
+                    referencedSourceIds.add(sourceId);
+                }
+
             }
         }
     }
@@ -680,7 +697,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return relationshipId;
     }
 
-    private static void attemptLinkUsingTerm(HTreeMap<String, Map<String, Map<String, String>>> termIdPropertyMap,
+    private static void attemptLinkUsingTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap,
                                              Set<String> referencedSourceIds,
                                              Set<String> referencedTargetIds,
                                              Record coreRecord,
