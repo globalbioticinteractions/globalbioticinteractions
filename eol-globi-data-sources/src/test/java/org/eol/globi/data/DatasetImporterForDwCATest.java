@@ -636,6 +636,36 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void hasResourceRelationshipsOccurrenceToOccurrenceMissingTargetReference() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("fmnh-rr-unresolved-targetid-test.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
+        importResourceRelationExtension(archive, new InteractionListener() {
+
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                numberOfFoundLinks.incrementAndGet();
+                assertThat(interaction.get(relatedResourceID.qualifiedName()), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
+                assertThat(interaction.get(SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
+                assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
+                assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Ectoparasite of"));
+                assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
+                assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
+                assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+                assertThat(interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
+                assertThat(interaction.get(DatasetImporterForTSV.TARGET_CATALOG_NUMBER), is(nullValue()));
+                assertThat(interaction.get(DatasetImporterForTSV.TARGET_COLLECTION_CODE), is(nullValue()));
+                assertThat(interaction.get(DatasetImporterForTSV.TARGET_INSTITUTION_CODE), is(nullValue()));
+                assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
+            }
+        });
+
+        assertThat(numberOfFoundLinks.get(), is(1));
+    }
+
+    @Test
     public void hasResourceRelationshipsOccurrenceToOccurrenceRemarks() throws IOException, URISyntaxException {
         URI sampleArchive = getClass().getResource("fmnh-rr-remarks-test.zip").toURI();
 
