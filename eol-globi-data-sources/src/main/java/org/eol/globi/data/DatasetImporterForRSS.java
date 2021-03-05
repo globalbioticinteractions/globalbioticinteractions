@@ -187,7 +187,7 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
     static Dataset embeddedDatasetFor(final Dataset datasetOrig,
                                       final String embeddedCitation,
                                       final URI embeddedArchiveURI) {
-        String hasDependencies = datasetOrig.getOrDefault("hasDependencies", "false");
+        String hasDependencies = datasetOrig.getOrDefault(HAS_DEPENDENCIES, "false");
         ObjectNode config = new ObjectMapper().createObjectNode();
         config.put("citation", embeddedCitation);
         config.put("format", PropertyAndValueDictionary.MIME_TYPE_DWCA);

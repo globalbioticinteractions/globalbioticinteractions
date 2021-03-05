@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.eol.globi.data.DatasetImporterForDwCA.NONE_DETECTED;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -178,117 +179,7 @@ public class DatasetImporterForRSSTest {
             public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
                 return null;
             }
-        }, new NodeFactory() {
-            @Override
-            public Location findLocation(Location location) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Season createSeason(String seasonNameLower) {
-                return null;
-            }
-
-            @Override
-            public Specimen createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Specimen createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Study createStudy(Study study) {
-                return null;
-            }
-
-            @Override
-            public Study getOrCreateStudy(Study study) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Study findStudy(String title) {
-                return null;
-            }
-
-            @Override
-            public Season findSeason(String seasonName) {
-                return null;
-            }
-
-            @Override
-            public Location getOrCreateLocation(Location location) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
-
-            }
-
-            @Override
-            public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
-                return null;
-            }
-
-            @Override
-            public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public TermLookupService getTermLookupService() {
-                return null;
-            }
-
-            @Override
-            public AuthorIdResolver getAuthorResolver() {
-                return null;
-            }
-
-            @Override
-            public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
-                return null;
-            }
-
-            @Override
-            public Dataset getOrCreateDataset(Dataset dataset) {
-                return null;
-            }
-
-            @Override
-            public Interaction createInteraction(Study study) throws NodeFactoryException {
-                return null;
-            }
-        }) {
+        }, new NodeFactoryNull()) {
             @Override
             public void importStudy() throws StudyImporterException {
                 //
@@ -326,6 +217,65 @@ public class DatasetImporterForRSSTest {
         Map<String, String> received = receivedLinks.get(0);
         assertThat(received.get(TaxonUtil.TARGET_TAXON_NAME), is("taxonName"));
         assertThat(received.get(TaxonUtil.TARGET_TAXON_ID), is("taxonId"));
+        assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_NAME), is("bodyPartName"));
+        assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_ID), is("bodyPartId"));
+        assertThat(received.get(DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME), is("lifeStageName"));
+        assertThat(received.get(DatasetImporterForTSV.TARGET_LIFE_STAGE_ID), is("lifeStageId"));
+
+
+    }
+    @Test
+    public void enrichingInteractionListenerSourceOccurrence() throws StudyImporterException {
+        DatasetImporterWithListener studyImporter = new DatasetImporterWithListener(new ParserFactory() {
+            @Override
+            public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
+                return null;
+            }
+        }, new NodeFactoryNull()) {
+            @Override
+            public void importStudy() throws StudyImporterException {
+                //
+            }
+        };
+
+
+        final List<Map<String, String>> receivedLinks = new ArrayList<>();
+        studyImporter.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                receivedLinks.add(interaction);
+            }
+        });
+        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<String, Map<String, String>>() {{
+            put("1234", new TreeMap<String, String>() {
+                {
+                    put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "4567");
+                    put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "some:interaction");
+                    put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
+                }
+            });
+        }};
+        DatasetImportUtil.EnrichingInteractionListener listener = new DatasetImportUtil.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
+
+        listener.on(new TreeMap<String, String>() {{
+            put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234");
+            put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, "lifeStageName");
+            put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID, "lifeStageId");
+            put(DatasetImporterForTSV.SOURCE_BODY_PART_NAME, "bodyPartName");
+            put(DatasetImporterForTSV.SOURCE_BODY_PART_ID, "bodyPartId");
+            put(TaxonUtil.SOURCE_TAXON_NAME, "taxonName");
+            put(TaxonUtil.SOURCE_TAXON_ID, "taxonId");
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, NONE_DETECTED);
+
+        }});
+
+        assertThat(receivedLinks.size(), is(1));
+        Map<String, String> received = receivedLinks.get(0);
+        assertThat(received.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("4567"));
+        assertThat(received.get(DatasetImporterForTSV.INTERACTION_TYPE_ID), is("some:interaction"));
+        assertThat(received.get(TaxonUtil.TARGET_TAXON_NAME), is("taxonName"));
+        assertThat(received.get(TaxonUtil.TARGET_TAXON_ID), is("taxonId"));
+        assertThat(received.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("1234"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_NAME), is("bodyPartName"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_ID), is("bodyPartId"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME), is("lifeStageName"));
@@ -373,4 +323,115 @@ public class DatasetImporterForRSSTest {
         assertThat(DatasetImporterForRSS.getRSSEndpoint(dataset), is("bar"));
     }
 
+    private static class NodeFactoryNull implements NodeFactory {
+        @Override
+        public Location findLocation(Location location) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Season createSeason(String seasonNameLower) {
+            return null;
+        }
+
+        @Override
+        public Specimen createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Specimen createSpecimen(Study study, Taxon taxon) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Specimen createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Study createStudy(Study study) {
+            return null;
+        }
+
+        @Override
+        public Study getOrCreateStudy(Study study) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Study findStudy(String title) {
+            return null;
+        }
+
+        @Override
+        public Season findSeason(String seasonName) {
+            return null;
+        }
+
+        @Override
+        public Location getOrCreateLocation(Location location) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
+
+        }
+
+        @Override
+        public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
+            return null;
+        }
+
+        @Override
+        public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Term getOrCreatePhysiologicalState(String externalId, String name) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Term getOrCreateLifeStage(String externalId, String name) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public TermLookupService getTermLookupService() {
+            return null;
+        }
+
+        @Override
+        public AuthorIdResolver getAuthorResolver() {
+            return null;
+        }
+
+        @Override
+        public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
+            return null;
+        }
+
+        @Override
+        public Dataset getOrCreateDataset(Dataset dataset) {
+            return null;
+        }
+
+        @Override
+        public Interaction createInteraction(Study study) throws NodeFactoryException {
+            return null;
+        }
+    }
 }

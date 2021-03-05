@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.DatasetImporterForDwCA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.ImportLogger;
@@ -76,7 +77,7 @@ public class DatasetImportUtil {
         }
     }
 
-    public static void indexArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
+    private static void indexArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
 
         final IndexingInteractionListener indexingListener = new IndexingInteractionListener(interactionsWithUnresolvedOccurrenceIds);
         for (Dataset dataset : datasets) {
@@ -112,24 +113,36 @@ public class DatasetImportUtil {
         @Override
         public void on(Map<String, String> interaction) throws StudyImporterException {
             Map<String, String> enrichedProperties = null;
-            if (interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)) {
+            if (interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID)
+                    && DatasetImporterForDwCA.noInteractionDetected(interaction)) {
+                String occurrenceId = interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
+                Map<String, String> unresolvedInteraction = occurrenceId == null ? null : interactionsWithUnresolvedOccurrenceIds.get(occurrenceId);
+                if (unresolvedInteraction != null) {
+                    if (StringUtils.equals(occurrenceId, unresolvedInteraction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID))) {
+                        TreeMap<String, String> enrichedMap = new TreeMap<>(unresolvedInteraction);
+                        mapSourceToTarget(interaction, enrichedMap);
+                        enrichedProperties = enrichedMap;
+                    }
+                }
+            } else if (interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)) {
                 String targetOccurrenceId = interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
                 Map<String, String> targetProperties = interactionsWithUnresolvedOccurrenceIds.get(targetOccurrenceId);
                 if (targetProperties != null) {
                     TreeMap<String, String> enrichedMap = new TreeMap<>(interaction);
-                    enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_NAME, TaxonUtil.TARGET_TAXON_NAME);
-                    enrichProperties(targetProperties, enrichedMap, TaxonUtil.SOURCE_TAXON_ID, TaxonUtil.TARGET_TAXON_ID);
-                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME);
-                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID, DatasetImporterForTSV.TARGET_LIFE_STAGE_ID);
-                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_BODY_PART_NAME, DatasetImporterForTSV.TARGET_BODY_PART_NAME);
-                    enrichProperties(targetProperties, enrichedMap, DatasetImporterForTSV.SOURCE_BODY_PART_ID, DatasetImporterForTSV.TARGET_BODY_PART_ID);
+                    mapSourceToTarget(targetProperties, enrichedMap);
                     enrichedProperties = enrichedMap;
                 }
             }
             interactionListener.on(enrichedProperties == null ? interaction : enrichedProperties);
         }
 
-        public void enrichProperties(Map<String, String> targetProperties, TreeMap<String, String> enrichedMap, String sourceKey, String targetKey) {
+        public void mapSourceToTarget(Map<String, String> interaction, TreeMap<String, String> enrichedMap) {
+            DatasetImporterForTSV.SOURCE_TARGET_PROPERTY_NAME_PAIRS.forEach(pair -> {
+                enrichProperties(interaction, enrichedMap, pair.getLeft(), pair.getRight());
+            });
+        }
+
+        void enrichProperties(Map<String, String> targetProperties, TreeMap<String, String> enrichedMap, String sourceKey, String targetKey) {
             String value = targetProperties.get(sourceKey);
             if (StringUtils.isNotBlank(value)) {
                 enrichedMap.put(targetKey, value);

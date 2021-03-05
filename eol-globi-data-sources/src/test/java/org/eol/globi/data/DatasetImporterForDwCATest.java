@@ -33,13 +33,14 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static junit.framework.TestCase.assertNull;
 import static org.eol.globi.data.DatasetImporterForDwCA.EXTENSION_ASSOCIATED_TAXA;
 import static org.eol.globi.data.DatasetImporterForDwCA.EXTENSION_RESOURCE_RELATIONSHIP;
 import static org.eol.globi.data.DatasetImporterForDwCA.importAssociatedTaxaExtension;
 import static org.eol.globi.data.DatasetImporterForDwCA.importResourceRelationExtension;
 import static org.eol.globi.data.DatasetImporterForDwCA.mapReferenceInfo;
+import static org.eol.globi.data.DatasetImporterForDwCA.noInteractionDetected;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseAssociatedOccurrences;
-import static org.eol.globi.data.AssociatedTaxaUtil.parseAssociatedTaxa;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseDynamicPropertiesForInteractionsOnly;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
@@ -50,6 +51,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
@@ -158,7 +160,9 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
-                recordCounter.incrementAndGet();
+                if (!noInteractionDetected(interaction)) {
+                    recordCounter.incrementAndGet();
+                }
             }
         });
         studyImporterForDwCA.importStudy();
@@ -191,6 +195,24 @@ public class DatasetImporterForDwCATest {
     public void importRecordsFromUArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomething(resource.toURI(), new AtomicInteger(0));
+    }
+
+    @Test
+    public void importRecordsFromUnresolvedResourceRelationshipArchive() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("fmnh-rr-unresolved-targetid-test.zip");
+
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI(), inStream -> inStream));
+        studyImporterForDwCA.setInteractionListener(interaction -> {
+            if (interaction.get(TARGET_OCCURRENCE_ID) != null) {
+                assertNull(interaction.get(TARGET_TAXON_NAME));
+                assertThat(interaction.get(TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
+                recordCounter.incrementAndGet();
+            }
+        });
+        studyImporterForDwCA.importStudy();
+        assertThat(recordCounter.get(), greaterThan(0));
     }
 
     @Test
@@ -247,19 +269,21 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
-                String associatedTaxa = interaction.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
-                String dynamicProperties = interaction.get("http://rs.tdwg.org/dwc/terms/dynamicProperties");
-                assertThat(StringUtils.isNotBlank(associatedTaxa) || StringUtils.isNotBlank(dynamicProperties), is(true));
-                assertThat(interaction.get(SOURCE_TAXON_NAME), is(not(nullValue())));
-                assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
-                assertThat(interaction.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
-                assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString("some citation"));
-                assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString("Accessed at"));
-                assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString("dataset/dwca.zip"));
-                assertThat(interaction.get(REFERENCE_ID), is(not(nullValue())));
-                assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
-                assertThat(interaction.get(REFERENCE_URL), is(not(nullValue())));
-                someRecords.set(true);
+                if (!noInteractionDetected(interaction)) {
+                    String associatedTaxa = interaction.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
+                    String dynamicProperties = interaction.get("http://rs.tdwg.org/dwc/terms/dynamicProperties");
+                    assertThat(StringUtils.isNotBlank(associatedTaxa) || StringUtils.isNotBlank(dynamicProperties), is(true));
+                    assertThat(interaction.get(SOURCE_TAXON_NAME), is(not(nullValue())));
+                    assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
+                    assertThat(interaction.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
+                    assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString("some citation"));
+                    assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString("Accessed at"));
+                    assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString("dataset/dwca.zip"));
+                    assertThat(interaction.get(REFERENCE_ID), is(not(nullValue())));
+                    assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
+                    assertThat(interaction.get(REFERENCE_URL), is(not(nullValue())));
+                    someRecords.set(true);
+                }
             }
         });
         studyImporterForDwCA.importStudy();
@@ -328,17 +352,19 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
-                String associatedTaxa = interaction.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
-                String dynamicProperties = interaction.get("http://rs.tdwg.org/dwc/terms/dynamicProperties");
-                assertThat(StringUtils.isNotBlank(associatedTaxa) || StringUtils.isNotBlank(dynamicProperties), is(true));
-                assertThat(interaction.get(SOURCE_TAXON_NAME), is(not(nullValue())));
-                assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
-                assertThat(interaction.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
-                assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString(expectedCitation));
-                assertThat(interaction.get(REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
-                assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
-                assertThat(interaction.get(REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
-                someRecords.set(true);
+                if (!noInteractionDetected(interaction)) {
+                    String associatedTaxa = interaction.get("http://rs.tdwg.org/dwc/terms/associatedTaxa");
+                    String dynamicProperties = interaction.get("http://rs.tdwg.org/dwc/terms/dynamicProperties");
+                    assertThat(StringUtils.isNotBlank(associatedTaxa) || StringUtils.isNotBlank(dynamicProperties), is(true));
+                    assertThat(interaction.get(SOURCE_TAXON_NAME), is(not(nullValue())));
+                    assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
+                    assertThat(interaction.get(INTERACTION_TYPE_NAME), is(not(nullValue())));
+                    assertThat(interaction.get(DatasetImporterForTSV.DATASET_CITATION), containsString(expectedCitation));
+                    assertThat(interaction.get(REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                    assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                    assertThat(interaction.get(REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                    someRecords.set(true);
+                }
             }
         });
         studyImporterForDwCA.importStudy();
@@ -351,12 +377,14 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
-                for (String expectedProperty : expectedProperties) {
-                    assertThat("no [" + expectedProperty + "] found in " + interaction, interaction.containsKey(expectedProperty), is(true));
-                    assertThat("no value of [" + expectedProperty + "] found in " + interaction, interaction.get(expectedProperty), is(notNullValue()));
-                }
+                if (!noInteractionDetected(interaction)) {
+                    for (String expectedProperty : expectedProperties) {
+                        assertThat("no [" + expectedProperty + "] found in " + interaction, interaction.containsKey(expectedProperty), is(true));
+                        assertThat("no value of [" + expectedProperty + "] found in " + interaction, interaction.get(expectedProperty), is(notNullValue()));
+                    }
 
-                recordCounter.incrementAndGet();
+                    recordCounter.incrementAndGet();
+                }
             }
         });
         studyImporterForDwCA.importStudy();
@@ -449,7 +477,6 @@ public class DatasetImporterForDwCATest {
             throw ex;
         }
     }
-
 
 
     @Test
@@ -785,9 +812,9 @@ public class DatasetImporterForDwCATest {
 
     private class DummyRecord implements Record {
 
-        private final Map<Term, String>  valueMap;
+        private final Map<Term, String> valueMap;
 
-        DummyRecord(Map<Term,String> valueMap) {
+        DummyRecord(Map<Term, String> valueMap) {
             this.valueMap = valueMap;
         }
 
