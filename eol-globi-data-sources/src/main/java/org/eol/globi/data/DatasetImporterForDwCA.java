@@ -9,7 +9,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.DatasetImportUtil;
 import org.eol.globi.util.InteractTypeMapper;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
@@ -21,7 +20,6 @@ import org.gbif.utils.file.ClosableIterator;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.DatasetConstant;
-import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -105,20 +103,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
     public static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
     public static final String DWC_COREID = "dwc:coreid";
-    public static final String NONE_DETECTED = "none:detected";
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
-    }
-
-    public static boolean noInteractionDetected(Map<String, String> interaction) {
-        return StringUtils.equals(interaction.get(INTERACTION_TYPE_ID), NONE_DETECTED);
-    }
-
-    public static Map<String, String> setNoInteractionDetected(Map<String, String> interaction) {
-        interaction.put(INTERACTION_TYPE_ID, NONE_DETECTED);
-        return interaction;
     }
 
 
@@ -225,6 +213,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private void handleRecord(InteractionListener interactionListener, Record rec) throws StudyImporterException {
         List<Map<String, String>> interactionCandidates = new ArrayList<>();
 
+
         String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
         if (StringUtils.isNotBlank(associatedTaxa)) {
             interactionCandidates.addAll(AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa));
@@ -260,11 +249,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         Map<String, String> interaction = new HashMap<>(rec.terms().size());
         for (Term term : rec.terms()) {
             interaction.put(term.qualifiedName(), rec.value(term));
-        }
-
-        // give listener a shot at using the related source occurrence to resolve prior unresolved source/target ids
-        if (interactionCandidates.isEmpty() && DatasetImportUtil.needsIndexing(getDataset())) {
-            interactionCandidates.add(setNoInteractionDetected(new TreeMap<>()));
         }
 
         for (Map<String, String> interactionProperties : interactionCandidates) {
@@ -531,7 +515,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     putAll(referenceMap.get(s));
                 }}
                         : interaction;
-
                 interactionListener.on(enrichedLink);
             }
         };

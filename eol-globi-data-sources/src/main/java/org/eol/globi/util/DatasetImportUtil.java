@@ -113,18 +113,7 @@ public class DatasetImportUtil {
         @Override
         public void on(Map<String, String> interaction) throws StudyImporterException {
             Map<String, String> enrichedProperties = null;
-            if (interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID)
-                    && DatasetImporterForDwCA.noInteractionDetected(interaction)) {
-                String occurrenceId = interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
-                Map<String, String> unresolvedInteraction = occurrenceId == null ? null : interactionsWithUnresolvedOccurrenceIds.get(occurrenceId);
-                if (unresolvedInteraction != null) {
-                    if (StringUtils.equals(occurrenceId, unresolvedInteraction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID))) {
-                        TreeMap<String, String> enrichedMap = new TreeMap<>(unresolvedInteraction);
-                        mapSourceToTarget(interaction, enrichedMap);
-                        enrichedProperties = enrichedMap;
-                    }
-                }
-            } else if (interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)) {
+             if (interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID)) {
                 String targetOccurrenceId = interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
                 Map<String, String> targetProperties = interactionsWithUnresolvedOccurrenceIds.get(targetOccurrenceId);
                 if (targetProperties != null) {
@@ -136,7 +125,7 @@ public class DatasetImportUtil {
             interactionListener.on(enrichedProperties == null ? interaction : enrichedProperties);
         }
 
-        public void mapSourceToTarget(Map<String, String> interaction, TreeMap<String, String> enrichedMap) {
+        void mapSourceToTarget(Map<String, String> interaction, TreeMap<String, String> enrichedMap) {
             DatasetImporterForTSV.SOURCE_TARGET_PROPERTY_NAME_PAIRS.forEach(pair -> {
                 enrichProperties(interaction, enrichedMap, pair.getLeft(), pair.getRight());
             });

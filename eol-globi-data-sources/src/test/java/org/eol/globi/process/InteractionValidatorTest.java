@@ -1,6 +1,5 @@
 package org.eol.globi.process;
 
-import org.eol.globi.data.DatasetImporterForDwCA;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.domain.InteractType;
 import org.junit.Test;
@@ -32,17 +31,6 @@ public class InteractionValidatorTest {
         assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
         }}), is(true));
-    }
-
-
-    @Test
-    public void interactionTypePredicateValidNoInteractionDetected() {
-        Predicate<Map<String, String>> interactionTypePredicate =
-                InteractionValidator.createInteractionTypePredicate(null);
-
-        assertThat(interactionTypePredicate.test(new TreeMap<String, String>() {{
-            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, DatasetImporterForDwCA.NONE_DETECTED);
-        }}), is(false));
     }
 
     @Test

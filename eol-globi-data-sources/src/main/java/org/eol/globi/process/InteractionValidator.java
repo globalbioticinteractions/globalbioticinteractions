@@ -1,7 +1,6 @@
 package org.eol.globi.process;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.DatasetImporterForDwCA;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.LogUtil;
 import org.eol.globi.data.StudyImporterException;
@@ -81,26 +80,24 @@ public class InteractionValidator implements InteractionProcessor {
 
     static Predicate<Map<String, String>> createInteractionTypePredicate(ImportLogger logger) {
         return (Map<String, String> l) -> {
+            String interactionTypeId = l.get(INTERACTION_TYPE_ID);
             boolean hasValidId = false;
-            if (!DatasetImporterForDwCA.noInteractionDetected(l)) {
-                String interactionTypeId = l.get(INTERACTION_TYPE_ID);
-                if (StringUtils.isBlank(interactionTypeId) && logger != null) {
-                    if (StringUtils.isBlank(l.get(INTERACTION_TYPE_NAME))) {
-                        logger.warn(LogUtil.contextFor(l), "missing interaction type");
-                    } else {
-                        logger.warn(LogUtil.contextFor(l), "found unsupported interaction type with name: [" + l.get(INTERACTION_TYPE_NAME) + "]");
-                    }
+            if (StringUtils.isBlank(interactionTypeId) && logger != null) {
+                if (StringUtils.isBlank(l.get(INTERACTION_TYPE_NAME))) {
+                    logger.warn(LogUtil.contextFor(l), "missing interaction type");
                 } else {
-                    hasValidId = InteractType.typeOf(interactionTypeId) != null;
-                    if (!hasValidId && logger != null) {
-                        StringBuilder msg = new StringBuilder("found unsupported interaction type with id: [" + interactionTypeId + "]");
-                        if (StringUtils.isNotBlank(l.get(INTERACTION_TYPE_NAME))) {
-                            msg.append(" and name: [")
-                                    .append(l.get(INTERACTION_TYPE_NAME))
-                                    .append("]");
-                        }
-                        logger.warn(LogUtil.contextFor(l), msg.toString());
+                    logger.warn(LogUtil.contextFor(l), "found unsupported interaction type with name: [" + l.get(INTERACTION_TYPE_NAME) + "]");
+                }
+            } else {
+                hasValidId = InteractType.typeOf(interactionTypeId) != null;
+                if (!hasValidId && logger != null) {
+                    StringBuilder msg = new StringBuilder("found unsupported interaction type with id: [" + interactionTypeId + "]");
+                    if (StringUtils.isNotBlank(l.get(INTERACTION_TYPE_NAME))) {
+                        msg.append(" and name: [")
+                                .append(l.get(INTERACTION_TYPE_NAME))
+                                .append("]");
                     }
+                    logger.warn(LogUtil.contextFor(l), msg.toString());
                 }
             }
             return hasValidId;

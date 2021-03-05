@@ -14,12 +14,13 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.AuthorIdResolver;
+import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.DatasetImportUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.service.TermLookupService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mapdb.DBMaker;
 
@@ -31,14 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.eol.globi.data.DatasetImporterForDwCA.NONE_DETECTED;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForRSSTest {
@@ -224,7 +222,9 @@ public class DatasetImporterForRSSTest {
 
 
     }
-    @Test
+
+    @Ignore("see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/616")
+    @Test()
     public void enrichingInteractionListenerSourceOccurrence() throws StudyImporterException {
         DatasetImporterWithListener studyImporter = new DatasetImporterWithListener(new ParserFactory() {
             @Override
@@ -265,7 +265,6 @@ public class DatasetImporterForRSSTest {
             put(DatasetImporterForTSV.SOURCE_BODY_PART_ID, "bodyPartId");
             put(TaxonUtil.SOURCE_TAXON_NAME, "taxonName");
             put(TaxonUtil.SOURCE_TAXON_ID, "taxonId");
-            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, NONE_DETECTED);
 
         }});
 
