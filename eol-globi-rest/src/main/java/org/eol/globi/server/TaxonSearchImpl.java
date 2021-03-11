@@ -184,7 +184,6 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     public Collection<String> taxonLinks(String taxonPath, HttpServletRequest request) throws IOException {
-        System.out.println(taxonPath);
         return TaxonSearchUtil.linksForTaxonName(taxonPath, request, new TaxonSearchUtil.LinkMapper() {
 
             @Override
