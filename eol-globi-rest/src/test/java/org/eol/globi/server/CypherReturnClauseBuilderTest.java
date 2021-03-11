@@ -20,12 +20,20 @@ public class CypherReturnClauseBuilderTest {
                 "sourceTaxon.externalId as source_taxon_external_id," +
                 "sourceTaxon.name as source_taxon_name," +
                 "sourceTaxon.path as source_taxon_path," +
+                "sourceSpecimen.occurrenceId as source_specimen_occurrence_id," +
+                "sourceSpecimen.institutionCode as source_specimen_institution_code," +
+                "sourceSpecimen.collectionCode as source_specimen_collection_code," +
+                "sourceSpecimen.catalogNumber as source_specimen_catalog_number,"+
                 "sourceSpecimen.lifeStageLabel as source_specimen_life_stage," +
                 "sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record," +
                 "interaction.label as interaction_type," +
                 "targetTaxon.externalId as target_taxon_external_id," +
                 "targetTaxon.name as target_taxon_name," +
                 "targetTaxon.path as target_taxon_path," +
+                "targetSpecimen.occurrenceId as target_occurrence_id," +
+                "targetSpecimen.institutionCode as target_institution_code," +
+                "targetSpecimen.collectionCode as target_collection_code," +
+                "targetSpecimen.catalogNumber as target_catalog_number,"+
                 "targetSpecimen.lifeStageLabel as target_specimen_life_stage," +
                 "targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record," +
                 "loc.latitude as latitude," +
@@ -84,12 +92,20 @@ public class CypherReturnClauseBuilderTest {
                 "sourceTaxon.externalId as source_taxon_external_id," +
                 "sourceTaxon.name as source_taxon_name," +
                 "sourceTaxon.path as source_taxon_path," +
+                "sourceSpecimen.occurrenceId as source_occurrence_id," +
+                "sourceSpecimen.institutionCode as source_institution_code," +
+                "sourceSpecimen.collectionCode as source_collection_code," +
+                "sourceSpecimen.catalogNumber as source_catalog_number,"+
                 "sourceSpecimen.lifeStageLabel as source_specimen_life_stage," +
                 "sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record," +
                 "interaction.label as interaction_type," +
                 "targetTaxon.externalId as target_taxon_external_id," +
                 "targetTaxon.name as target_taxon_name," +
                 "targetTaxon.path as target_taxon_path," +
+                "targetSpecimen.occurrenceId as target_occurrence_id," +
+                "targetSpecimen.institutionCode as target_institution_code," +
+                "targetSpecimen.collectionCode as target_collection_code," +
+                "targetSpecimen.catalogNumber as target_catalog_number,"+
                 "targetSpecimen.lifeStageLabel as target_specimen_life_stage," +
                 "targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record," +
                 "loc.latitude as latitude," +
@@ -308,12 +324,20 @@ public class CypherReturnClauseBuilderTest {
                 "RETURN sourceTaxon.externalId as source_taxon_external_id," +
                 "sourceTaxon.name as source_taxon_name," +
                 "sourceTaxon.path as source_taxon_path," +
+                "NULL as source_specimen_occurrence_id," +
+                "NULL as source_specimen_institution_code," +
+                "NULL as source_specimen_collection_code," +
+                "NULL as source_specimen_catalog_number,"+
                 "NULL as source_specimen_life_stage," +
                 "NULL as source_specimen_basis_of_record," +
                 "iType as interaction_type," +
                 "targetTaxon.externalId as target_taxon_external_id," +
                 "targetTaxon.name as target_taxon_name," +
                 "targetTaxon.path as target_taxon_path," +
+                "NULL as target_specimen_occurrence_id," +
+                "NULL as target_specimen_institution_code," +
+                "NULL as target_specimen_collection_code," +
+                "NULL as target_specimen_catalog_number,"+
                 "NULL as target_specimen_life_stage," +
                 "NULL as target_specimen_basis_of_record," +
                 "NULL as latitude," +

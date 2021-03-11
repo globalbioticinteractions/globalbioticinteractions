@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultObject;
@@ -25,6 +26,10 @@ import static org.eol.globi.server.util.ResultField.LONGITUDE;
 import static org.eol.globi.server.util.ResultField.NUMBER_OF_INTERACTIONS;
 import static org.eol.globi.server.util.ResultField.NUMBER_OF_SOURCES;
 import static org.eol.globi.server.util.ResultField.NUMBER_OF_STUDIES;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_CATALOG_NUMBER;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_COLLECTION_CODE;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_INSTITUTION_CODE;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_OCCURRENCE_ID;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BASIS_OF_RECORD;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART_ID;
@@ -48,6 +53,10 @@ import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_CITATION;
 import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_LAST_SEEN_AT;
 import static org.eol.globi.server.util.ResultField.STUDY_TITLE;
 import static org.eol.globi.server.util.ResultField.STUDY_URL;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_CATALOG_NUMBER;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_COLLECTION_CODE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_INSTITUTION_CODE;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_OCCURRENCE_ID;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BASIS_OF_RECORD;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BODY_PART;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BODY_PART_ID;
@@ -75,12 +84,17 @@ import static org.eol.globi.server.util.ResultField.values;
 public class CypherReturnClauseBuilder {
 
     private static final ResultField[] RETURN_FIELDS_MULTI_TAXON_DEFAULT = new ResultField[]{
-            SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH, SOURCE_SPECIMEN_LIFE_STAGE, SOURCE_SPECIMEN_BASIS_OF_RECORD,
+            SOURCE_TAXON_EXTERNAL_ID, SOURCE_TAXON_NAME, SOURCE_TAXON_PATH,
+            SOURCE_SPECIMEN_OCCURRENCE_ID, SOURCE_SPECIMEN_INSTITUTION_CODE, SOURCE_SPECIMEN_COLLECTION_CODE, SOURCE_SPECIMEN_CATALOG_NUMBER,
+            SOURCE_SPECIMEN_LIFE_STAGE, SOURCE_SPECIMEN_BASIS_OF_RECORD,
             INTERACTION_TYPE,
-            TARGET_TAXON_EXTERNAL_ID, TARGET_TAXON_NAME, TARGET_TAXON_PATH, TARGET_SPECIMEN_LIFE_STAGE, TARGET_SPECIMEN_BASIS_OF_RECORD,
+            TARGET_TAXON_EXTERNAL_ID, TARGET_TAXON_NAME, TARGET_TAXON_PATH,
+            TARGET_SPECIMEN_OCCURRENCE_ID, TARGET_SPECIMEN_INSTITUTION_CODE, TARGET_SPECIMEN_COLLECTION_CODE, TARGET_SPECIMEN_CATALOG_NUMBER,
+            TARGET_SPECIMEN_LIFE_STAGE, TARGET_SPECIMEN_BASIS_OF_RECORD,
             LATITUDE, LONGITUDE, STUDY_TITLE};
 
-    private static final ResultField[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new ResultField[]{SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
+    private static final ResultField[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new ResultField[]{
+            SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
             LATITUDE, LONGITUDE, ALTITUDE, STUDY_TITLE, COLLECTION_TIME_IN_UNIX_EPOCH,
             SOURCE_SPECIMEN_ID,
             TARGET_SPECIMEN_ID,
@@ -309,6 +323,10 @@ public class CypherReturnClauseBuilder {
                         put(SOURCE_TAXON_EXTERNAL_ID, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".externalId");
                         put(SOURCE_TAXON_NAME, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".name");
                         put(SOURCE_TAXON_PATH, ResultObject.SOURCE_TAXON_DISTINCT.getLabel() + ".path");
+                        put(SOURCE_SPECIMEN_OCCURRENCE_ID, "NULL");
+                        put(SOURCE_SPECIMEN_INSTITUTION_CODE, "NULL");
+                        put(SOURCE_SPECIMEN_COLLECTION_CODE, "NULL");
+                        put(SOURCE_SPECIMEN_CATALOG_NUMBER, "NULL");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
                         put(SOURCE_SPECIMEN_SEX, "NULL");
@@ -319,6 +337,10 @@ public class CypherReturnClauseBuilder {
                         put(TARGET_TAXON_EXTERNAL_ID, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".externalId");
                         put(TARGET_TAXON_NAME, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".name");
                         put(TARGET_TAXON_PATH, ResultObject.TARGET_TAXON_DISTINCT.getLabel() + ".path");
+                        put(TARGET_SPECIMEN_OCCURRENCE_ID, "NULL");
+                        put(TARGET_SPECIMEN_INSTITUTION_CODE, "NULL");
+                        put(TARGET_SPECIMEN_COLLECTION_CODE, "NULL");
+                        put(TARGET_SPECIMEN_CATALOG_NUMBER, "NULL");
                         put(TARGET_SPECIMEN_LIFE_STAGE, "NULL");
                         put(TARGET_SPECIMEN_BASIS_OF_RECORD, "NULL");
                         put(TARGET_SPECIMEN_SEX, "NULL");
@@ -339,9 +361,17 @@ public class CypherReturnClauseBuilder {
                     {
                         put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label");
                         put(NUMBER_OF_INTERACTIONS, ResultObject.INTERACTION.getLabel() + ".count");
+                        put(SOURCE_SPECIMEN_OCCURRENCE_ID, "NULL");
+                        put(SOURCE_SPECIMEN_INSTITUTION_CODE, "NULL");
+                        put(SOURCE_SPECIMEN_COLLECTION_CODE, "NULL");
+                        put(SOURCE_SPECIMEN_CATALOG_NUMBER, "NULL");
                         put(SOURCE_SPECIMEN_LIFE_STAGE, "NULL");
                         put(SOURCE_SPECIMEN_BASIS_OF_RECORD, "NULL");
                         put(SOURCE_SPECIMEN_SEX, "NULL");
+                        put(TARGET_SPECIMEN_OCCURRENCE_ID, "NULL");
+                        put(TARGET_SPECIMEN_INSTITUTION_CODE, "NULL");
+                        put(TARGET_SPECIMEN_COLLECTION_CODE, "NULL");
+                        put(TARGET_SPECIMEN_CATALOG_NUMBER, "NULL");
                         put(TARGET_SPECIMEN_LIFE_STAGE, "NULL");
                         put(TARGET_SPECIMEN_BASIS_OF_RECORD, "NULL");
                         put(TARGET_SPECIMEN_SEX, "NULL");
@@ -409,8 +439,14 @@ public class CypherReturnClauseBuilder {
                 put(SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID);
                 put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL);
                 put(TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.PHYSIOLOGICAL_STATE_ID);
-                put(SOURCE_SPECIMEN_BASIS_OF_RECORD, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
-                put(TARGET_SPECIMEN_BASIS_OF_RECORD, ResultObject.TARGET_SPECIMEN.getLabel() + "." + SpecimenConstant.BASIS_OF_RECORD_LABEL);
+                put(SOURCE_SPECIMEN_OCCURRENCE_ID, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.OCCURRENCE_ID);
+                put(TARGET_SPECIMEN_OCCURRENCE_ID, ResultObject.TARGET_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.OCCURRENCE_ID);
+                put(SOURCE_SPECIMEN_CATALOG_NUMBER, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.CATALOG_NUMBER);
+                put(TARGET_SPECIMEN_CATALOG_NUMBER, ResultObject.TARGET_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.CATALOG_NUMBER);
+                put(SOURCE_SPECIMEN_COLLECTION_CODE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.COLLECTION_CODE);
+                put(TARGET_SPECIMEN_COLLECTION_CODE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.COLLECTION_CODE);
+                put(SOURCE_SPECIMEN_INSTITUTION_CODE, ResultObject.SOURCE_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.INSTITUTION_CODE);
+                put(TARGET_SPECIMEN_INSTITUTION_CODE, ResultObject.TARGET_SPECIMEN.getLabel() + "." + PropertyAndValueDictionary.INSTITUTION_CODE);
             }
 
             private void addTargetTaxonFields(String prefix) {

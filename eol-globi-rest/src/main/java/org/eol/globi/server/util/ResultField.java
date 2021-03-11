@@ -38,6 +38,15 @@ public enum ResultField {
     TARGET_SPECIMEN_ID("tmp_and_unique_target_specimen_id"),
     SOURCE_SPECIMEN_ID("tmp_and_unique_source_specimen_id"),
 
+    TARGET_SPECIMEN_OCCURRENCE_ID("target_specimen_occurrence_id"),
+    SOURCE_SPECIMEN_OCCURRENCE_ID("source_specimen_occurrence_id"),
+    TARGET_SPECIMEN_CATALOG_NUMBER("target_specimen_catalog_number"),
+    SOURCE_SPECIMEN_CATALOG_NUMBER("source_specimen_catalog_number"),
+    TARGET_SPECIMEN_INSTITUTION_CODE("target_specimen_institution_code"),
+    SOURCE_SPECIMEN_INSTITUTION_CODE("source_specimen_institution_code"),
+    TARGET_SPECIMEN_COLLECTION_CODE("target_specimen_collection_code"),
+    SOURCE_SPECIMEN_COLLECTION_CODE("source_specimen_collection_code"),
+
     TARGET_SPECIMEN_PHYSIOLOGICAL_STATE("target_specimen_physiological_state"),
     TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID("target_specimen_physiological_state_id"),
     SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE( "source_specimen_physiological_state"),
