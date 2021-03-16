@@ -109,6 +109,7 @@ public enum InteractType implements RelType {
     HAS_EGGS_LAYED_ON_BY("http://purl.obolibrary.org/obo/RO_0008508", "hasEggsLayedOnBy", OBJECT, SUBJECT),
 
     CO_OCCURS_WITH("http://purl.obolibrary.org/obo/RO_0008506", "coOccursWith"),
+    CO_ROOSTS_WITH("http://purl.obolibrary.org/obo/RO_0002801", "coRoostsWith"),
 
     COMMENSALIST_OF("http://purl.obolibrary.org/obo/RO_0002441", "commensalistOf"),
     MUTUALIST_OF("http://purl.obolibrary.org/obo/RO_0002442", "mutualistOf"),
@@ -186,6 +187,7 @@ public enum InteractType implements RelType {
                 put(RELATED_TO, new ArrayList<>());
                 put(INTERACTS_WITH, Arrays.asList(RELATED_TO, CO_OCCURS_WITH));
                 put(CO_OCCURS_WITH, Collections.singletonList(RELATED_TO));
+                put(CO_ROOSTS_WITH, Arrays.asList(CO_OCCURS_WITH, RELATED_TO));
                 put(ADJACENT_TO, Arrays.asList(RELATED_TO, CO_OCCURS_WITH));
                 put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(ATE, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
@@ -286,6 +288,7 @@ public enum InteractType implements RelType {
                 put(SYMBIONT_OF, SYMBIONT_OF);
                 put(INTERACTS_WITH, INTERACTS_WITH);
                 put(CO_OCCURS_WITH, CO_OCCURS_WITH);
+                put(CO_ROOSTS_WITH, CO_ROOSTS_WITH);
                 put(ADJACENT_TO, ADJACENT_TO);
                 put(PARASITE_OF, HAS_PARASITE);
                 put(HYPERPARASITE_OF, HAS_HYPERPARASITE);
