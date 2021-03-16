@@ -6,6 +6,9 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -36,22 +39,25 @@ public class InteractTypeMapperFactoryForROTest {
         InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryForRO().create();
 
-        InteractType[] interactionTypes = InteractType.values();
-        for (InteractType value : interactionTypes) {
+        Stream<InteractType> interactionTypes = Arrays
+                .stream(InteractType.values())
+                // co-roosts should be included in next RO release
+                .filter(interactType -> !interactType.equals(InteractType.CO_ROOSTS_WITH));
+
+        interactionTypes.forEach(value -> {
             if (StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, value.getIRI())) {
                 assertTrue("[" + value.getLabel() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
                 assertTrue("[" + value.getIRI() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
             } else {
                 InteractType interactTypeByName = interactTypeMapper.getInteractType(value.getLabel());
                 InteractType interactTypeById = interactTypeMapper.getInteractType(value.getIRI());
+
                 InteractType expectedType = InteractType.typeOf(value.getIRI());
                 assertThat(interactTypeById, is(expectedType));
                 assertThat(interactTypeByName, is(expectedType));
                 assertFalse("[" + value.getLabel() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
                 assertFalse("[" + value.getIRI() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
             }
-        }
-
+        });
     }
-
 }
