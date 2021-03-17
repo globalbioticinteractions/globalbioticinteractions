@@ -18,16 +18,21 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.eol.globi.data.DatasetImporterForTSV.ASSOCIATED_TAXA;
+import static org.eol.globi.data.DatasetImporterForTSV.HABITAT_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.HABITAT_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_ID;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.hamcrest.CoreMatchers.not;
@@ -339,6 +344,53 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
             assertThat(link.get(INTERACTION_TYPE_NAME), is(nullValue()));
             assertThat(link.get(TARGET_TAXON_NAME), is(nullValue()));
             assertThat(link.get(ASSOCIATED_TAXA), is(nullValue()));
+        });
+        importStudy(importer);
+        assertThat(atomicInteger.get(), greaterThan(0));
+    }
+
+
+    @Test
+    public void networkIdAndName() throws StudyImporterException {
+        String firstFewLines = "networkName\tnetworkId\n" +
+                "some name\tsome id";
+        Map<String, String> expected = new TreeMap<String, String>() {{
+            put(NETWORK_NAME, "some name");
+            put(NETWORK_ID, "some id");
+        }};
+
+        assertTermValues(firstFewLines, expected);
+    }
+
+    @Test
+    public void habitatIdAndName() throws StudyImporterException {
+        String firstFewLines = "habitatName\thabitatId\n" +
+                "some name\tsome id";
+        Map<String, String> expected = new TreeMap<String, String>() {{
+            put(HABITAT_NAME, "some name");
+            put(HABITAT_ID, "some id");
+        }};
+
+        assertTermValues(firstFewLines, expected);
+    }
+
+    public void assertTermValues(String firstFewLines, Map<String, String> expected) throws StudyImporterException {
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+
+
+        Dataset dataset = getDataset(new TreeMap<URI, String>() {{
+            put(URI.create("/interactions.tsv"), firstFewLines);
+        }});
+
+
+        DatasetImporterForTSV importer = new DatasetImporterForTSV(null, nodeFactory);
+        importer.setDataset(dataset);
+        importer.setInteractionListener(link -> {
+            int i = atomicInteger.incrementAndGet();
+            expected.values().forEach(termName -> {
+                assertThat(link.get(termName), is(expected.get(termName)));
+
+            });
         });
         importStudy(importer);
         assertThat(atomicInteger.get(), greaterThan(0));

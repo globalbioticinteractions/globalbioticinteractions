@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
+import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_ID;
+import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_CLASS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_GENUS;
@@ -245,6 +247,10 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
                             DECIMAL_LONGITUDE,
                             LOCALITY_ID,
                             LOCALITY_NAME,
+                            HABITAT_ID,
+                            HABITAT_NAME,
+                            NETWORK_ID,
+                            NETWORK_NAME,
                             SOURCE_BODY_PART_ID,
                             SOURCE_BODY_PART_NAME,
                             TARGET_BODY_PART_ID,

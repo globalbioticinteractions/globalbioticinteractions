@@ -24,6 +24,8 @@ public class PropertyAndValueDictionary {
     public static final String COLLECTION_CODE = "collectionCode";
     public static final String COLLECTION_ID = "collectionId";
     public static final String INSTITUTION_CODE = "institutionCode";
+    public static final String NETWORK_ID = "networkId";
+    public static final String NETWORK_NAME = "networkName";
     public static final String MIME_TYPE_DWCA = "application/dwca";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";
