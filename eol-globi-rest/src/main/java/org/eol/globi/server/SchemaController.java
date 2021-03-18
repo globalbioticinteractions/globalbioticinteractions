@@ -30,7 +30,7 @@ public class SchemaController {
                 CypherQuery cypherQuery = CypherQueryBuilder.buildInteractionTypeQuery(request.getParameterMap());
                 String interactionTypes = new ResultFormatterCSV().format(CypherUtil.executeRemote(cypherQuery));
                 String[] interactionType = StringUtils.replace(interactionTypes, "\"", "").split("\n");
-                availableTypes = new HashSet<InteractionTypeExternal>();
+                availableTypes = new HashSet<>();
                 for (String type : interactionType) {
                     InteractionTypeExternal value = CypherQueryBuilder.INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP.get(type);
                     if (value != null) {

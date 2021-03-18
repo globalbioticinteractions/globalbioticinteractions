@@ -36,6 +36,7 @@ public enum InteractionTypeExternal {
     VISITS_FLOWERS_OF(CypherQueryBuilder.INTERACTION_VISITS_FLOWERS_OF, "visitor", "plant", InteractType.VISITS_FLOWERS_OF),
     RELATED_TO(CypherQueryBuilder.INTERACTION_RELATED_TO, "source", "target", InteractType.RELATED_TO),
     CO_OCCURS_WITH(CypherQueryBuilder.INTERACTION_CO_OCCURS_WITH, "source", "target", InteractType.CO_OCCURS_WITH),
+    CO_ROOSTS_WITH(CypherQueryBuilder.INTERACTION_CO_ROOSTS_WITH, "source", "target", InteractType.CO_ROOSTS_WITH),
     INTERACTS_WITH(CypherQueryBuilder.INTERACTION_INTERACTS_WITH, "source", "target", InteractType.INTERACTS_WITH);
 
     InteractionTypeExternal(String label, String source, String target, InteractType interactType) {
