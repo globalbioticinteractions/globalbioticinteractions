@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
@@ -128,6 +129,12 @@ public class DatasetImporterForMangal extends DatasetImporterWithListener {
                     props.put(DatasetImporterForTSV.DECIMAL_LATITUDE, coordinates.get(1).asText());
                 }
             }
+        }
+        if (hasNonEmptyValueFor(singleNode, "id")) {
+            props.put(PropertyAndValueDictionary.NETWORK_ID, MANGAL_API_ENDPOINT + "/network/" + singleNode.get("id").asText());
+        }
+        if (hasNonEmptyValueFor(singleNode, "name")) {
+            props.put(PropertyAndValueDictionary.NETWORK_NAME, singleNode.get("name").asText());
         }
         networkMap.put(singleNode.get("id").asText(), props);
     }

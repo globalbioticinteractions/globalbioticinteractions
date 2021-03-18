@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
 import org.hamcrest.CoreMatchers;
@@ -166,6 +167,8 @@ public class DatasetImporterForMangalTest {
         assertThat(aNetwork.get(DatasetImporterForTSV.REFERENCE_CITATION), Is.is("some citation"));
         assertThat(aNetwork.get(DatasetImporterForTSV.REFERENCE_DOI), Is.is("some doi"));
         assertThat(aNetwork.get(DatasetImporterForTSV.REFERENCE_URL), Is.is("some url"));
+        assertThat(aNetwork.get(PropertyAndValueDictionary.NETWORK_ID), Is.is("https://mangal.io/api/v2/network/19"));
+        assertThat(aNetwork.get(PropertyAndValueDictionary.NETWORK_NAME), Is.is("roberson_1929_18990701_19"));
     }
 
     @Test
