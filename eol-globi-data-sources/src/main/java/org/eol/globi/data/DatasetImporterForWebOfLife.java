@@ -47,13 +47,12 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
 
         try {
             List<StudyImporterException> errors = new ArrayList<StudyImporterException>();
-            final String sourceCitation = "Web of Life. " + CitationUtil.createLastAccessedString("http://www.web-of-life.es/");
             final List<URI> networkNames = getNetworkNames(getDataset());
             LOG.info("found [" + networkNames.size() + "] networks.");
             for (URI networkName : networkNames) {
                 final List<URI> networkNames1 = Collections.singletonList(networkName);
                 try {
-                    importNetworks(generateArchiveURL(networkNames1), sourceCitation);
+                    importNetworks(generateArchiveURL(networkNames1));
                 } catch (StudyImporterException e) {
                     errors.add(new StudyImporterException("networks [" + networkNames1 + "] import failed.", e));
                     LOG.error("networks [" + networkNames1 + "] import failed.", e);
@@ -68,7 +67,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
         }
     }
 
-    public void importNetworks(URI archiveURL, String sourceCitation) throws StudyImporterException {
+    public void importNetworks(URI archiveURL) throws StudyImporterException {
         try (InputStream inputStream = getDataset().retrieve(archiveURL);
              ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
             ZipEntry entry;
