@@ -23,6 +23,16 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.size(), is(2));
     }
 
+
+    @Test
+    public void associatedTaxaGaller() {
+        List<Map<String, String>> properties = parseAssociatedTaxa("\"galler of\":\"Hypochaeris radicata L.\"");
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("galler of"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Hypochaeris radicata L."));
+    }
+
     @Test
     public void associatedTaxaMultipleCommas() {
         String associatedTaxa = "Ceramium, Chaetomorpha linum, Enteromorpha intestinalis, Ulva angusta, Porphyra perforata, Sargassum muticum, Gigartina spp., Rhodoglossum affine, and Grateloupia sp.";
