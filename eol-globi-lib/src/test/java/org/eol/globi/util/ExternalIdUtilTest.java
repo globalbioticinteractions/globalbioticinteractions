@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -166,6 +167,11 @@ public class ExternalIdUtilTest {
     @Test
     public void isUnsupportedId() {
         assertThat(ExternalIdUtil.isSupported("urn:catalog:AMNH:Mammals:M-39582"), is(false));
+    }
+
+    @Test
+    public void httpIsSupportedId() {
+        assertThat(ExternalIdUtil.urlForExternalId("this is not an url"), is(nullValue()));
     }
 
     @Test

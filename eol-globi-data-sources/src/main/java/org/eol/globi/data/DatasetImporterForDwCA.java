@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractTypeMapper;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
@@ -459,11 +460,19 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 if (associationsMap.containsKey(id)) {
                     try {
                         Map<String, String> targetProperties = associationsMap.get(id);
+                        String referenceCitation = targetProperties.get("http://purl.org/dc/terms/source");
                         List<Map<String, String>> maps = AssociatedTaxaUtil.parseAssociatedTaxa(targetProperties.get("http://purl.org/dc/terms/description"));
                         for (Map<String, String> map : maps) {
                             TreeMap<String, String> interaction = new TreeMap<>(map);
                             interaction.put(DWC_COREID, id);
                             mapCoreProperties(coreRecord, interaction);
+                            if (StringUtils.isNotBlank(referenceCitation)) {
+                                interaction.put(REFERENCE_CITATION, referenceCitation);
+                                String urlString = ExternalIdUtil.urlForExternalId(referenceCitation);
+                                if (ExternalIdUtil.isSupported(urlString)) {
+                                    interaction.put(REFERENCE_URL, urlString);
+                                }
+                            }
                             interactionListener.on(interaction);
                         }
 
