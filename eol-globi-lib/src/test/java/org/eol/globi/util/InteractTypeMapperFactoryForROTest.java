@@ -39,25 +39,21 @@ public class InteractTypeMapperFactoryForROTest {
         InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryForRO().create();
 
-        Stream<InteractType> interactionTypes = Arrays
-                .stream(InteractType.values())
-                // co-roosts should be included in next RO release
-                .filter(interactType -> !interactType.equals(InteractType.CO_ROOSTS_WITH));
+        Arrays.stream(InteractType.values())
+                .forEach(value -> {
+                    if (StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, value.getIRI())) {
+                        assertTrue("[" + value.getLabel() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
+                        assertTrue("[" + value.getIRI() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
+                    } else {
+                        InteractType interactTypeByName = interactTypeMapper.getInteractType(value.getLabel());
+                        InteractType interactTypeById = interactTypeMapper.getInteractType(value.getIRI());
 
-        interactionTypes.forEach(value -> {
-            if (StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, value.getIRI())) {
-                assertTrue("[" + value.getLabel() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
-                assertTrue("[" + value.getIRI() + "] should be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
-            } else {
-                InteractType interactTypeByName = interactTypeMapper.getInteractType(value.getLabel());
-                InteractType interactTypeById = interactTypeMapper.getInteractType(value.getIRI());
-
-                InteractType expectedType = InteractType.typeOf(value.getIRI());
-                assertThat(interactTypeById, is(expectedType));
-                assertThat(interactTypeByName, is(expectedType));
-                assertFalse("[" + value.getLabel() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
-                assertFalse("[" + value.getIRI() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
-            }
-        });
+                        InteractType expectedType = InteractType.typeOf(value.getIRI());
+                        assertThat(interactTypeById, is(expectedType));
+                        assertThat(interactTypeByName, is(expectedType));
+                        assertFalse("[" + value.getLabel() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getLabel()));
+                        assertFalse("[" + value.getIRI() + "] should not be ignored", interactTypeMapper.shouldIgnoreInteractionType(value.getIRI()));
+                    }
+                });
     }
 }

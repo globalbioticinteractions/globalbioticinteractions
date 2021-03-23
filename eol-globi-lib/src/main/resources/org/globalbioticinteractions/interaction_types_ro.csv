@@ -43,3 +43,6 @@ coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
 commensalistOf,http://purl.obolibrary.org/obo/RO_0002441
 mutualistOf,http://purl.obolibrary.org/obo/RO_0002442
 ecologicallyRelatedTo,http://purl.obolibrary.org/obo/RO_0002321
+coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
+acquiresNutrientsFrom,http://purl.obolibrary.org/obo/RO_0002457
+providesNutrientsFor,http://purl.obolibrary.org/obo/RO_0002469
