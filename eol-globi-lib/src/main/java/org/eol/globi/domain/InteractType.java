@@ -31,6 +31,9 @@ public enum InteractType implements RelType {
     HAS_PATHOGEN("http://purl.obolibrary.org/obo/RO_0002557", "hasPathogen", OBJECT, SUBJECT),
     PATHOGEN_OF("http://purl.obolibrary.org/obo/RO_0002556", "pathogenOf", SUBJECT, OBJECT),
 
+    ACQUIRES_NUTRIENTS_FROM("http://purl.obolibrary.org/obo/RO_0002457", "acquiresNutrientsFrom", OBJECT, SUBJECT),
+    PROVIDES_NUTRIENTS_FOR("http://purl.obolibrary.org/obo/RO_0002469", "providesNutrientsFor", SUBJECT, OBJECT),
+
     HAS_VECTOR("http://purl.obolibrary.org/obo/RO_0002460", "hasVector", SUBJECT, OBJECT),
     VECTOR_OF("http://purl.obolibrary.org/obo/RO_0002459", "vectorOf", OBJECT, SUBJECT),
 
@@ -191,6 +194,8 @@ public enum InteractType implements RelType {
                 put(ADJACENT_TO, Arrays.asList(RELATED_TO, CO_OCCURS_WITH));
                 put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(ATE, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
+                put(ACQUIRES_NUTRIENTS_FROM, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
+                put(PROVIDES_NUTRIENTS_FOR, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(SYMBIONT_OF, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(PREYS_UPON, Arrays.asList(ATE, KILLS, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(PATHOGEN_OF, Arrays.asList(PARASITE_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
@@ -283,6 +288,7 @@ public enum InteractType implements RelType {
                 put(HOST_OF, HAS_HOST);
                 put(PREYS_UPON, PREYED_UPON_BY);
                 put(ATE, EATEN_BY);
+                put(ACQUIRES_NUTRIENTS_FROM, PROVIDES_NUTRIENTS_FOR);
                 put(DAMAGED_BY, DAMAGES);
                 put(KILLS, KILLED_BY);
                 put(SYMBIONT_OF, SYMBIONT_OF);
