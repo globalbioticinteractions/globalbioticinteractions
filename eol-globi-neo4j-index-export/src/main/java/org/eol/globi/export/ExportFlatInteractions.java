@@ -4,8 +4,8 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
-import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.eol.globi.util.InteractUtil;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
@@ -17,15 +17,21 @@ public class ExportFlatInteractions implements GraphExporter {
     private final ExportUtil.ValueJoiner joiner;
     private final String filename;
 
+    private RelTypes argumentType = RelTypes.SUPPORTS;
+    private String argumentTypeId = PropertyAndValueDictionary.SUPPORTS;
+
     public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename) {
         this.joiner = joiner;
         this.filename = filename;
     }
 
 
-    private static final List<String> CYPHER_QUERIES = Arrays.asList(
-            createQuery(RelTypes.SUPPORTS, PropertyAndValueDictionary.SUPPORTS)
-    );
+
+    private List<String> createExportQueries() {
+        return Arrays.asList(ExportFlatInteractions.createQuery(getArgumentType(), getArgumentTypeId()));
+    }
+
+
 
     private static String createQuery(RelTypes argumentTypeRel, String argumentTypeId) {
         String argumentType = argumentTypeRel.name();
@@ -128,12 +134,30 @@ public class ExportFlatInteractions implements GraphExporter {
 
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        ExportUtil.export(graphService, baseDir, filename, CYPHER_QUERIES, joiner);
+        ExportUtil.export(graphService, baseDir, filename, createExportQueries(), joiner);
     }
 
     void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {
-        ExportUtil.export(appender, graphService, CYPHER_QUERIES);
+        ExportUtil.export(appender, graphService, createExportQueries());
     }
 
+    public RelTypes getArgumentType() {
+        return argumentType;
+    }
+
+
+    public ExportFlatInteractions setArgumentType(RelTypes argumentType) {
+        this.argumentType = argumentType;
+        return this;
+    }
+
+    public ExportFlatInteractions setArgumentTypeId(String argumentTypeId) {
+        this.argumentTypeId = argumentTypeId;
+        return this;
+    }
+
+    public String getArgumentTypeId() {
+        return argumentTypeId;
+    }
 
 }

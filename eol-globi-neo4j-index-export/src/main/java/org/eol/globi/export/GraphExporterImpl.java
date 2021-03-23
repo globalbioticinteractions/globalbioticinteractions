@@ -1,6 +1,8 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.StudyImporterException;
@@ -51,9 +53,22 @@ public class GraphExporterImpl implements GraphExporter {
         exportNames(baseDir, studies);
         // export to taxa for now, to avoid additional assemblies
         new ExportFlatInteractions(new ExportUtil.TsvValueJoiner(), "interactions.tsv.gz").export(graphService, "tsv");
+
+        new ExportFlatInteractions(new ExportUtil.TsvValueJoiner(), "refuted-interactions.tsv.gz")
+                .setArgumentType(RelTypes.REFUTES)
+                .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
+                .export(graphService, "tsv");
+
         new ExportCitations(new ExportUtil.TsvValueJoiner(), "citations.tsv.gz").export(graphService, "tsv");
 
-        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "interactions.csv.gz").export(graphService, "csv");
+        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "interactions.csv.gz")
+                .export(graphService, "csv");
+        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "refuted-interactions.csv.gz")
+                .setArgumentType(RelTypes.REFUTES)
+                .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
+                .export(graphService, "csv");
+
+
         new ExportCitations(new ExportUtil.CsvValueJoiner(), "citations.csv.gz").export(graphService, "csv");
 
         exportDataOntology(studies, baseDir);
