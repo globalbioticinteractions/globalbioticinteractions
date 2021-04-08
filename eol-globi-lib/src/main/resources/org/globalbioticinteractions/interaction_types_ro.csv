@@ -21,6 +21,7 @@ flowersVisitedBy,http://purl.obolibrary.org/obo/RO_0002623
 visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
 adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 createsHabitatFor,http://purl.obolibrary.org/obo/RO_0008505
+hasHabitat,http://purl.obolibrary.org/obo/RO_0002303
 endoparasiteOf,http://purl.obolibrary.org/obo/RO_0002634
 hasEndoparasite,http://purl.obolibrary.org/obo/RO_0002635
 hyperparasiteOf,http://purl.obolibrary.org/obo/RO_0002553
@@ -39,6 +40,8 @@ epiphyteOf,http://purl.obolibrary.org/obo/RO_0008501
 hasEpiphyte,http://purl.obolibrary.org/obo/RO_0008502
 laysEggsOn,http://purl.obolibrary.org/obo/RO_0008507
 hasEggsLayedOnBy,http://purl.obolibrary.org/obo/RO_0008508
+laysEggsIn,http://purl.obolibrary.org/obo/RO_0002624
+hasEggsLayedInBy,http://purl.obolibrary.org/obo/RO_0002625
 coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
 commensalistOf,http://purl.obolibrary.org/obo/RO_0002441
 mutualistOf,http://purl.obolibrary.org/obo/RO_0002442

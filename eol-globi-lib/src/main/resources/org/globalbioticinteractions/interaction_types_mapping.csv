@@ -60,3 +60,4 @@ farmedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 farms,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 damagedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 damages,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+isHabitatOf,,createsHabitatFor,http://purl.obolibrary.org/obo/RO_0008505

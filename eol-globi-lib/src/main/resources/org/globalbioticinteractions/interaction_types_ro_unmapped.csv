@@ -4,7 +4,6 @@ no:match
 perchedOnBy
 inhabitedBy
 inhabits
-isHabitatOf
 livedOnBy
 livesOn
 livedInsideOfBy
