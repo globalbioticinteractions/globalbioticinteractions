@@ -34,8 +34,10 @@ public class InteractionListenerWithInteractionTypeMapping implements Interactio
 
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
-        TaxonUtil.enrichTaxonNames(interaction);
+        onEnriched(TaxonUtil.enrichTaxonNames(interaction));
+    }
 
+    public void onEnriched(Map<String, String> interaction) throws StudyImporterException {
         String interactionTypeName = interaction.get(INTERACTION_TYPE_NAME);
         String interactionTypeId = interaction.get(INTERACTION_TYPE_ID);
         if (mapper.shouldIgnoreInteractionType(interactionTypeName) || mapper.shouldIgnoreInteractionType(interactionTypeId)) {

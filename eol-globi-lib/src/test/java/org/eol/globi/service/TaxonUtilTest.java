@@ -370,14 +370,14 @@ public class TaxonUtilTest {
     @Test
     public void mapToTaxon() {
         Map<String, String> taxonMap = new TreeMap<String, String>() {{
-            put("sourceTaxonClass", "Mammalia");
-            put("sourceTaxonFamily", "Bovidae");
-            put("sourceTaxonGenus", "Bos");
-            put("sourceTaxonOrder", "Artiodactyla");
-            put("sourceTaxonPhylum", "Chordata");
-            put("sourceTaxonSpecies", "Bos taurus");
-            put("sourceTaxonSpecificEpithet", null);
-            put("sourceTaxonSubfamily", "Bovinae");
+            put("sourceTaxonClassName", "Mammalia");
+            put("sourceTaxonFamilyName", "Bovidae");
+            put("sourceTaxonGenusName", "Bos");
+            put("sourceTaxonOrderName", "Artiodactyla");
+            put("sourceTaxonPhylumName", "Chordata");
+            put("sourceTaxonSpeciesName", "Bos taurus");
+            put("sourceTaxonSpecificEpithetName", null);
+            put("sourceTaxonSubfamilyName", "Bovinae");
 
         }};
 
@@ -532,5 +532,95 @@ public class TaxonUtilTest {
                 TaxonUtil.SOURCE_TAXON_SPECIES), is(nullValue()));
     }
 
+    @Test
+    public void enrichTaxonNames2() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceTaxonGenus", "some_genus");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonGenus"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonGenusName"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonName"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonPathNames"), is("genus"));
+    }
+
+    @Test
+    public void enrichTaxonNames3() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceGenus", "some_genus");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonGenusName"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonName"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonPathNames"), is("genus"));
+    }
+
+
+    @Test
+    public void enrichTaxonNames() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("targetFamilyName", "some_family");
+            put("targetOrderName", "some_order");
+            put("targetGenusName", null);
+            put("targetTaxonName", null);
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("targetOrderName"), is("some_order"));
+        assertThat(enriched.get("targetFamilyName"), is("some_family"));
+
+        assertThat(enriched.get("targetTaxonOrderName"), is("some_order"));
+        assertThat(enriched.get("targetTaxonFamilyName"), is("some_family"));
+
+        assertThat(enriched.get("targetTaxonPath"), is("some_order | some_family"));
+        assertThat(enriched.get("targetTaxonPathNames"), is("order | family"));
+
+        assertThat(enriched.get("targetTaxonName"), is("some_family"));
+    }
+
+
+    @Test
+    public void labelSynonymOf1() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceGenusId"), is("sourceTaxonGenusId"));
+    }
+
+    @Test
+    public void labelSynonymOfKingdomId() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceKingdomId"), is("sourceTaxonKingdomId"));
+    }
+
+    @Test
+    public void labelSynonymOfKingdomName() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceKingdomName"), is("sourceTaxonKingdomName"));
+    }
+
+    @Test
+    public void labelSynonymOf2() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceTaxonGenusId"), is("sourceTaxonGenusId"));
+    }
+
+    @Test
+    public void labelSynonymOf3() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceGenus"), is("sourceTaxonGenusName"));
+    }
+
+    @Test
+    public void labelSynonymOf4() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceGenusName"), is("sourceTaxonGenusName"));
+    }
+
+    @Test
+    public void labelSynonymOf5() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceTaxonGenus"), is("sourceTaxonGenusName"));
+    }
+
+    @Test
+    public void labelSynonymOfSpecies() {
+        assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceTaxonSpecies"), is("sourceTaxonSpeciesName"));
+    }
 
 }

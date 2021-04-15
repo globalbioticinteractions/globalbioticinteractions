@@ -280,8 +280,7 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
 
-            TaxonUtil.enrichTaxonNames(link);
-            interactionListener.on(link);
+            interactionListener.on(TaxonUtil.enrichTaxonNames(link));
         }
     }
 

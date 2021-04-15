@@ -932,7 +932,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (MapUtils.isNotEmpty(properties)) {
             properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
             properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
-            TaxonUtil.enrichTaxonNames(properties);
+            properties = TaxonUtil.enrichTaxonNames(properties);
         }
         return properties;
     }
