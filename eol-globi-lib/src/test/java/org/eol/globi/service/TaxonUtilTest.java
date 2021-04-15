@@ -547,6 +547,44 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void enrichTaxonNamesCommonName() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceTaxonCommonName", "some_common_name");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonCommonName"), is("some_common_name"));
+        assertThat(enriched.get("sourceTaxonName"), is("some_common_name"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_common_name"));
+    }
+
+    @Test
+    public void notEnrichTaxonNamesCommonNameIfOtherNamesArePresent() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceTaxonCommonName", "some_common_name");
+            put("sourceTaxonSpecies", "some_species_name");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonCommonName"), is("some_common_name"));
+        assertThat(enriched.get("sourceTaxonName"), is("some_species_name"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_species_name"));
+    }
+
+    @Test
+    public void enrichTaxonNamesCommonNameShort() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceCommonName", "some_common_name");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonCommonName"), is("some_common_name"));
+        assertThat(enriched.get("sourceCommonName"), is("some_common_name"));
+        assertThat(enriched.get("sourceTaxonName"), is("some_common_name"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_common_name"));
+    }
+
+    @Test
     public void enrichTaxonNames3() {
         HashMap<String, String> properties = new HashMap<String, String>() {{
             put("sourceGenus", "some_genus");

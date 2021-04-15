@@ -343,7 +343,7 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
             assertThat(link.get(INTERACTION_TYPE_ID), is(nullValue()));
             assertThat(link.get(INTERACTION_TYPE_NAME), is(nullValue()));
             assertThat(link.get(TARGET_TAXON_NAME), is(nullValue()));
-            assertThat(link.get(ASSOCIATED_TAXA), is(nullValue()));
+            assertThat(link.get(ASSOCIATED_TAXA), is(notNullValue()));
         });
         importStudy(importer);
         assertThat(atomicInteger.get(), greaterThan(0));

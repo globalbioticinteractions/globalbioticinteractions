@@ -232,40 +232,6 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
             InteractUtil.putIfKeyNotExistsAndValueNotBlank(link, DatasetImporterForMetaTable.EVENT_DATE, StringUtils.trimToNull(parser.getValueByLabel("eventDate")));
             InteractUtil.putIfKeyNotExistsAndValueNotBlank(link, DatasetImporterForMetaTable.EVENT_DATE, StringUtils.trimToNull(parser.getValueByLabel(DatasetImporterForMetaTable.EVENT_DATE)));
 
-            Stream.concat(
-                    TaxonUtil.TAXON_RANK_PROPERTY_NAMES.stream(),
-                    Stream.of(
-                            SOURCE_TAXON_NAME,
-                            TaxonUtil.SOURCE_TAXON_PATH,
-                            SOURCE_TAXON_PATH_NAMES,
-                            TARGET_TAXON_NAME,
-                            TaxonUtil.TARGET_TAXON_PATH,
-                            TARGET_TAXON_PATH_NAMES,
-                            INTERACTION_TYPE_NAME,
-                            INTERACTION_TYPE_ID,
-                            DECIMAL_LATITUDE,
-                            DECIMAL_LONGITUDE,
-                            LOCALITY_ID,
-                            LOCALITY_NAME,
-                            HABITAT_ID,
-                            HABITAT_NAME,
-                            NETWORK_ID,
-                            NETWORK_NAME,
-                            SOURCE_BODY_PART_ID,
-                            SOURCE_BODY_PART_NAME,
-                            TARGET_BODY_PART_ID,
-                            TARGET_BODY_PART_NAME,
-                            SOURCE_LIFE_STAGE_ID,
-                            SOURCE_LIFE_STAGE_NAME,
-                            TARGET_LIFE_STAGE_ID,
-                            TARGET_LIFE_STAGE_NAME,
-                            SOURCE_SEX_ID,
-                            SOURCE_SEX_NAME,
-                            TARGET_SEX_ID,
-                            TARGET_SEX_NAME
-                    ))
-                    .forEach(x -> doIdentifyMap(parser, link, x));
-
             String argumentTypeId = StringUtils.trim(parser.getValueByLabel(ARGUMENT_TYPE_ID));
             if (StringUtils.isBlank(argumentTypeId)) {
                 String negated = StringUtils.trim(parser.getValueByLabel("isNegated"));
@@ -279,6 +245,10 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
             InteractUtil.putNotBlank(link, RESOURCE_URI, resourceURI.toString());
 
             attemptToGenerateReferencePropertiesIfMissing(namespace, link);
+
+            for (String label : parser.getLabels()) {
+                InteractUtil.putIfKeyNotExistsAndValueNotBlank(link, label, parser.getValueByLabel(label));
+            }
 
             interactionListener.on(TaxonUtil.enrichTaxonNames(link));
         }

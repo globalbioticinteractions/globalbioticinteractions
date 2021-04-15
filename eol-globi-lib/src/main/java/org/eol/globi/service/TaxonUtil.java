@@ -178,9 +178,11 @@ public class TaxonUtil {
     public static final Pattern PATTERN_TAXON_COLUMN_NAME = Pattern.compile(
             "(target|source){1}" +
                     "(Taxon){0,1}" +
-                    "(" + join(RANKS_SUPPORTED, "|") + "){1}" +
+                    "(Common|" + join(RANKS_SUPPORTED, "|") + "){1}" +
                     "(Name|Id){0,1}"
     );
+    private static final String SOURCE_TAXON_COMMON_NAME = SOURCE_TAXON + "CommonName";
+    private static final String TARGET_TAXON_COMMON_NAME = TARGET_TAXON + "CommonName";
 
     public static Map<String, String> taxonToMap(Taxon taxon) {
         return taxonToMap(taxon, "");
@@ -574,7 +576,8 @@ public class TaxonUtil {
                                            String genusKey,
                                            String specificEpithetKey,
                                            String subspecificEpithetKey,
-                                           String speciesKey) {
+                                           String speciesKey,
+                                           String commonNameKey) {
 
         String taxonName = generateSpeciesName(properties, genusKey, specificEpithetKey, subspecificEpithetKey, speciesKey);
 
@@ -586,11 +589,18 @@ public class TaxonUtil {
                     break;
                 }
             }
+            if (isBlank(taxonName)) {
+                taxonName = properties.get(commonNameKey);
+            }
         }
         return taxonName;
     }
 
-    public static String generateSpeciesName(Map<String, String> properties, String genusKey, String specificEpithetKey, String subspecificEpithetKey, String speciesKey) {
+    public static String generateSpeciesName(Map<String, String> properties,
+                                             String genusKey,
+                                             String specificEpithetKey,
+                                             String subspecificEpithetKey,
+                                             String speciesKey) {
         String speciesName = null;
         if (isNotBlank(genusKey)
                 && properties.containsKey(genusKey)
@@ -614,8 +624,8 @@ public class TaxonUtil {
                 SOURCE_TAXON_GENUS,
                 SOURCE_TAXON_SPECIFIC_EPITHET,
                 SOURCE_TAXON_SUBSPECIFIC_EPITHET,
-                SOURCE_TAXON_SPECIES
-        );
+                SOURCE_TAXON_SPECIES,
+                SOURCE_TAXON_COMMON_NAME);
     }
 
     public static String generateTargetTaxonName(Map<String, String> properties) {
@@ -624,8 +634,8 @@ public class TaxonUtil {
                 TARGET_TAXON_GENUS,
                 TARGET_TAXON_SPECIFIC_EPITHET,
                 TARGET_TAXON_SUBSPECIFIC_EPITHET,
-                TARGET_TAXON_SPECIES
-        );
+                TARGET_TAXON_SPECIES,
+                TARGET_TAXON_COMMON_NAME);
     }
 
     public static Map<String, String> enrichTaxonNames(final Map<String, String> properties) {
@@ -653,6 +663,11 @@ public class TaxonUtil {
             }
         }
 
+        if (StringUtils.isBlank(properties.get(SOURCE_TAXON_PATH))
+                && StringUtils.isNotBlank(properties.get(SOURCE_TAXON_COMMON_NAME))) {
+            properties.put(SOURCE_TAXON_PATH, properties.get(SOURCE_TAXON_COMMON_NAME));
+        }
+
         if (StringUtils.isBlank(properties.get(TARGET_TAXON_NAME))) {
             properties.put(TARGET_TAXON_NAME, generateTargetTaxonName(properties));
         }
@@ -664,6 +679,17 @@ public class TaxonUtil {
                 properties.put(TARGET_TAXON_PATH_NAMES, generateTargetTaxonPathNames(properties));
             }
         }
+
+        if (StringUtils.isBlank(properties.get(TARGET_TAXON_PATH))
+                && StringUtils.isNotBlank(properties.get(TARGET_TAXON_COMMON_NAME))) {
+            properties.put(TARGET_TAXON_PATH, properties.get(TARGET_TAXON_COMMON_NAME));
+        }
+
+        if (StringUtils.isBlank(properties.get(TARGET_TAXON_PATH))
+                && StringUtils.isNotBlank(properties.get(TARGET_TAXON_COMMON_NAME))) {
+            properties.put(TARGET_TAXON_PATH, properties.get(TARGET_TAXON_COMMON_NAME));
+        }
+
         return properties;
     }
 
