@@ -50,6 +50,7 @@ import static org.eol.globi.server.util.ResultField.STUDY_CITATION;
 import static org.eol.globi.server.util.ResultField.STUDY_DOI;
 import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_ARCHIVE_URI;
 import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_CITATION;
+import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_ID;
 import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_LAST_SEEN_AT;
 import static org.eol.globi.server.util.ResultField.STUDY_TITLE;
 import static org.eol.globi.server.util.ResultField.STUDY_URL;
@@ -126,6 +127,7 @@ public class CypherReturnClauseBuilder {
                 put(STUDY_SOURCE_CITATION, ResultObject.DATASET.getLabel() + ".citation");
                 put(STUDY_SOURCE_ARCHIVE_URI, ResultObject.DATASET.getLabel() + ".archiveURI");
                 put(STUDY_SOURCE_LAST_SEEN_AT, ResultObject.DATASET.getLabel() + ".lastSeenAt");
+                put(STUDY_SOURCE_ID, ResultObject.DATASET.getLabel() + ".namespace");
             }
         };
     }

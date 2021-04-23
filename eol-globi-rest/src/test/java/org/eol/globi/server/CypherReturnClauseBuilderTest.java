@@ -63,6 +63,29 @@ public class CypherReturnClauseBuilderTest {
     }
 
     @Test
+    public void datasetNamespace() {
+        StringBuilder query = new StringBuilder();
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_ALL,
+                new TreeMap<String, String[]>() {
+                    {
+                        put("field", new String[]{
+                                "study_source_citation",
+                                "study_source_archive_uri",
+                                "study_source_last_seen_at",
+                                "study_source_id"
+                        });
+                    }
+                });
+        assertThat(query.toString(), is(" RETURN " +
+                "dataset.citation as study_source_citation," +
+                "dataset.archiveURI as study_source_archive_uri," +
+                "dataset.lastSeenAt as study_source_last_seen_at," +
+                "dataset.namespace as study_source_id"));
+    }
+
+    @Test
     public void multiTaxonAllUnknownReturnFieldsWithTaxonPrefix() {
         StringBuilder query = new StringBuilder();
         CypherReturnClauseBuilder.appendReturnClauseMap(
