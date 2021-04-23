@@ -309,6 +309,7 @@ public class CypherReturnClauseBuilder {
                         appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
                             {
                                 put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label");
+                                put(COLLECTION_TIME_IN_UNIX_EPOCH, ResultObject.COLLECTED_REL.getLabel() + ".dateInUnixEpoch");
                                 put(NUMBER_OF_INTERACTIONS, "1");
                                 put(NUMBER_OF_STUDIES, "1");
                                 put(NUMBER_OF_SOURCES, "1");
