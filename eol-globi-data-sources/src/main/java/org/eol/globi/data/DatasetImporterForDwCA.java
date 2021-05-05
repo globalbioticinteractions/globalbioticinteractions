@@ -145,7 +145,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                 InteractionListener referencingListener = createReferenceEnricher(archive, listenerWithContext);
 
-                importDescriptionExtension(archive, referencingListener);
+                importDescriptionExtension(archive, referencingListener, getLogger());
 
                 importResourceRelationExtension(archive, referencingListener);
 
@@ -435,7 +435,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static void importDescriptionExtension(Archive archive, InteractionListener interactionListener) {
+    private static void importDescriptionExtension(Archive archive,
+                                                   InteractionListener interactionListener,
+                                                   ImportLogger logger) {
         ArchiveFile extension = findResourceExtension(archive, EXTENSION_DESCRIPTION);
         if (extension != null) {
             ArchiveFile core = archive.getCore();
@@ -461,19 +463,33 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     try {
                         Map<String, String> targetProperties = associationsMap.get(id);
                         String referenceCitation = targetProperties.get("http://purl.org/dc/terms/source");
-                        List<Map<String, String>> maps = AssociatedTaxaUtil.parseAssociatedTaxa(targetProperties.get("http://purl.org/dc/terms/description"));
-                        for (Map<String, String> map : maps) {
-                            TreeMap<String, String> interaction = new TreeMap<>(map);
-                            interaction.put(DWC_COREID, id);
-                            mapCoreProperties(coreRecord, interaction);
-                            if (StringUtils.isNotBlank(referenceCitation)) {
-                                interaction.put(REFERENCE_CITATION, referenceCitation);
-                                String urlString = ExternalIdUtil.urlForExternalId(referenceCitation);
-                                if (ExternalIdUtil.isSupported(urlString)) {
-                                    interaction.put(REFERENCE_URL, urlString);
-                                }
+                        String descriptionType = targetProperties.get("http://purl.org/dc/terms/type");
+
+                        if (isUnsupportedDescriptionType(descriptionType)) {
+                            if (logger != null) {
+                                logger.info(null, "ignoring unsupported taxon description of type [" + descriptionType + "]");
                             }
-                            interactionListener.on(interaction);
+                        } else {
+                            String interactionTypeNameDefault = isEcologyDescription(descriptionType) ? null : "";
+
+                            List<Map<String, String>> maps = AssociatedTaxaUtil.parseAssociatedTaxa(
+                                    targetProperties.get("http://purl.org/dc/terms/description"),
+                                    interactionTypeNameDefault);
+
+
+                            for (Map<String, String> map : maps) {
+                                TreeMap<String, String> interaction = new TreeMap<>(map);
+                                interaction.put(DWC_COREID, id);
+                                mapCoreProperties(coreRecord, interaction);
+                                if (StringUtils.isNotBlank(referenceCitation)) {
+                                    interaction.put(REFERENCE_CITATION, referenceCitation);
+                                    String urlString = ExternalIdUtil.urlForExternalId(referenceCitation);
+                                    if (ExternalIdUtil.isSupported(urlString)) {
+                                        interaction.put(REFERENCE_URL, urlString);
+                                    }
+                                }
+                                interactionListener.on(interaction);
+                            }
                         }
 
                     } catch (StudyImporterException e) {
@@ -482,6 +498,25 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 }
             }
         }
+    }
+
+    private static boolean isUnsupportedDescriptionType(String descriptionType) {
+        return !isSupportedDescriptionType(descriptionType);
+    }
+
+    private static boolean isSupportedDescriptionType(String descriptionType) {
+        return isEcologyDescription(descriptionType)
+                || isTaxonAssociationDescription(descriptionType)
+                || StringUtils.equalsIgnoreCase(descriptionType, "disease")
+                || StringUtils.equalsIgnoreCase(descriptionType, "dispersal");
+    }
+
+    private static boolean isTaxonAssociationDescription(String descriptionType) {
+        return StringUtils.equalsIgnoreCase(descriptionType, "associations");
+    }
+
+    private static boolean isEcologyDescription(String descriptionType) {
+        return StringUtils.equalsIgnoreCase(descriptionType, "ecology");
     }
 
     private static InteractionListener createReferenceEnricher(Archive archive, final InteractionListener interactionListener) {

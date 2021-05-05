@@ -106,6 +106,42 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void importTaxonDescriptionsFromDirNoInteractionType() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer-no-interaction-type/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        List<Map<String, String>> links = new ArrayList<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+
+        assertThat(links.size(), is(0));
+    }
+
+    @Test
+    public void importTaxonDescriptionsFromDirUnsupportedDescriptionType() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer-unsupported-description-type/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        List<Map<String, String>> links = new ArrayList<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+
+        assertThat(links.size(), is(0));
+    }
+
+    @Test
     public void importAssociatedTaxaFromDirIgnoredInteractionType() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
