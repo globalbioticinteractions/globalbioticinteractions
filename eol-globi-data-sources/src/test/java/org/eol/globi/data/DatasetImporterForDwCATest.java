@@ -49,7 +49,9 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_COLLECTION_CODE;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_INSTITUTION_CODE;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
@@ -548,6 +550,41 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
         assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://arctos.database.museum/guid/MVZ:Bird:183644"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(eaten by)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+
+    @Test
+    public void associatedOccurrencesMCZ() {
+        String associateOccurrences = "parasitically found on/in          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=5197872\"> MCZ IZ ECH-8358</a>";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("http://mczbase.mcz.harvard.edu/guid/MCZ:IZ:ECH-8358"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("parasitically found on/in"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZLists() {
+        String associateOccurrences = "from same lot as          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=666604\"> MCZ Mamm 3186</a>; from same lot as          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=666606\"> MCZ Mamm 3187</a>; from same lot as          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=666608\"> MCZ Mamm 3188</a>; from same lot as          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=666610\"> MCZ Mamm 3190</a>; from same lot as          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=666612\"> MCZ Mamm 3192</a>; from same lot as          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=678406\"> MCZ Mamm 3191</a>; from same lot as          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=730482\"> MCZ Mamm 3189</a>";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(7));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("http://mczbase.mcz.harvard.edu/guid/MCZ:Mamm:3186"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("from same lot as"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+
+        properties = propertyList.get(6);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("http://mczbase.mcz.harvard.edu/guid/MCZ:Mamm:3189"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("from same lot as"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
     }
 

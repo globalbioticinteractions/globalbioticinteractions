@@ -104,6 +104,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
     public static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
     public static final String DWC_COREID = "dwc:coreid";
+    public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
+    public static final Pattern MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN =
+            Pattern.compile("^(.*)" +
+                    "<a href=\"(.*)/SpecimenDetail.*collection_object_id=[0-9]+\">[ ]+" +
+                    "([^<]+)</a>");
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -359,6 +364,15 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         String[] relationships = StringUtils.split(s, ";");
         for (String relationship : relationships) {
             String relationshipTrimmed = StringUtils.trim(relationship);
+            attemptToParseArctosAssocatedOccurrences(propertyList, relationshipTrimmed);
+            attemptToParseMCZAssocatedOccurrences(propertyList, relationshipTrimmed);
+
+        }
+        return propertyList;
+    }
+
+    private static void attemptToParseArctosAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
+        if (ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed).find()) {
             int i1 = StringUtils.indexOf(relationshipTrimmed, ")");
             if (i1 > -1 && i1 < relationshipTrimmed.length()) {
                 String relation = StringUtils.substring(relationshipTrimmed, 0, i1 + 1);
@@ -374,9 +388,20 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     }
                 }
             }
-
         }
-        return propertyList;
+    }
+
+
+    private static void attemptToParseMCZAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
+        Matcher matcher = MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed);
+        if (matcher.find()) {
+            TreeMap<String, String> properties = new TreeMap<>();
+            String baseUrl = StringUtils.trim(matcher.group(2));
+            String dwcTriple = StringUtils.replace(StringUtils.trim(matcher.group(3)), " ", ":");
+            properties.put(TARGET_OCCURRENCE_ID, baseUrl + "/guid/" + dwcTriple);
+            properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(1)));
+            propertyList.add(properties);
+        }
     }
 
     static Map<String, String> parseDynamicPropertiesForInteractionsOnly(String s) {
