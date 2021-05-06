@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.process.InteractionListener;
@@ -21,11 +22,13 @@ public class InteractionListenerResolvingTest {
     public void resolveWithSourceOccurrenceId() throws StudyImporterException {
         List<Map<String, String>> receivedInteractions = new ArrayList<>();
 
-        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
-        interactionsWithUnresolvedOccurrenceIds.put("target123", new TreeMap<String, String>() {{
-            put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "target123");
-            put(TaxonUtil.SOURCE_TAXON_NAME, "targetName123");
-        }});
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
+        interactionsWithUnresolvedOccurrenceIds.put(
+                Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "target123"),
+                new TreeMap<String, String>() {{
+                    put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "target123");
+                    put(TaxonUtil.SOURCE_TAXON_NAME, "targetName123");
+                }});
 
         new InteractionListenerResolving(interactionsWithUnresolvedOccurrenceIds, new InteractionListener() {
             @Override
@@ -46,11 +49,13 @@ public class InteractionListenerResolvingTest {
     public void resolveWithTargetOccurrenceId() throws StudyImporterException {
         List<Map<String, String>> receivedInteractions = new ArrayList<>();
 
-        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
-        interactionsWithUnresolvedOccurrenceIds.put("source123", new TreeMap<String, String>() {{
-            put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "source123");
-            put(TaxonUtil.TARGET_TAXON_NAME, "sourceName123");
-        }});
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
+        interactionsWithUnresolvedOccurrenceIds.put(
+                Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "source123"),
+                new TreeMap<String, String>() {{
+                    put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "source123");
+                    put(TaxonUtil.TARGET_TAXON_NAME, "sourceName123");
+                }});
 
         new InteractionListenerResolving(interactionsWithUnresolvedOccurrenceIds, new InteractionListener() {
             @Override

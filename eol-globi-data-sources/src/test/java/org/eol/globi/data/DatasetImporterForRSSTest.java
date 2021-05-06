@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eol.globi.domain.Environment;
@@ -142,7 +143,7 @@ public class DatasetImporterForRSSTest {
     @Test
     public void indexingInteractionListener() throws StudyImporterException {
 
-        TreeMap<String, Map<String, String>> index = new TreeMap<>();
+        TreeMap<Pair<String, String>, Map<String, String>> index = new TreeMap<>();
         InteractionListenerIndexing interactionListenerIndexing
                 = new InteractionListenerIndexing(index);
 
@@ -151,13 +152,13 @@ public class DatasetImporterForRSSTest {
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
         }});
 
-        assertTrue(index.containsKey("http://arctos.database.museum/guid/MVZ:Bird:180448"));
+        assertTrue(index.containsKey(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448")));
     }
 
     @Test
     public void indexingInteractionListenerDBMaker() throws StudyImporterException {
 
-        final Map<String, Map<String, String>> index = DBMaker.newTempTreeMap();
+        final Map<Pair<String, String>, Map<String, String>> index = DBMaker.newTempTreeMap();
 
 
         InteractionListenerIndexing interactionListenerIndexing
@@ -168,7 +169,7 @@ public class DatasetImporterForRSSTest {
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
         }});
 
-        assertTrue(index.containsKey("http://arctos.database.museum/guid/MVZ:Bird:180448"));
+        assertTrue(index.containsKey(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448")));
     }
 
     @Test
@@ -193,8 +194,8 @@ public class DatasetImporterForRSSTest {
                 receivedLinks.add(interaction);
             }
         });
-        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<String, Map<String, String>>() {{
-            put("1234", new TreeMap<String, String>() {
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<Pair<String, String>, Map<String, String>>() {{
+            put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234"), new TreeMap<String, String>() {
                 {
                     put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234");
                     put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, "lifeStageName");
@@ -247,8 +248,8 @@ public class DatasetImporterForRSSTest {
                 receivedLinks.add(interaction);
             }
         });
-        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<String, Map<String, String>>() {{
-            put("1234", new TreeMap<String, String>() {
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<Pair<String, String>, Map<String, String>>() {{
+            put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234"), new TreeMap<String, String>() {
                 {
                     put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "4567");
                     put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "some:interaction");

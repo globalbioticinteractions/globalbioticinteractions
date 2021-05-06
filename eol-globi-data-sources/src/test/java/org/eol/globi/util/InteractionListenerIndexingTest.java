@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.process.InteractionListener;
@@ -16,9 +17,8 @@ public class InteractionListenerIndexingTest {
 
     @Test
     public void indexOnSourceOccurrenceIdTargetOccurrenceIdPairs() throws StudyImporterException {
-        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
         InteractionListener listener = new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds);
-
 
         listener.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "target123");
@@ -28,7 +28,8 @@ public class InteractionListenerIndexingTest {
 
         assertThat(interactionsWithUnresolvedOccurrenceIds.size(), Is.is(1));
 
-        Map<String, String> props = interactionsWithUnresolvedOccurrenceIds.get("source123");
+        Map<String, String> props = interactionsWithUnresolvedOccurrenceIds.get(
+                Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "source123"));
 
         assertThat(props.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), Is.is("target123"));
         assertThat(props.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), Is.is("source123"));
@@ -37,7 +38,7 @@ public class InteractionListenerIndexingTest {
 
     @Test
     public void indexOnTargetOccurrenceIdOnly() throws StudyImporterException {
-        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
         InteractionListener listener = new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds);
 
 
@@ -51,7 +52,7 @@ public class InteractionListenerIndexingTest {
 
     @Test
     public void indexOnSourceOccurrenceIdOnly() throws StudyImporterException {
-        TreeMap<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
         InteractionListener listener = new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds);
 
 
@@ -61,6 +62,16 @@ public class InteractionListenerIndexingTest {
         }});
 
         assertThat(interactionsWithUnresolvedOccurrenceIds.size(), Is.is(0));
+    }
+
+    @Test
+    public void bla() {
+        TreeMap<Pair<String, String>, String> someMap = new TreeMap<Pair<String, String>, String>() {{
+            put(Pair.of("bla", "bla"), "1234");
+        }};
+
+        assertThat(someMap.get(Pair.of("bla", "bla")), Is.is("1234"));
+
     }
 
 }

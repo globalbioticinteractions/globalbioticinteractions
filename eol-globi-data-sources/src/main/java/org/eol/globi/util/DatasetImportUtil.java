@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.ImportLogger;
@@ -40,7 +41,7 @@ public class DatasetImportUtil {
                                                 NodeFactory nodeFactory,
                                                 String archiveLocation) throws StudyImporterException {
 
-        final Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
+        final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
 
         final String msgPrefix1 = "indexing dependencies of [" + archiveLocation + "]";
         LOG.info(msgPrefix1 + "...");
@@ -53,7 +54,7 @@ public class DatasetImportUtil {
         LOG.info(msgPrefix + " done.");
     }
 
-    public static void importArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
+    public static void importArchives(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
         for (Dataset dataset : datasets) {
             try {
                 importDataset(studyImporter -> {
@@ -71,7 +72,7 @@ public class DatasetImportUtil {
         }
     }
 
-    private static void indexArchives(Map<String, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
+    private static void indexArchives(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
 
         final InteractionListenerIndexing indexingListener = new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds);
         for (Dataset dataset : datasets) {
