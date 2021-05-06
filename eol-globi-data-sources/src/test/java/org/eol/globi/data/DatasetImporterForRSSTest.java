@@ -16,7 +16,8 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
-import org.eol.globi.util.DatasetImportUtil;
+import org.eol.globi.util.InteractionListenerIndexing;
+import org.eol.globi.util.InteractionListenerResolving;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -142,10 +143,10 @@ public class DatasetImporterForRSSTest {
     public void indexingInteractionListener() throws StudyImporterException {
 
         TreeMap<String, Map<String, String>> index = new TreeMap<>();
-        DatasetImportUtil.IndexingInteractionListener indexingInteractionListener
-                = new DatasetImportUtil.IndexingInteractionListener(index);
+        InteractionListenerIndexing interactionListenerIndexing
+                = new InteractionListenerIndexing(index);
 
-        indexingInteractionListener.on(new TreeMap<String, String>() {{
+        interactionListenerIndexing.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
         }});
@@ -159,10 +160,10 @@ public class DatasetImporterForRSSTest {
         final Map<String, Map<String, String>> index = DBMaker.newTempTreeMap();
 
 
-        DatasetImportUtil.IndexingInteractionListener indexingInteractionListener
-                = new DatasetImportUtil.IndexingInteractionListener(index);
+        InteractionListenerIndexing interactionListenerIndexing
+                = new InteractionListenerIndexing(index);
 
-        indexingInteractionListener.on(new TreeMap<String, String>() {{
+        interactionListenerIndexing.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
         }});
@@ -205,7 +206,7 @@ public class DatasetImporterForRSSTest {
                 }
             });
         }};
-        DatasetImportUtil.EnrichingInteractionListener listener = new DatasetImportUtil.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
+        InteractionListenerResolving listener = new InteractionListenerResolving(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
         listener.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
@@ -255,7 +256,7 @@ public class DatasetImporterForRSSTest {
                 }
             });
         }};
-        DatasetImportUtil.EnrichingInteractionListener listener = new DatasetImportUtil.EnrichingInteractionListener(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
+        InteractionListenerResolving listener = new InteractionListenerResolving(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
         listener.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234");
