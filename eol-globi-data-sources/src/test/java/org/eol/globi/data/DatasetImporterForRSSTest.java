@@ -22,6 +22,7 @@ import org.eol.globi.util.InteractionListenerResolving;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mapdb.DBMaker;
@@ -29,6 +30,7 @@ import org.mapdb.DBMaker;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -143,16 +145,22 @@ public class DatasetImporterForRSSTest {
     @Test
     public void indexingInteractionListener() throws StudyImporterException {
 
-        TreeMap<Pair<String, String>, Map<String, String>> index = new TreeMap<>();
+        TreeMap<Pair<String, String>, Map<String, String>> index = new TreeMap<Pair<String, String>, Map<String, String>>() {{
+            put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448"),
+                    Collections.emptyMap());
+        }};
         InteractionListenerIndexing interactionListenerIndexing
                 = new InteractionListenerIndexing(index);
 
         interactionListenerIndexing.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
+            put(TaxonUtil.SOURCE_TAXON_NAME, "someName");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
         }});
 
-        assertTrue(index.containsKey(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448")));
+        Pair<String, String> queryKey = Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448");
+        assertTrue(index.containsKey(queryKey));
+        assertThat(index.get(queryKey).get(TaxonUtil.SOURCE_TAXON_NAME), Is.is("someName"));
     }
 
     @Test
@@ -160,6 +168,7 @@ public class DatasetImporterForRSSTest {
 
         final Map<Pair<String, String>, Map<String, String>> index = DBMaker.newTempTreeMap();
 
+        index.put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448"), Collections.emptyMap());
 
         InteractionListenerIndexing interactionListenerIndexing
                 = new InteractionListenerIndexing(index);
@@ -195,15 +204,15 @@ public class DatasetImporterForRSSTest {
             }
         });
         TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<Pair<String, String>, Map<String, String>>() {{
-            put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234"), new TreeMap<String, String>() {
+            put(Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234"), new TreeMap<String, String>() {
                 {
-                    put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234");
-                    put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, "lifeStageName");
-                    put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID, "lifeStageId");
-                    put(DatasetImporterForTSV.SOURCE_BODY_PART_NAME, "bodyPartName");
-                    put(DatasetImporterForTSV.SOURCE_BODY_PART_ID, "bodyPartId");
-                    put(TaxonUtil.SOURCE_TAXON_NAME, "taxonName");
-                    put(TaxonUtil.SOURCE_TAXON_ID, "taxonId");
+                    put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
+                    put(DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME, "lifeStageName");
+                    put(DatasetImporterForTSV.TARGET_LIFE_STAGE_ID, "lifeStageId");
+                    put(DatasetImporterForTSV.TARGET_BODY_PART_NAME, "bodyPartName");
+                    put(DatasetImporterForTSV.TARGET_BODY_PART_ID, "bodyPartId");
+                    put(TaxonUtil.TARGET_TAXON_NAME, "taxonName");
+                    put(TaxonUtil.TARGET_TAXON_ID, "taxonId");
                 }
             });
         }};
@@ -225,7 +234,6 @@ public class DatasetImporterForRSSTest {
 
     }
 
-    @Ignore("see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/616")
     @Test()
     public void enrichingInteractionListenerSourceOccurrence() throws StudyImporterException {
         DatasetImporterWithListener studyImporter = new DatasetImporterWithListener(new ParserFactory() {
@@ -249,24 +257,25 @@ public class DatasetImporterForRSSTest {
             }
         });
         TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<Pair<String, String>, Map<String, String>>() {{
-            put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234"), new TreeMap<String, String>() {
+            put(Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234"), new TreeMap<String, String>() {
                 {
-                    put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "4567");
-                    put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "some:interaction");
+
                     put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
+                    put(DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME, "lifeStageName");
+                    put(DatasetImporterForTSV.TARGET_LIFE_STAGE_ID, "lifeStageId");
+                    put(DatasetImporterForTSV.TARGET_BODY_PART_NAME, "bodyPartName");
+                    put(DatasetImporterForTSV.TARGET_BODY_PART_ID, "bodyPartId");
+                    put(TaxonUtil.TARGET_TAXON_NAME, "taxonName");
+                    put(TaxonUtil.TARGET_TAXON_ID, "taxonId");
                 }
             });
         }};
         InteractionListenerResolving listener = new InteractionListenerResolving(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
         listener.on(new TreeMap<String, String>() {{
-            put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "1234");
-            put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME, "lifeStageName");
-            put(DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID, "lifeStageId");
-            put(DatasetImporterForTSV.SOURCE_BODY_PART_NAME, "bodyPartName");
-            put(DatasetImporterForTSV.SOURCE_BODY_PART_ID, "bodyPartId");
-            put(TaxonUtil.SOURCE_TAXON_NAME, "taxonName");
-            put(TaxonUtil.SOURCE_TAXON_ID, "taxonId");
+            put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "4567");
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "some:interaction");
+            put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
 
         }});
 
