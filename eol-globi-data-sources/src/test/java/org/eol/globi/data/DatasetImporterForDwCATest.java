@@ -583,7 +583,7 @@ public class DatasetImporterForDwCATest {
 
         properties = propertyList.get(6);
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
-        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("http://mczbase.mcz.harvard.edu/guid/MCZ:Mamm:3189"));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("MCZ:Mamm:3189"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("from same lot as"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
     }
