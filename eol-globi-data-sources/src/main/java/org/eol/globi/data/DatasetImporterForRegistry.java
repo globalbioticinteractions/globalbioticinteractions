@@ -72,7 +72,7 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
         return registry;
     }
 
-    public void importData(Dataset dataset) throws StudyImporterException {
+    private void importData(Dataset dataset) throws StudyImporterException {
         DatasetImporter importer = new StudyImporterFactoryImpl(getNodeFactory()).createImporter(dataset);
         if (importer != null) {
             if (getLogger() != null) {

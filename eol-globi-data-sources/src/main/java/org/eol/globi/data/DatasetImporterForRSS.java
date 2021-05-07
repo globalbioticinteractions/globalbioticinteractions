@@ -39,19 +39,26 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        final List<Dataset> datasets = getDatasetsForFeed(getDataset());
-
-        List<Dataset> datasetDependencies = new ArrayList<>();
-        for (Dataset dataset : datasets) {
-            datasetDependencies.add(new DatasetDependency(dataset));
-        }
+        final List<Dataset> datasets = getDatasets();
 
         DatasetImportUtil.resolveAndImportDatasets(
-                datasetDependencies,
+                getDependencies(datasets),
                 datasets,
                 getLogger(),
                 getNodeFactory(),
                 getRssFeedUrlString());
+    }
+
+    private List<Dataset> getDatasets() throws StudyImporterException {
+        return getDatasetsForFeed(getDataset());
+    }
+
+    private List<Dataset> getDependencies(List<Dataset> datasets) {
+        List<Dataset> datasetDependencies = new ArrayList<>();
+        for (Dataset dataset : datasets) {
+            datasetDependencies.add(new DatasetDependency(dataset));
+        }
+        return datasetDependencies;
     }
 
     public String getRssFeedUrlString() {

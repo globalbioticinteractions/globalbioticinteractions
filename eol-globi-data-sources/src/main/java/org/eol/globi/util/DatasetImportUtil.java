@@ -24,7 +24,7 @@ import java.util.Map;
 public class DatasetImportUtil {
     private static final Logger LOG = LoggerFactory.getLogger(DatasetImportUtil.class);
 
-    public static void importDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset, NodeFactory nodeFactory, ImportLogger logger) throws StudyImporterException {
+    private static void importDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset, NodeFactory nodeFactory, ImportLogger logger) throws StudyImporterException {
         nodeFactory.getOrCreateDataset(dataset);
         NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
         DatasetImporter datasetImporter = new StudyImporterFactoryImpl(nodeFactoryForDataset).createImporter(dataset);
@@ -47,22 +47,22 @@ public class DatasetImportUtil {
 
         final String msgPrefix0 = "indexing unresolved occurrence references of [" + archiveLocation + "]";
         LOG.info(msgPrefix0 + "...");
-        indexDataset(datasetsWithDependencies, logger, nodeFactory, new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds));
+        indexDatasets(datasetsWithDependencies, logger, nodeFactory, new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds));
         LOG.info(msgPrefix0 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] unresolved occurrences");
 
         final String msgPrefix1 = "indexing dependencies of [" + archiveLocation + "]";
         LOG.info(msgPrefix1 + "...");
-        indexDataset(datasetDependencies, logger, nodeFactory, new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds));
+        indexDatasets(datasetDependencies, logger, nodeFactory, new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds));
         pruneKeysWithEmptyValues(interactionsWithUnresolvedOccurrenceIds, logger);
         LOG.info(msgPrefix1 + " done: resolved [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrence references");
 
         final String msgPrefix = "importing datasets for [" + archiveLocation + "]";
         LOG.info(msgPrefix + "...");
-        importArchives(interactionsWithUnresolvedOccurrenceIds, datasetsWithDependencies, logger, nodeFactory);
+        importDatasets(interactionsWithUnresolvedOccurrenceIds, datasetsWithDependencies, logger, nodeFactory);
         LOG.info(msgPrefix + " done.");
     }
 
-    public static void pruneKeysWithEmptyValues(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, ImportLogger logger) {
+    private static void pruneKeysWithEmptyValues(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, ImportLogger logger) {
         for (Map.Entry<Pair<String, String>, Map<String, String>> queryResultPair : interactionsWithUnresolvedOccurrenceIds.entrySet()) {
             if (queryResultPair.getValue().isEmpty()) {
                 if (logger != null) {
@@ -73,7 +73,7 @@ public class DatasetImportUtil {
         }
     }
 
-    public static void importArchives(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
+    public static void importDatasets(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
         for (Dataset dataset : datasets) {
             try {
                 importDataset(studyImporter -> {
@@ -91,7 +91,7 @@ public class DatasetImportUtil {
         }
     }
 
-    private static void indexDataset(List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory, InteractionListener indexingListener) {
+    private static void indexDatasets(List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory, InteractionListener indexingListener) {
         for (Dataset dataset : datasets) {
             if (needsIndexing(dataset)) {
                 try {
