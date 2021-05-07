@@ -7,8 +7,6 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -16,13 +14,14 @@ import org.eol.globi.util.DatasetImportUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.globalbioticinteractions.dataset.DatasetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -95,7 +94,6 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
                     if (e != null) {
                         datasets.add(e);
                     }
-                    ;
                 } else {
                     LOG.info("skipping [" + title + "] : was not included or excluded.");
                 }
