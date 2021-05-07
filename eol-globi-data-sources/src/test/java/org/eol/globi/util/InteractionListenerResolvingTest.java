@@ -37,6 +37,7 @@ public class InteractionListenerResolvingTest {
             }
         }).on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "occurrence456");
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "foo:bar");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "occurrence123");
         }});
 
@@ -64,6 +65,7 @@ public class InteractionListenerResolvingTest {
             }
         }).on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "occurrence123");
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "foo:bar");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "occurrence456");
         }});
 
@@ -97,6 +99,7 @@ public class InteractionListenerResolvingTest {
             }
         }).on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "occurrence123");
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "foo:bar");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "occurrence456");
         }});
 

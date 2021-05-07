@@ -219,6 +219,7 @@ public class DatasetImporterForRSSTest {
         InteractionListenerResolving listener = new InteractionListenerResolving(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
         listener.on(new TreeMap<String, String>() {{
+            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "1234");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
         }});
 
