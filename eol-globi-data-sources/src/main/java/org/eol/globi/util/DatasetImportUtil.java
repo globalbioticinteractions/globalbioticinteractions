@@ -18,7 +18,6 @@ import org.eol.globi.service.StudyImporterFactoryImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.mapdb.DBMaker;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -45,10 +44,16 @@ public class DatasetImportUtil {
 
         final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
 
+
+        final String msgPrefix0 = "indexing unresolved occurrence references of [" + archiveLocation + "]";
+        LOG.info(msgPrefix0 + "...");
+        indexDataset(datasetsWithDependencies, logger, nodeFactory, new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds));
+        LOG.info(msgPrefix0 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] unresolved occurrences");
+
         final String msgPrefix1 = "indexing dependencies of [" + archiveLocation + "]";
         LOG.info(msgPrefix1 + "...");
-        indexArchives(interactionsWithUnresolvedOccurrenceIds, datasetDependencies, logger, nodeFactory);
-        LOG.info(msgPrefix1 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrences");
+        indexDataset(datasetDependencies, logger, nodeFactory, new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds));
+        LOG.info(msgPrefix1 + " done: resolved [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrence references");
 
         final String msgPrefix = "importing datasets for [" + archiveLocation + "]";
         LOG.info(msgPrefix + "...");
@@ -74,27 +79,19 @@ public class DatasetImportUtil {
         }
     }
 
-    private static void indexArchives(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
-
-        List<InteractionListener> indexingListeners = Arrays.asList(
-                new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds),
-                new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds)
-        );
-
-        for (InteractionListener indexingListener : indexingListeners) {
-            for (Dataset dataset : datasets) {
-                if (needsIndexing(dataset)) {
-                    try {
-                        importDataset(studyImporter -> {
-                            studyImporter.setLogger(logger);
-                            if (studyImporter instanceof DatasetImporterWithListener) {
-                                ((DatasetImporterWithListener) studyImporter)
-                                        .setInteractionListener(indexingListener);
-                            }
-                        }, dataset, nodeFactory, logger);
-                    } catch (StudyImporterException | IllegalStateException ex) {
-                        LogUtil.logError(logger, ex);
-                    }
+    private static void indexDataset(List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory, InteractionListener indexingListener) {
+        for (Dataset dataset : datasets) {
+            if (needsIndexing(dataset)) {
+                try {
+                    importDataset(studyImporter -> {
+                        studyImporter.setLogger(logger);
+                        if (studyImporter instanceof DatasetImporterWithListener) {
+                            ((DatasetImporterWithListener) studyImporter)
+                                    .setInteractionListener(indexingListener);
+                        }
+                    }, dataset, nodeFactory, logger);
+                } catch (StudyImporterException | IllegalStateException ex) {
+                    LogUtil.logError(logger, ex);
                 }
             }
         }
