@@ -76,8 +76,10 @@ public class DatasetImportUtil {
 
     private static void indexArchives(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
 
-        List<InteractionListener> indexingListeners = Arrays.asList(new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds),
-                new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds));
+        List<InteractionListener> indexingListeners = Arrays.asList(
+                new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds),
+                new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds)
+        );
 
         for (InteractionListener indexingListener : indexingListeners) {
             for (Dataset dataset : datasets) {

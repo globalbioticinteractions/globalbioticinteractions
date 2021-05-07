@@ -12,4 +12,5 @@ public final class DatasetConstant {
     public static final String CONFIG_URI = "configURI";
     public static final String CONFIG = "config";
     public static final String DOI = "doi";
+    public static final String IS_DEPENDENCY = "isDependency";
 }

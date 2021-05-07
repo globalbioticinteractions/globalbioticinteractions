@@ -257,6 +257,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interaction.put(term.qualifiedName(), rec.value(term));
         }
 
+        if (interactionCandidates.isEmpty() && isDependency()) {
+            // If no candidates are found,
+            // add empty candidate to allow interaction listeners to do indexing/enriching
+            interactionCandidates.add(new TreeMap<>());
+        }
+
         for (Map<String, String> interactionProperties : interactionCandidates) {
             interactionProperties.putAll(interaction);
             interactionProperties.put(DWC_COREID, rec.id());
@@ -264,6 +270,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             mapCoreProperties(rec, interactionProperties);
             interactionListener.on(interactionProperties);
         }
+
+    }
+
+    private boolean isDependency() {
+        return StringUtils.equalsIgnoreCase(getDataset().getOrDefault(DatasetConstant.IS_DEPENDENCY, "false"), "true");
     }
 
     private static void addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {

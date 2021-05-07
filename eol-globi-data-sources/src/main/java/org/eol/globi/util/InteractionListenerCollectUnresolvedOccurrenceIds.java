@@ -2,6 +2,7 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.process.InteractionListener;
@@ -43,15 +44,23 @@ public class InteractionListenerCollectUnresolvedOccurrenceIds implements Intera
     }
 
     public static boolean hasUnresolvedSourceOccurrenceId(Map<String, String> interaction) {
-        return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.SOURCE_TAXON_NAME),
+        return hasInteractionTerms(interaction)
+                && StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.SOURCE_TAXON_NAME),
                 TaxonUtil.generateSourceTaxonName(interaction)))
-                && interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
+                && interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID)
+                ;
     }
 
     public static boolean hasUnresolvedTargetOccurrenceId(Map<String, String> interaction) {
-        return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.TARGET_TAXON_NAME),
+        return hasInteractionTerms(interaction)
+                && StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.TARGET_TAXON_NAME),
                 TaxonUtil.generateTargetTaxonName(interaction)))
                 && interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
+    }
+
+    public static boolean hasInteractionTerms(Map<String, String> interaction) {
+        return interaction.containsKey(DatasetImporterForTSV.INTERACTION_TYPE_ID)
+                || interaction.containsKey(DatasetImporterForTSV.INTERACTION_TYPE_NAME);
     }
 
 }
