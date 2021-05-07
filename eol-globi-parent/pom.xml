@@ -5,7 +5,7 @@
 
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-parent</artifactId>
-    <version>0.20.5</version>
+    <version>0.20.6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Global Biotic Interactions Shared Project Settings</name>
 
@@ -67,7 +67,7 @@
             <extension>
                 <groupId>org.globalbioticinteractions</groupId>
                 <artifactId>maven-s3-wagon</artifactId>
-                <version>0.0.4</version>
+                <version>0.0.3</version>
             </extension>
         </extensions>
         <plugins>
