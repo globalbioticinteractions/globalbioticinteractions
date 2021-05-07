@@ -29,11 +29,9 @@ public class InteractionListenerResolving implements InteractionListener {
         if (enrichedProperties == null) {
             interactionListener.on(interaction);
         } else {
-            for (Map<String, String> enrichedProperty : enrichedProperties) {
-                interactionListener.on(new TreeMap<String, String>(interaction) {{
-                    putAll(enrichedProperty);
-                }});
-            }
+            TreeMap<String, String> enriched = new TreeMap<>(interaction);
+            enrichedProperties.forEach(enriched::putAll);
+            interactionListener.on(enriched);
         }
     }
 

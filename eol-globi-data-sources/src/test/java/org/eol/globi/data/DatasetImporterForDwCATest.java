@@ -563,7 +563,7 @@ public class DatasetImporterForDwCATest {
 
         Map<String, String> properties = propertyList.get(0);
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
-        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("http://mczbase.mcz.harvard.edu/guid/MCZ:IZ:ECH-8358"));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("MCZ:IZ:ECH-8358"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("parasitically found on/in"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
     }
@@ -577,7 +577,7 @@ public class DatasetImporterForDwCATest {
 
         Map<String, String> properties = propertyList.get(0);
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
-        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("http://mczbase.mcz.harvard.edu/guid/MCZ:Mamm:3186"));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("MCZ:Mamm:3186"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("from same lot as"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
 
