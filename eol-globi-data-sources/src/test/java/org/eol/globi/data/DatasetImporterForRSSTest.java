@@ -219,7 +219,6 @@ public class DatasetImporterForRSSTest {
         InteractionListenerResolving listener = new InteractionListenerResolving(interactionsWithUnresolvedOccurrenceIds, studyImporter.getInteractionListener());
 
         listener.on(new TreeMap<String, String>() {{
-            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "1234");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
         }});
 
@@ -275,7 +274,6 @@ public class DatasetImporterForRSSTest {
 
         listener.on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "4567");
-            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "some:interaction");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "1234");
 
         }});
@@ -283,7 +281,6 @@ public class DatasetImporterForRSSTest {
         assertThat(receivedLinks.size(), is(1));
         Map<String, String> received = receivedLinks.get(0);
         assertThat(received.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("4567"));
-        assertThat(received.get(DatasetImporterForTSV.INTERACTION_TYPE_ID), is("some:interaction"));
         assertThat(received.get(TaxonUtil.TARGET_TAXON_NAME), is("taxonName"));
         assertThat(received.get(TaxonUtil.TARGET_TAXON_ID), is("taxonId"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("1234"));

@@ -44,16 +44,13 @@ public class InteractionListenerCollectUnresolvedOccurrenceIds implements Intera
     }
 
     public static boolean hasUnresolvedSourceOccurrenceId(Map<String, String> interaction) {
-        return hasInteractionTerms(interaction)
-                && StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.SOURCE_TAXON_NAME),
+        return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.SOURCE_TAXON_NAME),
                 TaxonUtil.generateSourceTaxonName(interaction)))
-                && interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID)
-                ;
+                && interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
     }
 
     public static boolean hasUnresolvedTargetOccurrenceId(Map<String, String> interaction) {
-        return hasInteractionTerms(interaction)
-                && StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.TARGET_TAXON_NAME),
+        return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.TARGET_TAXON_NAME),
                 TaxonUtil.generateTargetTaxonName(interaction)))
                 && interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
     }

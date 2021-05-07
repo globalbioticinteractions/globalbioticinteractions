@@ -24,7 +24,6 @@ public class InteractionListenerCollectUnresolvedOccurrenceIdsTest {
         .on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "source123");
             put(TaxonUtil.SOURCE_TAXON_NAME, "sourceName123");
-            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "foo:bar");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "target123");
         }});
 
@@ -42,7 +41,6 @@ public class InteractionListenerCollectUnresolvedOccurrenceIdsTest {
         new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds)
         .on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "source123");
-            put(DatasetImporterForTSV.INTERACTION_TYPE_ID, "foo:bar");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "target123");
         }});
 
