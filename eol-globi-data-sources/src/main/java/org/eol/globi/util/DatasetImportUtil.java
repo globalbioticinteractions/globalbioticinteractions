@@ -53,12 +53,24 @@ public class DatasetImportUtil {
         final String msgPrefix1 = "indexing dependencies of [" + archiveLocation + "]";
         LOG.info(msgPrefix1 + "...");
         indexDataset(datasetDependencies, logger, nodeFactory, new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds));
+        pruneKeysWithEmptyValues(interactionsWithUnresolvedOccurrenceIds, logger);
         LOG.info(msgPrefix1 + " done: resolved [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrence references");
 
         final String msgPrefix = "importing datasets for [" + archiveLocation + "]";
         LOG.info(msgPrefix + "...");
         importArchives(interactionsWithUnresolvedOccurrenceIds, datasetsWithDependencies, logger, nodeFactory);
         LOG.info(msgPrefix + " done.");
+    }
+
+    public static void pruneKeysWithEmptyValues(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, ImportLogger logger) {
+        for (Map.Entry<Pair<String, String>, Map<String, String>> queryResultPair : interactionsWithUnresolvedOccurrenceIds.entrySet()) {
+            if (queryResultPair.getValue().isEmpty()) {
+                if (logger != null) {
+                    logger.warn(null, "found unresolved reference [" + queryResultPair.getKey().getValue() + "]");
+                }
+                interactionsWithUnresolvedOccurrenceIds.remove(queryResultPair.getKey());
+            }
+        }
     }
 
     public static void importArchives(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, List<Dataset> datasets, ImportLogger logger, NodeFactory nodeFactory) throws StudyImporterException {
