@@ -79,12 +79,9 @@ public class NodeBacked {
 
     public void setPropertyWithTx(String propertyName, Object propertyValue) {
         if (propertyName != null && propertyValue != null) {
-            Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-            try {
+            try (Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx()) {
                 getUnderlyingNode().setProperty(propertyName, propertyValue);
                 transaction.success();
-            } finally {
-                transaction.close();
             }
         }
     }
