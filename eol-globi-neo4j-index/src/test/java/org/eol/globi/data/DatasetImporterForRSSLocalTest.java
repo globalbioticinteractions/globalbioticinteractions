@@ -96,6 +96,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
 
 
     }
+
     @Test
     public void importLocalMCZArchive() throws StudyImporterException, IOException {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
