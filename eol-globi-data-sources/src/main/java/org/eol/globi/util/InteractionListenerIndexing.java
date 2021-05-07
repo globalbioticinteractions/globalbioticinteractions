@@ -23,27 +23,39 @@ public class InteractionListenerIndexing implements InteractionListener {
         String sourceOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
         if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId))) {
-            interactionsWithUnresolvedOccurrenceIds.put(
-                    Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId),
-                    InteractionListenerResolving.mapSourceToSource(interaction));
+            Map<String, String> enriched = InteractionListenerResolving.mapSourceToSource(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId),
+                        enriched);
+            }
         } else if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId))) {
-            interactionsWithUnresolvedOccurrenceIds.put(
-                    Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId),
-                    InteractionListenerResolving.mapSourceToTarget(interaction));
+            Map<String, String> enriched = InteractionListenerResolving.mapSourceToTarget(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId),
+                        enriched);
+            }
         }
 
         String targetOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
         if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId))) {
-            interactionsWithUnresolvedOccurrenceIds.put(
-                    Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId),
-                    InteractionListenerResolving.mapTargetToTarget(interaction));
+            Map<String, String> enriched = InteractionListenerResolving.mapTargetToTarget(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId),
+                        enriched);
+            }
         } else if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, targetOccurrenceId))) {
-            interactionsWithUnresolvedOccurrenceIds.put(
-                    Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, targetOccurrenceId),
-                    InteractionListenerResolving.mapTargetToSource(interaction));
+            Map<String, String> enriched = InteractionListenerResolving.mapTargetToSource(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, targetOccurrenceId),
+                        enriched);
+            }
         }
 
     }

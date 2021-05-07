@@ -29,9 +29,11 @@ public class InteractionListenerResolving implements InteractionListener {
         if (enrichedProperties == null) {
             interactionListener.on(interaction);
         } else {
-            final TreeMap<String, String> interaction1 = new TreeMap<>(interaction);
-            enrichedProperties.forEach(interaction1::putAll);
-            interactionListener.on(interaction1);
+            for (Map<String, String> enrichedProperty : enrichedProperties) {
+                interactionListener.on(new TreeMap<String, String>(interaction) {{
+                    putAll(enrichedProperty);
+                }});
+            }
         }
     }
 
@@ -41,7 +43,7 @@ public class InteractionListenerResolving implements InteractionListener {
         if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedTargetOccurrenceId(interaction)) {
             String targetOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
             Map<String, String> resolved = interactionsWithUnresolvedOccurrenceIds.get(Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId));
-            if (resolved != null) {
+            if (resolved != null && !resolved.isEmpty()) {
                 enrichedProperties = new ArrayList<>();
                 enrichedProperties.add(resolved);
             }
@@ -50,7 +52,7 @@ public class InteractionListenerResolving implements InteractionListener {
         if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedSourceOccurrenceId(interaction)) {
             String sourceOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
             Map<String, String> resolved = interactionsWithUnresolvedOccurrenceIds.get(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId));
-            if (resolved != null) {
+            if (resolved != null && !resolved.isEmpty()) {
                 if (enrichedProperties == null) {
                     enrichedProperties = new ArrayList<>();
                 }

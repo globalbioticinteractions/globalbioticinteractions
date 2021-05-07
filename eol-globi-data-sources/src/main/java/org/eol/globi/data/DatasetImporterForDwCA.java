@@ -409,7 +409,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             TreeMap<String, String> properties = new TreeMap<>();
             String baseUrl = StringUtils.trim(matcher.group(2));
             String dwcTriple = StringUtils.replace(StringUtils.trim(matcher.group(3)), " ", ":");
-            properties.put(TARGET_OCCURRENCE_ID, baseUrl + "/guid/" + dwcTriple);
+            properties.put(TARGET_OCCURRENCE_ID, dwcTriple);
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(1)));
             propertyList.add(properties);
         }
