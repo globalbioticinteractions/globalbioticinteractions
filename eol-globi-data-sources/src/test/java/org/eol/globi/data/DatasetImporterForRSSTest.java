@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,7 +24,6 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mapdb.DBMaker;
 
@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -104,6 +105,28 @@ public class DatasetImporterForRSSTest {
         }
         assertThat(datasets.size(), is(84));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("true"));
+    }
+
+
+    @Test
+    public void readDatasetDependencies() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_msb_para.xml\", " +
+                "\"include\": \".*(Arctos).*\", " +
+                "\"exclude\": \".*GGBN.*\", " +
+                "\"hasDependencies\": true }";
+        final Dataset dataset = datasetFor(configJson);
+        List<Dataset> datasets = DatasetImporterForRSS.getDatasets(dataset);
+        for (Dataset dataset1 : datasets) {
+            assertThat(dataset1.getCitation(), containsString("(Arctos)"));
+            assertThat(dataset1.getCitation(), not(containsString("GGBN")));
+        }
+        assertThat(datasets.size(), is(1));
+        List<Dataset> dependencies = DatasetImporterForRSS.getDependencies(dataset);
+        assertThat(dependencies.size(), is(2));
+        assertThat(dependencies.get(0).getArchiveURI().toString(), is("http://ipt.vertnet.org:8080/ipt/archive.do?r=msb_para"));
+        assertThat(dependencies.get(0).getFormat(), is("application/dwca"));
+        assertThat(dependencies.get(1).getArchiveURI().toString(), is("http://ipt.vertnet.org:8080/ipt/archive.do?r=msb_host"));
+        assertThat(dependencies.get(1).getFormat(), is("foo"));
     }
 
     @Test

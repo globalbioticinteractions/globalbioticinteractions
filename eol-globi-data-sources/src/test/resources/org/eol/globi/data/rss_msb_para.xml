@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<rss version="2.0"
+     xmlns:ipt="http://ipt.gbif.org/"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+    <channel>
+        <title>MSB Parasite Collection and Dependencies RSS</title>
+        <link>http://ipt.vertnet.org:8080/ipt</link>
+        <atom:link href="http://ipt.vertnet.org:8080/ipt/rss.do" rel="self" type="application/rss+xml"/>
+        <description>Resource metadata of IPT - Hosted by VertNet</description>
+        <language>en-us</language>
+        <!-- RFC-822 date-time / Wed, 02 Oct 2010 13:00:00 GMT -->
+        <pubDate>Mon, 14 Mar 2011 18:52:13 +0000</pubDate>
+        <lastBuildDate>Mon, 17 Feb 2020 18:00:44 +0000</lastBuildDate>
+        <!-- UUID of the IPT making RSS feed available -->
+        <ipt:identifier>a957a663-2f17-415f-b1c8-5cf6398df8ed</ipt:identifier>
+        <generator>GBIF IPT 2.4.0-r6f4f375</generator>
+        <webMaster>dbloom@vertnet.org (David Bloom)</webMaster>
+        <docs>http://cyber.law.harvard.edu/rss/rss.html</docs>
+        <ttl>15</ttl>
+        <geo:Point>
+            <geo:lat>38.958437</geo:lat>
+            <geo:long>-95.243644</geo:long>
+        </geo:Point>
+        <item>
+            <title>MSB Parasite Collection (Arctos)</title>
+            <link>http://ipt.vertnet.org:8080/ipt/resource?r=msb_para</link>
+            <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+            <description>Respecting encumbrances.</description>
+            <author>larussell@vertnet.org (Laura Russell)</author>
+            <ipt:eml>http://ipt.vertnet.org:8080/ipt/eml.do?r=msb_para</ipt:eml>
+            <ipt:dwca>http://ipt.vertnet.org:8080/ipt/archive.do?r=msb_para</ipt:dwca>
+            <pubDate>Mon, 17 Feb 2020 17:40:30 +0000</pubDate>
+            <guid isPermaLink="false">78ff8409-15b9-456f-9793-291b030190a7/v32.36</guid>
+        </item>
+        <item>
+            <title>MSB Host Collection (Arctos)</title>
+            <link>http://ipt.vertnet.org:8080/ipt/resource?r=msb_host</link>
+            <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+            <description>Respecting encumbrances.</description>
+            <author>larussell@vertnet.org (Laura Russell)</author>
+            <ipt:eml>http://ipt.vertnet.org:8080/ipt/eml.do?r=msb_host</ipt:eml>
+            <ipt:dwca>http://ipt.vertnet.org:8080/ipt/archive.do?r=msb_host</ipt:dwca>
+            <pubDate>Mon, 17 Feb 2020 17:39:49 +0000</pubDate>
+            <guid isPermaLink="false">b211f32f-326b-43d3-8012-2fbce0cc6dcc/v34.35</guid>
+            <category domain="http://www.w3.org/ns/prov">http://www.w3.org/ns/prov#wasUsedBy</category>
+            <category domain="http://purl.org/dc/terms/MediaType">application/globi+foo</category>
+        </item>
+    </channel>
+</rss>
