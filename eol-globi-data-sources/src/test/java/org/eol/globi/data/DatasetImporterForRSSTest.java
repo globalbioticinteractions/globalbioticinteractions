@@ -53,9 +53,7 @@ public class DatasetImporterForRSSTest {
         List<Dataset> datasets = DatasetImporterForRSS.getDatasetsForFeed(dataset);
         assertThat(datasets.size(), is(3));
         assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
-
     }
-
 
     @Test
     public void titleIncludeExcludePattern() throws StudyImporterException, IOException {
@@ -111,16 +109,11 @@ public class DatasetImporterForRSSTest {
     @Test
     public void readDatasetDependencies() throws StudyImporterException, IOException {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_msb_para.xml\", " +
-                "\"include\": \".*(Arctos).*\", " +
-                "\"exclude\": \".*GGBN.*\", " +
                 "\"hasDependencies\": true }";
         final Dataset dataset = datasetFor(configJson);
         List<Dataset> datasets = DatasetImporterForRSS.getDatasets(dataset);
-        for (Dataset dataset1 : datasets) {
-            assertThat(dataset1.getCitation(), containsString("(Arctos)"));
-            assertThat(dataset1.getCitation(), not(containsString("GGBN")));
-        }
         assertThat(datasets.size(), is(1));
+
         List<Dataset> dependencies = DatasetImporterForRSS.getDependencies(dataset);
         assertThat(dependencies.size(), is(2));
         assertThat(dependencies.get(0).getArchiveURI().toString(), is("http://ipt.vertnet.org:8080/ipt/archive.do?r=msb_para"));

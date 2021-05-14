@@ -104,6 +104,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
     public static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
     public static final String DWC_COREID = "dwc:coreid";
+    
+    public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN =
+            Pattern.compile("^([(][a-zA-Z ]+[)])[ ](.*)(http[s]{0,1}://mczbase.mcz.harvard.edu/guid/)([a-zA-Z0-9:-]+)");
     public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
     public static final Pattern MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN =
             Pattern.compile("^(.*)" +
@@ -132,6 +135,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             File dwcaFile = null;
             try {
                 URI dwcaURI = URI.create(archiveURL);
+
                 tmpDwA = Files.createTempDirectory("dwca");
                 final File tmpDir = tmpDwA.toFile();
                 deleteOnShutdownHook = addDeleteOnShutdownHook(tmpDir);
@@ -383,7 +387,19 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static void attemptToParseArctosAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
-        if (ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed).find()) {
+        Matcher matcher = ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN.matcher(relationshipTrimmed);
+        if (matcher.find()) {
+            String verb = matcher.group(1);
+            String occurrenceId = matcher.group(4);
+            if (StringUtils.isNotBlank(occurrenceId)) {
+                propertyList.add(new TreeMap<String, String>() {
+                    {
+                        put(TARGET_OCCURRENCE_ID, StringUtils.trim(occurrenceId));
+                        put(INTERACTION_TYPE_NAME, StringUtils.trim(verb));
+                    }
+                });
+            }
+        } else if (ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed).find()) {
             int i1 = StringUtils.indexOf(relationshipTrimmed, ")");
             if (i1 > -1 && i1 < relationshipTrimmed.length()) {
                 String relation = StringUtils.substring(relationshipTrimmed, 0, i1 + 1);
@@ -402,12 +418,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-
     private static void attemptToParseMCZAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
         Matcher matcher = MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed);
         if (matcher.find()) {
             TreeMap<String, String> properties = new TreeMap<>();
-            String baseUrl = StringUtils.trim(matcher.group(2));
             String dwcTriple = StringUtils.replace(StringUtils.trim(matcher.group(3)), " ", ":");
             properties.put(TARGET_OCCURRENCE_ID, dwcTriple);
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(1)));
@@ -938,6 +952,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
 
         }
+
     }
 
     public static Map<String, String> parseUSNMStyleHostOccurrenceRemarks(String occurrenceRemarks) throws IOException {

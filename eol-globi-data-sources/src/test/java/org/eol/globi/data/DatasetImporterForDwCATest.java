@@ -555,6 +555,35 @@ public class DatasetImporterForDwCATest {
 
 
     @Test
+    public void associatedOccurrencesMCZArctos() {
+        String associateOccurrences = "(parasite of) MCZ:Orn - Museum of Comparative Zoology Ornithology Collection https://mczbase.mcz.harvard.edu/guid/MCZ:Orn:348192";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("MCZ:Orn:348192"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZArctos2() {
+        String associateOccurrences = "(parasite of) MCZ:Orn - Museum of Comparative Zoology Ornithology Collection https://mczbase.mcz.harvard.edu/guid/MCZ:Orn:348209";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("MCZ:Orn:348209"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+
+    @Test
     public void associatedOccurrencesMCZ() {
         String associateOccurrences = "parasitically found on/in          <a href=\"http://mczbase.mcz.harvard.edu/SpecimenDetail.cfm?collection_object_id=5197872\"> MCZ IZ ECH-8358</a>";
         List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
