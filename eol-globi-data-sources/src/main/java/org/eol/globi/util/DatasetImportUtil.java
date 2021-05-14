@@ -3,6 +3,7 @@ package org.eol.globi.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.service.GeoNamesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.ImportLogger;
@@ -24,15 +25,43 @@ import java.util.Map;
 public class DatasetImportUtil {
     private static final Logger LOG = LoggerFactory.getLogger(DatasetImportUtil.class);
 
-    private static void importDataset(StudyImporterConfigurator studyImporterConfigurator, Dataset dataset, NodeFactory nodeFactory, ImportLogger logger) throws StudyImporterException {
+    public static void importDataset(Dataset dataset,
+                                     NodeFactory nodeFactory,
+                                     ImportLogger logger) throws StudyImporterException {
+        importDataset(null, dataset, nodeFactory, logger);
+    }
+
+
+    public static void importDataset(StudyImporterConfigurator studyImporterConfigurator,
+                                     Dataset dataset,
+                                     NodeFactory nodeFactory,
+                                     ImportLogger logger) throws StudyImporterException {
+        importDataset(studyImporterConfigurator, dataset, nodeFactory, logger, null);
+    }
+    public static void importDataset(StudyImporterConfigurator studyImporterConfigurator,
+                                     Dataset dataset,
+                                     NodeFactory nodeFactory,
+                                     ImportLogger logger,
+                                     GeoNamesService geoNamesService) throws StudyImporterException {
         nodeFactory.getOrCreateDataset(dataset);
+
         NodeFactory nodeFactoryForDataset = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
+
         DatasetImporter datasetImporter = new StudyImporterFactoryImpl(nodeFactoryForDataset).createImporter(dataset);
         datasetImporter.setDataset(dataset);
+
+        if (studyImporterConfigurator != null) {
+            studyImporterConfigurator.configure(datasetImporter);
+        }
+
         if (logger != null) {
             datasetImporter.setLogger(logger);
         }
-        studyImporterConfigurator.configure(datasetImporter);
+
+        if (geoNamesService != null) {
+            datasetImporter.setGeoNamesService(geoNamesService);
+        }
+
         datasetImporter.importStudy();
     }
 
