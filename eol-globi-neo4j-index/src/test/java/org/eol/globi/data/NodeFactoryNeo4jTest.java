@@ -52,7 +52,7 @@ import static org.junit.Assert.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
-    public static final DOI SOME_DOI = new DOI("some", "doi");
+    private static final DOI SOME_DOI = new DOI("some", "doi");
 
     @Test
     public void toCitation() {
@@ -81,8 +81,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertStudyType(studyRelationType, specimen);
         assertStudyType(studyRelationType, specimen1);
 
-        Transaction transaction = getGraphDb().beginTx();
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
             assertThat(relIter.hasNext(), is(true));
             final Relationship rel = relIter.next();
@@ -103,19 +102,14 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
             assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
             assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
             transaction.success();
-        } finally {
-            transaction.close();
         }
     }
 
     private void assertStudyType(RelTypes studyRelationType, SpecimenNode specimen2) {
-        Transaction transaction = specimen2.getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
+        try (Transaction transaction = specimen2.getUnderlyingNode().getGraphDatabase().beginTx()) {
             boolean hasRelationship = specimen2.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(studyRelationType));
             transaction.success();
             assertThat(hasRelationship, is(true));
-        } finally {
-            transaction.close();
         }
     }
 
@@ -251,7 +245,6 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         StudyImpl study1 = new StudyImpl("my title", null, "some citation");
         study1.setExternalId("some:id");
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
-
         assertThat(study.getExternalId(), is("some:id"));
         assertThat(study.getDOI(), is(nullValue()));
 
@@ -308,14 +301,11 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         String expectedConfig = new ObjectMapper().writeValueAsString(objectNode);
         assertThat(new ObjectMapper().writeValueAsString(origDataset.getConfig()), is(expectedConfig));
         Node datasetNode = NodeUtil.getDataSetForStudy(study);
-        Transaction tx = datasetNode.getGraphDatabase().beginTx();
-        try {
+        try (Transaction tx = datasetNode.getGraphDatabase().beginTx()) {
             assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
             assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
             assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
             tx.success();
-        } finally {
-            tx.close();
         }
 
         StudyImpl otherStudy = new StudyImpl("my other title", SOME_DOI, "some citation");
@@ -380,14 +370,11 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
         Node datasetNode = NodeUtil.getDataSetForStudy(study);
-        Transaction tx = datasetNode.getGraphDatabase().beginTx();
-        try {
+        try (Transaction tx = datasetNode.getGraphDatabase().beginTx()) {
             assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
             assertThat(datasetNode.hasProperty(DatasetConstant.ARCHIVE_URI), is(false));
             assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
             tx.success();
-        } finally {
-            tx.close();
         }
     }
 
@@ -402,12 +389,9 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl(null, "bla:123"));
-        Transaction transaction = getGraphDb().beginTx();
-        try {
+        try (Transaction transaction = getGraphDb().beginTx()) {
             assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
             transaction.success();
-        } finally {
-            transaction.close();
         }
     }
 

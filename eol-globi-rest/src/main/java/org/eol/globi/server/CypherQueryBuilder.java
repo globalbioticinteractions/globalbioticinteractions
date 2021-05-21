@@ -298,7 +298,9 @@ public class CypherQueryBuilder {
                 .map(s -> "http://gomexsi.tamucc.edu.")
                 .collect(Collectors.toList()));
 
-        String regex = (hasAtLeastOneURL(expandedList) || hasDOIs(expandedList)) ? regexStrict(expandedList) : regexWildcard(expandedList);
+        String regex = (hasAtLeastOneURL(expandedList) || hasDOIs(expandedList))
+                ? regexStrict(expandedList)
+                : regexWildcard(expandedList);
         return "(?i)" + regex;
     }
 
