@@ -48,9 +48,11 @@ public class CypherQueryBuilderTest {
     private static final String EXPECTED_ACCORDING_TO_START_CLAUSE = CYPHER_VERSION +
             "START externalId = node:externalIds({accordingTo})" +
             " MATCH" +
-            " study-[:IN_DATASET]->dataset" +
-            ", study-[:HAS_DOI|HAS_EXTERNAL_ID]->externalId" +
-            " WITH study ";
+            " x-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->externalId" +
+            " WHERE" +
+            " x.type = 'StudyNode'" +
+            " WITH" +
+            " x as study ";
     private static final String EXTERNAL_WHERE_CLAUSE_MAMMALIA = "WHERE " + hasTargetTaxon("Mammalia");
     private static final String HAS_TARGET_TAXON_PLANTAE = hasTargetTaxon("Plantae");
 

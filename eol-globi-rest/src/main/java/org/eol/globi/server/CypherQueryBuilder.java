@@ -503,9 +503,10 @@ public class CypherQueryBuilder {
         } else {
             query.append(" externalId = node:externalIds({accordingTo})")
                     .append(" MATCH")
-                    .append(" study-[:IN_DATASET]->dataset")
-                    .append(", study-[:HAS_DOI|HAS_EXTERNAL_ID]->externalId")
-                    .append(" WITH study ");
+                    .append(" x-[:IN_DATASET|HAS_DOI|HAS_EXTERNAL_ID*]->externalId")
+                    .append(" WHERE")
+                    .append(" x.type = 'StudyNode'")
+                    .append(" WITH x as study ");
         }
     }
 
