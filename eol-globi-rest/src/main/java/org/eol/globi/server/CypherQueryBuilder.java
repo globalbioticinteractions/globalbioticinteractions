@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -241,21 +240,16 @@ public class CypherQueryBuilder {
         return lucenePathQuery.toString();
     }
 
-    public static String regexWildcard(List<String> terms) {
-        return ".*" + regexStrict(terms) + ".*";
-    }
-
-    protected static String regexStrict(List<String> terms) {
+    protected static String strictExternalIdMatch(List<String> terms) {
         List<String> quotedTerms = new ArrayList<String>();
         for (String term : terms) {
-            String quote = Pattern.quote(term);
-            quotedTerms.add(quote.replace("\\Q", "\\\\Q").replace("\\E", "\\\\E").replace("\"", "\\\""));
+            quotedTerms.add("externalId:\\\"" + term + "\\\"");
         }
         return orNestedTerms(quotedTerms);
     }
 
     private static String orNestedTerms(List<String> quotedTerms) {
-        return "(" + StringUtils.join(quotedTerms, "|") + ")";
+        return StringUtils.join(quotedTerms, " ");
     }
 
     private static Map<String, String> getParams(List<String> sourceTaxonNames, List<String> targetTaxonNames, boolean exactNameMatchesOnly, Map parameterMap) {
@@ -272,12 +266,12 @@ public class CypherQueryBuilder {
         if (accordingTo != null && accordingTo.size() > 0) {
             List<DOI> dois = extractDOIs(accordingTo);
             if (dois.size() > 0) {
-                paramMap.put("accordingTo", regexForAccordingTo(dois.stream().map(DOI::toString).collect(Collectors.toList())));
+                paramMap.put("accordingTo", matchReferenceOrDataset(dois.stream().map(DOI::toString).collect(Collectors.toList())));
             } else if (isAccordingToNamespaceQuery(accordingTo)) {
                 List<String> namespaces = getNamespaces(accordingTo);
-                paramMap.put("accordingTo", "namespace:" + orNestedTerms(namespaces));
+                paramMap.put("accordingTo", "namespace:\\\"" + orNestedTerms(namespaces) + "\\\"");
             } else {
-                paramMap.put("accordingTo", regexForAccordingTo(accordingTo));
+                paramMap.put("accordingTo", matchReferenceOrDataset(accordingTo));
             }
         }
 
@@ -291,20 +285,17 @@ public class CypherQueryBuilder {
         return paramMap;
     }
 
-    static String regexForAccordingTo(List<String> accordingTo) {
+    static String matchReferenceOrDataset(List<String> accordingTo) {
         List<String> expandedList = new ArrayList<>(accordingTo);
         expandedList.addAll(accordingTo.stream()
                 .filter(s -> StringUtils.startsWith(s, "http://gomexsi.tamucc.edu"))
-                .map(s -> "http://gomexsi.tamucc.edu.")
+                .map(s -> "http://gomexsi.tamucc.edu/")
                 .collect(Collectors.toList()));
 
-        String regex = (hasAtLeastOneURL(expandedList) || hasDOIs(expandedList))
-                ? regexStrict(expandedList)
-                : regexWildcard(expandedList);
-        return "(?i)" + regex;
+        return strictExternalIdMatch(expandedList);
     }
 
-    static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean exactNameMatchesOnly) {
+    private static void appendTaxonSelectors(boolean includeSourceTaxon, boolean includeTargetTaxon, StringBuilder query, boolean exactNameMatchesOnly) {
         if (includeSourceTaxon) {
             final String sourceTaxonSelector = "sourceTaxon = " + getTaxonPathSelector(SOURCE_TAXON_NAME.getLabel(), exactNameMatchesOnly);
             query.append(sourceTaxonSelector);
@@ -510,17 +501,11 @@ public class CypherQueryBuilder {
                     .append(" MATCH study-[:IN_DATASET]->dataset")
                     .append(" WITH study");
         } else {
-            String whereClause;
-            if (hasDOIs(accordingToParams)) {
-                whereClause = "(exists(study.doi) AND study.doi =~ {accordingTo})";
-            } else if (hasAtLeastOneURL(accordingToParams)) {
-                whereClause = "(exists(study.externalId) AND study.externalId =~ {accordingTo})";
-            } else {
-                whereClause = "(exists(study.externalId) AND study.externalId =~ {accordingTo}) OR (exists(study.citation) AND study.citation =~ {accordingTo}) OR (exists(dataset.citation) AND dataset.citation =~ {accordingTo})";
-            }
-            query.append(" study = node:studies('*:*') MATCH study-[:IN_DATASET]->dataset WHERE ")
-                    .append(whereClause)
-                    .append(" WITH study");
+            query.append(" externalId = node:externalIds({accordingTo})")
+                    .append(" MATCH")
+                    .append(" study-[:IN_DATASET]->dataset")
+                    .append(", study-[:HAS_DOI|HAS_EXTERNAL_ID]->externalId")
+                    .append(" WITH study ");
         }
     }
 
@@ -575,7 +560,7 @@ public class CypherQueryBuilder {
         }
         StringBuilder stringBuilder = appendTaxonWhereClauseIfNecessary(parameterMap, sourceTaxa, targetTaxa, query);
         if (!RequestHelper.isSpatialSearch(parameterMap) && (QueryType.MULTI_TAXON_ALL.equals(queryType)
-                || QueryType.SINGLE_TAXON_ALL.equals(queryType))){
+                || QueryType.SINGLE_TAXON_ALL.equals(queryType))) {
             query.append(" OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc ");
         }
         return stringBuilder;
