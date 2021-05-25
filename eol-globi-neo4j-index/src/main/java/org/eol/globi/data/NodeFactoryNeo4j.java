@@ -354,7 +354,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
     }
 
     private void createExternalIdRelationIfExists(Node node, String externalId, RelTypes hasExternalId) {
-        Node externalIdNode = getOrCreateExternalIdTx(externalId);
+        Node externalIdNode = getOrCreateExternalIdNoTx(externalId);
         if (node != null && externalIdNode != null) {
             node.createRelationshipTo(externalIdNode, NodeUtil.asNeo4j(hasExternalId));
         }
@@ -373,7 +373,9 @@ public class NodeFactoryNeo4j implements NodeFactory {
         datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
         if (archiveURI != null) {
-            datasetNode.setProperty(DatasetConstant.ARCHIVE_URI, archiveURI.toString());
+            String archiveURIString = archiveURI.toString();
+            datasetNode.setProperty(DatasetConstant.ARCHIVE_URI, archiveURIString);
+            createExternalIdRelationIfExists(datasetNode, archiveURIString, RelTypes.HAS_EXTERNAL_ID);
         }
         URI configURI = dataset.getConfigURI();
         if (configURI != null) {
@@ -652,7 +654,7 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return interactionNode;
     }
 
-    private Node getOrCreateExternalIdTx(String externalId) {
+    private Node getOrCreateExternalIdNoTx(String externalId) {
         Node externalIdNode = null;
         if (StringUtils.isNotBlank(externalId)) {
             IndexHits<Node> datasetHits = externalIds.get(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
