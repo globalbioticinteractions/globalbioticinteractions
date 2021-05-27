@@ -1623,6 +1623,18 @@ public class CypherQueryBuilderTest {
         assertThat(regex, is("externalId:\\\"https://example.com\\\""));
     }
 
+    @Test
+    public void accordingToiNaturalistShortcut() {
+        String regex = CypherQueryBuilder.matchReferenceOrDataset(Collections.singletonList("inaturalist"));
+        assertThat(regex, is("externalId:\\\"inaturalist\\\" externalId:\\\"globi:globalbioticinteractions/inaturalist\\\""));
+
+        regex = CypherQueryBuilder.matchReferenceOrDataset(Arrays.asList("inaturalist", "https://example.com"));
+        assertThat(regex, is("externalId:\\\"inaturalist\\\" externalId:\\\"https://example.com\\\" externalId:\\\"globi:globalbioticinteractions/inaturalist\\\""));
+
+        regex = CypherQueryBuilder.matchReferenceOrDataset(Collections.singletonList("https://example.com"));
+        assertThat(regex, is("externalId:\\\"https://example.com\\\""));
+    }
+
     @Test(expected = QueryExecutionException.class)
     public void queryValidation() {
         String malformed = "malformed";

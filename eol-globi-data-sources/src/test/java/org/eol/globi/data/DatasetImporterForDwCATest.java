@@ -618,6 +618,26 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void associatedOccurrencesARK() {
+        String associateOccurrences = " (parasite of) ARK http://n2t.net/ark:/65665/3777ecb64-7edc-4479-8486-a0b584092bd0; (parasite of) USNM: National Museum of Natural History 602540";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(2));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/3777ecb64-7edc-4479-8486-a0b584092bd0"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+
+        properties = propertyList.get(1);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(TARGET_OCCURRENCE_ID), is("National Museum of Natural History 602540"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
     public void associatedOccurrencesMalformed() {
         assertThat(parseAssociatedOccurrences("(eaten by)").size(), is(0));
     }

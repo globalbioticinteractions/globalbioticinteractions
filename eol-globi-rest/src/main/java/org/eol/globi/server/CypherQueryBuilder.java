@@ -292,6 +292,11 @@ public class CypherQueryBuilder {
                 .map(s -> "http://gomexsi.tamucc.edu/")
                 .collect(Collectors.toList()));
 
+        expandedList.addAll(accordingTo.stream()
+                .filter(s -> StringUtils.equals(s, "inaturalist"))
+                .map(s -> "globi:globalbioticinteractions/inaturalist")
+                .collect(Collectors.toList()));
+
         return strictExternalIdMatch(expandedList);
     }
 
