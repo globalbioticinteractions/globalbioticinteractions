@@ -262,7 +262,8 @@ public class CypherQueryBuilder {
             paramMap.put(TARGET_TAXON_NAME.getLabel(), lucenePathQuery(targetTaxonNames, exactNameMatchesOnly));
         }
 
-        List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
+        List<String> accordingTo = collectAccordingTo(parameterMap);
+
         if (accordingTo != null && accordingTo.size() > 0) {
             List<DOI> dois = extractDOIs(accordingTo);
             if (dois.size() > 0) {
@@ -285,16 +286,23 @@ public class CypherQueryBuilder {
         return paramMap;
     }
 
+    static List<String> collectAccordingTo(Map parameterMap) {
+        List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
+        if (accordingTo != null && accordingTo.size() > 0) {
+            accordingTo = accordingTo.stream()
+                    .map(s -> StringUtils.equalsIgnoreCase(s, "inaturalist")
+                            ? "globi:globalbioticinteractions/inaturalist"
+                            : s).collect(Collectors.toList());
+        }
+        return accordingTo;
+    }
+
+
     static String matchReferenceOrDataset(List<String> accordingTo) {
         List<String> expandedList = new ArrayList<>(accordingTo);
         expandedList.addAll(accordingTo.stream()
                 .filter(s -> StringUtils.startsWith(s, "http://gomexsi.tamucc.edu"))
                 .map(s -> "http://gomexsi.tamucc.edu/")
-                .collect(Collectors.toList()));
-
-        expandedList.addAll(accordingTo.stream()
-                .filter(s -> StringUtils.equals(s, "inaturalist"))
-                .map(s -> "globi:globalbioticinteractions/inaturalist")
                 .collect(Collectors.toList()));
 
         return strictExternalIdMatch(expandedList);
@@ -361,8 +369,8 @@ public class CypherQueryBuilder {
 
     public static CypherQuery locations(Map parameterMap) {
         StringBuilder query = new StringBuilder();
-        final List<String> accordingTo = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
-        if (accordingTo.size() > 0) {
+        final List<String> accordingTo = collectAccordingTo(parameterMap);
+        if (accordingTo != null && accordingTo.size() > 0) {
             appendStartClause2(parameterMap, Collections.<String>emptyList(), Collections.<String>emptyList(), query);
             query.append(" MATCH study-[:" + createArgumentSelector(parameterMap) + "]->specimen-[:COLLECTED_AT]->location");
             query.append(" WITH DISTINCT(location) as loc");
@@ -450,7 +458,8 @@ public class CypherQueryBuilder {
     }
 
     private static boolean hasAccordingTo(Map parameterMap) {
-        return collectParamValues(parameterMap, ParamName.ACCORDING_TO).size() > 0;
+        List<String> accordingTo = collectAccordingTo(parameterMap);
+        return accordingTo != null && accordingTo.size() > 0;
     }
 
     private static boolean shouldIncludeExactNameMatchesOnly(Map parameterMap) {
@@ -471,9 +480,8 @@ public class CypherQueryBuilder {
 
     protected static StringBuilder appendStartClause2(Map parameterMap, List<String> sourceTaxa, List<String> targetTaxa, StringBuilder query) {
         query.append("START");
-        List<String> accordingToParams = collectParamValues(parameterMap, ParamName.ACCORDING_TO);
-        if (accordingToParams.size() > 0) {
-            appendWithStudy(query, accordingToParams);
+        if (hasAccordingTo(parameterMap)) {
+            appendWithStudy(query, collectAccordingTo(parameterMap));
         } else if (noSearchCriteria(RequestHelper.isSpatialSearch(parameterMap), sourceTaxa, targetTaxa)) {
             List<String> strings = collectRequestedFields(parameterMap);
             Stream<String> withoutTaxonOrInteractionTypes = strings
