@@ -6,12 +6,15 @@ import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.process.InteractionListener;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InteractionListenerIndexing implements InteractionListener {
+    public static final Pattern US_NATIONAL_PARASITE_COLLECTION_RECORD_NUMBER = Pattern.compile("USNPC # [0]*([0-9]+)");
     private final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
 
     public InteractionListenerIndexing(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
@@ -20,26 +23,18 @@ public class InteractionListenerIndexing implements InteractionListener {
 
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
-        String sourceOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
-        if (interactionsWithUnresolvedOccurrenceIds.containsKey(
-                Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId))) {
-            Map<String, String> enriched = InteractionListenerResolving.mapSourceToSource(interaction);
-            if (enriched.size() > 1) {
-                interactionsWithUnresolvedOccurrenceIds.put(
-                        Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId),
-                        enriched);
-            }
-        } else if (interactionsWithUnresolvedOccurrenceIds.containsKey(
-                Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId))) {
-            Map<String, String> enriched = InteractionListenerResolving.mapSourceToTarget(interaction);
-            if (enriched.size() > 1) {
-                interactionsWithUnresolvedOccurrenceIds.put(
-                        Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId),
-                        enriched);
-            }
-        }
 
-        String targetOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
+        attemptToResolveSourceOccurrenceId(interaction, getOccurrenceId(interaction, DatasetImporterForTSV.SOURCE_OCCURRENCE_ID));
+        inferOccurrenceId(interaction.get(DatasetImporterForTSV.SOURCE_CATALOG_NUMBER))
+                .forEach(occurrenceId -> attemptToResolveSourceOccurrenceId(interaction, occurrenceId));
+
+        attemptToResolveTargetOccurrenceId(interaction, getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID));
+        inferOccurrenceId(interaction.get(DatasetImporterForTSV.TARGET_CATALOG_NUMBER))
+                .forEach(occurrenceId -> attemptToResolveTargetOccurrenceId(interaction, occurrenceId));
+
+    }
+
+    public void attemptToResolveTargetOccurrenceId(Map<String, String> interaction, String targetOccurrenceId) {
         if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId))) {
             Map<String, String> enriched = InteractionListenerResolving.mapTargetToTarget(interaction);
@@ -57,7 +52,26 @@ public class InteractionListenerIndexing implements InteractionListener {
                         enriched);
             }
         }
+    }
 
+    public void attemptToResolveSourceOccurrenceId(Map<String, String> interaction, String sourceOccurrenceId) {
+        if (interactionsWithUnresolvedOccurrenceIds.containsKey(
+                Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId))) {
+            Map<String, String> enriched = InteractionListenerResolving.mapSourceToSource(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId),
+                        enriched);
+            }
+        } else if (interactionsWithUnresolvedOccurrenceIds.containsKey(
+                Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId))) {
+            Map<String, String> enriched = InteractionListenerResolving.mapSourceToTarget(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId),
+                        enriched);
+            }
+        }
     }
 
     public static String getOccurrenceId(Map<String, String> interaction, String sourceOccurrenceId) {
@@ -68,5 +82,20 @@ public class InteractionListenerIndexing implements InteractionListener {
             value = splitValue.length == 1 ? value : splitValue[0];
         }
         return value;
+    }
+
+    static List<String> inferOccurrenceId(String catalogNumber) {
+        List<String> occurrenceIds = Collections.emptyList();
+        if (StringUtils.isNotBlank(catalogNumber)) {
+            Matcher matcher = US_NATIONAL_PARASITE_COLLECTION_RECORD_NUMBER.matcher(catalogNumber);
+            if (matcher.find()) {
+                String group = matcher.group(1);
+                occurrenceIds = new ArrayList<String>() {{
+                    add("United States National Parasite Collection " + String.format("%06d", Integer.parseInt(group)));
+                    add("United States National Parasite Collection " + group);
+                }};
+            }
+        }
+        return occurrenceIds;
     }
 }
