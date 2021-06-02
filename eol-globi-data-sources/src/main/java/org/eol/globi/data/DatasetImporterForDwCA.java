@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
@@ -28,16 +29,19 @@ import org.mapdb.HTreeMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -115,23 +119,22 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     "([^<]+)</a>");
 
     public static final Map<String, String> PATCHES_FOR_USNM_HOST_OCCURRENCE_REMARKS = new TreeMap<String, String>() {{
-        put("\"hostRemarks\":\"Sp. \"cururu\"\"", "\"hostRemarks\":\"Sp. \\\"cururu\\\"\"");
-        put("\"hostFldNo\":\"ishi&Hokanak-\"B\"\"", "\"hostFldNo\":\"ishi&Hokanak-\\\"B\\\"\"");
-        put("\"hostRemarks\":\"sp. \"toc_2\"\"", "\"hostRemarks\":\"sp. \\\"toc_2\\\"\"");
-        put("\"hostRemarks\":\"sp. \"2\"\"", "\"hostRemarks\":\"sp. \\\"2\\\"\"");
-        put("\"hostRemarks\":\"sp. \"1\"\"", "\"hostRemarks\":\"sp. \\\"1\\\"\"");
-        put("\"hostRemarks\":\"sp. \"mar_1\"\"", "\"hostRemarks\":\"sp. \\\"mar_1\\\"\"");
-        put("\"hostRemarks\":\"sp. \"tpj_1\"\"", "\"hostRemarks\":\"sp. \\\"tpj_1\\\"\"");
-        put("\"hostRemarks\":\"sp. \"jam1\"\"", "\"hostRemarks\":\"sp. \\\"jam1\\\"\"");
-        put("\"hostFldNo\":\"EJenkins-exp.inf.\"blue\"\"", "\"hostFldNo\":\"EJenkins-exp.inf.\\\"blue\\\"\"");
-        put("\"hostFldNo\":\"EJenkins-exp.inf.\"black\"\"", "\"hostFldNo\":\"EJenkins-exp.inf.\\\"black\\\"\"");
-        put("\"hostFldNo\":\"SKutz-\"10\"\"", "\"hostFldNo\":\"SKutz-\\\"10\\\"\"");
-        put("\"hostFldNo\":\"Niptanataik-\"A\"\"", "\"hostFldNo\":\"Niptanataik-\\\"A\\\"\"");
-        put("\"hostFldNo\":\"C.Ajdun-\"Cox Lake\"\"", "\"hostFldNo\":\"C.Ajdun-\\\"Cox Lake\\\"\"");
-        put("\"hostRemarks\":\"Host species listed \"calligaster calligaster\", probably reference to a King or Brown snake. Possibly the Dipodomys ordii was inside the snake?\"", "\"hostRemarks\":\"Host species listed \\\"calligaster calligaster\\\", probably reference to a King or Brown snake. Possibly the Dipodomys ordii was inside the snake?\"");
-        put("\"hostFldNo\":\"DGButh-tag \"W06-1\"\"", "\"hostFldNo\":\"DGButh-tag \\\"W06-1\\\"\"");
-        put("\"hostFldNo\":\"CHWharton-\"Old Bindy\"\"", "\"hostFldNo\":\"CHWharton-\\\"Old Bindy\\\"\"");
-        put("\"hostBodyLoc\":\"\"arm pits\" of wahoo\"", "\"hostBodyLoc\":\"\\\"arm pits\\\" of wahoo\"");
+
+        String patchFile = "/org/eol/globi/data/usnm/usnm-patches.tsv";
+        try {
+            InputStream is = getClass().getResourceAsStream(patchFile);
+            String[] lines = StringUtils.split(IOUtils.toString(is, StandardCharsets.UTF_8), "\n");
+            for (String line : lines) {
+                String[] values = StringUtils.split(line, "\t");
+                if (values.length < 2) {
+                    throw new IllegalArgumentException("at least two columns expected in patch file [" + patchFile + "]");
+                }
+                put(values[0], values[1]);
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("patch file [" + patchFile + "] is invalid or does not exist", e);
+        }
+
     }};
 
 

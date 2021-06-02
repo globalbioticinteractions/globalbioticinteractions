@@ -1,0 +1,41 @@
+2021-06-02
+
+Some json-like occurrence remarks in:
+
+Orrell T, (2021): NMNH Extant Specimen Records. <v1.44. National Museum of Natural History, Smithsonian Institution. Dataset/Occurrence. https://collections.nmnh.si.edu/ipt/archive?r=nmnh_extant_dwc-a
+
+have invalid json chunks.
+
+The included file ```usnm-patch.tsv``` contains the invalid json chunks with their patched counterparts.
+
+---
+context from https://github.com/globalbioticinteractions/globalbioticinteractions/issues/505:
+
+Via  a tracked version of https://hash-archive.org/history/https://collections.nmnh.si.edu/ipt/archive.do?r=nmnh_extant_dwc-a , retrieved source data using associated content id using:
+
+```
+ curl "https://deeplinker.bio/23ff25c30747d4181ab84ea6582b454e053dc7fde1cee2fa21b11f4bcd52bf00" > nmnh.zip
+```
+
+then, extracted host related info from occurrenceRemarks using:
+
+```
+unzip -p nmnh.zip occurrence.txt | cut -f11 | grep hostGen | pv -l | sort | uniq > hostgen.txt
+```
+
+and isolated json snippets describing host info (see attached
+[host.json.gz](https://github.com/globalbioticinteractions/globalbioticinteractions/files/4731983/host.json.gz)
+) using:
+
+```
+cat hostgen.txt | sed 's+.*{"host+{"host+g' | sed 's+"}.*+"}+g' > host.json
+```
+and found a invalid json value ```:""arm pits" of wahoo"```` in occurrenceRemarks on line 2636:
+
+```
+{"hostGen":"Acanthocybium","hostSpec":"solandri","hostBodyLoc":""arm pits" of wahoo","hostFldNo":"030913-15-4 & 5"}
+```
+
+related to http://n2t.net/ark:/65665/3b7d88950-9b11-404b-b620-80d6ce663d53 .
+
+related to https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
