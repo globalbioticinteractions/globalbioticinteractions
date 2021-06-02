@@ -24,6 +24,8 @@ public class InteractionListenerIndexingTest {
     public void extractCatalogNumber() {
         List<String> s = InteractionListenerIndexing
                 .inferOccurrenceId("USNPC # 081321");
+        assertThat(s, hasItem("United States National Parasite Collection USNPC 81321"));
+        assertThat(s, hasItem("United States National Parasite Collection USNPC 081321"));
         assertThat(s, hasItem("United States National Parasite Collection 081321"));
         assertThat(s, hasItem("United States National Parasite Collection 81321"));
     }
@@ -32,6 +34,8 @@ public class InteractionListenerIndexingTest {
     public void extractCatalogNumberUSNPC() {
         List<String> s = InteractionListenerIndexing
                 .inferOccurrenceId("USNPC # 81321");
+        assertThat(s, hasItem("United States National Parasite Collection USNPC 81321"));
+        assertThat(s, hasItem("United States National Parasite Collection USNPC 081321"));
         assertThat(s, hasItem("United States National Parasite Collection 081321"));
         assertThat(s, hasItem("United States National Parasite Collection 81321"));
     }

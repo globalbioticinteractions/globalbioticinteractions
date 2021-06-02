@@ -91,7 +91,10 @@ public class InteractionListenerIndexing implements InteractionListener {
             if (matcher.find()) {
                 String group = matcher.group(1);
                 occurrenceIds = new ArrayList<String>() {{
-                    add("United States National Parasite Collection " + String.format("%06d", Integer.parseInt(group)));
+                    String paddedGroup = String.format("%06d", Integer.parseInt(group));
+                    add("United States National Parasite Collection USNPC " + paddedGroup);
+                    add("United States National Parasite Collection USNPC " + group);
+                    add("United States National Parasite Collection " + paddedGroup);
                     add("United States National Parasite Collection " + group);
                 }};
             }
