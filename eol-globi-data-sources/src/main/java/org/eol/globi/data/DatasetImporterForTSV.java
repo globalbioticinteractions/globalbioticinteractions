@@ -113,6 +113,8 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
     public static final String ASSOCIATED_TAXA = "associatedTaxa";
     public static final String ARGUMENT_TYPE_ID = "argumentTypeId";
 
+    public static final String RESOURCE_TYPES = "resourceTypes";
+
     private static final String RESOURCE_LINE_NUMBER = "resourceLineNumber";
     private static final String RESOURCE_URI = "resourceURI";
 

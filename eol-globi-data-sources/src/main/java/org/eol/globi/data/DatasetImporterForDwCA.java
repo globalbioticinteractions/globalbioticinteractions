@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +62,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
+import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_NAME;
@@ -250,7 +250,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         String associatedTaxa = rec.value(DwcTerm.associatedTaxa);
         if (StringUtils.isNotBlank(associatedTaxa)) {
-            interactionCandidates.addAll(AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa));
+            List<Map<String, String>> associatedTaxonProperties = AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa);
+            for (Map<String, String> associatedTaxonProperty : associatedTaxonProperties) {
+                appendResourceType(associatedTaxonProperty, DwcTerm.associatedTaxa.qualifiedName());
+                interactionCandidates.add(associatedTaxonProperty);
+            }
         }
 
         String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
@@ -296,6 +300,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interactionProperties.put(DWC_COREID, rec.id());
             mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
             mapCoreProperties(rec, interactionProperties);
+            appendResourceType(interactionProperties, rec.rowType());
             interactionListener.on(interactionProperties);
         }
 
@@ -308,6 +313,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
         Map<String, String> properties = parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
     }
@@ -331,7 +337,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private void addUSNMStyleHostOccurrenceRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
         Map<String, String> properties = parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            interactionCandidates.add(properties);
+            appendResourceType(properties, DwcTerm.occurrenceRemarks.qualifiedName());
         }
     }
 
@@ -374,6 +380,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             value = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
         }
         if (StringUtils.isNotBlank(value)) {
+            appendResourceType(interactionProperties, rec.rowType());
             interactionProperties.put(REFERENCE_CITATION, value);
             interactionProperties.put(REFERENCE_ID, value);
             try {
@@ -405,7 +412,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             String relationshipTrimmed = StringUtils.trim(relationship);
             attemptToParseArctosAssocatedOccurrences(propertyList, relationshipTrimmed);
             attemptToParseMCZAssocatedOccurrences(propertyList, relationshipTrimmed);
-
         }
         return propertyList;
     }
@@ -416,12 +422,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             String verb = matcher.group(1);
             String occurrenceId = matcher.group(4);
             if (StringUtils.isNotBlank(occurrenceId)) {
-                propertyList.add(new TreeMap<String, String>() {
+                TreeMap<String, String> e = new TreeMap<String, String>() {
                     {
                         put(TARGET_OCCURRENCE_ID, StringUtils.trim(occurrenceId));
                         put(INTERACTION_TYPE_NAME, StringUtils.trim(verb));
                     }
-                });
+                };
+                appendAssociatedOccurrencesProperties(propertyList, e);
             }
         } else if (ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed).find()) {
             int i1 = StringUtils.indexOf(relationshipTrimmed, ")");
@@ -435,11 +442,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         TreeMap<String, String> properties = new TreeMap<>();
                         properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(occurrenceId));
                         properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(relation));
-                        propertyList.add(properties);
+                        appendAssociatedOccurrencesProperties(propertyList, properties);
                     }
                 }
             }
         }
+    }
+
+    private static void appendAssociatedOccurrencesProperties(List<Map<String, String>> propertyList, TreeMap<String, String> e) {
+        appendResourceType(e, DwcTerm.associatedOccurrences);
+        propertyList.add(e);
     }
 
     private static void attemptToParseMCZAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
@@ -449,7 +461,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             String dwcTriple = StringUtils.replace(StringUtils.trim(matcher.group(3)), " ", ":");
             properties.put(TARGET_OCCURRENCE_ID, dwcTriple);
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(1)));
-            propertyList.add(properties);
+            appendAssociatedOccurrencesProperties(propertyList, properties);
         }
     }
 
@@ -462,17 +474,25 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 properties.put(StringUtils.trim(propertyValue[0]), StringUtils.trim(propertyValue[1]));
             }
         }
+        if (hasInteractionTypeOrName(properties)) {
+            appendResourceType(properties, DwcTerm.dynamicProperties.qualifiedName());
+        }
         // only consider dynamic properties if interaction types are defined in it.
-        return properties.containsKey(INTERACTION_TYPE_ID)
-                || properties.containsKey(INTERACTION_TYPE_NAME)
+        return hasInteractionTypeOrName(properties)
                 ? properties
                 : Collections.emptyMap();
+    }
+
+    private static boolean hasInteractionTypeOrName(Map<String, String> properties) {
+        return properties.containsKey(INTERACTION_TYPE_ID)
+                || properties.containsKey(INTERACTION_TYPE_NAME);
     }
 
     static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener) {
         ArchiveFile extension = findResourceExtension(archive, EXTENSION_ASSOCIATED_TAXA);
         if (extension != null) {
             ArchiveFile core = archive.getCore();
+
 
             DB db = DBMaker
                     .newMemoryDirectDB()
@@ -499,6 +519,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         mapAssociationProperties(targetProperties, interaction);
 
                         mapCoreProperties(coreRecord, interaction);
+
+                        interaction.put(RESOURCE_TYPES,
+                                StringUtils.join(Arrays.asList(core.getRowType().qualifiedName(), extension.getRowType().qualifiedName()), CharsetConstant.SEPARATOR));
 
                         interactionListener.on(interaction);
                     } catch (StudyImporterException e) {
@@ -616,6 +639,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                             Map<String, String> props = new TreeMap<>();
                             termsToMap(record, props);
                             props.put(REFERENCE_CITATION, CitationUtil.citationFor(props));
+                            appendResourceType(props, extension.getRowType());
                             referenceMap.put(record.id(), props);
                         }
                     }
@@ -681,6 +705,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                                     List<DwcTerm> termTypes) {
         for (Record record : resourceExtension) {
             Map<String, String> props = new TreeMap<>();
+
+            appendResourceType(props, resourceExtension.getRowType());
             String sourceId = record.value(DwcTerm.resourceID);
             String relationship = record.value(DwcTerm.relationshipOfResource);
 
@@ -738,6 +764,25 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 } catch (StudyImporterException e) {
                     //
                 }
+            }
+        }
+    }
+
+    private static void appendResourceType(Map<String, String> props, Term rowType) {
+        if (rowType != null) {
+            String qualifiedName = rowType.qualifiedName();
+            appendResourceType(props, qualifiedName);
+        }
+    }
+
+    private static void appendResourceType(Map<String, String> props, String qualifiedName) {
+        if (StringUtils.isNotBlank(qualifiedName)) {
+            String prefix = StringUtils.isBlank(props.get(RESOURCE_TYPES))
+                    ? ""
+                    : props.get(RESOURCE_TYPES) + CharsetConstant.SEPARATOR;
+
+            if (!StringUtils.contains(prefix, qualifiedName)) {
+                props.put(RESOURCE_TYPES, prefix + qualifiedName);
             }
         }
     }
@@ -839,7 +884,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 (referencedTargetIds.contains(id) || referencedSourceIds.contains(id))) {
             TreeMap<String, String> occProps = new TreeMap<>();
             termsToMap(coreRecord, occProps);
-
+            appendResourceType(occProps, coreRecord.rowType());
             Map<String, Map<String, String>> propMap = termIdPropertyMap.get(term.qualifiedName());
             if (propMap == null) {
                 propMap = new HashMap<>();
@@ -879,6 +924,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             putIfAbsentAndNotBlank(props, DECIMAL_LONGITUDE, occurrenceProperties.get(DwcTerm.decimalLongitude.qualifiedName()));
             putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, occurrenceProperties.get(DwcTerm.eventDate.qualifiedName()));
             putIfAbsentAndNotBlank(props, BASIS_OF_RECORD_NAME, occurrenceProperties.get(DwcTerm.basisOfRecord.qualifiedName()));
+            appendResourceType(props, occurrenceProperties.get(RESOURCE_TYPES));
         }
     }
 
@@ -911,6 +957,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             if (StringUtils.isNotBlank(value)) {
                 props.put(term.qualifiedName(), value);
             }
+            appendResourceType(props, record.rowType());
         }
     }
 
@@ -952,6 +999,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 DatasetImporterForTSV.INTERACTION_TYPE_NAME,
                 targetProperties.get("http://purl.org/NET/aec/associatedRelationshipTerm")
         );
+
+        appendResourceType(interaction, targetProperties.get(RESOURCE_TYPES));
+
+
     }
 
     private class InteractionListenerWithContext implements InteractionListener {

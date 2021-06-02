@@ -25,15 +25,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertNull;
 import static org.eol.globi.data.DatasetImporterForDwCA.EXTENSION_ASSOCIATED_TAXA;
@@ -49,6 +50,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
@@ -62,6 +64,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -74,14 +77,19 @@ public class DatasetImporterForDwCATest {
     public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/vampire-moth-dwca-main/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
-        assertImportsSomething(archiveRoot, new AtomicInteger(0));
+        assertImportsSomethingOfType(archiveRoot
+                , new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/dynamicProperties | http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/associatedTaxa" );
     }
 
     @Test
     public void importAssociatedTaxaFromDir() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
-        assertImportsSomething(archiveRoot, new AtomicInteger(0));
+        assertImportsSomethingOfType(archiveRoot
+                , new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/associatedTaxa"
+        );
     }
 
     @Test
@@ -105,6 +113,7 @@ public class DatasetImporterForDwCATest {
         assertThat(links.get(0).get(TARGET_TAXON_NAME), is("Chaetodactylus leleupi"));
         assertThat(links.get(0).get(SOURCE_TAXON_NAME), is("Ceratina ruwenzorica Cockerell, 1937"));
         assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("Parasite"));
+        assertThat(links.get(0).get(RESOURCE_TYPES), is("http://rs.gbif.org/terms/1.0/Reference"));
     }
 
     @Test
@@ -117,6 +126,7 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
                 links.add(interaction);
             }
         });
@@ -135,6 +145,7 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
                 links.add(interaction);
             }
         });
@@ -147,7 +158,9 @@ public class DatasetImporterForDwCATest {
     public void importAssociatedTaxaFromDirIgnoredInteractionType() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
-        assertImportsSomething(archiveRoot, new AtomicInteger(0));
+        assertImportsSomethingOfType(archiveRoot
+                , new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/associatedTaxa | http://rs.tdwg.org/dwc/terms/Occurrence");
     }
 
     @Test
@@ -171,6 +184,7 @@ public class DatasetImporterForDwCATest {
                     assertThat("no [" + expectedProperty + "] found in " + interaction, interaction.containsKey(expectedProperty), is(true));
                     assertThat("no value of [" + expectedProperty + "] found in " + interaction, interaction.get(expectedProperty), is(notNullValue()));
                 }
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
 
                 recordCounter.incrementAndGet();
             }
@@ -197,6 +211,7 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
                 recordCounter.incrementAndGet();
 
             }
@@ -211,26 +226,32 @@ public class DatasetImporterForDwCATest {
     @Test
     public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
-        assertImportsSomething(resource.toURI(), new AtomicInteger(0));
+        assertImportsSomethingOfType(resource.toURI(), new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/dynamicProperties" +
+                        " | http://rs.tdwg.org/dwc/terms/Occurrence" +
+                        " | http://rs.tdwg.org/dwc/terms/associatedTaxa");
     }
 
     @Test
     public void importRecordsFromArchiveWithResourceRelations() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-resource-relation.zip");
         AtomicInteger recordCounter = new AtomicInteger(0);
-        assertImportsSomething(resource.toURI(), recordCounter,
-                TaxonUtil.SOURCE_TAXON_ID,
-                SOURCE_TAXON_NAME,
-                INTERACTION_TYPE_NAME,
-                TaxonUtil.TARGET_TAXON_ID,
-                TaxonUtil.TARGET_TAXON_NAME);
+        assertImportsSomethingOfType(resource.toURI()
+                , recordCounter
+                , "http://rs.tdwg.org/dwc/terms/Taxon | http://rs.tdwg.org/dwc/terms/ResourceRelationship"
+                , TaxonUtil.SOURCE_TAXON_ID, SOURCE_TAXON_NAME, INTERACTION_TYPE_NAME, TaxonUtil.TARGET_TAXON_ID, TaxonUtil.TARGET_TAXON_NAME);
         assertThat(recordCounter.get(), is(677));
     }
 
     @Test
     public void importRecordsFromUArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
-        assertImportsSomething(resource.toURI(), new AtomicInteger(0));
+        assertImportsSomethingOfType(resource.toURI()
+                , new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/dynamicProperties" +
+                        " | http://rs.tdwg.org/dwc/terms/Occurrence" +
+                        " | http://rs.tdwg.org/dwc/terms/associatedTaxa"
+        );
     }
 
     @Test
@@ -246,6 +267,8 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
                 recordCounter.incrementAndGet();
             }
+            assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
+
         });
         studyImporterForDwCA.importStudy();
         assertThat(recordCounter.get(), greaterThan(0));
@@ -254,7 +277,11 @@ public class DatasetImporterForDwCATest {
     @Test
     public void importRecordsFromArchiveWithAssociatedTaxa() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/eol/globi/data/AEC-DBCNet_DwC-A20160308-sample.zip");
-        assertImportsSomething(resource.toURI(), new AtomicInteger(0));
+        assertImportsSomethingOfType(resource.toURI()
+                , new AtomicInteger(0)
+                , "http://purl.org/NET/aec/associatedTaxa" +
+                        " | http://rs.tdwg.org/dwc/terms/Occurrence" +
+                        " | http://rs.tdwg.org/dwc/terms/associatedTaxa");
     }
 
     @Test
@@ -285,6 +312,7 @@ public class DatasetImporterForDwCATest {
                         is("Accipitridae"),
                         is("Strigidae")
                 ));
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences | http://rs.tdwg.org/dwc/terms/Occurrence"));
 
                 someRecords.set(true);
             }
@@ -302,6 +330,7 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setDataset(dataset);
 
         AtomicBoolean someRecords = new AtomicBoolean(false);
+        Set<String> resourceTypes = new TreeSet<>();
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -317,11 +346,19 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(REFERENCE_ID), is(not(nullValue())));
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
                 assertThat(interaction.get(REFERENCE_URL), is(not(nullValue())));
+                resourceTypes.addAll(Arrays.asList(splitByPipes(interaction.get(RESOURCE_TYPES))));
+
                 someRecords.set(true);
             }
         });
         studyImporterForDwCA.importStudy();
         assertThat(someRecords.get(), is(true));
+        assertThat(resourceTypes, containsInAnyOrder(
+                "http://rs.tdwg.org/dwc/terms/dynamicProperties"
+                ,"http://rs.tdwg.org/dwc/terms/Occurrence"
+                ,"http://rs.tdwg.org/dwc/terms/associatedTaxa"
+        ));
+
     }
 
     @Test
@@ -383,6 +420,7 @@ public class DatasetImporterForDwCATest {
         studyImporterForDwCA.setDataset(dataset);
         String expectedCitation = dataset.getCitation();
         AtomicBoolean someRecords = new AtomicBoolean(false);
+        Set<String> resourceTypes = new TreeSet<>();
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -396,14 +434,23 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(REFERENCE_ID), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
                 assertThat(interaction.get(REFERENCE_URL), startsWith("https://symbiota.ccber.ucsb.edu:443/collections/individual/index.php?occid"));
+                resourceTypes.addAll(Arrays.asList(splitByPipes(interaction.get(RESOURCE_TYPES))));
+
+
                 someRecords.set(true);
             }
         });
         studyImporterForDwCA.importStudy();
         assertThat(someRecords.get(), is(true));
+        assertThat(resourceTypes, containsInAnyOrder(
+                "http://rs.tdwg.org/dwc/terms/dynamicProperties"
+                , "http://rs.tdwg.org/dwc/terms/Occurrence"
+                , "http://rs.tdwg.org/dwc/terms/associatedTaxa"
+        ));
     }
 
-    private void assertImportsSomething(URI archiveRoot, AtomicInteger recordCounter, String... expectedProperties) throws StudyImporterException {
+    private void assertImportsSomethingOfType(URI archiveRoot, AtomicInteger recordCounter, String defaultResourceType, String... expectedProperties) throws StudyImporterException {
+        final Set<String> resourceTypes = new TreeSet<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", archiveRoot, inStream -> inStream));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
@@ -414,11 +461,21 @@ public class DatasetImporterForDwCATest {
                     assertThat("no value of [" + expectedProperty + "] found in " + interaction, interaction.get(expectedProperty), is(notNullValue()));
                 }
 
+                assertThat(interaction.get(RESOURCE_TYPES), is(notNullValue()));
+                String[] types = splitByPipes(interaction.get(RESOURCE_TYPES));
+                resourceTypes.addAll(Arrays.asList(types));
                 recordCounter.incrementAndGet();
             }
         });
         studyImporterForDwCA.importStudy();
         assertThat(recordCounter.get(), greaterThan(0));
+        String[] items = splitByPipes(defaultResourceType);
+        assertThat(resourceTypes, containsInAnyOrder(items));
+        assertThat(recordCounter.get(), greaterThan(0));
+    }
+
+    private String[] splitByPipes(String defaultResourceType) {
+        return StringUtils.splitByWholeSeparator(defaultResourceType, CharsetConstant.SEPARATOR);
     }
 
 
@@ -560,6 +617,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
     }
 
     @Test
@@ -594,6 +652,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://arctos.database.museum/guid/MVZ:Bird:183644"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(eaten by)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }
 
 
@@ -609,6 +668,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("MCZ:Orn:348192"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }
 
     @Test
@@ -623,6 +683,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("MCZ:Orn:348209"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }
 
 
@@ -638,6 +699,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TARGET_OCCURRENCE_ID), is("MCZ:IZ:ECH-8358"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("parasitically found on/in"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }
 
     @Test
@@ -658,6 +720,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TARGET_OCCURRENCE_ID), is("MCZ:Mamm:3189"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("from same lot as"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }
 
     @Test
@@ -678,6 +741,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TARGET_OCCURRENCE_ID), is("National Museum of Natural History 602540"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }
 
     @Test
@@ -710,6 +774,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("Denver Zoology Tissue Mammal 2823"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(ate)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }
 
     @Test
@@ -760,6 +825,7 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(DatasetImporterForTSV.SOURCE_INSTITUTION_CODE), is("CUIC"));
                 assertThat(interaction.get(DatasetImporterForTSV.SOURCE_CATALOG_NUMBER), is("CUIC_ENT 00014070"));
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("Digital Bee Collections Network, 2014 (and updates). Version: 2016-03-08. National Science Foundation grant DBI 0956388"));
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/Occurrence | http://purl.org/NET/aec/associatedTaxa"));
                 foundLink.set(true);
 
             }
@@ -816,6 +882,7 @@ public class DatasetImporterForDwCATest {
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("C. M. Barber"));
                 }
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
             }
         });
 
@@ -846,6 +913,8 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(DatasetImporterForTSV.TARGET_COLLECTION_CODE), is(nullValue()));
                 assertThat(interaction.get(DatasetImporterForTSV.TARGET_INSTITUTION_CODE), is(nullValue()));
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
+
             }
         });
 
@@ -874,6 +943,8 @@ public class DatasetImporterForDwCATest {
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
                 }
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
+                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
+
             }
         });
 
@@ -902,6 +973,8 @@ public class DatasetImporterForDwCATest {
                     assertThat(interaction.get(TaxonUtil.TARGET_TAXON_ID), is("http://www.inaturalist.org/taxa/133061"));
                     assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is("Enhydra lutris kenyoni"));
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("https://www.inaturalist.org/users/dpom"));
+                    assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/Taxon"));
+
                 }
 
             }
@@ -923,6 +996,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(REFERENCE_CITATION), is("some reference"));
         assertThat(properties.get(REFERENCE_ID), is("some reference"));
         assertThat(properties.get(REFERENCE_URL), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("f:oo/bar"));
 
     }
 
@@ -938,6 +1012,8 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(REFERENCE_CITATION), is("something"));
         assertThat(properties.get(REFERENCE_ID), is("something"));
         assertThat(properties.get(REFERENCE_URL), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("f:oo/bar"));
+
 
     }
 
@@ -952,6 +1028,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(REFERENCE_CITATION), is("https://example.org"));
         assertThat(properties.get(REFERENCE_ID), is("https://example.org"));
         assertThat(properties.get(REFERENCE_URL), is("https://example.org"));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("f:oo/bar"));
     }
 
     @Test
@@ -965,6 +1042,7 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(REFERENCE_CITATION), is("https://example.org"));
         assertThat(properties.get(REFERENCE_ID), is("https://example.org"));
         assertThat(properties.get(REFERENCE_URL), is("https://example.org"));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("f:oo/bar"));
     }
 
     private class DummyRecord implements Record {
@@ -982,7 +1060,27 @@ public class DatasetImporterForDwCATest {
 
         @Override
         public Term rowType() {
-            return null;
+            return new Term() {
+                @Override
+                public String prefix() {
+                    return "foo:";
+                }
+
+                @Override
+                public URI namespace() {
+                    return URI.create("f:oo/");
+                }
+
+                @Override
+                public String simpleName() {
+                    return "bar";
+                }
+
+                @Override
+                public boolean isClass() {
+                    return true;
+                }
+            };
         }
 
         @Override
