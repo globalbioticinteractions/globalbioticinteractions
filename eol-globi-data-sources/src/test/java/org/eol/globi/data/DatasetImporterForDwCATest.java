@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertNull;
 import static org.eol.globi.data.DatasetImporterForDwCA.EXTENSION_ASSOCIATED_TAXA;
@@ -49,9 +51,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
-import static org.eol.globi.data.DatasetImporterForTSV.TARGET_COLLECTION_CODE;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
-import static org.eol.globi.data.DatasetImporterForTSV.TARGET_INSTITUTION_CODE;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
@@ -456,6 +456,45 @@ public class DatasetImporterForDwCATest {
 
     @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceUSNMMalformedJsonChunk() throws IOException {
+        String occurrenceRemarks = "{\"hostGen\":\"Potamotrygon\"" +
+                ",\"hostSpec\":\"sp.\"" +
+                ",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\"" +
+                ",\"hostBodyLoc\":\"gill\"" +
+                ",\"hostFldNo\":\"Code: TO05-31\",\"hostRemarks\":\"sp. \"toc_2\"\"}";
+
+
+        occurrenceRemarks = DatasetImporterForDwCA.attemptToPatchOccurrenceRemarksWithMalformedJSON(occurrenceRemarks);
+
+        String fixed = occurrenceRemarks;
+
+        assertPotamotrygonHostValues(DatasetImporterForDwCA.parseJsonChunk(fixed));
+    }
+
+    private void assertPotamotrygonHostValues(Map<String, String> properties) {
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Potamotrygon sp."));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Potamotrygon"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("sp."));
+        assertThat(properties.get(TARGET_FIELD_NUMBER), is("Code: TO05-31"));
+        assertThat(properties.get(TARGET_CATALOG_NUMBER), is(nullValue()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+    @Test
+    public void occurrenceUSNMWelformedJsonChunk() throws IOException {
+        String occurrenceRemarks = "{\"hostGen\":\"Potamotrygon\"" +
+                ",\"hostSpec\":\"sp.\"" +
+                ",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\"" +
+                ",\"hostBodyLoc\":\"gill\"" +
+                ",\"hostFldNo\":\"Code: TO05-31\",\"hostRemarks\":\"sp. \\\"toc_2\\\"\"}";
+
+
+        assertPotamotrygonHostValues(DatasetImporterForDwCA.parseJsonChunk(occurrenceRemarks));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarks2() throws IOException {
         String occurrenceRemarks = "4% Formaldehyde Original USNPC preservative was a solution of 70% ethanol, 3% formalin, and 2% glycerine " +
                 "{\"hostGen\":\"Lutjanus\",\"hostSpec\":\"campechanus\",\"hostHiTax\":\"Actinopterygii: Pereciformes: Lutjanidae\",\"hostBodyLoc\":\"ovary\"}";
@@ -498,12 +537,17 @@ public class DatasetImporterForDwCATest {
     @Test(expected = IOException.class)
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarksMalformed() throws IOException {
-        String occurrenceRemarks = "{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1\"\"}";
+        String occurrenceRemarks = "{\"hostGen\":" +
+                "\"Potamotrygon\",\"hostSpec\":\"sp.\"," +
+                "\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\"," +
+                "\"hostBodyLoc\":\"gill\"," +
+                "\"hostFldNo\":\"Code: AC06-069\"," +
+                "\"hostRemarks\":\"sp. \"jam1unpatched\"\"}";
 
         try {
             DatasetImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
         } catch (IOException ex) {
-            assertThat(ex.getMessage(), is("found likely malformed host description [{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1\"\"}], see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/505"));
+            assertThat(ex.getMessage(), is("found likely malformed host description [{\"hostGen\":\"Potamotrygon\",\"hostSpec\":\"sp.\",\"hostHiTax\":\"Pisces: Rajiformes: Potamotrygonidae\",\"hostBodyLoc\":\"gill\",\"hostFldNo\":\"Code: AC06-069\",\"hostRemarks\":\"sp. \"jam1unpatched\"\"}], see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/505"));
             throw ex;
         }
     }

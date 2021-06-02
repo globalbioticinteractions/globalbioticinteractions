@@ -108,10 +108,31 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN =
             Pattern.compile("^([(][a-zA-Z ]+[)])[ ](.*)(http[s]{0,1}://mczbase.mcz.harvard.edu/guid/)([a-zA-Z0-9:-]+)");
     public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
+
     public static final Pattern MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN =
             Pattern.compile("^(.*)" +
                     "<a href=\"(.*)/SpecimenDetail.*collection_object_id=[0-9]+\">[ ]+" +
                     "([^<]+)</a>");
+
+    public static final Map<String, String> PATCHES_FOR_USNM_HOST_OCCURRENCE_REMARKS = new TreeMap<String, String>() {{
+        put("\"hostRemarks\":\"Sp. \"cururu\"\"", "\"hostRemarks\":\"Sp. \\\"cururu\\\"\"");
+        put("\"hostFldNo\":\"ishi&Hokanak-\"B\"\"", "\"hostFldNo\":\"ishi&Hokanak-\\\"B\\\"\"");
+        put("\"hostRemarks\":\"sp. \"toc_2\"\"", "\"hostRemarks\":\"sp. \\\"toc_2\\\"\"");
+        put("\"hostRemarks\":\"sp. \"2\"\"", "\"hostRemarks\":\"sp. \\\"2\\\"\"");
+        put("\"hostRemarks\":\"sp. \"1\"\"", "\"hostRemarks\":\"sp. \\\"1\\\"\"");
+        put("\"hostRemarks\":\"sp. \"mar_1\"\"", "\"hostRemarks\":\"sp. \\\"mar_1\\\"\"");
+        put("\"hostRemarks\":\"sp. \"tpj_1\"\"", "\"hostRemarks\":\"sp. \\\"tpj_1\\\"\"");
+        put("\"hostRemarks\":\"sp. \"jam1\"\"", "\"hostRemarks\":\"sp. \\\"jam1\\\"\"");
+        put("\"hostFldNo\":\"EJenkins-exp.inf.\"blue\"\"", "\"hostFldNo\":\"EJenkins-exp.inf.\\\"blue\\\"\"");
+        put("\"hostFldNo\":\"EJenkins-exp.inf.\"black\"\"", "\"hostFldNo\":\"EJenkins-exp.inf.\\\"black\\\"\"");
+        put("\"hostFldNo\":\"SKutz-\"10\"\"", "\"hostFldNo\":\"SKutz-\\\"10\\\"\"");
+        put("\"hostFldNo\":\"Niptanataik-\"A\"\"", "\"hostFldNo\":\"Niptanataik-\\\"A\\\"\"");
+        put("\"hostFldNo\":\"C.Ajdun-\"Cox Lake\"\"", "\"hostFldNo\":\"C.Ajdun-\\\"Cox Lake\\\"\"");
+        put("\"hostRemarks\":\"Host species listed \"calligaster calligaster\", probably reference to a King or Brown snake. Possibly the Dipodomys ordii was inside the snake?\"", "\"hostRemarks\":\"Host species listed \\\"calligaster calligaster\\\", probably reference to a King or Brown snake. Possibly the Dipodomys ordii was inside the snake?\"");
+        put("\"hostFldNo\":\"DGButh-tag \"W06-1\"\"", "\"hostFldNo\":\"DGButh-tag \\\"W06-1\\\"\"");
+        put("\"hostFldNo\":\"CHWharton-\"Old Bindy\"\"", "\"hostFldNo\":\"CHWharton-\\\"Old Bindy\\\"\"");
+        put("\"hostBodyLoc\":\"\"arm pits\" of wahoo\"", "\"hostBodyLoc\":\"\\\"arm pits\\\" of wahoo\"");
+    }};
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -968,7 +989,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         if (StringUtils.isNotBlank(candidateJsonChunk)) {
             try {
-                properties = parseJsonChunk(candidateJsonChunk);
+
+                properties = parseJsonChunk(
+                        attemptToPatchOccurrenceRemarksWithMalformedJSON(candidateJsonChunk)
+                );
             } catch (IOException ex) {
                 if (StringUtils.contains(candidateJsonChunk, "hostGen")) {
                     throw new IOException("found likely malformed host description [" + candidateJsonChunk + "], see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/505");
@@ -1029,6 +1053,15 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             properties.put(propertyName, StringUtils.trim(value));
         }
     }
+
+    static String attemptToPatchOccurrenceRemarksWithMalformedJSON(String occurrenceRemarks) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+        for (Map.Entry<String, String> replacement : PATCHES_FOR_USNM_HOST_OCCURRENCE_REMARKS.entrySet()) {
+            occurrenceRemarks = occurrenceRemarks.replace(replacement.getKey(), replacement.getValue());
+        }
+        return occurrenceRemarks;
+    }
+
 
 
 }
