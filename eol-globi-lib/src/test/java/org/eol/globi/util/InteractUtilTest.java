@@ -64,7 +64,7 @@ public class InteractUtilTest {
                 put("(ate)", InteractType.ATE);
                 put("(eaten by)", InteractType.EATEN_BY);
                 put("(parasite of)", InteractType.PARASITE_OF);
-                put("(host of)", InteractType.HOST_OF);
+                put("(host of)", InteractType.HAS_PARASITE); //see https://arctos.database.museum/info/ctDocumentation.cfm?table=ctid_references#host_of
                 put("(in amplexus with)", InteractType.INTERACTS_WITH);
                 put("consumption", InteractType.ATE);
                 put("flower predator", InteractType.ATE);

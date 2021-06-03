@@ -20,7 +20,7 @@ eaten by,,eatenBy,http://purl.obolibrary.org/obo/RO_0002471
 (ate),,eats,http://purl.obolibrary.org/obo/RO_0002470
 (eaten by),,eatenBy,http://purl.obolibrary.org/obo/RO_0002471
 (parasite of),,parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
-(host of),,hostOf,http://purl.obolibrary.org/obo/RO_0002453
+(host of),,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
 (in amplexus with),,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 consumption,,eats,http://purl.obolibrary.org/obo/RO_0002470
 flower predator,,eats,http://purl.obolibrary.org/obo/RO_0002470
