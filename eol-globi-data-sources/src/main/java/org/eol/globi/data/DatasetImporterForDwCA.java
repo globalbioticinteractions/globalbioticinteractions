@@ -474,6 +474,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 properties.put(StringUtils.trim(propertyValue[0]), StringUtils.trim(propertyValue[1]));
             }
         }
+
+        mapManterDynamicProperties(properties);
+
         if (hasInteractionTypeOrName(properties)) {
             appendResourceType(properties, DwcTerm.dynamicProperties.qualifiedName());
         }
@@ -481,6 +484,22 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return hasInteractionTypeOrName(properties)
                 ? properties
                 : Collections.emptyMap();
+    }
+
+    private static void mapManterDynamicProperties(Map<String, String> properties) {
+        // see https://github.com/globalbioticinteractions/unl-nsm/issues/4
+        putIfAbsentAndNotBlank(properties, TARGET_TAXON_NAME, properties.get("verbatim host ID"));
+        putIfAbsentAndNotBlank(properties, TARGET_BODY_PART_NAME, properties.get("location in host"));
+        putIfAbsentAndNotBlank(properties, TARGET_SEX_NAME, properties.get("verbatim host sex"));
+        putIfAbsentAndNotBlank(properties, TARGET_LIFE_STAGE_NAME, properties.get("verbatim host age"));
+
+        putIfAbsentAndNotBlank(properties, SOURCE_LIFE_STAGE_NAME, properties.get("age class"));
+        putIfAbsentAndNotBlank(properties, SOURCE_SEX_NAME, properties.get("sex"));
+
+        if (StringUtils.isNoneBlank(properties.get("verbatim host ID"))) {
+            properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
+            properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
+        }
     }
 
     private static boolean hasInteractionTypeOrName(Map<String, String> properties) {

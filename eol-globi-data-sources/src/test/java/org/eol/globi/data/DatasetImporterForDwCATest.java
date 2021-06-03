@@ -51,10 +51,13 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
@@ -621,6 +624,34 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void dynamicPropertiesManterLab() {
+        // see https://github.com/globalbioticinteractions/unl-nsm/issues/4
+        String s = "age class=adult;location in host=gallbladder;verbatim host ID=Ictalurus punctatus";
+        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Ictalurus punctatus"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("gallbladder"));
+        assertThat(properties.get(SOURCE_LIFE_STAGE_NAME), is("adult"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("hasHost"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesManterLab2() {
+        // see https://github.com/globalbioticinteractions/unl-nsm/issues/4
+        String s = "location in host=intestine;verbatim host ID=Tadarida brasiliensis;verbatim host sex=male";
+        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Tadarida brasiliensis"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("intestine"));
+        assertThat(properties.get(TARGET_SEX_NAME), is("male"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("hasHost"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
     public void dynamicPropertiesEmptyOnNoInteractions() {
         String s = "targetTaxonName: Homo sapiens; targetTaxonId: https://www.gbif.org/species/2436436; targetBodyPartName: blood; targetBodyPartId: http://purl.obolibrary.org/obo/NCIT_C12434\",\"eats: Homo sapiens";
         Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
@@ -634,7 +665,7 @@ public class DatasetImporterForDwCATest {
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Mus"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("inside"));
-        assertThat(properties.get(DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME), is("pupae"));
+        assertThat(properties.get(SOURCE_LIFE_STAGE_NAME), is("pupae"));
         assertThat(properties.get(DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID), is(nullValue()));
         assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0001025"));
     }
@@ -810,7 +841,7 @@ public class DatasetImporterForDwCATest {
             public void on(Map<String, String> interaction) throws StudyImporterException {
                 assertThat(interaction.get(SOURCE_TAXON_NAME), is("Andrena wilkella"));
                 assertThat(interaction.get(DatasetImporterForTSV.SOURCE_SEX_NAME), is("Female"));
-                assertThat(interaction.get(DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME), is("Adult"));
+                assertThat(interaction.get(SOURCE_LIFE_STAGE_NAME), is("Adult"));
                 assertThat(interaction.get(TaxonUtil.TARGET_TAXON_NAME), is("Melilotus officinalis"));
                 assertThat(interaction.get(INTERACTION_TYPE_NAME), is("associated with"));
                 assertThat(interaction.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002437"));
