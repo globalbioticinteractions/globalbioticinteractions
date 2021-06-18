@@ -29,6 +29,9 @@ public enum InteractionTypeExternal {
     DISPERSAL_VECTOR_OF(CypherQueryBuilder.INTERACTION_DISPERSAL_VECTOR_OF, "vector", "seed", InteractType.DISPERSAL_VECTOR_OF),
     HAS_DISPERSAL_VECTOR(CypherQueryBuilder.INTERACTION_HAS_DISPERSAL_VECTOR, "seed", "vector", InteractType.HAS_DISPERAL_VECTOR),
 
+    HAS_HABITAT(CypherQueryBuilder.INTERACTION_HAS_HABITAT, "inhabitant", "habitat", InteractType.HAS_HABITAT),
+    CREATES_HABITAT_FOR(CypherQueryBuilder.INTERACTION_CREATES_HABITAT_FOR, "habitat", "inhabitant", InteractType.CREATES_HABITAT_FOR),
+
     SYMBIONT_OF(CypherQueryBuilder.INTERACTION_SYMBIONT_OF, "symbiont", "symbiont", InteractType.SYMBIONT_OF),
     MUTUALIST_OF(CypherQueryBuilder.INTERACTION_MUTUALIST_OF, "mutualist", "mutualist", InteractType.MUTUALIST_OF),
     COMMENSALIST_OF(CypherQueryBuilder.INTERACTION_COMMENSALIST_OF, "commensalist", "commensalist", InteractType.COMMENSALIST_OF),

@@ -2,8 +2,6 @@ package org.eol.globi.server;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -17,6 +15,8 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -67,7 +67,6 @@ public class CypherQueryBuilder {
 
     public static final String INTERACTION_PATHOGEN_OF = InteractType.PATHOGEN_OF.getLabel();
     public static final String INTERACTION_HAS_PATHOGEN = InteractType.HAS_PATHOGEN.getLabel();
-    ;
 
     public static final String INTERACTION_VECTOR_OF = InteractType.VECTOR_OF.getLabel();
     public static final String INTERACTION_HAS_VECTOR = InteractType.HAS_VECTOR.getLabel();
@@ -90,6 +89,9 @@ public class CypherQueryBuilder {
 
     public static final String INTERACTION_KILLS = InteractType.KILLS.getLabel();
     public static final String INTERACTION_KILLED_BY = InteractType.KILLED_BY.getLabel();
+
+    public static final String INTERACTION_HAS_HABITAT = InteractType.HAS_HABITAT.getLabel();
+    public static final String INTERACTION_CREATES_HABITAT_FOR = InteractType.CREATES_HABITAT_FOR.getLabel();
 
     public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new TreeMap<String, InteractionTypeExternal>() {
         {
@@ -117,6 +119,9 @@ public class CypherQueryBuilder {
             put(InteractType.HAS_VECTOR.toString(), InteractionTypeExternal.HAS_VECTOR);
             put(InteractType.DISPERSAL_VECTOR_OF.toString(), InteractionTypeExternal.DISPERSAL_VECTOR_OF);
             put(InteractType.HAS_DISPERAL_VECTOR.toString(), InteractionTypeExternal.HAS_DISPERSAL_VECTOR);
+
+            put(InteractType.HAS_HABITAT.toString(), InteractionTypeExternal.HAS_HABITAT);
+            put(InteractType.CREATES_HABITAT_FOR.toString(), InteractionTypeExternal.CREATES_HABITAT_FOR);
 
 
             put(InteractType.SYMBIONT_OF.toString(), InteractionTypeExternal.SYMBIONT_OF);
