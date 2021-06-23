@@ -46,7 +46,10 @@ public class NodeUtil {
 
     public static String truncateTaxonName(String taxonName) {
         String truncatedName = taxonName;
-        if (!StringUtils.containsIgnoreCase(taxonName, "virus") && StringUtils.isNotBlank(taxonName)) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/672
+        if (!StringUtils.containsIgnoreCase(taxonName, "virus")
+                && !StringUtils.endsWith(taxonName, "V")
+                && StringUtils.isNotBlank(taxonName)) {
             String[] nameParts = StringUtils.split(taxonName);
             if (nameParts.length > 2) {
                 truncatedName = nameParts[0].trim() + " " + nameParts[1].trim();

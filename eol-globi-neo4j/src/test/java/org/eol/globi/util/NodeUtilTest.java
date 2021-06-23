@@ -19,4 +19,9 @@ public class NodeUtilTest {
     public void doNotTruncateVirusName() {
         assertThat(NodeUtil.truncateTaxonName("whatever something virus"), is("whatever something virus"));
     }
+
+    @Test
+    public void doNotTruncateLikelyVirusName() {
+        assertThat(NodeUtil.truncateTaxonName("whatever something V"), is("whatever something V"));
+    }
 }
