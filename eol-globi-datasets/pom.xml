@@ -16,7 +16,7 @@
 
     <properties>
         <globi.neo4j.index.version>${parent.version}</globi.neo4j.index.version>
-        <globi.taxa.version>0.3.32</globi.taxa.version>
+        <globi.taxa.version>0.3.33</globi.taxa.version>
         <globi.tsv.version>1.0-SNAPSHOT</globi.tsv.version>
         <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
         <dataset.dir>change/me/in/pom.xml</dataset.dir>
