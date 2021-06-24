@@ -26,7 +26,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,18 +43,17 @@ import static org.eol.globi.data.DatasetImporterForDwCA.importResourceRelationEx
 import static org.eol.globi.data.DatasetImporterForDwCA.mapReferenceInfo;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseAssociatedOccurrences;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseDynamicPropertiesForInteractionsOnly;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
-import static org.eol.globi.data.DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
@@ -82,7 +80,7 @@ public class DatasetImporterForDwCATest {
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomethingOfType(archiveRoot
                 , new AtomicInteger(0)
-                , "http://rs.tdwg.org/dwc/terms/dynamicProperties | http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/associatedTaxa" );
+                , "http://rs.tdwg.org/dwc/terms/dynamicProperties | http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/associatedTaxa");
     }
 
     @Test
@@ -358,8 +356,8 @@ public class DatasetImporterForDwCATest {
         assertThat(someRecords.get(), is(true));
         assertThat(resourceTypes, containsInAnyOrder(
                 "http://rs.tdwg.org/dwc/terms/dynamicProperties"
-                ,"http://rs.tdwg.org/dwc/terms/Occurrence"
-                ,"http://rs.tdwg.org/dwc/terms/associatedTaxa"
+                , "http://rs.tdwg.org/dwc/terms/Occurrence"
+                , "http://rs.tdwg.org/dwc/terms/associatedTaxa"
         ));
 
     }
@@ -493,6 +491,23 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Biomphalaria havanensis"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Biomphalaria"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("havanensis"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarks4() throws IOException {
+        String occurrenceRemarks = "{\"hostGen\":\"Tilapia\",\"hostSpec\":\"sparrmani\"}";
+
+        ArrayList<Map<String, String>> candidates = new ArrayList<>();
+        DatasetImporterForDwCA.addCandidatesFromRemarks(candidates, occurrenceRemarks);
+
+        assertThat(candidates.size(), is(1));
+        Map<String, String> properties = candidates.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Tilapia sparrmani"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Tilapia"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("sparrmani"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
     }

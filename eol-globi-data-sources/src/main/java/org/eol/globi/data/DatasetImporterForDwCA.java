@@ -108,7 +108,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
     public static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
     public static final String DWC_COREID = "dwc:coreid";
-    
+
     public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN =
             Pattern.compile("^([(][a-zA-Z ]+[)])[ ](.*)(http[s]{0,1}://mczbase.mcz.harvard.edu/guid/)([a-zA-Z0-9:-]+)");
     public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
@@ -263,16 +263,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
 
         String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
-        if (StringUtils.isNotBlank(occurrenceRemarks)) {
-            try {
-                addUSNMStyleHostOccurrenceRemarks(interactionCandidates, occurrenceRemarks);
-                addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(interactionCandidates, occurrenceRemarks);
-            } catch (IOException e) {
-                if (getLogger() != null) {
-                    Map<String, String> interactionProperties = new HashMap<>();
-                    mapCoreProperties(rec, interactionProperties);
-                    getLogger().warn(LogUtil.contextFor(interactionProperties), e.getMessage());
-                }
+        try {
+            addCandidatesFromRemarks(interactionCandidates, occurrenceRemarks);
+        } catch (IOException e) {
+            if (getLogger() != null) {
+                Map<String, String> interactionProperties = new HashMap<>();
+                mapCoreProperties(rec, interactionProperties);
+                getLogger().warn(LogUtil.contextFor(interactionProperties), e.getMessage());
             }
         }
 
@@ -306,6 +303,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }
 
+    static void addCandidatesFromRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
+        if (StringUtils.isNotBlank(occurrenceRemarks)) {
+            addUSNMStyleHostOccurrenceRemarks(interactionCandidates, occurrenceRemarks);
+            addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(interactionCandidates, occurrenceRemarks);
+        }
+    }
+
     private boolean isDependency() {
         return StringUtils.equalsIgnoreCase(getDataset().getOrDefault(DatasetConstant.IS_DEPENDENCY, "false"), "true");
     }
@@ -334,10 +338,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
-    private void addUSNMStyleHostOccurrenceRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
+    private static void addUSNMStyleHostOccurrenceRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
         Map<String, String> properties = parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
             appendResourceType(properties, DwcTerm.occurrenceRemarks.qualifiedName());
+            interactionCandidates.add(properties);
         }
     }
 
@@ -1134,7 +1139,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
         return occurrenceRemarks;
     }
-
 
 
 }
