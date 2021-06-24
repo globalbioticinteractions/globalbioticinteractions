@@ -417,20 +417,22 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     public static List<Column> columnNamesForSchema(JsonNode tableSchema) {
         List<Column> columnNames = new ArrayList<Column>();
         final JsonNode columns = tableSchema.get("columns");
-        for (JsonNode column : columns) {
-            final JsonNode columnName = column.get("name");
-            if (columnName != null) {
-                final Column col = column.has("datatype")
-                        ? createTypedColumn(column, columnName)
-                        : createStringColumn(columnName);
+        if (columns != null) {
+            for (JsonNode column : columns) {
+                final JsonNode columnName = column.get("name");
+                if (columnName != null) {
+                    final Column col = column.has("datatype")
+                            ? createTypedColumn(column, columnName)
+                            : createStringColumn(columnName);
 
-                if (column.has("titles")) {
-                    String titlesText = column.get("titles").asText();
-                    if (StringUtils.isNotBlank(titlesText) && !StringUtils.equals(columnName.asText(), titlesText)) {
-                        col.setOriginalName(StringUtils.trim(titlesText));
+                    if (column.has("titles")) {
+                        String titlesText = column.get("titles").asText();
+                        if (StringUtils.isNotBlank(titlesText) && !StringUtils.equals(columnName.asText(), titlesText)) {
+                            col.setOriginalName(StringUtils.trim(titlesText));
+                        }
                     }
+                    columnNames.add(col);
                 }
-                columnNames.add(col);
             }
         }
         return columnNames;
