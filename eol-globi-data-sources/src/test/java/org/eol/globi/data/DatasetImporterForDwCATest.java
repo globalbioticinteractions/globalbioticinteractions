@@ -94,6 +94,16 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void importHabitatFromDir() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/habitat-test/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        assertImportsSomethingOfType(archiveRoot
+                , new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/habitat"
+        );
+    }
+
+    @Test
     public void importTaxonDescriptionsFromDir() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
