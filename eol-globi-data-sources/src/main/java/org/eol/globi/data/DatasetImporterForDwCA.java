@@ -248,9 +248,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         List<Map<String, String>> interactionCandidates = new ArrayList<>();
 
 
-        appendInteractionCandidatesIfAvailable(rec, interactionCandidates, DwcTerm.associatedTaxa);
+        appendInteractionCandidatesIfAvailable(rec, interactionCandidates, DwcTerm.associatedTaxa, "");
 
-        appendInteractionCandidatesIfAvailable(rec, interactionCandidates, DwcTerm.habitat);
+        appendInteractionCandidatesIfAvailable(rec, interactionCandidates, DwcTerm.habitat, null);
 
         String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
         if (StringUtils.isNotBlank(associatedOccurrences)) {
@@ -298,10 +298,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }
 
-    private String appendInteractionCandidatesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates, DwcTerm term) {
+    private String appendInteractionCandidatesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates, DwcTerm term, String interactionTypeNameDefault) {
         String associatedTaxa = rec.value(term);
         if (StringUtils.isNotBlank(associatedTaxa)) {
-            List<Map<String, String>> associatedTaxonProperties = AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa);
+            List<Map<String, String>> associatedTaxonProperties = AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa, interactionTypeNameDefault);
+
             for (Map<String, String> associatedTaxonProperty : associatedTaxonProperties) {
                 appendResourceType(associatedTaxonProperty, term.qualifiedName());
                 interactionCandidates.add(associatedTaxonProperty);
