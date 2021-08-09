@@ -156,7 +156,7 @@ public class GraphExporterImpl implements GraphExporter {
             int count = 1;
             for (StudyNode study : studies) {
                 studyExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()), true);
-                if (count % 50 == 0) {
+                    if (count % 10000 == 0) {
                     LOG.info("added triples for [" + count + "] of [" + total + "] studies...");
                 }
                 count++;
