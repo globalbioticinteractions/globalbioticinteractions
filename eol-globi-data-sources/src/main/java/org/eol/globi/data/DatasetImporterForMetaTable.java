@@ -340,6 +340,9 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
             if (null == convertedValue) {
                 if ("https://marinemetadata.org/references/nodctaxacodes".equals(column.getDataTypeId())) {
                     final String[] parts = value.trim().split("[^0-9]");
+                    if (parts.length == 0) {
+                        throw new IllegalNODCTaxonCodeException("expected numeric NDOC taxon code, but got [" + value + "]");
+                    }
                     convertedValue = TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER.getIdPrefix() + parts[0].replace("00", "");
                 } else if ("http://purl.bioontology.org/ontology/NCBITAXON".equals(column.getDataTypeId())) {
                     final String id = value.trim();

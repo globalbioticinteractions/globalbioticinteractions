@@ -210,6 +210,13 @@ public class DatasetImporterForMetaTableTest {
         assertThat(parsedValue, is("NODC:123"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void parseValueNODCNonNumeric() {
+        final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "https://marinemetadata.org/references/nodctaxacodes");
+        final String parsedValue = DatasetImporterForMetaTable.parseValue("a", column);
+        assertThat(parsedValue, is(nullValue()));
+    }
+
     @Test
     public void parseValueNCBI() {
         final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "string");
