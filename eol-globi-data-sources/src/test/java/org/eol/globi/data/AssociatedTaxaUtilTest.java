@@ -452,6 +452,28 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("feeding on"));
     }
 
+    @Test
+    public void associatedTaxaRestingOn() {
+        String associatedTaxa = "resting on Juniperus virginiana trunk";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Juniperus virginiana trunk"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("resting on"));
+    }
+
+    @Test
+    public void associatedTaxaCollectedVar() {
+        String associatedTaxa = "Coll. Im. Red-Tailed Hawk";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Im. Red-Tailed Hawk"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Coll."));
+    }
+
     public static List<Map<String, String>> attemptParsingAssociationString(String associatedTaxa) {
         List<Map<String, String>> properties = new ArrayList<>();
         return AssociatedTaxaUtil.attemptParsingAssociationString(associatedTaxa, properties);

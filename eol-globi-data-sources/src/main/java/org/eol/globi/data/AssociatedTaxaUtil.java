@@ -34,6 +34,7 @@ public final class AssociatedTaxaUtil {
             "^[gG]rasping",
             "^[Ff]rom",
             "^[cC]lutching",
+            "^[rR]esting on",
             "[Ff]eeding on")
             + ")([ ])(.*)");
 
