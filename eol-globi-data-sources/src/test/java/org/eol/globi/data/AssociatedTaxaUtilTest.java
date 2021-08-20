@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -250,5 +251,210 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
     }
 
+
+    @Test
+    public void associatedTaxaFoundOn() {
+        String associatedTaxa = "Found on wild turkey";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("wild turkey"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Found on"));
+    }
+
+    @Test
+    public void associatedTaxaFoundOn2() {
+        String associatedTaxa = "found on overhang";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("overhang"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("found on"));
+    }
+
+    @Test
+    public void associatedTaxaOn() {
+        String associatedTaxa = "on inflorescence (past flowering) of Onosmodium molle";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("inflorescence (past flowering) of Onosmodium molle"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+    }
+
+    @Test
+    public void associatedTaxaOn2() {
+        String associatedTaxa = "On Monarda punctata Oak-Pine Barrens";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Monarda punctata Oak-Pine Barrens"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("On"));
+    }
+
+    @Test
+    public void associatedTaxaGrasping() {
+        String associatedTaxa = "grasping dead Epicauta pensylvanica #4283 among flowers of Solidago speciosa 4PM fair 72";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("dead Epicauta pensylvanica #4283 among flowers of Solidago speciosa 4PM fair 72"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("grasping"));
+    }
+
+
+    @Test
+    public void associatedTaxaCollectedFrom() {
+        String associatedTaxa = "Coll. Sharp-shinned Hawk im. Female";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Sharp-shinned Hawk im. Female"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Coll."));
+    }
+
+    @Test
+    public void associatedTaxaCollectedFrom1() {
+        String associatedTaxa = "Coll. in field with sweep net";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("field with sweep net"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Coll. in"));
+    }
+
+    @Test
+    public void associatedTaxaCollectedFrom2() {
+        String associatedTaxa = "coll. from Ulmus americana";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ulmus americana"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("coll. from"));
+    }
+
+    @Test
+    public void associatedTaxaCollectedFrom3() {
+        String associatedTaxa = "Collected from Yellow Pan Traps";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Yellow Pan Traps"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Collected from"));
+    }
+
+    @Test
+    public void associatedTaxaCollectedFrom4() {
+        String associatedTaxa = "collected from underbrush oak pasture";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("underbrush oak pasture"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("collected from"));
+    }
+
+    @Test
+    public void associatedTaxaCollectedOn() {
+        String associatedTaxa = "collected on Lathyrus japonicus";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Lathyrus japonicus"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("collected on"));
+    }
+
+    @Test
+    public void associatedTaxaClutching() {
+        String associatedTaxa = "clutching dead Xestia smithii #4299 among flowers of Spiraea alba noon sunny";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("dead Xestia smithii #4299 among flowers of Spiraea alba noon sunny"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("clutching"));
+    }
+
+    @Test
+    public void associatedTaxaRearedFrom() {
+        String associatedTaxa = "reared from Gravesia aqualegia";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Gravesia aqualegia"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("reared from"));
+    }
+
+
+    @Test
+    public void associatedTaxaFeedingOn() {
+        String associatedTaxa = "feeding on Northern Blue Butterfly";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Northern Blue Butterfly"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("feeding on"));
+    }
+
+    @Test
+    public void associatedTaxaFrom() {
+        String associatedTaxa = "From red tail hawk";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("red tail hawk"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("From"));
+    }
+
+    @Test
+    public void associatedTaxaFrom2() {
+        String associatedTaxa = "from turkey brooder house on Clem Stedley farm";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("turkey brooder house on Clem Stedley farm"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("from"));
+    }
+
+    @Test
+    public void associatedTaxaFeedingOn2() {
+        String associatedTaxa = "Feeding on domestic bronze turkey";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("domestic bronze turkey"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Feeding on"));
+    }
+
+    @Test
+    public void associatedTaxaFeedingOn3() {
+        String associatedTaxa = "fem. feeding on dead Eristalis tenax #4571 among flowers of Eupatorium perfoliatum w/ male atop her";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("dead Eristalis tenax #4571 among flowers of Eupatorium perfoliatum w/ male atop her"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("feeding on"));
+    }
+
+    public static List<Map<String, String>> attemptParsingAssociationString(String associatedTaxa) {
+        List<Map<String, String>> properties = new ArrayList<>();
+        return AssociatedTaxaUtil.attemptParsingAssociationString(associatedTaxa, properties);
+    }
 
 }

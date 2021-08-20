@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.eol.globi.data.DatasetImporterForTSV.ASSOCIATED_TAXA;
@@ -19,6 +20,22 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
 public final class AssociatedTaxaUtil {
+
+    private final static Pattern ASSOCIATION_PATTERNS = Pattern.compile("(.*)("
+            + String.join(CharsetConstant.SEPARATOR_CHAR,
+            "^[rR]eared from",
+            "^[Cc]oll. in",
+            "^[Cc]oll. from",
+            "^[Cc]oll.",
+            "^[Cc]ollected from",
+            "^[Cc]ollected on",
+            "^[fF]ound on",
+            "^[oO]n",
+            "^[gG]rasping",
+            "^[Ff]rom",
+            "^[cC]lutching",
+            "[Ff]eeding on")
+            + ")([ ])(.*)");
 
     public static List<Map<String, String>> expandIfNeeded(Map<String, String> properties) {
         try {
@@ -68,28 +85,34 @@ public final class AssociatedTaxaUtil {
         String lastVerb = null;
         for (String part : parts) {
             String trimmedPart = StringUtils.trim(part);
-            Matcher matcher = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_IDEA.matcher(trimmedPart);
-            if (matcher.find()) {
-                String genus = StringUtils.trim(matcher.group(1));
-                String specificEpithet = StringUtils.trim(matcher.group(2));
-                addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, interactionTypeNameDefault);
-            } else {
-                Matcher matcher1 = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_EAE.matcher(trimmedPart);
-                if (matcher1.find()) {
-                    String genus = StringUtils.trim(matcher1.group(2));
-                    String specificEpithet = StringUtils.trim(matcher1.group(3));
+
+            int before = properties.size();
+            attemptParsingAssociationString(trimmedPart, properties);
+            int after = properties.size();
+            if (before == after) {
+                Matcher matcher = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_IDEA.matcher(trimmedPart);
+                if (matcher.find()) {
+                    String genus = StringUtils.trim(matcher.group(1));
+                    String specificEpithet = StringUtils.trim(matcher.group(2));
                     addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, interactionTypeNameDefault);
                 } else {
-                    String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
-                    if (verbTaxon.length == 2) {
-                        lastVerb = trimAndRemoveQuotes(verbTaxon[0]);
-                        addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
-                    } else if (StringUtils.isNotBlank(lastVerb)) {
-                        addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, trimAndRemoveQuotes(lastVerb));
+                    Matcher matcher1 = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_EAE.matcher(trimmedPart);
+                    if (matcher1.find()) {
+                        String genus = StringUtils.trim(matcher1.group(2));
+                        String specificEpithet = StringUtils.trim(matcher1.group(3));
+                        addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, interactionTypeNameDefault);
                     } else {
-                        addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, interactionTypeNameDefault);
-                    }
+                        String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
+                        if (verbTaxon.length == 2) {
+                            lastVerb = trimAndRemoveQuotes(verbTaxon[0]);
+                            addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
+                        } else if (StringUtils.isNotBlank(lastVerb)) {
+                            addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, trimAndRemoveQuotes(lastVerb));
+                        } else {
+                            addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, interactionTypeNameDefault);
+                        }
 
+                    }
                 }
 
             }
@@ -132,5 +155,16 @@ public final class AssociatedTaxaUtil {
                 }});
             }
         }
+    }
+
+    public static List<Map<String, String>> attemptParsingAssociationString(String associatedTaxa, List<Map<String, String>> properties) {
+        Matcher matcher = ASSOCIATION_PATTERNS.matcher(associatedTaxa);
+        if (matcher.find()) {
+            properties.add(new HashMap<String, String>() {{
+                put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group(4)));
+                put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(2)));
+            }});
+        }
+        return properties;
     }
 }
