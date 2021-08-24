@@ -1,6 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.domain.Citable;
 import org.eol.globi.service.ResourceService;
 

@@ -8,8 +8,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
@@ -98,7 +98,7 @@ public class DOIResolverImpl implements DOIResolver {
         double score = 0.0;
         if (result.has("score")) {
             if (result.get("score").isDouble()) {
-                score = result.get("score").getDoubleValue();
+                score = result.get("score").asDouble();
             }
         }
         return score > minMatchScore;

@@ -1,6 +1,6 @@
 package org.eol.globi.service;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.data.BaseDatasetImporter;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;

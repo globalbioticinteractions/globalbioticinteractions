@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.StudyNode;
 import org.globalbioticinteractions.dataset.DatasetImpl;

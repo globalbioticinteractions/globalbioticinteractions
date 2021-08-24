@@ -1,8 +1,8 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
@@ -56,20 +56,20 @@ public class TaxonSearchImpl implements TaxonSearch {
         if (dataNode != null && dataNode.size() > 0) {
             props = new HashMap<>();
             JsonNode first = dataNode.get(0);
-            props.put(PropertyAndValueDictionary.NAME, StringUtils.defaultString(first.get(0).getTextValue()));
-            props.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.defaultString(first.get(1).getTextValue()));
-            props.put(PropertyAndValueDictionary.PATH, StringUtils.defaultString(first.get(2).getTextValue()));
-            final String externalId = StringUtils.defaultString(first.get(3).getTextValue());
+            props.put(PropertyAndValueDictionary.NAME, StringUtils.defaultString(first.get(0).asText()));
+            props.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.defaultString(first.get(1).asText()));
+            props.put(PropertyAndValueDictionary.PATH, StringUtils.defaultString(first.get(2).asText()));
+            final String externalId = StringUtils.defaultString(first.get(3).asText());
             props.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
 
-            final String externalURL = StringUtils.defaultString(first.get(4).getTextValue());
+            final String externalURL = StringUtils.defaultString(first.get(4).asText());
             if (StringUtils.isNotBlank(externalId) && StringUtils.isBlank(externalURL)) {
                 props.put(PropertyAndValueDictionary.EXTERNAL_URL, StringUtils.defaultString(ExternalIdUtil.urlForExternalId(externalId)));
             } else {
                 props.put(PropertyAndValueDictionary.EXTERNAL_URL, externalURL);
             }
 
-            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, StringUtils.defaultString(first.get(5).getTextValue()));
+            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, StringUtils.defaultString(first.get(5).asText()));
         }
         return props;
     }

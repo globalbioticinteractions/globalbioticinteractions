@@ -3,7 +3,7 @@ package org.globalbioticinteractions.dataset;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheProxyForDataset;
 import org.globalbioticinteractions.cache.ContentProvenance;

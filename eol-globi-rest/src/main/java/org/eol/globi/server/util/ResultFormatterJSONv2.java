@@ -1,7 +1,7 @@
 package org.eol.globi.server.util;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.server.CypherQueryBuilder;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             throw new IllegalArgumentException("columns array expected, but not found");
         }
         for (JsonNode column : columns) {
-            columnNames.add(column.getTextValue());
+            columnNames.add(column.asText());
         }
 
         JsonNode data = jsonNode.get("data");
@@ -113,22 +113,22 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
         String colName = columnNames.get(i);
         final JsonNode value = row.get(i);
         if (ResultField.INTERACTION_TYPE.getLabel().equals(colName)) {
-            interaction.put("type", value.getTextValue());
+            interaction.put("type", value.asText());
         } else if (ResultField.SOURCE_TAXON_NAME.getLabel().equals(colName)) {
             if (value.isTextual()) {
-                sourceTaxon.put("name", value.getTextValue());
+                sourceTaxon.put("name", value.asText());
             }
         } else if (ResultField.SOURCE_TAXON_PATH.getLabel().equals(colName)) {
             if (value.isTextual()) {
-                sourceTaxon.put("path", value.getTextValue());
+                sourceTaxon.put("path", value.asText());
             }
         } else if (ResultField.SOURCE_TAXON_EXTERNAL_ID.getLabel().equals(colName)) {
             if (value.isTextual()) {
-                sourceTaxon.put("id", value.getTextValue());
+                sourceTaxon.put("id", value.asText());
             }
         } else if (ResultField.TARGET_TAXON_NAME.getLabel().equals(colName)) {
             if (value.isTextual()) {
-                targetTaxon.put("name", value.getTextValue());
+                targetTaxon.put("name", value.asText());
             } else if (value.isArray()) {
                 for (final JsonNode name : value) {
                     if (name.isTextual()) {
@@ -138,36 +138,36 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             }
         } else if (ResultField.TARGET_TAXON_PATH.getLabel().equals(colName)) {
             if (value.isTextual()) {
-                targetTaxon.put("path", value.getTextValue());
+                targetTaxon.put("path", value.asText());
             }
         } else if (ResultField.TARGET_TAXON_EXTERNAL_ID.getLabel().equals(colName)) {
             if (value.isTextual()) {
-                targetTaxon.put("id", value.getTextValue());
+                targetTaxon.put("id", value.asText());
             }
         } else if (ResultField.LATITUDE.getLabel().equals(colName)) {
             if (value.isNumber()) {
-                interaction.put("latitude", value.getDoubleValue());
+                interaction.put("latitude", value.asDouble());
             }
         } else if (ResultField.LONGITUDE.getLabel().equals(colName)) {
             if (value.isNumber()) {
-                interaction.put("longitude", value.getDoubleValue());
+                interaction.put("longitude", value.asDouble());
             }
         } else if (ResultField.ALTITUDE.getLabel().equals(colName)) {
             if (value.isNumber()) {
-                interaction.put("altitude", value.getDoubleValue());
+                interaction.put("altitude", value.asDouble());
             }
         } else if (ResultField.COLLECTION_TIME_IN_UNIX_EPOCH.getLabel().equals(colName)) {
             if (value.isNumber()) {
-                interaction.put("time", value.getLongValue());
+                interaction.put("time", value.asLong());
             }
         } else if (ResultField.STUDY_TITLE.getLabel().equals(colName)) {
-            interaction.put("study", value.getTextValue());
+            interaction.put("study", value.asText());
         }
     }
 
     private void addTargetTaxon(List<Map<String, String>> targetTaxa, final JsonNode name) {
         targetTaxa.add(new HashMap<String, String>() {{
-            put("name", name.getTextValue());
+            put("name", name.asText());
         }});
     }
 }

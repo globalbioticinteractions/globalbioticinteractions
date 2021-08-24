@@ -1,10 +1,9 @@
 package org.globalbioticinteractions.dataset;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.ResourceService;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -23,7 +22,7 @@ import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.eol.globi.domain.PropertyAndValueDictionary.*;
+import static org.eol.globi.domain.PropertyAndValueDictionary.MIME_TYPE_DWCA;
 
 public class EMLUtil {
 

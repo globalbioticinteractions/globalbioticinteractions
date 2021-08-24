@@ -1,6 +1,6 @@
 package org.eol.globi.server.util;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -39,7 +39,7 @@ public class ResultFormatterDOT implements ResultFormatter {
         JsonNode columns = results.get("columns");
         Map<String, Integer> nameIndex = new HashMap<String, Integer>();
         for (int i = 0; i < columns.size(); i++) {
-            nameIndex.put(columns.get(i).getTextValue(), i);
+            nameIndex.put(columns.get(i).asText(), i);
         }
 
         List<ResultField> sourceTaxonResultFields = Arrays.asList(ResultField.SOURCE_TAXON_NAME, ResultField.SOURCE_TAXON_PATH, ResultField.SOURCE_TAXON_EXTERNAL_ID, ResultField.SOURCE_TAXON_PATH_IDS);
@@ -55,7 +55,7 @@ public class ResultFormatterDOT implements ResultFormatter {
                 JsonNode targetTaxon = row.get(targetTaxonIndex);
                 JsonNode type = row.get(interactionTypeIndex);
                 if (sourceTaxon != null && targetTaxon != null && type != null) {
-                    String sourceId = getSafeLabel(sourceTaxon.getTextValue());
+                    String sourceId = getSafeLabel(sourceTaxon.asText());
                     if (targetTaxon.isArray()) {
                         for (JsonNode targetTaxonItem : targetTaxon) {
                             appendEdge(builder, targetTaxonItem, type, sourceId);
@@ -80,7 +80,7 @@ public class ResultFormatterDOT implements ResultFormatter {
     }
 
     private void appendEdge(StringBuilder builder, JsonNode targetTaxon, JsonNode type, String sourceId) {
-        String targetId = getSafeLabel(targetTaxon.getTextValue());
+        String targetId = getSafeLabel(targetTaxon.asText());
         appendEdge(builder, type, sourceId, targetId);
     }
 
@@ -89,7 +89,7 @@ public class ResultFormatterDOT implements ResultFormatter {
         builder.append("->");
         builder.append(targetId);
         builder.append("[label=\"");
-        builder.append(type.getTextValue());
+        builder.append(type.asText());
         builder.append("\"];\n");
     }
 

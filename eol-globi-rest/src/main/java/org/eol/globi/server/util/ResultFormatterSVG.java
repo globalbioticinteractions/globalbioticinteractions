@@ -1,7 +1,7 @@
 package org.eol.globi.server.util;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.io.InputStream;

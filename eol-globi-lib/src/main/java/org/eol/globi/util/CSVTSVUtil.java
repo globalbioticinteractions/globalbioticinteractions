@@ -7,7 +7,7 @@ import com.Ostermiller.util.ExcelCSVPrinter;
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
 

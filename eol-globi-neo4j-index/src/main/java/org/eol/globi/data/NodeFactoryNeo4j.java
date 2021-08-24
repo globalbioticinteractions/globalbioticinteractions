@@ -2,8 +2,8 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.QueryParser;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;

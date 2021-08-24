@@ -1,6 +1,6 @@
 package org.eol.globi.server.util;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.util.CSVTSVUtil;
 
 public class ResultFormatterTSV extends ResultFormatterSeparatedValues {

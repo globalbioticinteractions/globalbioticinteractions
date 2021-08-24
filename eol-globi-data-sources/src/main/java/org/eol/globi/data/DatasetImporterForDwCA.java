@@ -5,8 +5,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
@@ -1092,7 +1092,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         Map<String, String> properties = new TreeMap<>();
         JsonNode jsonNode = new ObjectMapper().readTree(candidateJsonChunk);
 
-        Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.getFields();
+        Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> field = fields.next();
             if (field.getValue().isValueNode()) {

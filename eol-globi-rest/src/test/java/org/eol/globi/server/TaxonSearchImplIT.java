@@ -1,7 +1,7 @@
 package org.eol.globi.server;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.HttpUtil;
 import org.hamcrest.CoreMatchers;
@@ -231,7 +231,7 @@ public class TaxonSearchImplIT extends ITBase {
 
         String response = new CypherQueryExecutor(cypherQuery).execute(null);
         JsonNode jsonNode = new ObjectMapper().readTree(response);
-        assertThat(jsonNode.get("data").get(0).get(0).getTextValue(), is("Ariopsis felis"));
+        assertThat(jsonNode.get("data").get(0).get(0).asText(), is("Ariopsis felis"));
         assertThat(jsonNode.get("data").size(), is(1));
     }
 
@@ -240,16 +240,16 @@ public class TaxonSearchImplIT extends ITBase {
         String response = new TaxonSearchImpl().findTaxonProxy("Ariopsis felis");
         JsonNode resp = new ObjectMapper().readTree(response);
         JsonNode columns = resp.get("columns");
-        assertThat(columns.get(0).getTextValue(), is("name"));
-        assertThat(columns.get(1).getTextValue(), is("commonNames"));
-        assertThat(columns.get(2).getTextValue(), is("path"));
-        assertThat(columns.get(3).getTextValue(), is("externalId"));
-        assertThat(columns.get(4).getTextValue(), is("externalUrl"));
-        assertThat(columns.get(5).getTextValue(), is("thumbnailUrl"));
+        assertThat(columns.get(0).asText(), is("name"));
+        assertThat(columns.get(1).asText(), is("commonNames"));
+        assertThat(columns.get(2).asText(), is("path"));
+        assertThat(columns.get(3).asText(), is("externalId"));
+        assertThat(columns.get(4).asText(), is("externalUrl"));
+        assertThat(columns.get(5).asText(), is("thumbnailUrl"));
         JsonNode info = resp.get("data").get(0);
-        assertThat(info.get(0).getTextValue(), is("Ariopsis felis"));
-        assertThat(info.get(2).getTextValue(), StringContains.containsString("Actinopterygii"));
-        assertThat(info.get(3).getTextValue(), StringContains.containsString(":"));
+        assertThat(info.get(0).asText(), is("Ariopsis felis"));
+        assertThat(info.get(2).asText(), StringContains.containsString("Actinopterygii"));
+        assertThat(info.get(3).asText(), StringContains.containsString(":"));
     }
 
     @Test

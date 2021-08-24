@@ -1,7 +1,7 @@
 package org.eol.globi.server.util;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.server.CypherTestUtil;
 import org.junit.Test;
 
@@ -21,24 +21,24 @@ public class ResultFormatterJSONv2Test {
         JsonNode jsonNode = mapper.readTree(format);
         assertThat(jsonNode.isArray(), is(true));
         for (JsonNode interaction : jsonNode) {
-            assertThat(interaction.get("type").getTextValue(), is("preyedUponBy"));
+            assertThat(interaction.get("type").asText(), is("preyedUponBy"));
             JsonNode taxon = interaction.get("source");
-            assertThat(taxon.get("name").getTextValue(), is("Ariopsis felis"));
+            assertThat(taxon.get("name").asText(), is("Ariopsis felis"));
 
             taxon = interaction.get("target");
-            assertThat(taxon.get("name").getTextValue(),
+            assertThat(taxon.get("name").asText(),
                     anyOf(is("Pomatomus saltatrix"), is("Lagodon rhomboides"), is("Centropomus undecimalis")));
 
-            assertThat(interaction.get("latitude").getDoubleValue(), is(notNullValue()));
-            assertThat(interaction.get("longitude").getDoubleValue(), is(notNullValue()));
+            assertThat(interaction.get("latitude").asDouble(), is(notNullValue()));
+            assertThat(interaction.get("longitude").asDouble(), is(notNullValue()));
             if (interaction.has("altitude")) {
-                assertThat(interaction.get("altitude").getDoubleValue(), is(notNullValue()));
+                assertThat(interaction.get("altitude").asDouble(), is(notNullValue()));
             }
             if (interaction.has("time")) {
-                assertThat(interaction.get("time").getLongValue() > 0, is(true));
+                assertThat(interaction.get("time").asLong() > 0, is(true));
             }
 
-            assertThat(interaction.get("study").getTextValue(),
+            assertThat(interaction.get("study").asText(),
                     anyOf(is("SPIRE"), is("Akin et al 2006"), is("Blewett 2006")));
             assertThat(interaction.get("study_title").asText(), anyOf(is("SPIRE"), is("Blewett 2006"), is("Akin et al 2006")));
             assertThat(interaction.get("source_taxon_name").asText(), is("Ariopsis felis"));
@@ -64,20 +64,20 @@ public class ResultFormatterJSONv2Test {
         assertThat(jsonNode.isArray(), is(true));
         int count = 0;
         for (JsonNode interaction : jsonNode) {
-            assertThat(interaction.get("type").getTextValue(), is("ATE"));
+            assertThat(interaction.get("type").asText(), is("ATE"));
             JsonNode taxon = assertNodePropertiesExist(interaction, "source");
 
             if (count == 0) {
-                assertThat(taxon.get("name").getTextValue(), is("Todus mexicanus"));
-                assertThat(taxon.get("path").getTextValue(), is("Animalia Chordata Aves Coraciiformes Todidae Todus"));
-                assertThat(taxon.get("id").getTextValue(), is("EOL:917146"));
+                assertThat(taxon.get("name").asText(), is("Todus mexicanus"));
+                assertThat(taxon.get("path").asText(), is("Animalia Chordata Aves Coraciiformes Todidae Todus"));
+                assertThat(taxon.get("id").asText(), is("EOL:917146"));
             }
 
             taxon = assertNodePropertiesExist(interaction, "target");
             if (count == 0) {
-                assertThat(taxon.get("name").getTextValue(), is("Coleoptera"));
-                assertThat(taxon.get("path").getTextValue(), is("Animalia Arthropoda Insecta"));
-                assertThat(taxon.get("id").getTextValue(), is("EOL:345"));
+                assertThat(taxon.get("name").asText(), is("Coleoptera"));
+                assertThat(taxon.get("path").asText(), is("Animalia Arthropoda Insecta"));
+                assertThat(taxon.get("id").asText(), is("EOL:345"));
             }
 
             assertThat(interaction.has("source"), is(true));

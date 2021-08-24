@@ -1,29 +1,29 @@
 package org.eol.globi.server.util;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.codehaus.jackson.JsonToken.END_ARRAY;
-import static org.codehaus.jackson.JsonToken.FIELD_NAME;
-import static org.codehaus.jackson.JsonToken.START_ARRAY;
-import static org.codehaus.jackson.JsonToken.VALUE_FALSE;
-import static org.codehaus.jackson.JsonToken.VALUE_NULL;
-import static org.codehaus.jackson.JsonToken.VALUE_NUMBER_FLOAT;
-import static org.codehaus.jackson.JsonToken.VALUE_NUMBER_INT;
-import static org.codehaus.jackson.JsonToken.VALUE_STRING;
-import static org.codehaus.jackson.JsonToken.VALUE_TRUE;
+import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.FIELD_NAME;
+import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_FALSE;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_NULL;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_NUMBER_FLOAT;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_NUMBER_INT;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_TRUE;
+
 
 public abstract class ResultFormatterSeparatedValues implements ResultFormatterStreaming {
 

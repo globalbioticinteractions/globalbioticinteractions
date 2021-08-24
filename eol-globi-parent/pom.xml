@@ -20,6 +20,7 @@
         <commons-io.version>2.6</commons-io.version>
         <httpcomponents.version>4.5.8</httpcomponents.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <jackson.version>2.12.4</jackson.version>
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>

@@ -4,8 +4,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.process.InteractionListener;
@@ -132,7 +132,7 @@ public class DatasetImporterForZenodoMetadata extends DatasetImporterWithListene
             String citation = StringUtils.join(citationElements.collect(Collectors.toList()), ". ");
 
             final JsonNode custom = metadata.get("custom");
-            final Iterator<String> fieldNames = custom.getFieldNames();
+            final Iterator<String> fieldNames = custom.fieldNames();
             final Spliterator<String> stringSpliterator = Spliterators
                     .spliteratorUnknownSize(fieldNames, Spliterator.ORDERED);
             final Stream<String> fields = StreamSupport.stream(stringSpliterator, false);

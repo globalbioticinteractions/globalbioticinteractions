@@ -3,8 +3,8 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -211,7 +211,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
             put("doi", REFERENCE_DOI);
             put("url", REFERENCE_URL);
         }};
-        Iterator<Map.Entry<String, JsonNode>> fields = config.getFields();
+        Iterator<Map.Entry<String, JsonNode>> fields = config.fields();
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> field = fields.next();
             if (field.getValue().isValueNode()) {

@@ -11,8 +11,8 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -110,7 +110,7 @@ public class GitHubUtil {
                     new ResponseHandlerWithInputStreamFactory(inputStreamFactory));
             JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);
             if (jsonNode.has("total_count")) {
-                totalAvailable = jsonNode.get("total_count").getIntValue();
+                totalAvailable = jsonNode.get("total_count").asInt();
             }
             if (jsonNode.has("items")) {
                 for (JsonNode item : jsonNode.get("items")) {

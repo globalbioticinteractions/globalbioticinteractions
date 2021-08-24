@@ -3,8 +3,8 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -151,16 +151,16 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
                 sourceTaxon = parseTaxon(observation.get("taxon"));
             }
         }
-        long observationId = jsonNode.get("observation_id").getLongValue();
+        long observationId = jsonNode.get("observation_id").asLong();
         if (targetTaxon == null) {
             LOG.debug("skipping interaction with missing target taxon name for observation [" + observationId + "]");
         } else if (sourceTaxon == null) {
             LOG.warn("cannot create interaction with missing source taxon name for observation with id [" + observationId + "]");
         } else {
             JsonNode observationField = jsonNode.get("observation_field");
-            String interactionDataType = observationField.get("datatype").getTextValue();
-            String interactionTypeName = observationField.get("name").getTextValue();
-            int interactionTypeId = observationField.get("id").getIntValue();
+            String interactionDataType = observationField.get("datatype").asText();
+            String interactionTypeName = observationField.get("name").asText();
+            int interactionTypeId = observationField.get("id").asInt();
             String interactionTypeIdURI = "https://www.inaturalist.org/observation_fields/" + interactionTypeId;
 
             List<Term> mappedTerms;
@@ -214,8 +214,8 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         StringBuilder citation = new StringBuilder();
         if (observationNode.has("user")) {
             JsonNode userNode = observationNode.get("user");
-            String user = userNode.has("name") ? userNode.get("name").getTextValue() : "";
-            String login = userNode.has("login") ? userNode.get("login").getTextValue() : "";
+            String user = userNode.has("name") ? userNode.get("name").asText() : "";
+            String login = userNode.has("login") ? userNode.get("login").asText() : "";
             citation.append(StringUtils.isBlank(user) ? login : user);
             citation.append(". ");
         }
@@ -234,8 +234,8 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
 
     private Date getObservationDate(JsonNode observation) {
         DateTime dateTime = null;
-        String timeObservedAtUtc = observation.get("time_observed_at_utc").getTextValue();
-        timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").getTextValue() : timeObservedAtUtc;
+        String timeObservedAtUtc = observation.get("time_observed_at_utc").asText();
+        timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").asText() : timeObservedAtUtc;
         if (timeObservedAtUtc != null) {
             dateTime = parseUTCDateTime(timeObservedAtUtc);
         }
@@ -265,8 +265,8 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
 
     private Location parseLocation(JsonNode observation) throws NodeFactoryException {
         Location location = null;
-        String latitudeString = observation.get("latitude").getTextValue();
-        String longitudeString = observation.get("longitude").getTextValue();
+        String latitudeString = observation.get("latitude").asText();
+        String longitudeString = observation.get("longitude").asText();
         if (latitudeString != null && longitudeString != null) {
             double latitude = Double.parseDouble(latitudeString);
             double longitude = Double.parseDouble(longitudeString);

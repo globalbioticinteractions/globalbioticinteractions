@@ -1,13 +1,12 @@
 package org.globalbioticinteractions.dataset;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.codehaus.jackson.JsonNode;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -134,7 +132,7 @@ public class CitationUtil {
         if (table.has(citationKey)) {
             String secondaryCitation = table
                     .get(citationKey)
-                    .getTextValue();
+                    .asText();
             if (StringUtils.isNotBlank(secondaryCitation)) {
                 citation = Optional.of(secondaryCitation);
             }

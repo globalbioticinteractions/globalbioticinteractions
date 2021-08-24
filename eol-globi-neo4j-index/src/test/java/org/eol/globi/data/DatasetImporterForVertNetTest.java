@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.HttpUtil;
@@ -194,7 +194,7 @@ public class DatasetImporterForVertNetTest extends GraphDBTestCase {
                 JsonNode jsonNode = parseResponse(stomachStrings, jsonString, fos);
                 if (jsonNode.has("cursor")) {
                     oldCursor = cursor;
-                    cursor = jsonNode.get("cursor").getTextValue();
+                    cursor = jsonNode.get("cursor").asText();
                 }
             }
             fos.flush();
@@ -216,7 +216,7 @@ public class DatasetImporterForVertNetTest extends GraphDBTestCase {
 
     private void parseRecord(Collection<String> stomachStrings, JsonNode rec, OutputStream outputStream) throws IOException {
         if (rec.has("dynamicproperties")) {
-            String props = rec.get("dynamicproperties").getTextValue();
+            String props = rec.get("dynamicproperties").asText();
             Map<String, String> dynProps = new TreeMap<String, String>();
             String[] split = props.split(";");
             if (split.length > 1) {
@@ -237,9 +237,9 @@ public class DatasetImporterForVertNetTest extends GraphDBTestCase {
             stomachStrings.add(stomachContents);
             if (StringUtils.isNotBlank(stomachContents)) {
                 if (rec.has("occurrenceremarks")) {
-                    remarks = rec.get("occurrenceremarks").getTextValue();
+                    remarks = rec.get("occurrenceremarks").asText();
                 }
-                String line = "\"" + (rec.has("individualid") ? rec.get("individualid").getTextValue() : "") + "\",\"" + stomachContents + "\", \"" + remarks + "\"\n";
+                String line = "\"" + (rec.has("individualid") ? rec.get("individualid").asText() : "") + "\",\"" + stomachContents + "\", \"" + remarks + "\"\n";
                 IOUtils.write(line, outputStream, StandardCharsets.UTF_8);
             }
         }

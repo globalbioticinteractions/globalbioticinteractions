@@ -2,8 +2,8 @@ package org.eol.globi.server;
 
 import com.Ostermiller.util.LabeledCSVParser;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CSVTSVUtil;
 import org.hamcrest.CoreMatchers;

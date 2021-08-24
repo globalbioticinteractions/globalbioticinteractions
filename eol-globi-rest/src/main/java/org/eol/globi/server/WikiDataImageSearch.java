@@ -2,8 +2,8 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
