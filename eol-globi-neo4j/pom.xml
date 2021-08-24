@@ -26,11 +26,19 @@
             <version>${neo4j.version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>org.neo4j</groupId>
                     <artifactId>neo4j-cypher-compiler-1.9_2.11</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.neo4j</groupId>
+                    <artifactId>neo4j-cypher-compiler-2.2_2.11</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>neo4j-jmx</artifactId>
                     <groupId>org.neo4j</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>neo4j-cypher-compiler-2.2_2.11</artifactId>
+                    <artifactId>neo4j-udc</artifactId>
                     <groupId>org.neo4j</groupId>
                 </exclusion>
             </exclusions>
