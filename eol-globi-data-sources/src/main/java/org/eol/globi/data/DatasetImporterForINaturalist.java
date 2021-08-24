@@ -234,8 +234,14 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
 
     private Date getObservationDate(JsonNode observation) {
         DateTime dateTime = null;
-        String timeObservedAtUtc = observation.get("time_observed_at_utc").asText();
-        timeObservedAtUtc = timeObservedAtUtc == null ? observation.get("observed_on").asText() : timeObservedAtUtc;
+        String timeObservedAtUtc = observation
+                .get("time_observed_at_utc")
+                .asText(null);
+
+        timeObservedAtUtc = timeObservedAtUtc == null
+                ? observation.get("observed_on").asText(null)
+                : timeObservedAtUtc;
+
         if (timeObservedAtUtc != null) {
             dateTime = parseUTCDateTime(timeObservedAtUtc);
         }
