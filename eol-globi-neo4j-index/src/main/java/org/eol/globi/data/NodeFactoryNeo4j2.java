@@ -1,7 +1,11 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.domain.DatasetNode;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Study;
@@ -15,6 +19,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.index.lucene.QueryContext;
+import org.neo4j.index.lucene.ValueContext;
 
 public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
 
@@ -22,6 +28,8 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     private final Index<Node> studies;
     private final Index<Node> externalIds;
     private final Index<Node> seasons;
+    private final Index<Node> locations;
+
 
 
     public NodeFactoryNeo4j2(GraphDatabaseService graphDb) {
@@ -30,6 +38,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         this.studies = NodeUtil.forNodes(graphDb, "studies");
         this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
         this.seasons = NodeUtil.forNodes(graphDb, "seasons");
+        this.locations = NodeUtil.forNodes(graphDb, "locations");
     }
 
     @Override
@@ -123,6 +132,83 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         return getGraphDb().createNode();
     }
 
+    @Override
+    protected Node createLocationNode() {
+        return getGraphDb().createNode();
+    }
+
+    @Override
+    protected void indexLocation(Location location, Node node) {
+        if (location.getLatitude() != null) {
+            locations.add(node, LocationConstant.LATITUDE, ValueContext.numeric(location.getLatitude()));
+        }
+        if (location.getLongitude() != null) {
+            locations.add(node, LocationConstant.LONGITUDE, ValueContext.numeric(location.getLongitude()));
+        }
+        if (location.getAltitude() != null) {
+            locations.add(node, LocationConstant.ALTITUDE, ValueContext.numeric(location.getAltitude()));
+        }
+        if (StringUtils.isNotBlank(location.getFootprintWKT())) {
+            locations.add(node, LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
+        }
+        if (StringUtils.isNotBlank(location.getLocality())) {
+            locations.add(node, LocationConstant.LOCALITY, location.getLocality());
+        }
+        if (StringUtils.isNotBlank(location.getLocalityId())) {
+            locations.add(node, LocationConstant.LOCALITY_ID, location.getLocalityId());
+        }
+    }
+
+    @Override
+    public LocationNode findLocation(Location location) throws NodeFactoryException {
+        Node matchingLocation = null;
+        if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
+            matchingLocation = findLocationByLatitude(location);
+        }
+        if (matchingLocation == null) {
+            matchingLocation = findLocationByLocality(location);
+        }
+        if (matchingLocation == null) {
+            matchingLocation = findLocationByLocalityId(location);
+        }
+        return matchingLocation == null ? null : new LocationNode(matchingLocation);
+    }
+
+
+    private Node findLocationByLocality(Location location) throws NodeFactoryException {
+        return location.getLocality() == null ? null : findLocationBy(location, LocationConstant.LOCALITY, location.getLocality());
+    }
+
+    private Node findLocationByLocalityId(Location location) throws NodeFactoryException {
+        return location.getLocalityId() == null ? null : findLocationBy(location, LocationConstant.LOCALITY_ID, location.getLocalityId());
+    }
+
+    private Node findLocationBy(Location location, String key, String value) {
+        Node matchingLocation = null;
+        String query = key + ":\"" + QueryParser.escape(value) + "\"";
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> matchingLocations = locations.query(query);
+            matchingLocation = findFirstMatchingLocationIfAvailable(location, matchingLocations);
+            matchingLocations.close();
+            transaction.success();
+        }
+        return matchingLocation;
+    }
+
+
+
+    private Node findLocationByLatitude(Location location) throws NodeFactoryException {
+        Node matchingLocation;
+        validate(location);
+        QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
+            matchingLocation = findFirstMatchingLocationIfAvailable(location, matchingLocations);
+            matchingLocations.close();
+            transaction.success();
+        }
+        return matchingLocation;
+    }
 
 }
 

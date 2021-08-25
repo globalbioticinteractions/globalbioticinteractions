@@ -3,14 +3,12 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.InteractionNode;
 import org.eol.globi.domain.Location;
-import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -41,11 +39,10 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.index.lucene.QueryContext;
-import org.neo4j.index.lucene.ValueContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +60,6 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private GraphDatabaseService graphDb;
-    private final Index<Node> locations;
     private final Index<Node> environments;
 
     private TermLookupService termLookupService;
@@ -78,117 +74,12 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         this.lifeStageLookupService = new TermLookupServiceWithResource("life-stage-mapping.csv");
         this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv");
         this.envoLookupService = new EnvoLookupService();
-        this.locations = NodeUtil.forNodes(graphDb, "locations");
         this.environments = NodeUtil.forNodes(graphDb, "environments");
 
     }
 
     public GraphDatabaseService getGraphDb() {
         return graphDb;
-    }
-
-    @Override
-    public LocationNode findLocation(Location location) throws NodeFactoryException {
-        Node matchingLocation = null;
-        if (hasLatLng(location)) {
-            matchingLocation = findLocationByLatitude(location);
-        }
-        if (matchingLocation == null) {
-            matchingLocation = findLocationByLocality(location);
-        }
-        if (matchingLocation == null) {
-            matchingLocation = findLocationByLocalityId(location);
-        }
-        return matchingLocation == null ? null : new LocationNode(matchingLocation);
-    }
-
-    private boolean hasLatLng(Location location) {
-        return location.getLatitude() != null && location.getLongitude() != null;
-    }
-
-    private Node findLocationByLocality(Location location) throws NodeFactoryException {
-        return location.getLocality() == null ? null : findLocationBy(location, LocationConstant.LOCALITY, location.getLocality());
-    }
-
-    private Node findLocationByLocalityId(Location location) throws NodeFactoryException {
-        return location.getLocalityId() == null ? null : findLocationBy(location, LocationConstant.LOCALITY_ID, location.getLocalityId());
-    }
-
-    private Node findLocationBy(Location location, String key, String value) {
-        Node matchingLocation = null;
-        String query = key + ":\"" + QueryParser.escape(value) + "\"";
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> matchingLocations = locations.query(query);
-            for (Node node : matchingLocations) {
-                final LocationNode foundLocation = new LocationNode(node);
-                if (isSameLocation(location, foundLocation)) {
-                    matchingLocation = node;
-                    break;
-                }
-            }
-            matchingLocations.close();
-            transaction.success();
-        }
-        return matchingLocation;
-    }
-
-    private boolean isSameLocation(Location location, Location foundLocation) {
-        return sameLatitude(location, foundLocation)
-                && sameLongitude(location, foundLocation)
-                && sameAltitude(location, foundLocation)
-                && sameFootprintWKT(location, foundLocation)
-                && sameLocality(location, foundLocation)
-                && sameLocalityId(location, foundLocation);
-    }
-
-    private boolean sameLocalityId(Location location, Location foundLocation) {
-        return foundLocation.getLocalityId() == null && location.getLocalityId() == null
-                || location.getLocalityId() != null && location.getLocalityId().equals(foundLocation.getLocalityId());
-    }
-
-    private boolean sameLocality(Location location, Location foundLocation) {
-        return foundLocation.getLocality() == null && location.getLocality() == null
-                || location.getLocality() != null && location.getLocality().equals(foundLocation.getLocality());
-    }
-
-    private boolean sameFootprintWKT(Location location, Location foundLocation) {
-        return foundLocation.getFootprintWKT() == null && location.getFootprintWKT() == null
-                || location.getFootprintWKT() != null && location.getFootprintWKT().equals(foundLocation.getFootprintWKT());
-    }
-
-    private boolean sameAltitude(Location location, Location foundLocation) {
-        return foundLocation.getAltitude() == null && location.getAltitude() == null
-                || location.getAltitude() != null && location.getAltitude().equals(foundLocation.getAltitude());
-    }
-
-    private boolean sameLatitude(Location location, Location foundLocation) {
-        return foundLocation.getLatitude() == null && location.getLatitude() == null
-                || location.getLatitude() != null && location.getLatitude().equals(foundLocation.getLatitude());
-    }
-
-    private boolean sameLongitude(Location location, Location foundLocation) {
-        return foundLocation.getLongitude() == null && location.getLongitude() == null
-                || location.getLongitude() != null && location.getLongitude().equals(foundLocation.getLongitude());
-    }
-
-
-    private Node findLocationByLatitude(Location location) throws NodeFactoryException {
-        Node matchingLocation = null;
-        validate(location);
-        QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
-            for (Node node : matchingLocations) {
-                final LocationNode foundLocation = new LocationNode(node);
-                if (isSameLocation(location, foundLocation)) {
-                    matchingLocation = node;
-                    break;
-                }
-            }
-            matchingLocations.close();
-            transaction.success();
-        }
-        return matchingLocation;
     }
 
     @Override
@@ -211,30 +102,30 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         LocationNode locationNode;
 
         try (Transaction transaction = graphDb.beginTx()) {
-            Node node = graphDb.createNode();
+            Node node = createLocationNode();
             locationNode = new LocationNode(node, fromLocation(location));
-            if (location.getLatitude() != null) {
-                locations.add(node, LocationConstant.LATITUDE, ValueContext.numeric(location.getLatitude()));
-            }
-            if (location.getLongitude() != null) {
-                locations.add(node, LocationConstant.LONGITUDE, ValueContext.numeric(location.getLongitude()));
-            }
-            if (location.getAltitude() != null) {
-                locations.add(node, LocationConstant.ALTITUDE, ValueContext.numeric(location.getAltitude()));
-            }
-            if (StringUtils.isNotBlank(location.getFootprintWKT())) {
-                locations.add(node, LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
-            }
-            if (StringUtils.isNotBlank(location.getLocality())) {
-                locations.add(node, LocationConstant.LOCALITY, location.getLocality());
-            }
-            if (StringUtils.isNotBlank(location.getLocalityId())) {
-                locations.add(node, LocationConstant.LOCALITY_ID, location.getLocalityId());
-            }
+            indexLocation(location, node);
             transaction.success();
         }
         return locationNode;
     }
+
+    abstract protected void indexLocation(Location location, Node node);
+
+    protected abstract Node createLocationNode();
+
+    protected Node findFirstMatchingLocationIfAvailable(Location location, ResourceIterator<Node> matchingLocations) {
+        Node matching = null;
+        while (matching == null && matchingLocations.hasNext()) {
+            Node node = matchingLocations.next();
+            final LocationNode foundLocation = new LocationNode(node);
+            if (org.eol.globi.domain.LocationUtil.isSameLocation(location, foundLocation)) {
+                matching = node;
+            }
+        }
+        return matching;
+    }
+
 
     @Override
     public SpecimenNode createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException {
@@ -473,21 +364,13 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
-        LocationNode locationNode = findLocation(location);
-        if (null == locationNode) {
-            locationNode = createLocation(location);
+        Location location1 = findLocation(location);
+        if (!(location1 instanceof LocationNode)) {
+            location1 = createLocation(location);
         }
-        return locationNode;
+        return (LocationNode) location1;
     }
 
-    private void validate(Location location) throws NodeFactoryException {
-        if (!LocationUtil.isValidLatitude(location.getLatitude())) {
-            throw new NodeFactoryException("found invalid latitude [" + location.getLatitude() + "]");
-        }
-        if (!LocationUtil.isValidLongitude(location.getLongitude())) {
-            throw new NodeFactoryException("found invalid longitude [" + location.getLongitude() + "]");
-        }
-    }
 
     @Override
     public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
@@ -658,7 +541,18 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
 
     protected abstract Node getOrCreateExternalIdNoTx(String externalId);
 
-
     abstract protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset);
+
+    protected void validate(Location location) throws NodeFactoryException {
+        if (location.getLatitude() != null
+                && !LocationUtil.isValidLatitude(location.getLatitude())) {
+            throw new NodeFactoryException("found invalid latitude [" + location.getLatitude() + "]");
+        }
+        if (location.getLongitude() != null
+                && !LocationUtil.isValidLongitude(location.getLongitude())) {
+            throw new NodeFactoryException("found invalid longitude [" + location.getLongitude() + "]");
+        }
+    }
+
 }
 

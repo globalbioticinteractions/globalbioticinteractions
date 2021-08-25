@@ -2,6 +2,9 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.DatasetNode;
+import org.eol.globi.domain.Location;
+import org.eol.globi.domain.LocationConstant;
+import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Study;
@@ -9,10 +12,15 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
+import org.neo4j.cypher.internal.compiler.v2_3.No;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.graphdb.schema.IndexDefinition;
+
+import java.util.Iterator;
 
 public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
@@ -38,6 +46,15 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
                 NodeLabel.Season,
                 StudyConstant.TITLE
         );
+        createIndexIfNeeded(getGraphDb(),
+                NodeLabel.Location,
+                LocationConstant.LATITUDE);
+        createIndexIfNeeded(getGraphDb(),
+                NodeLabel.Location,
+                LocationConstant.LOCALITY);
+        createIndexIfNeeded(getGraphDb(),
+                NodeLabel.Location,
+                LocationConstant.LOCALITY_ID);
     }
 
     @Override
@@ -48,6 +65,16 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     @Override
     protected Node createSeasonNode() {
         return getGraphDb().createNode(NodeLabel.Season);
+    }
+
+    @Override
+    protected void indexLocation(Location location, Node node) {
+        // should already be taken care of by constraints: do nothing
+    }
+
+    @Override
+    protected Node createLocationNode() {
+        return getGraphDb().createNode(NodeLabel.Location);
     }
 
     @Override
@@ -93,6 +120,36 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
 
     @Override
+    public LocationNode findLocation(Location location) throws NodeFactoryException {
+        validate(location);
+
+        Node matchingLocation = null;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
+                Double latitude = location.getLatitude();
+                ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LATITUDE, latitude);
+                matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+            }
+            if (matchingLocation == null) {
+                String locality = location.getLocality();
+                if (StringUtils.isNotBlank(locality)) {
+                    ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LOCALITY, locality);
+                    matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+                }
+            }
+            if (matchingLocation == null) {
+                String localityId = location.getLocalityId();
+                if (StringUtils.isNotBlank(location.getLocalityId())) {
+                    ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LOCALITY_ID, localityId);
+                    matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+                }
+            }
+            tx.success();
+            return matchingLocation == null ? null : new LocationNode(matchingLocation);
+        }
+    }
+
+    @Override
     public StudyNode getOrCreateStudy(Study study) {
         Node node;
         try (Transaction tx = getGraphDb().beginTx()) {
@@ -129,6 +186,37 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
                         .schema()
                         .constraintFor(label)
                         .assertPropertyIsUnique(propertyName)
+                        .create();
+            }
+            transaction.success();
+        }
+    }
+
+    private static void createIndexIfNeeded(GraphDatabaseService graphDb,
+                                            NodeLabel label,
+                                            String propertyName) {
+        try (Transaction transaction = graphDb.beginTx()) {
+
+            Iterable<IndexDefinition> indexes = graphDb
+                    .schema()
+                    .getIndexes(label);
+
+            IndexDefinition indexMatching = null;
+            for (IndexDefinition index : indexes) {
+                Iterator<String> keyIterator = index.getPropertyKeys().iterator();
+                if (keyIterator.hasNext()) {
+                    if (StringUtils.equals(keyIterator.next(), propertyName)) {
+                        indexMatching = index;
+                        break;
+                    }
+                }
+
+            }
+            if (indexMatching == null) {
+                graphDb
+                        .schema()
+                        .indexFor(label)
+                        .on(propertyName)
                         .create();
             }
             transaction.success();
