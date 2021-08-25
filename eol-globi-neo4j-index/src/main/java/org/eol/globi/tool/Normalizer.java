@@ -8,6 +8,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.NodeFactoryNeo4j2;
+import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.Version;
@@ -78,15 +80,35 @@ public class Normalizer {
         return options;
     }
 
+    interface Factories {
+        GraphServiceFactory getGraphServiceFactory();
+        NodeFactoryFactory getNodeFactoryFactory();
+    }
+
     public void run(CommandLine cmdLine) throws StudyImporterException {
-        final GraphServiceFactory factory = new GraphServiceFactoryImpl("./");
+
+        Factories factoriesNeo4j2 = new Factories() {
+            final GraphServiceFactory factory = new GraphServiceFactoryImpl("./");
+
+            @Override
+            public GraphServiceFactory getGraphServiceFactory() {
+                return factory;
+            }
+
+            @Override
+            public NodeFactoryFactory getNodeFactoryFactory() {
+                return service -> new NodeFactoryNeo4j2(factory.getGraphService());
+            }
+        };
+
+        GraphServiceFactory graphServiceFactory = factoriesNeo4j2.getGraphServiceFactory();
         try {
-            importDatasets(cmdLine, factory);
-            resolveAndLinkTaxa(cmdLine, factory);
-            generateReports(cmdLine, factory);
-            exportData(cmdLine, factory.getGraphService());
+            importDatasets(cmdLine, graphServiceFactory, factoriesNeo4j2.getNodeFactoryFactory());
+            resolveAndLinkTaxa(cmdLine, graphServiceFactory);
+            generateReports(cmdLine, graphServiceFactory);
+            exportData(cmdLine, graphServiceFactory.getGraphService());
         } finally {
-            factory.clear();
+            graphServiceFactory.clear();
             HttpUtil.shutdown();
         }
 
@@ -108,14 +130,14 @@ public class Normalizer {
         }
     }
 
-    private void importDatasets(CommandLine cmdLine, GraphServiceFactory factory) throws StudyImporterException {
+    private void importDatasets(CommandLine cmdLine, GraphServiceFactory factory, NodeFactoryFactory nodeFactoryFactory) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
             String cacheDir = cmdLine == null
                     ? "target/datasets"
                     : cmdLine.getOptionValue(OPTION_DATASET_DIR, "target/datasets");
 
             DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(cacheDir);
-            new IndexerDataset(registry).index(factory);
+            new IndexerDataset(registry, nodeFactoryFactory).index(factory);
         } else {
             LOG.info("skipping data import...");
         }
@@ -125,7 +147,6 @@ public class Normalizer {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
             new LinkerDOI(new DOIResolverCache()).index(graphServiceFactory);
-            //new LinkerDOI(graphService).link();
         } else {
             LOG.info("skipping citation resolving ...");
         }

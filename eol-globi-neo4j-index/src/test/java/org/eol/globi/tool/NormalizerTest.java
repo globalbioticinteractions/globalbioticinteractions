@@ -12,7 +12,6 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
-import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.Study;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -79,7 +78,7 @@ public class NormalizerTest extends GraphDBTestCase {
         URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
-        final IndexerDataset indexerDataset = new IndexerDataset(DatasetRegistryUtil.getDatasetRegistry(datasetDirTest));
+        final IndexerDataset indexerDataset = new IndexerDataset(DatasetRegistryUtil.getDatasetRegistry(datasetDirTest), service -> new NodeFactoryNeo4j2(service));
         indexerDataset.index(getGraphFactory());
 
         String baseDir = "./target/normalizer-test/";
