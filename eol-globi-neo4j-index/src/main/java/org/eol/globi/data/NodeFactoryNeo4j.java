@@ -63,8 +63,6 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private GraphDatabaseService graphDb;
-    private final Index<Node> externalIds;
-    private final Index<Node> seasons;
     private final Index<Node> locations;
     private final Index<Node> environments;
 
@@ -80,8 +78,6 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         this.lifeStageLookupService = new TermLookupServiceWithResource("life-stage-mapping.csv");
         this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv");
         this.envoLookupService = new EnvoLookupService();
-        this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
-        this.seasons = NodeUtil.forNodes(graphDb, "seasons");
         this.locations = NodeUtil.forNodes(graphDb, "locations");
         this.environments = NodeUtil.forNodes(graphDb, "environments");
 
@@ -199,13 +195,17 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     public SeasonNode createSeason(String seasonNameLower) {
         SeasonNode season;
         try (Transaction transaction = graphDb.beginTx()) {
-            Node node = graphDb.createNode();
+            Node node = createSeasonNode();
             season = new SeasonNode(node, seasonNameLower);
-            seasons.add(node, SeasonNode.TITLE, seasonNameLower);
+            indexSeasonNode(seasonNameLower, node);
             transaction.success();
         }
         return season;
     }
+
+    protected abstract void indexSeasonNode(String seasonNameLower, Node node);
+
+    protected abstract Node createSeasonNode();
 
     private LocationNode createLocation(final Location location) {
         LocationNode locationNode;
@@ -320,7 +320,7 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
 
     abstract Node createStudyNode();
 
-    abstract void indexReferenceNode(StudyNode studyNode);
+    abstract void indexStudyNode(StudyNode studyNode);
 
     @Override
     public StudyNode createStudy(Study study) {
@@ -329,7 +329,7 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         try (Transaction transaction = graphDb.beginTx()) {
             Node node = createStudyNode();
             studyNode = createStudyNode(study, node);
-            indexReferenceNode(studyNode);
+            indexStudyNode(studyNode);
             transaction.success();
         }
 
@@ -414,12 +414,17 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         return datasetNode;
     }
 
-    private Node createExternalId(String externalId) {
-        Node externalIdNode = graphDb.createNode();
+    protected Node createExternalId(String externalId) {
+        Node externalIdNode = createExternalIdNode();
         externalIdNode.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
-        externalIds.add(externalIdNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+        indexExternalIdNode(externalId, externalIdNode);
         return externalIdNode;
     }
+
+
+    protected abstract void indexExternalIdNode(String externalId, Node externalIdNode);
+
+    protected abstract Node createExternalIdNode();
 
     @Override
     public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
@@ -465,17 +470,6 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
                 : "globi:" + namespace + "/" + study.getTitle();
     }
 
-    @Override
-    public SeasonNode findSeason(String seasonName) {
-        Node seasonHit;
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
-            seasonHit = nodeIndexHits.getSingle();
-            nodeIndexHits.close();
-            transaction.success();
-        }
-        return seasonHit == null ? null : new SeasonNode(seasonHit);
-    }
 
     @Override
     public LocationNode getOrCreateLocation(org.eol.globi.domain.Location location) throws NodeFactoryException {
@@ -662,17 +656,8 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         return interactionNode;
     }
 
-    private Node getOrCreateExternalIdNoTx(String externalId) {
-        Node externalIdNode = null;
-        if (StringUtils.isNotBlank(externalId)) {
-            IndexHits<Node> datasetHits = externalIds.get(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
-            externalIdNode = datasetHits.hasNext()
-                    ? datasetHits.next()
-                    : createExternalId(externalId);
+    protected abstract Node getOrCreateExternalIdNoTx(String externalId);
 
-        }
-        return externalIdNode;
-    }
 
     abstract protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset);
 }
