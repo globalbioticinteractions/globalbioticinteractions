@@ -54,10 +54,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
 
-public class NodeFactoryNeo4j implements NodeFactory {
+public abstract class NodeFactoryNeo4j implements NodeFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(NodeFactoryNeo4j.class);
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
@@ -65,7 +67,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
     private GraphDatabaseService graphDb;
     private final Index<Node> studies;
     private final Index<Node> externalIds;
-    private final Index<Node> datasets;
     private final Index<Node> seasons;
     private final Index<Node> locations;
     private final Index<Node> environments;
@@ -84,10 +85,32 @@ public class NodeFactoryNeo4j implements NodeFactory {
         this.envoLookupService = new EnvoLookupService();
         this.studies = NodeUtil.forNodes(graphDb, "studies");
         this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
-        this.datasets = NodeUtil.forNodes(graphDb, "datasets");
         this.seasons = NodeUtil.forNodes(graphDb, "seasons");
         this.locations = NodeUtil.forNodes(graphDb, "locations");
         this.environments = NodeUtil.forNodes(graphDb, "environments");
+
+
+        createDatasetConstraint(graphDb);
+    }
+
+    private void createDatasetConstraint(GraphDatabaseService graphDb) {
+        try (Transaction transaction = graphDb.beginTx()) {
+            if (!graphDb
+                    .schema()
+                    .getConstraints(NodeLabel.Dataset)
+                    .iterator()
+                    .hasNext()) {
+
+                graphDb
+                        .schema()
+                        .constraintFor(NodeLabel.Dataset)
+                        .assertPropertyIsUnique(DatasetConstant.NAMESPACE)
+                        .create();
+            } else {
+                System.out.println("constraint already exists");
+            }
+            transaction.success();
+        }
     }
 
     public GraphDatabaseService getGraphDb() {
@@ -368,8 +391,12 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return externalId;
     }
 
-    private Node createDatasetNode(Dataset dataset) {
-        Node datasetNode = graphDb.createNode();
+    protected Node createDatasetNode(Dataset dataset) {
+        Node datasetNode = graphDb.createNode(NodeLabel.Dataset);
+        return createDatasetNode(dataset, datasetNode);
+    }
+
+    protected Node createDatasetNode(Dataset dataset, Node datasetNode) {
         datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
         if (archiveURI != null) {
@@ -399,7 +426,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         datasetNode.setProperty(DatasetConstant.CITATION, StringUtils.defaultIfBlank(dataset.getCitation(), "no citation"));
         datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
         datasetNode.setProperty(DatasetConstant.LAST_SEEN_AT, dataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, Long.toString(System.currentTimeMillis())));
-        datasets.add(datasetNode, DatasetConstant.NAMESPACE, dataset.getNamespace());
         return datasetNode;
     }
 
@@ -666,18 +692,6 @@ public class NodeFactoryNeo4j implements NodeFactory {
         return externalIdNode;
     }
 
-    private Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) {
-        Dataset datasetCreated = null;
-        if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
-            IndexHits<Node> datasetHits = datasets.get(DatasetConstant.NAMESPACE, originatingDataset.getNamespace());
-
-            Node datasetNode = datasetHits.hasNext()
-                    ? datasetHits.next()
-                    : createDatasetNode(originatingDataset);
-
-            datasetCreated = new DatasetNode(datasetNode);
-        }
-        return datasetCreated;
-    }
+    abstract protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset);
 }
 

@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.DatasetImporter;
@@ -54,7 +55,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImport() throws StudyImporterException {
-        importData(DatasetImporterForSimons.class, new NodeFactoryNeo4j(getGraphDb()));
+        importData(DatasetImporterForSimons.class, new NodeFactoryNeo4j2(getGraphDb()));
         GraphDatabaseService graphService = getGraphDb();
 
         Study study = getStudySingleton(graphService);

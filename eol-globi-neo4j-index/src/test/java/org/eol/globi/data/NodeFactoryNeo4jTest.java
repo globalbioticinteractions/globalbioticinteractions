@@ -36,21 +36,27 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.schema.ConstraintDefinition;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class NodeFactoryNeo4jTest extends GraphDBTestCase {
+import static org.junit.Assert.assertNotNull;
+
+public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
 
     private static final DOI SOME_DOI = new DOI("some", "doi");
 
@@ -132,11 +138,11 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
         getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
         Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
-        Assert.assertNotNull(location);
+        assertNotNull(location);
         Location location1 = getNodeFactory().findLocation(location2);
-        Assert.assertNotNull(location1);
+        assertNotNull(location1);
         Location foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));
-        Assert.assertNotNull(foundLocationNoDepth);
+        assertNotNull(foundLocationNoDepth);
     }
 
     @Test
@@ -145,7 +151,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         providedLocation.setLocality("some locale");
         getNodeFactory().getOrCreateLocation(providedLocation);
         Location foundLocation = getNodeFactory().findLocation(providedLocation);
-        Assert.assertNotNull(foundLocation);
+        assertNotNull(foundLocation);
     }
 
     @Test
@@ -154,7 +160,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         providedLocation.setLocalityId("locality:id");
         getNodeFactory().getOrCreateLocation(providedLocation);
         Location foundLocation = getNodeFactory().findLocation(providedLocation);
-        Assert.assertNotNull(foundLocation);
+        assertNotNull(foundLocation);
     }
 
     @Test
@@ -163,11 +169,11 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         getNodeFactory().getOrCreateLocation(new LocationImpl(2.2d, 1.4d, -1.0d, null));
         getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 2.4d, -1.0d, null));
         Location locationNoDepth = getNodeFactory().getOrCreateLocation(new LocationImpl(1.5d, 2.8d, null, null));
-        Assert.assertNotNull(location);
+        assertNotNull(location);
         LocationNode location1 = getNodeFactory().findLocation(new LocationImpl(location.getLatitude(), location.getLongitude(), location.getAltitude(), null));
-        Assert.assertNotNull(location1);
+        assertNotNull(location1);
         LocationNode foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));
-        Assert.assertNotNull(foundLocationNoDepth);
+        assertNotNull(foundLocationNoDepth);
     }
 
     @Test
@@ -260,7 +266,7 @@ public class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertDataset(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION);
     }
 
-    private void assertDataset(String citationKey) {
+    protected void assertDataset(String citationKey) {
         DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);

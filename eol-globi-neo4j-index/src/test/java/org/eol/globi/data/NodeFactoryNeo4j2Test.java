@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-public class GraphDBTestCase extends GraphDBTestCaseAbstract {
+public class NodeFactoryNeo4j2Test extends NodeFactoryNeo4jTest{
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {
@@ -9,5 +9,6 @@ public class GraphDBTestCase extends GraphDBTestCaseAbstract {
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
         return nodeFactoryNeo4j;
     }
+
 
 }

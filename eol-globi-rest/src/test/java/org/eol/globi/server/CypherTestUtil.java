@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.NodeFactoryNeo4j;
+import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.service.CacheService;
@@ -29,7 +30,7 @@ public class CypherTestUtil {
     public static void validate(CypherQuery cypherQuery) {
         TestGraphDatabaseFactory testGraphDatabaseFactory = new TestGraphDatabaseFactory();
         GraphDatabaseService graphDatabaseService = testGraphDatabaseFactory.newImpermanentDatabase();
-        new NodeFactoryNeo4j(graphDatabaseService);
+        new NodeFactoryNeo4j2(graphDatabaseService);
         new NonResolvingTaxonIndex(graphDatabaseService);
         new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(graphDatabaseService));
         CacheService cacheService = new CacheService();

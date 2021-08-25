@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.CharsetConstant;
@@ -41,7 +42,7 @@ public class IndexerDataset implements IndexerNeo4j {
             LOG.info("found dataset namespaces: {" + namespacelist + "}");
 
             final GraphDatabaseService graphService1 = factory.getGraphService();
-            NodeFactoryNeo4j nodeFactory = new NodeFactoryNeo4j(graphService1);
+            NodeFactoryNeo4j nodeFactory = new NodeFactoryNeo4j2(graphService1);
 
             DatasetImporterForRegistry importer = new DatasetImporterForRegistry(new ParserFactoryLocal(), nodeFactory, registry);
             importer.setDatasetFilter(x -> !DatasetUtil.isDeprecated(x));
