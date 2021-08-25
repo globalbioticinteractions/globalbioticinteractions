@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.DatasetNode;
+import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
@@ -10,14 +11,13 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Term;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
-import org.neo4j.cypher.internal.compiler.v2_3.No;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.schema.IndexDefinition;
 
 import java.util.Iterator;
@@ -26,6 +26,23 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     public NodeFactoryNeo4j3(GraphDatabaseService graphDb) {
         super(graphDb);
+        initConstraints();
+        initIndexes();
+    }
+
+    private void initIndexes() {
+        createIndexIfNeeded(getGraphDb(),
+                NodeLabel.Location,
+                LocationConstant.LATITUDE);
+        createIndexIfNeeded(getGraphDb(),
+                NodeLabel.Location,
+                LocationConstant.LOCALITY);
+        createIndexIfNeeded(getGraphDb(),
+                NodeLabel.Location,
+                LocationConstant.LOCALITY_ID);
+    }
+
+    private void initConstraints() {
         createConstraintIfNeeded(
                 getGraphDb(),
                 NodeLabel.Dataset,
@@ -46,15 +63,12 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
                 NodeLabel.Season,
                 StudyConstant.TITLE
         );
-        createIndexIfNeeded(getGraphDb(),
-                NodeLabel.Location,
-                LocationConstant.LATITUDE);
-        createIndexIfNeeded(getGraphDb(),
-                NodeLabel.Location,
-                LocationConstant.LOCALITY);
-        createIndexIfNeeded(getGraphDb(),
-                NodeLabel.Location,
-                LocationConstant.LOCALITY_ID);
+
+        createConstraintIfNeeded(
+                getGraphDb(),
+                NodeLabel.Environment,
+                PropertyAndValueDictionary.NAME
+        );
     }
 
     @Override
@@ -116,6 +130,11 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         return node == null
                 ? null
                 : new StudyNode(node);
+    }
+
+    @Override
+    public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) {
+        // environment nodes already automatically indexed: do nothing
     }
 
 
@@ -252,6 +271,26 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
                     : node;
         }
         return externalIdNode;
+    }
+
+
+    @Override
+    public Node createEnvironmentNode() {
+        return getGraphDb().createNode(NodeLabel.Environment);
+    }
+
+    @Override
+    public EnvironmentNode findEnvironment(String name) {
+        try (Transaction tx = getGraphDb().beginTx()) {
+            Node node = getGraphDb().findNode(NodeLabel.Environment,
+                    PropertyAndValueDictionary.NAME,
+                    name
+            );
+            tx.success();
+            return node == null
+                    ? null
+                    : new EnvironmentNode(node);
+        }
     }
 
 

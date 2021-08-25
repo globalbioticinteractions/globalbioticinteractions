@@ -60,7 +60,6 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private GraphDatabaseService graphDb;
-    private final Index<Node> environments;
 
     private TermLookupService termLookupService;
     private TermLookupService envoLookupService;
@@ -74,7 +73,6 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         this.lifeStageLookupService = new TermLookupServiceWithResource("life-stage-mapping.csv");
         this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv");
         this.envoLookupService = new EnvoLookupService();
-        this.environments = NodeUtil.forNodes(graphDb, "environments");
 
     }
 
@@ -437,10 +435,7 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
                 try (Transaction transaction = graphDb.beginTx()) {
-                    EnvironmentNode environmentNode = new EnvironmentNode(graphDb.createNode(), term.getId(), term.getName());
-                    environments.add(environmentNode.getUnderlyingNode(), PropertyAndValueDictionary.NAME, term.getName());
-                    transaction.success();
-                    environment = environmentNode;
+                    environment = createEnvironmentNode(term, transaction);
                 }
             }
             try (Transaction transaction = graphDb.beginTx()) {
@@ -452,19 +447,20 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         return normalizedEnvironments;
     }
 
-    protected EnvironmentNode findEnvironment(String name) {
-        EnvironmentNode firstMatchingEnvironment = null;
-        String query = "name:\"" + name + "\"";
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> matches = environments.query(query);
-            if (matches.hasNext()) {
-                firstMatchingEnvironment = new EnvironmentNode(matches.next());
-            }
-            matches.close();
-            transaction.success();
-        }
-        return firstMatchingEnvironment;
+    public EnvironmentNode createEnvironmentNode(Term term, Transaction transaction) {
+        Node node = createEnvironmentNode();
+        EnvironmentNode environmentNode = new EnvironmentNode(node, term.getId(), term.getName());
+        indexEnvironmentNode(term, environmentNode);
+        transaction.success();
+        return environmentNode;
     }
+
+    abstract public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode);
+
+    abstract public Node createEnvironmentNode();
+
+    abstract public EnvironmentNode findEnvironment(String name);
+
 
     @Override
     public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {

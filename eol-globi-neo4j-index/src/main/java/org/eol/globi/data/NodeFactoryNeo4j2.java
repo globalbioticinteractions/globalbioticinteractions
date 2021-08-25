@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.domain.DatasetNode;
+import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
@@ -11,6 +12,7 @@ import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.domain.Term;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
@@ -29,7 +31,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     private final Index<Node> externalIds;
     private final Index<Node> seasons;
     private final Index<Node> locations;
-
+    private final Index<Node> environments;
 
 
     public NodeFactoryNeo4j2(GraphDatabaseService graphDb) {
@@ -39,6 +41,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
         this.seasons = NodeUtil.forNodes(graphDb, "seasons");
         this.locations = NodeUtil.forNodes(graphDb, "locations");
+        this.environments = NodeUtil.forNodes(graphDb, "environments");
     }
 
     @Override
@@ -196,7 +199,6 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
 
-
     private Node findLocationByLatitude(Location location) throws NodeFactoryException {
         Node matchingLocation;
         validate(location);
@@ -209,6 +211,36 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         }
         return matchingLocation;
     }
+
+    @Override
+    public Node createEnvironmentNode() {
+        return getGraphDb().createNode();
+    }
+
+    @Override
+    public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) {
+        environments.add(
+                environmentNode.getUnderlyingNode(),
+                PropertyAndValueDictionary.NAME,
+                term.getName()
+        );
+    }
+
+    @Override
+    public EnvironmentNode findEnvironment(String name) {
+        EnvironmentNode firstMatchingEnvironment = null;
+        String query = "name:\"" + name + "\"";
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            IndexHits<Node> matches = environments.query(query);
+            if (matches.hasNext()) {
+                firstMatchingEnvironment = new EnvironmentNode(matches.next());
+            }
+            matches.close();
+            transaction.success();
+        }
+        return firstMatchingEnvironment;
+    }
+
 
 }
 
