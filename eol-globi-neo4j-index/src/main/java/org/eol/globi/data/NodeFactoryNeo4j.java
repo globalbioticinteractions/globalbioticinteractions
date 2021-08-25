@@ -1,9 +1,9 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryParser.QueryParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.queryParser.QueryParser;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.EnvironmentNode;
@@ -54,8 +54,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
 
@@ -65,7 +63,6 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);
 
     private GraphDatabaseService graphDb;
-    private final Index<Node> studies;
     private final Index<Node> externalIds;
     private final Index<Node> seasons;
     private final Index<Node> locations;
@@ -83,34 +80,11 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         this.lifeStageLookupService = new TermLookupServiceWithResource("life-stage-mapping.csv");
         this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv");
         this.envoLookupService = new EnvoLookupService();
-        this.studies = NodeUtil.forNodes(graphDb, "studies");
         this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
         this.seasons = NodeUtil.forNodes(graphDb, "seasons");
         this.locations = NodeUtil.forNodes(graphDb, "locations");
         this.environments = NodeUtil.forNodes(graphDb, "environments");
 
-
-        createDatasetConstraint(graphDb);
-    }
-
-    private void createDatasetConstraint(GraphDatabaseService graphDb) {
-        try (Transaction transaction = graphDb.beginTx()) {
-            if (!graphDb
-                    .schema()
-                    .getConstraints(NodeLabel.Dataset)
-                    .iterator()
-                    .hasNext()) {
-
-                graphDb
-                        .schema()
-                        .constraintFor(NodeLabel.Dataset)
-                        .assertPropertyIsUnique(DatasetConstant.NAMESPACE)
-                        .create();
-            } else {
-                System.out.println("constraint already exists");
-            }
-            transaction.success();
-        }
     }
 
     public GraphDatabaseService getGraphDb() {
@@ -344,35 +318,45 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     }
 
 
+    abstract Node createStudyNode();
+
+    abstract void indexReferenceNode(StudyNode studyNode);
+
     @Override
     public StudyNode createStudy(Study study) {
         StudyNode studyNode;
 
         try (Transaction transaction = graphDb.beginTx()) {
-            Node node = graphDb.createNode();
-            studyNode = new StudyNode(node, study.getTitle());
-            studyNode.setCitation(study.getCitation());
-            studyNode.setDOI(study.getDOI());
-            if (study.getDOI() != null) {
-                String doiString = study.getDOI().toString();
-                createExternalIdRelationIfExists(node, doiString, RelTypes.HAS_DOI);
-            }
-
-            String externalId = getExternalIdOrDOI(study);
-            studyNode.setExternalId(externalId);
-
-            createExternalIdRelationIfExists(node, externalId, RelTypes.HAS_EXTERNAL_ID);
-
-            Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-            if (dataset instanceof DatasetNode) {
-                studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
-            }
-
-            studies.add(node, StudyConstant.TITLE, study.getTitle());
-            studies.add(node, StudyConstant.TITLE_IN_NAMESPACE, getTitleInNamespace(study));
+            Node node = createStudyNode();
+            studyNode = createStudyNode(study, node);
+            indexReferenceNode(studyNode);
             transaction.success();
         }
 
+        return studyNode;
+    }
+
+    protected StudyNode createStudyNode(Study study, Node node) {
+        StudyNode studyNode;
+        studyNode = new StudyNode(node, study.getTitle());
+        studyNode.setCitation(study.getCitation());
+        studyNode.setDOI(study.getDOI());
+        if (study.getDOI() != null) {
+            String doiString = study.getDOI().toString();
+            createExternalIdRelationIfExists(node, doiString, RelTypes.HAS_DOI);
+        }
+
+        String externalId = getExternalIdOrDOI(study);
+        studyNode.setExternalId(externalId);
+
+        createExternalIdRelationIfExists(node, externalId, RelTypes.HAS_EXTERNAL_ID);
+
+        Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
+        if (dataset instanceof DatasetNode) {
+            studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
+        }
+
+        studyNode.getUnderlyingNode().setProperty(StudyConstant.TITLE_IN_NAMESPACE, getTitleInNamespace(study));
         return studyNode;
     }
 
@@ -391,12 +375,12 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         return externalId;
     }
 
-    protected Node createDatasetNode(Dataset dataset) {
-        Node datasetNode = graphDb.createNode(NodeLabel.Dataset);
-        return createDatasetNode(dataset, datasetNode);
-    }
+    protected abstract Node createDatasetNode();
 
-    protected Node createDatasetNode(Dataset dataset, Node datasetNode) {
+    protected abstract void indexDatasetNode(Dataset dataset, Node datasetNode);
+
+    protected Node createDatasetNode(Dataset dataset) {
+        Node datasetNode = createDatasetNode();
         datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
         if (archiveURI != null) {
@@ -426,6 +410,7 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         datasetNode.setProperty(DatasetConstant.CITATION, StringUtils.defaultIfBlank(dataset.getCitation(), "no citation"));
         datasetNode.setProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES, dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
         datasetNode.setProperty(DatasetConstant.LAST_SEEN_AT, dataset.getOrDefault(DatasetConstant.LAST_SEEN_AT, Long.toString(System.currentTimeMillis())));
+        indexDatasetNode(dataset, datasetNode);
         return datasetNode;
     }
 
@@ -448,9 +433,11 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
             transaction.success();
         }
 
-        return studyNode == null
-                ? createStudy(study)
-                : studyNode;
+        if (studyNode == null) {
+            studyNode = createStudy(study);
+        }
+
+        return studyNode;
     }
 
     private String namespaceOrNull(Study study) {
@@ -469,14 +456,9 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         }
     }
 
-    private StudyNode findStudy(Study study) {
-        String titleNS = getTitleInNamespace(study);
-        final IndexHits<Node> nodes = studies.get(StudyConstant.TITLE_IN_NAMESPACE, titleNS);
-        Node foundStudyNode = nodes != null ? nodes.getSingle() : null;
-        return foundStudyNode == null ? null : new StudyNode(foundStudyNode);
-    }
+    protected abstract StudyNode findStudy(Study study);
 
-    private String getTitleInNamespace(Study study) {
+    protected String getTitleInNamespace(Study study) {
         String namespace = namespaceOrNull(study);
         return StringUtils.isBlank(namespace)
                 ? study.getTitle()

@@ -67,13 +67,10 @@ public class StudyNode extends NodeBacked implements Study {
 
     @Override
     public String getCitation() {
-        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
+        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
             String citation = getUnderlyingNode().hasProperty(StudyConstant.CITATION) ? getProperty(StudyConstant.CITATION) : null;
             tx.success();
             return citation;
-        } finally {
-            tx.close();
         }
     }
 
