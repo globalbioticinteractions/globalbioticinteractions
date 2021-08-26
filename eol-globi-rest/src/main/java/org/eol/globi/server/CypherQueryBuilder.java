@@ -239,17 +239,21 @@ public class CypherQueryBuilder {
                     .append(selectorPrefixForName(taxonSelector, isExactMatch))
                     .append("\\\"")
                     // see https://stackoverflow.com/questions/25450308/full-text-search-in-neo4j-with-spaces
-                    .append(StringUtils.replace(taxonSelector, " ", "\\ "))
+                    .append(escapeWhitespace(taxonSelector))
                     .append("\\\"");
             count++;
         }
         return lucenePathQuery.toString();
     }
 
+    public static String escapeWhitespace(String taxonSelector) {
+        return StringUtils.replace(taxonSelector, " ", "\\ ");
+    }
+
     protected static String strictExternalIdMatch(List<String> terms) {
         List<String> quotedTerms = new ArrayList<String>();
         for (String term : terms) {
-            quotedTerms.add("externalId:\\\"" + term + "\\\"");
+            quotedTerms.add("externalId:\\\"" + escapeWhitespace(term) + "\\\"");
         }
         return orNestedTerms(quotedTerms);
     }
