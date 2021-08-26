@@ -19,12 +19,12 @@ public class CypherQuery {
     }
 
     public CypherQuery(String query, String version) {
-        this(query, null, version);
+        this(query, Collections.emptyMap(), version);
     }
 
     public CypherQuery(String query, Map<String, String> params, String version) {
         this.query = query;
-        this.params = params;
+        this.params = params == null ? Collections.emptyMap() : params;
         this.version = version;
     }
 

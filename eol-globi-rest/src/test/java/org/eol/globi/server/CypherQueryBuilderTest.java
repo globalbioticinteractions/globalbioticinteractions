@@ -34,8 +34,8 @@ import static org.eol.globi.server.QueryType.MULTI_TAXON_DISTINCT;
 import static org.eol.globi.server.QueryType.MULTI_TAXON_DISTINCT_BY_NAME_ONLY;
 import static org.eol.globi.server.QueryType.SINGLE_TAXON_ALL;
 import static org.eol.globi.server.QueryType.SINGLE_TAXON_DISTINCT;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.fail;
 
