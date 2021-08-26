@@ -1505,7 +1505,11 @@ public class CypherQueryBuilderTest {
         assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo sapiens\\\""));
         assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
 
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+        System.out.println("found:");
+        System.out.println(query.getVersionedQuery());
+
+
+        String expectedQuery = CYPHER_VERSION +
                 "START " +
                 "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
                 "MATCH " +
@@ -1513,7 +1517,12 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE +
                 "RETURN " +
-                "sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
+                "sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name";
+
+        System.out.println("expected:");
+        System.out.println(expectedQuery);
+
+        assertThat(query.getVersionedQuery(), is(expectedQuery));
     }
 
     @Test
