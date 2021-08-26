@@ -8,6 +8,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.riot.system.ErrorHandlerFactory;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
@@ -216,6 +217,7 @@ public class DatasetImporterForSPIRE extends NodeBasedImporter {
     }
 
     private Model buildModel() throws IOException {
+        ErrorHandlerFactory.setDefaultErrorHandler(ErrorHandlerFactory.errorHandlerNoWarnings);
         Model model = ModelFactory.createDefaultModel();
         try (InputStream resource = getDataset().retrieve(URI.create("spire/allFoodWebStudies.owl"))) {
             BufferedReader bufferedReader = FileUtils.getUncompressedBufferedReader(resource, CharsetConstant.UTF8);
