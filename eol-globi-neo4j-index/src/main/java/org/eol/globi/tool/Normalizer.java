@@ -167,7 +167,6 @@ public class Normalizer {
         } else {
             LOG.info("skipping linking ...");
         }
-
     }
 
     void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {

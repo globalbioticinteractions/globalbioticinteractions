@@ -106,13 +106,25 @@ public class NormalizerTest extends GraphDBTestCase {
     }
 
     @Test
-    public void doSingleImportExport() throws StudyImporterException, URISyntaxException {
+    public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
+        doSingleImportExport(NodeFactoryNeo4j2::new);
+    }
+
+    @Test
+    public void doSingleImportExportV3() throws StudyImporterException, URISyntaxException {
+        doSingleImportExport(NodeFactoryNeo4j3::new);
+    }
+
+    public void doSingleImportExport(NodeFactoryFactory nodeFactoryFactory) throws URISyntaxException, StudyImporterException {
         Normalizer dataNormalizationTool = createNormalizer();
 
         URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
-        final IndexerDataset indexerDataset = new IndexerDataset(DatasetRegistryUtil.getDatasetRegistry(datasetDirTest), service -> new NodeFactoryNeo4j2(service));
+        final IndexerDataset indexerDataset = new IndexerDataset(
+                DatasetRegistryUtil.getDatasetRegistry(datasetDirTest),
+                nodeFactoryFactory);
+
         indexerDataset.index(getGraphFactory());
 
         String baseDir = "./target/normalizer-test/";
