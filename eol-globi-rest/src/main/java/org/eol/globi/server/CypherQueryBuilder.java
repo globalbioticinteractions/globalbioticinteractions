@@ -238,7 +238,8 @@ public class CypherQueryBuilder {
             lucenePathQuery
                     .append(selectorPrefixForName(taxonSelector, isExactMatch))
                     .append("\\\"")
-                    .append(taxonSelector)
+                    // see https://stackoverflow.com/questions/25450308/full-text-search-in-neo4j-with-spaces
+                    .append(StringUtils.replace(taxonSelector, " ", "\\ "))
                     .append("\\\"");
             count++;
         }

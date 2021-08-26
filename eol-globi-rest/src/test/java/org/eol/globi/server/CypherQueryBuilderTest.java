@@ -417,7 +417,8 @@ public class CypherQueryBuilderTest {
                 "sourceTaxon.name as source_taxon_name" +
                 ",targetTaxon.name as target_taxon_name" +
                 ",collected_rel.dateInUnixEpoch as collection_time_in_unix_epoch"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Ariopsis felis\\\"}")));
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=path:\\\"Ariopsis\\ felis\\\"}"));
 
     }
 
@@ -493,7 +494,7 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         Map<String, String> expected = new HashMap<String, String>() {{
             put("source_taxon_name", "path:\\\"urn:catalog:AMNH:Mammals:M-39582\\\"");
-            put("target_taxon_name", "path:\\\"Paradyschiria lineata Kessel, 1925\\\"");
+            put("target_taxon_name", "path:\\\"Paradyschiria\\ lineata\\ Kessel,\\ 1925\\\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -890,7 +891,8 @@ public class CypherQueryBuilderTest {
                 "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta']) " +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some name\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some\\ name\\\", target_taxon_name=name:\\\"Insecta\\\"}"));
     }
 
     @Test
@@ -911,7 +913,7 @@ public class CypherQueryBuilderTest {
                 " OR (exists(targetTaxon.externalId) AND targetTaxon.externalId IN ['EOL:123']) " +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some name\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some\\ name\\\"}")));
     }
 
 
@@ -932,7 +934,8 @@ public class CypherQueryBuilderTest {
                 "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['FOO:123','some name'])" +
                 " OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc" +
                 " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"FOO:123\\\" OR name:\\\"some name\\\"}")));
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"FOO:123\\\" OR name:\\\"some\\ name\\\"}"));
     }
 
     @Test
@@ -1398,7 +1401,8 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset, " +
                 "sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + HAS_TARGET_TAXON_PLANTAE + expectedReturnClause()));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=path:\\\"Homo\\ sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
     @Test
@@ -1411,7 +1415,8 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=path:\\\"Homo\\ sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
     @Test
@@ -1423,7 +1428,8 @@ public class CypherQueryBuilderTest {
                 "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(PARASITE_OF) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=path:\\\"Homo\\ sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
     @Test
@@ -1438,7 +1444,8 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "OPTIONAL MATCH " +
                 "sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=path:\\\"Homo\\ sapiens\\\"}"));
     }
 
     @Test
@@ -1452,7 +1459,9 @@ public class CypherQueryBuilderTest {
                 "sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:" + InteractUtil.interactionsCypherClause(KILLS) + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\"}"));
+
+        assertThat(query.getParams().toString(),
+                is("{source_taxon_name=path:\\\"Homo\\ sapiens\\\"}"));
     }
 
     @Test
@@ -1467,7 +1476,7 @@ public class CypherQueryBuilderTest {
 
         Map<String, String> params1 = query.getParams();
         assertThat(params1.size(), is(2));
-        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo sapiens\\\""));
+        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo\\ sapiens\\\""));
         assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
 
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
@@ -1486,7 +1495,7 @@ public class CypherQueryBuilderTest {
 
         Map<String, String> params1 = query.getParams();
         assertThat(params1.size(), is(2));
-        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo sapiens\\\""));
+        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo\\ sapiens\\\""));
         assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
 
 
@@ -1508,12 +1517,8 @@ public class CypherQueryBuilderTest {
 
         Map<String, String> params1 = query.getParams();
         assertThat(params1.size(), is(2));
-        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo sapiens\\\""));
+        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo\\ sapiens\\\""));
         assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
-
-        System.out.println("found:");
-        System.out.println(query.getVersionedQuery());
-
 
         String expectedQuery = CYPHER_VERSION +
                 "START " +
@@ -1524,9 +1529,6 @@ public class CypherQueryBuilderTest {
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE +
                 "RETURN " +
                 "sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name";
-
-        System.out.println("expected:");
-        System.out.println(expectedQuery);
 
         assertThat(query.getVersionedQuery(), is(expectedQuery));
     }
