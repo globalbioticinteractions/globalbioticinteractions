@@ -534,7 +534,7 @@ public class CypherQueryBuilderTest {
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("accordingTo", "namespace:\\\"some/namespace\\\"");
+            put("accordingTo", "namespace:\\\"some\\/namespace\\\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -571,7 +571,7 @@ public class CypherQueryBuilderTest {
                 "sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
             put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("accordingTo", "namespace:\\\"some/namespace\\\"");
+            put("accordingTo", "namespace:\\\"some\\/namespace\\\"");
         }};
         assertThat(query.getParams(), is(expected));
     }

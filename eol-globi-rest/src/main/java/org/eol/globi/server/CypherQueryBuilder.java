@@ -272,7 +272,8 @@ public class CypherQueryBuilder {
         if (accordingTo != null && accordingTo.size() > 0) {
             List<DOI> dois = extractDOIs(accordingTo);
             if (dois.size() > 0) {
-                paramMap.put("accordingTo", matchReferenceOrDataset(dois.stream().map(DOI::toString).collect(Collectors.toList())));
+                List<String> DOIs = dois.stream().map(DOI::toString).collect(Collectors.toList());
+                paramMap.put("accordingTo", matchReferenceOrDataset(DOIs));
             } else if (isAccordingToNamespaceQuery(accordingTo)) {
                 List<String> namespaces = getNamespaces(accordingTo);
                 paramMap.put("accordingTo", "namespace:\\\"" + orNestedTerms(namespaces) + "\\\"");
@@ -528,10 +529,6 @@ public class CypherQueryBuilder {
         }
     }
 
-    private static boolean hasDOIs(List<String> accordingToParams) {
-        return extractDOIs(accordingToParams).size() > 0;
-    }
-
     private static List<DOI> extractDOIs(List<String> accordingToParams) {
         List<DOI> dois = new ArrayList<>();
         for (String accordingToParam : accordingToParams) {
@@ -553,7 +550,11 @@ public class CypherQueryBuilder {
     private static List<String> getNamespaces(List<String> accordingToParams) {
         Stream<String> namespaces = accordingToParams.stream()
                 .filter(accordingTo -> StringUtils.startsWith(accordingTo, "globi:"))
-                .map(accordingTo -> StringUtils.replaceOnce(accordingTo, "globi:", ""));
+                .map(accordingTo -> StringUtils.replaceOnce(accordingTo, "globi:", ""))
+                // since lucene 4.0 forward slashes need to be escaped
+                // see https://stackoverflow.com/questions/17798300/lucene-queryparser-with-in-query-criteria
+                // see https://lucene.apache.org/core/4_0_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Regexp_Searches
+                .map(accordingTo -> StringUtils.replace(accordingTo, "/", "\\/"));
         return namespaces.collect(Collectors.toList());
     }
 

@@ -61,7 +61,7 @@ public class Elton4N {
                 ? "2"
                 : cmdLine.getOptionValue(CmdOptionConstants.OPTION_NEO4J_VERSION, "2");
 
-    
+
         Factories factoriesNeo4j = new Factories() {
             final GraphServiceFactory factory = new GraphServiceFactoryImpl("./");
 
