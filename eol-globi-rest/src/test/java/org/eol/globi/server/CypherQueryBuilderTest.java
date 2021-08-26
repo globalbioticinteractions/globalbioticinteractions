@@ -1458,6 +1458,12 @@ public class CypherQueryBuilderTest {
         };
 
         query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
+
+        Map<String, String> params1 = query.getParams();
+        assertThat(params1.size(), is(2));
+        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo sapiens\\\""));
+        assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
+
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START " +
                 "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
@@ -1465,13 +1471,19 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset, " +
                 "sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + HAS_TARGET_TAXON_PLANTAE + "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
     @Test
     public void findDistinctPlantPreyWithoutLocation() {
         Map<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
+
+        Map<String, String> params1 = query.getParams();
+        assertThat(params1.size(), is(2));
+        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo sapiens\\\""));
+        assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
+
+
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START " +
                 "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
@@ -1480,13 +1492,19 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE +
                 "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+
     }
 
     @Test
     public void findDistinctPlantParasiteWithoutLocation() {
         HashMap<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "parasiteOf", "Plantae", params, SINGLE_TAXON_DISTINCT);
+
+        Map<String, String> params1 = query.getParams();
+        assertThat(params1.size(), is(2));
+        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo sapiens\\\""));
+        assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
+
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START " +
                 "sourceTaxon = node:taxonPaths({source_taxon_name}) " +
@@ -1496,7 +1514,6 @@ public class CypherQueryBuilderTest {
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE +
                 "RETURN " +
                 "sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name"));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Homo sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
     }
 
     @Test
