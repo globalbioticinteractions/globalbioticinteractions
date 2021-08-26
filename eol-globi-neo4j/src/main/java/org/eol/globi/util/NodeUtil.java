@@ -89,14 +89,14 @@ public class NodeUtil {
     }
 
     public static void findDatasetsByQuery(GraphDatabaseService graphService, DatasetNodeListener listener, String queryKey, String queryValue) {
-        try (Transaction transaction = graphService.beginTx()) {
+        try (Transaction tx = graphService.beginTx()) {
             Index<Node> studyIndex = graphService.index().forNodes("datasets");
             IndexHits<Node> hits = studyIndex.query(queryKey, queryValue);
             for (Node hit : hits) {
                 listener.on(new DatasetNode(hit));
             }
             hits.close();
-            transaction.success();
+            tx.success();
         }
     }
 
@@ -174,35 +174,24 @@ public class NodeUtil {
         return index;
     }
 
-    public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName, Map properties) {
-        Index<Node> index;
-        try (Transaction tx = graphDb.beginTx()) {
-            index = graphDb.index().forNodes(indexName, properties);
+    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener) {
+        try (Transaction tx = ntd.srcNode.getGraphDatabase().beginTx()) {
+            handleCollectionRelationshipsNoTx(ntd, listener);
             tx.success();
         }
-        return index;
     }
 
-    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener) {
-        handleCollectedRelationships(ntd, listener, TRANSACTION_BATCH_SIZE_DEFAULT);
+    public static void handleCollectedRelationshipsNoTx(NodeTypeDirection ntd, final RelationshipListener listener) {
+        Iterable<Relationship> relIterable = getOutgoingNodeRelationships(ntd.srcNode, ntd.relType, ntd.dir);
+        for (Relationship rel : relIterable) {
+            listener.on(rel);
+        }
     }
 
-    public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener, int batchSize) {
-        int counter = 0;
-        Transaction tx = ntd.srcNode.getGraphDatabase().beginTx();
-        try {
-            Iterable<Relationship> relIterable = getOutgoingNodeRelationships(ntd.srcNode, ntd.relType, ntd.dir);
-            for (Relationship rel : relIterable) {
-                listener.on(rel);
-                if (++counter % batchSize == 0) {
-                    tx.success();
-                    tx.close();
-                    tx = ntd.srcNode.getGraphDatabase().beginTx();
-                }
-            }
-            tx.success();
-        } finally {
-            tx.close();
+    private static void handleCollectionRelationshipsNoTx(NodeTypeDirection ntd, RelationshipListener listener) {
+        Iterable<Relationship> relIterable = getOutgoingNodeRelationships(ntd.srcNode, ntd.relType, ntd.dir);
+        for (Relationship rel : relIterable) {
+            listener.on(rel);
         }
     }
 

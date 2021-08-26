@@ -69,7 +69,7 @@ public class ReportGenerator {
 
             @Override
             public String datasetQueryFor(String namespace) {
-                return namespace;
+                return StringUtils.replace(namespace, "/", "\\/");
             }
 
             @Override
@@ -88,7 +88,7 @@ public class ReportGenerator {
 
             @Override
             public String datasetQueryFor(String namespace) {
-                return namespace + "/*";
+                return namespace + "\\/*";
             }
 
             @Override
@@ -148,7 +148,7 @@ public class ReportGenerator {
                 .make();
 
         for (final String namespaceGroup : namespaceGroups) {
-            LOG.info("generate report for namespace(s) [" + namespaceHandler.datasetQueryFor(namespaceGroup) + "]...");
+            LOG.info("generate report for namespace(s) [" + namespaceHandler.parse(namespaceGroup) + "]...");
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
             distinctDatasets.clear();
@@ -189,7 +189,7 @@ public class ReportGenerator {
 
                 tx.success();
             }
-            LOG.info("generate report for namespace(s) [" + namespaceHandler.datasetQueryFor(namespaceGroup) + "] done.");
+            LOG.info("generate report for namespace(s) [" + namespaceHandler.parse(namespaceGroup) + "] done.");
         }
     }
 
@@ -261,7 +261,9 @@ public class ReportGenerator {
             }
         };
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
+        NodeUtil.handleCollectedRelationshipsNoTx(
+                new NodeTypeDirection(study.getUnderlyingNode()),
+                handler);
     }
 
     private static class Counter {

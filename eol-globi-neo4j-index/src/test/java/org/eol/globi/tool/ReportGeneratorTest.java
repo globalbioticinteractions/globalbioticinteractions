@@ -1,5 +1,6 @@
 package org.eol.globi.tool;
 
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -24,6 +25,7 @@ import java.net.URI;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Rule
@@ -55,7 +57,9 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
 
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
-                new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
+                new DatasetImpl("zother/source",
+                        URI.create("http://example.com"),
+                        inStream -> inStream));
 
 
         StudyImpl study3 = new StudyImpl("yet another title", null, null);
@@ -65,39 +69,39 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceIndividuals();
 
-        Transaction transaction = getGraphDb().beginTx();
+        try (Transaction transaction = getGraphDb().beginTx()) {
+            String escapedQuery = QueryParser.escape("globi:az/source");
+            IndexHits<Node> reports = getGraphDb()
+                    .index()
+                    .forNodes("reports")
+                    .query(StudyConstant.SOURCE_ID, escapedQuery);
 
-        IndexHits<Node> reports = getGraphDb()
-                .index()
-                .forNodes("reports")
-                .get(StudyConstant.SOURCE_ID, "globi:az/source");
+            Node reportNode = reports.getSingle();
+            assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az/source"));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+            reports.close();
 
-        Node reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az/source"));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        reports.close();
+            IndexHits<Node> otherReports = getGraphDb()
+                    .index()
+                    .forNodes("reports")
+                    .query(StudyConstant.SOURCE_ID, "globi\\:zother\\/source");
 
-        IndexHits<Node> otherReports = getGraphDb()
-                .index()
-                .forNodes("reports")
-                .get(StudyConstant.SOURCE_ID, "globi:zother/source");
+            Node otherReport = otherReports.getSingle();
+            assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("globi:zother/source"));
+            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
+            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
+            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
+            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
 
-        Node otherReport = otherReports.getSingle();
-        assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("globi:zother/source"));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-
-        transaction.success();
-        transaction.close();
+            transaction.success();
+        }
     }
 
     @Test
@@ -130,7 +134,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         IndexHits<Node> reports = getGraphDb()
                 .index()
                 .forNodes("reports")
-                .get(StudyConstant.SOURCE_ID, "globi:az");
+                .query(StudyConstant.SOURCE_ID, "globi\\:az");
 
         Node reportNode = reports.getSingle();
         assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az"));
@@ -145,7 +149,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         IndexHits<Node> otherReports = getGraphDb()
                 .index()
                 .forNodes("reports")
-                .get(StudyConstant.SOURCE_ID, "globi:zother");
+                .query(StudyConstant.SOURCE_ID, "globi\\:zother");
 
         Node otherReport = otherReports.getSingle();
         assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("globi:zother"));
@@ -179,7 +183,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         IndexHits<Node> reports = getGraphDb()
                 .index()
                 .forNodes("reports")
-                .query("*:*");
+                .query("*", "*");
 
         assertThat(reports.size(), is(1));
         Node reportNode = reports.getSingle();
