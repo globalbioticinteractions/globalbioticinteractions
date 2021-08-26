@@ -44,8 +44,7 @@ public class LinkerDOI implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         GraphDatabaseService graphDb = factory.getGraphService();
-        Transaction transaction = graphDb.beginTx();
-        try {
+        try (Transaction readTx = graphDb.beginTx()) {
             Index<Node> taxons = graphDb.index().forNodes("studies");
             IndexHits<Node> hits = taxons.query("*:*");
 
@@ -68,9 +67,6 @@ public class LinkerDOI implements IndexerNeo4j {
                     LOG.info(logProgress(counterResolved, stopWatch));
                     resolveBatch(doiResolver, batch);
                     batch.clear();
-                    transaction.success();
-                    transaction.close();
-                    transaction = graphDb.beginTx();
                 }
             }
             resolveBatch(doiResolver, batch);
@@ -80,9 +76,7 @@ public class LinkerDOI implements IndexerNeo4j {
                 LOG.info(logProgress(counterResolved, stopWatch));
             }
             stopWatch.stop();
-            transaction.success();
-        } finally {
-            transaction.close();
+            readTx.success();
         }
     }
 

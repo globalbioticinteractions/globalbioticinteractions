@@ -31,8 +31,7 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         GraphDatabaseService graphDb = factory.getGraphService();
-        Transaction tx = graphDb.beginTx();
-        try {
+        try (Transaction readTx = graphDb.beginTx()) {
             Index<Node> taxons = graphDb.index().forNodes("taxons");
             Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
             TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
@@ -60,14 +59,10 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
 
                 String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
                 hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
-                tx.success();
-                tx.close();
-                tx = graphDb.beginTx();
+
             }
             hits.close();
-            tx.success();
-        } finally {
-            tx.close();
+            readTx.success();
         }
     }
 
