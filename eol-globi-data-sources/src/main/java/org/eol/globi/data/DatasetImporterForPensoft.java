@@ -63,7 +63,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         final ObjectNode obj = objectMapper.createObjectNode();
         final ArrayNode arrayNode = objectMapper.createArrayNode();
         columns.forEach(arrayNode::add);
-        obj.put("columns", arrayNode);
+        obj.set("columns", arrayNode);
         return obj;
     }
 

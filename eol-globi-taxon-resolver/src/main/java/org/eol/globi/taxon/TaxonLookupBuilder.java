@@ -1,6 +1,8 @@
 package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
@@ -63,7 +65,8 @@ public class TaxonLookupBuilder implements TaxonImportListener, AutoCloseable {
     @Override
     public void start() {
         try {
-            IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, null);
+            Analyzer analyzer = new StandardAnalyzer();
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
             indexWriter = new IndexWriter(indexDir, config);
         } catch (IOException e) {
             throw new RuntimeException("failed to create indexWriter, cannot continue", e);

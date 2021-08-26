@@ -28,7 +28,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
 
         rssUrl.put("rss", "http://ipt.vertnet.org:8080/ipt/rss.do");
         ObjectNode configNode = new ObjectMapper().createObjectNode();
-        configNode.put("resources", rssUrl);
+        configNode.set("resources", rssUrl);
         datasetWithCache.setConfig(configNode);
 
         importer.setDataset(datasetWithCache);
@@ -48,7 +48,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
 
         rssUrl.put("rss", "https://symbiota.ccber.ucsb.edu/webservices/dwc/rss.xml");
         ObjectNode configNode = new ObjectMapper().createObjectNode();
-        configNode.put("resources", rssUrl);
+        configNode.set("resources", rssUrl);
         datasetWithCache.setConfig(configNode);
 
         importer.setDataset(datasetWithCache);
@@ -68,7 +68,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
 
         rssUrl.put("rss", "http://amnh.begoniasociety.org/dwc/rss.xml");
         ObjectNode configNode = new ObjectMapper().createObjectNode();
-        configNode.put("resources", rssUrl);
+        configNode.set("resources", rssUrl);
         dataset.setConfig(configNode);
         importer.setDataset(dataset);
         importStudy(importer);

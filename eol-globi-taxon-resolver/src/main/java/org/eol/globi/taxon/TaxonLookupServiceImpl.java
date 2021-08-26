@@ -2,8 +2,8 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.PhraseQuery;
@@ -40,7 +40,7 @@ public class TaxonLookupServiceImpl implements TaxonLookupService, AutoCloseable
 
     private Taxon[] findTaxon(String fieldName1, String fieldValue) throws IOException {
         if (indexSearcher == null) {
-            indexSearcher = new IndexSearcher(IndexReader.open(indexDir));
+            indexSearcher = new IndexSearcher(DirectoryReader.open(indexDir));
         }
 
         Taxon[] terms = new TaxonImpl[0];
@@ -56,31 +56,31 @@ public class TaxonLookupServiceImpl implements TaxonLookupService, AutoCloseable
                     ScoreDoc scoreDoc = docs.scoreDocs[i];
                     Document foundDoc = indexSearcher.doc(scoreDoc.doc);
                     Taxon term = new TaxonImpl();
-                    Fieldable idField = foundDoc.getFieldable(TaxonLookupServiceConstants.FIELD_ID);
+                    IndexableField idField = foundDoc.getField(TaxonLookupServiceConstants.FIELD_ID);
                     if (idField != null) {
                         term.setExternalId(idField.stringValue());
                     }
-                    Fieldable rankPathField = foundDoc.getFieldable(TaxonLookupServiceConstants.FIELD_RANK_PATH);
+                    IndexableField rankPathField = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RANK_PATH);
                     if (rankPathField != null) {
                         term.setPath(rankPathField.stringValue());
                     }
-                    Fieldable rankPathIdsField = foundDoc.getFieldable(TaxonLookupServiceConstants.FIELD_RANK_PATH_IDS);
+                    IndexableField rankPathIdsField = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RANK_PATH_IDS);
                     if (rankPathIdsField != null) {
                         term.setPathIds(rankPathIdsField.stringValue());
                     }
-                    Fieldable rankPathNamesField = foundDoc.getFieldable(TaxonLookupServiceConstants.FIELD_RANK_PATH_NAMES);
+                    IndexableField rankPathNamesField = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RANK_PATH_NAMES);
                     if (rankPathNamesField != null) {
                         term.setPathNames(rankPathNamesField.stringValue());
                     }
-                    Fieldable commonNamesFields = foundDoc.getFieldable(TaxonLookupServiceConstants.FIELD_COMMON_NAMES);
+                    IndexableField commonNamesFields = foundDoc.getField(TaxonLookupServiceConstants.FIELD_COMMON_NAMES);
                     if (commonNamesFields != null) {
                         term.setCommonNames(commonNamesFields.stringValue());
                     }
-                    Fieldable fieldName = foundDoc.getFieldable(TaxonLookupServiceConstants.FIELD_RECOMMENDED_NAME);
+                    IndexableField fieldName = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RECOMMENDED_NAME);
                     if (fieldName != null) {
                         term.setName(fieldName.stringValue());
                     }
-                    Fieldable fieldRank = foundDoc.getFieldable(TaxonLookupServiceConstants.FIELD_RANK);
+                    IndexableField fieldRank = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RANK);
                     if (fieldRank != null) {
                         term.setRank(fieldRank.stringValue());
                     }
@@ -102,7 +102,6 @@ public class TaxonLookupServiceImpl implements TaxonLookupService, AutoCloseable
     @Override
     public void close() throws IOException {
         if (indexSearcher != null) {
-            indexSearcher.close();
             indexSearcher = null;
         }
         if (indexDir != null) {

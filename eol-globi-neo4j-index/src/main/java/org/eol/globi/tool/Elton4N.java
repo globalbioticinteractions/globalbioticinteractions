@@ -18,12 +18,12 @@ import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Elton4Neo {
-    private static final Logger LOG = LoggerFactory.getLogger(Elton4Neo.class);
+public class Elton4N {
+    private static final Logger LOG = LoggerFactory.getLogger(Elton4N.class);
     private static final String OPTION_HELP = "h";
 
     public static void main(final String[] args) throws StudyImporterException, ParseException {
-        String o = Version.getVersionInfo(Elton4Neo.class);
+        String o = Version.getVersionInfo(Elton4N.class);
         LOG.info(o);
         CommandLine cmdLine = parseOptions(args);
         if (cmdLine.hasOption(OPTION_HELP)) {
@@ -31,7 +31,7 @@ public class Elton4Neo {
             formatter.printHelp("java -jar eol-globi-data-tool-[VERSION]-jar-with-dependencies.jar", getOptions());
         } else {
             try {
-                new Elton4Neo().run(cmdLine);
+                new Elton4N().run(cmdLine);
             } catch (Throwable th) {
                 LOG.error("failed to run GloBI indexer with [" + StringUtils.join(args, " ") + "]", th);
                 throw th;
@@ -61,7 +61,7 @@ public class Elton4Neo {
                 ? "2"
                 : cmdLine.getOptionValue(CmdOptionConstants.OPTION_NEO4J_VERSION, "2");
 
-
+    
         Factories factoriesNeo4j = new Factories() {
             final GraphServiceFactory factory = new GraphServiceFactoryImpl("./");
 

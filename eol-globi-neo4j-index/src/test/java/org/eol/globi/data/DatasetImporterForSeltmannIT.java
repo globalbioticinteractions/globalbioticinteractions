@@ -74,7 +74,7 @@ public class DatasetImporterForSeltmannIT extends GraphDBTestCase {
         ObjectNode objectNode = objMapper.createObjectNode();
         ObjectNode objectNode1 = objMapper.createObjectNode();
         objectNode1.put("archive", archiveURI.toString());
-        objectNode.put("resources", objectNode1);
+        objectNode.set("resources", objectNode1);
         dataset.setConfig(objectNode);
     }
 }

@@ -26,8 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -142,8 +143,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     private void initTaxonIdMap() throws PropertyEnricherException {
         try {
-            File luceneDir = new File(getCacheDir().getAbsolutePath(), "lucene");
-            if (!luceneDir.exists()) {
+            Path luceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene");
+            if (!luceneDir.toFile().exists()) {
                 buildIndex(luceneDir);
             }
             this.taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir)) {{
@@ -155,9 +156,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
     }
 
-    private void buildIndex(File luceneDir) throws PropertyEnricherException, IOException {
-        File tmpLuceneDir = new File(getCacheDir().getAbsolutePath(), "lucene" + UUID.randomUUID());
-        CacheServiceUtil.createCacheDir(tmpLuceneDir);
+    private void buildIndex(Path luceneDir) throws PropertyEnricherException, IOException {
+        Path tmpLuceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene" + UUID.randomUUID());
+        CacheServiceUtil.createCacheDir(tmpLuceneDir.toFile());
         SimpleFSDirectory indexDir = new SimpleFSDirectory(tmpLuceneDir);
         TaxonLookupBuilder taxonLookupService = new TaxonLookupBuilder(indexDir) {{
             start();
@@ -185,10 +186,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         watch.reset();
         taxonLookupService.finish();
         try {
-            FileUtils.moveDirectory(tmpLuceneDir, luceneDir);
+            FileUtils.moveDirectory(tmpLuceneDir.toFile(), luceneDir.toFile());
         } catch (FileExistsException ex) {
-            LOG.info("failed to move recently built index at [" + tmpLuceneDir.getAbsolutePath() + "] to [" + luceneDir.getAbsolutePath() + "]. Assuming that some other builder has already created the index.");
-            FileUtils.deleteDirectory(tmpLuceneDir);
+            LOG.info("failed to move recently built index at [" + tmpLuceneDir.toFile().getAbsolutePath() + "] to [" + luceneDir.toFile().getAbsolutePath() + "]. Assuming that some other builder has already created the index.");
+            FileUtils.deleteDirectory(tmpLuceneDir.toFile());
         }
     }
 

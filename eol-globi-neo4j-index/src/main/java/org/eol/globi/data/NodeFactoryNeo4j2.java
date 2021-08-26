@@ -1,7 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
@@ -187,7 +187,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     private Node findLocationBy(Location location, String key, String value) {
-        Node matchingLocation = null;
+        Node matchingLocation;
         String query = key + ":\"" + QueryParser.escape(value) + "\"";
         try (Transaction transaction = getGraphDb().beginTx()) {
             IndexHits<Node> matchingLocations = locations.query(query);

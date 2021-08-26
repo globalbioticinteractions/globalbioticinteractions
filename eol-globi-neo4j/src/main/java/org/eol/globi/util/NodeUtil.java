@@ -21,7 +21,6 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.kernel.api.Neo4jTypes;
 
 import java.util.ArrayList;
 import java.util.Iterator;
