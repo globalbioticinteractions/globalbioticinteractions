@@ -16,6 +16,7 @@ import org.neo4j.test.TestGraphDatabaseFactory;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class CypherTestUtil {
@@ -39,7 +40,9 @@ public class CypherTestUtil {
         ReportGenerator reportGenerator = new ReportGenerator(graphDatabaseService, cacheService);
 
         reportGenerator.run();
-        HashMap<String, Object> params = cypherQuery.getParams() == null ? null : new HashMap<>(cypherQuery.getParams());
+        Map<String, Object> params = cypherQuery.getParams() == null
+                ? Collections.EMPTY_MAP
+                : new HashMap<>(cypherQuery.getParams());
         try {
             graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
         } catch (NullPointerException ex) {

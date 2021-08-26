@@ -27,12 +27,10 @@ public class ExportTaxonMap implements StudyExporter {
                 ", linkedTaxon.externalId as resolvedTaxonId" +
                 ", linkedTaxon.name as resolvedTaxonName";
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-
         ExportUtil.writeResults(writer,
                 study.getUnderlyingNode().getGraphDatabase(),
                 query,
-                params,
+                new HashMap<>(),
                 true
         );
     }

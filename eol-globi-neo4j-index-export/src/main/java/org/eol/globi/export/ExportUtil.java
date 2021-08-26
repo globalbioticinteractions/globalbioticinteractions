@@ -56,8 +56,7 @@ public final class ExportUtil {
     }
 
     public static void export(Appender appender, GraphDatabaseService graphService, List<String> queries) throws IOException {
-        TreeMap<String, Object> params = new TreeMap<String, Object>() {{
-        }};
+        Map<String, Object> params = new TreeMap<>();
         writeResults(appender, graphService, queries, params, true);
     }
 

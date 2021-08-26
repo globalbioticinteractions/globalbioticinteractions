@@ -4,6 +4,8 @@ import org.eol.globi.domain.StudyNode;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ExportUnmatchedTaxonNames implements StudyExporter {
 
@@ -28,7 +30,7 @@ public class ExportUnmatchedTaxonNames implements StudyExporter {
                 ", study.citation as `study`" +
                 ", dataset.citation as `source`";
 
-        HashMap<String, Object> params = new HashMap<String, Object>() {{
+        Map<String, Object> params = new TreeMap<String, Object>() {{
             put("study_title", study.getTitle());
         }};
 
