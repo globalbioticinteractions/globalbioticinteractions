@@ -1,7 +1,6 @@
 package org.eol.globi.server;
 
 import org.apache.commons.io.FileUtils;
-import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.server.util.ResultField;
@@ -12,6 +11,7 @@ import org.eol.globi.tool.ReportGenerator;
 import org.eol.globi.util.CypherQuery;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.test.TestGraphDatabaseFactory;
+import org.slf4j.helpers.NOPLogger;
 
 import java.io.File;
 import java.util.Collections;
@@ -39,9 +39,10 @@ public class CypherTestUtil {
         cacheService.setCacheDir(cacheDir);
         ReportGenerator reportGenerator = new ReportGenerator(graphDatabaseService, cacheService);
 
-        reportGenerator.run();
-        Map<String, Object> params = cypherQuery.getParams() == null
-                ? Collections.EMPTY_MAP
+        reportGenerator.run(NOPLogger.NOP_LOGGER);
+        Map<String, Object> params =
+                cypherQuery.getParams() == null
+                ? Collections.emptyMap()
                 : new HashMap<>(cypherQuery.getParams());
         try {
             graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);

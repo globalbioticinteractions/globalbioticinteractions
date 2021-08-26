@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.logging.NullLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
@@ -47,17 +48,21 @@ public class ReportGenerator {
     }
 
     public void run() {
-        LOG.info("report for collection generating ...");
+        run(LOG);
+    }
+
+    public void run(Logger log) {
+        log.info("report for collection generating ...");
         generateReportForCollection();
-        LOG.info("report for collection done.");
+        log.info("report for collection done.");
 
-        LOG.info("report for sources generating ...");
+        log.info("report for sources generating ...");
         generateReportForSourceIndividuals();
-        LOG.info("report for sources done.");
+        log.info("report for sources done.");
 
-        LOG.info("report for source organizations generating ...");
+        log.info("report for source organizations generating ...");
         generateReportForSourceOrganizations();
-        LOG.info("report for source organizations done.");
+        log.info("report for source organizations done.");
     }
 
     public void generateReportForSourceIndividuals() {
@@ -148,7 +153,6 @@ public class ReportGenerator {
                 .make();
 
         for (final String namespaceGroup : namespaceGroups) {
-            LOG.info("generate report for namespace(s) [" + namespaceHandler.parse(namespaceGroup) + "]...");
             final Counter counter = new Counter();
             final Counter studyCounter = new Counter();
             distinctDatasets.clear();
@@ -189,7 +193,6 @@ public class ReportGenerator {
 
                 tx.success();
             }
-            LOG.info("generate report for namespace(s) [" + namespaceHandler.parse(namespaceGroup) + "] done.");
         }
     }
 

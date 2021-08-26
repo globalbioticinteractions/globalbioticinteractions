@@ -1645,7 +1645,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH " +
                         "DISTINCT(location) as loc RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT as footprintWKT"));
-        assertThat(query.getParams().toString(), is("{accordingTo=externalId:\\\"some source\\\"}"));
+        assertThat(query.getParams().toString(), is("{accordingTo=externalId:\\\"some\\ source\\\"}"));
     }
 
     @Test

@@ -43,24 +43,20 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException {
-
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("az/source", URI.create("http://example.com"), inStream -> inStream));
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
 
-
         StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDataset1);
         createStudy(study2);
-
 
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
                 new DatasetImpl("zother/source",
                         URI.create("http://example.com"),
                         inStream -> inStream));
-
 
         StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
