@@ -44,6 +44,7 @@ public class CypherTestUtil {
             graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
         } catch (NullPointerException ex) {
             // encountered nullpointer exceptions were caused by initialization of graph database
+            throw ex;
         } catch (RuntimeException ex) {
             // for some reason lucene queries like "node:taxons('externalId:\"NCBI:9606\"') "
             // work fine in cypher query, but cause parse exception when running programatically
