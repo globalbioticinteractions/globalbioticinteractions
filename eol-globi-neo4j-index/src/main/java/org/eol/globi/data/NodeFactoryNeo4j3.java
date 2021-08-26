@@ -8,6 +8,7 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Season;
+import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
@@ -187,7 +188,13 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public Season findSeason(String seasonName) {
-        return null;
+        Season seasonFound = null;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            Node node = getGraphDb().findNode(NodeLabel.Season, StudyConstant.TITLE, seasonName);
+            seasonFound = node == null ? null : new SeasonNode(node);
+            tx.success();
+        }
+        return seasonFound;
     }
 
 

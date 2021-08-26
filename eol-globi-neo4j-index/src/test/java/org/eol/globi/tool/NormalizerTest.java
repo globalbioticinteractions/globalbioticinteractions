@@ -4,6 +4,11 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.NodeFactoryNeo4j2;
+import org.eol.globi.data.NodeFactoryNeo4j3;
+import org.eol.globi.data.NodeLabel;
+import org.eol.globi.domain.StudyNode;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.DatasetImporter;
@@ -21,7 +26,9 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class NormalizerTest extends GraphDBTestCase {
@@ -53,12 +60,39 @@ public class NormalizerTest extends GraphDBTestCase {
     }
 
     @Test
-    public void doSingleImport() throws StudyImporterException {
-        importData(DatasetImporterForSimons.class, new NodeFactoryNeo4j2(getGraphDb()));
+    public void doSingleImportNeo4j2() throws StudyImporterException {
+        NodeFactoryNeo4j factory = new NodeFactoryNeo4j2(getGraphDb());
+        importData(DatasetImporterForSimons.class, factory);
         GraphDatabaseService graphService = getGraphDb();
 
         Study study = getStudySingleton(graphService);
         assertThat(study.getTitle(), is("Simons 1997"));
+
+        Transaction transaction = graphService.beginTx();
+        assertNotNull(graphService.getNodeById(1));
+        assertNotNull(graphService.getNodeById(200));
+        transaction.success();
+        transaction.close();
+    }
+
+    @Test
+    public void doSingleImportNeo4j3() throws StudyImporterException {
+        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
+        importData(DatasetImporterForSimons.class, factory);
+        GraphDatabaseService graphService = getGraphDb();
+
+        try( Transaction tx = getGraphDb().beginTx()) {
+            ResourceIterator<Node> nodes = graphService.findNodes(NodeLabel.Reference);
+
+            assertTrue(nodes.hasNext());
+
+            Study study = new StudyNode(nodes.next());
+            assertThat(study.getTitle(), is("Simons 1997"));
+
+            assertFalse(nodes.hasNext());
+            tx.success();
+        }
+
 
         Transaction transaction = graphService.beginTx();
         assertNotNull(graphService.getNodeById(1));

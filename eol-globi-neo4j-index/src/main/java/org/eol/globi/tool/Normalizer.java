@@ -18,7 +18,6 @@ import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.HttpUtil;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,6 @@ public class Normalizer {
     private static final String OPTION_SKIP_LINK_THUMBNAILS = "skipLinkThumbnails";
     private static final String OPTION_SKIP_LINK = "skipLink";
     private static final String OPTION_SKIP_REPORT = "skipReport";
-    private static final String OPTION_DATASET_DIR = "datasetDir";
     private static final String OPTION_SKIP_RESOLVE_CITATIONS = OPTION_SKIP_RESOLVE;
 
     public static void main(final String[] args) throws StudyImporterException, ParseException {
@@ -72,16 +70,11 @@ public class Normalizer {
         options.addOption(OPTION_SKIP_LINK_THUMBNAILS, false, "skip linking of names to thumbnails");
         options.addOption(OPTION_SKIP_LINK, false, "skip taxa cross-reference step");
         options.addOption(OPTION_SKIP_REPORT, false, "skip report generation step");
-        options.addOption(OPTION_DATASET_DIR, true, "specifies location of dataset cache");
+        options.addOption(CmdOptionConstants.OPTION_DATASET_DIR, true, "specifies location of dataset cache");
 
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
         options.addOption(helpOpt);
         return options;
-    }
-
-    interface Factories {
-        GraphServiceFactory getGraphServiceFactory();
-        NodeFactoryFactory getNodeFactoryFactory();
     }
 
     public void run(CommandLine cmdLine) throws StudyImporterException {
@@ -131,12 +124,7 @@ public class Normalizer {
 
     private void importDatasets(CommandLine cmdLine, GraphServiceFactory factory, NodeFactoryFactory nodeFactoryFactory) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            String cacheDir = cmdLine == null
-                    ? "target/datasets"
-                    : cmdLine.getOptionValue(OPTION_DATASET_DIR, "target/datasets");
-
-            DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(cacheDir);
-            new IndexerDataset(registry, nodeFactoryFactory).index(factory);
+            new CmdIndexDatasets(cmdLine, nodeFactoryFactory, factory).run();
         } else {
             LOG.info("skipping data import...");
         }
