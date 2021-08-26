@@ -78,7 +78,7 @@ public class DatasetImporterForMangal extends DatasetImporterWithListener {
     }
 
     public static boolean hasNonEmptyValueFor(JsonNode jsonNode, String key) {
-        return jsonNode.has(key) && !jsonNode.get(key).isNull();
+        return jsonNode.hasNonNull(key);
     }
 
     public static void appendReferenceToMap(JsonNode aReference, Map<String, Map<String, String>> refMap) {

@@ -205,6 +205,6 @@ public final class WikidataUtil {
     }
 
     public static boolean valueExists(JsonNode name) {
-        return name != null && name.has("value") && !name.isNull();
+        return name != null && name.hasNonNull("value");
     }
 }

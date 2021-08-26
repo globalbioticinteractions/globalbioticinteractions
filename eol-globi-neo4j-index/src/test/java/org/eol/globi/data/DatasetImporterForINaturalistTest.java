@@ -3,7 +3,9 @@ package org.eol.globi.data;
 import com.Ostermiller.util.LabeledCSVParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Location;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
@@ -49,6 +51,30 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         importer = new DatasetImporterForINaturalist(parserFactory, nodeFactory);
         importer.setDataset(dataset);
+    }
+
+    @Test
+    public void parseNullLocation() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.set("latitude", null);
+        objectNode.set("longitude", null);
+
+        Location location = DatasetImporterForINaturalist.parseLocationNode(objectNode);
+        assertThat(location, is(nullValue()));
+    }
+
+    @Test
+    public void parseLocation() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("latitude", "10.3");
+        objectNode.put("longitude", "12.2");
+
+        Location location = DatasetImporterForINaturalist.parseLocationNode(objectNode);
+        assertThat(location, is(notNullValue()));
+        assertThat(location.getLatitude(), is(10.3));
+        assertThat(location.getLongitude(), is(12.2));
     }
 
     @Test

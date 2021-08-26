@@ -32,9 +32,8 @@ public class PropertyEnrichmentFilterExternalId implements PropertyEnrichmentFil
                 JsonNode jsonNode = new ObjectMapper().readTree(response);
                 JsonNode collectionItems = jsonNode.get("collection_items");
                 for (JsonNode item : collectionItems) {
-                    JsonNode objectId = item.get("object_id");
-                    if (objectId != null) {
-                        exludedEOLIds.add(TaxonomyProvider.ID_PREFIX_EOL + objectId.asText());
+                    if (item.hasNonNull("object_id")) {
+                        exludedEOLIds.add(TaxonomyProvider.ID_PREFIX_EOL + item.get("object_id").asText());
                     }
                 }
 

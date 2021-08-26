@@ -56,22 +56,30 @@ public class TaxonSearchImpl implements TaxonSearch {
         if (dataNode != null && dataNode.size() > 0) {
             props = new HashMap<>();
             JsonNode first = dataNode.get(0);
-            props.put(PropertyAndValueDictionary.NAME, StringUtils.defaultString(first.get(0).asText()));
-            props.put(PropertyAndValueDictionary.COMMON_NAMES, StringUtils.defaultString(first.get(1).asText()));
-            props.put(PropertyAndValueDictionary.PATH, StringUtils.defaultString(first.get(2).asText()));
-            final String externalId = StringUtils.defaultString(first.get(3).asText());
+            props.put(PropertyAndValueDictionary.NAME, textOrEmpty(first, 0));
+            props.put(PropertyAndValueDictionary.COMMON_NAMES, textOrEmpty(first, 1));
+            props.put(PropertyAndValueDictionary.PATH, textOrEmpty(first, 2));
+            final String externalId = textOrEmpty(first, 3);
             props.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
 
-            final String externalURL = StringUtils.defaultString(first.get(4).asText());
+            final String externalURL = textOrEmpty(first, 4);
             if (StringUtils.isNotBlank(externalId) && StringUtils.isBlank(externalURL)) {
                 props.put(PropertyAndValueDictionary.EXTERNAL_URL, StringUtils.defaultString(ExternalIdUtil.urlForExternalId(externalId)));
             } else {
                 props.put(PropertyAndValueDictionary.EXTERNAL_URL, externalURL);
             }
 
-            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, StringUtils.defaultString(first.get(5).asText()));
+            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, textOrEmpty(first, 5));
         }
         return props;
+    }
+
+    public String textOrEmpty(JsonNode first, int index) {
+        return StringUtils.defaultString(textOrNull(first, index));
+    }
+
+    public String textOrNull(JsonNode first, int i) {
+        return first.hasNonNull(i) ? first.get(i).asText() : null;
     }
 
     public String findTaxonProxy(@PathVariable("taxonName") final String taxonName) throws IOException {
@@ -104,8 +112,8 @@ public class TaxonSearchImpl implements TaxonSearch {
             @Override
             public String linkForNode(JsonNode node) {
                 String link = null;
-                String externalId = node.get(0).asText();
-                String externalUrl = node.get(1).asText();
+                String externalId = textOrNull(node, 0);
+                String externalUrl = textOrNull(node,1);
                 if (StringUtils.isNotBlank(externalId)) {
                     link = externalId;
                 } else if (StringUtils.isNotBlank(externalUrl)) {
@@ -189,8 +197,8 @@ public class TaxonSearchImpl implements TaxonSearch {
             @Override
             public String linkForNode(JsonNode node) {
                 String link = null;
-                String externalId = node.get(0).asText();
-                String externalUrl = node.get(1).asText();
+                String externalId = textOrNull(node, 0);
+                String externalUrl = textOrNull(node, 1);
                 String resolvedUrl = ExternalIdUtil.urlForExternalId(externalId);
                 if (StringUtils.isNotBlank(resolvedUrl)) {
                     link = resolvedUrl;

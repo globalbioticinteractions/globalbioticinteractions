@@ -270,14 +270,19 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
     }
 
     private Location parseLocation(JsonNode observation) throws NodeFactoryException {
-        Location location = null;
-        String latitudeString = observation.get("latitude").asText();
-        String longitudeString = observation.get("longitude").asText();
-        if (latitudeString != null && longitudeString != null) {
-            double latitude = Double.parseDouble(latitudeString);
-            double longitude = Double.parseDouble(longitudeString);
-            location = getNodeFactory().getOrCreateLocation(new LocationImpl(latitude, longitude, null, null));
+        Location location = parseLocationNode(observation);
+        return location == null ? null : getNodeFactory().getOrCreateLocation(location);
+    }
 
+    protected static Location parseLocationNode(JsonNode observation) {
+        Location location = null;
+        if (observation.hasNonNull("latitude")
+                && observation.hasNonNull("longitude")) {
+
+            double latitude = observation.get("latitude").asDouble();
+            double longitude = observation.get("longitude").asDouble();
+
+            location = new LocationImpl(latitude, longitude, null, null);
         }
         return location;
     }

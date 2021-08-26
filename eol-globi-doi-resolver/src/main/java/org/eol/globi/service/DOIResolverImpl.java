@@ -86,7 +86,9 @@ public class DOIResolverImpl implements DOIResolver {
                 if (msg.has("items")) {
                     for (JsonNode items : msg.get("items")) {
                         if (hasReasonableMatchScore(items)) {
-                            doi = DOI.create(items.get("DOI").asText());
+                            if (items.hasNonNull("DOI")) {
+                                doi = DOI.create(items.get("DOI").asText());
+                            }
                         }
                     }
                 }

@@ -187,9 +187,11 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
         final JsonNode networks = new ObjectMapper().readTree(networkList);
         final List<URI> networkNames = new ArrayList<>();
         for (JsonNode network : networks) {
-            final JsonNode networkName = network.get("networkName");
-            if (networkName != null && networkName.isTextual()) {
-                networkNames.add(URI.create(networkName.asText()));
+            if (network.hasNonNull("networkName")) {
+                final JsonNode networkName = network.get("networkName");
+                if (networkName.isTextual()) {
+                    networkNames.add(URI.create(networkName.asText()));
+                }
             }
         }
         return networkNames;

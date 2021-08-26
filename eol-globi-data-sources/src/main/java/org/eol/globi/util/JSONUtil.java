@@ -15,7 +15,7 @@ public class JSONUtil {
     public static String textValueOrDefault(JsonNode jsonNode, String key, String defaultValue) {
         String textValue = defaultValue;
         JsonNode interactionTypeId = jsonNode.get(key);
-        if (interactionTypeId != null) {
+        if (jsonNode.hasNonNull(key)) {
             textValue = interactionTypeId.asText();
         }
         return textValue;

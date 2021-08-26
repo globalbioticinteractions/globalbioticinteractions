@@ -423,8 +423,8 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         if (columns != null) {
             for (JsonNode column : columns) {
                 final JsonNode columnName = column.get("name");
-                if (columnName != null) {
-                    final Column col = column.has("datatype")
+                if (column.hasNonNull("name")) {
+                    final Column col = column.hasNonNull("datatype")
                             ? createTypedColumn(column, columnName)
                             : createStringColumn(columnName);
 
@@ -452,16 +452,16 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         if (dataType.isValueNode()) {
             dataTypeId = dataType.asText();
         } else {
-            if (dataType.has("id")) {
+            if (dataType.hasNonNull("id")) {
                 dataTypeId = dataType.get("id").asText();
             }
         }
         final Column col = new Column(columnName.asText(), dataTypeId == null ? "string" : dataTypeId);
 
-        col.setDataTypeFormat(dataType.has("format") ? dataType.get("format").asText() : null);
-        col.setDataTypeBase(dataType.has("base") ? dataType.get("base").asText() : null);
-        col.setValueUrl(dataType.has("valueUrl") ? dataType.get("valueUrl").asText() : null);
-        col.setDefaultValue(column.has("default") ? column.get("default").asText() : null);
+        col.setDataTypeFormat(dataType.hasNonNull("format") ? dataType.get("format").asText() : null);
+        col.setDataTypeBase(dataType.hasNonNull("base") ? dataType.get("base").asText() : null);
+        col.setValueUrl(dataType.hasNonNull("valueUrl") ? dataType.get("valueUrl").asText() : null);
+        col.setDefaultValue(column.hasNonNull("default") ? column.get("default").asText() : null);
         return col;
     }
 

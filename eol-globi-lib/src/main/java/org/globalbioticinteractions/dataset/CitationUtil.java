@@ -129,7 +129,7 @@ public class CitationUtil {
 
     private static Optional<String> addSecondaryCitation(JsonNode table, String citationKey) {
         Optional<String> citation = Optional.empty();
-        if (table.has(citationKey)) {
+        if (table.hasNonNull(citationKey)) {
             String secondaryCitation = table
                     .get(citationKey)
                     .asText();
