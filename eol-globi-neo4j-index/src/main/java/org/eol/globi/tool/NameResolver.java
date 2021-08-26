@@ -50,8 +50,7 @@ public class NameResolver implements IndexerNeo4j {
         Long count = 0L;
 
         Index<Node> studyIndex = NodeUtil.forNodes(graphService, "studies");
-        Transaction transaction = graphService.beginTx();
-        try {
+        try(Transaction readTx = graphService.beginTx()) {
             IndexHits<Node> studies = studyIndex.query("title", "*");
             for (Node studyNode : studies) {
                 final Study study1 = new StudyNode(studyNode);
@@ -84,9 +83,6 @@ public class NameResolver implements IndexerNeo4j {
                                     }
                                     watchForBatch.reset();
                                     watchForBatch.start();
-                                    transaction.success();
-                                    transaction.close();
-                                    transaction = graphService.beginTx();
                                 }
                             }
                         }
@@ -96,10 +92,8 @@ public class NameResolver implements IndexerNeo4j {
             }
             studies.close();
             watchForEntireRun.stop();
-            transaction.success();
+            readTx.success();
             LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watchForEntireRun.getTime()));
-        } finally {
-            transaction.close();
         }
     }
 
