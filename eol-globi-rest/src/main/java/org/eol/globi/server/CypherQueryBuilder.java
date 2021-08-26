@@ -388,17 +388,17 @@ public class CypherQueryBuilder {
     }
 
     public static CypherQuery buildInteractionQuery(final String sourceTaxonName, final String interactionType, final String targetTaxonName, final Map parameterMap, QueryType queryType) {
-        final Map paramMapModified = new HashMap(parameterMap);
+        final Map paramMapModified = new TreeMap<ParamName, String[]>(parameterMap);
         List<String> sourceTaxa = new ArrayList<String>() {{
             if (sourceTaxonName != null) {
                 add(sourceTaxonName);
-                paramMapModified.put(ParamName.SOURCE_TAXON, new String[]{sourceTaxonName});
+                paramMapModified.put(ParamName.SOURCE_TAXON.name(), new String[]{sourceTaxonName});
             }
         }};
         List<String> targetTaxa = new ArrayList<String>() {{
             if (targetTaxonName != null) {
                 add(targetTaxonName);
-                paramMapModified.put(ParamName.TARGET_TAXON, new String[]{targetTaxonName});
+                paramMapModified.put(ParamName.TARGET_TAXON.name(), new String[]{targetTaxonName});
             }
         }};
         return buildInteractionQuery(sourceTaxa, interactionType, targetTaxa, paramMapModified, queryType);

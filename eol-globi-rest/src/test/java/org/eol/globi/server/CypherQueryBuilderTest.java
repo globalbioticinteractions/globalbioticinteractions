@@ -1470,7 +1470,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void findDistinctPlantPreyWithoutLocation() {
-        HashMap<String, String[]> params = new HashMap<String, String[]>();
+        Map<String, String[]> params = new HashMap<String, String[]>();
         query = buildInteractionQuery("Homo sapiens", "preysOn", "Plantae", params, SINGLE_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START " +
