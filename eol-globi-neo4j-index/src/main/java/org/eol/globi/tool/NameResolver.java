@@ -50,7 +50,7 @@ public class NameResolver implements IndexerNeo4j {
         Long count = 0L;
 
         Index<Node> studyIndex = NodeUtil.forNodes(graphService, "studies");
-        try(Transaction readTx = graphService.beginTx()) {
+        try (Transaction readTx = graphService.beginTx()) {
             IndexHits<Node> studies = studyIndex.query("title", "*");
             for (Node studyNode : studies) {
                 final Study study1 = new StudyNode(studyNode);

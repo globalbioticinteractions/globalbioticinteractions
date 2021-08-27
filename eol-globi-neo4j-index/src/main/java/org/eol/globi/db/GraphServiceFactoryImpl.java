@@ -3,6 +3,7 @@ package org.eol.globi.db;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.logging.slf4j.Slf4jLogProvider;
 
 import java.io.File;
 
@@ -41,6 +42,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
         System.out.print("neo4j starting at [" + storeDir.getAbsolutePath() + "]...");
 
         final GraphDatabaseService graphService = new GraphDatabaseFactory()
+                .setUserLogProvider(new Slf4jLogProvider())
                 .newEmbeddedDatabaseBuilder(storeDir)
                 .setConfig(GraphDatabaseSettings.keep_logical_logs, "500M size")
                 .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "250M")
