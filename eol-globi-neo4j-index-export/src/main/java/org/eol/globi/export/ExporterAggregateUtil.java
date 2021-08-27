@@ -7,7 +7,6 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.StudyNodeListener;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
@@ -18,7 +17,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +30,10 @@ public class ExporterAggregateUtil {
                 .make();
         final Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate = db.createTreeMap("studyOccAggregate").make();
 
-        NodeUtil.findStudies(graphDatabase, new StudyNodeListener() {
-            @Override
-            public void onStudy(StudyNode aStudy) {
-                collectDistinctInteractions(aStudy, studyOccAggregate);
-            }
-        });
+        NodeUtil.findStudies(graphDatabase, node -> collectDistinctInteractions(studyOccAggregate, node));
 
         for (Map.Entry<Fun.Tuple3<Long, String, String>, List<String>> distinctInteractions : studyOccAggregate.entrySet()) {
-            Transaction transaction = graphDatabase.beginTx();
-            try {
+            try (Transaction transaction = graphDatabase.beginTx()) {
                 rowWriter.writeRow(
                         writer,
                         new StudyNode(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
@@ -50,17 +42,13 @@ public class ExporterAggregateUtil {
                         distinctInteractions.getValue()
                 );
                 transaction.success();
-            } finally {
-                transaction.close();
             }
 
         }
         db.close();
     }
 
-    public static void collectDistinctInteractions(StudyNode aStudy, final Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate) {
-
-
+    public static void collectDistinctInteractions(final Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate, final Node studyNode) {
         {
 
             NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
@@ -75,10 +63,10 @@ public class ExporterAggregateUtil {
                             final String sourceTaxonExternalId = getExternalIdForTaxonOf(sourceSpecimen);
                             final String targetTaxonExternalId = getExternalIdForTaxonOf(targetSpecimen);
                             if (sourceTaxonExternalId != null && targetTaxonExternalId != null) {
-                                final Fun.Tuple3<Long, String, String> key = new Fun.Tuple3<Long, String, String>(aStudy.getNodeID(), sourceTaxonExternalId, interaction.getType().name());
+                                final Fun.Tuple3<Long, String, String> key = new Fun.Tuple3<Long, String, String>(studyNode.getId(), sourceTaxonExternalId, interaction.getType().name());
                                 List<String> targetTaxonExternalIds = studyOccAggregate.get(key);
                                 if (targetTaxonExternalIds == null) {
-                                    targetTaxonExternalIds = new ArrayList<String>();
+                                    targetTaxonExternalIds = new ArrayList<>();
                                 }
                                 if (!targetTaxonExternalIds.contains(targetTaxonExternalId)) {
                                     targetTaxonExternalIds.add(targetTaxonExternalId);
@@ -91,7 +79,7 @@ public class ExporterAggregateUtil {
                 }
             };
 
-            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(aStudy.getUnderlyingNode()), handler);
+            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(studyNode), handler);
         }
     }
 

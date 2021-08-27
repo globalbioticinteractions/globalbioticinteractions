@@ -8,6 +8,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.service.GraphDatabaseServiceBatchingTransactions;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -26,24 +27,32 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void doNameResolving() throws NodeFactoryException, PropertyEnricherException {
-        assertResolveNames(RelTypes.COLLECTED);
+        assertResolveNames(RelTypes.COLLECTED, getGraphDb());
+    }
+
+    @Test
+    public void doNameResolvingBatching() throws NodeFactoryException, PropertyEnricherException {
+        GraphDatabaseServiceBatchingTransactions graphDb = new GraphDatabaseServiceBatchingTransactions(getGraphDb());
+        graphDb.setBatchSize(2);
+        assertResolveNames(RelTypes.COLLECTED, graphDb);
     }
 
     @Test
     public void doNameResolvingForRefuting() throws NodeFactoryException, PropertyEnricherException {
-        assertResolveNames(RelTypes.REFUTES);
+        assertResolveNames(RelTypes.REFUTES, getGraphDb());
     }
 
     @Test
     public void doNameResolvingForSupporting() throws NodeFactoryException, PropertyEnricherException {
-        assertResolveNames(RelTypes.SUPPORTS);
+        assertResolveNames(RelTypes.SUPPORTS, getGraphDb());
     }
 
-    private void assertResolveNames(RelTypes relTypes) throws NodeFactoryException {
+    private void assertResolveNames(RelTypes relTypes, final GraphDatabaseService graphDb) throws NodeFactoryException {
         Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"), relTypes);
         Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Animalia", "WORMS:2"), relTypes);
         human.ate(animal);
@@ -53,7 +62,7 @@ public class NameResolverTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("NCBI:9606"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        final NameResolver nameResolver = new NameResolver(new NonResolvingTaxonIndex(getGraphDb()));
+        final NameResolver nameResolver = new NameResolver(new NonResolvingTaxonIndex(graphDb));
         nameResolver.setBatchSize(1L);
 
         final GraphServiceFactory factory = new GraphServiceFactory() {

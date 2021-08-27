@@ -1,7 +1,6 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
-import org.neo4j.logging.NullLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
@@ -166,7 +165,7 @@ public class ReportGenerator {
                         NodeUtil.asNeo4j(RelTypes.IN_DATASET));
                 for (Relationship studyInDataset : studiesInDataset) {
                     StudyNode study = new StudyNode(studyInDataset.getStartNode());
-                    countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
+                    countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, study.getUnderlyingNode());
                     studyCounter.count();
                     final String namespace = dataset.getNamespace();
                     distinctSources.add(namespace);
@@ -214,10 +213,10 @@ public class ReportGenerator {
         final Set<String> distinctSources = reportCache.createHashSet("distinctSources").make();
         final Set<String> distinctDatasets = reportCache.createHashSet("distinctDatasets").make();
 
-        NodeUtil.findStudies(getGraphDb(), study -> {
-            countInteractionsAndTaxa(study, distinctTaxonIds, counter, distinctTaxonIdsNoMatch);
+        NodeUtil.findStudies(getGraphDb(), studyNode -> {
+            countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, studyNode);
             studyCounter.count();
-            final Dataset originatingDataset = study.getOriginatingDataset();
+            final Dataset originatingDataset = new StudyNode(studyNode).getOriginatingDataset();
             if (originatingDataset != null) {
                 final String namespace = originatingDataset.getNamespace();
                 distinctSources.add(namespace);
@@ -241,14 +240,15 @@ public class ReportGenerator {
     }
 
 
-    private void countInteractionsAndTaxa(StudyNode study, Set<Long> ids, Counter interactionCounter, Set<Long> idsNoMatch) {
+    private void countInteractionsAndTaxa(Set<Long> ids, Counter interactionCounter, Set<Long> idsNoMatch, Node studyNode) {
 
         NodeUtil.RelationshipListener handler = specimen -> {
             Iterable<Relationship> relationships = specimen.getEndNode().getRelationships();
             for (Relationship relationship : relationships) {
                 InteractType[] types = InteractType.values();
                 for (InteractType type : types) {
-                    if (relationship.isType(NodeUtil.asNeo4j(type)) && !relationship.hasProperty(PropertyAndValueDictionary.INVERTED)) {
+                    if (relationship.isType(NodeUtil.asNeo4j(type))
+                            && !relationship.hasProperty(PropertyAndValueDictionary.INVERTED)) {
                         interactionCounter.count();
                         break;
                     }
@@ -265,7 +265,7 @@ public class ReportGenerator {
         };
 
         NodeUtil.handleCollectedRelationshipsNoTx(
-                new NodeTypeDirection(study.getUnderlyingNode()),
+                new NodeTypeDirection(studyNode),
                 handler);
     }
 

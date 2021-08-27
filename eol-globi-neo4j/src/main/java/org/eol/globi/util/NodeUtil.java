@@ -25,21 +25,17 @@ import org.neo4j.graphdb.index.IndexHits;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NodeUtil {
 
     public static final int TRANSACTION_BATCH_SIZE_DEFAULT = 1000;
 
     public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
-        Transaction tx = node.getGraphDatabase().beginTx();
-        try {
+        try (Transaction tx = node.getGraphDatabase().beginTx()) {
             String value = node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;
             tx.success();
             return value;
-
-        } finally {
-            tx.close();
         }
     }
 
@@ -68,36 +64,21 @@ public class NodeUtil {
 
     public static List<StudyNode> findAllStudies(GraphDatabaseService graphService) {
         final List<StudyNode> studies = new ArrayList<>();
-        findStudies(graphService, studies::add);
+        findStudies(graphService, study -> studies.add(new StudyNode(study)));
         return studies;
     }
 
-    public static void findStudies(GraphDatabaseService graphService, StudyNodeListener listener) {
-        findStudiesByQuery(graphService, listener, "title", "*");
+    public static void findStudies(GraphDatabaseService graphService, NodeListener listener) {
+        findStudies(graphService, listener, "title", "*");
     }
 
-    public static void findStudiesByQuery(GraphDatabaseService graphService, StudyNodeListener listener, String queryKey, String queryValue) {
-        try (Transaction transaction = graphService.beginTx()) {
-            Index<Node> studyIndex = graphService.index().forNodes("studies");
-            IndexHits<Node> hits = studyIndex.query(queryKey, queryValue);
-            for (Node hit : hits) {
-                listener.onStudy(new StudyNode(hit));
-            }
-            hits.close();
-            transaction.success();
-        }
+    public static void findStudies(GraphDatabaseService graphService, NodeListener listener, String queryKey, String queryValue) {
+        processStudies(1000L, graphService, listener, queryKey, queryValue);
     }
 
     public static void findDatasetsByQuery(GraphDatabaseService graphService, DatasetNodeListener listener, String queryKey, String queryValue) {
-        try (Transaction tx = graphService.beginTx()) {
-            Index<Node> studyIndex = graphService.index().forNodes("datasets");
-            IndexHits<Node> hits = studyIndex.query(queryKey, queryValue);
-            for (Node hit : hits) {
-                listener.on(new DatasetNode(hit));
-            }
-            hits.close();
-            tx.success();
-        }
+        new NodeProcessorImpl(graphService, 1000L, queryKey, queryValue, "datasets")
+                .process(node -> listener.on(new DatasetNode(node)));
     }
 
     public static RelationshipType asNeo4j(RelType type) {
@@ -195,7 +176,38 @@ public class NodeUtil {
         }
     }
 
+    public static List<Node> getBatchOfNodes(GraphDatabaseService graphService,
+                                             Long offset,
+                                             Long batchSize,
+                                             String queryKey,
+                                             String queryOrQueryObject,
+                                             String indexName) {
+        List<Node> studyNodes;
+        try (Transaction tx = graphService.beginTx()) {
+            Index<Node> index = graphService.index().forNodes(indexName);
+            IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
+            studyNodes = studies
+                    .stream()
+                    .skip(offset * batchSize)
+                    .limit(batchSize)
+                    .collect(Collectors.toList());
+            tx.success();
+        }
+        return studyNodes;
+    }
+
+    public static void processStudies(Long batchSize,
+                                      GraphDatabaseService graphService,
+                                      NodeListener listener,
+                                      String queryKey,
+                                      String queryOrQueryObject) {
+
+        new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject)
+                .process(listener);
+    }
+
     public interface RelationshipListener {
         void on(Relationship relationship);
     }
+
 }

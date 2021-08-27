@@ -5,12 +5,13 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.StudyNodeListener;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -269,11 +270,11 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
         importer.setDataset(dataset);
         importStudy(importer);
         final AtomicBoolean foundStudy = new AtomicBoolean(false);
-        NodeUtil.findStudies(getGraphDb(), new StudyNodeListener() {
+        NodeUtil.findStudies(getGraphDb(), new NodeListener() {
 
             @Override
-            public void onStudy(StudyNode study) {
-                assertTrue(study.getUnderlyingNode().hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(argumentType)));
+            public void on(Node node) {
+                assertTrue(node.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(argumentType)));
                 foundStudy.set(true);
             }
         });

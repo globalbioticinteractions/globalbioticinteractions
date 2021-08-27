@@ -60,7 +60,7 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
         if (StringUtils.isNotBlank(value)) {
             String query = key + ":\"" + QueryParser.escape(value) + "\"";
             try (Transaction transaction = graphDbService.beginTx()) {
-                IndexHits<Node> matchingTaxa = taxons.query(query);
+                IndexHits<Node> matchingTaxa = getTaxonIndex().query(query);
                 Node matchingTaxon;
                 while (matchingTaxa.hasNext()) {
                     matchingTaxon = matchingTaxa.next();
@@ -77,6 +77,10 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
             }
         }
         return firstMatchingTaxon;
+    }
+
+    private Index<Node> getTaxonIndex() {
+        return taxons;
     }
 
     TaxonNode findTaxon(Taxon taxon) throws NodeFactoryException {
@@ -121,12 +125,12 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
     }
 
     IndexHits<Node> findCloseMatchesForTaxonName(String taxonName) {
-        return QueryUtil.query(taxonName, PropertyAndValueDictionary.NAME, taxons);
+        return QueryUtil.query(taxonName, PropertyAndValueDictionary.NAME, getTaxonIndex());
     }
 
     private void indexTaxonByProperty(TaxonNode taxonNode, String propertyName, String propertyValue) {
         try (Transaction tx = taxonNode.getUnderlyingNode().getGraphDatabase().beginTx()) {
-            taxons.add(taxonNode.getUnderlyingNode(), propertyName, propertyValue);
+            getTaxonIndex().add(taxonNode.getUnderlyingNode(), propertyName, propertyValue);
             tx.success();
         }
     }
@@ -177,26 +181,29 @@ public class NonResolvingTaxonIndex implements TaxonIndex {
 
     private void addToIndeces(TaxonNode taxon, String indexedName) {
         if (isNonEmptyTaxonNameOrId(indexedName)) {
-            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
+            getTaxonIndex().add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
         }
 
         String externalId = taxon.getExternalId();
         if (isNonEmptyTaxonNameOrId(externalId)) {
-            taxons.add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+            getTaxonIndex().add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
         }
     }
 
     protected TaxonNode addNoMatchTaxon(Taxon origTaxon) throws NodeFactoryException {
-        Taxon noMatchTaxon = TaxonUtil.copy(origTaxon);
+        Taxon noMatchTaxon;
+        try (Transaction tx = graphDbService.beginTx()) {
+            noMatchTaxon = TaxonUtil.copy(origTaxon);
 
-        noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName())
-                ? origTaxon.getName()
-                : PropertyAndValueDictionary.NO_NAME);
+            noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName())
+                    ? origTaxon.getName()
+                    : PropertyAndValueDictionary.NO_NAME);
 
-        noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId())
-                ? origTaxon.getExternalId()
-                : PropertyAndValueDictionary.NO_MATCH);
-
+            noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId())
+                    ? origTaxon.getExternalId()
+                    : PropertyAndValueDictionary.NO_MATCH);
+            tx.success();
+        }
         return createAndIndexTaxon(origTaxon, noMatchTaxon);
     }
 

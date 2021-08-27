@@ -1,6 +1,9 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.eol.globi.domain.StudyConstant;
+import org.eol.globi.util.NodeListener;
+import org.eol.globi.util.StudyNodeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.NodeFactoryException;
@@ -18,8 +21,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 public class NameResolver implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(NameResolver.class);
@@ -47,54 +50,67 @@ public class NameResolver implements IndexerNeo4j {
         watchForEntireRun.start();
         StopWatch watchForBatch = new StopWatch();
         watchForBatch.start();
-        Long count = 0L;
+        final AtomicLong nameCount = new AtomicLong(0L);
+        NodeListener listener = new NodeListener() {
+            @Override
+            public void on(Node study) {
+                nameCount.set(resolveNamesInStudy(batchSize,
+                        watchForBatch,
+                        nameCount.get(),
+                        study));
+            }
+        };
 
-        Index<Node> studyIndex = NodeUtil.forNodes(graphService, "studies");
-        try (Transaction readTx = graphService.beginTx()) {
-            IndexHits<Node> studies = studyIndex.query("title", "*");
-            for (Node studyNode : studies) {
-                final Study study1 = new StudyNode(studyNode);
-                final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
-                for (Relationship specimenNode : specimenNodes) {
-                    SpecimenNode specimen = new SpecimenNode(specimenNode.getEndNode());
-                    final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
-                    if (classifiedAs == null) {
-                        final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING);
-                        if (describedAs == null) {
-                            LOG.warn("failed to find original taxon description for specimen for [" + study1.getCitation() + "]");
-                        } else {
-                            final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
-                            try {
-                                if (taxonFilter.shouldInclude(describedAsTaxon)) {
-                                    Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
-                                    if (resolvedTaxon != null) {
-                                        specimen.classifyAs(resolvedTaxon);
-                                    }
-                                }
-                            } catch (NodeFactoryException e) {
-                                LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
-                            } finally {
-                                count++;
-                                if (count % batchSize == 0) {
-                                    watchForBatch.stop();
-                                    final long duration = watchForBatch.getTime();
-                                    if (duration > 0) {
-                                        LOG.info("resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
-                                    }
-                                    watchForBatch.reset();
-                                    watchForBatch.start();
-                                }
+        NodeUtil.processStudies(
+                batchSize,
+                graphService,
+                listener,
+                StudyConstant.TITLE,
+                "*");
+
+        watchForEntireRun.stop();
+        LOG.info("resolved [" + nameCount + "] names in " + getProgressMsg(nameCount.get(), watchForEntireRun.getTime()));
+
+    }
+
+    public Long resolveNamesInStudy(Long batchSize, StopWatch watchForBatch, Long nameCount, Node studyNode) {
+        final Study study1 = new StudyNode(studyNode);
+        final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
+        for (Relationship specimenNode : specimenNodes) {
+            SpecimenNode specimen = new SpecimenNode(specimenNode.getEndNode());
+            final Relationship classifiedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
+            if (classifiedAs == null) {
+                final Relationship describedAs = specimen.getUnderlyingNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING);
+                if (describedAs == null) {
+                    LOG.warn("failed to find original taxon description for specimen for [" + study1.getCitation() + "]");
+                } else {
+                    final TaxonNode describedAsTaxon = new TaxonNode(describedAs.getEndNode());
+                    try {
+                        if (taxonFilter.shouldInclude(describedAsTaxon)) {
+                            Taxon resolvedTaxon = taxonIndex.getOrCreateTaxon(describedAsTaxon);
+                            if (resolvedTaxon != null) {
+                                specimen.classifyAs(resolvedTaxon);
                             }
                         }
+                    } catch (NodeFactoryException e) {
+                        LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
+                    } finally {
+                        nameCount++;
+                        if (nameCount % batchSize == 0) {
+                            watchForBatch.stop();
+                            final long duration = watchForBatch.getTime();
+                            if (duration > 0) {
+                                LOG.info("resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
+                            }
+                            watchForBatch.reset();
+                            watchForBatch.start();
+                        }
                     }
-
                 }
             }
-            studies.close();
-            watchForEntireRun.stop();
-            readTx.success();
-            LOG.info("resolved [" + count + "] names in " + getProgressMsg(count, watchForEntireRun.getTime()));
+
         }
+        return nameCount;
     }
 
     public static String getProgressMsg(Long count, long duration) {
