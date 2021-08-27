@@ -34,12 +34,12 @@
                     <artifactId>neo4j-cypher-compiler-2.2_2.11</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>neo4j-jmx</artifactId>
                     <groupId>org.neo4j</groupId>
+                    <artifactId>neo4j-jmx</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>neo4j-udc</artifactId>
                     <groupId>org.neo4j</groupId>
+                    <artifactId>neo4j-udc</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
