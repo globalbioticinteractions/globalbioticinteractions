@@ -27,46 +27,49 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     public NodeFactoryNeo4j3(GraphDatabaseService graphDb) {
         super(graphDb);
-        initConstraints();
-        initIndexes();
     }
 
-    private void initIndexes() {
-        createIndexIfNeeded(getGraphDb(),
+    public static void initSchema(GraphDatabaseService graphDb) {
+        initConstraints(graphDb);
+        initIndexes(graphDb);
+    }
+
+    private static void initIndexes(GraphDatabaseService graphDb) {
+        createIndexIfNeeded(graphDb,
                 NodeLabel.Location,
                 LocationConstant.LATITUDE);
-        createIndexIfNeeded(getGraphDb(),
+        createIndexIfNeeded(graphDb,
                 NodeLabel.Location,
                 LocationConstant.LOCALITY);
-        createIndexIfNeeded(getGraphDb(),
+        createIndexIfNeeded(graphDb,
                 NodeLabel.Location,
                 LocationConstant.LOCALITY_ID);
     }
 
-    private void initConstraints() {
+    private static void initConstraints(GraphDatabaseService graphDb) {
         createConstraintIfNeeded(
-                getGraphDb(),
+                graphDb,
                 NodeLabel.Dataset,
                 DatasetConstant.NAMESPACE
         );
         createConstraintIfNeeded(
-                getGraphDb(),
+                graphDb,
                 NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE
         );
         createConstraintIfNeeded(
-                getGraphDb(),
+                graphDb,
                 NodeLabel.ExternalId,
                 PropertyAndValueDictionary.EXTERNAL_ID
         );
         createConstraintIfNeeded(
-                getGraphDb(),
+                graphDb,
                 NodeLabel.Season,
                 StudyConstant.TITLE
         );
 
         createConstraintIfNeeded(
-                getGraphDb(),
+                graphDb,
                 NodeLabel.Environment,
                 PropertyAndValueDictionary.NAME
         );

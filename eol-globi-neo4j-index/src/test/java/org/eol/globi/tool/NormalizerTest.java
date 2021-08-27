@@ -7,6 +7,7 @@ import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.service.GraphDatabaseServiceBatchingTransactions;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.slf4j.Logger;
@@ -61,10 +62,21 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImportNeo4j2() throws StudyImporterException {
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j2(getGraphDb());
-        importData(DatasetImporterForSimons.class, factory);
-        GraphDatabaseService graphService = getGraphDb();
+        importWithGraphDB(new NodeFactoryNeo4j2(getGraphDb()));
+    }
 
+    @Test
+    public void doSingleImportNeo4j2Batching() throws StudyImporterException {
+        final GraphDatabaseServiceBatchingTransactions graphDb2 =
+                new GraphDatabaseServiceBatchingTransactions(getGraphDb());
+        importWithGraphDB(new NodeFactoryNeo4j2(graphDb2));
+    }
+
+    public void importWithGraphDB(NodeFactoryNeo4j factory) throws StudyImporterException {
+
+        importData(DatasetImporterForSimons.class, factory);
+
+        GraphDatabaseService graphService = getGraphDb();
         Study study = getStudySingleton(graphService);
         assertThat(study.getTitle(), is("Simons 1997"));
 
@@ -77,7 +89,21 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImportNeo4j3() throws StudyImporterException {
+        NodeFactoryNeo4j3.initSchema(getGraphDb());
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
+        assertGraphDBImportNativeIndexes(factory);
+    }
+
+    @Test
+    public void doSingleImportNeo4j3Batching() throws StudyImporterException {
+        NodeFactoryNeo4j3.initSchema(getGraphDb());
+        final GraphDatabaseServiceBatchingTransactions graphDb2 =
+                new GraphDatabaseServiceBatchingTransactions(getGraphDb());
+        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(graphDb2);
+        assertGraphDBImportNativeIndexes(factory);
+    }
+
+    public void assertGraphDBImportNativeIndexes(NodeFactoryNeo4j factory) throws StudyImporterException {
         importData(DatasetImporterForSimons.class, factory);
         GraphDatabaseService graphService = getGraphDb();
 

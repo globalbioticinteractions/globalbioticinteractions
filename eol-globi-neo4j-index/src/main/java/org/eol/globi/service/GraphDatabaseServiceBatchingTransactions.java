@@ -11,7 +11,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GraphDatabaseServiceBatchingTransactions
         extends GraphDatabaseServiceProxy
         implements AutoCloseable {
-    private int batchSize;
+    public static final int BATCH_SIZE_DEFAULT = 1000;
+
+    private int batchSize = BATCH_SIZE_DEFAULT;
     private AtomicReference<Transaction> currentTransaction = new AtomicReference<>();
     private AtomicInteger timeToLive = new AtomicInteger(getBatchSize());
 
@@ -43,7 +45,7 @@ public class GraphDatabaseServiceBatchingTransactions
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         Transaction currentTx = currentTransaction.get();
         if (currentTx != null) {
             currentTransaction.set(null);

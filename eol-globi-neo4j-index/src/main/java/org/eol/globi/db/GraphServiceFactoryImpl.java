@@ -30,7 +30,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
     }
 
     @Override
-    public void clear() {
+    public void close() {
         if (graphDb != null) {
             graphDb.shutdown();
             graphDb = null;

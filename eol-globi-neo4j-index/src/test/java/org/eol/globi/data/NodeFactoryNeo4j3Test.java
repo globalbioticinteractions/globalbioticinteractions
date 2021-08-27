@@ -1,9 +1,16 @@
 package org.eol.globi.data;
 
+import org.junit.Before;
+
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 public class NodeFactoryNeo4j3Test extends NodeFactoryNeo4jTest {
+
+    @Before
+    public void init() {
+        NodeFactoryNeo4j3.initSchema(getGraphDb());
+    }
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {

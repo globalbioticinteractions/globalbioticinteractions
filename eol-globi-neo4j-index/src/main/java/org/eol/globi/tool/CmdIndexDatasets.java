@@ -10,12 +10,12 @@ public class CmdIndexDatasets implements Cmd {
 
     private final CommandLine cmdLine;
     private final NodeFactoryFactory nodeFactoryFactory;
-    private final GraphServiceFactory factory;
+    private final GraphServiceFactory graphServiceFactory;
 
     public CmdIndexDatasets(CommandLine cmdLine, NodeFactoryFactory nodeFactoryFactory, GraphServiceFactory factory) {
         this.cmdLine = cmdLine;
         this.nodeFactoryFactory = nodeFactoryFactory;
-        this.factory = factory;
+        this.graphServiceFactory = factory;
     }
 
     @Override
@@ -25,6 +25,6 @@ public class CmdIndexDatasets implements Cmd {
                 : cmdLine.getOptionValue(CmdOptionConstants.OPTION_DATASET_DIR, "target/datasets");
 
         DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(cacheDir);
-        new IndexerDataset(registry, nodeFactoryFactory).index(factory);
+        new IndexerDataset(registry, nodeFactoryFactory).index(graphServiceFactory);
     }
 }

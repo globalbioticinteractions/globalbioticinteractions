@@ -15,6 +15,7 @@ import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
 import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.service.DOIResolverCache;
+import org.eol.globi.service.GraphServiceBatchingFactory;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.HttpUtil;
@@ -93,14 +94,30 @@ public class Normalizer {
             }
         };
 
-        GraphServiceFactory graphServiceFactory = factoriesNeo4j2.getGraphServiceFactory();
+        GraphServiceFactory graphServiceFactory = null;
         try {
-            importDatasets(cmdLine, graphServiceFactory, factoriesNeo4j2.getNodeFactoryFactory());
-            resolveAndLinkTaxa(cmdLine, graphServiceFactory);
-            generateReports(cmdLine, graphServiceFactory);
-            exportData(cmdLine, graphServiceFactory.getGraphService());
+            graphServiceFactory = factoriesNeo4j2.getGraphServiceFactory();
+            try (GraphServiceBatchingFactory graphDbFactory = new GraphServiceBatchingFactory(graphServiceFactory)) {
+                importDatasets(cmdLine, graphDbFactory, factoriesNeo4j2.getNodeFactoryFactory());
+            }
+            try (GraphServiceBatchingFactory graphDbFactory = new GraphServiceBatchingFactory(graphServiceFactory)) {
+                resolveAndLinkTaxa(cmdLine, graphDbFactory);
+            }
+            try (GraphServiceBatchingFactory graphDbFactory = new GraphServiceBatchingFactory(graphServiceFactory)) {
+                generateReports(cmdLine, graphDbFactory);
+            }
+            try (GraphServiceBatchingFactory graphDbFactory = new GraphServiceBatchingFactory(graphServiceFactory)) {
+                exportData(cmdLine, graphDbFactory.getGraphService());
+            }
+
         } finally {
-            graphServiceFactory.clear();
+            if (graphServiceFactory != null) {
+                try {
+                    graphServiceFactory.close();
+                } catch (Exception e) {
+                    throw new StudyImporterException(e);
+                }
+            }
             HttpUtil.shutdown();
         }
 

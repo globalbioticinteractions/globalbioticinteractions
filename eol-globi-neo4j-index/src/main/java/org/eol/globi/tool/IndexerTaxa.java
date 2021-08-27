@@ -1,6 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.service.GraphDatabaseServiceBatchingTransactions;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
@@ -72,4 +74,5 @@ public class IndexerTaxa implements IndexerNeo4j {
     public void index(GraphServiceFactory graphService) {
         indexTaxa(graphService, taxonCacheService);
     }
+
 }

@@ -83,7 +83,11 @@ public class Elton4N {
             new CmdIndexDatasets(cmdLine, factoriesNeo4j.getNodeFactoryFactory(), graphServiceFactory)
                     .run();
         } finally {
-            graphServiceFactory.clear();
+            try {
+                graphServiceFactory.close();
+            } catch (Exception e) {
+                LOG.error("failed to gracefully shutdown graphdb", e);
+            }
             HttpUtil.shutdown();
         }
     }
