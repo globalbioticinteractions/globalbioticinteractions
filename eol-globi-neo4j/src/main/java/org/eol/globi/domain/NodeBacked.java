@@ -87,15 +87,12 @@ public class NodeBacked {
     }
 
     protected String getPropertyValueOrNull(String propertyName) {
-        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
+        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
             Object value = getUnderlyingNode().hasProperty(propertyName)
                     ? getUnderlyingNode().getProperty(propertyName)
                     : null;
             tx.success();
             return value == null ? null : value.toString();
-        } finally {
-            tx.close();
         }
     }
 

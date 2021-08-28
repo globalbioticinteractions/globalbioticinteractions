@@ -2,6 +2,7 @@ package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 
 import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 
@@ -72,17 +73,20 @@ public class TaxonNode extends NamedNode implements Taxon {
         if (status != null
                 && StringUtils.isNotBlank(status.getId())
                 && StringUtils.isNotBlank(status.getName())) {
-            getUnderlyingNode().setProperty(STATUS_ID, status.getId());
-            getUnderlyingNode().setProperty(STATUS_LABEL, status.getName());
+            setPropertyWithTx(STATUS_ID, status.getId());
+            setPropertyWithTx(STATUS_LABEL, status.getName());
         }
     }
 
     @Override
     public Term getStatus() {
         TermImpl status = null;
-        Node node = getUnderlyingNode();
-        if (node.hasProperty(STATUS_ID) && node.hasProperty(STATUS_LABEL)) {
-            status = new TermImpl((String) node.getProperty(STATUS_ID), (String) node.getProperty(STATUS_LABEL));
+        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
+            Node node = getUnderlyingNode();
+            if (node.hasProperty(STATUS_ID) && node.hasProperty(STATUS_LABEL)) {
+                status = new TermImpl((String) node.getProperty(STATUS_ID), (String) node.getProperty(STATUS_LABEL));
+            }
+            tx.success();
         }
         return status;
     }
@@ -90,14 +94,14 @@ public class TaxonNode extends NamedNode implements Taxon {
     @Override
     public void setExternalUrl(String externalUrl) {
         if (externalUrl != null) {
-            getUnderlyingNode().setProperty(EXTERNAL_URL, externalUrl);
+            setPropertyWithTx(EXTERNAL_URL, externalUrl);
         }
     }
 
     @Override
     public void setThumbnailUrl(String thumbnailUrl) {
         if (thumbnailUrl != null) {
-            getUnderlyingNode().setProperty(THUMBNAIL_URL, thumbnailUrl);
+            setPropertyWithTx(THUMBNAIL_URL, thumbnailUrl);
         }
     }
 
