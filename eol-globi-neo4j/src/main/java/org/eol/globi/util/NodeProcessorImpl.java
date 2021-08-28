@@ -33,17 +33,17 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
 
     @Override
     public void process(NodeListener listener) {
-        List<Node> nodes;
+        List<Long> nodeIds;
         final AtomicLong nodeCount = new AtomicLong(0L);
-        while (!(nodes = NodeUtil.getBatchOfNodes(graphService,
+        while (!(nodeIds = NodeUtil.getBatchOfNodes(graphService,
                 nodeCount.get(),
                 batchSize,
                 queryKey,
                 queryOrQueryObject,
                 indexName)).isEmpty()) {
-            for (Node studyNode : nodes) {
+            for (Long nodeId : nodeIds) {
                 try (Transaction tx = graphService.beginTx()) {
-                    listener.on(studyNode);
+                    listener.on(graphService.getNodeById(nodeId));
                     tx.success();
                 }
                 nodeCount.incrementAndGet();

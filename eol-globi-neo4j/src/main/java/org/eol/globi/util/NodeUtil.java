@@ -176,13 +176,13 @@ public class NodeUtil {
         }
     }
 
-    public static List<Node> getBatchOfNodes(GraphDatabaseService graphService,
+    public static List<Long> getBatchOfNodes(GraphDatabaseService graphService,
                                              Long offset,
                                              Long batchSize,
                                              String queryKey,
                                              String queryOrQueryObject,
                                              String indexName) {
-        List<Node> studyNodes;
+        List<Long> studyNodes;
         try (Transaction tx = graphService.beginTx()) {
             Index<Node> index = graphService.index().forNodes(indexName);
             IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
@@ -190,6 +190,7 @@ public class NodeUtil {
                     .stream()
                     .skip(offset * batchSize)
                     .limit(batchSize)
+                    .map(Node::getId)
                     .collect(Collectors.toList());
             tx.success();
         }
