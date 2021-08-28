@@ -177,8 +177,8 @@ public class NodeUtil {
     }
 
     public static List<Long> getBatchOfNodes(GraphDatabaseService graphService,
-                                             Long offset,
-                                             Long batchSize,
+                                             Long skip,
+                                             Long limit,
                                              String queryKey,
                                              String queryOrQueryObject,
                                              String indexName) {
@@ -188,8 +188,8 @@ public class NodeUtil {
             IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
             studyNodes = studies
                     .stream()
-                    .skip(offset)
-                    .limit(batchSize)
+                    .skip(skip)
+                    .limit(limit)
                     .map(Node::getId)
                     .collect(Collectors.toList());
             tx.success();

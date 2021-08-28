@@ -10,6 +10,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ExportFlatInteractions implements GraphExporter {
@@ -25,10 +26,8 @@ public class ExportFlatInteractions implements GraphExporter {
         this.filename = filename;
     }
 
-
-
     private List<String> createExportQueries() {
-        return Arrays.asList(ExportFlatInteractions.createQuery(getArgumentType(), getArgumentTypeId()));
+        return Collections.singletonList(ExportFlatInteractions.createQuery(getArgumentType(), getArgumentTypeId()));
     }
 
 
