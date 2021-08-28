@@ -73,7 +73,7 @@ public class NameResolver implements IndexerNeo4j {
 
     }
 
-    public Long resolveNamesInStudy(Long batchSize, StopWatch watchForBatch, Long nameCount, Node studyNode) {
+    private Long resolveNamesInStudy(Long batchSize, StopWatch watchForBatch, Long nameCount, Node studyNode) {
         final Study study1 = new StudyNode(studyNode);
         final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
         for (Relationship specimenNode : specimenNodes) {

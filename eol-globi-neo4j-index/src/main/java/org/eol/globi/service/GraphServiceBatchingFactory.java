@@ -13,12 +13,13 @@ public class GraphServiceBatchingFactory implements GraphServiceFactory {
     }
 
     @Override
-    public GraphDatabaseServiceBatchingTransactions getGraphService() {
-        if (graphDatabaseServiceBatchingTransactions == null) {
-            GraphDatabaseService graphService1 = graphService.getGraphService();
-            graphDatabaseServiceBatchingTransactions = new GraphDatabaseServiceBatchingTransactions(graphService1);
-        }
-        return graphDatabaseServiceBatchingTransactions;
+    public GraphDatabaseService getGraphService() {
+//        if (graphDatabaseServiceBatchingTransactions == null) {
+//            GraphDatabaseService graphService1 = graphService.getGraphService();
+//            graphDatabaseServiceBatchingTransactions = new GraphDatabaseServiceBatchingTransactions(graphService1);
+//        }
+//        return graphDatabaseServiceBatchingTransactions;
+        return graphService.getGraphService();
     }
 
     @Override
