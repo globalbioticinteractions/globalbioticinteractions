@@ -14,9 +14,14 @@ import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
+import org.eol.globi.service.GraphServiceBatchingFactory;
 import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class Elton4N {
     private static final Logger LOG = LoggerFactory.getLogger(Elton4N.class);
@@ -61,9 +66,27 @@ public class Elton4N {
                 ? "2"
                 : cmdLine.getOptionValue(CmdOptionConstants.OPTION_NEO4J_VERSION, "2");
 
+        Optional<String> aPackage = Stream.of(
+                cmdLine == null || cmdLine.getArgs() == null
+                        ? new String[0]
+                        : cmdLine.getArgs())
+                .filter(arg -> StringUtils.equals(arg, "package"))
+                .findFirst();
 
+        if (aPackage.isPresent()) {
+            new Normalizer().run(cmdLine);
+        } else {
+            importWithVersion(cmdLine, neo4jVersion);
+        }
+    }
+
+    public void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
         Factories factoriesNeo4j = new Factories() {
-            final GraphServiceFactory factory = new GraphServiceFactoryImpl("./");
+            final GraphServiceFactory factory =
+                    new GraphServiceBatchingFactory(
+                            new GraphServiceFactoryImpl("./")
+                    );
+
 
             @Override
             public GraphServiceFactory getGraphServiceFactory() {

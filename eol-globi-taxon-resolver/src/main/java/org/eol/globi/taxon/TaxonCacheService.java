@@ -47,7 +47,6 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     private TaxonLookupServiceImpl taxonLookupService = null;
 
-
     // maximum number of expected taxon links related to a given taxon id
     private int maxTaxonLinks = 125;
 
@@ -130,19 +129,22 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return externalId;
     }
 
-    private void lazyInit() throws PropertyEnricherException {
+    private void lazyInit() {
         if (resolvedIdToTaxonMap == null || taxonLookupService == null) {
             init();
         }
     }
 
-    private void init() throws PropertyEnricherException {
-        initTaxonCache();
-        initTaxonIdMap();
+    private void init() {
+        try {
+            initTaxonCache();
+            initTaxonIdMap();
+        } catch (IOException ex) {
+            throw new IllegalStateException("problem initiating taxon cache index", ex);
+        }
     }
 
-    private void initTaxonIdMap() throws PropertyEnricherException {
-        try {
+    private void initTaxonIdMap() throws IOException {
             Path luceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene");
             if (!luceneDir.toFile().exists()) {
                 buildIndex(luceneDir);
@@ -151,12 +153,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 setMaxHits(getMaxTaxonLinks());
             }};
 
-        } catch (IOException e) {
-            throw new PropertyEnricherException("problem initiating taxon cache index", e);
-        }
     }
 
-    private void buildIndex(Path luceneDir) throws PropertyEnricherException, IOException {
+    private void buildIndex(Path luceneDir) throws IOException {
         Path tmpLuceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene" + UUID.randomUUID());
         CacheServiceUtil.createCacheDir(tmpLuceneDir.toFile());
         SimpleFSDirectory indexDir = new SimpleFSDirectory(tmpLuceneDir);
@@ -193,7 +192,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         }
     }
 
-    private void initTaxonCache() throws PropertyEnricherException {
+    private void initTaxonCache() throws IOException {
         DB db = initDb("taxonCache");
         String taxonCacheName = "taxonCacheById";
         if (db.exists(taxonCacheName)) {
@@ -214,7 +213,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                         .make();
                 db.commit();
             } catch (IOException e) {
-                throw new PropertyEnricherException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
+                throw new IllegalStateException("failed to instantiate taxonCache: [" + e.getMessage() + "]", e);
             }
             watch.stop();
             logCacheLoadStats(watch.getTime(), tmpResolvedIdToTaxonMap.size());

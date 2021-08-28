@@ -13,10 +13,10 @@ public class CacheServiceUtil {
         return new BufferedReader(new InputStreamReader(ResourceUtil.asInputStream(taxonResourceUrl)));
     }
 
-    public static void createCacheDir(File cacheDir) throws PropertyEnricherException {
+    public static void createCacheDir(File cacheDir) throws IOException {
         if (!cacheDir.exists()) {
             if (!cacheDir.mkdirs()) {
-                throw new PropertyEnricherException("failed to create cache dir at [" + cacheDir.getAbsolutePath() + "]");
+                throw new IOException("failed to create cache dir at [" + cacheDir.getAbsolutePath() + "]");
             }
         }
     }

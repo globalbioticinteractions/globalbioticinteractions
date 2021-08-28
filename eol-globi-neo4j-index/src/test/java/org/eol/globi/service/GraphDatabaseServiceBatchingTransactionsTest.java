@@ -68,7 +68,7 @@ public class GraphDatabaseServiceBatchingTransactionsTest extends GraphDBTestCas
         }
 
 
-        assertThat(tx1, is(equalTo(tx2)));
+        assertThat(tx1, is(not(equalTo(tx2))));
         assertThat(tx1, is(not(equalTo(tx3))));
 
     }

@@ -4,6 +4,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.eol.globi.service.CacheServiceUtil.createCacheDir;
 
@@ -11,7 +12,7 @@ public class CacheService {
 
     private File cacheDir = new File("./target/term-cache");
 
-    public DB initDb(String cacheName) throws PropertyEnricherException {
+    public DB initDb(String cacheName) throws IOException {
         File mapdbCacheDir = getMapDBDir();
         if (!mapdbCacheDir.exists()) {
             createCacheDir(getMapDBDir());

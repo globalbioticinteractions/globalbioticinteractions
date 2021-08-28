@@ -22,6 +22,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -116,7 +117,7 @@ public class ReportGenerator {
             DB reportCache = cacheService.initDb("sourceReports" + UUID.randomUUID());
             reportForHandler(namespaceHandler, reportCache);
             reportCache.close();
-        } catch (PropertyEnricherException e) {
+        } catch (IOException e) {
             LOG.warn("failed to create report", e);
         }
 
@@ -200,7 +201,7 @@ public class ReportGenerator {
             DB reportCache = cacheService.initDb("collectionReport");
             generateCollectionReport(reportCache);
             reportCache.close();
-        } catch (PropertyEnricherException e) {
+        } catch (IOException e) {
             LOG.warn("failed to generate collection report", e);
         }
     }
