@@ -53,11 +53,11 @@ public class NameResolver implements IndexerNeo4j {
         final AtomicLong nameCount = new AtomicLong(0L);
         NodeListener listener = new NodeListener() {
             @Override
-            public void on(Node study) {
+            public void on(Node node) {
                 nameCount.set(resolveNamesInStudy(batchSize,
                         watchForBatch,
                         nameCount.get(),
-                        study));
+                        node));
             }
         };
 

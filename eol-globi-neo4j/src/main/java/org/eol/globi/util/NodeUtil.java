@@ -188,7 +188,7 @@ public class NodeUtil {
             IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
             studyNodes = studies
                     .stream()
-                    .skip(offset * batchSize)
+                    .skip(offset)
                     .limit(batchSize)
                     .map(Node::getId)
                     .collect(Collectors.toList());
