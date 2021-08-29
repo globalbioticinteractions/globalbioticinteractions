@@ -77,32 +77,31 @@ public class Normalizer {
         return options;
     }
 
-    public void run(CommandLine cmdLine) throws StudyImporterException {
+    void run(CommandLine cmdLine) throws StudyImporterException {
 
-        Factories factoriesNeo4j2 = new Factories() {
-            final GraphServiceFactory factory = new GraphServiceFactoryImpl("./");
-
-            @Override
-            public GraphServiceFactory getGraphServiceFactory() {
-                return factory;
-            }
-
-            @Override
-            public NodeFactoryFactory getNodeFactoryFactory() {
-                return service -> new NodeFactoryNeo4j2(factory.getGraphService());
-            }
-        };
+        GraphServiceFactoryImpl graphServiceFactory = new GraphServiceFactoryImpl("./");
 
         try {
-            GraphServiceFactory graphDbFactory = factoriesNeo4j2.getGraphServiceFactory();
-            importDatasets(cmdLine, graphDbFactory, factoriesNeo4j2.getNodeFactoryFactory());
-            resolveAndLinkTaxa(cmdLine, graphDbFactory);
-            generateReports(cmdLine, graphDbFactory);
-            exportData(cmdLine, graphDbFactory.getGraphService());
+            importDatasets(cmdLine, graphServiceFactory);
+            processDatasets(cmdLine, graphServiceFactory);
         } finally {
             HttpUtil.shutdown();
         }
 
+    }
+
+    private void processDatasets(CommandLine cmdLine, GraphServiceFactoryImpl graphServiceFactory) throws StudyImporterException {
+        Factories factoriesNeo4j2 = new FactoriesBase(graphServiceFactory);
+        GraphServiceFactory graphServiceFactory1 = factoriesNeo4j2.getGraphServiceFactory();
+        resolveAndLinkTaxa(cmdLine, graphServiceFactory1);
+        generateReports(cmdLine, graphServiceFactory1);
+        exportData(cmdLine, graphServiceFactory1.getGraphService());
+    }
+
+    private void importDatasets(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) throws StudyImporterException {
+        Factories importerFactory = new FactoriesForDatasetImport(graphServiceFactory);
+        GraphServiceFactory graphDbFactory = importerFactory.getGraphServiceFactory();
+        importDatasets(cmdLine, graphDbFactory, importerFactory.getNodeFactoryFactory());
     }
 
     private void exportData(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
@@ -173,5 +172,35 @@ public class Normalizer {
                 .export(graphService, baseDir);
     }
 
+    public class FactoriesForDatasetImport extends FactoriesBase {
+        public FactoriesForDatasetImport(GraphServiceFactory graphServiceFactory) {
+            super(graphServiceFactory);
+        }
+
+        @Override
+        public NodeFactoryFactory getNodeFactoryFactory() {
+            return new NodeFactoryFactoryTransactingOnDataset(this.getGraphServiceFactory());
+        }
+
+    }
+
+    public class FactoriesBase implements Factories {
+
+        private final GraphServiceFactory factory;
+
+        public FactoriesBase(GraphServiceFactory factory) {
+            this.factory = factory;
+        }
+
+        @Override
+        public GraphServiceFactory getGraphServiceFactory() {
+            return factory;
+        }
+
+        @Override
+        public NodeFactoryFactory getNodeFactoryFactory() {
+            return service -> new NodeFactoryNeo4j2(factory.getGraphService());
+        }
+    }
 
 }

@@ -37,13 +37,10 @@ public class IndexerDataset implements IndexerNeo4j {
             nodeFactory = nodeFactoryFactory.create(graphService);
             tx.success();
         }
- 
-        try (Transaction tx = graphService.beginTx()) {
-            indexDatasets(
-                    this.registry,
-                    nodeFactory);
-            tx.success();
-        }
+
+        indexDatasets(
+                this.registry,
+                nodeFactory);
     }
 
     private static void indexDatasets(DatasetRegistry registry, NodeFactory nodeFactory) {

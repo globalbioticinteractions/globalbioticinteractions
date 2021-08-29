@@ -7,7 +7,6 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.taxon.TaxonFuzzySearchIndex;
-import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -15,7 +14,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.helpers.collection.MapUtil;
 
@@ -32,18 +30,19 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         GraphDatabaseService graphDb = factory.getGraphService();
+        initIndexes(graphDb);
+
+        NodeUtil.processStudies(1000L, graphDb,
+                node -> onTaxonNode(getTaxonPathsIndex(graphDb), getFuzzySearchIndex(graphDb), node)
+                , "*", "*", "taxons");
+    }
+
+    public void initIndexes(GraphDatabaseService graphDb) {
         try (Transaction tx = graphDb.beginTx()) {
             getTaxonPathsIndex(graphDb);
             getFuzzySearchIndex(graphDb);
             tx.success();
         }
-
-        NodeUtil.processStudies(1000L, graphDb, new NodeListener() {
-            @Override
-            public void on(Node node) {
-                onTaxonNode(getTaxonPathsIndex(graphDb), getFuzzySearchIndex(graphDb), node);
-            }
-        }, "*", "*", "taxons");
     }
 
     public TaxonFuzzySearchIndex getFuzzySearchIndex(GraphDatabaseService graphDb) {

@@ -135,12 +135,12 @@ public class NormalizerTest extends GraphDBTestCase {
     @Test
     public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
         createNeo4j2(getGraphDb());
-        doSingleImportExport(NodeFactoryNeo4j2::new);
+        doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));
     }
 
     @Test
     public void doSingleImportExportV3() throws StudyImporterException, URISyntaxException {
-        doSingleImportExport(NodeFactoryNeo4j3::new);
+        doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset3(getGraphFactory()));
     }
 
     public void doSingleImportExport(NodeFactoryFactory nodeFactoryFactory) throws URISyntaxException, StudyImporterException {
@@ -149,6 +149,7 @@ public class NormalizerTest extends GraphDBTestCase {
         URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
+
         final IndexerDataset indexerDataset = new IndexerDataset(
                 DatasetRegistryUtil.getDatasetRegistry(datasetDirTest),
                 nodeFactoryFactory);
