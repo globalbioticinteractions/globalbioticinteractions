@@ -163,16 +163,14 @@ public class NodeUtil {
                                              String queryKey,
                                              String queryOrQueryObject,
                                              String indexName) {
-        List<Long> studyNodes;
         Index<Node> index = graphService.index().forNodes(indexName);
         IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
-        studyNodes = studies
+        return studies
                 .stream()
                 .skip(skip)
                 .limit(limit)
                 .map(Node::getId)
                 .collect(Collectors.toList());
-        return studyNodes;
     }
 
     public static void processStudies(Long batchSize,

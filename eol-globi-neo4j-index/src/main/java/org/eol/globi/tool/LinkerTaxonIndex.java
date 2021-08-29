@@ -13,6 +13,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
@@ -31,15 +32,26 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         GraphDatabaseService graphDb = factory.getGraphService();
+        try (Transaction tx = graphDb.beginTx()) {
+            getTaxonPathsIndex(graphDb);
+            getFuzzySearchIndex(graphDb);
+            tx.success();
+        }
 
         NodeUtil.processStudies(1000L, graphDb, new NodeListener() {
             @Override
             public void on(Node node) {
-                Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-                TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
-                onTaxonNode(ids, fuzzySearchIndex, node);
+                onTaxonNode(getTaxonPathsIndex(graphDb), getFuzzySearchIndex(graphDb), node);
             }
         }, "*", "*", "taxons");
+    }
+
+    public TaxonFuzzySearchIndex getFuzzySearchIndex(GraphDatabaseService graphDb) {
+        return new TaxonFuzzySearchIndex(graphDb);
+    }
+
+    public Index<Node> getTaxonPathsIndex(GraphDatabaseService graphDb) {
+        return graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 
     private void onTaxonNode(Index<Node> ids, TaxonFuzzySearchIndex fuzzySearchIndex, Node hit) {
