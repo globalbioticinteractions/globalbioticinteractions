@@ -61,7 +61,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
     }
 
     @Override
-    public DOI resolveDoiFor(final String reference) throws IOException {
+    public DOI resolveDoiFor(final String reference) {
         return getDoiCitationMap().get(reference);
     }
 

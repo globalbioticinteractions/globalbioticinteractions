@@ -68,7 +68,7 @@ public class LinkerDOITest extends GraphDBTestCase {
         assertLinkMany(LinkerDOI.BATCH_SIZE + 2);
     }
 
-    private void assertLinkMany(int numberOfStudies) throws NodeFactoryException {
+    private void assertLinkMany(long numberOfStudies) throws NodeFactoryException {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", null, "HOCKING"));
         getNodeFactory().getOrCreateStudy(new StudyImpl("title1", null, "MEDAN"));
         assertThat(study.getDOI(), is(nullValue()));
