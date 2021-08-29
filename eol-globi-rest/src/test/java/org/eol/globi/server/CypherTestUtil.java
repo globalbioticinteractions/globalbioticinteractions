@@ -10,6 +10,7 @@ import org.eol.globi.tool.LinkerTaxonIndex;
 import org.eol.globi.tool.ReportGenerator;
 import org.eol.globi.util.CypherQuery;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.test.TestGraphDatabaseFactory;
 import org.slf4j.helpers.NOPLogger;
 
@@ -31,32 +32,34 @@ public class CypherTestUtil {
     public static void validate(CypherQuery cypherQuery) {
         TestGraphDatabaseFactory testGraphDatabaseFactory = new TestGraphDatabaseFactory();
         GraphDatabaseService graphDatabaseService = testGraphDatabaseFactory.newImpermanentDatabase();
-        new NodeFactoryNeo4j2(graphDatabaseService);
-        new NonResolvingTaxonIndex(graphDatabaseService);
-        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(graphDatabaseService));
-        CacheService cacheService = new CacheService();
-        File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
-        cacheService.setCacheDir(cacheDir);
-        ReportGenerator reportGenerator = new ReportGenerator(graphDatabaseService, cacheService);
+        try(Transaction tx = graphDatabaseService.beginTx()) {
+            new NodeFactoryNeo4j2(graphDatabaseService);
+            new NonResolvingTaxonIndex(graphDatabaseService);
+            new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(graphDatabaseService));
+            CacheService cacheService = new CacheService();
+            File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
+            cacheService.setCacheDir(cacheDir);
+            ReportGenerator reportGenerator = new ReportGenerator(graphDatabaseService, cacheService);
 
-        reportGenerator.run(NOPLogger.NOP_LOGGER);
-        Map<String, Object> params =
-                cypherQuery.getParams() == null
-                ? Collections.emptyMap()
-                : new HashMap<>(cypherQuery.getParams());
-        try {
-            graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
-        } catch (NullPointerException ex) {
-            // encountered nullpointer exceptions were caused by initialization of graph database
-            throw ex;
-        } catch (RuntimeException ex) {
-            // for some reason lucene queries like "node:taxons('externalId:\"NCBI:9606\"') "
-            // work fine in cypher query, but cause parse exception when running programatically
-            if (!ex.getMessage().contains("Encountered \" \":\" \": \"\"")) {
+            reportGenerator.run(NOPLogger.NOP_LOGGER);
+            Map<String, Object> params =
+                    cypherQuery.getParams() == null
+                            ? Collections.emptyMap()
+                            : new HashMap<>(cypherQuery.getParams());
+            try {
+                graphDatabaseService.execute(cypherQuery.getVersionedQuery(), params);
+            } catch (NullPointerException ex) {
+                // encountered nullpointer exceptions were caused by initialization of graph database
                 throw ex;
+            } catch (RuntimeException ex) {
+                // for some reason lucene queries like "node:taxons('externalId:\"NCBI:9606\"') "
+                // work fine in cypher query, but cause parse exception when running programatically
+                if (!ex.getMessage().contains("Encountered \" \":\" \": \"\"")) {
+                    throw ex;
+                }
+            } finally {
+                FileUtils.deleteQuietly(cacheDir);
             }
-        } finally {
-            FileUtils.deleteQuietly(cacheDir);
         }
     }
 }
