@@ -32,9 +32,12 @@ public class IndexerDataset implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory graphServiceFactory) {
         GraphDatabaseService graphService = graphServiceFactory.getGraphService();
-        NodeFactory nodeFactory
-                = nodeFactoryFactory.create(graphService);
-
+        NodeFactory nodeFactory;
+        try (Transaction tx = graphService.beginTx()) {
+            nodeFactory = nodeFactoryFactory.create(graphService);
+            tx.success();
+        }
+ 
         try (Transaction tx = graphService.beginTx()) {
             indexDatasets(
                     this.registry,

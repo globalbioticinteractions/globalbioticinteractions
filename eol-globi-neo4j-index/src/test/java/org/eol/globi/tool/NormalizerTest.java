@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.data.NodeFactoryNeo4j3;
@@ -69,18 +70,23 @@ public class NormalizerTest extends GraphDBTestCase {
     @Test
     public void doSingleImportNeo4j2() throws StudyImporterException {
         GraphDatabaseService graphDb = getGraphDb();
-        NodeFactoryNeo4j2 factory;
-        try (Transaction tx = getGraphDb().beginTx()) {
-            factory = new NodeFactoryNeo4j2(graphDb);
-            tx.success();
-        }
+        NodeFactory factory = createNeo4j2(graphDb);
 
         try (Transaction tx = getGraphDb().beginTx()) {
             importWithGraphDB(factory);
         }
     }
 
-    public void importWithGraphDB(NodeFactoryNeo4j factory) throws StudyImporterException {
+    private NodeFactory createNeo4j2(GraphDatabaseService graphDb) {
+        NodeFactory factory;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            factory = new NodeFactoryNeo4j2(graphDb);
+            tx.success();
+        }
+        return factory;
+    }
+
+    private void importWithGraphDB(NodeFactory factory) throws StudyImporterException {
 
         importData(DatasetImporterForSimons.class, factory);
 
@@ -128,6 +134,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
+        createNeo4j2(getGraphDb());
         doSingleImportExport(NodeFactoryNeo4j2::new);
     }
 
@@ -146,7 +153,10 @@ public class NormalizerTest extends GraphDBTestCase {
                 DatasetRegistryUtil.getDatasetRegistry(datasetDirTest),
                 nodeFactoryFactory);
 
-        indexerDataset.index(getGraphFactory());
+        try (Transaction tx = getGraphDb().beginTx()) {
+            indexerDataset.index(getGraphFactory());
+            tx.success();
+        }
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));
@@ -156,14 +166,17 @@ public class NormalizerTest extends GraphDBTestCase {
         }
     }
 
-    private static void importData(Class<? extends DatasetImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
+    private static void importData(Class<? extends DatasetImporter> importer,
+                                   NodeFactory factory) throws StudyImporterException {
         DatasetImporter datasetImporter = createStudyImporter(importer, factory);
         LOG.info("[" + importer + "] importing ...");
         datasetImporter.importStudy();
         LOG.info("[" + importer + "] imported.");
     }
 
-    private static DatasetImporter createStudyImporter(Class<? extends DatasetImporter> studyImporter, NodeFactoryNeo4j factory) throws StudyImporterException {
+    private static DatasetImporter createStudyImporter(
+            Class<? extends DatasetImporter> studyImporter,
+            NodeFactory factory) throws StudyImporterException {
         DatasetImporter importer = new StudyImporterTestFactory(factory).instantiateImporter(studyImporter);
         importer.setLogger(new NullImportLogger());
         return importer;
