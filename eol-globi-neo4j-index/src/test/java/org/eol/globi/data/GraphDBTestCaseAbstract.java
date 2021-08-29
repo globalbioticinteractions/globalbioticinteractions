@@ -84,7 +84,7 @@ public abstract class GraphDBTestCaseAbstract {
     @Before
     public void startGraphDb() throws IOException {
         nodeFactory = createNodeFactory();
-        try(Transaction tx = getGraphDb().beginTx()) {
+        try (Transaction tx = getGraphDb().beginTx()) {
             getOrCreateTaxonIndex();
             tx.success();
         }

@@ -2,6 +2,8 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeFactory;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.data.CharsetConstant;
@@ -29,10 +31,16 @@ public class IndexerDataset implements IndexerNeo4j {
 
     @Override
     public void index(GraphServiceFactory graphServiceFactory) {
-        NodeFactory nodeFactory = nodeFactoryFactory.create(graphServiceFactory.getGraphService());
-        indexDatasets(
-                this.registry,
-                nodeFactory);
+        GraphDatabaseService graphService = graphServiceFactory.getGraphService();
+        NodeFactory nodeFactory
+                = nodeFactoryFactory.create(graphService);
+
+        try (Transaction tx = graphService.beginTx()) {
+            indexDatasets(
+                    this.registry,
+                    nodeFactory);
+            tx.success();
+        }
     }
 
     private static void indexDatasets(DatasetRegistry registry, NodeFactory nodeFactory) {

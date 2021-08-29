@@ -18,6 +18,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.index.lucene.QueryContext;
@@ -35,12 +36,15 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
 
     public NodeFactoryNeo4j2(GraphDatabaseService graphDb) {
         super(graphDb);
-        this.datasets = NodeUtil.forNodes(graphDb, "datasets");
-        this.studies = NodeUtil.forNodes(graphDb, "studies");
-        this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
-        this.seasons = NodeUtil.forNodes(graphDb, "seasons");
-        this.locations = NodeUtil.forNodes(graphDb, "locations");
-        this.environments = NodeUtil.forNodes(graphDb, "environments");
+        try (Transaction tx = graphDb.beginTx()) {
+            this.datasets = NodeUtil.forNodes(graphDb, "datasets");
+            this.studies = NodeUtil.forNodes(graphDb, "studies");
+            this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
+            this.seasons = NodeUtil.forNodes(graphDb, "seasons");
+            this.locations = NodeUtil.forNodes(graphDb, "locations");
+            this.environments = NodeUtil.forNodes(graphDb, "environments");
+            tx.success();
+        }
     }
 
     @Override

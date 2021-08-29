@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,12 @@ import static org.junit.Assert.assertNotNull;
 public class NormalizerTest extends GraphDBTestCase {
 
     private final static Logger LOG = LoggerFactory.getLogger(NormalizerTest.class);
+
+    @Override
+    public void afterGraphDBStart() {
+
+    }
+
 
     @Test
     public void handleOptions() throws ParseException {
@@ -78,9 +85,15 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImportNeo4j3() throws StudyImporterException {
-        NodeFactoryNeo4j3.initSchema(getGraphDb());
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            NodeFactoryNeo4j3.initSchema(getGraphDb());
+            tx.success();
+        }
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
-        assertGraphDBImportNativeIndexes(factory);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            assertGraphDBImportNativeIndexes(factory);
+        }
     }
 
     public void assertGraphDBImportNativeIndexes(NodeFactoryNeo4j factory) throws StudyImporterException {
@@ -127,7 +140,10 @@ public class NormalizerTest extends GraphDBTestCase {
 
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));
-        dataNormalizationTool.exportData(getGraphDb(), baseDir);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            dataNormalizationTool.exportData(getGraphDb(), baseDir);
+            tx.success();
+        }
     }
 
     private static void importData(Class<? extends DatasetImporter> importer, NodeFactoryNeo4j factory) throws StudyImporterException {
