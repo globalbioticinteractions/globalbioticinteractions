@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
     @Test
-    public void buildTaxonInterIndex() throws NodeFactoryException, PropertyEnricherException {
+    public void buildTaxonInterIndex() throws NodeFactoryException {
         Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"));
         Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Canis lupus", "WORMS:2"));
         human.ate(animal);
