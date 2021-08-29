@@ -20,6 +20,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
 public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     private NonResolvingTaxonIndex taxonService;
 
@@ -138,21 +139,26 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public final void indexTwoHomonymsSeparately() throws NodeFactoryException {
-        Taxon taxon1 = new TaxonImpl("some name 4567", null);
-        taxon1.setPath("one | two | three | some name 4567");
-        taxon1.setPathNames("kingdom | family | genus | species");
-        assertThat(taxonService.findTaxon(taxon1), is(nullValue()));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            Taxon taxon1 = new TaxonImpl("some name 4567", null);
+            taxon1.setPath("one | two | three | some name 4567");
+            taxon1.setPathNames("kingdom | family | genus | species");
 
-        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
-        assertThat(taxon, is(notNullValue()));
-        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+            assertThat(taxonService.findTaxon(taxon1), is(nullValue()));
 
-        assertThat(taxonService.findTaxonByName("some name 4567"), is(notNullValue()));
+            TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+            assertThat(taxon, is(notNullValue()));
 
-        Taxon taxon2 = new TaxonImpl("some name 4567", null);
-        taxon2.setPath("four | five | six | some name 4567");
-        taxon2.setPathNames("kingdom | family | genus | species");
-        assertThat(taxonService.findTaxon(taxon2), is(nullValue()));
+            assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+            assertThat(taxonService.findTaxonByName("some name 4567"), is(notNullValue()));
+
+            Taxon taxon2 = new TaxonImpl("some name 4567", null);
+            taxon2.setPath("four | five | six | some name 4567");
+            taxon2.setPathNames("kingdom | family | genus | species");
+
+            assertThat(taxonService.findTaxon(taxon2), is(nullValue()));
+            tx.success();
+        }
     }
 
     @Test
@@ -162,7 +168,10 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         taxon1.setPathNames("kingdom | family | genus | species");
         TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon.getPath(), is("seven | eight | nine | some name"));
-        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+            tx.success();
+        }
 
         assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
 
@@ -174,7 +183,10 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
 
         Taxon taxon3 = new TaxonImpl("some name");
 
-        assertThat(taxonService.findTaxon(taxon3).getPath(), is("seven | eight | nine | some name"));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            assertThat(taxonService.findTaxon(taxon3).getPath(), is("seven | eight | nine | some name"));
+            tx.success();
+        }
     }
 
     @Test
@@ -184,14 +196,20 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         taxon1.setPathNames("kingdom | family | genus | species");
         TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
-        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+            tx.success();
+        }
 
         assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
 
         Taxon taxon2 = new TaxonImpl("some name", "foo:123");
         taxon2.setPath("some name");
         taxon2.setPathNames("species");
-        assertThat(taxonService.findTaxon(taxon2), is(not(nullValue())));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            assertThat(taxonService.findTaxon(taxon2), is(not(nullValue())));
+            tx.success();
+        }
     }
 
 

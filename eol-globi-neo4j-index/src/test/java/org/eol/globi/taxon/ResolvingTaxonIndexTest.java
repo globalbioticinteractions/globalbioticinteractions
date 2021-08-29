@@ -42,7 +42,7 @@ import static org.junit.Assert.fail;
 
 public class ResolvingTaxonIndexTest extends GraphDBTestCase {
 
-    private NonResolvingTaxonIndex taxonService;
+    private NonResolvingTaxonIndexNoTx taxonService;
 
     public static final String EXPECTED_COMMON_NAMES = "some german name @de" + CharsetConstant.SEPARATOR + "some english name @en" + CharsetConstant.SEPARATOR;
 
@@ -403,14 +403,12 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
     public final void labelUnambiguousMatchesByPath() throws NodeFactoryException {
         ResolvingTaxonIndex taxonService = createTaxonService(getGraphDb());
         configureAnuraHits(taxonService);
-        this.taxonService = taxonService;
-
 
         TaxonImpl anura = new TaxonImpl("Anura", null);
         anura.setPath("four | five | six | some name");
         anura.setPathNames("kingdom | family | genus | species");
 
-        TaxonNode first = this.taxonService.getOrCreateTaxon(anura);
+        TaxonNode first = taxonService.getOrCreateTaxon(anura);
         assertThat(first.getName(), is("Anura"));
         assertThat(first.getExternalId(), is("frogs:1"));
 
