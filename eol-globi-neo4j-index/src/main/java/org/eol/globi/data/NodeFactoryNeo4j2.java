@@ -36,15 +36,12 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
 
     public NodeFactoryNeo4j2(GraphDatabaseService graphDb) {
         super(graphDb);
-        try (Transaction tx = graphDb.beginTx()) {
-            this.datasets = NodeUtil.forNodes(graphDb, "datasets");
-            this.studies = NodeUtil.forNodes(graphDb, "studies");
-            this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
-            this.seasons = NodeUtil.forNodes(graphDb, "seasons");
-            this.locations = NodeUtil.forNodes(graphDb, "locations");
-            this.environments = NodeUtil.forNodes(graphDb, "environments");
-            tx.success();
-        }
+        this.datasets = NodeUtil.forNodes(graphDb, "datasets");
+        this.studies = NodeUtil.forNodes(graphDb, "studies");
+        this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
+        this.seasons = NodeUtil.forNodes(graphDb, "seasons");
+        this.locations = NodeUtil.forNodes(graphDb, "locations");
+        this.environments = NodeUtil.forNodes(graphDb, "environments");
     }
 
     @Override

@@ -68,7 +68,16 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Test
     public void doSingleImportNeo4j2() throws StudyImporterException {
-        importWithGraphDB(new NodeFactoryNeo4j2(getGraphDb()));
+        GraphDatabaseService graphDb = getGraphDb();
+        NodeFactoryNeo4j2 factory;
+        try (Transaction tx = getGraphDb().beginTx()) {
+            factory = new NodeFactoryNeo4j2(graphDb);
+            tx.success();
+        }
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            importWithGraphDB(factory);
+        }
     }
 
     public void importWithGraphDB(NodeFactoryNeo4j factory) throws StudyImporterException {
@@ -90,6 +99,7 @@ public class NormalizerTest extends GraphDBTestCase {
             NodeFactoryNeo4j3.initSchema(getGraphDb());
             tx.success();
         }
+
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
         try (Transaction tx = getGraphDb().beginTx()) {
             assertGraphDBImportNativeIndexes(factory);

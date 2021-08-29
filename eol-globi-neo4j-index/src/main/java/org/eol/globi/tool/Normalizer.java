@@ -169,7 +169,8 @@ public class Normalizer {
     }
 
     void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        new GraphExporterImpl().export(graphService, baseDir);
+        new GraphExporterImpl()
+                .export(graphService, baseDir);
     }
 
 
