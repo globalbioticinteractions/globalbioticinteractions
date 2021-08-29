@@ -13,6 +13,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.tool.TransactionPerBatch;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -65,7 +66,7 @@ public class NodeUtil {
     }
 
     public static void findStudies(GraphDatabaseService graphService, NodeListener listener, String queryKey, String queryValue) {
-        processStudies(1000L, graphService, listener, queryKey, queryValue);
+        processStudies(1000L, graphService, listener, queryKey, queryValue, "studies");
     }
 
     public static void findDatasetsByQuery(GraphDatabaseService graphService, DatasetNodeListener listener, String queryKey, String queryValue) {
@@ -178,10 +179,11 @@ public class NodeUtil {
                                       GraphDatabaseService graphService,
                                       NodeListener listener,
                                       String queryKey,
-                                      String queryOrQueryObject) {
+                                      String queryOrQueryObject,
+                                      String indexName) {
 
-        new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject)
-                .process(listener);
+        new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject, indexName)
+                .process(listener, new TransactionPerBatch(graphService));
     }
 
 }

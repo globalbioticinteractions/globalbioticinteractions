@@ -1,21 +1,15 @@
 package org.eol.globi.util;
 
 import org.eol.globi.data.GraphDBTestCase;
-import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.data.NodeFactoryNeo4j;
-import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
-import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 
-import java.net.URI;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -61,11 +55,7 @@ public class NodeProcessorImplTest extends GraphDBTestCase {
 
     public AtomicLong processStudies(long batchSize) {
         AtomicLong counter = new AtomicLong();
-        new NodeProcessorImpl(
-                getGraphDb(),
-                batchSize,
-                "title",
-                "*")
+        new NodeProcessorImpl(getGraphDb(), batchSize, "title", "*", "studies")
                 .process(new NodeListener() {
                     @Override
                     public void on(Node node) {

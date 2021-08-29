@@ -2,12 +2,6 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.eol.globi.util.BatchListener;
-import org.eol.globi.util.NodeListener;
-import org.eol.globi.util.NodeProcessorImpl;
-import org.neo4j.graphdb.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
@@ -15,21 +9,16 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
 import org.eol.globi.service.DOIResolverImpl;
+import org.eol.globi.util.NodeProcessorImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LinkerDOI implements IndexerNeo4j {
 
@@ -64,23 +53,7 @@ public class LinkerDOI implements IndexerNeo4j {
                 .process(node -> {
                     counter.incrementAndGet();
                     linkStudy(doiResolver, new StudyNode(node));
-                }, new BatchListener() {
-                    Transaction tx;
-                    @Override
-                    public void onStartBatch() {
-                        if (tx != null) {
-                            tx.success();
-                            tx.close();
-                        }
-                        tx = graphDb.beginTx();
-                    }
-
-                    @Override
-                    public void onFinishBatch() {
-                        tx.success();
-                        tx.close();
-                    }
-                });
+                }, new TransactionPerBatch(graphDb));
 
         LOG.info(msg + " complete. Out of [" + counter.get() + "] references, [" + counterResolved.get() + "] needed resolving.");
         stopWatch.stop();

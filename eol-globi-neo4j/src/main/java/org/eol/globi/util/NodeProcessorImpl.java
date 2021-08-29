@@ -13,10 +13,6 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     private final String queryOrQueryObject;
     private final String indexName;
 
-    public NodeProcessorImpl(GraphDatabaseService graphService, Long batchSize, String queryKey, String queryOrQueryObject) {
-        this(graphService, batchSize, queryKey, queryOrQueryObject, "studies");
-    }
-
     public NodeProcessorImpl(GraphDatabaseService graphService,
                              Long batchSize,
                              String queryKey,
