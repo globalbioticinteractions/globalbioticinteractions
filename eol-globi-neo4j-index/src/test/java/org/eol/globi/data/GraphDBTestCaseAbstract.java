@@ -21,6 +21,7 @@ import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 import java.io.IOException;
@@ -83,7 +84,10 @@ public abstract class GraphDBTestCaseAbstract {
     @Before
     public void startGraphDb() throws IOException {
         nodeFactory = createNodeFactory();
-        getOrCreateTaxonIndex();
+        try(Transaction tx = getGraphDb().beginTx()) {
+            getOrCreateTaxonIndex();
+            tx.success();
+        }
     }
 
     public void afterGraphDBStart() {
