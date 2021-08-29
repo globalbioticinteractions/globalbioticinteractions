@@ -16,7 +16,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -37,7 +36,6 @@ public class LinkerOpenTreeOfLife implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         final GraphDatabaseService graphDb = factory.getGraphService();
-        Transaction transaction = graphDb.beginTx();
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");
         for (Node hit : hits) {
@@ -51,8 +49,6 @@ public class LinkerOpenTreeOfLife implements IndexerNeo4j {
             validate(ottIds);
         }
         hits.close();
-        transaction.success();
-        transaction.close();
     }
 
     protected void validate(Map<String, Long> ottIds) {

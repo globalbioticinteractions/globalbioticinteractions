@@ -40,9 +40,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,13 +79,9 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public SeasonNode createSeason(String seasonNameLower) {
-        SeasonNode season;
-        try (Transaction transaction = graphDb.beginTx()) {
-            Node node = createSeasonNode();
-            season = new SeasonNode(node, seasonNameLower);
-            indexSeasonNode(seasonNameLower, node);
-            transaction.success();
-        }
+        Node node = createSeasonNode();
+        SeasonNode season = new SeasonNode(node, seasonNameLower);
+        indexSeasonNode(seasonNameLower, node);
         return season;
     }
 
@@ -97,14 +90,9 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     protected abstract Node createSeasonNode();
 
     private LocationNode createLocation(final Location location) {
-        LocationNode locationNode;
-
-        try (Transaction transaction = graphDb.beginTx()) {
-            Node node = createLocationNode();
-            locationNode = new LocationNode(node, fromLocation(location));
-            indexLocation(location, node);
-            transaction.success();
-        }
+        Node node = createLocationNode();
+        LocationNode locationNode = new LocationNode(node, fromLocation(location));
+        indexLocation(location, node);
         return locationNode;
     }
 
@@ -198,12 +186,7 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
 
 
     private SpecimenNode createSpecimen() {
-        SpecimenNode specimen;
-        try (Transaction transaction = graphDb.beginTx()) {
-            specimen = new SpecimenNode(graphDb.createNode(), null);
-            transaction.success();
-        }
-        return specimen;
+        return new SpecimenNode(graphDb.createNode(), null);
     }
 
 
@@ -213,15 +196,9 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public StudyNode createStudy(Study study) {
-        StudyNode studyNode;
-
-        try (Transaction transaction = graphDb.beginTx()) {
-            Node node = createStudyNode();
-            studyNode = createStudyNode(study, node);
-            indexStudyNode(studyNode);
-            transaction.success();
-        }
-
+        Node node = createStudyNode();
+        StudyNode studyNode = createStudyNode(study, node);
+        indexStudyNode(studyNode);
         return studyNode;
     }
 
@@ -321,11 +298,7 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
             throw new NodeFactoryException("null or empty study title");
         }
 
-        StudyNode studyNode;
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            studyNode = findStudy(study);
-            transaction.success();
-        }
+        StudyNode studyNode = findStudy(study);
 
         if (studyNode == null) {
             studyNode = createStudy(study);
@@ -343,11 +316,7 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     @Deprecated
     @Override
     public StudyNode findStudy(String title) {
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            StudyNode study = findStudy(new StudyImpl(title));
-            transaction.success();
-            return study;
-        }
+        return findStudy(new StudyImpl(title));
     }
 
     protected abstract StudyNode findStudy(Study study);
@@ -373,12 +342,9 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException {
         if (specimen != null && date != null) {
-            try (Transaction tx = getGraphDb().beginTx()) {
-                Iterable<Relationship> rels = getCollectedRel(specimen);
-                for (Relationship rel : rels) {
-                    rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
-                }
-                tx.success();
+            Iterable<Relationship> rels = getCollectedRel(specimen);
+            for (Relationship rel : rels) {
+                rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
             }
         }
     }
@@ -398,18 +364,14 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
     @Override
     public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
         Date date = null;
-        try (Transaction tx = getGraphDb().beginTx()) {
-            Iterable<Relationship> rels = getCollectedRel(specimen);
-            if (rels.iterator().hasNext()) {
-                Relationship rel = rels.iterator().next();
-                if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
-                    Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
-                    date = new Date(unixEpoch);
-                }
+        Iterable<Relationship> rels = getCollectedRel(specimen);
+        if (rels.iterator().hasNext()) {
+            Relationship rel = rels.iterator().next();
+            if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
+                Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
+                date = new Date(unixEpoch);
             }
-            tx.success();
         }
-
         return date;
     }
 
@@ -434,25 +396,15 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
         for (Term term : terms) {
             Environment environment = findEnvironment(term.getName());
             if (environment == null) {
-                try (Transaction transaction = graphDb.beginTx()) {
-                    environment = createEnvironmentNode(term, transaction);
-                }
+                Node node = createEnvironmentNode();
+                EnvironmentNode environmentNode = new EnvironmentNode(node, term.getId(), term.getName());
+                indexEnvironmentNode(term, environmentNode);
+                environment = environmentNode;
             }
-            try (Transaction transaction = graphDb.beginTx()) {
-                location.addEnvironment(environment);
-                normalizedEnvironments.add(environment);
-                transaction.success();
-            }
+            location.addEnvironment(environment);
+            normalizedEnvironments.add(environment);
         }
         return normalizedEnvironments;
-    }
-
-    public EnvironmentNode createEnvironmentNode(Term term, Transaction transaction) {
-        Node node = createEnvironmentNode();
-        EnvironmentNode environmentNode = new EnvironmentNode(node, term.getId(), term.getName());
-        indexEnvironmentNode(term, environmentNode);
-        transaction.success();
-        return environmentNode;
     }
 
     abstract public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode);
@@ -511,26 +463,19 @@ public abstract class NodeFactoryNeo4j implements NodeFactory {
 
     @Override
     public Dataset getOrCreateDataset(Dataset originatingDataset) {
-        try (Transaction transaction = graphDb.beginTx()) {
-            Dataset datasetCreated = getOrCreateDatasetNoTx(originatingDataset);
-            transaction.success();
-            return datasetCreated;
-        }
+        return getOrCreateDatasetNoTx(originatingDataset);
     }
 
     @Override
     public Interaction createInteraction(Study study) throws NodeFactoryException {
         InteractionNode interactionNode;
-        try (Transaction transaction = graphDb.beginTx()) {
-            Node node = graphDb.createNode();
-            StudyNode studyNode = getOrCreateStudy(study);
-            interactionNode = new InteractionNode(node);
-            interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
-            Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
-            if (dataset instanceof DatasetNode) {
-                interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
-            }
-            transaction.success();
+        Node node = graphDb.createNode();
+        StudyNode studyNode = getOrCreateStudy(study);
+        interactionNode = new InteractionNode(node);
+        interactionNode.createRelationshipTo(studyNode, RelTypes.DERIVED_FROM);
+        Dataset dataset = getOrCreateDatasetNoTx(study.getOriginatingDataset());
+        if (dataset instanceof DatasetNode) {
+            interactionNode.createRelationshipTo(dataset, RelTypes.ACCESSED_AT);
         }
         return interactionNode;
     }

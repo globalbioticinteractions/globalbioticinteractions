@@ -3,35 +3,34 @@ package org.eol.globi.tool;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
-import org.eol.globi.data.NodeFactoryNeo4j2;
-import org.eol.globi.data.NodeFactoryNeo4j3;
-import org.eol.globi.data.NodeLabel;
-import org.eol.globi.domain.StudyNode;
-import org.eol.globi.service.GraphDatabaseServiceBatchingTransactions;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.ResourceIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.DatasetImporterForSimons;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryNeo4j;
+import org.eol.globi.data.NodeFactoryNeo4j2;
+import org.eol.globi.data.NodeFactoryNeo4j3;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyNode;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 public class NormalizerTest extends GraphDBTestCase {
 
     private final static Logger LOG = LoggerFactory.getLogger(NormalizerTest.class);
@@ -65,13 +64,6 @@ public class NormalizerTest extends GraphDBTestCase {
         importWithGraphDB(new NodeFactoryNeo4j2(getGraphDb()));
     }
 
-    @Test
-    public void doSingleImportNeo4j2Batching() throws StudyImporterException {
-        final GraphDatabaseServiceBatchingTransactions graphDb2 =
-                new GraphDatabaseServiceBatchingTransactions(getGraphDb());
-        importWithGraphDB(new NodeFactoryNeo4j2(graphDb2));
-    }
-
     public void importWithGraphDB(NodeFactoryNeo4j factory) throws StudyImporterException {
 
         importData(DatasetImporterForSimons.class, factory);
@@ -80,11 +72,8 @@ public class NormalizerTest extends GraphDBTestCase {
         Study study = getStudySingleton(graphService);
         assertThat(study.getTitle(), is("Simons 1997"));
 
-        Transaction transaction = graphService.beginTx();
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));
-        transaction.success();
-        transaction.close();
     }
 
     @Test
@@ -94,37 +83,20 @@ public class NormalizerTest extends GraphDBTestCase {
         assertGraphDBImportNativeIndexes(factory);
     }
 
-    @Test
-    public void doSingleImportNeo4j3Batching() throws StudyImporterException {
-        NodeFactoryNeo4j3.initSchema(getGraphDb());
-        final GraphDatabaseServiceBatchingTransactions graphDb2 =
-                new GraphDatabaseServiceBatchingTransactions(getGraphDb());
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(graphDb2);
-        assertGraphDBImportNativeIndexes(factory);
-    }
-
     public void assertGraphDBImportNativeIndexes(NodeFactoryNeo4j factory) throws StudyImporterException {
         importData(DatasetImporterForSimons.class, factory);
         GraphDatabaseService graphService = getGraphDb();
 
-        try( Transaction tx = getGraphDb().beginTx()) {
-            ResourceIterator<Node> nodes = graphService.findNodes(NodeLabel.Reference);
+        ResourceIterator<Node> nodes = graphService.findNodes(NodeLabel.Reference);
 
-            assertTrue(nodes.hasNext());
+        assertTrue(nodes.hasNext());
 
-            Study study = new StudyNode(nodes.next());
-            assertThat(study.getTitle(), is("Simons 1997"));
+        Study study = new StudyNode(nodes.next());
+        assertThat(study.getTitle(), is("Simons 1997"));
 
-            assertFalse(nodes.hasNext());
-            tx.success();
-        }
-
-
-        Transaction transaction = graphService.beginTx();
+        assertFalse(nodes.hasNext());
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));
-        transaction.success();
-        transaction.close();
     }
 
     private Normalizer createNormalizer() {

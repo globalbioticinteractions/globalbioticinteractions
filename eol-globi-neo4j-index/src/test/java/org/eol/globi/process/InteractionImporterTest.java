@@ -19,6 +19,7 @@ import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -249,7 +250,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
         listener.on(link);
 
         final AtomicBoolean foundPair = new AtomicBoolean(false);
-        NodeUtil.RelationshipListener relationshipListener = relationship -> {
+        RelationshipListener relationshipListener = relationship -> {
             final SpecimenNode predator = new SpecimenNode(relationship.getEndNode());
             for (Relationship stomachRel : NodeUtil.getStomachContents(predator)) {
                 final SpecimenNode prey = new SpecimenNode(stomachRel.getEndNode());
@@ -296,7 +297,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
         assertThat(foundPair.get(), is(true));
     }
 
-    private void handleRelations(NodeUtil.RelationshipListener handler, RelTypes collected) {
+    private void handleRelations(RelationshipListener handler, RelTypes collected) {
         final List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));
         final StudyNode study = allStudies.get(0);
@@ -335,7 +336,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
         listener.on(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
-        NodeUtil.RelationshipListener relHandler = relationship -> {
+        RelationshipListener relHandler = relationship -> {
             final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.REFUTES)));
             assertFalse(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
@@ -366,7 +367,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
         listener.on(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
-        NodeUtil.RelationshipListener someListener = relationship -> {
+        RelationshipListener someListener = relationship -> {
             final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
             LocationNode sampleLocation = someSpecimen.getSampleLocation();
@@ -399,7 +400,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
         listener.on(link);
 
         AtomicInteger foundSpecimen = new AtomicInteger(0);
-        NodeUtil.RelationshipListener someListener = relationship -> {
+        RelationshipListener someListener = relationship -> {
             final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(NodeUtil.asNeo4j(InteractType.ATE)));
@@ -439,7 +440,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
         listener.on(link);
 
         AtomicInteger foundSpecimen = new AtomicInteger(0);
-        NodeUtil.RelationshipListener someListener = relationship -> {
+        RelationshipListener someListener = relationship -> {
             final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS)));
@@ -499,7 +500,7 @@ public class InteractionImporterTest extends GraphDBTestCase {
         listener.on(link);
 
         AtomicBoolean foundSpecimen = new AtomicBoolean(false);
-        NodeUtil.RelationshipListener someListener = relationship -> {
+        RelationshipListener someListener = relationship -> {
 
             final SpecimenNode someSpecimen = new SpecimenNode(relationship.getEndNode());
             assertTrue(someSpecimen.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.COLLECTED)));

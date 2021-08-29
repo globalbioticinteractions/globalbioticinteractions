@@ -13,13 +13,13 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.service.PropertyEnricherException;
 import org.junit.Test;
-import org.neo4j.graphdb.Transaction;
 
 import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
 
     @Test
@@ -48,11 +48,8 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
             }).index(new GraphServiceFactoryProxy(getGraphDb()));
             new LinkerOpenTreeOfLife(index).index(new GraphServiceFactoryProxy(getGraphDb()));
 
-            Transaction transaction = getGraphDb().beginTx();
             Collection<String> externalIds = LinkerTestUtil.assertHasOther(taxon.getName(), expectedCount, taxonIndex, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));
-            transaction.success();
-            transaction.close();
         } finally {
             if (index != null) {
                 index.destroy();

@@ -1,8 +1,6 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.RelTypes;
@@ -14,9 +12,10 @@ import org.eol.globi.taxon.TermMatcher;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,29 +37,20 @@ public class LinkerTermMatcher implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         final GraphDatabaseService graphDb = factory.getGraphService();
-        Transaction transaction = graphDb.beginTx();
-        try {
-            Index<Node> taxons = graphDb.index().forNodes("taxons");
-            IndexHits<Node> hits = taxons.query("*:*");
+        Index<Node> taxons = graphDb.index().forNodes("taxons");
+        IndexHits<Node> hits = taxons.query("*:*");
 
-            final Map<Long, TaxonNode> nodeMap = new HashMap<>();
-            int counter = 1;
-            for (Node hit : hits) {
-                if (counter % BATCH_SIZE == 0) {
-                    handleBatch(graphDb, termMatcher, nodeMap, counter);
-                    transaction.success();
-                    transaction.close();
-                    transaction = graphDb.beginTx();
-                }
-                TaxonNode node = new TaxonNode(hit);
-                nodeMap.put(node.getNodeID(), node);
-                counter++;
+        final Map<Long, TaxonNode> nodeMap = new HashMap<>();
+        int counter = 1;
+        for (Node hit : hits) {
+            if (counter % BATCH_SIZE == 0) {
+                handleBatch(graphDb, termMatcher, nodeMap, counter);
             }
-            handleBatch(graphDb, termMatcher, nodeMap, counter);
-            transaction.success();
-        } finally {
-            transaction.close();
+            TaxonNode node = new TaxonNode(hit);
+            nodeMap.put(node.getNodeID(), node);
+            counter++;
         }
+        handleBatch(graphDb, termMatcher, nodeMap, counter);
     }
 
     private void handleBatch(final GraphDatabaseService graphDb, TermMatcher termMatcher, final Map<Long, TaxonNode> nodeMap, int counter) {

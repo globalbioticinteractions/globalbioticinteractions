@@ -12,12 +12,12 @@ import org.eol.globi.util.NodeUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 
 import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class LinkerTermMatcherTest extends GraphDBTestCase {
 
     @Ignore
@@ -38,22 +38,17 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
         Taxon taxon2 = new TaxonImpl("Holorchis castex", classifiedId);
 
         Taxon createdTaxon = taxonIndex.getOrCreateTaxon(taxon2);
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            Node specimenDummy = getGraphDb().createNode();
-            Node originalTaxonDummy = getGraphDb().createNode();
-            originalTaxonDummy.setProperty("name", "holorchis castex");
-            originalTaxonDummy.setProperty("externalId", "EOL:11987314");
-            specimenDummy.createRelationshipTo(
-                    originalTaxonDummy,
-                    NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS));
+        Node specimenDummy = getGraphDb().createNode();
+        Node originalTaxonDummy = getGraphDb().createNode();
+        originalTaxonDummy.setProperty("name", "holorchis castex");
+        originalTaxonDummy.setProperty("externalId", "EOL:11987314");
+        specimenDummy.createRelationshipTo(
+                originalTaxonDummy,
+                NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS));
 
-            specimenDummy.createRelationshipTo(
-                    ((TaxonNode) createdTaxon).getUnderlyingNode(),
-                    NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-
-            transaction.success();
-        }
-
+        specimenDummy.createRelationshipTo(
+                ((TaxonNode) createdTaxon).getUnderlyingNode(),
+                NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
 
         TaxonCacheService taxonCacheService = new TaxonCacheService(
                 "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
@@ -62,12 +57,9 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
         new LinkerTermMatcher(taxonCacheService)
                 .index(new GraphServiceFactoryProxy(getGraphDb()));
 
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);
-            assertThat(externalIds, hasItem("EOL_V2:11987314"));
-            assertThat(externalIds, hasItem("GBIF:5890922"));
-            transaction.success();
-        }
+        Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);
+        assertThat(externalIds, hasItem("EOL_V2:11987314"));
+        assertThat(externalIds, hasItem("GBIF:5890922"));
     }
 
 

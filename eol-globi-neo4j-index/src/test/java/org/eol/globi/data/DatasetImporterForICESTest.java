@@ -8,6 +8,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -49,7 +50,7 @@ public class DatasetImporterForICESTest extends GraphDBTestCase {
 
         AtomicInteger specimenCollected = new AtomicInteger(0);
         AtomicInteger preyEaten = new AtomicInteger(0);
-        NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
+        RelationshipListener handler = new RelationshipListener() {
             @Override
             public void on(Relationship rel) {
                 assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(DateUtil.parsePatternUTC("1981", "yyyy").toDate().getTime()));

@@ -19,7 +19,6 @@ import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,7 +57,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
 
             @Override
             public LatLng findLatLng(String locality) throws IOException {
-                return new LatLng(10,10);
+                return new LatLng(10, 10);
             }
         });
         importStudy(importer);
@@ -69,11 +68,8 @@ public class ExporterRDFTest extends GraphDBTestCase {
         Taxon taxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("some taxon", null));
         Taxon sameAsTaxon = taxonIndex.getOrCreateTaxon(new TaxonImpl("bugus same as taxon", "EOL:123"));
 
-        try (Transaction tx = getGraphDb().beginTx()) {
-            assertThat(taxon, is(notNullValue()));
-            ((NodeBacked) taxon).getUnderlyingNode().createRelationshipTo(((NodeBacked) sameAsTaxon).getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
-            tx.success();
-        }
+        assertThat(taxon, is(notNullValue()));
+        ((NodeBacked) taxon).getUnderlyingNode().createRelationshipTo(((NodeBacked) sameAsTaxon).getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
 
         File file = File.createTempFile("spire-as-light-globi", ".nq");
         try {

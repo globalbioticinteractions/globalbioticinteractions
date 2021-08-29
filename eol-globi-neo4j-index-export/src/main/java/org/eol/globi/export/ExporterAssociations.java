@@ -5,6 +5,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -20,7 +21,7 @@ public class ExporterAssociations extends ExporterAssociationsBase {
     public void doExportStudy(StudyNode study, ExportUtil.Appender writer, boolean includeHeader) throws IOException {
         Map<String, String> properties = new TreeMap<String, String>();
         AtomicReference<IOException> lastException = new AtomicReference<>();
-        NodeUtil.RelationshipListener handler = collectedRel -> {
+        RelationshipListener handler = collectedRel -> {
             Node specimenNode = collectedRel.getEndNode();
             if (isSpecimenClassified(specimenNode)) {
                 try {

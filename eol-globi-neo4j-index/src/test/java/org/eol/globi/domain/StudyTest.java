@@ -4,6 +4,7 @@ import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -45,7 +46,7 @@ public class StudyTest extends GraphDBTestCase {
 
         assertEquals(study.getTitle(), foundStudy.getTitle());
 
-        NodeUtil.RelationshipListener handler = rel -> {
+        RelationshipListener handler = rel -> {
             Specimen specimen = new SpecimenNode(rel.getEndNode());
             Relationship caughtDuringRel = rel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CAUGHT_DURING), Direction.OUTGOING);
             if (caughtDuringRel != null) {

@@ -20,17 +20,16 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
     @Test
@@ -126,13 +125,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         predatorSpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", null));
         Node synonymNode = ((NodeBacked) taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens Synonym", null))).getUnderlyingNode();
         Node node = ((NodeBacked) taxonIndex.getOrCreateTaxon(new TaxonImpl("Homo sapiens", null))).getUnderlyingNode();
-        Transaction tx = getGraphDb().beginTx();
-        try {
-            node.createRelationshipTo(synonymNode, NodeUtil.asNeo4j(RelTypes.SAME_AS));
-            tx.success();
-        } finally {
-            tx.close();
-        }
+        node.createRelationshipTo(synonymNode, NodeUtil.asNeo4j(RelTypes.SAME_AS));
 
         preySpecimen = nodeFactory.createSpecimen(study, new TaxonImpl("Canis", null));
         predatorSpecimen.ate(preySpecimen);

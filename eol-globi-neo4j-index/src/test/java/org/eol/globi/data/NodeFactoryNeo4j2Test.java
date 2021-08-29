@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-public class NodeFactoryNeo4j2Test extends NodeFactoryNeo4jTest{
+public class NodeFactoryNeo4j2Test extends NodeFactoryNeo4jTest {
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {

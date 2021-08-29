@@ -1,6 +1,11 @@
 package org.eol.globi.data;
 
+import org.neo4j.graphdb.Transaction;
+
 public class GraphDBTestCase extends GraphDBTestCaseAbstract {
+
+    private Transaction transaction;
+
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {
@@ -9,5 +14,17 @@ public class GraphDBTestCase extends GraphDBTestCaseAbstract {
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
         return nodeFactoryNeo4j;
     }
+
+    @Override
+    public void afterGraphDBStart() {
+        transaction = getGraphDb().beginTx();
+    }
+
+    @Override
+    public void beforeGraphDbShutdown() {
+        //transaction.success();
+        //transaction.close();
+    }
+
 
 }

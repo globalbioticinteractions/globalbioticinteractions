@@ -11,6 +11,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -37,23 +38,19 @@ public class ExporterRDF implements StudyExporter {
             throws IOException {
 
         AtomicReference<IOException> lastException = new AtomicReference<>();
-        NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
-
-            @Override
-            public void on(Relationship relationship) {
-                try {
-                    Node agentNode = relationship.getEndNode();
-                    for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j())) {
-                        writeStatement(appender, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
-                        writeParticipantStatements(appender, ixnR, ixnR.getEndNode());
-                        writeParticipantStatements(appender, ixnR, agentNode);
-                        writeStatement(appender, Arrays.asList(blankNode(agentNode), iriNode(InteractType.valueOf(ixnR.getType().name()).getIRI()), blankNode(ixnR.getEndNode())));
-                    }
-                } catch (IOException ex) {
-                    lastException.set(ex);
+        RelationshipListener handler = relationship -> {
+            try {
+                Node agentNode = relationship.getEndNode();
+                for (Relationship ixnR : agentNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j())) {
+                    writeStatement(appender, Arrays.asList(blankNode(ixnR), iriNode(HAS_TYPE), iriNode(INTERACTION)));
+                    writeParticipantStatements(appender, ixnR, ixnR.getEndNode());
+                    writeParticipantStatements(appender, ixnR, agentNode);
+                    writeStatement(appender, Arrays.asList(blankNode(agentNode), iriNode(InteractType.valueOf(ixnR.getType().name()).getIRI()), blankNode(ixnR.getEndNode())));
                 }
-
+            } catch (IOException ex) {
+                lastException.set(ex);
             }
+
         };
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), handler);
 

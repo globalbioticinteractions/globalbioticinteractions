@@ -18,7 +18,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -32,11 +31,7 @@ public class NodeUtil {
     public static final int TRANSACTION_BATCH_SIZE_DEFAULT = 1000;
 
     public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
-        try (Transaction tx = node.getGraphDatabase().beginTx()) {
-            String value = node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;
-            tx.success();
-            return value;
-        }
+        return node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;
     }
 
     public static String truncateTaxonName(String taxonName) {
@@ -54,12 +49,9 @@ public class NodeUtil {
     }
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {
-        try (Transaction tx = graphDb.beginTx()) {
-            TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
-            TaxonUtil.copy(taxon, sameAsTaxon);
-            taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
-            tx.success();
-        }
+        TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
+        TaxonUtil.copy(taxon, sameAsTaxon);
+        taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
     }
 
     public static List<StudyNode> findAllStudies(GraphDatabaseService graphService) {
@@ -137,29 +129,17 @@ public class NodeUtil {
     }
 
     public static Node getDataSetForStudy(StudyNode study) {
-        try (Transaction tx = study.getUnderlyingNode().getGraphDatabase().beginTx()) {
-            Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
-            Iterator<Relationship> iterator = rels.iterator();
-            Node datasetNode = iterator.hasNext() ? iterator.next().getEndNode() : null;
-            tx.success();
-            return datasetNode;
-        }
+        Iterable<Relationship> rels = study.getUnderlyingNode().getRelationships(asNeo4j(RelTypes.IN_DATASET), Direction.OUTGOING);
+        Iterator<Relationship> iterator = rels.iterator();
+        return iterator.hasNext() ? iterator.next().getEndNode() : null;
     }
 
     public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName) {
-        Index<Node> index;
-        try (Transaction tx = graphDb.beginTx()) {
-            index = graphDb.index().forNodes(indexName);
-            tx.success();
-        }
-        return index;
+        return graphDb.index().forNodes(indexName);
     }
 
     public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener) {
-        try (Transaction tx = ntd.srcNode.getGraphDatabase().beginTx()) {
-            handleCollectionRelationshipsNoTx(ntd, listener);
-            tx.success();
-        }
+        handleCollectionRelationshipsNoTx(ntd, listener);
     }
 
     public static void handleCollectedRelationshipsNoTx(NodeTypeDirection ntd, final RelationshipListener listener) {
@@ -183,17 +163,14 @@ public class NodeUtil {
                                              String queryOrQueryObject,
                                              String indexName) {
         List<Long> studyNodes;
-        try (Transaction tx = graphService.beginTx()) {
-            Index<Node> index = graphService.index().forNodes(indexName);
-            IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
-            studyNodes = studies
-                    .stream()
-                    .skip(skip)
-                    .limit(limit)
-                    .map(Node::getId)
-                    .collect(Collectors.toList());
-            tx.success();
-        }
+        Index<Node> index = graphService.index().forNodes(indexName);
+        IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
+        studyNodes = studies
+                .stream()
+                .skip(skip)
+                .limit(limit)
+                .map(Node::getId)
+                .collect(Collectors.toList());
         return studyNodes;
     }
 
@@ -207,8 +184,5 @@ public class NodeUtil {
                 .process(listener);
     }
 
-    public interface RelationshipListener {
-        void on(Relationship relationship);
-    }
-
 }
+

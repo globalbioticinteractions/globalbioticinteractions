@@ -8,6 +8,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -56,7 +57,7 @@ public class DatasetImporterForLifeWatchGreeceTest extends GraphDBTestCase {
         for (StudyNode study : studies) {
             assertThat(study.getCitation(), is(notNullValue()));
             assertThat(study.getTitle(), containsString("greece"));
-            NodeUtil.RelationshipListener handler = relationship -> {
+            RelationshipListener handler = relationship -> {
                 addTaxonNameForSpecimenNode(taxa, relationship.getEndNode());
                 Specimen predatorSpecimen = new SpecimenNode(relationship.getEndNode());
                 Iterable<Relationship> prey = NodeUtil.getStomachContents(predatorSpecimen);

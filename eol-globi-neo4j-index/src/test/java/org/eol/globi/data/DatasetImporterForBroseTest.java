@@ -14,15 +14,15 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
-import java.util.TreeMap;
 import java.util.List;
+import java.util.TreeMap;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DatasetImporterForBroseTest extends GraphDBTestCase {
 
     @Override
@@ -65,17 +65,11 @@ public class DatasetImporterForBroseTest extends GraphDBTestCase {
 
         Taxon taxon = taxonIndex.findTaxonByName("Praon dorsale");
         assertThat(taxon, is(notNullValue()));
-        Transaction transaction = getGraphDb().beginTx();
-        try {
-            Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-            for (Relationship relationship : relationships) {
-                Node predatorSpecimenNode = relationship.getStartNode();
-                assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
-                assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
-            }
-            transaction.success();
-        } finally {
-            transaction.close();
+        Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+        for (Relationship relationship : relationships) {
+            Node predatorSpecimenNode = relationship.getStartNode();
+            assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_LABEL), is("post-juvenile adult stage"));
+            assertThat(predatorSpecimenNode.getProperty(SpecimenConstant.LIFE_STAGE_ID), is("UBERON:0000113"));
         }
         assertThat(taxonIndex.findTaxonByName("Aphelinus abdominalis"), is(notNullValue()));
 

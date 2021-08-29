@@ -9,6 +9,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -83,7 +84,7 @@ public class DatasetImporterForWrastTest extends GraphDBTestCase {
         Study foundStudy = nodeFactory.findStudy("Wrast 2008");
         assertNotNull(foundStudy);
 
-        NodeUtil.RelationshipListener handler = relationship -> {
+        RelationshipListener handler = relationship -> {
             Date unixEpochProperty = null;
             try {
                 unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(relationship.getEndNode()));

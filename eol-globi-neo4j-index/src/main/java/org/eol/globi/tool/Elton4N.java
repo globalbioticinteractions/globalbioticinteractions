@@ -14,12 +14,10 @@ import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
-import org.eol.globi.service.GraphServiceBatchingFactory;
 import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -83,9 +81,7 @@ public class Elton4N {
     public void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
         Factories factoriesNeo4j = new Factories() {
             final GraphServiceFactory factory =
-                    new GraphServiceBatchingFactory(
-                            new GraphServiceFactoryImpl("./")
-                    );
+                    new GraphServiceFactoryImpl("./");
 
 
             @Override
@@ -106,11 +102,6 @@ public class Elton4N {
             new CmdIndexDatasets(cmdLine, factoriesNeo4j.getNodeFactoryFactory(), graphServiceFactory)
                     .run();
         } finally {
-            try {
-                graphServiceFactory.close();
-            } catch (Exception e) {
-                LOG.error("failed to gracefully shutdown graphdb", e);
-            }
             HttpUtil.shutdown();
         }
     }

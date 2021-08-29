@@ -17,7 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
@@ -65,39 +64,35 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceIndividuals();
 
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            String escapedQuery = QueryParser.escape("globi:az/source");
-            IndexHits<Node> reports = getGraphDb()
-                    .index()
-                    .forNodes("reports")
-                    .query(StudyConstant.SOURCE_ID, escapedQuery);
+        String escapedQuery = QueryParser.escape("globi:az/source");
+        IndexHits<Node> reports = getGraphDb()
+                .index()
+                .forNodes("reports")
+                .query(StudyConstant.SOURCE_ID, escapedQuery);
 
-            Node reportNode = reports.getSingle();
-            assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az/source"));
-            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
-            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
-            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-            reports.close();
+        Node reportNode = reports.getSingle();
+        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az/source"));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+        reports.close();
 
-            IndexHits<Node> otherReports = getGraphDb()
-                    .index()
-                    .forNodes("reports")
-                    .query(StudyConstant.SOURCE_ID, "globi\\:zother\\/source");
+        IndexHits<Node> otherReports = getGraphDb()
+                .index()
+                .forNodes("reports")
+                .query(StudyConstant.SOURCE_ID, "globi\\:zother\\/source");
 
-            Node otherReport = otherReports.getSingle();
-            assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("globi:zother/source"));
-            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
-            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
-            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-            assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-
-            transaction.success();
-        }
+        Node otherReport = otherReports.getSingle();
+        assertThat(otherReport.getProperty(StudyConstant.SOURCE_ID), is("globi:zother/source"));
+        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(1));
+        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
+        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
+        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+        assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
     }
 
     @Test
@@ -126,7 +121,6 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceOrganizations();
 
-        Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> reports = getGraphDb()
                 .index()
                 .forNodes("reports")
@@ -155,9 +149,6 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(4));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         assertThat(otherReport.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-
-        transaction.success();
-        transaction.close();
     }
 
     @Test
@@ -175,7 +166,6 @@ public class ReportGeneratorTest extends GraphDBTestCase {
 
         new ReportGenerator(getGraphDb(), cacheService).generateReportForCollection();
 
-        Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> reports = getGraphDb()
                 .index()
                 .forNodes("reports")
@@ -189,8 +179,6 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
-        transaction.success();
-        transaction.close();
     }
 
     protected Study createStudy(Study study1) throws NodeFactoryException {

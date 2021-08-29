@@ -2,7 +2,6 @@ package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 
 import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 
@@ -24,7 +23,7 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public void setPath(String path) {
-        setPropertyWithTx(PATH, path);
+        setProperty(PATH, path);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public void setPathNames(String pathNames) {
-        setPropertyWithTx(PATH_NAMES, pathNames);
+        setProperty(PATH_NAMES, pathNames);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public void setCommonNames(String commonNames) {
-        setPropertyWithTx(COMMON_NAMES, commonNames);
+        setProperty(COMMON_NAMES, commonNames);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public void setRank(String rank) {
-        setPropertyWithTx(RANK, rank);
+        setProperty(RANK, rank);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     @Override
     public void setPathIds(String pathIds) {
-        setPropertyWithTx(PATH_IDS, pathIds);
+        setProperty(PATH_IDS, pathIds);
     }
 
     @Override
@@ -73,20 +72,17 @@ public class TaxonNode extends NamedNode implements Taxon {
         if (status != null
                 && StringUtils.isNotBlank(status.getId())
                 && StringUtils.isNotBlank(status.getName())) {
-            setPropertyWithTx(STATUS_ID, status.getId());
-            setPropertyWithTx(STATUS_LABEL, status.getName());
+            setProperty(STATUS_ID, status.getId());
+            setProperty(STATUS_LABEL, status.getName());
         }
     }
 
     @Override
     public Term getStatus() {
         TermImpl status = null;
-        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
-            Node node = getUnderlyingNode();
-            if (node.hasProperty(STATUS_ID) && node.hasProperty(STATUS_LABEL)) {
-                status = new TermImpl((String) node.getProperty(STATUS_ID), (String) node.getProperty(STATUS_LABEL));
-            }
-            tx.success();
+        Node node = getUnderlyingNode();
+        if (node.hasProperty(STATUS_ID) && node.hasProperty(STATUS_LABEL)) {
+            status = new TermImpl((String) node.getProperty(STATUS_ID), (String) node.getProperty(STATUS_LABEL));
         }
         return status;
     }
@@ -94,14 +90,14 @@ public class TaxonNode extends NamedNode implements Taxon {
     @Override
     public void setExternalUrl(String externalUrl) {
         if (externalUrl != null) {
-            setPropertyWithTx(EXTERNAL_URL, externalUrl);
+            setProperty(EXTERNAL_URL, externalUrl);
         }
     }
 
     @Override
     public void setThumbnailUrl(String thumbnailUrl) {
         if (thumbnailUrl != null) {
-            setPropertyWithTx(THUMBNAIL_URL, thumbnailUrl);
+            setProperty(THUMBNAIL_URL, thumbnailUrl);
         }
     }
 

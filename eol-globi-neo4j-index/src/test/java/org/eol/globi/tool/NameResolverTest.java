@@ -8,7 +8,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.GraphDatabaseServiceBatchingTransactions;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
@@ -21,25 +20,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class NameResolverTest extends GraphDBTestCase {
 
     @Test
     public void doNameResolving() throws NodeFactoryException, PropertyEnricherException {
         assertResolveNames(RelTypes.COLLECTED, getGraphDb());
-    }
-
-    @Test
-    public void doNameResolvingBatching() throws NodeFactoryException, PropertyEnricherException {
-        GraphDatabaseServiceBatchingTransactions graphDb = new GraphDatabaseServiceBatchingTransactions(getGraphDb());
-        graphDb.setBatchSize(2);
-        assertResolveNames(RelTypes.COLLECTED, graphDb);
     }
 
     @Test

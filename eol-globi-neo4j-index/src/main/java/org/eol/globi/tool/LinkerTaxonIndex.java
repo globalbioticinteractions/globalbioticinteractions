@@ -12,7 +12,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
@@ -31,46 +30,36 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         GraphDatabaseService graphDb = factory.getGraphService();
-        try (Transaction readTx = graphDb.beginTx()) {
-            Index<Node> taxons = graphDb.index().forNodes("taxons");
-            Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
-            TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
-            IndexHits<Node> hits = taxons.query("*:*");
-            for (Node hit : hits) {
-                List<String> taxonIds = new ArrayList<>();
-                List<String> taxonPathIdsAndNames = new ArrayList<>();
-                TaxonNode taxonNode = new TaxonNode(hit);
-                addTaxonId(taxonIds, taxonNode);
-                addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
+        Index<Node> taxons = graphDb.index().forNodes("taxons");
+        Index<Node> ids = graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
+        TaxonFuzzySearchIndex fuzzySearchIndex = new TaxonFuzzySearchIndex(graphDb);
+        IndexHits<Node> hits = taxons.query("*:*");
+        for (Node hit : hits) {
+            List<String> taxonIds = new ArrayList<>();
+            List<String> taxonPathIdsAndNames = new ArrayList<>();
+            TaxonNode taxonNode = new TaxonNode(hit);
+            addTaxonId(taxonIds, taxonNode);
+            addPathIdAndNames(taxonPathIdsAndNames, taxonNode);
 
-                addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, taxonNode);
+            fuzzySearchIndex.index(hit, taxonNode);
 
-                Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
-                for (Relationship rel : rels) {
-                    TaxonNode sameAsTaxon = new TaxonNode(rel.getEndNode());
-                    addTaxonId(taxonIds, sameAsTaxon);
-                    addPathIdAndNames(taxonPathIdsAndNames, sameAsTaxon);
-                    addToFuzzyIndex(graphDb, fuzzySearchIndex, hit, sameAsTaxon);
-                }
-                taxonPathIdsAndNames.addAll(taxonIds);
-                String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
-                ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
-                hit.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
-
-                String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
-                hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
-
+            Iterable<Relationship> rels = hit.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.SAME_AS));
+            for (Relationship rel : rels) {
+                TaxonNode sameAsTaxon = new TaxonNode(rel.getEndNode());
+                addTaxonId(taxonIds, sameAsTaxon);
+                addPathIdAndNames(taxonPathIdsAndNames, sameAsTaxon);
+                fuzzySearchIndex.index(hit, sameAsTaxon);
             }
-            hits.close();
-            readTx.success();
-        }
-    }
+            taxonPathIdsAndNames.addAll(taxonIds);
+            String aggregateIds = StringUtils.join(taxonPathIdsAndNames.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+            ids.add(hit, PropertyAndValueDictionary.PATH, aggregateIds);
+            hit.setProperty(PropertyAndValueDictionary.EXTERNAL_IDS, aggregateIds);
 
-    private void addToFuzzyIndex(GraphDatabaseService graphDb, TaxonFuzzySearchIndex fuzzySearchIndex, Node indexNode, TaxonNode taxonNode) {
-        try (Transaction tx = graphDb.beginTx()) {
-            fuzzySearchIndex.index(indexNode, taxonNode);
-            tx.success();
+            String aggregateTaxonIds = StringUtils.join(taxonIds.stream().distinct().sorted().collect(Collectors.toList()), CharsetConstant.SEPARATOR);
+            hit.setProperty(PropertyAndValueDictionary.NAME_IDS, aggregateTaxonIds);
+
         }
+        hits.close();
     }
 
     private void addTaxonId(List<String> externalIds, TaxonNode taxonNode) {

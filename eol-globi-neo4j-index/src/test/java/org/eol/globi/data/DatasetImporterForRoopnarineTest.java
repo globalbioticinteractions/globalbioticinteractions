@@ -5,6 +5,7 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -94,20 +95,16 @@ public class DatasetImporterForRoopnarineTest extends GraphDBTestCase {
 
     private int validateSpecimen() {
         AtomicInteger totalRels = new AtomicInteger(0);
-        NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
-
-            @Override
-            public void on(Relationship rel) {
-                Node specimen = rel.getEndNode();
-                assertNotNull(specimen);
-                Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
-                assertNotNull("missing location information", collectedAtRelationship);
-                Node locationNode = collectedAtRelationship.getEndNode();
-                assertNotNull(locationNode);
-                assertTrue(locationNode.hasProperty(LocationConstant.LATITUDE));
-                assertTrue(locationNode.hasProperty(LocationConstant.LONGITUDE));
-                totalRels.incrementAndGet();
-            }
+        RelationshipListener handler = rel -> {
+            Node specimen = rel.getEndNode();
+            assertNotNull(specimen);
+            Relationship collectedAtRelationship = specimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED_AT), Direction.OUTGOING);
+            assertNotNull("missing location information", collectedAtRelationship);
+            Node locationNode = collectedAtRelationship.getEndNode();
+            assertNotNull(locationNode);
+            assertTrue(locationNode.hasProperty(LocationConstant.LATITUDE));
+            assertTrue(locationNode.hasProperty(LocationConstant.LONGITUDE));
+            totalRels.incrementAndGet();
         };
         NodeUtil.handleCollectedRelationships(new NodeTypeDirection(getStudySingleton(getGraphDb()).getUnderlyingNode()),
                 handler);

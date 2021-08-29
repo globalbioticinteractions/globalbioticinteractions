@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
+import org.eol.globi.util.RelationshipListener;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeTypeDirection;
@@ -38,19 +39,18 @@ public class DatasetImporterForSeltmannTest extends GraphDBTestCase {
             assertThat(allStudy.getCitation(), is("Digital Bee Collections Network, 2014 (and updates). Version: 2015-03-18. National Science Foundation grant DBI 0956388"));
 
             AtomicBoolean success = new AtomicBoolean(false);
-            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(allStudy.getUnderlyingNode()), new NodeUtil.RelationshipListener() {
-                @Override
-                public void on(Relationship relationship) {
-                    SpecimenNode spec = new SpecimenNode(relationship.getEndNode());
-                    final String recordId = (String) spec.getUnderlyingNode().getProperty("idigbio:recordID");
-                    assertThat(recordId, is(notNullValue()));
-                    assertThat(spec.getExternalId(), is(recordId));
-                    Term basisOfRecord = spec.getBasisOfRecord();
-                    assertThat(basisOfRecord.getId(), either(is("TEST:PreservedSpecimen")).or(is("TEST:LabelObservation")));
-                    assertThat(basisOfRecord.getName(), either(is("PreservedSpecimen")).or(is("LabelObservation")));
-                    success.set(true);
-                }
-            });
+            NodeUtil.handleCollectedRelationships(
+                    new NodeTypeDirection(allStudy.getUnderlyingNode())
+                    , relationship -> {
+                        SpecimenNode spec = new SpecimenNode(relationship.getEndNode());
+                        final String recordId = (String) spec.getUnderlyingNode().getProperty("idigbio:recordID");
+                        assertThat(recordId, is(notNullValue()));
+                        assertThat(spec.getExternalId(), is(recordId));
+                        Term basisOfRecord = spec.getBasisOfRecord();
+                        assertThat(basisOfRecord.getId(), either(is("TEST:PreservedSpecimen")).or(is("TEST:LabelObservation")));
+                        assertThat(basisOfRecord.getName(), either(is("PreservedSpecimen")).or(is("LabelObservation")));
+                        success.set(true);
+                    });
 
             assertTrue(success.get());
         }
@@ -62,11 +62,12 @@ public class DatasetImporterForSeltmannTest extends GraphDBTestCase {
 
     @Test
     public void extractAssociatedNameGenusAndSpecificEpithet() {
-        Map<String, String> assocMap = new TreeMap<String, String>() {{
-            put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_GENUS, "Donald");
-            put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_SPECIFIC_EPITHET, "duckus");
-            put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_SCIENTIFIC_NAME, "Donaldduckus");
-        }
+        Map<String, String> assocMap = new TreeMap<String, String>() {
+            {
+                put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_GENUS, "Donald");
+                put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_SPECIFIC_EPITHET, "duckus");
+                put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_SCIENTIFIC_NAME, "Donaldduckus");
+            }
         };
         final String targetName = DatasetImporterForSeltmann.getTargetNameFromAssocMap(assocMap);
         assertThat(targetName, is("Donald duckus"));
@@ -74,9 +75,10 @@ public class DatasetImporterForSeltmannTest extends GraphDBTestCase {
 
     @Test
     public void extractAssociatedNameScientificNameOnly() {
-        Map<String, String> assocMap = new TreeMap<String, String>() {{
-            put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_SCIENTIFIC_NAME, "Donaldidae");
-        }
+        Map<String, String> assocMap = new TreeMap<String, String>() {
+            {
+                put(DatasetImporterForSeltmann.FIELD_ASSOCIATED_SCIENTIFIC_NAME, "Donaldidae");
+            }
         };
         final String targetName = DatasetImporterForSeltmann.getTargetNameFromAssocMap(assocMap);
         assertThat(targetName, is("Donaldidae"));

@@ -1,26 +1,24 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.eol.globi.domain.StudyConstant;
-import org.eol.globi.util.NodeListener;
-import org.eol.globi.util.StudyNodeListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicLong;
 

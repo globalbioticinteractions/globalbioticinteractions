@@ -1,15 +1,13 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.service.GraphDatabaseServiceBatchingTransactions;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.ResolvingTaxonIndexNoTx;
 import org.eol.globi.taxon.TaxonCacheService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -29,7 +27,7 @@ public class IndexerTaxa implements IndexerNeo4j {
     public static void indexTaxa(GraphServiceFactory graphService, TaxonCacheService taxonCacheService) {
         LOG.info("resolving names with taxon cache ...");
         try {
-            ResolvingTaxonIndex index = new ResolvingTaxonIndex(taxonCacheService, graphService.getGraphService());
+            ResolvingTaxonIndexNoTx index = new ResolvingTaxonIndexNoTx(taxonCacheService, graphService.getGraphService());
             index.setIndexResolvedTaxaOnly(true);
 
             TaxonFilter taxonCacheFilter = new TaxonFilter() {

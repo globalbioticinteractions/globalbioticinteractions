@@ -1,8 +1,6 @@
 package org.eol.globi.util;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -42,10 +40,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
                 queryOrQueryObject,
                 indexName)).isEmpty()) {
             for (Long nodeId : nodeIds) {
-                try (Transaction tx = graphService.beginTx()) {
-                    listener.on(graphService.getNodeById(nodeId));
-                    tx.success();
-                }
+                listener.on(graphService.getNodeById(nodeId));
                 nodeCount.incrementAndGet();
             }
         }

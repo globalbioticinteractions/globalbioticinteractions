@@ -18,7 +18,6 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.index.lucene.QueryContext;
@@ -115,13 +114,9 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
 
     @Override
     public SeasonNode findSeason(String seasonName) {
-        Node seasonHit;
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
-            seasonHit = nodeIndexHits.getSingle();
-            nodeIndexHits.close();
-            transaction.success();
-        }
+        IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
+        Node seasonHit = nodeIndexHits.getSingle();
+        nodeIndexHits.close();
         return seasonHit == null ? null : new SeasonNode(seasonHit);
     }
 
@@ -187,28 +182,20 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     private Node findLocationBy(Location location, String key, String value) {
-        Node matchingLocation;
         String query = key + ":\"" + QueryParser.escape(value) + "\"";
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> matchingLocations = locations.query(query);
-            matchingLocation = findFirstMatchingLocationIfAvailable(location, matchingLocations);
-            matchingLocations.close();
-            transaction.success();
-        }
+        IndexHits<Node> matchingLocations = locations.query(query);
+        Node matchingLocation = findFirstMatchingLocationIfAvailable(location, matchingLocations);
+        matchingLocations.close();
         return matchingLocation;
     }
 
 
     private Node findLocationByLatitude(Location location) throws NodeFactoryException {
-        Node matchingLocation;
         validate(location);
         QueryContext queryOrQueryObject = QueryContext.numericRange(LocationConstant.LATITUDE, location.getLatitude(), location.getLatitude());
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
-            matchingLocation = findFirstMatchingLocationIfAvailable(location, matchingLocations);
-            matchingLocations.close();
-            transaction.success();
-        }
+        IndexHits<Node> matchingLocations = locations.query(queryOrQueryObject);
+        Node matchingLocation = findFirstMatchingLocationIfAvailable(location, matchingLocations);
+        matchingLocations.close();
         return matchingLocation;
     }
 
@@ -230,14 +217,11 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     public EnvironmentNode findEnvironment(String name) {
         EnvironmentNode firstMatchingEnvironment = null;
         String query = "name:\"" + name + "\"";
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            IndexHits<Node> matches = environments.query(query);
-            if (matches.hasNext()) {
-                firstMatchingEnvironment = new EnvironmentNode(matches.next());
-            }
-            matches.close();
-            transaction.success();
+        IndexHits<Node> matches = environments.query(query);
+        if (matches.hasNext()) {
+            firstMatchingEnvironment = new EnvironmentNode(matches.next());
         }
+        matches.close();
         return firstMatchingEnvironment;
     }
 

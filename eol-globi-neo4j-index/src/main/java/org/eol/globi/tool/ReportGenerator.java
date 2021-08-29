@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.RelationshipListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
@@ -20,7 +21,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.Set;
@@ -174,25 +174,22 @@ public class ReportGenerator {
                 }
             }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup));
 
-            try (Transaction tx = getGraphDb().beginTx()) {
-                final Node node = getGraphDb().createNode();
-                String sourceIdPrefix = "globi:" + namespaceGroup;
-                node.setProperty(namespaceHandler.getNamespaceKey(), sourceIdPrefix);
-                node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
-                node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
+            final Node node = getGraphDb().createNode();
+            String sourceIdPrefix = "globi:" + namespaceGroup;
+            node.setProperty(namespaceHandler.getNamespaceKey(), sourceIdPrefix);
+            node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
 
-                getGraphDb()
-                        .index()
-                        .forNodes("reports")
-                        .add(node, namespaceHandler.getNamespaceKey(), sourceIdPrefix);
+            getGraphDb()
+                    .index()
+                    .forNodes("reports")
+                    .add(node, namespaceHandler.getNamespaceKey(), sourceIdPrefix);
 
-                tx.success();
-            }
         }
     }
 
@@ -225,25 +222,22 @@ public class ReportGenerator {
             }
         });
 
-        try (Transaction tx = getGraphDb().beginTx()) {
-            final Node node = getGraphDb().createNode();
-            node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
-            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
-            getGraphDb().index().forNodes("reports")
-                    .add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-            tx.success();
-        }
+        final Node node = getGraphDb().createNode();
+        node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
+        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
+        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
+        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
+        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
+        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
+        getGraphDb().index().forNodes("reports")
+                .add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
     }
 
 
     private void countInteractionsAndTaxa(Set<Long> ids, Counter interactionCounter, Set<Long> idsNoMatch, Node studyNode) {
 
-        NodeUtil.RelationshipListener handler = specimen -> {
+        RelationshipListener handler = specimen -> {
             Iterable<Relationship> relationships = specimen.getEndNode().getRelationships();
             for (Relationship relationship : relationships) {
                 InteractType[] types = InteractType.values();

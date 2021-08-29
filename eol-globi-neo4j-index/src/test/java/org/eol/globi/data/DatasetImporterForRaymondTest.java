@@ -9,6 +9,7 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
@@ -63,15 +64,14 @@ public class DatasetImporterForRaymondTest extends GraphDBTestCase {
         AtomicBoolean foundAtLeastOne = new AtomicBoolean(false);
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
         for (StudyNode study : studies) {
-            NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), new NodeUtil.RelationshipListener() {
-                @Override
-                public void on(Relationship next) {
-                    Specimen specimen = new SpecimenNode(next.getEndNode());
-                    assertThat(specimen.getSampleLocation().getLongitude(), is (-61.66666667d));
-                    assertThat(next.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(not(nullValue())));
-                    foundAtLeastOne.set(true);
-                }
-            });
+            NodeUtil.handleCollectedRelationships(
+                    new NodeTypeDirection(study.getUnderlyingNode()),
+                    next -> {
+                        Specimen specimen = new SpecimenNode(next.getEndNode());
+                        assertThat(specimen.getSampleLocation().getLongitude(), is (-61.66666667d));
+                        assertThat(next.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(not(nullValue())));
+                        foundAtLeastOne.set(true);
+                    });
         }
         assertTrue(foundAtLeastOne.get());
     }

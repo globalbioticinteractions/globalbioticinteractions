@@ -7,6 +7,7 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -63,7 +64,7 @@ public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
 
     private int validateSpecimen(StudyNode study) {
         AtomicInteger totalRels = new AtomicInteger(0);
-        NodeUtil.RelationshipListener handler = rel -> {
+        RelationshipListener handler = rel -> {
             assertTrue(rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);

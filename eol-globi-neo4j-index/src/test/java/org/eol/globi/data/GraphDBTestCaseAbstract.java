@@ -86,8 +86,15 @@ public abstract class GraphDBTestCaseAbstract {
         getOrCreateTaxonIndex();
     }
 
+    public void afterGraphDBStart() {
+    }
+
+    public void beforeGraphDbShutdown() {
+    }
+
     @After
     public void shutdownGraphDb() throws Exception {
+        beforeGraphDbShutdown();
         graphFactory.close();
     }
 
@@ -106,6 +113,7 @@ public abstract class GraphDBTestCaseAbstract {
     protected GraphDatabaseService getGraphDb() {
         if (graphFactory == null) {
             graphFactory = getGraphFactory();
+            afterGraphDBStart();
         }
         return graphFactory.getGraphService();
     }

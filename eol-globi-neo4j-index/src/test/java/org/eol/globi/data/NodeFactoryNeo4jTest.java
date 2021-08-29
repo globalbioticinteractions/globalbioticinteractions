@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.net.URI;
@@ -82,36 +81,30 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertStudyType(studyRelationType, specimen);
         assertStudyType(studyRelationType, specimen1);
 
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
-            assertThat(relIter.hasNext(), is(true));
-            final Relationship rel = relIter.next();
-            assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002470"));
-            assertThat(rel.getProperty("label").toString(), is("eats"));
-            assertFalse(rel.hasProperty("inverted"));
+        final Iterator<Relationship> relIter = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE)).iterator();
+        assertThat(relIter.hasNext(), is(true));
+        final Relationship rel = relIter.next();
+        assertThat(rel.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(rel.getProperty("label").toString(), is("eats"));
+        assertFalse(rel.hasProperty("inverted"));
 
-            final Iterator<Relationship> relIterClassification = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS)).iterator();
-            assertThat(relIterClassification.hasNext(), is(true));
-            final Node taxonNode = relIterClassification.next().getEndNode();
-            TaxonNode actualSourceTaxonNode = new TaxonNode(taxonNode);
-            assertThat(actualSourceTaxonNode.getName(), is(sourceTaxonName));
+        final Iterator<Relationship> relIterClassification = specimen.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS)).iterator();
+        assertThat(relIterClassification.hasNext(), is(true));
+        final Node taxonNode = relIterClassification.next().getEndNode();
+        TaxonNode actualSourceTaxonNode = new TaxonNode(taxonNode);
+        assertThat(actualSourceTaxonNode.getName(), is(sourceTaxonName));
 
-            Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.EATEN_BY));
-            Iterator<Relationship> iterator = relationships.iterator();
-            assertThat(iterator.hasNext(), is(true));
-            Relationship relInverted = iterator.next();
-            assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
-            assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
-            transaction.success();
-        }
+        Iterable<Relationship> relationships = specimen1.getUnderlyingNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.EATEN_BY));
+        Iterator<Relationship> iterator = relationships.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        Relationship relInverted = iterator.next();
+        assertThat(relInverted.getProperty("iri").toString(), is("http://purl.obolibrary.org/obo/RO_0002471"));
+        assertThat(relInverted.getProperty("label").toString(), is("eatenBy"));
     }
 
     private void assertStudyType(RelTypes studyRelationType, SpecimenNode specimen2) {
-        try (Transaction transaction = specimen2.getUnderlyingNode().getGraphDatabase().beginTx()) {
-            boolean hasRelationship = specimen2.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(studyRelationType));
-            transaction.success();
-            assertThat(hasRelationship, is(true));
-        }
+        boolean hasRelationship = specimen2.getUnderlyingNode().hasRelationship(Direction.INCOMING, NodeUtil.asNeo4j(studyRelationType));
+        assertThat(hasRelationship, is(true));
     }
 
     @Test
@@ -302,12 +295,9 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         String expectedConfig = new ObjectMapper().writeValueAsString(objectNode);
         assertThat(new ObjectMapper().writeValueAsString(origDataset.getConfig()), is(expectedConfig));
         Node datasetNode = NodeUtil.getDataSetForStudy(study);
-        try (Transaction tx = datasetNode.getGraphDatabase().beginTx()) {
-            assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
-            assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
-            assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
-            tx.success();
-        }
+        assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
+        assertThat(datasetNode.getProperty("archiveURI"), is("some:uri"));
+        assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("false"));
 
         StudyImpl otherStudy = new StudyImpl("my other title", SOME_DOI, "some citation");
         otherStudy.setOriginatingDataset(dataset);
@@ -371,12 +361,9 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
         Node datasetNode = NodeUtil.getDataSetForStudy(study);
-        try (Transaction tx = datasetNode.getGraphDatabase().beginTx()) {
-            assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
-            assertThat(datasetNode.hasProperty(DatasetConstant.ARCHIVE_URI), is(false));
-            assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
-            tx.success();
-        }
+        assertThat(datasetNode.getProperty(DatasetConstant.NAMESPACE), is("some/namespace"));
+        assertThat(datasetNode.hasProperty(DatasetConstant.ARCHIVE_URI), is(false));
+        assertThat(datasetNode.getProperty(DatasetConstant.SHOULD_RESOLVE_REFERENCES), is("true"));
     }
 
 
@@ -390,10 +377,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl(null, "bla:123"));
-        try (Transaction transaction = getGraphDb().beginTx()) {
-            assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
-            transaction.success();
-        }
+        assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));
     }
 
     @Test

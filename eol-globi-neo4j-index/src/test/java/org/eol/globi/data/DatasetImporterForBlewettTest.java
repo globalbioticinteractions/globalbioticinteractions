@@ -15,6 +15,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
@@ -120,7 +121,7 @@ public class DatasetImporterForBlewettTest extends GraphDBTestCase {
 
         AtomicBoolean success = new AtomicBoolean(false);
 
-        NodeUtil.RelationshipListener handler1 = collectedRel -> {
+        RelationshipListener handler1 = collectedRel -> {
             Date unixEpochProperty = null;
             try {
                 unixEpochProperty = nodeFactory.getUnixEpochProperty(new SpecimenNode(collectedRel.getEndNode()));
@@ -162,7 +163,7 @@ public class DatasetImporterForBlewettTest extends GraphDBTestCase {
 
         success.set(false);
 
-        NodeUtil.RelationshipListener handler2 = collectedRel -> {
+        RelationshipListener handler2 = collectedRel -> {
             Node predatorNode = collectedRel.getEndNode();
             if (predatorNode.hasProperty(SpecimenConstant.LENGTH_IN_MM)
                     && (Double) predatorNode.getProperty(SpecimenConstant.LENGTH_IN_MM) == 548.0) {

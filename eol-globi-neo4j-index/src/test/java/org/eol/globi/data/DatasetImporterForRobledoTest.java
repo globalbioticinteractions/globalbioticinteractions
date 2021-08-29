@@ -7,6 +7,7 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Relationship;
 
@@ -31,19 +32,18 @@ public class DatasetImporterForRobledoTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findStudy(study.getTitle()));
 
         AtomicInteger count = new AtomicInteger(0);
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(study.getUnderlyingNode()), new NodeUtil.RelationshipListener() {
-            @Override
-            public void on(Relationship relationship) {
-                Specimen specimen1 = new SpecimenNode(relationship.getEndNode());
-                Location sampleLocation = specimen1.getSampleLocation();
-                assertThat(sampleLocation, is(notNullValue()));
-                assertThat(sampleLocation.getAltitude(), is(35.0));
-                assertThat(Math.round(sampleLocation.getLongitude()), is(-84L));
-                assertThat(Math.round(sampleLocation.getLatitude()), is(10L));
-                count.incrementAndGet();
+        NodeUtil.handleCollectedRelationships(
+                new NodeTypeDirection(study.getUnderlyingNode())
+                , relationship -> {
+                    Specimen specimen1 = new SpecimenNode(relationship.getEndNode());
+                    Location sampleLocation = specimen1.getSampleLocation();
+                    assertThat(sampleLocation, is(notNullValue()));
+                    assertThat(sampleLocation.getAltitude(), is(35.0));
+                    assertThat(Math.round(sampleLocation.getLongitude()), is(-84L));
+                    assertThat(Math.round(sampleLocation.getLatitude()), is(10L));
+                    count.incrementAndGet();
 
-            }
-        });
+                });
 
         assertThat(count.get(), is(93));
     }

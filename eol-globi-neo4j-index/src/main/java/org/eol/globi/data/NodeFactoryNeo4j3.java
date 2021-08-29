@@ -18,7 +18,6 @@ import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.IndexDefinition;
 
 import java.util.Iterator;
@@ -147,41 +146,34 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         validate(location);
 
         Node matchingLocation = null;
-        try (Transaction tx = getGraphDb().beginTx()) {
-            if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
-                Double latitude = location.getLatitude();
-                ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LATITUDE, latitude);
+        if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
+            Double latitude = location.getLatitude();
+            ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LATITUDE, latitude);
+            matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+        }
+        if (matchingLocation == null) {
+            String locality = location.getLocality();
+            if (StringUtils.isNotBlank(locality)) {
+                ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LOCALITY, locality);
                 matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
             }
-            if (matchingLocation == null) {
-                String locality = location.getLocality();
-                if (StringUtils.isNotBlank(locality)) {
-                    ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LOCALITY, locality);
-                    matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
-                }
-            }
-            if (matchingLocation == null) {
-                String localityId = location.getLocalityId();
-                if (StringUtils.isNotBlank(location.getLocalityId())) {
-                    ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LOCALITY_ID, localityId);
-                    matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
-                }
-            }
-            tx.success();
-            return matchingLocation == null ? null : new LocationNode(matchingLocation);
         }
+        if (matchingLocation == null) {
+            String localityId = location.getLocalityId();
+            if (StringUtils.isNotBlank(location.getLocalityId())) {
+                ResourceIterator<Node> nodes = getGraphDb().findNodes(NodeLabel.Location, LocationConstant.LOCALITY_ID, localityId);
+                matchingLocation = findFirstMatchingLocationIfAvailable(location, nodes);
+            }
+        }
+        return matchingLocation == null ? null : new LocationNode(matchingLocation);
     }
 
     @Override
     public StudyNode getOrCreateStudy(Study study) {
-        Node node;
-        try (Transaction tx = getGraphDb().beginTx()) {
-            node = getGraphDb()
-                    .findNode(NodeLabel.Reference,
-                            StudyConstant.TITLE_IN_NAMESPACE,
-                            getTitleInNamespace(study));
-            tx.success();
-        }
+        Node node = getGraphDb()
+                .findNode(NodeLabel.Reference,
+                        StudyConstant.TITLE_IN_NAMESPACE,
+                        getTitleInNamespace(study));
 
         return node == null
                 ? createStudy(study)
@@ -191,64 +183,53 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public Season findSeason(String seasonName) {
-        Season seasonFound = null;
-        try (Transaction tx = getGraphDb().beginTx()) {
-            Node node = getGraphDb().findNode(NodeLabel.Season, StudyConstant.TITLE, seasonName);
-            seasonFound = node == null ? null : new SeasonNode(node);
-            tx.success();
-        }
-        return seasonFound;
+        Node node = getGraphDb().findNode(NodeLabel.Season, StudyConstant.TITLE, seasonName);
+        return node == null ? null : new SeasonNode(node);
     }
 
 
     private static void createConstraintIfNeeded(GraphDatabaseService graphDb,
                                                  NodeLabel label,
                                                  String propertyName) {
-        try (Transaction transaction = graphDb.beginTx()) {
-            if (!graphDb
-                    .schema()
-                    .getConstraints(label)
-                    .iterator()
-                    .hasNext()) {
+        if (!graphDb
+                .schema()
+                .getConstraints(label)
+                .iterator()
+                .hasNext()) {
 
-                graphDb
-                        .schema()
-                        .constraintFor(label)
-                        .assertPropertyIsUnique(propertyName)
-                        .create();
-            }
-            transaction.success();
+            graphDb
+                    .schema()
+                    .constraintFor(label)
+                    .assertPropertyIsUnique(propertyName)
+                    .create();
         }
     }
 
     private static void createIndexIfNeeded(GraphDatabaseService graphDb,
                                             NodeLabel label,
                                             String propertyName) {
-        try (Transaction transaction = graphDb.beginTx()) {
 
-            Iterable<IndexDefinition> indexes = graphDb
-                    .schema()
-                    .getIndexes(label);
+        Iterable<IndexDefinition> indexes = graphDb
+                .schema()
+                .getIndexes(label);
 
-            IndexDefinition indexMatching = null;
-            for (IndexDefinition index : indexes) {
-                Iterator<String> keyIterator = index.getPropertyKeys().iterator();
-                if (keyIterator.hasNext()) {
-                    if (StringUtils.equals(keyIterator.next(), propertyName)) {
-                        indexMatching = index;
-                        break;
-                    }
+        IndexDefinition indexMatching = null;
+        for (IndexDefinition index : indexes) {
+            Iterator<String> keyIterator = index.getPropertyKeys().iterator();
+            if (keyIterator.hasNext()) {
+                if (StringUtils.equals(keyIterator.next(), propertyName)) {
+                    indexMatching = index;
+                    break;
                 }
+            }
 
-            }
-            if (indexMatching == null) {
-                graphDb
-                        .schema()
-                        .indexFor(label)
-                        .on(propertyName)
-                        .create();
-            }
-            transaction.success();
+        }
+        if (indexMatching == null) {
+            graphDb
+                    .schema()
+                    .indexFor(label)
+                    .on(propertyName)
+                    .create();
         }
     }
 
@@ -291,16 +272,13 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public EnvironmentNode findEnvironment(String name) {
-        try (Transaction tx = getGraphDb().beginTx()) {
-            Node node = getGraphDb().findNode(NodeLabel.Environment,
-                    PropertyAndValueDictionary.NAME,
-                    name
-            );
-            tx.success();
-            return node == null
-                    ? null
-                    : new EnvironmentNode(node);
-        }
+        Node node = getGraphDb().findNode(NodeLabel.Environment,
+                PropertyAndValueDictionary.NAME,
+                name
+        );
+        return node == null
+                ? null
+                : new EnvironmentNode(node);
     }
 
 

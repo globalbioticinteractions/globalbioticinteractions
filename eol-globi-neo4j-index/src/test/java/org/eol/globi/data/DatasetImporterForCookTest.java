@@ -9,6 +9,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -18,9 +19,9 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForCookTest extends GraphDBTestCase {
 
     @Test
@@ -45,7 +46,7 @@ public class DatasetImporterForCookTest extends GraphDBTestCase {
         AtomicInteger count = new AtomicInteger(0);
         AtomicBoolean foundFirstHost = new AtomicBoolean(false);
 
-        NodeUtil.RelationshipListener handler = relationship -> {
+        RelationshipListener handler = relationship -> {
             assertThat(relationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
             Node specimen = relationship.getEndNode();
             if (specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {

@@ -6,6 +6,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.util.RelationshipListener;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -40,16 +41,15 @@ public class DatasetImporterForSzoboszlaiIT extends GraphDBTestCase {
 
         importStudy(importer);
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(getStudySingleton(getGraphDb()).getUnderlyingNode()), new NodeUtil.RelationshipListener() {
-            @Override
-            public void on(Relationship relationship) {
-                Specimen specimenNode = new SpecimenNode(relationship.getEndNode());
-                Location sampleLocation = specimenNode.getSampleLocation();
-                assertThat(sampleLocation, is(notNullValue()));
-                assertThat(sampleLocation.getLatitude(), is(notNullValue()));
-                assertThat(sampleLocation.getLongitude(), is(notNullValue()));
-            }
-        });
+        NodeUtil.handleCollectedRelationships(
+                new NodeTypeDirection(getStudySingleton(getGraphDb()).getUnderlyingNode()),
+                relationship -> {
+                    Specimen specimenNode = new SpecimenNode(relationship.getEndNode());
+                    Location sampleLocation = specimenNode.getSampleLocation();
+                    assertThat(sampleLocation, is(notNullValue()));
+                    assertThat(sampleLocation.getLatitude(), is(notNullValue()));
+                    assertThat(sampleLocation.getLongitude(), is(notNullValue()));
+                });
 
         assertThat(taxonIndex.findTaxonByName("Thunnus thynnus"), is(notNullValue()));
         assertThat(nodeFactory.findLocation(new LocationImpl(34.00824202376044, -120.72716166720323, null, null)), is(notNullValue()));

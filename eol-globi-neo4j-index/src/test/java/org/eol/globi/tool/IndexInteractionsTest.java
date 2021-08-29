@@ -15,9 +15,10 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -25,7 +26,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.Transaction;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         Set<Long> ids = new HashSet<>();
         List<Long> idList = new ArrayList<>();
 
-        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(someStudy.getUnderlyingNode()), new NodeUtil.RelationshipListener() {
+        NodeUtil.handleCollectedRelationships(new NodeTypeDirection(someStudy.getUnderlyingNode()), new RelationshipListener() {
             @Override
             public void on(Relationship specimen) {
                 assertThat(specimen.getEndNode().hasRelationship(Direction.INCOMING, hasParticipant), Is.is(true));
@@ -88,15 +88,9 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         assertThat(ids.size(), Is.is(1));
         assertThat(idList.size(), Is.is(2));
 
-        Transaction transaction = getGraphDb().beginTx();
-        try {
-            Node interactionNode = getGraphDb().getNodeById(idList.get(0));
-            assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM)));
-            assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT)));
-            transaction.success();
-        } finally {
-            transaction.close();
-        }
+        Node interactionNode = getGraphDb().getNodeById(idList.get(0));
+        assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.DERIVED_FROM)));
+        assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT)));
 
     }
 }

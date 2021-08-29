@@ -10,16 +10,14 @@ import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 public class DatasetImporterForGeminaTest extends GraphDBTestCase {
 
@@ -45,25 +43,19 @@ public class DatasetImporterForGeminaTest extends GraphDBTestCase {
         assertThat(taxon, is(notNullValue()));
         assertThat(taxon.getExternalId(), is("NCBI:1392"));
 
-        Transaction tx = getGraphDb().beginTx();
-        try {
-            List<String> antraxHosts = new ArrayList<String>();
-            Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
-            for (Relationship rel : relationships) {
-                Node specimen = rel.getStartNode();
-                Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
-                for (Relationship pathogenRel : pathogenRels) {
-                    Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
-                    antraxHosts.add(new TaxonNode(singleRelationship.getEndNode()).getName());
-                }
-
+        List<String> antraxHosts = new ArrayList<String>();
+        Iterable<Relationship> relationships = ((NodeBacked) taxon).getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.INCOMING);
+        for (Relationship rel : relationships) {
+            Node specimen = rel.getStartNode();
+            Iterable<Relationship> pathogenRels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.PATHOGEN_OF));
+            for (Relationship pathogenRel : pathogenRels) {
+                Relationship singleRelationship = pathogenRel.getEndNode().getSingleRelationship(NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS), Direction.OUTGOING);
+                antraxHosts.add(new TaxonNode(singleRelationship.getEndNode()).getName());
             }
 
-            assertThat(antraxHosts, hasItem("Equus caballus"));
-            tx.success();
-        } finally {
-            tx.close();
         }
+
+        assertThat(antraxHosts, hasItem("Equus caballus"));
     }
 
     private void assertHuman() throws NodeFactoryException {

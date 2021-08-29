@@ -4,7 +4,6 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.util.Iterator;
 
@@ -33,13 +32,7 @@ public class NodeBacked {
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType) {
-        Relationship rel;
-        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
-            rel = createRelationshipToNoTx((NodeBacked) endNode, relType);
-            tx.success();
-        }
-
-        return rel;
+        return createRelationshipToNoTx((NodeBacked) endNode, relType);
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
@@ -77,23 +70,17 @@ public class NodeBacked {
         return getUnderlyingNode().getId();
     }
 
-    public void setPropertyWithTx(String propertyName, Object propertyValue) {
+    public void setProperty(String propertyName, Object propertyValue) {
         if (propertyName != null && propertyValue != null) {
-            try (Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx()) {
-                getUnderlyingNode().setProperty(propertyName, propertyValue);
-                transaction.success();
-            }
+            getUnderlyingNode().setProperty(propertyName, propertyValue);
         }
     }
 
     protected String getPropertyValueOrNull(String propertyName) {
-        try (Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx()) {
-            Object value = getUnderlyingNode().hasProperty(propertyName)
-                    ? getUnderlyingNode().getProperty(propertyName)
-                    : null;
-            tx.success();
-            return value == null ? null : value.toString();
-        }
+        Object value = getUnderlyingNode().hasProperty(propertyName)
+                ? getUnderlyingNode().getProperty(propertyName)
+                : null;
+        return value == null ? null : value.toString();
     }
 
     protected String getPropertyStringValueOrNull(String propertyName) {
@@ -102,7 +89,7 @@ public class NodeBacked {
     }
 
     public void setExternalId(String externalId) {
-        setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+        setProperty(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
     }
 
     public String getExternalId() {
@@ -117,16 +104,16 @@ public class NodeBacked {
         }
     }
 
+    protected void setPropertyIfNotNull(String name, Double value) {
+        if (value != null) {
+            getUnderlyingNode().setProperty(name, value);
+        }
+    }
+
     protected String getProperty(String propertyName) {
         Object value = null;
-        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            if (getUnderlyingNode().hasProperty(propertyName)) {
-                value = getUnderlyingNode().getProperty(propertyName);
-            }
-            tx.success();
-        } finally {
-            tx.close();
+        if (getUnderlyingNode().hasProperty(propertyName)) {
+            value = getUnderlyingNode().getProperty(propertyName);
         }
         return value == null ? "" : value.toString();
 

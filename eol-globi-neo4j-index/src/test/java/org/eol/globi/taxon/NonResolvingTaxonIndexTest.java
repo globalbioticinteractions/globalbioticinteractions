@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -88,11 +87,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     }
 
     static Object propertyOf(TaxonNode taxon, String propertyName) {
-        try (Transaction transaction = taxon.getUnderlyingNode().getGraphDatabase().beginTx()) {
-            Object value = taxon.getUnderlyingNode().getProperty(propertyName);
-            transaction.success();
-            return value;
-        }
+        return taxon.getUnderlyingNode().getProperty(propertyName);
     }
 
     @Test
@@ -113,7 +108,6 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     @Test
     public final void findCloseMatch() throws NodeFactoryException {
         taxonService.getOrCreateTaxon(new TaxonImpl("Homo sapiens"));
-        Transaction transaction = getGraphDb().beginTx();
         IndexHits<Node> hits = taxonService.findCloseMatchesForTaxonName("Homo sapiens");
         assertThat(hits.hasNext(), is(true));
         hits.close();
@@ -123,8 +117,6 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         assertThat(hits.hasNext(), is(true));
         hits = taxonService.findCloseMatchesForTaxonName("homo sa");
         assertThat(hits.hasNext(), is(true));
-        transaction.success();
-        transaction.close();
     }
 
     @Test
@@ -139,26 +131,23 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public final void indexTwoHomonymsSeparately() throws NodeFactoryException {
-        try (Transaction tx = getGraphDb().beginTx()) {
-            Taxon taxon1 = new TaxonImpl("some name 4567", null);
-            taxon1.setPath("one | two | three | some name 4567");
-            taxon1.setPathNames("kingdom | family | genus | species");
+        Taxon taxon1 = new TaxonImpl("some name 4567", null);
+        taxon1.setPath("one | two | three | some name 4567");
+        taxon1.setPathNames("kingdom | family | genus | species");
 
-            assertThat(taxonService.findTaxon(taxon1), is(nullValue()));
+        assertThat(taxonService.findTaxon(taxon1), is(nullValue()));
 
-            TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
-            assertThat(taxon, is(notNullValue()));
+        TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
+        assertThat(taxon, is(notNullValue()));
 
-            assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
-            assertThat(taxonService.findTaxonByName("some name 4567"), is(notNullValue()));
+        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
+        assertThat(taxonService.findTaxonByName("some name 4567"), is(notNullValue()));
 
-            Taxon taxon2 = new TaxonImpl("some name 4567", null);
-            taxon2.setPath("four | five | six | some name 4567");
-            taxon2.setPathNames("kingdom | family | genus | species");
+        Taxon taxon2 = new TaxonImpl("some name 4567", null);
+        taxon2.setPath("four | five | six | some name 4567");
+        taxon2.setPathNames("kingdom | family | genus | species");
 
-            assertThat(taxonService.findTaxon(taxon2), is(nullValue()));
-            tx.success();
-        }
+        assertThat(taxonService.findTaxon(taxon2), is(nullValue()));
     }
 
     @Test
@@ -168,10 +157,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         taxon1.setPathNames("kingdom | family | genus | species");
         TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon.getPath(), is("seven | eight | nine | some name"));
-        try (Transaction tx = getGraphDb().beginTx()) {
-            assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
-            tx.success();
-        }
+        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
 
         assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
 
@@ -183,10 +169,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
 
         Taxon taxon3 = new TaxonImpl("some name");
 
-        try (Transaction tx = getGraphDb().beginTx()) {
-            assertThat(taxonService.findTaxon(taxon3).getPath(), is("seven | eight | nine | some name"));
-            tx.success();
-        }
+        assertThat(taxonService.findTaxon(taxon3).getPath(), is("seven | eight | nine | some name"));
     }
 
     @Test
@@ -196,20 +179,14 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
         taxon1.setPathNames("kingdom | family | genus | species");
         TaxonNode taxon = taxonService.getOrCreateTaxon(taxon1);
         assertThat(taxon, is(notNullValue()));
-        try (Transaction tx = getGraphDb().beginTx()) {
-            assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
-            tx.success();
-        }
+        assertThat(taxonService.findTaxon(taxon1), is(not(nullValue())));
 
         assertThat(taxonService.findTaxonById("foo:123"), is(notNullValue()));
 
         Taxon taxon2 = new TaxonImpl("some name", "foo:123");
         taxon2.setPath("some name");
         taxon2.setPathNames("species");
-        try (Transaction tx = getGraphDb().beginTx()) {
-            assertThat(taxonService.findTaxon(taxon2), is(not(nullValue())));
-            tx.success();
-        }
+        assertThat(taxonService.findTaxon(taxon2), is(not(nullValue())));
     }
 
 

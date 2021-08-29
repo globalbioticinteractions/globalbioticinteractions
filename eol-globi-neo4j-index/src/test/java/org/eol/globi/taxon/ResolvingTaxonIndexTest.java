@@ -17,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
@@ -53,12 +52,8 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
-        Transaction transaction = getGraphDb().beginTx();
         assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
-        transaction.success();
-        transaction.close();
-
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon(new TaxonImpl("some name")), "");
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"), "");
     }
@@ -99,11 +94,8 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
         );
 
 
-        Transaction transaction = getGraphDb().beginTx();
         assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
-        transaction.success();
-        transaction.close();
 
         TaxonNode indexedTaxonNode = taxonService.getOrCreateTaxon(new TaxonImpl("some name1"));
         assertEnrichedPropertiesSet(indexedTaxonNode, "1");
@@ -112,7 +104,7 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
         assertEnrichedPropertiesSet(someFoundTaxonNode, "1");
 
 
-        try (Transaction ignored = getGraphDb().beginTx()) {
+        {
             Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,
                     MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
 
@@ -125,7 +117,7 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
         LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex();
         linkerTaxonIndex.index(new GraphServiceFactoryProxy(getGraphDb()));
 
-        try (Transaction ignored = getGraphDb().beginTx()) {
+        {
             Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,
                     MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
             IndexHits<Node> hits = ids.query("path:\"a kingdom name2\"");

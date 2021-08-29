@@ -13,6 +13,7 @@ import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -70,7 +71,7 @@ public class DatasetImporterForAkinTest extends GraphDBTestCase {
 
         AtomicBoolean success = new AtomicBoolean(false);
 
-        NodeUtil.RelationshipListener relHandler = rel -> {
+        RelationshipListener relHandler = rel -> {
             assertThat(rel, is(not(nullValue())));
 
             if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {

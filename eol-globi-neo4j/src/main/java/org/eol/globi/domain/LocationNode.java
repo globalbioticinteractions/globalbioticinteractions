@@ -5,7 +5,6 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,14 +60,7 @@ public class LocationNode extends NodeBacked implements Location {
     }
 
     private Double getDoubleOrNull(String altitude) {
-        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            Double aDouble = getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
-            tx.success();
-            return aDouble;
-        } finally {
-            tx.close();
-        }
+        return getUnderlyingNode().hasProperty(altitude) ? (Double) getUnderlyingNode().getProperty(altitude) : null;
     }
 
     @Override
@@ -84,35 +76,23 @@ public class LocationNode extends NodeBacked implements Location {
 
     public void addEnvironment(Environment environment) {
         boolean needsAssociation = true;
-        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
-            for (Relationship relationship : relationships) {
-                if (relationship.getEndNode().getId() == ((NodeBacked) environment).getNodeID()) {
-                    needsAssociation = false;
-                    break;
-                }
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+        for (Relationship relationship : relationships) {
+            if (relationship.getEndNode().getId() == ((NodeBacked) environment).getNodeID()) {
+                needsAssociation = false;
+                break;
             }
-            if (needsAssociation) {
-                createRelationshipTo(environment, RelTypes.HAS_ENVIRONMENT);
-            }
-            tx.success();
-        } finally {
-            tx.close();
+        }
+        if (needsAssociation) {
+            createRelationshipTo(environment, RelTypes.HAS_ENVIRONMENT);
         }
     }
 
     public List<Environment> getEnvironments() {
         List<Environment> environments = new ArrayList<Environment>();
-        Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
-            for (Relationship relationship : relationships) {
-                environments.add(new EnvironmentNode(relationship.getEndNode()));
-            }
-            tx.success();
-        } finally {
-            tx.close();
+        Iterable<Relationship> relationships = getUnderlyingNode().getRelationships(NodeUtil.asNeo4j(RelTypes.HAS_ENVIRONMENT), Direction.OUTGOING);
+        for (Relationship relationship : relationships) {
+            environments.add(new EnvironmentNode(relationship.getEndNode()));
         }
         return environments;
 

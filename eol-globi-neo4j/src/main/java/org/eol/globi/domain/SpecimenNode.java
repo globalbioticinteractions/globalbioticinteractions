@@ -5,10 +5,7 @@ import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class SpecimenNode extends NodeBacked implements Specimen {
@@ -94,18 +91,18 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void setLengthInMm(Double lengthInMm) {
         if (lengthInMm != null) {
-            setPropertyWithTx(SpecimenConstant.LENGTH_IN_MM, lengthInMm);
+            this.setProperty(SpecimenConstant.LENGTH_IN_MM, lengthInMm);
         }
     }
 
     @Override
     public void setVolumeInMilliLiter(Double volumeInMm3) {
-        setPropertyWithTx(SpecimenConstant.VOLUME_IN_ML, volumeInMm3);
+        this.setProperty(SpecimenConstant.VOLUME_IN_ML, volumeInMm3);
     }
 
     @Override
     public void setStomachVolumeInMilliLiter(Double volumeInMilliLiter) {
-        setPropertyWithTx(SpecimenConstant.STOMACH_VOLUME_ML, volumeInMilliLiter);
+        this.setProperty(SpecimenConstant.STOMACH_VOLUME_ML, volumeInMilliLiter);
     }
 
     @Override
@@ -118,27 +115,15 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void interactsWith(Specimen recipientSpecimen, InteractType relType) {
         if (recipientSpecimen instanceof NodeBacked) {
-            Transaction tx = getUnderlyingNode().getGraphDatabase().beginTx();
-            try {
-                createInteraction(this, relType, (NodeBacked) recipientSpecimen);
-                tx.success();
-            } finally {
-                tx.close();
-            }
+            createInteraction(this, relType, (NodeBacked) recipientSpecimen);
         }
     }
 
     @Override
     public void setOriginalTaxonDescription(Taxon taxon) {
-        Transaction transaction = getUnderlyingNode().getGraphDatabase().beginTx();
-        try {
-            TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
-            TaxonUtil.copy(taxon, taxonNode);
-            createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
-            transaction.success();
-        } finally {
-            transaction.close();
-        }
+        TaxonNode taxonNode = new TaxonNode(getUnderlyingNode().getGraphDatabase().createNode(), taxon.getName());
+        TaxonUtil.copy(taxon, taxonNode);
+        createRelationshipTo(taxonNode, RelTypes.ORIGINALLY_DESCRIBED_AS);
     }
 
     @Override
@@ -151,16 +136,16 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void setLifeStage(Term lifeStage) {
         if (lifeStage != null) {
-            setPropertyWithTx(SpecimenConstant.LIFE_STAGE_LABEL, lifeStage.getName());
-            setPropertyWithTx(SpecimenConstant.LIFE_STAGE_ID, lifeStage.getId());
+            this.setProperty(SpecimenConstant.LIFE_STAGE_LABEL, lifeStage.getName());
+            this.setProperty(SpecimenConstant.LIFE_STAGE_ID, lifeStage.getId());
         }
     }
 
     @Override
     public void setPhysiologicalState(Term physiologicalState) {
         if (physiologicalState != null) {
-            setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
-            setPropertyWithTx(SpecimenConstant.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
+            this.setProperty(SpecimenConstant.PHYSIOLOGICAL_STATE_LABEL, physiologicalState.getName());
+            this.setProperty(SpecimenConstant.PHYSIOLOGICAL_STATE_ID, physiologicalState.getId());
         }
     }
 
@@ -174,16 +159,16 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void setBodyPart(Term bodyPart) {
         if (bodyPart != null) {
-            setPropertyWithTx(SpecimenConstant.BODY_PART_LABEL, bodyPart.getName());
-            setPropertyWithTx(SpecimenConstant.BODY_PART_ID, bodyPart.getId());
+            this.setProperty(SpecimenConstant.BODY_PART_LABEL, bodyPart.getName());
+            this.setProperty(SpecimenConstant.BODY_PART_ID, bodyPart.getId());
         }
     }
 
     @Override
     public void setBasisOfRecord(Term basisOfRecord) {
         if (basisOfRecord != null) {
-            setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
-            setPropertyWithTx(SpecimenConstant.BASIS_OF_RECORD_ID, basisOfRecord.getId());
+            this.setProperty(SpecimenConstant.BASIS_OF_RECORD_LABEL, basisOfRecord.getName());
+            this.setProperty(SpecimenConstant.BASIS_OF_RECORD_ID, basisOfRecord.getId());
         }
     }
 
@@ -194,28 +179,37 @@ public class SpecimenNode extends NodeBacked implements Specimen {
 
     @Override
     public void setFrequencyOfOccurrence(Double frequencyOfOccurrence) {
-        setPropertyWithTx(SpecimenConstant.FREQUENCY_OF_OCCURRENCE, frequencyOfOccurrence);
+        this.setProperty(
+                SpecimenConstant.FREQUENCY_OF_OCCURRENCE,
+                frequencyOfOccurrence
+        );
     }
 
     @Override
     public void setTotalCount(Integer totalCount) {
-        setPropertyWithTx(SpecimenConstant.TOTAL_COUNT, totalCount);
+        setProperty(SpecimenConstant.TOTAL_COUNT, totalCount);
     }
 
 
     @Override
     public void setTotalVolumeInMl(Double totalVolumeInMl) {
-        setPropertyWithTx(SpecimenConstant.TOTAL_VOLUME_IN_ML, totalVolumeInMl);
+        setProperty(
+                SpecimenConstant.TOTAL_VOLUME_IN_ML,
+                totalVolumeInMl);
     }
 
     @Override
     public Term getLifeStage() {
-        return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_ID), getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_LABEL));
+        return new TermImpl(
+                getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_ID),
+                getPropertyStringValueOrNull(SpecimenConstant.LIFE_STAGE_LABEL));
     }
 
     @Override
     public Term getBodyPart() {
-        return new TermImpl(getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_ID), getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_LABEL));
+        return new TermImpl(
+                getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_ID),
+                getPropertyStringValueOrNull(SpecimenConstant.BODY_PART_LABEL));
     }
 
     @Override
@@ -226,20 +220,20 @@ public class SpecimenNode extends NodeBacked implements Specimen {
     @Override
     public void setSex(Term term) {
         if (term != null) {
-            setPropertyWithTx(SpecimenConstant.SEX_LABEL, term.getName());
-            setPropertyWithTx(SpecimenConstant.SEX_ID, term.getId());
+            setPropertyIfNotNull(SpecimenConstant.SEX_LABEL, term.getName());
+            setPropertyIfNotNull(SpecimenConstant.SEX_ID, term.getId());
         }
     }
 
 
     @Override
     public void setProperty(String name, String value) {
-        setPropertyWithTx(name, value);
+        setPropertyIfNotNull(name, value);
     }
 
     @Override
     public void setProperty(String name, Double value) {
-        setPropertyWithTx(name, value);
+        setPropertyIfNotNull(name, value);
     }
 
     @Override

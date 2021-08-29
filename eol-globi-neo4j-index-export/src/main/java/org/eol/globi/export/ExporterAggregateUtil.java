@@ -7,6 +7,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.RelationshipListener;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
@@ -14,7 +15,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,16 +33,13 @@ public class ExporterAggregateUtil {
         NodeUtil.findStudies(graphDatabase, node -> collectDistinctInteractions(studyOccAggregate, node));
 
         for (Map.Entry<Fun.Tuple3<Long, String, String>, List<String>> distinctInteractions : studyOccAggregate.entrySet()) {
-            try (Transaction transaction = graphDatabase.beginTx()) {
-                rowWriter.writeRow(
-                        writer,
-                        new StudyNode(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
-                        distinctInteractions.getKey().b,
-                        distinctInteractions.getKey().c,
-                        distinctInteractions.getValue()
-                );
-                transaction.success();
-            }
+            rowWriter.writeRow(
+                    writer,
+                    new StudyNode(graphDatabase.getNodeById(distinctInteractions.getKey().a)),
+                    distinctInteractions.getKey().b,
+                    distinctInteractions.getKey().c,
+                    distinctInteractions.getValue()
+            );
 
         }
         db.close();
@@ -51,7 +48,7 @@ public class ExporterAggregateUtil {
     public static void collectDistinctInteractions(final Map<Fun.Tuple3<Long, String, String>, List<String>> studyOccAggregate, final Node studyNode) {
         {
 
-            NodeUtil.RelationshipListener handler = new NodeUtil.RelationshipListener() {
+            RelationshipListener handler = new RelationshipListener() {
 
                 @Override
                 public void on(Relationship specimen) {

@@ -16,7 +16,6 @@ import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.globalbioticinteractions.doi.DOI;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -44,40 +43,37 @@ public class LinkerDOI implements IndexerNeo4j {
     @Override
     public void index(GraphServiceFactory factory) {
         GraphDatabaseService graphDb = factory.getGraphService();
-        try (Transaction readTx = graphDb.beginTx()) {
-            Index<Node> taxons = graphDb.index().forNodes("studies");
-            IndexHits<Node> hits = taxons.query("*:*");
+        Index<Node> taxons = graphDb.index().forNodes("studies");
+        IndexHits<Node> hits = taxons.query("*:*");
 
-            int counter = 0;
-            int counterResolved = 0;
-            String msg = "linking study citations to DOIs";
-            LOG.info(msg + " started...");
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-            Map<String, StudyNode> batch = new HashMap<>();
-            for (Node hit : hits) {
-                counter++;
-                StudyNode study = new StudyNode(hit);
-                if (shouldResolve(study)) {
-                    counterResolved++;
-                    batch.put(study.getCitation(), study);
-                }
-
-                if (batch.size() >= BATCH_SIZE) {
-                    LOG.info(logProgress(counterResolved, stopWatch));
-                    resolveBatch(doiResolver, batch);
-                    batch.clear();
-                }
+        int counter = 0;
+        int counterResolved = 0;
+        String msg = "linking study citations to DOIs";
+        LOG.info(msg + " started...");
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        Map<String, StudyNode> batch = new HashMap<>();
+        for (Node hit : hits) {
+            counter++;
+            StudyNode study = new StudyNode(hit);
+            if (shouldResolve(study)) {
+                counterResolved++;
+                batch.put(study.getCitation(), study);
             }
-            resolveBatch(doiResolver, batch);
 
-            LOG.info(msg + " complete. Out of [" + counter + "] references, [" + counterResolved + "] needed resolving.");
-            if (counter % 100 != 0) {
+            if (batch.size() >= BATCH_SIZE) {
                 LOG.info(logProgress(counterResolved, stopWatch));
+                resolveBatch(doiResolver, batch);
+                batch.clear();
             }
-            stopWatch.stop();
-            readTx.success();
         }
+        resolveBatch(doiResolver, batch);
+
+        LOG.info(msg + " complete. Out of [" + counter + "] references, [" + counterResolved + "] needed resolving.");
+        if (counter % 100 != 0) {
+            LOG.info(logProgress(counterResolved, stopWatch));
+        }
+        stopWatch.stop();
     }
 
     public void resolveBatch(DOIResolver doiResolver, Map<String, StudyNode> batch) {
@@ -135,9 +131,9 @@ public class LinkerDOI implements IndexerNeo4j {
 
     private static void setDOIForStudy(StudyNode study, DOI doiResolved) {
         if (null != doiResolved) {
-            study.setPropertyWithTx(StudyConstant.DOI, doiResolved.toString());
+            study.setProperty(StudyConstant.DOI, doiResolved.toString());
             if (StringUtils.isBlank(study.getExternalId())) {
-                study.setPropertyWithTx(PropertyAndValueDictionary.EXTERNAL_ID, doiResolved.toURI().toString());
+                study.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, doiResolved.toURI().toString());
             }
         }
     }

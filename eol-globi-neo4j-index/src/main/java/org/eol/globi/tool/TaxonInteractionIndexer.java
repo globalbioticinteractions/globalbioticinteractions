@@ -15,7 +15,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
@@ -52,12 +51,7 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
         watchForEntireRun.start();
 
         long count = 0;
-        Transaction tx = null;
         for (Fun.Tuple3<Long, String, Long> uniqueTaxonInteraction : taxonInteractions.keySet()) {
-            if (count % 1000 == 0) {
-                finalizeTx(tx);
-                tx = graphService.beginTx();
-            }
             final Node sourceTaxon = graphService.getNodeById(uniqueTaxonInteraction.a);
             final Node targetTaxon = graphService.getNodeById(uniqueTaxonInteraction.c);
             if (sourceTaxon != null && targetTaxon != null) {
@@ -68,7 +62,6 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
             }
             count++;
         }
-        finalizeTx(tx);
 
         watchForEntireRun.stop();
         LOG.info("created [" + count + "] taxon interactions in " + getProgressMsg(count, watchForEntireRun.getTime()));
@@ -80,13 +73,6 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
         interactRel.setProperty("count", interactionCount);
     }
 
-    public void finalizeTx(Transaction tx) {
-        if (tx != null) {
-            tx.success();
-            tx.close();
-        }
-    }
-
     public void collectTaxonInteractions(Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions, GraphDatabaseService graphService) {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
@@ -95,45 +81,36 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
         long count = 0L;
         int batchSize = 1000;
 
-        Transaction transaction = graphService.beginTx();
-        try {
-            Index<Node> taxonIndex = graphService.index().forNodes("taxons");
-            IndexHits<Node> taxa = taxonIndex.query("name", "*");
-            for (Node sourceTaxon : taxa) {
-                final Iterable<Relationship> classifiedAs = sourceTaxon.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-                for (Relationship classifiedA : classifiedAs) {
-                    Node specimenNode = classifiedA.getStartNode();
-                    final Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.values()));
-                    for (Relationship interaction : interactions) {
-                        final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
-                        for (Relationship targetClassification : targetClassifications) {
-                            final Node targetTaxonNode = targetClassification.getEndNode();
-                            final Fun.Tuple3<Long, String, Long> interactionKey = new Fun.Tuple3<Long, String, Long>(sourceTaxon.getId(), interaction.getType().name(), targetTaxonNode.getId());
-                            final Long distinctInteractions = taxonInteractions.get(interactionKey);
-                            taxonInteractions.put(interactionKey, distinctInteractions == null ? 1L : (distinctInteractions + 1L));
-                            count++;
-                        }
+        Index<Node> taxonIndex = graphService.index().forNodes("taxons");
+        IndexHits<Node> taxa = taxonIndex.query("name", "*");
+        for (Node sourceTaxon : taxa) {
+            final Iterable<Relationship> classifiedAs = sourceTaxon.getRelationships(Direction.INCOMING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+            for (Relationship classifiedA : classifiedAs) {
+                Node specimenNode = classifiedA.getStartNode();
+                final Iterable<Relationship> interactions = specimenNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.values()));
+                for (Relationship interaction : interactions) {
+                    final Iterable<Relationship> targetClassifications = interaction.getEndNode().getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
+                    for (Relationship targetClassification : targetClassifications) {
+                        final Node targetTaxonNode = targetClassification.getEndNode();
+                        final Fun.Tuple3<Long, String, Long> interactionKey = new Fun.Tuple3<Long, String, Long>(sourceTaxon.getId(), interaction.getType().name(), targetTaxonNode.getId());
+                        final Long distinctInteractions = taxonInteractions.get(interactionKey);
+                        taxonInteractions.put(interactionKey, distinctInteractions == null ? 1L : (distinctInteractions + 1L));
+                        count++;
                     }
-                }
-                if (count % batchSize == 0) {
-                    watchForBatch.stop();
-                    final long duration = watchForBatch.getTime();
-                    if (duration > 0) {
-                        LOG.info("walked [" + batchSize + "] interactions in " + getProgressMsg(batchSize, duration));
-                    }
-                    watchForBatch.reset();
-                    watchForBatch.start();
-                    transaction.success();
-                    transaction.close();
-                    transaction = graphService.beginTx();
                 }
             }
-            taxa.close();
-            watchForEntireRun.stop();
-            transaction.success();
-        } finally {
-            transaction.close();
+            if (count % batchSize == 0) {
+                watchForBatch.stop();
+                final long duration = watchForBatch.getTime();
+                if (duration > 0) {
+                    LOG.info("walked [" + batchSize + "] interactions in " + getProgressMsg(batchSize, duration));
+                }
+                watchForBatch.reset();
+                watchForBatch.start();
+            }
         }
+        taxa.close();
+        watchForEntireRun.stop();
         LOG.info("walked [" + count + "] interactions in " + getProgressMsg(count, watchForEntireRun.getTime()));
     }
 
