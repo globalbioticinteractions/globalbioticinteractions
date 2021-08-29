@@ -51,7 +51,7 @@ import java.util.List;
 
 import static org.eol.globi.domain.LocationUtil.fromLocation;
 
-public abstract class NodeFactoryNeo4j implements NodeFactory {
+public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     private static final Logger LOG = LoggerFactory.getLogger(NodeFactoryNeo4j.class);
     public static final TermImpl NO_MATCH_TERM = new TermImpl(PropertyAndValueDictionary.NO_MATCH, PropertyAndValueDictionary.NO_MATCH);

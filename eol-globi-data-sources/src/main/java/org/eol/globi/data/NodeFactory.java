@@ -16,7 +16,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import java.util.Date;
 import java.util.List;
 
-public interface NodeFactory {
+public interface NodeFactory extends AutoCloseable {
     Location findLocation(Location location) throws NodeFactoryException;
 
     Season createSeason(String seasonNameLower);

@@ -17,7 +17,7 @@ import org.globalbioticinteractions.dataset.Dataset;
 import java.util.Date;
 import java.util.List;
 
-public class NodeFactoryWithDatasetContext implements NodeFactory {
+public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
 
     private final NodeFactory factory;
 

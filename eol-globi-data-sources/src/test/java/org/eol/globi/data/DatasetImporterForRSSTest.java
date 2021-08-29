@@ -347,7 +347,7 @@ public class DatasetImporterForRSSTest {
         assertThat(DatasetImporterForRSS.getRSSEndpoint(dataset), is("bar"));
     }
 
-    private static class NodeFactoryNull implements NodeFactory {
+    private static class NodeFactoryNull extends NodeFactoryAbstract {
         @Override
         public Location findLocation(Location location) throws NodeFactoryException {
             return null;

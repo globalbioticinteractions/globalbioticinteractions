@@ -128,7 +128,7 @@ public class Normalizer {
         }
     }
 
-    private void resolveAndLinkTaxa(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) {
+    private void resolveAndLinkTaxa(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
             new LinkerDOI(new DOIResolverCache()).index(graphServiceFactory);
@@ -151,8 +151,10 @@ public class Normalizer {
             final IndexerNeo4j nameResolver = new NameResolver(taxonIndex);
             final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer();
 
-            Arrays.asList(nameResolver, taxonInteractionIndexer)
-                    .forEach(x -> x.index(graphServiceFactory));
+            List<IndexerNeo4j> indexers = Arrays.asList(nameResolver, taxonInteractionIndexer);
+            for (IndexerNeo4j indexer : indexers) {
+                indexer.index(graphServiceFactory);
+            }
         } else {
             LOG.info("skipping taxa resolving ...");
         }
@@ -160,8 +162,10 @@ public class Normalizer {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
             List<IndexerNeo4j> linkers = new ArrayList<>();
             linkers.add(new LinkerTaxonIndex());
-            linkers.forEach(x -> new IndexerTimed(x)
-                    .index(graphServiceFactory));
+            for (IndexerNeo4j linker : linkers) {
+                new IndexerTimed(linker)
+                        .index(graphServiceFactory);
+            }
         } else {
             LOG.info("skipping linking ...");
         }
@@ -173,7 +177,7 @@ public class Normalizer {
     }
 
     public class FactoriesForDatasetImport extends FactoriesBase {
-        public FactoriesForDatasetImport(GraphServiceFactory graphServiceFactory) {
+        FactoriesForDatasetImport(GraphServiceFactory graphServiceFactory) {
             super(graphServiceFactory);
         }
 
@@ -188,7 +192,7 @@ public class Normalizer {
 
         private final GraphServiceFactory factory;
 
-        public FactoriesBase(GraphServiceFactory factory) {
+        FactoriesBase(GraphServiceFactory factory) {
             this.factory = factory;
         }
 

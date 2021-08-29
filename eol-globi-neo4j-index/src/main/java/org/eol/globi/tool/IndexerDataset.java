@@ -30,17 +30,27 @@ public class IndexerDataset implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphServiceFactory graphServiceFactory) {
+    public void index(GraphServiceFactory graphServiceFactory) throws StudyImporterException {
         GraphDatabaseService graphService = graphServiceFactory.getGraphService();
         NodeFactory nodeFactory;
-        try (Transaction tx = graphService.beginTx()) {
+        try (Transaction tx = graphService.beginTx();) {
             nodeFactory = nodeFactoryFactory.create(graphService);
             tx.success();
         }
 
-        indexDatasets(
-                this.registry,
-                nodeFactory);
+        try {
+            indexDatasets(
+                    this.registry,
+                    nodeFactory);
+        } finally {
+            if (nodeFactory != null) {
+                try {
+                    nodeFactory.close();
+                } catch (Exception e) {
+                    throw new StudyImporterException("failed to gracefully end index process", e);
+                }
+            }
+        }
     }
 
     private static void indexDatasets(DatasetRegistry registry, NodeFactory nodeFactory) {

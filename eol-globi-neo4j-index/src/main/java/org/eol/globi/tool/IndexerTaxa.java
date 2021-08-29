@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.opentree.OpenTreeTaxonIndex;
@@ -24,7 +25,19 @@ public class IndexerTaxa implements IndexerNeo4j {
         this.taxonCacheService = taxonCacheService;
     }
 
-    public static void indexTaxa(GraphServiceFactory graphService, TaxonCacheService taxonCacheService) {
+    private static void appendOpenTreeTaxonLinker(List<IndexerNeo4j> linkers) {
+        String ottUrl = System.getProperty("ott.url");
+        try {
+            if (StringUtils.isNotBlank(ottUrl)) {
+                linkers.add(new LinkerOpenTreeOfLife(new OpenTreeTaxonIndex(new URI(ottUrl).toURL())));
+            }
+        } catch (MalformedURLException | URISyntaxException e) {
+            LOG.warn("failed to link against OpenTreeOfLife", e);
+        }
+    }
+
+    @Override
+    public void index(GraphServiceFactory graphService) throws StudyImporterException {
         LOG.info("resolving names with taxon cache ...");
         try {
             ResolvingTaxonIndexNoTx index = new ResolvingTaxonIndexNoTx(taxonCacheService, graphService.getGraphService());
@@ -48,30 +61,16 @@ public class IndexerTaxa implements IndexerNeo4j {
             List<IndexerNeo4j> linkers = new ArrayList<>();
             //appendOpenTreeTaxonLinker(linkers);
 
-            linkers.forEach(x -> new IndexerTimed(x)
-                    .index(graphService));
+            for (IndexerNeo4j linker : linkers) {
+                new IndexerTimed(linker)
+                        .index(graphService);
+            }
             LOG.info("adding same and similar terms for resolved taxa done.");
 
         } finally {
             taxonCacheService.shutdown();
         }
         LOG.info("resolving names with taxon cache done.");
-    }
-
-    private static void appendOpenTreeTaxonLinker(List<IndexerNeo4j> linkers) {
-        String ottUrl = System.getProperty("ott.url");
-        try {
-            if (StringUtils.isNotBlank(ottUrl)) {
-                linkers.add(new LinkerOpenTreeOfLife(new OpenTreeTaxonIndex(new URI(ottUrl).toURL())));
-            }
-        } catch (MalformedURLException | URISyntaxException e) {
-            LOG.warn("failed to link against OpenTreeOfLife", e);
-        }
-    }
-
-    @Override
-    public void index(GraphServiceFactory graphService) {
-        indexTaxa(graphService, taxonCacheService);
     }
 
 }

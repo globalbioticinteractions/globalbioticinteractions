@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.eol.globi.data.StudyImporterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
@@ -15,7 +16,7 @@ public class IndexerTimed implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphServiceFactory graphService) {
+    public void index(GraphServiceFactory graphService) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String linkName = indexer.getClass().getSimpleName();
