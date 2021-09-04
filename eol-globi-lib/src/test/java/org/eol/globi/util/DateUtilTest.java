@@ -1,13 +1,17 @@
 package org.eol.globi.util;
 
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Date;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DateUtilTest {
 
     @Test
@@ -96,5 +100,54 @@ public class DateUtilTest {
         assertThat(dateTime.getYear(), is(2016));
         assertThat(dateTime.getMonthOfYear(), is(04));
     }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void startDateAfterEndDateInvalidEndDate() {
+        assertFalse(DateUtil.hasStartDateAfterEndDate("1973-07-01/1973-09-31"));
+    }
+
+    @Test
+    public void startDateAfterEndDate() {
+        assertFalse(DateUtil.hasStartDateAfterEndDate("1973-07-01/1973-09-30"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void startDateAfterEndDate2() {
+        assertTrue(DateUtil.hasStartDateAfterEndDate("1973-09-30/1973-07-01"));
+    }
+
+
+    @Test
+    public void startDateEndDateYearMonth() {
+        assertFalse(DateUtil.hasStartDateAfterEndDate("2006-07/08"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void startedMonthAfterEnding() {
+        Assert.assertTrue(DateUtil.hasStartDateAfterEndDate("2006-09/08"));
+    }
+
+    @Test
+    public void startDateEndDateYearMonth2() {
+        assertFalse(DateUtil.hasStartDateAfterEndDate("2006-07/2006-08"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void startAfterEnding() {
+        Assert.assertTrue(DateUtil.hasStartDateAfterEndDate("2008-07/2006-08"));
+    }
+
+    @Test
+    public void validateDate() {
+        String dateRange = "1973-07-01/1973-09-31";
+        String s = DateUtil.validateDate(
+                dateRange, DateUtil.parseDateUTC(dateRange)
+        );
+
+        assertThat(s, is("issue handling date range [1973-07-01/1973-09-31]: Cannot parse \"1973-09-31\": Value 31 for dayOfMonth must be in the range [1,30]"));
+
+    }
+
 
 }

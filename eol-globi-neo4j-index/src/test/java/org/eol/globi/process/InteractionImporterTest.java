@@ -529,24 +529,4 @@ public class InteractionImporterTest extends GraphDBTestCase {
                 .iterator().next().getEndNode());
     }
 
-    @Test
-    public void startDateEndDateYearMonth() {
-        assertFalse(InteractionImporter.hasStartDateAfterEndDate("2006-07/08"));
-    }
-
-    @Test
-    public void startedMonthAfterEnding() {
-        assertTrue(InteractionImporter.hasStartDateAfterEndDate("2006-09/08"));
-    }
-
-    @Test
-    public void startDateEndDateYearMonth2() {
-        assertFalse(InteractionImporter.hasStartDateAfterEndDate("2006-07/2006-08"));
-    }
-
-    @Test
-    public void startAfterEnding() {
-        assertTrue(InteractionImporter.hasStartDateAfterEndDate("2008-07/2006-08"));
-    }
-
 }

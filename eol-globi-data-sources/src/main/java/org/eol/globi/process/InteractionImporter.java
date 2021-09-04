@@ -25,7 +25,6 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
-import org.joda.time.Interval;
 
 import java.io.IOException;
 import java.util.Date;
@@ -102,32 +101,6 @@ public class InteractionImporter implements InteractionListener {
         this.logger = logger;
         this.nodeFactory = factory;
         this.geoNamesService = geonamesService;
-    }
-
-    static boolean hasStartDateAfterEndDate(String eventDate) {
-        boolean hasStartedAfterFinishing = false;
-        final String[] split = StringUtils.split(eventDate, "/");
-        if (split.length > 1) {
-            try {
-                Interval actual = Interval.parse(eventDate);
-                hasStartedAfterFinishing = actual.getStart().isAfter(actual.getEnd());
-            } catch (IllegalArgumentException ex) {
-                final int diff = StringUtils.length(split[0]) - StringUtils.length(split[1]);
-                if (diff > 0) {
-                    final String prefix = StringUtils.substring(split[0], 0, diff);
-                    final String attemptWorkaround = StringUtils.join(split[0], "/", prefix + split[1]);
-                    try {
-                        Interval actual = Interval.parse(attemptWorkaround);
-                        hasStartedAfterFinishing = actual.getStart().isAfter(actual.getEnd());
-                    } catch (IllegalArgumentException e) {
-                        hasStartedAfterFinishing = true;
-                    }
-                } else {
-                    hasStartedAfterFinishing = true;
-                }
-            }
-        }
-        return hasStartedAfterFinishing;
     }
 
     @Override
@@ -304,20 +277,14 @@ public class InteractionImporter implements InteractionListener {
             try {
                 final DateTime dateTime = DateUtil
                         .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
-                Date date = dateTime.toDate();
-                if (dateTime.getYear() == 8888) {
-                    // 8888 is a magic number used by Arctos
-                    // see http://handbook.arctosdb.org/documentation/dates.html#restricted-data
-                    // https://github.com/ArctosDB/arctos/issues/2426
-                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] appears to be restricted, see http://handbook.arctosdb.org/documentation/dates.html#restricted-data");
-                } else if (date.after(new Date())) {
-                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] is in the future");
-                } else if (dateTime.getYear() < 100) {
-                    logWarningIfPossible(link, "date [" + DateUtil.printDate(date) + "] occurred in the first century AD");
-                } else if (hasStartDateAfterEndDate(eventDate)) {
-                    logWarningIfPossible(link, "date range [" + eventDate + "] appears to start after it ends.");
+
+                String msg = DateUtil.validateDate(eventDate, dateTime);
+
+                if (StringUtils.isNoneBlank(msg)) {
+                    logWarningIfPossible(link, msg);
                 }
-                nodeFactory.setUnixEpochProperty(target, date);
+
+                nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
             } catch (IllegalArgumentException ex) {
                 logWarningIfPossible(link, "invalid date string [" + eventDate + "]");
             } catch (NodeFactoryException e) {
