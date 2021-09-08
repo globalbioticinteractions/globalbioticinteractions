@@ -54,8 +54,8 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
                 "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
                 "/org/eol/globi/taxon/taxonMapHolorchis.tsv");
 
-        new LinkerTermMatcher(taxonCacheService)
-                .index(new GraphServiceFactoryProxy(getGraphDb()));
+        new LinkerTermMatcher(taxonCacheService, new GraphServiceFactoryProxy(getGraphDb()))
+                .index();
 
         Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);
         assertThat(externalIds, hasItem("EOL_V2:11987314"));

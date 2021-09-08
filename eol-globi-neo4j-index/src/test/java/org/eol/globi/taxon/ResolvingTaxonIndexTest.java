@@ -114,8 +114,8 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
             );
         }
 
-        LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex();
-        linkerTaxonIndex.index(new GraphServiceFactoryProxy(getGraphDb()));
+        LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb()));
+        linkerTaxonIndex.index();
 
         {
             Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,

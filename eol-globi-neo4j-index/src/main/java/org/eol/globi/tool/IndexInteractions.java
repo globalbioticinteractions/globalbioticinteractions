@@ -10,19 +10,21 @@ import org.neo4j.helpers.collection.MapUtil;
 
 public class IndexInteractions implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(IndexInteractions.class);
+    private final GraphServiceFactory factory;
 
     private Integer batchSize;
 
-    public IndexInteractions() {
-        this(10000);
+    public IndexInteractions(GraphServiceFactory factory) {
+        this(factory, 10000);
     }
 
-    public IndexInteractions(int batchSize) {
+    public IndexInteractions(GraphServiceFactory factory, int batchSize) {
         this.batchSize = batchSize;
+        this.factory = factory;
     }
 
     @Override
-    public void index(GraphServiceFactory factory) {
+    public void index() {
         final GraphDatabaseService graphDb = factory.getGraphService();
         LinkProgress progress = new LinkProgress(LOG::info, 10);
         progress.start();

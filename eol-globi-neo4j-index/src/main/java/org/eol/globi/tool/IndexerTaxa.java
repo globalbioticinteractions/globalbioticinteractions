@@ -20,27 +20,19 @@ public class IndexerTaxa implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(IndexerTaxa.class);
 
     private final TaxonCacheService taxonCacheService;
+    private final GraphServiceFactory factory;
 
-    public IndexerTaxa(TaxonCacheService taxonCacheService) {
+    public IndexerTaxa(TaxonCacheService taxonCacheService, GraphServiceFactory factory) {
         this.taxonCacheService = taxonCacheService;
+        this.factory = factory;
     }
 
-    private static void appendOpenTreeTaxonLinker(List<IndexerNeo4j> linkers) {
-        String ottUrl = System.getProperty("ott.url");
-        try {
-            if (StringUtils.isNotBlank(ottUrl)) {
-                linkers.add(new LinkerOpenTreeOfLife(new OpenTreeTaxonIndex(new URI(ottUrl).toURL())));
-            }
-        } catch (MalformedURLException | URISyntaxException e) {
-            LOG.warn("failed to link against OpenTreeOfLife", e);
-        }
-    }
 
     @Override
-    public void index(GraphServiceFactory graphService) throws StudyImporterException {
+    public void index() throws StudyImporterException {
         LOG.info("resolving names with taxon cache ...");
         try {
-            ResolvingTaxonIndexNoTx index = new ResolvingTaxonIndexNoTx(taxonCacheService, graphService.getGraphService());
+            ResolvingTaxonIndexNoTx index = new ResolvingTaxonIndexNoTx(taxonCacheService, factory.getGraphService());
             index.setIndexResolvedTaxaOnly(true);
 
             TaxonFilter taxonCacheFilter = new TaxonFilter() {
@@ -54,8 +46,8 @@ public class IndexerTaxa implements IndexerNeo4j {
                 }
             };
 
-            new NameResolver(index, taxonCacheFilter)
-                    .index(graphService);
+            new NameResolver(factory, index, taxonCacheFilter)
+                    .index();
 
             LOG.info("adding same and similar terms for resolved taxa...");
             List<IndexerNeo4j> linkers = new ArrayList<>();
@@ -63,7 +55,7 @@ public class IndexerTaxa implements IndexerNeo4j {
 
             for (IndexerNeo4j linker : linkers) {
                 new IndexerTimed(linker)
-                        .index(graphService);
+                        .index();
             }
             LOG.info("adding same and similar terms for resolved taxa done.");
 

@@ -21,10 +21,16 @@ import java.util.Map;
 
 public class TaxonInteractionIndexer implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(TaxonInteractionIndexer.class);
+    private final GraphServiceFactory factory;
 
-    public void index(GraphDatabaseService graphService) {
+    TaxonInteractionIndexer(GraphServiceFactory factory) {
+        this.factory = factory;
+    }
+
+    @Override
+    public void index() {
         LOG.info("indexing interactions started...");
-        indexInteractions(graphService);
+        indexInteractions(factory.getGraphService());
         LOG.info("indexing interactions complete.");
     }
 
@@ -107,8 +113,4 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
         return String.format("[%.2f] taxon/s over [%.2f] s", (float) count * 1000.0 / duration, duration / 1000.0);
     }
 
-    @Override
-    public void index(GraphServiceFactory graphServiceFactory) {
-        indexInteractions(graphServiceFactory.getGraphService());
-    }
 }

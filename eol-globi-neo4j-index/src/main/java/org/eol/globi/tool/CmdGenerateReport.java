@@ -11,7 +11,6 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.CacheService;
-import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -26,8 +25,8 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
-public class ReportGenerator {
-    private static final Logger LOG = LoggerFactory.getLogger(ReportGenerator.class);
+public class CmdGenerateReport implements Cmd {
+    private static final Logger LOG = LoggerFactory.getLogger(CmdGenerateReport.class);
 
     public static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 
@@ -38,11 +37,11 @@ public class ReportGenerator {
         return this.graphService;
     }
 
-    public ReportGenerator(GraphDatabaseService graphService) {
+    public CmdGenerateReport(GraphDatabaseService graphService) {
         this(graphService, new CacheService());
     }
 
-    public ReportGenerator(GraphDatabaseService graphService, CacheService cacheService) {
+    public CmdGenerateReport(GraphDatabaseService graphService, CacheService cacheService) {
         this.graphService = graphService;
         this.cacheService = cacheService;
     }

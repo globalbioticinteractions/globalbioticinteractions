@@ -22,7 +22,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -114,7 +113,7 @@ public class Normalizer {
 
     private void generateReports(CommandLine cmdLine, GraphServiceFactory graphService) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
-            new ReportGenerator(graphService.getGraphService()).run();
+            new CmdGenerateReport(graphService.getGraphService()).run();
         } else {
             LOG.info("skipping report generation ...");
         }
@@ -131,49 +130,81 @@ public class Normalizer {
     private void resolveAndLinkTaxa(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
-            new LinkerDOI(new DOIResolverCache()).index(graphServiceFactory);
+            new LinkerDOI(new DOIResolverCache(), graphServiceFactory).index();
         } else {
             LOG.info("skipping citation resolving ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_TAXON_CACHE)) {
-            final TaxonCacheService taxonCacheService = new TaxonCacheService(
-                    "/taxa/taxonCache.tsv.gz",
-                    "/taxa/taxonMap.tsv.gz");
-            IndexerNeo4j taxonIndexer = new IndexerTaxa(taxonCacheService);
-            taxonIndexer.index(graphServiceFactory);
+            new CmdInterpretTaxa(graphServiceFactory).run();
         } else {
             LOG.info("skipping taxon cache ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-            final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(graphServiceFactory.getGraphService());
-            final IndexerNeo4j nameResolver = new NameResolver(taxonIndex);
-            final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer();
-
-            List<IndexerNeo4j> indexers = Arrays.asList(nameResolver, taxonInteractionIndexer);
-            for (IndexerNeo4j indexer : indexers) {
-                indexer.index(graphServiceFactory);
-            }
+            cmdIndexTaxa(graphServiceFactory);
         } else {
             LOG.info("skipping taxa resolving ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-            List<IndexerNeo4j> linkers = new ArrayList<>();
-            linkers.add(new LinkerTaxonIndex());
-            for (IndexerNeo4j linker : linkers) {
-                new IndexerTimed(linker)
-                        .index(graphServiceFactory);
-            }
+            CmdIndexTaxa(graphServiceFactory);
         } else {
             LOG.info("skipping linking ...");
         }
     }
 
+    private void CmdIndexTaxa(GraphServiceFactory graphServiceFactory) throws StudyImporterException {
+        new CmdBuildTaxonSearch(graphServiceFactory);
+    }
+
+    private void cmdIndexTaxa(GraphServiceFactory graphServiceFactory) throws StudyImporterException {
+        new CmdIndexTaxa(graphServiceFactory).run();
+    }
+
     void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         new GraphExporterImpl()
                 .export(graphService, baseDir);
+    }
+
+    private static class CmdInterpretTaxa implements Cmd {
+
+        private final GraphServiceFactory graphServiceFactory;
+
+        public CmdInterpretTaxa(GraphServiceFactory graphServiceFactory) {
+            this.graphServiceFactory = graphServiceFactory;
+        }
+
+        @Override
+        public void run() throws StudyImporterException {
+            final TaxonCacheService taxonCacheService = new TaxonCacheService(
+                    "/taxa/taxonCache.tsv.gz",
+                    "/taxa/taxonMap.tsv.gz");
+            IndexerNeo4j taxonIndexer = new IndexerTaxa(taxonCacheService, graphServiceFactory);
+            taxonIndexer.index();
+        }
+    }
+
+    private static class CmdIndexTaxa implements Cmd {
+
+        private final GraphServiceFactory graphServiceFactory;
+
+        public CmdIndexTaxa(GraphServiceFactory graphServiceFactory) {
+            this.graphServiceFactory = graphServiceFactory;
+        }
+
+        @Override
+        public void run() throws StudyImporterException {
+            final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(graphServiceFactory.getGraphService());
+            final IndexerNeo4j nameResolver = new NameResolver(graphServiceFactory, taxonIndex);
+            final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(graphServiceFactory);
+
+            List<IndexerNeo4j> indexers = Arrays.asList(nameResolver, taxonInteractionIndexer);
+            for (IndexerNeo4j indexer : indexers) {
+                indexer.index();
+            }
+
+        }
     }
 
     public class FactoriesForDatasetImport extends FactoriesBase {

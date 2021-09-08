@@ -23,14 +23,18 @@ public class IndexerDataset implements IndexerNeo4j {
 
     private final DatasetRegistry registry;
     private final NodeFactoryFactory nodeFactoryFactory;
+    private final GraphServiceFactory graphServiceFactory;
 
-    public IndexerDataset(DatasetRegistry registry, NodeFactoryFactory nodeFactoryFactory) {
+    public IndexerDataset(DatasetRegistry registry,
+                          NodeFactoryFactory nodeFactoryFactory,
+                          GraphServiceFactory graphServiceFactory) {
         this.registry = registry;
         this.nodeFactoryFactory = nodeFactoryFactory;
+        this.graphServiceFactory = graphServiceFactory;
     }
 
     @Override
-    public void index(GraphServiceFactory graphServiceFactory) throws StudyImporterException {
+    public void index() throws StudyImporterException {
         GraphDatabaseService graphService = graphServiceFactory.getGraphService();
         NodeFactory nodeFactory;
         try (Transaction tx = graphService.beginTx();) {

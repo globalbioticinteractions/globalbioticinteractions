@@ -154,7 +154,10 @@ public abstract class GraphDBTestCaseAbstract {
     }
 
     protected void resolveNames() {
-        new NameResolver(getOrCreateTaxonIndex()).index(new GraphServiceFactoryProxy(getGraphDb()));
+        new NameResolver(
+                new GraphServiceFactoryProxy(getGraphDb()),
+                getOrCreateTaxonIndex()
+        ).index();
     }
 
 

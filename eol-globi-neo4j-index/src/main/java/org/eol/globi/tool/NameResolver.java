@@ -27,6 +27,7 @@ public class NameResolver implements IndexerNeo4j {
 
     private final TaxonIndex taxonIndex;
     private final TaxonFilter taxonFilter;
+    private final GraphServiceFactory factory;
 
     public void setBatchSize(Long batchSize) {
         this.batchSize = batchSize;
@@ -34,13 +35,14 @@ public class NameResolver implements IndexerNeo4j {
 
     private Long batchSize = 10000L;
 
-    public NameResolver(TaxonIndex index) {
-        this(index, new KnownBadNameFilter());
+    public NameResolver(GraphServiceFactory factory, TaxonIndex index) {
+        this(factory, index, new KnownBadNameFilter());
     }
 
-    public NameResolver(TaxonIndex index, TaxonFilter taxonFilter) {
+    public NameResolver(GraphServiceFactory factory, TaxonIndex index, TaxonFilter taxonFilter) {
         this.taxonIndex = index;
         this.taxonFilter = taxonFilter;
+        this.factory = factory;
     }
 
     public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
@@ -116,9 +118,9 @@ public class NameResolver implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphServiceFactory graphService) {
+    public void index() {
         LOG.info("name resolving started...");
-        resolveNames(batchSize, graphService.getGraphService());
+        resolveNames(batchSize, factory.getGraphService());
         LOG.info("name resolving complete.");
 
     }

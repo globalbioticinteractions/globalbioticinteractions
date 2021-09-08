@@ -25,6 +25,6 @@ public class CmdIndexDatasets implements Cmd {
                 : cmdLine.getOptionValue(CmdOptionConstants.OPTION_DATASET_DIR, "target/datasets");
 
         DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(cacheDir);
-        new IndexerDataset(registry, nodeFactoryFactory).index(graphServiceFactory);
+        new IndexerDataset(registry, nodeFactoryFactory, graphServiceFactory).index();
     }
 }

@@ -152,10 +152,12 @@ public class NormalizerTest extends GraphDBTestCase {
 
         final IndexerDataset indexerDataset = new IndexerDataset(
                 DatasetRegistryUtil.getDatasetRegistry(datasetDirTest),
-                nodeFactoryFactory);
+                nodeFactoryFactory,
+                getGraphFactory()
+        );
 
         try (Transaction tx = getGraphDb().beginTx()) {
-            indexerDataset.index(getGraphFactory());
+            indexerDataset.index();
             tx.success();
         }
 

@@ -25,10 +25,14 @@ import java.util.stream.Collectors;
 public class LinkerTaxonIndex implements IndexerNeo4j {
 
     public static final String INDEX_TAXON_NAMES_AND_IDS = "taxonPaths";
+    private final GraphServiceFactory factory;
 
+    public LinkerTaxonIndex(GraphServiceFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
-    public void index(GraphServiceFactory factory) {
+    public void index() {
         GraphDatabaseService graphDb = factory.getGraphService();
         initIndexes(graphDb);
 

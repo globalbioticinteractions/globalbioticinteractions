@@ -28,14 +28,16 @@ public class LinkerTermMatcher implements IndexerNeo4j {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkerTermMatcher.class);
     private final TermMatcher termMatcher;
+    private final GraphServiceFactory factory;
 
-    public LinkerTermMatcher(TermMatcher termMatcher) {
+    public LinkerTermMatcher(TermMatcher termMatcher, GraphServiceFactory factory) {
         this.termMatcher = termMatcher;
+        this.factory = factory;
     }
 
 
     @Override
-    public void index(GraphServiceFactory factory) {
+    public void index() {
         final GraphDatabaseService graphDb = factory.getGraphService();
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");

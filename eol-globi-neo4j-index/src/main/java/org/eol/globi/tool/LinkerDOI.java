@@ -8,6 +8,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
+import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.util.NodeProcessorImpl;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -26,18 +27,21 @@ public class LinkerDOI implements IndexerNeo4j {
     public static final long BATCH_SIZE = 25;
 
     private final DOIResolver doiResolver;
+    private final GraphServiceFactory factory;
 
-    public LinkerDOI() {
-        this(new DOIResolverImpl());
+    public LinkerDOI(GraphServiceFactory graphServiceFactory) {
+        this(new DOIResolverImpl(), graphServiceFactory);
     }
 
-    public LinkerDOI(DOIResolver resolver) {
-        this.doiResolver = resolver;
+
+    public LinkerDOI(DOIResolver doiResolverCache, GraphServiceFactory graphServiceFactory) {
+        this.doiResolver = doiResolverCache;
+        this.factory = graphServiceFactory;
     }
 
     @Override
-    public void index(GraphServiceFactory factory) {
-        GraphDatabaseService graphDb = factory.getGraphService();
+    public void index() {
+        GraphDatabaseService graphDb = this.factory.getGraphService();
 
         final AtomicLong counter = new AtomicLong(0);
         final AtomicLong counterResolved = new AtomicLong(0);

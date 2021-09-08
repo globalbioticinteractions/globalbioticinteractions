@@ -34,7 +34,7 @@ public class LinkerDOITest extends GraphDBTestCase {
     @Test
     public void doLink() throws NodeFactoryException, PropertyEnricherException {
         StudyNode study = getNodeFactory().getOrCreateStudy(new StudyImpl("title", null, "some citation"));
-        new LinkerDOI().index(new GraphServiceFactoryProxy(getGraphDb()));
+        new LinkerDOI(new GraphServiceFactoryProxy(getGraphDb())).index();
         Study studyResolved = nodeFactory.getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(nullValue()));
         assertThat(study.getDOI(), is(nullValue()));
@@ -90,7 +90,7 @@ public class LinkerDOITest extends GraphDBTestCase {
             public DOI resolveDoiFor(String reference) throws IOException {
                 return new DOI("123", "456");
             }
-        }).index(new GraphServiceFactoryProxy(getGraphDb()));
+        }, new GraphServiceFactoryProxy(getGraphDb())).index();
         StudyNode studyResolved = getNodeFactory().getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(new DOI("123", "456")));
     }

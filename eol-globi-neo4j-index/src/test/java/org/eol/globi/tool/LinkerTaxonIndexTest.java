@@ -45,7 +45,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
-        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
+        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         IndexHits<Node> hits = getGraphDb()
                 .index()
@@ -83,7 +83,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
         resolveNames();
 
-        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
+        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
                 .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"");
@@ -100,7 +100,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonIndex.getOrCreateTaxon(taxonFound);
         resolveNames();
 
-        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
+        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         IndexHits<Node> hits = getGraphDb()
                 .index()
@@ -145,7 +145,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         resolveNames();
 
-        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
+        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
     }
 
     @Test
@@ -154,7 +154,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         resolveNames();
-        new LinkerTaxonIndex().index(new GraphServiceFactoryProxy(getGraphDb()));
+        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         assertThat(getGraphDb()
                         .index()

@@ -25,7 +25,7 @@ import java.net.URI;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ReportGeneratorTest extends GraphDBTestCase {
+public class CmdGenerateReportTest extends GraphDBTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -62,7 +62,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceIndividuals();
+        new CmdGenerateReport(getGraphDb(), cacheService).generateReportForSourceIndividuals();
 
         String escapedQuery = QueryParser.escape("globi:az/source");
         IndexHits<Node> reports = getGraphDb()
@@ -119,7 +119,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new ReportGenerator(getGraphDb(), cacheService).generateReportForSourceOrganizations();
+        new CmdGenerateReport(getGraphDb(), cacheService).generateReportForSourceOrganizations();
 
         IndexHits<Node> reports = getGraphDb()
                 .index()
@@ -164,7 +164,7 @@ public class ReportGeneratorTest extends GraphDBTestCase {
         createStudy(study2);
         resolveNames();
 
-        new ReportGenerator(getGraphDb(), cacheService).generateReportForCollection();
+        new CmdGenerateReport(getGraphDb(), cacheService).generateReportForCollection();
 
         IndexHits<Node> reports = getGraphDb()
                 .index()

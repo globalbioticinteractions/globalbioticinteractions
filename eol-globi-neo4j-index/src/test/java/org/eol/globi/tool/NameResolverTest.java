@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
@@ -54,9 +55,6 @@ public class NameResolverTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("NCBI:9606"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        final NameResolver nameResolver = new NameResolver(new NonResolvingTaxonIndex(graphDb));
-        nameResolver.setBatchSize(1L);
-
         final GraphServiceFactory factory = new GraphServiceFactory() {
 
             @Override
@@ -69,7 +67,12 @@ public class NameResolverTest extends GraphDBTestCase {
 
             }
         };
-        nameResolver.index(factory);
+
+        final NameResolver nameResolver = new NameResolver(factory, new NonResolvingTaxonIndex(graphDb));
+        nameResolver.setBatchSize(1L);
+
+
+        nameResolver.index();
 
         assertAnimalia(taxonIndex.findTaxonById("WORMS:2"));
 
@@ -91,19 +94,11 @@ public class NameResolverTest extends GraphDBTestCase {
         Specimen someOtherOrganism2 = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Redus rha", "INAT_TAXON:126777"));
         someOtherOrganism.ate(someOtherOrganism2);
 
-        final NameResolver nameResolver = new NameResolver(new NonResolvingTaxonIndex(getGraphDb()));
+        GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
+
+        final NameResolver nameResolver = new NameResolver(graphServiceFactory, new NonResolvingTaxonIndex(getGraphDb()));
         nameResolver.setBatchSize(1L);
-        nameResolver.index(new GraphServiceFactory() {
-            @Override
-            public GraphDatabaseService getGraphService() {
-                return getGraphDb();
-            }
-
-            @Override
-            public void close() {
-
-            }
-        });
+        nameResolver.index();
 
         Taxon resolvedTaxon = taxonIndex.findTaxonById("INAT_TAXON:58831");
         assertThat(resolvedTaxon, is(notNullValue()));
@@ -127,7 +122,7 @@ public class NameResolverTest extends GraphDBTestCase {
 
         someOtherOrganism.ate(someOtherOrganism2);
 
-        final NameResolver nameResolver = new NameResolver(new ResolvingTaxonIndex(new PropertyEnricher() {
+        final NameResolver nameResolver = new NameResolver(new GraphServiceFactoryProxy(getGraphDb()), new ResolvingTaxonIndex(new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return enrichAllMatches(properties).get(0);
@@ -152,17 +147,7 @@ public class NameResolverTest extends GraphDBTestCase {
 
 
         nameResolver.setBatchSize(1L);
-        nameResolver.index(new GraphServiceFactory() {
-            @Override
-            public GraphDatabaseService getGraphService() {
-                return getGraphDb();
-            }
-
-            @Override
-            public void close() {
-
-            }
-        });
+        nameResolver.index();
 
         Taxon resolvedTaxon = taxonIndex.findTaxonById("foo:123");
         assertThat(resolvedTaxon, is(notNullValue()));

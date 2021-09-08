@@ -10,7 +10,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -20,11 +19,11 @@ import org.neo4j.graphdb.Relationship;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TaxonInteractionIndexerTest extends GraphDBTestCase {
 
@@ -41,10 +40,11 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById("WORMS:2"));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(new NonResolvingTaxonIndex(getGraphDb()))
-                .index(new GraphServiceFactoryProxy(getGraphDb()));
+        new NameResolver(new GraphServiceFactoryProxy(getGraphDb()),
+                new NonResolvingTaxonIndex(getGraphDb()))
+                .index();
 
-        new TaxonInteractionIndexer().index(getGraphDb());
+        new TaxonInteractionIndexer(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
@@ -78,8 +78,9 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
-        new NameResolver(new NonResolvingTaxonIndex(getGraphDb()))
-                .index(new GraphServiceFactoryProxy(getGraphDb()));
+        new NameResolver(new GraphServiceFactoryProxy(getGraphDb()),
+                new NonResolvingTaxonIndex(getGraphDb()))
+                .index();
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));
         assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));

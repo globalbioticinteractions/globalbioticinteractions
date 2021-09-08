@@ -28,13 +28,15 @@ public class LinkerOpenTreeOfLife implements IndexerNeo4j {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkerOpenTreeOfLife.class);
     private final OpenTreeTaxonIndex index;
+    private final GraphServiceFactory factory;
 
-    public LinkerOpenTreeOfLife(OpenTreeTaxonIndex index) {
+    public LinkerOpenTreeOfLife(OpenTreeTaxonIndex index, GraphServiceFactory factory) {
         this.index = index;
+        this.factory = factory;
     }
 
     @Override
-    public void index(GraphServiceFactory factory) {
+    public void index() {
         final GraphDatabaseService graphDb = factory.getGraphService();
         Index<Node> taxons = graphDb.index().forNodes("taxons");
         IndexHits<Node> hits = taxons.query("*:*");

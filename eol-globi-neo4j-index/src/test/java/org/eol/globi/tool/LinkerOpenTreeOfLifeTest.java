@@ -45,8 +45,9 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
                 for (Term term : terms) {
                     termMatchListener.foundTaxonForTerm(nodeID, term, taxon, NameType.SAME_AS);
                 }
-            }).index(new GraphServiceFactoryProxy(getGraphDb()));
-            new LinkerOpenTreeOfLife(index).index(new GraphServiceFactoryProxy(getGraphDb()));
+            }, new GraphServiceFactoryProxy(getGraphDb()))
+                    .index();
+            new LinkerOpenTreeOfLife(index, new GraphServiceFactoryProxy(getGraphDb())).index();
 
             Collection<String> externalIds = LinkerTestUtil.assertHasOther(taxon.getName(), expectedCount, taxonIndex, RelTypes.SAME_AS);
             assertThat(externalIds, hasItem(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix() + ottId));

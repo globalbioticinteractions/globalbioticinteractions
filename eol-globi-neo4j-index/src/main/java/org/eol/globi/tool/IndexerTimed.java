@@ -16,13 +16,13 @@ public class IndexerTimed implements IndexerNeo4j {
     }
 
     @Override
-    public void index(GraphServiceFactory graphService) throws StudyImporterException {
+    public void index() throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         String linkName = indexer.getClass().getSimpleName();
         LOG.info(linkName + " started...");
         try {
-            indexer.index(graphService);
+            indexer.index();
         } finally {
             stopWatch.stop();
             LOG.info(linkName + " completed in [" + stopWatch.getTime() / 1000 + "]s");

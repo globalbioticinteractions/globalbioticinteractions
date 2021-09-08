@@ -57,7 +57,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
 
         donald.ate(mickey);
 
-        new IndexInteractions().index(new GraphServiceFactoryProxy(getGraphDb()));
+        new IndexInteractions(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j2(getGraphDb());
         StudyImpl study1 = new StudyImpl("some study", null, "come citation");
