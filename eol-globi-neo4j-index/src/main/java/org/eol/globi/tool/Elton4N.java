@@ -100,11 +100,26 @@ public class Elton4N {
 
         try {
             String datasetDir = getDatasetDir(cmdLine);
+            GraphServiceFactory graphServiceFactory = factoriesNeo4j.getGraphServiceFactory();
             new CmdIndexDatasets(
                     factoriesNeo4j.getNodeFactoryFactory(),
-                    factoriesNeo4j.getGraphServiceFactory(),
+                    graphServiceFactory,
                     datasetDir
             ).run();
+
+            new CmdInterpretTaxa(graphServiceFactory,
+                    "taxonCache.tsv.gz",
+                    "taxonMap.tsv.gz")
+                    .run();
+
+            new CmdIndexTaxonStrings(graphServiceFactory)
+                    .run();
+
+            new CmdGenerateReport(graphServiceFactory.getGraphService());
+
+            new CmdExport(graphServiceFactory, "./target/export/");
+
+
         } finally {
             HttpUtil.shutdown();
         }
