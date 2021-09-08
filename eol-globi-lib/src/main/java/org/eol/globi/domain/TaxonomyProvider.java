@@ -6,7 +6,7 @@ import java.util.List;
 public enum TaxonomyProvider {
     ITIS("ITIS:", "https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value="),
     NBN("NBN:", "https://data.nbn.org.uk/Taxa/"),
-    WORMS("WORMS:", "https://www.marinespecies.org/aphia.php?p=taxdetails&id="),
+    WORMS("WORMS:", "https://www.marinespecies.org/aphia.php?p=taxdetails&id=", "urn:lsid:marinespecies.org:taxname:"),
     NCBI("NCBI:", "NCBITaxon:", "NCBI:txid", "http://purl.obolibrary.org/obo/NCBITaxon_"),
     EOL("EOL:", "http://eol.org/pages/", "https://eol.org/pages/"),
     EOL_V2("EOL_V2:"),

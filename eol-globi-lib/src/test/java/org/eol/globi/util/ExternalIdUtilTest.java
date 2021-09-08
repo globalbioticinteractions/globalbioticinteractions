@@ -133,6 +133,11 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void wormsTaxonId() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("urn:lsid:marinespecies.org:taxname:123"), is(TaxonomyProvider.WORMS));
+    }
+
+    @Test
     public void mammalSpeciesOfTheWorldId() {
         String url = "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=12100795";
         assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.MSW));
