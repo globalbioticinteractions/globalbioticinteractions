@@ -76,7 +76,7 @@ public class LinkerDOITest extends GraphDBTestCase {
             getNodeFactory().getOrCreateStudy(new StudyImpl("id" + i, null, "foo bar this is not a citation" + i));
 
         }
-        new LinkerDOI(new DOIResolver() {
+        new LinkerDOI(new GraphServiceFactoryProxy(getGraphDb()), new DOIResolver() {
             @Override
             public Map<String, DOI> resolveDoiFor(Collection<String> references) throws IOException {
                 Map<String, DOI> resolved = new HashMap<>();
@@ -90,7 +90,7 @@ public class LinkerDOITest extends GraphDBTestCase {
             public DOI resolveDoiFor(String reference) throws IOException {
                 return new DOI("123", "456");
             }
-        }, new GraphServiceFactoryProxy(getGraphDb())).index();
+        }).index();
         StudyNode studyResolved = getNodeFactory().getOrCreateStudy(study);
         assertThat(studyResolved.getDOI(), is(new DOI("123", "456")));
     }

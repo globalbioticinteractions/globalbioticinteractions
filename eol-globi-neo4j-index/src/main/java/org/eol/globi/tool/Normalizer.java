@@ -13,17 +13,10 @@ import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
-import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.service.DOIResolverCache;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
-import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.HttpUtil;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class Normalizer {
     private static final Logger LOG = LoggerFactory.getLogger(Normalizer.class);
@@ -81,7 +74,7 @@ public class Normalizer {
         GraphServiceFactoryImpl graphServiceFactory = new GraphServiceFactoryImpl("./");
 
         try {
-            importDatasets(cmdLine, graphServiceFactory);
+            indexDatasets(cmdLine, graphServiceFactory);
             processDatasets(cmdLine, graphServiceFactory);
         } finally {
             HttpUtil.shutdown();
@@ -90,38 +83,35 @@ public class Normalizer {
     }
 
     private void processDatasets(CommandLine cmdLine, GraphServiceFactoryImpl graphServiceFactory) throws StudyImporterException {
-        Factories factoriesNeo4j2 = new FactoriesBase(graphServiceFactory);
-        GraphServiceFactory graphServiceFactory1 = factoriesNeo4j2.getGraphServiceFactory();
-        resolveAndLinkTaxa(cmdLine, graphServiceFactory1);
-        generateReports(cmdLine, graphServiceFactory1);
-        exportData(cmdLine, graphServiceFactory1.getGraphService());
+        GraphServiceFactory factory = new FactoriesBase(graphServiceFactory)
+                .getGraphServiceFactory();
+
+        resolveAndLinkTaxa(cmdLine, factory);
+
+        generateReports(cmdLine, factory);
+
+        exportData(cmdLine, factory);
     }
 
-    private void importDatasets(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) throws StudyImporterException {
-        Factories importerFactory = new FactoriesForDatasetImport(graphServiceFactory);
-        GraphServiceFactory graphDbFactory = importerFactory.getGraphServiceFactory();
-        importDatasets(cmdLine, graphDbFactory, importerFactory.getNodeFactoryFactory());
-    }
-
-    private void exportData(CommandLine cmdLine, GraphDatabaseService graphService) throws StudyImporterException {
+    private void exportData(CommandLine cmdLine, GraphServiceFactory factory) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_EXPORT)) {
-            exportData(graphService, "./");
-        } else {
-            LOG.info("skipping data export...");
+            new CmdExport(factory).run();
         }
     }
 
-    private void generateReports(CommandLine cmdLine, GraphServiceFactory graphService) {
+    private void generateReports(CommandLine cmdLine, GraphServiceFactory graphServiceFactory1) {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_REPORT)) {
-            new CmdGenerateReport(graphService.getGraphService()).run();
+            new CmdGenerateReport(graphServiceFactory1.getGraphService()).run();
         } else {
             LOG.info("skipping report generation ...");
         }
     }
 
-    private void importDatasets(CommandLine cmdLine, GraphServiceFactory factory, NodeFactoryFactory nodeFactoryFactory) throws StudyImporterException {
+    private void indexDatasets(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) throws StudyImporterException {
+        Factories importerFactory = new FactoriesForDatasetImport(graphServiceFactory);
+        GraphServiceFactory graphDbFactory = importerFactory.getGraphServiceFactory();
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            new CmdIndexDatasets(cmdLine, nodeFactoryFactory, factory).run();
+            new CmdIndexDatasets(cmdLine, importerFactory.getNodeFactoryFactory(), graphDbFactory).run();
         } else {
             LOG.info("skipping data import...");
         }
@@ -130,7 +120,7 @@ public class Normalizer {
     private void resolveAndLinkTaxa(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) throws StudyImporterException {
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE_CITATIONS)) {
             LOG.info("resolving citations to DOIs ...");
-            new LinkerDOI(new DOIResolverCache(), graphServiceFactory).index();
+            new LinkerDOI(graphServiceFactory, new DOIResolverCache()).index();
         } else {
             LOG.info("skipping citation resolving ...");
         }
@@ -142,68 +132,15 @@ public class Normalizer {
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_RESOLVE)) {
-            cmdIndexTaxa(graphServiceFactory);
+            new CmdIndexTaxa(graphServiceFactory).run();
         } else {
             LOG.info("skipping taxa resolving ...");
         }
 
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_LINK)) {
-            CmdIndexTaxa(graphServiceFactory);
+            new CmdIndexTaxonStrings(graphServiceFactory).run();
         } else {
             LOG.info("skipping linking ...");
-        }
-    }
-
-    private void CmdIndexTaxa(GraphServiceFactory graphServiceFactory) throws StudyImporterException {
-        new CmdBuildTaxonSearch(graphServiceFactory);
-    }
-
-    private void cmdIndexTaxa(GraphServiceFactory graphServiceFactory) throws StudyImporterException {
-        new CmdIndexTaxa(graphServiceFactory).run();
-    }
-
-    void exportData(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        new GraphExporterImpl()
-                .export(graphService, baseDir);
-    }
-
-    private static class CmdInterpretTaxa implements Cmd {
-
-        private final GraphServiceFactory graphServiceFactory;
-
-        public CmdInterpretTaxa(GraphServiceFactory graphServiceFactory) {
-            this.graphServiceFactory = graphServiceFactory;
-        }
-
-        @Override
-        public void run() throws StudyImporterException {
-            final TaxonCacheService taxonCacheService = new TaxonCacheService(
-                    "/taxa/taxonCache.tsv.gz",
-                    "/taxa/taxonMap.tsv.gz");
-            IndexerNeo4j taxonIndexer = new IndexerTaxa(taxonCacheService, graphServiceFactory);
-            taxonIndexer.index();
-        }
-    }
-
-    private static class CmdIndexTaxa implements Cmd {
-
-        private final GraphServiceFactory graphServiceFactory;
-
-        public CmdIndexTaxa(GraphServiceFactory graphServiceFactory) {
-            this.graphServiceFactory = graphServiceFactory;
-        }
-
-        @Override
-        public void run() throws StudyImporterException {
-            final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(graphServiceFactory.getGraphService());
-            final IndexerNeo4j nameResolver = new NameResolver(graphServiceFactory, taxonIndex);
-            final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(graphServiceFactory);
-
-            List<IndexerNeo4j> indexers = Arrays.asList(nameResolver, taxonInteractionIndexer);
-            for (IndexerNeo4j indexer : indexers) {
-                indexer.index();
-            }
-
         }
     }
 

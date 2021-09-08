@@ -6,11 +6,11 @@ import org.eol.globi.db.GraphServiceFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CmdBuildTaxonSearch implements Cmd {
+public class CmdIndexTaxonStrings implements Cmd {
 
     private final GraphServiceFactory graphServiceFactory;
 
-    public CmdBuildTaxonSearch(GraphServiceFactory graphServiceFactory) {
+    public CmdIndexTaxonStrings(GraphServiceFactory graphServiceFactory) {
         this.graphServiceFactory = graphServiceFactory;
     }
 

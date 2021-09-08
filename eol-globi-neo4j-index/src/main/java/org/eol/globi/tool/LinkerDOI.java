@@ -8,7 +8,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DOIResolver;
-import org.eol.globi.service.DOIResolverCache;
 import org.eol.globi.service.DOIResolverImpl;
 import org.eol.globi.util.NodeProcessorImpl;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -30,11 +29,11 @@ public class LinkerDOI implements IndexerNeo4j {
     private final GraphServiceFactory factory;
 
     public LinkerDOI(GraphServiceFactory graphServiceFactory) {
-        this(new DOIResolverImpl(), graphServiceFactory);
+        this(graphServiceFactory, new DOIResolverImpl());
     }
 
 
-    public LinkerDOI(DOIResolver doiResolverCache, GraphServiceFactory graphServiceFactory) {
+    public LinkerDOI(GraphServiceFactory graphServiceFactory, DOIResolver doiResolverCache) {
         this.doiResolver = doiResolverCache;
         this.factory = graphServiceFactory;
     }

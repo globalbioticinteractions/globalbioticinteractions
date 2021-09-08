@@ -15,6 +15,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.export.GraphExporterImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -164,7 +165,8 @@ public class NormalizerTest extends GraphDBTestCase {
         String baseDir = "./target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));
         try (Transaction tx = getGraphDb().beginTx()) {
-            dataNormalizationTool.exportData(getGraphDb(), baseDir);
+            new GraphExporterImpl()
+                    .export(getGraphDb(), baseDir);
             tx.success();
         }
     }
