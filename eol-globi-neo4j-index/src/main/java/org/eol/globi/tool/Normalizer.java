@@ -111,7 +111,11 @@ public class Normalizer {
         Factories importerFactory = new FactoriesForDatasetImport(graphServiceFactory);
         GraphServiceFactory graphDbFactory = importerFactory.getGraphServiceFactory();
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            new CmdIndexDatasets(cmdLine, importerFactory.getNodeFactoryFactory(), graphDbFactory).run();
+            new CmdIndexDatasets(
+                    importerFactory.getNodeFactoryFactory(),
+                    graphDbFactory,
+                    Elton4N.getDatasetDir(cmdLine)
+            ).run();
         } else {
             LOG.info("skipping data import...");
         }

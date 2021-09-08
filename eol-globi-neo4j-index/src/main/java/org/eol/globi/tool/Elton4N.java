@@ -97,14 +97,25 @@ public class Elton4N {
             }
         };
 
-        GraphServiceFactory graphServiceFactory = factoriesNeo4j.getGraphServiceFactory();
+
         try {
-            new CmdIndexDatasets(cmdLine, factoriesNeo4j.getNodeFactoryFactory(), graphServiceFactory)
-                    .run();
+            String datasetDir = getDatasetDir(cmdLine);
+            new CmdIndexDatasets(
+                    factoriesNeo4j.getNodeFactoryFactory(),
+                    factoriesNeo4j.getGraphServiceFactory(),
+                    datasetDir
+            ).run();
         } finally {
             HttpUtil.shutdown();
         }
     }
+
+    public static String getDatasetDir(CommandLine cmdLine) {
+        return cmdLine == null
+                ? "target/datasets"
+                : cmdLine.getOptionValue(CmdOptionConstants.OPTION_DATASET_DIR, "target/datasets");
+    }
+
 
 
 }

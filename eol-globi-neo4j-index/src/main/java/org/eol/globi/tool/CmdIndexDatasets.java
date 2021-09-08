@@ -8,23 +8,22 @@ import org.globalbioticinteractions.dataset.DatasetRegistry;
 public class CmdIndexDatasets implements Cmd {
 
 
-    private final CommandLine cmdLine;
     private final NodeFactoryFactory nodeFactoryFactory;
     private final GraphServiceFactory graphServiceFactory;
+    private final String datasetDir;
 
-    public CmdIndexDatasets(CommandLine cmdLine, NodeFactoryFactory nodeFactoryFactory, GraphServiceFactory factory) {
-        this.cmdLine = cmdLine;
+    public CmdIndexDatasets(NodeFactoryFactory nodeFactoryFactory,
+                            GraphServiceFactory factory,
+                            String datasetDir) {
         this.nodeFactoryFactory = nodeFactoryFactory;
         this.graphServiceFactory = factory;
+        this.datasetDir = datasetDir;
     }
 
     @Override
     public void run() throws StudyImporterException {
-        String cacheDir = cmdLine == null
-                ? "target/datasets"
-                : cmdLine.getOptionValue(CmdOptionConstants.OPTION_DATASET_DIR, "target/datasets");
-
-        DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(cacheDir);
+        DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(datasetDir);
         new IndexerDataset(registry, nodeFactoryFactory, graphServiceFactory).index();
     }
+
 }
