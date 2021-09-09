@@ -1,21 +1,28 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPOutputStream;
 
 public class GraphExporterImpl implements GraphExporter {
@@ -45,12 +52,11 @@ public class GraphExporterImpl implements GraphExporter {
 
         LOG.info("site maps generated... ");
 
-        List<StudyNode> studies = NodeUtil.findAllStudies(graphService);
         LOG.info("ncbi linkout files generating... ");
-        exportNCBILinkOut(graphService, baseDir, studies);
+        exportNCBILinkOut(graphService, baseDir);
         LOG.info("ncbi linkout files generated. ");
 
-        exportNames(baseDir, studies);
+        exportNames(graphService, baseDir);
         // export to taxa for now, to avoid additional assemblies
         new ExportFlatInteractions(new ExportUtil.TsvValueJoiner(), "interactions.tsv.gz").export(graphService, "tsv");
 
@@ -63,6 +69,7 @@ public class GraphExporterImpl implements GraphExporter {
 
         new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "interactions.csv.gz")
                 .export(graphService, "csv");
+
         new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "refuted-interactions.csv.gz")
                 .setArgumentType(RelTypes.REFUTES)
                 .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
@@ -71,12 +78,12 @@ public class GraphExporterImpl implements GraphExporter {
 
         new ExportCitations(new ExportUtil.CsvValueJoiner(), "citations.csv.gz").export(graphService, "csv");
 
-        exportDataOntology(studies, baseDir);
-        exportDarwinCoreAggregatedByStudy(baseDir, studies);
-        exportDarwinCoreAll(baseDir, studies);
+        exportDataOntology(graphService, baseDir);
+        exportDarwinCoreAggregatedByStudy(graphService, baseDir);
+        exportDarwinCoreAll(graphService, baseDir);
     }
 
-    public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir, List<StudyNode> studies) throws StudyImporterException {
+    public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         final String ncbiDir = baseDir + "ncbi-link-out/";
         mkdir(ncbiDir);
         new ExportNCBIIdentityFile().export(graphService, ncbiDir);
@@ -89,10 +96,10 @@ public class GraphExporterImpl implements GraphExporter {
         });
     }
 
-    public void exportNames(String baseDir, List<StudyNode> studies) throws StudyImporterException {
+    public void exportNames(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         mkdir(baseDir, "taxa");
-        exportNames(studies, baseDir, new ExportTaxonMap(), "taxa/taxonMap.tsv.gz");
-        exportNames(studies, baseDir, new ExportTaxonCache(), "taxa/taxonCache.tsv.gz");
+        exportNames(graphService, baseDir, new ExportTaxonMap(), "taxa/taxonMap.tsv.gz");
+        exportNames(graphService, baseDir, new ExportTaxonCache(), "taxa/taxonCache.tsv.gz");
         //exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.tsv");
     }
 
@@ -108,22 +115,31 @@ public class GraphExporterImpl implements GraphExporter {
         }
     }
 
-    private void exportNames(List<StudyNode> studies, String baseDir, StudyExporter exporter, String filename) throws StudyImporterException {
+    private void exportNames(GraphDatabaseService graphService, String baseDir, StudyExporter exporter, String filename) throws StudyImporterException {
         try {
             String filePath = baseDir + filename;
             OutputStreamWriter writer = openStream(filePath);
-            for (StudyNode study : studies) {
-                boolean includeHeader = studies.indexOf(study) == 0;
-                exporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer), includeHeader);
-            }
+            NodeUtil.findStudies(graphService, new NodeListener() {
+                final AtomicBoolean isFirst = new AtomicBoolean(true);
+                @Override
+                public void on(Node node) {
+                    boolean includeHeader = isFirst.getAndSet(false);
+                    try {
+                        exporter.exportStudy(new StudyNode(node), ExportUtil.AppenderWriter.of(writer), includeHeader);
+                    } catch (IOException e) {
+                        throw new IllegalStateException("failed to export names to [" + filePath + "]");
+                    }
+
+                }
+            });
             closeStream(filePath, writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
         }
     }
 
-    private void exportDarwinCoreAggregatedByStudy(String baseDir, List<StudyNode> studies) throws StudyImporterException {
-        exportDarwinCoreArchive(studies,
+    private void exportDarwinCoreAggregatedByStudy(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
+        exportDarwinCoreArchive(graphService,
                 baseDir + "aggregatedByStudy/", new HashMap<String, DarwinCoreExporter>() {
                     {
                         put("association.tsv", new ExporterAssociationAggregates());
@@ -135,8 +151,8 @@ public class GraphExporterImpl implements GraphExporter {
         );
     }
 
-    private void exportDarwinCoreAll(String baseDir, List<StudyNode> studies) throws StudyImporterException {
-        exportDarwinCoreArchive(studies, baseDir + "all/", new HashMap<String, DarwinCoreExporter>() {
+    private void exportDarwinCoreAll(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
+        exportDarwinCoreArchive(graphService, baseDir + "all/", new HashMap<String, DarwinCoreExporter>() {
             {
                 put("association.tsv", new ExporterAssociations());
                 put("occurrence.tsv", new ExporterOccurrences());
@@ -147,35 +163,37 @@ public class GraphExporterImpl implements GraphExporter {
         });
     }
 
-    private void exportDataOntology(List<StudyNode> studies, String baseDir) throws StudyImporterException {
+    private void exportDataOntology(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         try {
             ExporterRDF studyExporter = new ExporterRDF();
             String exportPath = baseDir + "interactions.nq.gz";
             OutputStreamWriter writer = openStream(exportPath);
-            int total = studies.size();
-            int count = 1;
-            for (StudyNode study : studies) {
-                studyExporter.exportStudy(study, ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()), true);
-                    if (count % 10000 == 0) {
-                    LOG.info("added triples for [" + count + "] of [" + total + "] studies...");
+            String msg = "writing nquads archive to [" + exportPath + "]" ;
+            LOG.info(msg + "...");
+            NodeUtil.findStudies(graphService, node -> {
+                try {
+                    studyExporter.exportStudy(
+                            new StudyNode(node),
+                            ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()),
+                            true);
+                } catch (IOException e) {
+                    throw new IllegalStateException("failed to export interactions to [" + exportPath + "]", e);
                 }
-                count++;
-            }
-            LOG.info("adding triples for [" + total + "] of [" + total + "] studies.");
 
-            LOG.info("writing nquads archive...");
+            });
+            LOG.info(msg + " done.");
             closeStream(exportPath, writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export as owl", e);
         }
     }
 
-    private void exportDarwinCoreArchive(List<StudyNode> studies, String pathPrefix, Map<String, DarwinCoreExporter> exporters) throws StudyImporterException {
+    private void exportDarwinCoreArchive(GraphDatabaseService graphDatabaseService, String pathPrefix, Map<String, DarwinCoreExporter> exporters) throws StudyImporterException {
         try {
             FileUtils.forceMkdir(new File(pathPrefix));
             FileWriter darwinCoreMeta = writeMetaHeader(pathPrefix);
             for (Map.Entry<String, DarwinCoreExporter> exporter : exporters.entrySet()) {
-                export(studies, pathPrefix, exporter.getKey(), exporter.getValue(), darwinCoreMeta);
+                export(graphDatabaseService, pathPrefix, exporter.getKey(), exporter.getValue(), darwinCoreMeta);
             }
             writeMetaFooter(darwinCoreMeta);
         } catch (IOException e) {
@@ -196,13 +214,26 @@ public class GraphExporterImpl implements GraphExporter {
         return darwinCoreMeta;
     }
 
-    private void export(List<StudyNode> importedStudies, String exportPath, String filename, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
-        OutputStreamWriter writer = openStream(exportPath + filename);
-        for (StudyNode importedStudy : importedStudies) {
-            boolean includeHeader = importedStudies.indexOf(importedStudy) == 0;
-            studyExporter.exportStudy(importedStudy, ExportUtil.AppenderWriter.of(writer), includeHeader);
-        }
-        closeStream(exportPath + filename, writer);
+    private void export(GraphDatabaseService graphService, String exportPath, String filename, DarwinCoreExporter studyExporter, FileWriter darwinCoreMeta) throws IOException {
+        String exportPath1 = exportPath + filename;
+        OutputStreamWriter writer = openStream(exportPath1);
+
+        NodeUtil.findStudies(graphService, new NodeListener() {
+            final AtomicBoolean isFirst = new AtomicBoolean(true);
+
+            @Override
+            public void on(Node node) {
+                try {
+                    studyExporter.exportStudy(new StudyNode(node),
+                            ExportUtil.AppenderWriter.of(writer), isFirst.getAndSet(false));
+                } catch (IOException e) {
+                    throw new IllegalStateException("failed to export to [" + exportPath1 + "]", e);
+                }
+
+            }
+        });
+        closeStream(exportPath1, writer);
+
         LOG.info("darwin core meta file writing... ");
         studyExporter.exportDarwinCoreMetaTable(darwinCoreMeta, filename);
         LOG.info("darwin core meta file written. ");

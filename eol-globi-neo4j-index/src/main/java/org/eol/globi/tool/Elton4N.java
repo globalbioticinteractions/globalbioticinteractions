@@ -18,7 +18,10 @@ import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Elton4N {
@@ -52,6 +55,8 @@ public class Elton4N {
         Options options = new Options();
         options.addOption(CmdOptionConstants.OPTION_DATASET_DIR, true, "specifies location of dataset cache");
         options.addOption(CmdOptionConstants.OPTION_NEO4J_VERSION, true, "specifies version of Neo4j to use");
+        options.addOption(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, true, "specifies location of taxon cache to use");
+        options.addOption(CmdOptionConstants.OPTION_TAXON_MAP_PATH, true, "specifies location of taxon map to use");
 
         Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
         options.addOption(helpOpt);
@@ -102,28 +107,26 @@ public class Elton4N {
         try {
             String datasetDir = getDatasetDir(cmdLine);
             GraphServiceFactory graphServiceFactory = factoriesNeo4j.getGraphServiceFactory();
-            new CmdIndexDatasets(
-                    factoriesNeo4j.getNodeFactoryFactory(),
-                    graphServiceFactory,
-                    datasetDir
-            ).run();
 
-            new CmdInterpretTaxa(graphServiceFactory,
-                    cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, "taxonCache.tsv.gz"),
-                    cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_MAP_PATH, "taxonMap.tsv.gz")
-            )
-                    .run();
+            List<Cmd> steps = Arrays.asList(
+                    new CmdIndexDatasets(
+                            factoriesNeo4j.getNodeFactoryFactory(),
+                            graphServiceFactory,
+                            datasetDir
+                    ),
+                    new CmdInterpretTaxa(graphServiceFactory,
+                            cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, "taxonCache.tsv.gz"),
+                            cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_MAP_PATH, "taxonMap.tsv.gz")
+                    ),
+                    new CmdIndexTaxa(graphServiceFactory),
+                    new CmdIndexTaxonStrings(graphServiceFactory),
+                    new CmdGenerateReport(graphServiceFactory.getGraphService()),
+                    new CmdExport(graphServiceFactory, "./target/export/")
+            );
 
-            new CmdIndexTaxa(graphServiceFactory)
-                    .run();
-
-            new CmdIndexTaxonStrings(graphServiceFactory)
-                    .run();
-
-            new CmdGenerateReport(graphServiceFactory.getGraphService());
-
-            new CmdExport(graphServiceFactory, "./target/export/");
-
+            for (Cmd step : steps) {
+                step.run();
+            }
 
         } finally {
             HttpUtil.shutdown();

@@ -28,7 +28,7 @@ import java.util.UUID;
 public class CmdGenerateReport implements Cmd {
     private static final Logger LOG = LoggerFactory.getLogger(CmdGenerateReport.class);
 
-    public static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
+    private static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 
     private final GraphDatabaseService graphService;
     private final CacheService cacheService;
@@ -51,20 +51,27 @@ public class CmdGenerateReport implements Cmd {
     }
 
     public void run(Logger log) {
+
+        TransactionPerBatch transactionPerBatch = new TransactionPerBatch(graphService);
+        transactionPerBatch.onStartBatch();
         log.info("report for collection generating ...");
         generateReportForCollection();
         log.info("report for collection done.");
 
+        transactionPerBatch.onStartBatch();
         log.info("report for sources generating ...");
         generateReportForSourceIndividuals();
         log.info("report for sources done.");
 
+        transactionPerBatch.onStartBatch();
         log.info("report for source organizations generating ...");
         generateReportForSourceOrganizations();
         log.info("report for source organizations done.");
+
+        transactionPerBatch.onFinishBatch();
     }
 
-    public void generateReportForSourceIndividuals() {
+    void generateReportForSourceIndividuals() {
         generateReportForStudySources(new NamespaceHandler() {
             @Override
             public String parse(String namespace) {
@@ -83,7 +90,7 @@ public class CmdGenerateReport implements Cmd {
         });
     }
 
-    public void generateReportForSourceOrganizations() {
+    void generateReportForSourceOrganizations() {
         generateReportForStudySources(new NamespaceHandler() {
             @Override
             public String parse(String namespace) {
@@ -203,12 +210,12 @@ public class CmdGenerateReport implements Cmd {
     }
 
     private void generateCollectionReport(DB reportCache) {
-        final Set<Long> distinctTaxonIds = reportCache.createHashSet("distinctTaxonIds").make();
-        final Set<Long> distinctTaxonIdsNoMatch = reportCache.createHashSet("distinctTaxonIdsNoMatch").make();
+        final Set<Long> distinctTaxonIds = makeOrRemake(reportCache, "distinctTaxonIds");
+        final Set<Long> distinctTaxonIdsNoMatch = makeOrRemake(reportCache,"distinctTaxonIdsNoMatch");
         final Counter counter = new Counter();
         final Counter studyCounter = new Counter();
-        final Set<String> distinctSources = reportCache.createHashSet("distinctSources").make();
-        final Set<String> distinctDatasets = reportCache.createHashSet("distinctDatasets").make();
+        final Set<String> distinctSources = makeOrRemakeString(reportCache,"distinctSources");
+        final Set<String> distinctDatasets = makeOrRemakeString(reportCache,"distinctDatasets");
 
         NodeUtil.findStudies(getGraphDb(), studyNode -> {
             countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, studyNode);
@@ -231,6 +238,20 @@ public class CmdGenerateReport implements Cmd {
         node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
         getGraphDb().index().forNodes("reports")
                 .add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+    }
+
+    private Set<Long> makeOrRemake(DB reportCache, String setName) {
+        if (reportCache.exists(setName)) {
+            reportCache.delete(setName);
+        }
+        return reportCache.createHashSet(setName).make();
+    }
+
+    private Set<String> makeOrRemakeString(DB reportCache, String setName) {
+        if (reportCache.exists(setName)) {
+            reportCache.delete(setName);
+        }
+        return reportCache.createHashSet(setName).make();
     }
 
 

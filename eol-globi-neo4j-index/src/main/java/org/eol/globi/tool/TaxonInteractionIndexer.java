@@ -18,6 +18,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TaxonInteractionIndexer implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(TaxonInteractionIndexer.class);
@@ -55,8 +57,12 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
         StopWatch watchForEntireRun = new StopWatch();
         watchForEntireRun.start();
 
-        long count = 0;
+        TransactionPerBatch transactionPerBatch = new TransactionPerBatch(graphService);
+        AtomicLong count = new AtomicLong(0);
         for (Fun.Tuple3<Long, String, Long> uniqueTaxonInteraction : taxonInteractions.keySet()) {
+            if (count.getAndIncrement() % 1000 == 0) {
+                transactionPerBatch.onStartBatch();
+            }
             final Node sourceTaxon = graphService.getNodeById(uniqueTaxonInteraction.a);
             final Node targetTaxon = graphService.getNodeById(uniqueTaxonInteraction.c);
             if (sourceTaxon != null && targetTaxon != null) {
@@ -65,11 +71,12 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
                 createInteraction(sourceTaxon, targetTaxon, relType, false, interactionCount);
                 createInteraction(targetTaxon, sourceTaxon, InteractType.inverseOf(relType), true, interactionCount);
             }
-            count++;
         }
 
+        transactionPerBatch.onFinishBatch();
+
         watchForEntireRun.stop();
-        LOG.info("created [" + count + "] taxon interactions in " + getProgressMsg(count, watchForEntireRun.getTime()));
+        LOG.info("created [" + count + "] taxon interactions in " + getProgressMsg(count.get(), watchForEntireRun.getTime()));
     }
 
     private void createInteraction(Node sourceTaxon, Node targetTaxon, InteractType relType, boolean inverted, Long interactionCount) {

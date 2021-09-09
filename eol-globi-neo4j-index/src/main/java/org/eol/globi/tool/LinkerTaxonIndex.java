@@ -37,7 +37,11 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
         initIndexes(graphDb);
 
         NodeUtil.processStudies(1000L, graphDb,
-                node -> onTaxonNode(getTaxonPathsIndex(graphDb), getFuzzySearchIndex(graphDb), node)
+                node -> onTaxonNode(
+                        getTaxonPathsIndex(graphDb),
+                        getFuzzySearchIndex(graphDb),
+                        node
+                )
                 , "*", "*", "taxons");
     }
 
@@ -49,11 +53,11 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
         }
     }
 
-    public TaxonFuzzySearchIndex getFuzzySearchIndex(GraphDatabaseService graphDb) {
+    private TaxonFuzzySearchIndex getFuzzySearchIndex(GraphDatabaseService graphDb) {
         return new TaxonFuzzySearchIndex(graphDb);
     }
 
-    public Index<Node> getTaxonPathsIndex(GraphDatabaseService graphDb) {
+    private Index<Node> getTaxonPathsIndex(GraphDatabaseService graphDb) {
         return graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 
