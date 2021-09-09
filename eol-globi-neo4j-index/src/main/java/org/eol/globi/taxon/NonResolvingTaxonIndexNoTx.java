@@ -20,13 +20,12 @@ import java.util.function.Predicate;
 
 public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
-    private final Index<Node> taxons;
+    private Index<Node> taxons = null;
 
     private static final String[] RANKS = new String[]{"kingdom", "phylum", "class", "order", "family", "genus", "species"};
 
     public NonResolvingTaxonIndexNoTx(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
-        this.taxons = NodeUtil.forNodes(graphDbService, "taxons");
     }
 
     @Override
@@ -76,6 +75,9 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
     }
 
     private Index<Node> getTaxonIndex() {
+        if (taxons == null) {
+            taxons = NodeUtil.forNodes(graphDbService, "taxons");
+        }
         return taxons;
     }
 
