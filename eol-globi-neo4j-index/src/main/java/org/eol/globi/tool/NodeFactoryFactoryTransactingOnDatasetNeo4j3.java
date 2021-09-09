@@ -8,12 +8,13 @@ import org.globalbioticinteractions.dataset.Dataset;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class NodeFactoryFactoryTransactingOnDataset3 implements NodeFactoryFactory {
+public class NodeFactoryFactoryTransactingOnDatasetNeo4j3 implements NodeFactoryFactory {
     private GraphServiceFactory graphServiceFactory;
 
-    public NodeFactoryFactoryTransactingOnDataset3(GraphServiceFactory graphServiceFactory) {
+    public NodeFactoryFactoryTransactingOnDatasetNeo4j3(GraphServiceFactory graphServiceFactory) {
         this.graphServiceFactory = graphServiceFactory;
     }
 
@@ -23,15 +24,31 @@ public class NodeFactoryFactoryTransactingOnDataset3 implements NodeFactoryFacto
         try (Transaction tx = graphService.beginTx()) {
             NodeFactory nodeFactory = new NodeFactoryNeo4j3(graphService) {
                 final AtomicReference<Transaction> tx = new AtomicReference<>();
+                final AtomicBoolean closing = new AtomicBoolean(false);
 
                 @Override
                 public Dataset getOrCreateDataset(Dataset dataset) {
-                    Transaction transaction = tx.getAndSet(graphServiceFactory.getGraphService().beginTx());
-                    if (transaction != null) {
-                        transaction.success();
-                        transaction.close();
+                    if (closing.get()) {
+                        throw new IllegalStateException("cannot create a dataset on closing node factory");
+                    } else {
+                        Transaction transaction = tx.get();
+                        if (transaction != null) {
+                            transaction.success();
+                            transaction.close();
+                        }
+                        tx.set(graphServiceFactory.getGraphService().beginTx());
                     }
                     return super.getOrCreateDataset(dataset);
+                }
+
+                @Override
+                public void close() {
+                    closing.set(true);
+                    Transaction lastTx = tx.getAndSet(null);
+                    if (lastTx != null) {
+                        lastTx.success();
+                        lastTx.close();
+                    }
                 }
 
             };

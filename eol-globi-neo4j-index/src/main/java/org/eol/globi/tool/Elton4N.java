@@ -83,6 +83,9 @@ public class Elton4N {
             final GraphServiceFactory factory =
                     new GraphServiceFactoryImpl("./");
 
+            final NodeFactoryFactory nodeFactoryFactory = StringUtils.equals("2", neo4jVersion)
+                    ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(factory)
+                        : new NodeFactoryFactoryTransactingOnDatasetNeo4j3(factory);
 
             @Override
             public GraphServiceFactory getGraphServiceFactory() {
@@ -91,9 +94,7 @@ public class Elton4N {
 
             @Override
             public NodeFactoryFactory getNodeFactoryFactory() {
-                return service -> StringUtils.equals("2", neo4jVersion)
-                        ? new NodeFactoryNeo4j2(factory.getGraphService())
-                        : new NodeFactoryNeo4j3(factory.getGraphService());
+                return nodeFactoryFactory;
             }
         };
 

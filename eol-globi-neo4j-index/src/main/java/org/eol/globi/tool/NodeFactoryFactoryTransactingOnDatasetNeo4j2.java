@@ -10,10 +10,10 @@ import org.neo4j.graphdb.Transaction;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class NodeFactoryFactoryTransactingOnDataset implements NodeFactoryFactory {
+public class NodeFactoryFactoryTransactingOnDatasetNeo4j2 implements NodeFactoryFactory {
     private GraphServiceFactory graphServiceFactory;
 
-    public NodeFactoryFactoryTransactingOnDataset(GraphServiceFactory graphServiceFactory) {
+    public NodeFactoryFactoryTransactingOnDatasetNeo4j2(GraphServiceFactory graphServiceFactory) {
         this.graphServiceFactory = graphServiceFactory;
     }
 
@@ -27,12 +27,15 @@ public class NodeFactoryFactoryTransactingOnDataset implements NodeFactoryFactor
 
                 @Override
                 public Dataset getOrCreateDataset(Dataset dataset) {
-                    if (!closing.get()) {
-                        Transaction transaction = tx.getAndSet(graphServiceFactory.getGraphService().beginTx());
+                    if (closing.get()) {
+                        throw new IllegalStateException("cannot create a dataset on closing node factory");
+                    } else {
+                        Transaction transaction = tx.get();
                         if (transaction != null) {
                             transaction.success();
                             transaction.close();
                         }
+                        tx.set(graphServiceFactory.getGraphService().beginTx());
                     }
                     return super.getOrCreateDataset(dataset);
                 }
@@ -46,8 +49,6 @@ public class NodeFactoryFactoryTransactingOnDataset implements NodeFactoryFactor
                         lastTx.close();
                     }
                 }
-
-
             };
             tx.success();
             return nodeFactory;

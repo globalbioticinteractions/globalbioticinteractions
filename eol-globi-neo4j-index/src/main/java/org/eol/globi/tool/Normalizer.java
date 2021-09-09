@@ -108,7 +108,7 @@ public class Normalizer {
     }
 
     private void indexDatasets(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) throws StudyImporterException {
-        Factories importerFactory = new FactoriesForDatasetImport(graphServiceFactory);
+        Factories importerFactory = new FactoriesForDatasetImportNeo4jV2(graphServiceFactory);
         GraphServiceFactory graphDbFactory = importerFactory.getGraphServiceFactory();
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
             new CmdIndexDatasets(
@@ -148,14 +148,26 @@ public class Normalizer {
         }
     }
 
-    public class FactoriesForDatasetImport extends FactoriesBase {
-        FactoriesForDatasetImport(GraphServiceFactory graphServiceFactory) {
+    public class FactoriesForDatasetImportNeo4jV2 extends FactoriesBase {
+        FactoriesForDatasetImportNeo4jV2(GraphServiceFactory graphServiceFactory) {
             super(graphServiceFactory);
         }
 
         @Override
         public NodeFactoryFactory getNodeFactoryFactory() {
-            return new NodeFactoryFactoryTransactingOnDataset(this.getGraphServiceFactory());
+            return new NodeFactoryFactoryTransactingOnDatasetNeo4j2(this.getGraphServiceFactory());
+        }
+
+    }
+
+    public class FactoriesForDatasetImportNeo4jV3 extends FactoriesBase {
+        FactoriesForDatasetImportNeo4jV3(GraphServiceFactory graphServiceFactory) {
+            super(graphServiceFactory);
+        }
+
+        @Override
+        public NodeFactoryFactory getNodeFactoryFactory() {
+            return new NodeFactoryFactoryTransactingOnDatasetNeo4j3(this.getGraphServiceFactory());
         }
 
     }

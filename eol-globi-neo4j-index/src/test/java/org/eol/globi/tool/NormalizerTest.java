@@ -136,12 +136,12 @@ public class NormalizerTest extends GraphDBTestCase {
     @Test
     public void doSingleImportExportV2() throws StudyImporterException, URISyntaxException {
         createNeo4j2(getGraphDb());
-        doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset(getGraphFactory()));
+        doSingleImportExport(new NodeFactoryFactoryTransactingOnDatasetNeo4j2(getGraphFactory()));
     }
 
     @Test
     public void doSingleImportExportV3() throws StudyImporterException, URISyntaxException {
-        doSingleImportExport(new NodeFactoryFactoryTransactingOnDataset3(getGraphFactory()));
+        doSingleImportExport(new NodeFactoryFactoryTransactingOnDatasetNeo4j3(getGraphFactory()));
     }
 
     public void doSingleImportExport(NodeFactoryFactory nodeFactoryFactory) throws URISyntaxException, StudyImporterException {
