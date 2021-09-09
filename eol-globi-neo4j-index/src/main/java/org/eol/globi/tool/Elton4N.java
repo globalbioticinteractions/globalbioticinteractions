@@ -85,7 +85,7 @@ public class Elton4N {
 
             final NodeFactoryFactory nodeFactoryFactory = StringUtils.equals("2", neo4jVersion)
                     ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(factory)
-                        : new NodeFactoryFactoryTransactingOnDatasetNeo4j3(factory);
+                    : new NodeFactoryFactoryTransactingOnDatasetNeo4j3(factory);
 
             @Override
             public GraphServiceFactory getGraphServiceFactory() {
@@ -109,8 +109,12 @@ public class Elton4N {
             ).run();
 
             new CmdInterpretTaxa(graphServiceFactory,
-                    "taxonCache.tsv.gz",
-                    "taxonMap.tsv.gz")
+                    cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, "taxonCache.tsv.gz"),
+                    cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_MAP_PATH, "taxonMap.tsv.gz")
+            )
+                    .run();
+
+            new CmdIndexTaxa(graphServiceFactory)
                     .run();
 
             new CmdIndexTaxonStrings(graphServiceFactory)
@@ -131,7 +135,6 @@ public class Elton4N {
                 ? "target/datasets"
                 : cmdLine.getOptionValue(CmdOptionConstants.OPTION_DATASET_DIR, "target/datasets");
     }
-
 
 
 }

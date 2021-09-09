@@ -71,7 +71,10 @@ public class NodeUtil {
 
     public static void findDatasetsByQuery(GraphDatabaseService graphService, DatasetNodeListener listener, String queryKey, String queryValue) {
         new NodeProcessorImpl(graphService, 1000L, queryKey, queryValue, "datasets")
-                .process(node -> listener.on(new DatasetNode(node)));
+                .process(
+                        node -> listener.on(new DatasetNode(node)),
+                        new TransactionPerBatch(graphService)
+                );
     }
 
     public static RelationshipType asNeo4j(RelType type) {

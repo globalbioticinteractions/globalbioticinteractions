@@ -59,7 +59,8 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     public TaxonCacheService(final String termResource, final String taxonMapResource) {
-        this(TermResources.defaultTaxonCacheResource(termResource), TermResources.defaultTaxonMapResource(taxonMapResource));
+        this(TermResources.defaultTaxonCacheResource(termResource),
+                TermResources.defaultTaxonMapResource(taxonMapResource));
     }
 
     @Override
@@ -145,13 +146,13 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     }
 
     private void initTaxonIdMap() throws IOException {
-            Path luceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene");
-            if (!luceneDir.toFile().exists()) {
-                buildIndex(luceneDir);
-            }
-            this.taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir)) {{
-                setMaxHits(getMaxTaxonLinks());
-            }};
+        Path luceneDir = Paths.get(getCacheDir().getAbsolutePath(), "lucene");
+        if (!luceneDir.toFile().exists()) {
+            buildIndex(luceneDir);
+        }
+        this.taxonLookupService = new TaxonLookupServiceImpl(new SimpleFSDirectory(luceneDir)) {{
+            setMaxHits(getMaxTaxonLinks());
+        }};
 
     }
 

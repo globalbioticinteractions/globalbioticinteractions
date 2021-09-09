@@ -52,9 +52,10 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void ensureThatEnrichedPropertiesAreIndexed() throws NodeFactoryException {
-        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
+        assertThat(getGraphDb().index().existsForNodes("taxons"), is(false));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
         assertEnrichedPropertiesSet(taxonService.getOrCreateTaxon(new TaxonImpl("some name")), "");
+        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertEnrichedPropertiesSet(taxonService.findTaxonByName("some name"), "");
     }
 
@@ -94,10 +95,12 @@ public class ResolvingTaxonIndexTest extends GraphDBTestCase {
         );
 
 
-        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
+        assertThat(getGraphDb().index().existsForNodes("taxons"), is(false));
         assertThat(getGraphDb().index().existsForNodes("thisDoesnoTExist"), is(false));
 
         TaxonNode indexedTaxonNode = taxonService.getOrCreateTaxon(new TaxonImpl("some name1"));
+
+        assertThat(getGraphDb().index().existsForNodes("taxons"), is(true));
         assertEnrichedPropertiesSet(indexedTaxonNode, "1");
         TaxonNode someFoundTaxonNode = taxonService.findTaxonByName("some name1");
         assertThat(someFoundTaxonNode.getNodeID(), is(indexedTaxonNode.getNodeID()));

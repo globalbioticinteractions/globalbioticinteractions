@@ -88,7 +88,8 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
                 "name",
                 "*",
                 "taxons")
-                .process(taxonNode -> onTaxonNode(taxonInteractions, taxonNode));
+                .process(taxonNode -> onTaxonNode(taxonInteractions, taxonNode)
+                , new TransactionPerBatch(graphService));
 
     }
 

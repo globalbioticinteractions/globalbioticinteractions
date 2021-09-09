@@ -20,7 +20,7 @@ public class CacheService {
         return getDb(cacheName, mapdbCacheDir);
     }
 
-    public DB getDb(String cacheName, File mapdbCacheDir) {
+    private DB getDb(String cacheName, File mapdbCacheDir) {
         File mapDBFile = new File(mapdbCacheDir, cacheName);
 
         DBMaker dbMaker = DBMaker

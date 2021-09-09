@@ -66,7 +66,8 @@ public class NameResolver implements IndexerNeo4j {
                 graphService,
                 listener,
                 StudyConstant.TITLE,
-                "*", "studies");
+                "*",
+                "studies");
 
         watchForEntireRun.stop();
         LOG.info("resolved [" + nameCount + "] names in " + getProgressMsg(nameCount.get(), watchForEntireRun.getTime()));
