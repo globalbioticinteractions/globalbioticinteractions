@@ -47,18 +47,19 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     public void process(NodeListener nodeListener, BatchListener batchListener) {
         List<Long> nodeIds;
         final AtomicLong nodeCount = new AtomicLong(0L);
-        while (!(nodeIds = NodeUtil.getBatchOfNodes(graphService,
-                nodeCount.get(),
-                batchSize,
-                queryKey,
-                queryOrQueryObject,
-                indexName)).isEmpty()) {
+        do {
             batchListener.onStartBatch();
+            nodeIds = NodeUtil.getBatchOfNodes(graphService,
+                    nodeCount.get(),
+                    batchSize,
+                    queryKey,
+                    queryOrQueryObject,
+                    indexName);
             for (Long nodeId : nodeIds) {
                 nodeListener.on(graphService.getNodeById(nodeId));
                 nodeCount.incrementAndGet();
             }
             batchListener.onFinishBatch();
-        }
+        } while (!nodeIds.isEmpty());
     }
 }

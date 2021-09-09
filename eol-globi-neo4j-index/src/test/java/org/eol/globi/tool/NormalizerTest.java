@@ -13,9 +13,11 @@ import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
+import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.GraphExporterImpl;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNoTx;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -145,8 +147,6 @@ public class NormalizerTest extends GraphDBTestCase {
     }
 
     public void doSingleImportExport(NodeFactoryFactory nodeFactoryFactory) throws URISyntaxException, StudyImporterException {
-        Normalizer dataNormalizationTool = createNormalizer();
-
         URL resource = getClass().getResource("datasets-test/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(resource);
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
@@ -156,6 +156,13 @@ public class NormalizerTest extends GraphDBTestCase {
                 nodeFactoryFactory,
                 getGraphFactory()
         );
+
+        try (Transaction tx = getGraphDb().beginTx()) {
+            indexerDataset.index();
+            new NonResolvingTaxonIndexNoTx(getGraphDb()).findTaxonByName("bla");
+            tx.success();
+        }
+
 
         try (Transaction tx = getGraphDb().beginTx()) {
             indexerDataset.index();
