@@ -16,15 +16,22 @@ public class NodeBackedTest extends GraphDBTestCase {
     @Test
     public void createRelationshipTo() {
         AtomicInteger relationshipCount = new AtomicInteger(0);
-        long nodeId = createRelationship(1);
-        assertSingleRelationship(relationshipCount, nodeId);
+        long nodeId = createRelationship(1, false);
+        assertRelationshipCount(relationshipCount, nodeId, 1);
     }
 
     @Test
     public void createPreventRedundantRelationshipTo() {
         AtomicInteger relationshipCount = new AtomicInteger(0);
-        long nodeId = createRelationship(10);
-        assertSingleRelationship(relationshipCount, nodeId);
+        long nodeId = createRelationship(10, true);
+        assertRelationshipCount(relationshipCount, nodeId, 1);
+    }
+
+    @Test
+    public void createPreventRedundantRelationshipToNoCheck() {
+        AtomicInteger relationshipCount = new AtomicInteger(0);
+        long nodeId = createRelationship(10, false);
+        assertRelationshipCount(relationshipCount, nodeId, 10);
     }
 
     @Test
@@ -103,7 +110,7 @@ public class NodeBackedTest extends GraphDBTestCase {
                 is(0));
     }
 
-    public void assertSingleRelationship(AtomicInteger relationshipCount, long nodeId) {
+    public void assertRelationshipCount(AtomicInteger relationshipCount, long nodeId, int expectedRelationshipCount) {
         Node nodeById = getGraphDb().getNodeById(nodeId);
         Iterable<Relationship> relationships = nodeById.getRelationships();
         for (Relationship relationship : relationships) {
@@ -113,10 +120,10 @@ public class NodeBackedTest extends GraphDBTestCase {
             relationshipCount.incrementAndGet();
         }
 
-        assertThat(relationshipCount.get(), Is.is(1));
+        assertThat(relationshipCount.get(), Is.is(expectedRelationshipCount));
     }
 
-    public long createRelationship(int numberOfRedundantRelationships) {
+    public long createRelationship(int numberOfRedundantRelationships, boolean checkExisting) {
         long nodeId1;
         Node node1 = getGraphDb().createNode();
         nodeId1 = node1.getId();
@@ -124,7 +131,7 @@ public class NodeBackedTest extends GraphDBTestCase {
         NodeBacked nodeBacked1 = new NodeBacked(node1);
         NodeBacked nodeBacked2 = new NodeBacked(node2);
         for (int i = 0; i < numberOfRedundantRelationships; i++) {
-            nodeBacked1.createRelationshipTo(nodeBacked2, RelTypes.COLLECTED);
+            nodeBacked1.createRelationshipTo(nodeBacked2, RelTypes.COLLECTED, checkExisting);
         }
         return nodeId1;
     }

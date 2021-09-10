@@ -32,13 +32,21 @@ public class NodeBacked {
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType) {
-        return createRelationshipToNoTx((NodeBacked) endNode, relType);
+        return createRelationshipToNoTx((NodeBacked) endNode, relType, false);
+    }
+
+    public Relationship createRelationshipTo(Object endNode, RelType relType, boolean checkExisting) {
+        return createRelationshipToNoTx((NodeBacked) endNode, relType, checkExisting);
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
+        return createRelationshipToNoTx(endNode, relType, false);
+    }
+
+    protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType, boolean checkExisting) {
         Relationship rel = null;
         if (getNodeID() != endNode.getNodeID()) {
-            if (!alreadyRelated(endNode, relType)) {
+            if (!checkExisting || !alreadyRelated(endNode, relType)) {
                 rel = getUnderlyingNode().createRelationshipTo(endNode.getUnderlyingNode(), NodeUtil.asNeo4j(relType));
             }
         }
