@@ -5,8 +5,6 @@ import org.neo4j.graphdb.Transaction;
 
 public class GraphDBTestCase extends GraphDBTestCaseAbstract {
 
-    private Transaction transaction;
-
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {
@@ -22,7 +20,7 @@ public class GraphDBTestCase extends GraphDBTestCaseAbstract {
 
     @Override
     public void afterGraphDBStart() {
-        transaction = getGraphDb().beginTx();
+        getGraphDb().beginTx();
     }
 
     @Override
