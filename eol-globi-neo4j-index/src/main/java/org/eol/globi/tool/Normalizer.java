@@ -111,7 +111,7 @@ public class Normalizer {
         Factories importerFactory = new FactoriesForDatasetImportNeo4jV2(graphServiceFactory);
         GraphServiceFactory graphDbFactory = importerFactory.getGraphServiceFactory();
         if (cmdLine == null || !cmdLine.hasOption(OPTION_SKIP_IMPORT)) {
-            new CmdIndexDatasets(
+            new CmdImportDatasets(
                     importerFactory.getNodeFactoryFactory(),
                     graphDbFactory,
                     Elton4N.getDatasetDir(cmdLine)

@@ -5,16 +5,16 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 
-public class CmdIndexDatasets implements Cmd {
+public class CmdImportDatasets implements Cmd {
 
 
     private final NodeFactoryFactory nodeFactoryFactory;
     private final GraphServiceFactory graphServiceFactory;
     private final String datasetDir;
 
-    public CmdIndexDatasets(NodeFactoryFactory nodeFactoryFactory,
-                            GraphServiceFactory factory,
-                            String datasetDir) {
+    public CmdImportDatasets(NodeFactoryFactory nodeFactoryFactory,
+                             GraphServiceFactory factory,
+                             String datasetDir) {
         this.nodeFactoryFactory = nodeFactoryFactory;
         this.graphServiceFactory = factory;
         this.datasetDir = datasetDir;

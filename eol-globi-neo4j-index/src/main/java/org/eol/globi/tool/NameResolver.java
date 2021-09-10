@@ -123,7 +123,6 @@ public class NameResolver implements IndexerNeo4j {
                 }
             }
         }
-        batchListener.onFinish();
         return nameCount;
     }
 

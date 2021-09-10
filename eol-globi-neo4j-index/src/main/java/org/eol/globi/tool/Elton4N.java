@@ -9,8 +9,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.Version;
-import org.eol.globi.data.NodeFactoryNeo4j2;
-import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
@@ -18,10 +16,10 @@ import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Elton4N {
@@ -108,21 +106,31 @@ public class Elton4N {
             String datasetDir = getDatasetDir(cmdLine);
             GraphServiceFactory graphServiceFactory = factoriesNeo4j.getGraphServiceFactory();
 
-            List<Cmd> steps = Arrays.asList(
-                    new CmdIndexDatasets(
-                            factoriesNeo4j.getNodeFactoryFactory(),
-                            graphServiceFactory,
-                            datasetDir
-                    ),
-                    new CmdInterpretTaxa(graphServiceFactory,
-                            cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, "taxonCache.tsv.gz"),
-                            cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_MAP_PATH, "taxonMap.tsv.gz")
-                    ),
-                    new CmdIndexTaxa(graphServiceFactory),
-                    new CmdIndexTaxonStrings(graphServiceFactory),
-                    new CmdGenerateReport(graphServiceFactory.getGraphService()),
-                    new CmdExport(graphServiceFactory, "./target/export/")
-            );
+            List<Cmd> steps = new ArrayList<>();
+
+            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains("import")) {
+                steps.add(new CmdImportDatasets(
+                        factoriesNeo4j.getNodeFactoryFactory(),
+                        graphServiceFactory,
+                        datasetDir
+                ));
+            }
+
+            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains("index")) {
+                steps.addAll(Arrays.asList(
+                        new CmdInterpretTaxa(graphServiceFactory,
+                                cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, "taxonCache.tsv.gz"),
+                                cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_MAP_PATH, "taxonMap.tsv.gz")
+                        ),
+                        new CmdIndexTaxa(graphServiceFactory),
+                        new CmdIndexTaxonStrings(graphServiceFactory),
+                        new CmdGenerateReport(graphServiceFactory.getGraphService())
+                ));
+            }
+            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains("export")) {
+                steps.add(new CmdExport(graphServiceFactory, "./target/export/"));
+
+            }
 
             for (Cmd step : steps) {
                 step.run();
