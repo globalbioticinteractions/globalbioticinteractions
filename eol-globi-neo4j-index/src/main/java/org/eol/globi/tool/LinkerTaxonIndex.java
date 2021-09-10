@@ -36,13 +36,19 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
         GraphDatabaseService graphDb = factory.getGraphService();
         initIndexes(graphDb);
 
-        NodeUtil.processStudies(1000L, graphDb,
+        NodeUtil.processNodes(
+                1000L,
+                graphDb,
                 node -> onTaxonNode(
                         getTaxonPathsIndex(graphDb),
                         getFuzzySearchIndex(graphDb),
                         node
                 )
-                , "*", "*", "taxons");
+                ,
+                "*",
+                "*",
+                "taxons",
+                new TransactionPerBatch(graphDb));
     }
 
     public void initIndexes(GraphDatabaseService graphDb) {

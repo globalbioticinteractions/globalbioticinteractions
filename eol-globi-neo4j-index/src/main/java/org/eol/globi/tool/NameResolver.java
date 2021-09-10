@@ -11,6 +11,7 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.BatchListener;
 import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -51,30 +52,40 @@ public class NameResolver implements IndexerNeo4j {
         StopWatch watchForBatch = new StopWatch();
         watchForBatch.start();
         final AtomicLong nameCount = new AtomicLong(0L);
+
+        final TransactionPerBatch batchListener = new TransactionPerBatch(graphService);
+
         NodeListener listener = new NodeListener() {
             @Override
             public void on(Node node) {
                 nameCount.set(resolveNamesInStudy(batchSize,
                         watchForBatch,
                         nameCount.get(),
-                        node));
+                        node,
+                        batchListener));
             }
         };
 
-        NodeUtil.processStudies(
+        NodeUtil.processNodes(
                 batchSize,
                 graphService,
                 listener,
                 StudyConstant.TITLE,
                 "*",
-                "studies");
+                "studies",
+                batchListener);
 
         watchForEntireRun.stop();
         LOG.info("resolved [" + nameCount + "] names in " + getProgressMsg(nameCount.get(), watchForEntireRun.getTime()));
 
     }
 
-    private Long resolveNamesInStudy(Long batchSize, StopWatch watchForBatch, Long nameCount, Node studyNode) {
+    private Long resolveNamesInStudy(Long batchSize,
+                                     StopWatch watchForBatch,
+                                     Long nameCount,
+                                     Node studyNode,
+                                     BatchListener batchListener) {
+        batchListener.onStart();
         final Study study1 = new StudyNode(studyNode);
         final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
         for (Relationship specimenNode : specimenNodes) {
@@ -98,6 +109,7 @@ public class NameResolver implements IndexerNeo4j {
                     } finally {
                         nameCount++;
                         if (nameCount % batchSize == 0) {
+                            batchListener.onFinish();;
                             watchForBatch.stop();
                             final long duration = watchForBatch.getTime();
                             if (duration > 0) {
@@ -105,12 +117,13 @@ public class NameResolver implements IndexerNeo4j {
                             }
                             watchForBatch.reset();
                             watchForBatch.start();
+                            batchListener.onStart();
                         }
                     }
                 }
             }
-
         }
+        batchListener.onFinish();
         return nameCount;
     }
 

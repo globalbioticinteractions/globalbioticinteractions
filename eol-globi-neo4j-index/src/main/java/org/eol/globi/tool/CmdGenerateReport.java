@@ -53,22 +53,22 @@ public class CmdGenerateReport implements Cmd {
     public void run(Logger log) {
 
         TransactionPerBatch transactionPerBatch = new TransactionPerBatch(graphService);
-        transactionPerBatch.onStartBatch();
+        transactionPerBatch.onStart();
         log.info("report for collection generating ...");
         generateReportForCollection();
         log.info("report for collection done.");
 
-        transactionPerBatch.onStartBatch();
+        transactionPerBatch.onStart();
         log.info("report for sources generating ...");
         generateReportForSourceIndividuals();
         log.info("report for sources done.");
 
-        transactionPerBatch.onStartBatch();
+        transactionPerBatch.onStart();
         log.info("report for source organizations generating ...");
         generateReportForSourceOrganizations();
         log.info("report for source organizations done.");
 
-        transactionPerBatch.onFinishBatch();
+        transactionPerBatch.onFinish();
     }
 
     void generateReportForSourceIndividuals() {

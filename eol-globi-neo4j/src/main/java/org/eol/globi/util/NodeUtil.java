@@ -66,11 +66,24 @@ public class NodeUtil {
     }
 
     public static void findStudies(GraphDatabaseService graphService, NodeListener listener, String queryKey, String queryValue) {
-        processStudies(1000L, graphService, listener, queryKey, queryValue, "studies");
+        processNodes(
+                1000L,
+                graphService,
+                listener,
+                queryKey,
+                queryValue,
+                "studies",
+                new TransactionPerBatch(graphService)
+        );
     }
 
     public static void findDatasetsByQuery(GraphDatabaseService graphService, DatasetNodeListener listener, String queryKey, String queryValue) {
-        new NodeProcessorImpl(graphService, 1000L, queryKey, queryValue, "datasets")
+        new NodeProcessorImpl(
+                graphService,
+                1000L,
+                queryKey,
+                queryValue,
+                "datasets")
                 .process(
                         node -> listener.on(new DatasetNode(node)),
                         new TransactionPerBatch(graphService)
@@ -176,15 +189,16 @@ public class NodeUtil {
                 .collect(Collectors.toList());
     }
 
-    public static void processStudies(Long batchSize,
-                                      GraphDatabaseService graphService,
-                                      NodeListener listener,
-                                      String queryKey,
-                                      String queryOrQueryObject,
-                                      String indexName) {
+    public static void processNodes(Long batchSize,
+                                    GraphDatabaseService graphService,
+                                    NodeListener listener,
+                                    String queryKey,
+                                    String queryOrQueryObject,
+                                    String indexName,
+                                    BatchListener batchListener) {
 
         new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject, indexName)
-                .process(listener, new TransactionPerBatch(graphService));
+                .process(listener, batchListener);
     }
 
 }

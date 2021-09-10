@@ -16,14 +16,14 @@ public class TransactionPerBatch implements BatchListener {
     }
 
     @Override
-    public void onStartBatch() {
-        onFinishBatch();
+    public void onStart() {
+        onFinish();
         LOG.info("start transaction");
         tx = graphDb.beginTx();
     }
 
     @Override
-    public void onFinishBatch() {
+    public void onFinish() {
         if (tx != null) {
             tx.success();
             tx.close();

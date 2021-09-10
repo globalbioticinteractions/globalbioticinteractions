@@ -33,12 +33,12 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     private BatchListener createBatchListenerNoop() {
         return new BatchListener() {
             @Override
-            public void onStartBatch() {
+            public void onStart() {
 
             }
 
             @Override
-            public void onFinishBatch() {
+            public void onFinish() {
 
             }
         };
@@ -48,7 +48,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
         List<Long> nodeIds;
         final AtomicLong nodeCount = new AtomicLong(0L);
         do {
-            batchListener.onStartBatch();
+            batchListener.onStart();
             nodeIds = NodeUtil.getBatchOfNodes(graphService,
                     nodeCount.get(),
                     batchSize,
@@ -59,7 +59,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
                 nodeListener.on(graphService.getNodeById(nodeId));
                 nodeCount.incrementAndGet();
             }
-            batchListener.onFinishBatch();
+            batchListener.onFinish();
         } while (!nodeIds.isEmpty());
     }
 }

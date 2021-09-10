@@ -18,7 +18,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TaxonInteractionIndexer implements IndexerNeo4j {
@@ -61,7 +60,7 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
         AtomicLong count = new AtomicLong(0);
         for (Fun.Tuple3<Long, String, Long> uniqueTaxonInteraction : taxonInteractions.keySet()) {
             if (count.getAndIncrement() % 1000 == 0) {
-                transactionPerBatch.onStartBatch();
+                transactionPerBatch.onStart();
             }
             final Node sourceTaxon = graphService.getNodeById(uniqueTaxonInteraction.a);
             final Node targetTaxon = graphService.getNodeById(uniqueTaxonInteraction.c);
@@ -73,7 +72,7 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
             }
         }
 
-        transactionPerBatch.onFinishBatch();
+        transactionPerBatch.onFinish();
 
         watchForEntireRun.stop();
         LOG.info("created [" + count + "] taxon interactions in " + getProgressMsg(count.get(), watchForEntireRun.getTime()));
