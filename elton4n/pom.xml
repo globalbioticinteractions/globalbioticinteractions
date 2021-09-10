@@ -14,6 +14,10 @@
     <artifactId>elton4n</artifactId>
     <name>GloBI's Elton for Neo4j: import, index, and export, biotic interaction data using Neo4j</name>
 
+    <properties>
+        <app.main.class>org.globalbioticinteractions.elton.Elton4N</app.main.class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

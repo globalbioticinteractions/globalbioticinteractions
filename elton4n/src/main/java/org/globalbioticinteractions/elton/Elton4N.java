@@ -1,4 +1,4 @@
-package org.eol.globi.tool;
+package org.globalbioticinteractions.elton;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -12,6 +12,20 @@ import org.eol.globi.Version;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
+import org.eol.globi.tool.Cmd;
+import org.eol.globi.tool.CmdExport;
+import org.eol.globi.tool.CmdGenerateReport;
+import org.eol.globi.tool.CmdImportDatasets;
+import org.eol.globi.tool.CmdIndexTaxa;
+import org.eol.globi.tool.CmdIndexTaxonStrings;
+import org.eol.globi.tool.CmdInterpretTaxa;
+import org.eol.globi.tool.CmdOptionConstants;
+import org.eol.globi.tool.CmdUtil;
+import org.eol.globi.tool.Factories;
+import org.eol.globi.tool.NodeFactoryFactory;
+import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j2;
+import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j3;
+import org.eol.globi.tool.Normalizer;
 import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +75,7 @@ public class Elton4N {
         return options;
     }
 
-    public void run(CommandLine cmdLine) throws StudyImporterException {
+    private void run(CommandLine cmdLine) throws StudyImporterException {
 
         final String neo4jVersion = cmdLine == null
                 ? "2"

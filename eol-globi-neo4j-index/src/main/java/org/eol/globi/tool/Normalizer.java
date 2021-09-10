@@ -69,7 +69,7 @@ public class Normalizer {
         return options;
     }
 
-    void run(CommandLine cmdLine) throws StudyImporterException {
+    public void run(CommandLine cmdLine) throws StudyImporterException {
 
         GraphServiceFactoryImpl graphServiceFactory = new GraphServiceFactoryImpl("./");
 
