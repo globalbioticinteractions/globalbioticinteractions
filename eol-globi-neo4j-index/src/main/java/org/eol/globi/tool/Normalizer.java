@@ -114,7 +114,7 @@ public class Normalizer {
             new CmdImportDatasets(
                     importerFactory.getNodeFactoryFactory(),
                     graphDbFactory,
-                    Elton4N.getDatasetDir(cmdLine)
+                    CmdUtil.getDatasetDir(cmdLine)
             ).run();
         } else {
             LOG.info("skipping data import...");

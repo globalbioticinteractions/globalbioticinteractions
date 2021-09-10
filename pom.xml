@@ -22,6 +22,7 @@
         <module>eol-globi-neo4j-index</module>
         <module>eol-globi-opentree</module>
         <module>eol-globi-rest</module>
+        <module>elton4n</module>
     </modules>
 
     <profiles>

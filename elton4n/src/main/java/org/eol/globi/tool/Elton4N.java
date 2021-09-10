@@ -103,7 +103,7 @@ public class Elton4N {
 
 
         try {
-            String datasetDir = getDatasetDir(cmdLine);
+            String datasetDir = CmdUtil.getDatasetDir(cmdLine);
             GraphServiceFactory graphServiceFactory = factoriesNeo4j.getGraphServiceFactory();
 
             List<Cmd> steps = new ArrayList<>();
@@ -139,12 +139,6 @@ public class Elton4N {
         } finally {
             HttpUtil.shutdown();
         }
-    }
-
-    public static String getDatasetDir(CommandLine cmdLine) {
-        return cmdLine == null
-                ? "target/datasets"
-                : cmdLine.getOptionValue(CmdOptionConstants.OPTION_DATASET_DIR, "target/datasets");
     }
 
 
