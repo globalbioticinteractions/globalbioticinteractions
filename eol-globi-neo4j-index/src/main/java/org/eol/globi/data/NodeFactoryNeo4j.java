@@ -202,7 +202,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return studyNode;
     }
 
-    protected StudyNode createStudyNode(Study study, Node node) {
+    private StudyNode createStudyNode(Study study, Node node) {
         StudyNode studyNode;
         studyNode = new StudyNode(node, study.getTitle());
         studyNode.setCitation(study.getCitation());
@@ -245,7 +245,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract void indexDatasetNode(Dataset dataset, Node datasetNode);
 
-    protected Node createDatasetNode(Dataset dataset) {
+    Node createDatasetNode(Dataset dataset) {
         Node datasetNode = createDatasetNode();
         datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
@@ -280,7 +280,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return datasetNode;
     }
 
-    protected Node createExternalId(String externalId) {
+    Node createExternalId(String externalId) {
         Node externalIdNode = createExternalIdNode();
         externalIdNode.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
         indexExternalIdNode(externalId, externalIdNode);
@@ -321,7 +321,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract StudyNode findStudy(Study study);
 
-    protected String getTitleInNamespace(Study study) {
+    String getTitleInNamespace(Study study) {
         String namespace = namespaceOrNull(study);
         return StringUtils.isBlank(namespace)
                 ? study.getTitle()

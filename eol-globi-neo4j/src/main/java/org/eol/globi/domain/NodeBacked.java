@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 public class NodeBacked {
 
+    public static final boolean CHECK_EXISTING_REL_DEFAULT = false;
     private final Node underlyingNode;
 
     public NodeBacked(Node node) {
@@ -32,7 +33,7 @@ public class NodeBacked {
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType) {
-        return createRelationshipToNoTx((NodeBacked) endNode, relType, false);
+        return createRelationshipToNoTx((NodeBacked) endNode, relType, CHECK_EXISTING_REL_DEFAULT);
     }
 
     public Relationship createRelationshipTo(Object endNode, RelType relType, boolean checkExisting) {
@@ -40,7 +41,7 @@ public class NodeBacked {
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType) {
-        return createRelationshipToNoTx(endNode, relType, false);
+        return createRelationshipToNoTx(endNode, relType, CHECK_EXISTING_REL_DEFAULT);
     }
 
     protected Relationship createRelationshipToNoTx(NodeBacked endNode, RelType relType, boolean checkExisting) {
