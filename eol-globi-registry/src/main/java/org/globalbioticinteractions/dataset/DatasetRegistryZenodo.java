@@ -1,8 +1,10 @@
 package org.globalbioticinteractions.dataset;
 
+import org.apache.commons.collections4.list.TreeList;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.service.DatasetZenodo;
@@ -22,13 +24,23 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class DatasetRegistryZenodo implements DatasetRegistry {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
     private static final String PREFIX_ZENODO = "oai:zenodo.org:";
-    private String cachedFeed = null;
+
+    private static final String ZENODO_ENDPOINT = "https://zenodo.org/";
+
+    private static final String ZENODO_LIST_RECORDS_PREFIX = ZENODO_ENDPOINT + "oai2d?verb=ListRecords";
+
+    private List<String> cachedFeed = null;
 
     private final InputStreamFactory inputStreamFactory;
 
@@ -36,35 +48,86 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         this.inputStreamFactory = inputStreamFactory;
     }
 
+    public static String parseResumptionToken(InputStream is) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+        String token = (String) XmlUtil.applyXPath(is, "//*[local-name()='resumptionToken']", XPathConstants.STRING);
+        return StringUtils.isBlank(token) ? null : token;
+    }
+
+    public static String generateResumptionURI(String resumptionToken) {
+        return ZENODO_LIST_RECORDS_PREFIX + "&resumptionToken=" + resumptionToken;
+    }
+
     @Override
     public Collection<String> findNamespaces() throws DatasetRegistryException {
-        return find(getFeedStream());
+        try {
+            Map<String, List<Pair<Long, URI>>> zenodoArchives = findZenodoArchives();
+            return zenodoArchives == null
+                    ? Collections.emptyList()
+                    : new TreeList<>(zenodoArchives.keySet());
+        } catch (XPathExpressionException | IOException e) {
+            throw new DatasetRegistryException("failed to retrieve, or parse, list of Zenodo archives", e);
+        }
     }
 
     @Override
     public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         try {
-            InputStream feedStream = getFeedStream();
-            URI zenodoGitHubArchives = findZenodoGitHubArchives(getRecordNodeList(feedStream), namespace);
-            return zenodoGitHubArchives == null ? null : new DatasetZenodo(namespace, zenodoGitHubArchives, getInputStreamFactory());
+            Map<String, List<Pair<Long, URI>>> zenodoGitHubArchives = findZenodoArchives();
+
+            URI latestArchive
+                    = getMostRecentArchiveInNamespace(namespace, zenodoGitHubArchives);
+            return latestArchive == null
+                    ? null
+                    : new DatasetZenodo(namespace, latestArchive, getInputStreamFactory());
         } catch (XPathExpressionException | IOException e) {
             throw new DatasetRegistryException("failed to query archive url for [" + namespace + "]", e);
         }
     }
 
-    private InputStream getFeedStream() throws DatasetRegistryException {
+    public Map<String, List<Pair<Long, URI>>> findZenodoArchives() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+        List<InputStream> feedStreams = getFeedStreams();
+
+        Map<String, List<Pair<Long, URI>>> zenodoGitHubArchives = new TreeMap<>();
+        for (InputStream feedStream : feedStreams) {
+            zenodoGitHubArchives.putAll(
+                    findZenodoGitHubArchives(getRecordNodeList(feedStream))
+            );
+
+        }
+        return zenodoGitHubArchives;
+    }
+
+    private List<InputStream> getFeedStreams() throws DatasetRegistryException {
         initFeedCacheIfNeeded();
 
-        try {
-            return IOUtils.toInputStream(getCachedFeed(), StandardCharsets.UTF_8.name());
-        } catch (IOException e) {
-            throw new DatasetRegistryException("failed to get Zenodo registry feed", e);
+        List<InputStream> cachedStreams = new ArrayList<>();
+        List<String> cachedFeed = getCachedFeed();
+        for (String s : cachedFeed) {
+            try {
+                cachedStreams.add(IOUtils.toInputStream(s, StandardCharsets.UTF_8.name()));
+            } catch (IOException e) {
+                throw new DatasetRegistryException("failed to access cached strings", e);
+            }
+
         }
+        return cachedStreams;
     }
 
     public void initFeedCacheIfNeeded() throws DatasetRegistryException {
-        if (StringUtils.isBlank(getCachedFeed())) {
-            setCachedFeed(getFeed(getInputStreamFactory()));
+        if (getCachedFeed() == null) {
+            String resumptionToken = null;
+            List<String> cachedPages = new ArrayList<>();
+            do {
+                String nextPage = getNextPage(getInputStreamFactory(), resumptionToken);
+                try {
+                    resumptionToken = parseResumptionToken(IOUtils.toInputStream(nextPage, StandardCharsets.UTF_8));
+                } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
+                    throw new DatasetRegistryException("failed to parse Zenodo registry results");
+                }
+                cachedPages.add(nextPage);
+            } while (StringUtils.isNoneBlank(resumptionToken));
+
+            setCachedFeed(cachedPages);
         }
     }
 
@@ -72,8 +135,30 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         return inputStreamFactory;
     }
 
-    static URI findZenodoGitHubArchives(NodeList records, String requestedRepo) throws XPathExpressionException, MalformedURLException {
-        URI archiveURI = null;
+    static URI findLatestZenodoGitHubArchiveForNamespace(NodeList records, String namespace) throws XPathExpressionException, MalformedURLException {
+        Map<String, List<Pair<Long, URI>>> archives = findZenodoGitHubArchives(records);
+        return getMostRecentArchiveInNamespace(namespace, archives);
+    }
+
+    private static URI getMostRecentArchiveInNamespace(String namespace, Map<String, List<Pair<Long, URI>>> archives) {
+        URI latestArchiveURI = null;
+        if (archives != null) {
+            List<Pair<Long, URI>> uris = archives.get(namespace);
+            if (uris != null) {
+                TreeMap<Long, URI> sortedMap = new TreeMap<>();
+                for (Pair<Long, URI> longURIPair : uris) {
+                    sortedMap.put(longURIPair.getKey(), longURIPair.getValue());
+                }
+                latestArchiveURI = sortedMap.size() == 0
+                        ? null
+                        : sortedMap.lastEntry().getValue();
+            }
+        }
+        return latestArchiveURI;
+    }
+
+    static Map<String, List<Pair<Long, URI>>> findZenodoGitHubArchives(NodeList records) throws XPathExpressionException, MalformedURLException {
+        Map<String, List<Pair<Long, URI>>> namespace2ZenodoPubs = new TreeMap<>();
         Long idMax = null;
         for (int i = 0; i < records.getLength(); i++) {
             Node item = records.item(i);
@@ -87,15 +172,18 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
                     Long id = NumberUtils.createLong(idString);
                     if (split.length > 3 && (idMax == null || id > idMax)) {
                         String githubRepo = split[0] + "/" + split[1];
-                        if (StringUtils.equals(githubRepo, requestedRepo)) {
-                            archiveURI = URI.create("https://zenodo.org/record/" + idString + "/files/" + githubRepo + "-" + split[3] + ".zip");
-                            idMax = id;
-                        }
+                        URI archiveURI = URI.create("https://zenodo.org/record/" + idString + "/files/" + githubRepo + "-" + split[3] + ".zip");
+                        List<Pair<Long, URI>> versions = namespace2ZenodoPubs
+                                .getOrDefault(githubRepo, new TreeList<>());
+                        namespace2ZenodoPubs.put(githubRepo, new TreeList<Pair<Long, URI>>(versions) {{
+                            add(Pair.of(id, archiveURI));
+                        }});
+
                     }
                 }
             }
         }
-        return archiveURI;
+        return namespace2ZenodoPubs;
     }
 
     static Collection<String> findPublishedGitHubRepos(Collection<String> refs) {
@@ -142,15 +230,17 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    static String getFeed() throws DatasetRegistryException {
-        return getFeed(inStream -> inStream);
+    static String getNextPage(String resumptionToken) throws DatasetRegistryException {
+        return getNextPage(inStream -> inStream, resumptionToken);
     }
 
-    static String getFeed(InputStreamFactory factory) throws DatasetRegistryException {
+    static String getNextPage(InputStreamFactory factory, String resumptionToken) throws DatasetRegistryException {
         try {
             HttpClient httpClient = HttpUtil.getHttpClient();
-            String requestUrl = "https://zenodo.org/oai2d?verb=ListRecords&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3";
-
+            String requestUrl = ZENODO_LIST_RECORDS_PREFIX + "&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3";
+            if (StringUtils.isNoneBlank(resumptionToken)) {
+                requestUrl = generateResumptionURI(resumptionToken);
+            }
             return HttpUtil.executeAndRelease(
                     new HttpGet(requestUrl),
                     httpClient,
@@ -170,11 +260,11 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     }
 
 
-    public void setCachedFeed(String cachedFeed) {
+    public void setCachedFeed(List<String> cachedFeed) {
         this.cachedFeed = cachedFeed;
     }
 
-    public String getCachedFeed() {
+    public List<String> getCachedFeed() {
         return this.cachedFeed;
     }
 

@@ -55,16 +55,11 @@ public class NameResolver implements IndexerNeo4j {
 
         final TransactionPerBatch batchListener = new TransactionPerBatch(graphService);
 
-        NodeListener listener = new NodeListener() {
-            @Override
-            public void on(Node node) {
-                nameCount.set(resolveNamesInStudy(batchSize,
-                        watchForBatch,
-                        nameCount.get(),
-                        node,
-                        batchListener));
-            }
-        };
+        NodeListener listener = node -> nameCount.set(resolveNamesInStudy(batchSize,
+                watchForBatch,
+                nameCount.get(),
+                node,
+                batchListener));
 
         NodeUtil.processNodes(
                 batchSize,
@@ -113,7 +108,7 @@ public class NameResolver implements IndexerNeo4j {
                             watchForBatch.stop();
                             final long duration = watchForBatch.getTime();
                             if (duration > 0) {
-                                LOG.info("resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration));
+                                LOG.info("resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration) + " (" + nameCount + " names resolved so far)");
                             }
                             watchForBatch.reset();
                             watchForBatch.start();

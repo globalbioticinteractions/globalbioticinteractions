@@ -1,0 +1,3272 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="/static/xsl/oai2.xsl"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2021-09-13T18:19:12Z</responseDate>
+  <request verb="ListRecords" metadataPrefix="oai_datacite3" resumptionToken=".eJwVjckKgzAUAP_lnaXEJQ0KHiriQbppbVwuEjS1wYiSCC0V_706x5nDLKA5b8FDB0QwdomLiYPI0cUmNkA3apSyFluHsIjMqohxkuM-HSgqrS447QSRutk6v2SN85Dpr8rkk_fXNw3T-Ewni6K4SBLfBwMm1nHwbAP6D1OdBm-Bgc-sZTO7K_4S320zMlHvohEzt2Fd_8UnMdY.YT-V_A.SiWX4XyFhmnNMuDMyPaXwUmTMlU">https://zenodo.org/oai2d</request>
+  <ListRecords>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:259823</identifier>
+        <datestamp>2020-01-25T07:25:31Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.259823</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Coccidae-of-Egypt: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-25</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Coccidae-of-Egypt/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;first release&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258221</identifier>
+        <datestamp>2020-01-24T19:27:54Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258221</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Diseases-of-Coffee-in-Porto-Rico: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Diseases-of-Coffee-in-Porto-Rico/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:232498</identifier>
+        <datestamp>2020-01-24T19:25:56Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.232498</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Jen Hammock</creatorName>
+                  <affiliation>Encyclopedia of Life</affiliation>
+                </creator>
+              </creators>
+              <titles>
+                <title>jhammock/Layman-and-Allgeier-Lionfish 1.0</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-06</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/jhammock/Layman-and-Allgeier-Lionfish/tree/1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Jen's practice dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258218</identifier>
+        <datestamp>2020-01-25T07:26:42Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258218</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Fishes-of-Basrah-Province-Iraq: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Fishes-of-Basrah-Province-Iraq/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258222</identifier>
+        <datestamp>2020-01-25T07:21:34Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258222</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Dapstrom-integrated-database-and-portal-for-fish-stomach-records: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Dapstrom-integrated-database-and-portal-for-fish-stomach-records/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258226</identifier>
+        <datestamp>2020-01-25T07:26:56Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258226</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Canadian-freshwater-fish-and-their-metazoan-parasites: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Canadian-freshwater-fish-and-their-metazoan-parasites/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258212</identifier>
+        <datestamp>2020-01-25T07:21:31Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258212</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Hummingbird-and-Flower-Interactions: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Hummingbird-and-Flower-Interactions/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258200</identifier>
+        <datestamp>2020-01-25T07:26:03Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258200</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/PLANT-SEED-DISPERSER-WEBS: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/PLANT-SEED-DISPERSER-WEBS/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258186</identifier>
+        <datestamp>2020-01-25T07:21:16Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258186</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/A-Host-parasite-Catalog-of-North-American-Tachinidae-Diptera-: First release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/A-Host-parasite-Catalog-of-North-American-Tachinidae-Diptera-/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258219</identifier>
+        <datestamp>2020-01-25T07:26:45Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258219</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Feeding-Niches-of-Hummingbirds-in-a-Trinidad-Valley: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Feeding-Niches-of-Hummingbirds-in-a-Trinidad-Valley/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:800554</identifier>
+        <datestamp>2020-01-25T07:26:48Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.800554</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Ant-Plant-Interactions: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-05-30</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Ant-Plant-Interactions/tree/V1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.800553</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>V1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;No description provided.&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258203</identifier>
+        <datestamp>2020-01-25T07:26:44Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258203</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Plant-Herbivore-Web: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Plant-Herbivore-Web/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.596897</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:1463221</identifier>
+        <datestamp>2020-08-17T22:29:27Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.1463221</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chris Mungall</creatorName>
+                  <affiliation>Lawrence Berkeley National Laboratory</affiliation>
+                </creator>
+              </creators>
+              <titles>
+                <title>globalbioticinteractions/jsonld-template-dataset v0.2</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2018</publicationYear>
+              <dates>
+                <date dateType="Issued">2018-10-15</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/jsonld-template-dataset/tree/v0.2</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.597906</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v0.2</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Add explicit bibliographic citation.&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949088</identifier>
+        <datestamp>2020-07-20T07:15:45Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949088</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Li, Wendong</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Shi, Zhengli</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Yu, Meng</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Ren, Wuze</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Smith, Craig</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Epstein, Jonathan H.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Wang, Hanzhong</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Crameri, Gary</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Hu, Zhihong</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhang, Huajun</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhang, Jianhong</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>McEachern, Jennifer</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Field, Hume</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Daszak, Peter</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Eaton, Bryan T.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhang, Shuyi</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Wang, Lin-Fa</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Bats Are Natural Reservoirs of SARS-Like Coronaviruses</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2005</publicationYear>
+              <subjects>
+                <subject>Coronaviridae</subject>
+                <subject>Viridae</subject>
+                <subject>corona viruses</subject>
+                <subject>biotic associations</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>covid</subject>
+                <subject>covid-19</subject>
+                <subject>pathogens</subject>
+                <subject>biotic interaction</subject>
+                <subject>virus-host</subject>
+                <subject>biotic relations</subject>
+                <subject>pathogen-host</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2005-10-31</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1126/science.1118391</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">Severe acute respiratory syndrome (SARS) emerged in 2002 to 2003 in southern China. The origin of its etiological agent, the SARS coronavirus (SARS-CoV), remains elusive. Here we report that species of bats are a natural host of coronaviruses closely related to those responsible for the SARS outbreak. These viruses, termed SARS-like coronaviruses (SL-CoVs), display greater genetic variation than SARS-CoV isolated from humans or from civets. The human and civet isolates of SARS-CoV nestle phylogenetically within the spectrum of SL-CoVs, indicating that the virus responsible for the SARS outbreak was a member of this coronavirus group.
+Several species of bat living in China are natural hosts of coronaviruses closely related to those responsible for the SARS outbreak.
+Several species of bat living in China are natural hosts of coronaviruses closely related to those responsible for the SARS outbreak.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:229536</identifier>
+        <datestamp>2020-08-17T22:29:27Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.229536</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Chris Mungall</creatorName>
+                  <affiliation>Lawrence Berkeley National Laboratory</affiliation>
+                </creator>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>globalbioticinteractions/jsonld-template-dataset: prepare for publication to zenodo</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-03</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/jsonld-template-dataset/tree/v0.1</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.597906</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v0.1</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">No description provided.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258196</identifier>
+        <datestamp>2020-01-25T07:26:51Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258196</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Anemonefish: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Anemonefish/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258211</identifier>
+        <datestamp>2020-01-25T07:22:54Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258211</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Insect-Herbivores-on-Goldenrods-Solidago-altissima: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Insect-Herbivores-on-Goldenrods-Solidago-altissima/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258199</identifier>
+        <datestamp>2020-01-25T07:26:54Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258199</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Pollination-Collection: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Pollination-Collection/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3816676</identifier>
+        <datestamp>2020-12-21T13:25:02Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-meisebotanicgarden</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.3816676</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Quentin Groom</creatorName>
+                  <affiliation>Botanic Garden Meise</affiliation>
+                </creator>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Bat Interactions</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2020</publicationYear>
+              <dates>
+                <date dateType="Issued">2020-05-08</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/qgroom/batinterations/tree/v1.0.1</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.3782323</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/meisebotanicgarden</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0.1</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Taxon IDs were added to source and target taxa. These were mostly from the Integrated Taxonomic Information System (ITIS; &lt;a href="https://www.itis.gov/"&gt;https://www.itis.gov/&lt;/a&gt;), but also identifiers from GBIF (&lt;a href="https://www.gbif.org/"&gt;https://www.gbif.org/&lt;/a&gt;), Index Fungorum (&lt;a href="http://www.indexfungorum.org/"&gt;http://www.indexfungorum.org/&lt;/a&gt;) and the NCBI (&lt;a href="https://www.ncbi.nlm.nih.gov/"&gt;https://www.ncbi.nlm.nih.gov/&lt;/a&gt;) were use to fill gaps.&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3782324</identifier>
+        <datestamp>2020-12-21T13:25:02Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-meisebotanicgarden</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.3782324</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Quentin Groom</creatorName>
+                  <affiliation>Botanic Garden Meise</affiliation>
+                </creator>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Bat Interactions</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2020</publicationYear>
+              <subjects>
+                <subject>Rousettus aegyptiacus, diet, parasites, cohabitants, predators</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="Funder">
+                  <contributorName>European Commission</contributorName>
+                  <nameIdentifier nameIdentifierScheme="info">info:eu-repo/grantAgreement/EC/H2020/823827/</nameIdentifier>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2020-05-02</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/qgroom/batinterations/tree/V1.0.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.3782323</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/meisebotanicgarden</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>V1.0.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Species Interactions focusing on Egyptian Fruit bat (&lt;em&gt;Rousettus aegyptiacus&lt;/em&gt;) that have been extracted from the literature.&lt;/p&gt;</description>
+                <description descriptionType="Other">{"references": ["Albayrak, I., A\u015fan, N. &amp; Yorulmaz, T. (2008). The natural history of the Egyptian fruit bat, Rousettus aegyptiacus, in Turkey (Mammalia: Chiroptera). Turkish Journal of Zoology, 32(1), 11-18.", "Brickner-Braun, I., Geffen, E. &amp; Yom-Tov, Y. (2007) The Domestic Cat as a Predator of Israeli Wildlife, Israel Journal of Ecology &amp; Evolution, 53(2), 129-142, DOI: 10.1560/IJEE.53.2.129", "del Vaglio, M. A., Nicolau, H., Bosso, L. &amp; Russo, D. (2011). A first assessment of feeding habits in the fruit bat Rousettus aegyptiacus on Cyprus island. Hystrix, the Italian Journal of Mammalogy, 22(2). https://doi.org/10.4404/hystrix-22.2-4587", "Fenton, M.B., Cumming, D.H.M. &amp; Oxley, D.J. (1977). Prey of bat hawks and availability of bats. The Condor, 79(4), 495-497.", "Haelewaters, D., Hiller, T. &amp; Dick, C.W. (2018). Bats, bat flies, and fungi: a case of hyperparasitism. Trends in parasitology, 34(9), 784-799. https://doi.org/10.1016/j.pt.2018.06.006", "Kaisila, J. (1966). The Egyptian Fruit-Bat, Rousettus aegyptiacus Geoffr. (Megachiroptera, Pteropodidae) visiting flowers of Bombax malabaricum. Annales Zoologici Fennici, 3(1), 1-3. Retrieved May 1, 2020, from www.jstor.org/stable/23730818", "Korine, C., Izhaki, I., &amp; Arad, Z. (1999). Is the Egyptian fruit-bat Rousettus aegyptiacus a pest in Israel? An analysis of the bat's diet and implications for its conservation. Biological conservation, 88(3), 301-306. https://doi.org/10.1016/S0006-3207(98)00126-8", "Lu\u010dan, R.K., Bartoni\u010dka, T., Jedli\u010dka, P., \u0158e\u0159ucha, S., \u0160\u00e1lek, M., \u010c\u00ed\u017eek, M., Nicolaou, H. &amp; Hor\u00e1\u010dek, I. (2016) Spatial activity and feeding ecology of the endangered northern population of the Egyptian fruit bat (Rousettus aegyptiacus). Journal of Mammalogy, 97(3), 815\u2013822. https://doi.org/10.1093/jmammal/gyw014", "Reinhardt, K., Naylor, R.A. &amp; Siva-Jothy, M.T. (2008). Temperature and humidity differences between roosts of the fruit bat, Rousettus aegyptiacus (Geoffroy, 1810), and the refugia of its ectoparasite, Afrocimex constrictus. Acta chiropterologica, 10(1), 173-176.", "Thomas, D.W. &amp; Marshall, A.G. (1984). Reproduction and growth in three species of West African fruit bats. Journal of Zoology, 202(2), 265-281.", "Zohoori, H., Kaibi, B.H., Karami, M., Khorasani, N., Dareshoori, B. &amp; Dakhteh, M.H. (2007). Some observation on fruit used by birds and Egyptian fruit bat Rousettus aegyptiacus on Qeshm Island, Southern Iran. Podoces, 2(2), 156-9."]}</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949268</identifier>
+        <datestamp>2020-07-20T07:29:31Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949268</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Lau, Susanna K. P.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhang, Libiao</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Luk, Hayes K. H.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Xiong, Lifeng</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Peng, Xingwen</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Li, Kenneth S. M.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>He, Xiangyang</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhao, Pyrear Su-Hui</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Fan, Rachel Y. Y.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Wong, Antonio C. P.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Ahmed, Syed Shakeel</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Cai, Jian-Piao</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chan, Jasper F. W.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Sun, Yinyan</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Jin, Dongyan</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chen, Honglin</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Lau, Terrence C. K.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Kok, Raven K. H.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Li, Wenhui</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Yuen, Kwok-Yung</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Woo, Patrick C. Y.</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Receptor Usage of a Novel Bat Lineage C Betacoronavirus Reveals Evolution of Middle East Respiratory Syndrome-Related Coronavirus Spike Proteins for Human Dipeptidyl Peptidase 4 Binding</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2018</publicationYear>
+              <subjects>
+                <subject>Phylogeny</subject>
+                <subject>Evolution</subject>
+                <subject>Coronavirus</subject>
+                <subject>Virus Internalization</subject>
+                <subject>Sequence Analysis</subject>
+                <subject>corona viruses</subject>
+                <subject>virus-host</subject>
+                <subject>Molecular</subject>
+                <subject>biotic associations</subject>
+                <subject>Humans</subject>
+                <subject>pathogen-host</subject>
+                <subject>Chiroptera</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>biotic interaction</subject>
+                <subject>Betacoronavirus</subject>
+                <subject>DNA</subject>
+                <subject>HEK293 Cells</subject>
+                <subject>Dipeptidyl Peptidase 4</subject>
+                <subject>Protein Binding</subject>
+                <subject>Spike Glycoprotein</subject>
+                <subject>Coronaviridae</subject>
+                <subject>covid</subject>
+                <subject>Virus</subject>
+                <subject>covid-19</subject>
+                <subject>pathogens</subject>
+                <subject>Viridae</subject>
+                <subject>Receptors</subject>
+                <subject>biotic relations</subject>
+                <subject>Animals</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2018-06-30</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1093/infdis/jiy018</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">Although bats are known to harbor Middle East Respiratory Syndrome coronavirus (MERS-CoV)-related viruses, the role of bats in the evolutionary origin and pathway remains obscure. We identified a novel MERS-CoV-related betacoronavirus, Hp-BatCoV HKU25, from Chinese pipistrelle bats. Although it is closely related to MERS-CoV in most genome regions, its spike protein occupies a phylogenetic position between that of Ty-BatCoV HKU4 and Pi-BatCoV HKU5. Because Ty-BatCoV HKU4 but not Pi-BatCoV HKU5 can use the MERS-CoV receptor human dipeptidyl peptidase 4 (hDPP4) for cell entry, we tested the ability of Hp-BatCoV HKU25 to bind and use hDPP4. The HKU25-receptor binding domain (RBD) can bind to hDPP4 protein and hDPP4-expressing cells, but it does so with lower efficiency than that of MERS-RBD. Pseudovirus assays showed that HKU25-spike can use hDPP4 for entry to hDPP4-expressing cells, although with lower efficiency than that of MERS-spike and HKU4-spike. Our findings support a bat origin of MERS-CoV and suggest that bat CoV spike proteins may have evolved in a stepwise manner for binding to hDPP4.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258208</identifier>
+        <datestamp>2020-01-25T07:26:50Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258208</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Lara-C.-2006: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Lara-C.-2006/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258189</identifier>
+        <datestamp>2020-01-25T07:26:54Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258189</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Wardeh-et-al.-2015: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Wardeh-et-al.-2015/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258193</identifier>
+        <datestamp>2020-01-25T07:26:03Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258193</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Adams-et-al.-2016: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Adams-et-al.-2016/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949056</identifier>
+        <datestamp>2020-07-20T07:13:11Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949056</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Zaki, Ali M.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>van Boheemen, Sander</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Bestebroer, Theo M.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Osterhaus, Albert D.M.E.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Fouchier, Ron A.M.</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Isolation of a Novel Coronavirus from a Man with Pneumonia in Saudi Arabia</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2012</publicationYear>
+              <subjects>
+                <subject>Coronaviridae</subject>
+                <subject>Viridae</subject>
+                <subject>corona viruses</subject>
+                <subject>biotic associations</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>covid</subject>
+                <subject>covid-19</subject>
+                <subject>pathogens</subject>
+                <subject>biotic interaction</subject>
+                <subject>virus-host</subject>
+                <subject>biotic relations</subject>
+                <subject>pathogen-host</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2012-11-30</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1056/NEJMoa1211721</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">No abstract found</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949272</identifier>
+        <datestamp>2020-07-20T07:29:47Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949272</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Zhang, Tao</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Wu, Qunfu</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhang, Zhigang</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Probable Pangolin Origin of SARS-CoV-2 Associated with the COVID-19 Outbreak</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2020</publicationYear>
+              <subjects>
+                <subject>covid</subject>
+                <subject>virus-host</subject>
+                <subject>covid-19</subject>
+                <subject>biotic associations</subject>
+                <subject>pathogen-host</subject>
+                <subject>COVID-19</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>pathogens</subject>
+                <subject>Coronaviridae</subject>
+                <subject>origin</subject>
+                <subject>Viridae</subject>
+                <subject>biotic interaction</subject>
+                <subject>SARS-CoV-2</subject>
+                <subject>corona viruses</subject>
+                <subject>biotic relations</subject>
+                <subject>pangolin</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2020-03-31</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1016/j.cub.2020.03.022</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">No abstract found</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949278</identifier>
+        <datestamp>2020-07-20T07:30:02Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949278</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Borucki, Monica K.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Allen, Jonathan E.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chen-Harris, Haiyin</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zemla, Adam</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Vanier, Gilda</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Mabery, Shalini</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Torres, Clinton</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Hullinger, Pamela</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Slezak, Tom</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>The role of viral population diversity in adaptation of bovine coronavirus to new host environments</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2013</publicationYear>
+              <subjects>
+                <subject>Genetic Variation</subject>
+                <subject>Consensus Sequence</subject>
+                <subject>Viral Proteins</subject>
+                <subject>Phylogeny</subject>
+                <subject>Protein Structure</subject>
+                <subject>Coronavirus</subject>
+                <subject>Virus Internalization</subject>
+                <subject>Cattle</subject>
+                <subject>High-Throughput Nucleotide Sequencing</subject>
+                <subject>Tertiary</subject>
+                <subject>Sequence Alignment</subject>
+                <subject>corona viruses</subject>
+                <subject>virus-host</subject>
+                <subject>Molecular</subject>
+                <subject>Genome</subject>
+                <subject>Humans</subject>
+                <subject>biotic associations</subject>
+                <subject>pathogen-host</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>biotic interaction</subject>
+                <subject>Coronavirus Infections</subject>
+                <subject>Amino Acid Sequence</subject>
+                <subject>Viral</subject>
+                <subject>Models</subject>
+                <subject>Coronaviridae</subject>
+                <subject>Bovine</subject>
+                <subject>Mutation Rate</subject>
+                <subject>covid</subject>
+                <subject>covid-19</subject>
+                <subject>Point Mutation</subject>
+                <subject>pathogens</subject>
+                <subject>Viridae</subject>
+                <subject>Molecular Sequence Data</subject>
+                <subject>Cell Line</subject>
+                <subject>biotic relations</subject>
+                <subject>Animals</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2013-01-01</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1371/journal.pone.0052752</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">The high mutation rate of RNA viruses enables a diverse genetic population of viral genotypes to exist within a single infected host. In-host genetic diversity could better position the virus population to respond and adapt to a diverse array of selective pressures such as host-switching events. Multiple new coronaviruses, including SARS, have been identified in human samples just within the last ten years, demonstrating the potential of coronaviruses as emergent human pathogens. Deep sequencing was used to characterize genomic changes in coronavirus quasispecies during simulated host-switching. Three bovine nasal samples infected with bovine coronavirus were used to infect human and bovine macrophage and lung cell lines. The virus reproduced relatively well in macrophages, but the lung cell lines were not infected efficiently enough to allow passage of non lab-adapted samples. Approximately 12 kb of the genome was amplified before and after passage and sequenced at average coverages of nearly 950×(454 sequencing) and 38,000×(Illumina). The consensus sequence of many of the passaged samples had a 12 nucleotide insert in the consensus sequence of the spike gene, and multiple point mutations were associated with the presence of the insert. Deep sequencing revealed that the insert was present but very rare in the unpassaged samples and could quickly shift to dominate the population when placed in a different environment. The insert coded for three arginine residues, occurred in a region associated with fusion entry into host cells, and may allow infection of new cell types via heparin sulfate binding. Analysis of the deep sequencing data indicated that two distinct genotypes circulated at different frequency levels in each sample, and support the hypothesis that the mutations present in passaged strains were "selected" from a pre-existing pool rather than through de novo mutation and subsequent population fixation.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258213</identifier>
+        <datestamp>2020-01-25T07:22:54Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258213</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Greystock-et-al.-2015: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Greystock-et-al.-2015/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:207958</identifier>
+        <datestamp>2020-01-25T19:21:46Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.207958</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>globalbioticinteractions/template-dataset: dataset description now includes zenodo instructions and badges</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2016</publicationYear>
+              <dates>
+                <date dateType="Issued">2016-12-17</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/template-dataset/tree/0.0.2</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.593491</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>0.0.2</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Template species interaction data repository compatible with globalbioticinteractions.org&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258231</identifier>
+        <datestamp>2020-01-24T19:27:55Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258231</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Bascompte-J.-Meli-n-C.J.-and-Sala-E.-2005: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Bascompte-J.-Meli-n-C.J.-and-Sala-E.-2005/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258204</identifier>
+        <datestamp>2020-01-25T07:21:20Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258204</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Plant-Disease-Survey: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Plant-Disease-Survey/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:207784</identifier>
+        <datestamp>2020-01-24T19:26:14Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.207784</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>globalbioticinteractions/template-dataset: initial release of GloBI template dataset</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2016</publicationYear>
+              <dates>
+                <date dateType="Issued">2016-12-17</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/template-dataset/tree/0.0.1</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.593491</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>0.0.1</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Template species interaction data repository compatible with globalbioticinteractions.org&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258202</identifier>
+        <datestamp>2020-01-25T07:26:53Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258202</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Arctic-food-web: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Arctic-food-web/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258190</identifier>
+        <datestamp>2020-01-24T19:27:48Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258190</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/The-Butterflies-of-North-America: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/The-Butterflies-of-North-America/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258229</identifier>
+        <datestamp>2020-01-25T07:26:55Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258229</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/BHL-Interactions: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/BHL-Interactions/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258210</identifier>
+        <datestamp>2020-01-25T07:26:43Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258210</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Interaction-data-by-SEM: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Interaction-data-by-SEM/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:1436853</identifier>
+        <datestamp>2020-01-24T19:26:12Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.1436853</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>globalbioticinteractions/template-dataset: More examples and mappings.</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2018</publicationYear>
+              <dates>
+                <date dateType="Issued">2018-09-28</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/template-dataset/tree/0.0.3</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.593491</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>0.0.3</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Template species interaction data repository compatible with globalbioticinteractions.org&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258227</identifier>
+        <datestamp>2020-01-25T07:26:46Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258227</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Birds-Consumed-by-the-Invasive-Burmese-Python-Python-molurus-bivittatus-: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Birds-Consumed-by-the-Invasive-Burmese-Python-Python-molurus-bivittatus-/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258215</identifier>
+        <datestamp>2020-01-25T07:26:45Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258215</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Fly-parasites: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Fly-parasites/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.591247</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258197</identifier>
+        <datestamp>2020-01-25T07:26:50Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258197</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Serengeti: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Serengeti/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258201</identifier>
+        <datestamp>2020-01-25T07:26:53Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258201</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Plant-Pollinator-Web: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Plant-Pollinator-Web/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258191</identifier>
+        <datestamp>2020-01-25T07:22:26Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258191</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Smithsonian-Repository-Interactions: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Smithsonian-Repository-Interactions/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258206</identifier>
+        <datestamp>2020-01-25T07:25:32Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258206</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/parasitic-plant-connection: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/parasitic-plant-connection/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258217</identifier>
+        <datestamp>2020-01-25T07:25:32Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258217</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Flea-Collection: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Flea-Collection/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:259822</identifier>
+        <datestamp>2020-01-24T19:27:53Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.259822</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Host-plant-and-distribution-records: First Release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-25</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Host-plant-and-distribution-records/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;first release&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:823590</identifier>
+        <datestamp>2020-01-25T07:21:33Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.823590</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Arctos: First release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-07-06</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Arctos/tree/V1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.823589</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>V1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;No description provided.&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258216</identifier>
+        <datestamp>2020-01-25T07:21:59Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258216</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Flowers-and-insects-lists-of-visitors-to-four-hundred-and-fifty-three-flowers: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Flowers-and-insects-lists-of-visitors-to-four-hundred-and-fifty-three-flowers/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258214</identifier>
+        <datestamp>2020-01-25T07:25:56Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258214</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Fossil-snake: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Fossil-snake/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3988628</identifier>
+        <datestamp>2020-08-18T00:59:22Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.3988628</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jorrit Poelen</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chris Mungall</creatorName>
+                  <affiliation>Lawrence Berkeley National Laboratory</affiliation>
+                </creator>
+              </creators>
+              <titles>
+                <title>globalbioticinteractions/jsonld-template-dataset v0.3</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2020</publicationYear>
+              <dates>
+                <date dateType="Issued">2020-08-17</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/globalbioticinteractions/jsonld-template-dataset/tree/v0.3</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.597906</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v0.3</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Update references to use recently introduced "main" branch.&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:258198</identifier>
+        <datestamp>2020-01-25T07:26:02Z</datestamp>
+        <setSpec>software</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.258198</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Sarah Miller</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>millerse/Seaweed: first release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <dates>
+                <date dateType="Issued">2017-01-23</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Software"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/millerse/Seaweed/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;The first release of the dataset&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949280</identifier>
+        <datestamp>2020-07-20T07:30:12Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949280</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Gay, Noellie</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Olival, Kevin J.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Bumrungsri, Sara</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Siriaroonrat, Boripat</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Bourgarel, Mathieu</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Morand, Serge</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Parasite and viral species richness of Southeast Asian bats: Fragmentation of area distribution matters</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2014</publicationYear>
+              <subjects>
+                <subject>Helminths</subject>
+                <subject>Parasite diversity</subject>
+                <subject>corona viruses</subject>
+                <subject>virus-host</subject>
+                <subject>biotic associations</subject>
+                <subject>pathogen-host</subject>
+                <subject>Asia</subject>
+                <subject>Chiroptera</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>biotic interaction</subject>
+                <subject>Distribution range</subject>
+                <subject>Coronaviridae</subject>
+                <subject>Ectoparasites</subject>
+                <subject>Fragmentation</subject>
+                <subject>covid</subject>
+                <subject>Virus</subject>
+                <subject>covid-19</subject>
+                <subject>pathogens</subject>
+                <subject>Viridae</subject>
+                <subject>biotic relations</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2014-08-31</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1016/j.ijppaw.2014.06.003</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">Interest in bat-borne diseases and parasites has grown in the past decade over concerns for human health. However, the drivers of parasite diversity among bat host species are understudied as are the links between parasite richness and emerging risks. Thus, we aimed at exploring factors that explain macro and microparasite species richness in bats from Southeast Asia, a hotspot of emerging infectious diseases. First, we identified bat species that need increased sampling effort for pathogen discovery. Our approach highlights pathogen investigation disparities among species within the same genus, such as Rhinolophus and Pteropus. Secondly, comparative analysis using independent contrasts method allowed the identification of likely factors explaining parasite and viral diversity of bats. Our results showed a key role of bat distribution shape, an index of the fragmentation of bat distribution, on parasite diversity, linked to a decrease for both viral and endoparasite species richness. We discuss how our study may contribute to a better understanding of the link between parasite species richness and emergence.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949276</identifier>
+        <datestamp>2020-07-20T07:29:55Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949276</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Hu, Dan</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhu, Changqiang</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Wang, Yi</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Ai, Lele</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Yang, Lu</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Ye, Fuqiang</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Ding, Chenxi</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chen, Jiafeng</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>He, Biao</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhu, Jin</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Qian, Hui</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Xu, Wenrong</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Feng, Youjun</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Tan, Weilong</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Wang, Changjun</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Virome analysis for identification of novel mammalian viruses in bats from Southeast China</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2017</publicationYear>
+              <subjects>
+                <subject>Phylogeny</subject>
+                <subject>Zoonoses</subject>
+                <subject>Sequence Analysis</subject>
+                <subject>Virus Diseases</subject>
+                <subject>Lung</subject>
+                <subject>corona viruses</subject>
+                <subject>virus-host</subject>
+                <subject>Viruses</subject>
+                <subject>biotic associations</subject>
+                <subject>China</subject>
+                <subject>pathogen-host</subject>
+                <subject>Chiroptera</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>biotic interaction</subject>
+                <subject>DNA</subject>
+                <subject>Polymerase Chain Reaction</subject>
+                <subject>Coronaviridae</subject>
+                <subject>covid</subject>
+                <subject>covid-19</subject>
+                <subject>pathogens</subject>
+                <subject>Viridae</subject>
+                <subject>Intestines</subject>
+                <subject>Metagenomics</subject>
+                <subject>biotic relations</subject>
+                <subject>Animals</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2017-09-30</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1038/s41598-017-11384-w</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">Bats have been shown as important mammal resevoirs to carry a variety of zoonotic pathogens. To analyze pathogenic species in bats from southeast coastal regions of China, we performed metagenomic sequencing technology for high throughput sequencing of six sentinels from southeast coastal area of China. We obtained 5,990,261 high quality reads from intestine and lung tissue of 235 bats, including 2,975,371 assembled sequences. 631,490 reads predicted overlapping sequences for the open reading frame (ORF), which accounts for 2.37\% of all the sequences (15,012/631,490). Further, the acquired virus sequences were classified into 25 viral families, including 16 vertebrate viruses, four plant viruses and five insect viruses. All bat samples were screened by specific PCR and phylogenetic analysis. Using these techniques, we discovered many novel bat viruses and some bat viruses closely-related to known human/animal pathogens, including coronavirus, norovirus, adenovirus, bocavirus, astrovirus, and circovirus. In summary, this study extended our understanding of bats as the viral reservoirs. Additionally, it also provides a basis for furher studying the transmission of viruses from bats to humans.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:5441458</identifier>
+        <datestamp>2021-09-12T09:22:08Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-meisebotanicgarden</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.5441458</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Demetriou, Jakovos</creatorName>
+                  <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0001-5273-7109</nameIdentifier>
+                  <affiliation>National and Kapodistrian University of Athens</affiliation>
+                </creator>
+                <creator>
+                  <creatorName>Quentin Groom</creatorName>
+                  <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0002-0596-5376</nameIdentifier>
+                  <affiliation>Meise Botanic Garden</affiliation>
+                </creator>
+              </creators>
+              <titles>
+                <title>qgroom/Sceliphron: Initial release</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2021</publicationYear>
+              <dates>
+                <date dateType="Issued">2021-09-04</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/qgroom/Sceliphron/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.5441457</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/meisebotanicgarden</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Initial release of Sceliphron biotic interaction data from literature&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949022</identifier>
+        <datestamp>2020-07-17T00:59:21Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949022</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Guan, Y.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zheng, B. J.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>He, Y. Q.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Liu, X. L.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhuang, Z. X.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Cheung, C. L.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Luo, S. W.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Li, P. H.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Zhang, L. J.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Guan, Y. J.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Butt, K. M.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Wong, K. L.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chan, K. W.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Lim, W.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Shortridge, K. F.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Yuen, K. Y.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Peiris, J. S. M.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Poon, L. L. M.</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Isolation and Characterization of Viruses Related to the SARS Coronavirus from Animals in Southern China</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2003</publicationYear>
+              <subjects>
+                <subject>Coronaviridae</subject>
+                <subject>Viridae</subject>
+                <subject>corona viruses</subject>
+                <subject>biotic associations</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>covid</subject>
+                <subject>covid-19</subject>
+                <subject>pathogens</subject>
+                <subject>biotic interaction</subject>
+                <subject>virus-host</subject>
+                <subject>biotic relations</subject>
+                <subject>pathogen-host</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2003-10-31</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1126/science.1087139</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">A novel coronavirus (SCoV) is the etiological agent of severe acute respiratory syndrome (SARS). SCoV-like viruses were isolated from Himalayan palm civets found in a live-animal market in Guangdong, China. Evidence of virus infection was also detected in other animals (including a raccoon dog, Nyctereutes procyonoides) and in humans working at the same market. All the animal isolates retain a 29-nucleotide sequence that is not found in most human isolates. The detection of SCoV-like viruses in small, live wild mammals in a retail market indicates a route of interspecies transmission, although the natural reservoir is not known.
+Civet cats, a raccoon dog, and a ferret badger in an animal market in Gunagdong, China, were infected with a coronavirus identical to the one that causes SARS in humans save for an extra 29-nucleotide sequence.
+Civet cats, a raccoon dog, and a ferret badger in an animal market in Gunagdong, China, were infected with a coronavirus identical to the one that causes SARS in humans save for an extra 29-nucleotide sequence.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:3949270</identifier>
+        <datestamp>2020-07-20T07:29:39Z</datestamp>
+        <setSpec>openaire</setSpec>
+        <setSpec>user-biosyslit</setSpec>
+        <setSpec>user-coviho</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-zenodo</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="URL">https://zenodo.org/record/3949270</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Wit, Emmie de</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Rasmussen, Angela L.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Falzarano, Darryl</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Bushmaker, Trenton</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Feldmann, Friederike</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Brining, Douglas L.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Fischer, Elizabeth R.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Martellaro, Cynthia</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Okumura, Atsushi</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Chang, Jean</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Scott, Dana</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Benecke, Arndt G.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Katze, Michael G.</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Feldmann, Heinz</creatorName>
+                </creator>
+                <creator>
+                  <creatorName>Munster, Vincent J.</creatorName>
+                </creator>
+              </creators>
+              <titles>
+                <title>Middle East respiratory syndrome coronavirus (MERS-CoV) causes transient lower respiratory tract infection in rhesus macaques</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2013</publicationYear>
+              <subjects>
+                <subject>covid</subject>
+                <subject>virus-host</subject>
+                <subject>covid-19</subject>
+                <subject>biotic associations</subject>
+                <subject>pathogen-host</subject>
+                <subject>pathogens</subject>
+                <subject>emerging infectious disease</subject>
+                <subject>CETAF-taskforce</subject>
+                <subject>Coronaviridae</subject>
+                <subject>Viridae</subject>
+                <subject>biotic interaction</subject>
+                <subject>DPP4</subject>
+                <subject>corona viruses</subject>
+                <subject>biotic relations</subject>
+              </subjects>
+              <contributors>
+                <contributor contributorType="DataCurator">
+                  <contributorName>Plazi</contributorName>
+                </contributor>
+              </contributors>
+              <dates>
+                <date dateType="Issued">2013-10-31</date>
+              </dates>
+              <language>en</language>
+              <resourceType resourceTypeGeneral="JournalArticle"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsIdenticalTo">10.1073/pnas.1310744110</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/biosyslit</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/coviho</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/zenodo</relatedIdentifier>
+              </relatedIdentifiers>
+              <rightsList>
+                <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">In 2012, a novel betacoronavirus, designated Middle East respiratory syndrome coronavirus or MERS-CoV and associated with severe respiratory disease in humans, emerged in the Arabian Peninsula. To date, 108 human cases have been reported, including cases of human-to-human transmission. The availability of an animal disease model is essential for understanding pathogenesis and developing effective countermeasures. Upon a combination of intratracheal, ocular, oral, and intranasal inoculation with 7 × 106 50\% tissue culture infectious dose of the MERS-CoV isolate HCoV-EMC/2012, rhesus macaques developed a transient lower respiratory tract infection. Clinical signs, virus shedding, virus replication in respiratory tissues, gene expression, and cytokine and chemokine profiles peaked early in infection and decreased over time. MERS-CoV caused a multifocal, mild to marked interstitial pneumonia, with virus replication occurring mainly in alveolar pneumocytes. This tropism of MERS-CoV for the lower respiratory tract may explain the severity of the disease observed in humans and the, up to now, limited human-to-human transmission.</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:5501760</identifier>
+        <datestamp>2021-09-13T01:48:24Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+        <setSpec>user-meisebotanicgarden</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.5501760</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Jakovos Demetriou</creatorName>
+                  <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0001-5273-7109</nameIdentifier>
+                </creator>
+                <creator>
+                  <creatorName>Quentin Groom</creatorName>
+                  <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0002-0596-5376</nameIdentifier>
+                  <affiliation>Botanic Garden Meise</affiliation>
+                </creator>
+              </creators>
+              <titles>
+                <title>Sceliphron biotic interactions extracted from the literature</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2021</publicationYear>
+              <dates>
+                <date dateType="Issued">2021-09-12</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/qgroom/Sceliphron/tree/v1.2</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.5441457</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/meisebotanicgarden</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.2</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;No description provided.&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>oai:zenodo.org:5501763</identifier>
+        <datestamp>2021-09-13T01:48:24Z</datestamp>
+        <setSpec>openaire_data</setSpec>
+        <setSpec>user-globalbioticinteractions</setSpec>
+      </header>
+      <metadata>
+        <oai_datacite xmlns="http://schema.datacite.org/oai/oai-1.0/" xsi:schemaLocation="http://schema.datacite.org/oai/oai-1.0/ oai_datacite.xsd">
+          <isReferenceQuality>true</isReferenceQuality>
+          <schemaVersion>3.1</schemaVersion>
+          <datacentreSymbol>CERN.ZENODO</datacentreSymbol>
+          <payload>
+            <resource xmlns="http://datacite.org/schema/kernel-3" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+              <identifier identifierType="DOI">10.5281/zenodo.5501763</identifier>
+              <creators>
+                <creator>
+                  <creatorName>Cristina Preda</creatorName>
+                  <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0002-3513-7344</nameIdentifier>
+                  <affiliation>Ovidius University</affiliation>
+                </creator>
+                <creator>
+                  <creatorName>Quentin Groom</creatorName>
+                  <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0002-0596-5376</nameIdentifier>
+                  <affiliation>Botanic Garden Meise</affiliation>
+                </creator>
+              </creators>
+              <titles>
+                <title>Vespa velutina interactions from literature</title>
+              </titles>
+              <publisher>Zenodo</publisher>
+              <publicationYear>2021</publicationYear>
+              <dates>
+                <date dateType="Issued">2021-09-12</date>
+              </dates>
+              <resourceType resourceTypeGeneral="Dataset"/>
+              <relatedIdentifiers>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://github.com/qgroom/Vespa-velutina/tree/v1.0</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5281/zenodo.5501762</relatedIdentifier>
+                <relatedIdentifier relatedIdentifierType="URL" relationType="IsPartOf">https://zenodo.org/communities/globalbioticinteractions</relatedIdentifier>
+              </relatedIdentifiers>
+              <version>v1.0</version>
+              <rightsList>
+                <rights rightsURI="info:eu-repo/semantics/openAccess">Open Access</rights>
+              </rightsList>
+              <descriptions>
+                <description descriptionType="Abstract">&lt;p&gt;Biotic interactions of &lt;em&gt;Vespa velutina&lt;/em&gt; extracted from literature&lt;/p&gt;</description>
+              </descriptions>
+            </resource>
+          </payload>
+        </oai_datacite>
+      </metadata>
+    </record>
+    <resumptionToken expirationDate="2021-09-13T18:20:43Z" cursor="200" completeListSize="{u'relation': u'eq', u'value': 257}"/>
+  </ListRecords>
+</OAI-PMH>
