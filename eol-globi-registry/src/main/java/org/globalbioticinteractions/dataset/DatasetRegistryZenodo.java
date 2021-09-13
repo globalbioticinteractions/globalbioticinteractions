@@ -48,7 +48,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         this.inputStreamFactory = inputStreamFactory;
     }
 
-    public static String parseResumptionToken(InputStream is) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+    static String parseResumptionToken(InputStream is) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
         String token = (String) XmlUtil.applyXPath(is, "//*[local-name()='resumptionToken']", XPathConstants.STRING);
         return StringUtils.isBlank(token) ? null : token;
     }
@@ -84,7 +84,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    public Map<String, List<Pair<Long, URI>>> findZenodoArchives() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+    private Map<String, List<Pair<Long, URI>>> findZenodoArchives() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
         List<InputStream> feedStreams = getFeedStreams();
 
         Map<String, List<Pair<Long, URI>>> zenodoGitHubArchives = new TreeMap<>();
@@ -113,7 +113,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         return cachedStreams;
     }
 
-    public void initFeedCacheIfNeeded() throws DatasetRegistryException {
+    private void initFeedCacheIfNeeded() throws DatasetRegistryException {
         if (getCachedFeed() == null) {
             String resumptionToken = null;
             List<String> cachedPages = new ArrayList<>();
@@ -131,7 +131,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    public InputStreamFactory getInputStreamFactory() {
+    private InputStreamFactory getInputStreamFactory() {
         return inputStreamFactory;
     }
 
@@ -157,7 +157,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         return latestArchiveURI;
     }
 
-    static Map<String, List<Pair<Long, URI>>> findZenodoGitHubArchives(NodeList records) throws XPathExpressionException, MalformedURLException {
+    private static Map<String, List<Pair<Long, URI>>> findZenodoGitHubArchives(NodeList records) throws XPathExpressionException, MalformedURLException {
         Map<String, List<Pair<Long, URI>>> namespace2ZenodoPubs = new TreeMap<>();
         Long idMax = null;
         for (int i = 0; i < records.getLength(); i++) {
@@ -170,7 +170,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
                     String replace = StringUtils.replace(StringUtils.trim(relatedIdentifier), PREFIX_GITHUB_RELATION, "");
                     String[] split = StringUtils.split(replace, "/");
                     Long id = NumberUtils.createLong(idString);
-                    if (split.length > 3 && (idMax == null || id > idMax)) {
+                    if (split.length > 3) {
                         String githubRepo = split[0] + "/" + split[1];
                         URI archiveURI = URI.create("https://zenodo.org/record/" + idString + "/files/" + githubRepo + "-" + split[3] + ".zip");
                         List<Pair<Long, URI>> versions = namespace2ZenodoPubs
@@ -221,17 +221,12 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-
-    static NodeList getRelationsNodeList(InputStream is) throws DatasetRegistryException {
+    private static NodeList getRelationsNodeList(InputStream is) throws DatasetRegistryException {
         try {
             return (NodeList) XmlUtil.applyXPath(is, "//*[local-name()='relatedIdentifier']", XPathConstants.NODESET);
         } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
             throw new DatasetRegistryException("failed to find published github repos in zenodo", e);
         }
-    }
-
-    static String getNextPage(String resumptionToken) throws DatasetRegistryException {
-        return getNextPage(inStream -> inStream, resumptionToken);
     }
 
     static String getNextPage(InputStreamFactory factory, String resumptionToken) throws DatasetRegistryException {
@@ -260,11 +255,11 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     }
 
 
-    public void setCachedFeed(List<String> cachedFeed) {
+    private void setCachedFeed(List<String> cachedFeed) {
         this.cachedFeed = cachedFeed;
     }
 
-    public List<String> getCachedFeed() {
+    private List<String> getCachedFeed() {
         return this.cachedFeed;
     }
 

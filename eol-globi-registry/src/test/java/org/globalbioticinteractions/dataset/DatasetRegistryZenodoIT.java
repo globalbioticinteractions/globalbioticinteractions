@@ -11,11 +11,12 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DatasetRegistryZenodoIT {
 
     @Test
     public void zenodoDataFeed() throws DatasetRegistryException {
-        String feed = DatasetRegistryZenodo.getNextPage(null);
+        String feed = DatasetRegistryZenodo.getNextPage(in -> in, null);
         assertThat(feed, containsString("<?xml version"));
     }
 
