@@ -181,14 +181,14 @@ public class NodeUtil {
                                              String indexName) {
         Index<Node> index = graphService.index().forNodes(indexName);
         IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
-        List<Long> collect = studies
+        List<Long> nodeIds = studies
                 .stream()
                 .skip(skip)
                 .limit(limit)
                 .map(Node::getId)
                 .collect(Collectors.toList());
         studies.close();
-        return collect;
+        return nodeIds;
     }
 
     public static void processNodes(Long batchSize,
