@@ -76,42 +76,45 @@ public class GraphExporterImpl implements GraphExporter {
         exportDarwinCoreAll(graphService, baseDir);
     }
 
-    public void exportInteractionsAndCitations(GraphDatabaseService graphService, String extension, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private void exportInteractionsAndCitations(GraphDatabaseService graphService, String extension, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         exportSupportingInteractions(graphService, extension, "interactions." + extension + ".gz", joiner);
         exportRefutedInteractions(extension, "refuted-interactions." + extension + ".gz", graphService, joiner);
         exportCitations(extension, "citations." + extension + ".gz", graphService, joiner);
     }
 
-    public void exportSupportingInteractions(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private void exportSupportingInteractions(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
-        stopWatch.stop();
+        stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
         new ExportFlatInteractions(joiner, filename)
                 .export(graphService, baseDir);
+        stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
     }
 
-    public void exportCitations(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private void exportCitations(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
-        stopWatch.stop();
+        stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
         new ExportCitations(new ExportUtil.TsvValueJoiner(), filename)
                 .export(graphService, baseDir);
+        stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
     }
 
-    public void exportRefutedInteractions(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private void exportRefutedInteractions(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
-        stopWatch.stop();
+        stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
         new ExportFlatInteractions(joiner, filename)
                 .setArgumentType(RelTypes.REFUTES)
                 .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
                 .export(graphService, baseDir);
+        stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
     }
 
-    public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
+    private void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         final String ncbiDir = baseDir + "ncbi-link-out/";
         mkdir(ncbiDir);
         new ExportNCBIIdentityFile().export(graphService, ncbiDir);
@@ -124,18 +127,18 @@ public class GraphExporterImpl implements GraphExporter {
         });
     }
 
-    public void exportNames(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
+    private void exportNames(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
         mkdir(baseDir, "taxa");
         exportNames(graphService, baseDir, new ExportTaxonMap(), "taxa/taxonMap.tsv.gz");
         exportNames(graphService, baseDir, new ExportTaxonCache(), "taxa/taxonCache.tsv.gz");
         //exportNames(studies, baseDir, new ExportUnmatchedTaxonNames(), "taxa/taxonUnmatched.tsv");
     }
 
-    public void mkdir(String baseDir, String subdirName) throws StudyImporterException {
+    private void mkdir(String baseDir, String subdirName) throws StudyImporterException {
         mkdir(baseDir + subdirName);
     }
 
-    public void mkdir(String dir) throws StudyImporterException {
+    private void mkdir(String dir) throws StudyImporterException {
         try {
             FileUtils.forceMkdir(new File(dir));
         } catch (IOException e) {
