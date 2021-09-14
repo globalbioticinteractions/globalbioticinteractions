@@ -7,14 +7,9 @@ import org.eol.globi.util.CypherUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Map;
 
 public class CypherQueryExecutor {
     private final CypherQuery cypherQuery;
-
-    public CypherQueryExecutor(String query, Map<String, String> queryParams) {
-        this(new CypherQuery(query, queryParams));
-    }
 
     public CypherQueryExecutor(CypherQuery cypherQuery) {
         this.cypherQuery = cypherQuery;

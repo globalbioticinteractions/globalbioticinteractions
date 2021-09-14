@@ -1,6 +1,7 @@
 package org.eol.globi.server.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 
 public class ResultFormatterDOT implements ResultFormatter {
     protected static String getSafeLabel(String string) {
-        return string.replaceAll("\\W", "_");
+        return StringUtils.replaceAll(string, "\\W", "_");
     }
 
     /*
@@ -56,12 +57,14 @@ public class ResultFormatterDOT implements ResultFormatter {
                 JsonNode type = row.get(interactionTypeIndex);
                 if (sourceTaxon != null && targetTaxon != null && type != null) {
                     String sourceId = getSafeLabel(sourceTaxon.asText());
-                    if (targetTaxon.isArray()) {
-                        for (JsonNode targetTaxonItem : targetTaxon) {
-                            appendEdge(builder, targetTaxonItem, type, sourceId);
+                    if (StringUtils.isNoneBlank(sourceId)) {
+                        if (targetTaxon.isArray()) {
+                            for (JsonNode targetTaxonItem : targetTaxon) {
+                                appendEdge(builder, targetTaxonItem, type, sourceId);
+                            }
+                        } else {
+                            appendEdge(builder, targetTaxon, type, sourceId);
                         }
-                    } else {
-                        appendEdge(builder, targetTaxon, type, sourceId);
                     }
                 }
             }

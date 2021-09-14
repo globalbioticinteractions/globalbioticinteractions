@@ -1,14 +1,17 @@
 package org.eol.globi.server.util;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class ResultFormatterCSVTest {
 
     public static final String CSV_WITH_TEXT_VALUES = "{ \"columns\" : [ \"loc.latitude\", \"loc.longitude\" ], \"data\" : [ [ \"one\", \"two\" ], [ \"three\", \"four\" ] ]}";
@@ -61,6 +64,21 @@ public class ResultFormatterCSVTest {
         String expectedValue = "\"loc.latitude\",\"loc.longitude\"\n\"and he said: \"\"boo\"\"\",\"two\"\n\"three\",\"four\"\n";
         assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
                 is(expectedValue));
+    }
+
+    @Ignore("see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/698")
+    @Test
+    public void toCSVWithJSONArray() throws ResultFormattingException {
+        String json = "{\"columns\":[\"source_taxon_name\",\"interaction_type\",\"target_taxon_name\"],\"data\":[[\"Homo sapiens\",\"preysOn\",[\"Tragelaphus spekii\",\"Kobus kob\",\"Hoplobatrachus occipitalis\",\"Pelusios castaneus\",\"Philantomba monticola\",\"Atherurus africanus\",\"Crossarchus platycephalus\",\"Heterotis niloticus\",\"Eidolon helvum\",\"Ctenosaura pectinata\",\"Poiana richardsonii\",\"Pteropus rufus\",\"Notolabrus fucicola\",\"Doryteuthis opalescens\",\"Tragelaphus scriptus\",\"Catopuma temminckii\",\"Rusa unicolor\",\"Helarctos malayanus malayanus\",\"Cercopithecus pogonias\",\"Cercopithecus nictitans\",\"Civettictis civetta\",\"Cercopithecus mona\",\"Nandinia binotata\",\"Daubentonia madagascariensis\",\"Varanus niloticus\",\"Ceratogymna atrata\",\"Thryonomys swinderianus\",\"Osteolaemus tetraspis\",\"Python sebae\",\"Cercopithecus erythrotis\",\"Cercopithecus cephus\",\"Phataginus tricuspis\",\"Bitis gabonica\",\"Rousettus madagascariensis\",\"Rousettus aegyptiacus\",\"Pardofelis marmorata\",\"Callosciurus pygerythrus\",\"Ursus thibetanus\",\"Hystrix brachyura\",\"Pteropus giganteus\",\"Conraua goliath\",\"Kinixys erosa\",\"Cricetomys emini\",\"Neofelis nebulosa\",\"Mus musculus\",\"Cricetomys gambianus\",\"Lybius bidentatus\",\"Treron calvus\",\"Heterobranchus longifilis\",\"Augosoma centaurus\",\"Ursus maritimus\",\"Spatula discors\",\"Anas clypeata\",\"Neotoma leucodon\",\"Lepus victoriae\",\"Pronolagus rupestris\",\"Cercocebus torquatus\",\"Cricetus cricetus\",\"Callipepla californica\",\"Branta canadensis\",\"Pteropus vampyrus\",\"Puma concolor\",\"Meleagris gallopavo\",\"Atilax paludinosus\",\"Brachycope anomala\",\"Grayia ornata\",\"Triaenops menamena\",\"Paratriaenops furculus\",\"Macronycteris commersonii\",\"Corythaeola cristata\",\"Clupea harengus membras\",\"Pteropus melanopogon\",\"Dendrohyrax interfluvialis\",\"Kinixys homeana\",\"Varanus albigularis\",\"Myotis bocagii\",\"Potamochoerus porcus\",\"Lavia frons\",\"Aix sponsa\",\"Pisces\",\"Cheloniidae\",\"Suidae\",\"coconut crabs\",\"Bothus leopardinus\",\"Scomberomorus guttatus\",\"demersal species\",\"Pomatomus saltatrix\",\"Galliformes\",\"Dasyatis\",\"Salvelinus alpinus alpinus\",\"fish carnivores\",\"prawns and shrimps\",\"fish herbivores\",\"Mirounga\",\"Balaenoptera\",\"Physeteridae\",\"Todarodes pacificus\",\"Engraulis japonicus\",\"Scomber japonicus\",\"Cephalopoda\",\"Stenella\",\"Sergia lucens\",\"Trachurus japonicus\"]]]}";
+        InputStream is = IOUtils.toInputStream(json, StandardCharsets.UTF_8);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        new ResultFormatterCSV().format(is, os);
+        String expectedValue = "\"source_taxon_name\",\"interaction_type\",\"target_taxon_name\"\n" +
+                "\"Homo sapiens\",\"preysOn\"\"Tragelaphus spekii\"\n" +
+                "\"Homo sapiens\",\"preysOn\",\"Kobus kob\"\n";
+        assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
+                startsWith(expectedValue));
+
     }
 
 }
