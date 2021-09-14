@@ -42,7 +42,7 @@ public class NormalizerTest extends GraphDBTestCase {
 
     @Override
     public void afterGraphDBStart() {
-
+        // stub
     }
 
 
