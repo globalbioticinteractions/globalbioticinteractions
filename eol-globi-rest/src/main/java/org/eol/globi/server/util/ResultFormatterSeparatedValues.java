@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.IOUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,23 +66,45 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
             boolean isFirstValue = true;
             boolean endOfLine = false;
             boolean endOfData = false;
+            boolean inValueArray = false;
+            boolean inRowArray = false;
+            ByteArrayOutputStream lineBuffer = new ByteArrayOutputStream();
             while ((token = jsonParser.nextToken()) != null && !endOfData) {
                 if (START_ARRAY.equals(token)) {
-                    endOfLine = false;
-                    endOfData = false;
-                    isFirstValue = true;
-                } else if (isValue(token)) {
-                    if (!isFirstValue) {
-                        IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
+                    if (inRowArray) {
+                        inValueArray = true;
+                    } else {
+                        endOfLine = false;
+                        endOfData = false;
+                        isFirstValue = true;
+                        inRowArray = true;
                     }
-                    writeValue(os, jsonParser, token);
+                } else if (isValue(token)) {
+                    if (!isFirstValue && !inValueArray) {
+                        IOUtils.write(getFieldSeparator(), lineBuffer, StandardCharsets.UTF_8);
+                    }
+                    if (inValueArray) {
+                        lineBuffer.writeTo(os);
+                        IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
+                        writeValue(os, jsonParser, token);
+                        addNewline(os);
+                    } else {
+                        writeValue(lineBuffer, jsonParser, token);
+                    }
                     isFirstValue = false;
                 } else if (END_ARRAY.equals(token)) {
-                    if (!endOfLine) {
-                        addNewline(os);
+                    if (inValueArray) {
+                        inValueArray = false;
+                    } else if (inRowArray) {
+                        addNewline(lineBuffer);
+                        lineBuffer.writeTo(os);
+                        lineBuffer = new ByteArrayOutputStream();
+                        endOfData = endOfLine;
+                        endOfLine = true;
+                        inRowArray = false;
                     }
-                    endOfData = endOfLine;
-                    endOfLine = true;
+
+
                 }
             }
         }
