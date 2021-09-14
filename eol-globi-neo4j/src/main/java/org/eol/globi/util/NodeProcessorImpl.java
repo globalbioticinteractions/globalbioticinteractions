@@ -97,6 +97,6 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     }
 
     public void logBatchFinishStats(StopWatch stopWatch, long count, String verb, String indexName) {
-        LOG.info(verb + " " + count + " " + "[" + indexName + "] nodes in " + stopWatch.getTime()/1000 + "s (@ " + count / stopWatch.getTime() + " nodes/ms)");
+        LOG.info(verb + " " + count + " " + "[" + indexName + "] nodes in " + stopWatch.getTime()/1000 + "s (@ " + count / (stopWatch.getTime()+1) + " nodes/ms)");
     }
 }
