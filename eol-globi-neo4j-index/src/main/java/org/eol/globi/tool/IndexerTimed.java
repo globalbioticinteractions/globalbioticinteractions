@@ -1,11 +1,11 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.data.StudyImporterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.eol.globi.db.GraphServiceFactory;
-import org.neo4j.graphdb.GraphDatabaseService;
+
+import java.util.concurrent.TimeUnit;
 
 public class IndexerTimed implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(IndexerTimed.class);
@@ -25,7 +25,7 @@ public class IndexerTimed implements IndexerNeo4j {
             indexer.index();
         } finally {
             stopWatch.stop();
-            LOG.info(linkName + " completed in [" + stopWatch.getTime() / 1000 + "]s");
+            LOG.info(linkName + " completed in [" + stopWatch.getTime(TimeUnit.SECONDS) + "]s");
         }
     }
 }

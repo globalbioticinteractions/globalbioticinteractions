@@ -1,7 +1,8 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class LinkProgress {
@@ -25,7 +26,7 @@ public class LinkProgress {
     public void progress() {
         counter.incrementAndGet();
         if (counter.get() % reportInterval == 0) {
-            long time = stopWatch.getTime() / 1000;
+            long time = stopWatch.getTime(TimeUnit.SECONDS);
             listener.onProgress(String.format("handled [%d] in [%d]s ([%.1f] /s)", counter.get(), time, (float) counter.get() / time));
         }
 

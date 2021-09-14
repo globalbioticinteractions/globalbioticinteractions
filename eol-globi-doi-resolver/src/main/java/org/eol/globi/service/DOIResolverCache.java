@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DOIResolverCache extends CacheService implements DOIResolver {
@@ -125,7 +126,7 @@ public class DOIResolverCache extends CacheService implements DOIResolver {
                     .make();
             db.commit();
             watch.stop();
-            LOG.info("doi cache built in [" + watch.getTime() / 1000 + "] s.");
+            LOG.info("doi cache built in [" + watch.getTime(TimeUnit.SECONDS) + "] s.");
         }
     }
 

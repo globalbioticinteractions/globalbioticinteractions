@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPOutputStream;
 
@@ -114,7 +115,7 @@ public class GraphExporterImpl implements GraphExporter {
         new ExportFlatInteractions(joiner, filename)
                 .export(graphService, baseDir);
         stopWatch.stop();
-        LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
+        LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
     private void exportCitations(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
@@ -124,7 +125,7 @@ public class GraphExporterImpl implements GraphExporter {
         new ExportCitations(new ExportUtil.TsvValueJoiner(), filename)
                 .export(graphService, baseDir);
         stopWatch.stop();
-        LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
+        LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
     private void exportRefutedInteractions(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
@@ -136,7 +137,7 @@ public class GraphExporterImpl implements GraphExporter {
                 .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
                 .export(graphService, baseDir);
         stopWatch.stop();
-        LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
+        LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
     private void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {

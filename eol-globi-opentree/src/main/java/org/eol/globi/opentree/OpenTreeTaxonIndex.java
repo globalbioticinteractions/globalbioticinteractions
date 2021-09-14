@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class OpenTreeTaxonIndex {
     private static final Logger LOG = LoggerFactory.getLogger(OpenTreeTaxonIndex.class);
@@ -40,7 +41,7 @@ public class OpenTreeTaxonIndex {
         map = buildMap();
         stopwatch.stop();
         if (map != null) {
-            LOG.info("OpenTreeTaxonIndex built in " + String.format("%.1f", (float) stopwatch.getTime() / (1000.0)) + "s.");
+            LOG.info("OpenTreeTaxonIndex built in " + String.format("%.1f", (float) stopwatch.getTime(TimeUnit.SECONDS)) + "s.");
         }  else {
             LOG.info("OpenTreeTaxonIndex failed to build.");
         }
