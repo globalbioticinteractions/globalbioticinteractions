@@ -11,6 +11,7 @@
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
+    <groupId>org.globalbioticinteractions</groupId>
     <artifactId>elton4n</artifactId>
     <name>GloBI's Elton for Neo4j: import, index, and export, biotic interaction data using Neo4j</name>
 
