@@ -8,7 +8,9 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.globalbioticinteractions.doi.DOI;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,25 +18,26 @@ import java.util.Random;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
+
 public class GraphExporterImplTest extends GraphDBTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void exportAll() throws StudyImporterException, IOException {
-        File tmpDir = FileUtils.getTempDirectory();
-        File tmpDirPath = new File(tmpDir, "test" + new Random().nextLong());
-        FileUtils.forceMkdir(tmpDirPath);
-        assertThat(tmpDirPath.list().length, is(0));
-        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("a study", new DOI("12345","123"), null));
+        File tmpDir = folder.newFolder();
+        assertNotNull(tmpDir);
+        assertThat(tmpDir.list().length, is(0));
+        Study study = nodeFactory.getOrCreateStudy(new StudyImpl("a study", new DOI("12345", "123"), null));
 
         Specimen human = nodeFactory.createSpecimen(study, new TaxonImpl("Homo sapiens", "NCBI:123"));
         human.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", "BLA:444")));
         resolveNames();
-        try {
-            new GraphExporterImpl().export(getGraphDb(), tmpDirPath.getAbsolutePath() + "/");
-            assertThat(tmpDirPath.list().length, is(6));
-        } finally {
-            FileUtils.deleteQuietly(tmpDirPath);
-        }
+
+        new GraphExporterImpl().export(getGraphDb(), tmpDir.getAbsolutePath());
+        assertThat(tmpDir.list().length, is(8));
 
     }
 

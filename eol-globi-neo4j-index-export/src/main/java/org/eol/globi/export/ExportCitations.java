@@ -18,7 +18,7 @@ public class ExportCitations implements GraphExporter {
 
     @Override
     public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        ExportUtil.export(graphService, baseDir, filename, CYPHER_QUERY, joiner);
+        ExportUtil.export(graphService, filename, CYPHER_QUERY, joiner);
     }
 
 }

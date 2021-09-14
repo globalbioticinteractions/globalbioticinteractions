@@ -29,14 +29,15 @@ import java.util.zip.GZIPOutputStream;
 
 public final class ExportUtil {
 
-    public static void export(GraphDatabaseService graphService, String baseDir, String filename, String cypherQuery, ValueJoiner joiner) throws StudyImporterException {
-        export(graphService, baseDir, filename, Collections.singletonList(cypherQuery), joiner);
+    public static void export(GraphDatabaseService graphService, String filename, String cypherQuery, ValueJoiner joiner) throws StudyImporterException {
+        export(graphService, filename, Collections.singletonList(cypherQuery), joiner);
     }
 
-    public static void export(GraphDatabaseService graphService, String baseDir, String filename, List<String> cypherQueries, ValueJoiner joiner) throws StudyImporterException {
+    public static void export(GraphDatabaseService graphService, String filename, List<String> cypherQueries, ValueJoiner joiner) throws StudyImporterException {
         try {
-            mkdirIfNeeded(baseDir);
-            final FileOutputStream out = new FileOutputStream(new File(baseDir, filename));
+            File file = new File(filename);
+            mkdirIfNeeded(file.getParent());
+            final FileOutputStream out = new FileOutputStream(file);
             GZIPOutputStream os = new GZIPOutputStream(out);
             final Writer writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
             Appender appender = AppenderWriter.of(writer, joiner);
@@ -91,6 +92,7 @@ public final class ExportUtil {
         public static AppenderWriter of(Writer writer) {
             return new AppenderWriter(writer);
         }
+
         public static AppenderWriter of(Writer writer, ValueJoiner joiner) {
             return new AppenderWriter(writer, joiner);
         }

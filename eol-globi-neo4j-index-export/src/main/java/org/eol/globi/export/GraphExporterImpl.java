@@ -82,9 +82,29 @@ public class GraphExporterImpl implements GraphExporter {
                                                 String baseDir,
                                                 String extension,
                                                 ExportUtil.ValueJoiner joiner) throws StudyImporterException {
-        exportSupportingInteractions(graphService, extension, new File(baseDir, "interactions." + extension + ".gz").getAbsolutePath(), joiner);
-        exportRefutedInteractions(extension, new File(baseDir,"refuted-interactions." + extension + ".gz").getAbsolutePath(), graphService, joiner);
-        exportCitations(extension, new File(baseDir, "citations." + extension + ".gz").getAbsolutePath(), graphService, joiner);
+        File formatBaseDir = new File(baseDir, extension);
+        try {
+            FileUtils.forceMkdir(formatBaseDir);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to create export dir [" + formatBaseDir.getAbsolutePath() + "]", e);
+        }
+        exportSupportingInteractions(
+                graphService,
+                formatBaseDir.getAbsolutePath(),
+                new File(formatBaseDir, "interactions." + extension + ".gz").getAbsolutePath(),
+                joiner);
+
+        exportRefutedInteractions(
+                graphService,
+                formatBaseDir.getAbsolutePath(),
+                new File(formatBaseDir,"refuted-interactions." + extension + ".gz").getAbsolutePath(),
+                joiner);
+
+        exportCitations(
+                graphService,
+                formatBaseDir.getAbsolutePath(),
+                new File(formatBaseDir, "citations." + extension + ".gz").getAbsolutePath(),
+                joiner);
     }
 
     private void exportSupportingInteractions(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
@@ -97,7 +117,7 @@ public class GraphExporterImpl implements GraphExporter {
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
     }
 
-    private void exportCitations(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private void exportCitations(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
@@ -107,7 +127,7 @@ public class GraphExporterImpl implements GraphExporter {
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
     }
 
-    private void exportRefutedInteractions(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private void exportRefutedInteractions(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
