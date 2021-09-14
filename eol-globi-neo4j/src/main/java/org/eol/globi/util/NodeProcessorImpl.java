@@ -1,11 +1,15 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
@@ -50,29 +54,43 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     }
 
     public void process(NodeListener nodeListener, BatchListener batchListener) {
-        List<Long> nodeIds;
         final AtomicLong nodeCount = new AtomicLong(0L);
-        do {
+        batchListener.onStart();
+
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        LOG.info("collecting [" + indexName + "] node ids");
+
+        DB db = null;
+
+        try {
+            db = DBMaker
+                    .newMemoryDirectDB()
+                    .make();
+            DB.BTreeSetMaker treeSet =
+                    db.createTreeSet(UUID.randomUUID().toString());
+
+            NavigableSet<Long> ids = treeSet.makeLongSet();
+            NodeUtil.collectIds(graphService, queryKey, queryOrQueryObject, indexName, ids);
+            LOG.info("received [" + indexName + "] node ids in [" + stopWatch.getTime() + "] ms");
             batchListener.onStart();
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-            LOG.info("requesting batch of [" + batchSize + "] [" + indexName + "] nodes");
-            nodeIds = NodeUtil.getBatchOfNodes(graphService,
-                    nodeCount.get(),
-                    batchSize,
-                    queryKey,
-                    queryOrQueryObject,
-                    indexName);
-            stopWatch.split();
-            LOG.info("received batch of [" + batchSize + "] [" + indexName + "] nodes in [" + stopWatch.getTime() +"] ms");
-            for (Long nodeId : nodeIds) {
+
+            for (Long nodeId : ids) {
                 nodeListener.on(graphService.getNodeById(nodeId));
                 nodeCount.incrementAndGet();
+                if (nodeCount.get() % batchSize == 0) {
+                    batchListener.onStart();
+                    LOG.info("processed batch of [" + batchSize + "] [" + indexName + "] nodes in [" + stopWatch.getTime() + "] ms.");
+                    LOG.info("total processed [" + indexName + "] nodes so far:  [" + nodeCount.get() + "]");
+                }
             }
+
             batchListener.onFinish();
             stopWatch.stop();
-            LOG.info("processed batch of [" + batchSize + "] [" + indexName + "] nodes in [" + stopWatch.getTime() +"] ms.");
-            LOG.info("total processed [" + indexName + "] nodes so far:  [" + nodeCount.get() +"]");
-        } while (!nodeIds.isEmpty());
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
     }
 }

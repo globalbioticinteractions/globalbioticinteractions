@@ -14,6 +14,8 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.TransactionPerBatch;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -25,6 +27,9 @@ import org.neo4j.graphdb.index.IndexHits;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class NodeUtil {
@@ -190,6 +195,29 @@ public class NodeUtil {
         studies.close();
         return nodeIds;
     }
+
+    public static Set<Long> getAllNodes(GraphDatabaseService graphService,
+                                        Long skip,
+                                        Long limit,
+                                        String queryKey,
+                                        String queryOrQueryObject,
+                                        String indexName) {
+        DB.BTreeSetMaker treeSet = DBMaker.newMemoryDirectDB().make().createTreeSet(UUID.randomUUID().toString());
+        NavigableSet<Long> ids = treeSet.makeLongSet();
+        collectIds(graphService, queryKey, queryOrQueryObject, indexName, ids);
+        return ids;
+    }
+
+    public static void collectIds(GraphDatabaseService graphService, String queryKey, String queryOrQueryObject, String indexName, NavigableSet<Long> ids) {
+        Index<Node> index = graphService.index().forNodes(indexName);
+        IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
+        studies
+                .stream()
+                .map(Node::getId)
+                .forEach(ids::add);
+        studies.close();
+    }
+
 
     public static void processNodes(Long batchSize,
                                     GraphDatabaseService graphService,
