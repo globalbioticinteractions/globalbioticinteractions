@@ -183,7 +183,7 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>${project.groupId}</groupId>
+                                            <groupId>org.globalbioticinteractions</groupId>
                                             <artifactId>elton4n</artifactId>
                                             <version>${elton4n.version}</version>
                                             <outputDirectory>${project.build.directory}</outputDirectory>
@@ -274,7 +274,7 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>${project.groupId}</groupId>
+                                            <groupId>org.globalbioticinteractions</groupId>
                                             <artifactId>elton4n</artifactId>
                                             <version>${elton4n.version}</version>
                                             <outputDirectory>${project.build.directory}</outputDirectory>
