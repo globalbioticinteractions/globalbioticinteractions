@@ -1,6 +1,7 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
@@ -57,30 +58,57 @@ public class GraphExporterImpl implements GraphExporter {
         LOG.info("ncbi linkout files generated. ");
 
         exportNames(graphService, baseDir);
-        // export to taxa for now, to avoid additional assemblies
-        new ExportFlatInteractions(new ExportUtil.TsvValueJoiner(), "interactions.tsv.gz").export(graphService, "tsv");
 
-        new ExportFlatInteractions(new ExportUtil.TsvValueJoiner(), "refuted-interactions.tsv.gz")
-                .setArgumentType(RelTypes.REFUTES)
-                .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
-                .export(graphService, "tsv");
+        exportInteractionsAndCitations(
+                graphService,
+                "tsv",
+                new ExportUtil.TsvValueJoiner()
+        );
 
-        new ExportCitations(new ExportUtil.TsvValueJoiner(), "citations.tsv.gz").export(graphService, "tsv");
-
-        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "interactions.csv.gz")
-                .export(graphService, "csv");
-
-        new ExportFlatInteractions(new ExportUtil.CsvValueJoiner(), "refuted-interactions.csv.gz")
-                .setArgumentType(RelTypes.REFUTES)
-                .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
-                .export(graphService, "csv");
-
-
-        new ExportCitations(new ExportUtil.CsvValueJoiner(), "citations.csv.gz").export(graphService, "csv");
+        exportInteractionsAndCitations(
+                graphService,
+                "csv",
+                new ExportUtil.CsvValueJoiner()
+        );
 
         exportDataOntology(graphService, baseDir);
         exportDarwinCoreAggregatedByStudy(graphService, baseDir);
         exportDarwinCoreAll(graphService, baseDir);
+    }
+
+    public void exportInteractionsAndCitations(GraphDatabaseService graphService, String extension, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+        exportSupportingInteractions(graphService, extension, "interactions." + extension + ".gz", joiner);
+        exportRefutedInteractions(extension, "refuted-interactions." + extension + ".gz", graphService, joiner);
+        exportCitations(extension, "citations." + extension + ".gz", graphService, joiner);
+    }
+
+    public void exportSupportingInteractions(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.stop();
+        LOG.info("[" + filename + "] generating... ");
+        new ExportFlatInteractions(joiner, filename)
+                .export(graphService, baseDir);
+        LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
+    }
+
+    public void exportCitations(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.stop();
+        LOG.info("[" + filename + "] generating... ");
+        new ExportCitations(new ExportUtil.TsvValueJoiner(), filename)
+                .export(graphService, baseDir);
+        LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
+    }
+
+    public void exportRefutedInteractions(String baseDir, String filename, GraphDatabaseService graphService, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.stop();
+        LOG.info("[" + filename + "] generating... ");
+        new ExportFlatInteractions(joiner, filename)
+                .setArgumentType(RelTypes.REFUTES)
+                .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
+                .export(graphService, baseDir);
+        LOG.info("[" + filename + "] generated in " + stopWatch.getTime() / 1000 + "s.");
     }
 
     public void exportNCBILinkOut(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
@@ -121,6 +149,7 @@ public class GraphExporterImpl implements GraphExporter {
             OutputStreamWriter writer = openStream(filePath);
             NodeUtil.findStudies(graphService, new NodeListener() {
                 final AtomicBoolean isFirst = new AtomicBoolean(true);
+
                 @Override
                 public void on(Node node) {
                     boolean includeHeader = isFirst.getAndSet(false);
@@ -168,7 +197,7 @@ public class GraphExporterImpl implements GraphExporter {
             ExporterRDF studyExporter = new ExporterRDF();
             String exportPath = baseDir + "interactions.nq.gz";
             OutputStreamWriter writer = openStream(exportPath);
-            String msg = "writing nquads archive to [" + exportPath + "]" ;
+            String msg = "writing nquads archive to [" + exportPath + "]";
             LOG.info(msg + "...");
             NodeUtil.findStudies(graphService, node -> {
                 try {

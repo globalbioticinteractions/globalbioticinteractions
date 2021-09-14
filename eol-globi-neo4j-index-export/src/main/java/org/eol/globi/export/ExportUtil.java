@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import java.util.zip.GZIPOutputStream;
 public final class ExportUtil {
 
     public static void export(GraphDatabaseService graphService, String baseDir, String filename, String cypherQuery, ValueJoiner joiner) throws StudyImporterException {
-        export(graphService, baseDir, filename, Arrays.asList(cypherQuery), joiner);
+        export(graphService, baseDir, filename, Collections.singletonList(cypherQuery), joiner);
     }
 
     public static void export(GraphDatabaseService graphService, String baseDir, String filename, List<String> cypherQueries, ValueJoiner joiner) throws StudyImporterException {
@@ -37,7 +38,7 @@ public final class ExportUtil {
             mkdirIfNeeded(baseDir);
             final FileOutputStream out = new FileOutputStream(new File(baseDir, filename));
             GZIPOutputStream os = new GZIPOutputStream(out);
-            final Writer writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            final Writer writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
             Appender appender = AppenderWriter.of(writer, joiner);
 
             export(appender, graphService, cypherQueries);
@@ -128,7 +129,7 @@ public final class ExportUtil {
         writeResults(appender, dbService, Collections.singletonList(query), params, includeHeader);
     }
 
-    static void writeResults(Appender appender, GraphDatabaseService dbService, List<String> queries, Map<String, Object> params, boolean includeHeader) throws IOException {
+    private static void writeResults(Appender appender, GraphDatabaseService dbService, List<String> queries, Map<String, Object> params, boolean includeHeader) throws IOException {
         for (String query : queries) {
             Result rows = dbService.execute(query, params);
             List<String> columns = rows.columns();
