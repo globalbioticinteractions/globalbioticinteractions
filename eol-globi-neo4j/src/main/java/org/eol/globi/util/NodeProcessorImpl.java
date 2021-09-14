@@ -60,7 +60,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        LOG.info("collecting [" + indexName + "] node ids");
+        LOG.info("collecting [" + indexName + "] node ids...");
 
         DB db = null;
 
@@ -73,10 +73,10 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
 
             NavigableSet<Long> ids = treeSet.makeLongSet();
             NodeUtil.collectIds(graphService, queryKey, queryOrQueryObject, indexName, ids);
-            LOG.info("collected " + ids.size() + " [" + indexName + "] node ids in [" + stopWatch.getTime()/1000 + "] s (@ " + nodeCount.get() / stopWatch.getTime() + " nodes/ms)");
+            LOG.info("collected " + ids.size() + " [" + indexName + "] node ids in [" + stopWatch.getTime()/1000 + "] s (@ " + ids.size() / stopWatch.getTime() + " nodes/ms)");
             batchListener.onStart();
 
-            LOG.info("processing " + "[" + ids.size() + "]" + "[" + indexName + "] nodes...");
+            LOG.info("processing " + ids.size() + "[" + indexName + "] nodes...");
 
             for (Long nodeId : ids) {
                 nodeListener.on(graphService.getNodeById(nodeId));
