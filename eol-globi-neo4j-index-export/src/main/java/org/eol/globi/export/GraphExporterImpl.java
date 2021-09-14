@@ -61,12 +61,14 @@ public class GraphExporterImpl implements GraphExporter {
 
         exportInteractionsAndCitations(
                 graphService,
+                baseDir,
                 "tsv",
                 new ExportUtil.TsvValueJoiner()
         );
 
         exportInteractionsAndCitations(
                 graphService,
+                baseDir,
                 "csv",
                 new ExportUtil.CsvValueJoiner()
         );
@@ -76,10 +78,13 @@ public class GraphExporterImpl implements GraphExporter {
         exportDarwinCoreAll(graphService, baseDir);
     }
 
-    private void exportInteractionsAndCitations(GraphDatabaseService graphService, String extension, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
-        exportSupportingInteractions(graphService, extension, "interactions." + extension + ".gz", joiner);
-        exportRefutedInteractions(extension, "refuted-interactions." + extension + ".gz", graphService, joiner);
-        exportCitations(extension, "citations." + extension + ".gz", graphService, joiner);
+    private void exportInteractionsAndCitations(GraphDatabaseService graphService,
+                                                String baseDir,
+                                                String extension,
+                                                ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+        exportSupportingInteractions(graphService, extension, new File(baseDir, "interactions." + extension + ".gz").getAbsolutePath(), joiner);
+        exportRefutedInteractions(extension, new File(baseDir,"refuted-interactions." + extension + ".gz").getAbsolutePath(), graphService, joiner);
+        exportCitations(extension, new File(baseDir, "citations." + extension + ".gz").getAbsolutePath(), graphService, joiner);
     }
 
     private void exportSupportingInteractions(GraphDatabaseService graphService, String baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
