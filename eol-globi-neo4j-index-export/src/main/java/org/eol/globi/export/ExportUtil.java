@@ -155,7 +155,7 @@ public final class ExportUtil {
     }
 
     public static void writeProperties(Appender appender, Map<String, String> properties, String[] fields) throws IOException {
-        String values[] = new String[fields.length];
+        String[] values = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
             values[i] = properties.getOrDefault(fields[i], "");
         }
