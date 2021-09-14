@@ -178,37 +178,7 @@ public class NodeUtil {
         }
     }
 
-    public static List<Long> getBatchOfNodes(GraphDatabaseService graphService,
-                                             Long skip,
-                                             Long limit,
-                                             String queryKey,
-                                             String queryOrQueryObject,
-                                             String indexName) {
-        Index<Node> index = graphService.index().forNodes(indexName);
-        IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
-        List<Long> nodeIds = studies
-                .stream()
-                .skip(skip)
-                .limit(limit)
-                .map(Node::getId)
-                .collect(Collectors.toList());
-        studies.close();
-        return nodeIds;
-    }
-
-    public static Set<Long> getAllNodes(GraphDatabaseService graphService,
-                                        Long skip,
-                                        Long limit,
-                                        String queryKey,
-                                        String queryOrQueryObject,
-                                        String indexName) {
-        DB.BTreeSetMaker treeSet = DBMaker.newMemoryDirectDB().make().createTreeSet(UUID.randomUUID().toString());
-        NavigableSet<Long> ids = treeSet.makeLongSet();
-        collectIds(graphService, queryKey, queryOrQueryObject, indexName, ids);
-        return ids;
-    }
-
-    public static void collectIds(GraphDatabaseService graphService, String queryKey, String queryOrQueryObject, String indexName, NavigableSet<Long> ids) {
+    static void collectIds(GraphDatabaseService graphService, String queryKey, String queryOrQueryObject, String indexName, NavigableSet<Long> ids) {
         Index<Node> index = graphService.index().forNodes(indexName);
         IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
         studies
