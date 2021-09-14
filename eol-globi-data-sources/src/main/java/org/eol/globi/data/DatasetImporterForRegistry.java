@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -12,6 +13,7 @@ import org.eol.globi.service.StudyImporterFactoryImpl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public class DatasetImporterForRegistry extends NodeBasedImporter {
@@ -51,15 +53,18 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
 
     private void importData(String namespace) throws StudyImporterException {
         try {
-            LOG.info("retrieving dataset from [" + namespace + "]...");
+            LOG.info("[" + namespace + "] checking status...");
             Dataset dataset = new DatasetFactory(getRegistry()).datasetFor(namespace);
             if (datasetFilter.test(dataset)) {
-                LOG.info("importing dataset from [" + namespace + "]...");
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
+                LOG.info("[" + namespace + "] is active, importing...");
                 getNodeFactory().getOrCreateDataset(dataset);
                 importData(dataset);
-                LOG.info("importing github repo [" + namespace + "] done.");
+                stopWatch.stop();
+                LOG.info("[" + namespace + "] imported in " + stopWatch.getTime(TimeUnit.SECONDS) + "s");
             } else {
-                LOG.info("skipping (deprecated) dataset from [" + namespace + "]...");
+                LOG.info("[" + namespace + "] is deprecated, not importing.");
             }
         } catch (StudyImporterException | DatasetRegistryException ex) {
             String msg = "failed to import data from repo [" + namespace + "]";
