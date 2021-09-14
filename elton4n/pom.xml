@@ -21,7 +21,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>${project.parent.groupId}</groupId>
             <artifactId>eol-globi-neo4j-index</artifactId>
             <version>${project.version}</version>
         </dependency>
