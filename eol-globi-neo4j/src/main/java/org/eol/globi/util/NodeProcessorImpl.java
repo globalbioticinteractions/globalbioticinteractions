@@ -6,6 +6,7 @@ import org.mapdb.DBMaker;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 
 import java.util.List;
 import java.util.NavigableSet;
@@ -80,12 +81,11 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
                 nodeCount.incrementAndGet();
                 if (nodeCount.get() % batchSize == 0) {
                     batchListener.onStart();
-                    LOG.info("processed batch of [" + batchSize + "] [" + indexName + "] nodes in [" + stopWatch.getTime() + "] ms.");
-                    LOG.info("total processed [" + indexName + "] nodes so far:  [" + nodeCount.get() + "]");
                 }
             }
 
             batchListener.onFinish();
+            LOG.info("processed " + "[" + nodeCount.get() + "]" + "[" + indexName + "] nodes in [" + stopWatch.getTime()/1000 + "]s ([" + nodeCount.get() / stopWatch.getTime() + "] nodes/ms)");
             stopWatch.stop();
         } finally {
             if (db != null) {

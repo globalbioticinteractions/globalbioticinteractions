@@ -38,11 +38,9 @@ public class NodeProcessorImplTest extends GraphDBTestCase {
 
     @Test
     public void processMultipleBatches() throws MalformedDOIException, NodeFactoryException {
-
-
         long batchSize = 2L;
 
-        for (int i=0; i < (batchSize * 10) + 1; i++) {
+        for (int i = 0; i < (batchSize * 10) + 1; i++) {
             Study study = createRandomStudy();
             getNodeFactory()
                     .getOrCreateStudy(study);
@@ -53,19 +51,14 @@ public class NodeProcessorImplTest extends GraphDBTestCase {
         assertThat(counter.get(), Is.is(21L));
     }
 
-    public AtomicLong processStudies(long batchSize) {
+    private AtomicLong processStudies(long batchSize) {
         AtomicLong counter = new AtomicLong();
         new NodeProcessorImpl(getGraphDb(), batchSize, "title", "*", "studies")
-                .process(new NodeListener() {
-                    @Override
-                    public void on(Node node) {
-                        counter.incrementAndGet();
-                    }
-                });
+                .process(node -> counter.incrementAndGet());
         return counter;
     }
 
-    public StudyImpl createRandomStudy() throws MalformedDOIException {
+    private StudyImpl createRandomStudy() throws MalformedDOIException {
         String randomString = UUID.randomUUID().toString();
         return new StudyImpl(randomString, DOI.create("10.123/" + randomString), randomString);
     }

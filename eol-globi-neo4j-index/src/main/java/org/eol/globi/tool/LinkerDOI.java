@@ -52,7 +52,9 @@ public class LinkerDOI implements IndexerNeo4j {
 
         new NodeProcessorImpl(graphDb,
                 BATCH_SIZE,
-                "*", "*", "studies")
+                "*",
+                "*",
+                "studies")
                 .process(node -> {
                     counter.incrementAndGet();
                     linkStudy(doiResolver, new StudyNode(node));
