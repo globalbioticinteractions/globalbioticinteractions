@@ -45,7 +45,6 @@
             </extension>
         </extensions>
         <plugins>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -63,22 +62,20 @@
                     <executable>java</executable>
                     <arguments>
                         <argument>-Xmx6G</argument>
-                        <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
-                        <argument>-Dshapefiles.dir=${shapefiles.dir}</argument>
-                        <argument>-Dott.url=file://${shapefiles.dir}/ott/taxonomy.tsv</argument>
                         <argument>-classpath</argument>
                         <argument>
-                            ${project.build.directory}/eol-globi-neo4j-index-${globi.neo4j.index.version}.jar
+                            ${project.build.directory}/elton4n-${globi.neo4j.index.version}.jar
                         </argument>
-                        <argument>org.eol.globi.tool.Normalizer</argument>
-                        <argument>${normalizer.arg.1}</argument>
-                        <argument>${normalizer.arg.2}</argument>
-                        <argument>${normalizer.arg.3}</argument>
-                        <argument>${normalizer.arg.4}</argument>
-                        <argument>${normalizer.arg.5}</argument>
-                        <argument>${normalizer.arg.6}</argument>
+                        <argument>org.globalbioticinteractions.elton.Elton4N</argument>
+                        <argument>${elton.step.name}</argument>
                         <argument>-datasetDir</argument>
                         <argument>${dataset.dir}</argument>
+                        <argument>-neo4jVersion</argument>
+                        <argument>2</argument>
+                        <argument>-taxonCache</argument>
+                        <argument>file://${shapefiles.dir}/taxa/taxonCache.tsv.gz</argument>
+                        <argument>-taxonMap</argument>
+                        <argument>file://${shapefiles.dir}/taxa/taxonMap.tsv.gz</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
@@ -116,12 +113,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <normalizer.arg.1>-skipExport</normalizer.arg.1>
-                <normalizer.arg.2>-skipResolve</normalizer.arg.2>
-                <normalizer.arg.3>-skipLink</normalizer.arg.3>
-                <normalizer.arg.4>-skipLinkThumbnails</normalizer.arg.4>
-                <normalizer.arg.5>-skipReport</normalizer.arg.5>
-                <normalizer.arg.6>-skipTaxonCache</normalizer.arg.6>
+                <elton.step.name>compile</elton.step.name>
             </properties>
             <build>
                 <plugins>
@@ -174,12 +166,7 @@
         <profile>
             <id>link</id>
             <properties>
-                <normalizer.arg.1>-skipImport</normalizer.arg.1>
-                <normalizer.arg.2>-skipImport</normalizer.arg.2>
-                <normalizer.arg.3>-skipImport</normalizer.arg.3>
-                <normalizer.arg.4>-skipImport</normalizer.arg.4>
-                <normalizer.arg.5>-skipImport</normalizer.arg.5>
-                <normalizer.arg.6>-skipExport</normalizer.arg.6>
+                <elton.step.name>link</elton.step.name>
             </properties>
             <build>
                 <plugins>
@@ -221,14 +208,6 @@
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${data.dir}</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.eol.globi.opentree</groupId>
-                                            <artifactId>opentree-taxonomy</artifactId>
-                                            <version>2.9</version>
-                                            <type>tar.gz</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>org.globalbioticinteractions</groupId>
@@ -278,12 +257,7 @@
         <profile>
             <id>export-all</id>
             <properties>
-                <normalizer.arg.1>-skipImport</normalizer.arg.1>
-                <normalizer.arg.2>-skipResolve</normalizer.arg.2>
-                <normalizer.arg.3>-skipLink</normalizer.arg.3>
-                <normalizer.arg.4>-skipLinkThumbnails</normalizer.arg.4>
-                <normalizer.arg.5>-skipReport</normalizer.arg.5>
-                <normalizer.arg.6>-skipTaxonCache</normalizer.arg.6>
+                <elton.step.name>package</elton.step.name>
             </properties>
             <build>
                 <plugins>

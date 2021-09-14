@@ -40,13 +40,17 @@ public class Elton4N {
     private static final Logger LOG = LoggerFactory.getLogger(Elton4N.class);
     private static final String OPTION_HELP = "h";
 
+    private static final String ELTON_STEP_NAME_COMPILE = "compile";
+    private static final String ELTON_STEP_NAME_LINK = "link";
+    private static final String ELTON_STEP_NAME_PACKAGE = "package";
+
     public static void main(final String[] args) throws StudyImporterException, ParseException {
         String o = Version.getVersionInfo(Elton4N.class);
         LOG.info(o);
         CommandLine cmdLine = parseOptions(args);
         if (cmdLine.hasOption(OPTION_HELP)) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java -jar eol-globi-data-tool-[VERSION]-jar-with-dependencies.jar", getOptions());
+            formatter.printHelp("java -jar elton4n-[VERSION].jar", getOptions());
         } else {
             try {
                 new Elton4N().run(cmdLine);
@@ -58,7 +62,7 @@ public class Elton4N {
     }
 
 
-    protected static CommandLine parseOptions(String[] args) throws ParseException {
+    private static CommandLine parseOptions(String[] args) throws ParseException {
         CommandLineParser parser = new BasicParser();
         return parser.parse(getOptions(), args);
     }
@@ -95,7 +99,7 @@ public class Elton4N {
         }
     }
 
-    public void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
+    private void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
         Factories factoriesNeo4j = new Factories() {
             final GraphServiceFactory factory =
                     new GraphServiceFactoryImpl("./");
@@ -122,7 +126,7 @@ public class Elton4N {
 
             List<Cmd> steps = new ArrayList<>();
 
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains("import")) {
+            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_COMPILE)) {
                 steps.add(new CmdImportDatasets(
                         factoriesNeo4j.getNodeFactoryFactory(),
                         graphServiceFactory,
@@ -130,7 +134,7 @@ public class Elton4N {
                 ));
             }
 
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains("index")) {
+            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_LINK)) {
                 steps.addAll(Arrays.asList(
                         new CmdInterpretTaxa(graphServiceFactory,
                                 cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, "taxonCache.tsv.gz"),
@@ -141,7 +145,7 @@ public class Elton4N {
                         new CmdGenerateReport(graphServiceFactory.getGraphService())
                 ));
             }
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains("export")) {
+            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_PACKAGE)) {
                 steps.add(new CmdExport(graphServiceFactory, "./target/export/"));
 
             }
