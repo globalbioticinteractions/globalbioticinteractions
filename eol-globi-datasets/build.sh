@@ -2,15 +2,16 @@
 #
 # compile, links, and packages GloBI data products for elton datasets.
 #
+# usage:
+#   build.sh [elton dataset dir (default: /var/cache/elton/datsets)]
+#
 
 ELTON_DATASET_DIR=${1:-/var/cache/elton/datasets}
 
-# compile
-mvn --settings /etc/globi/.m2/settings.xml -Ddataset.dir="${ELTON_DATASET_DIR}" -Pcompile clean install
+function run_step {
+  mvn --settings /etc/globi/.m2/settings.xml -Ddataset.dir="${ELTON_DATASET_DIR}" -P$1 clean install
+}
 
-# link
-mvn --settings /etc/globi/.m2/settings.xml -Ddataset.dir="${ELTON_DATASET_DIR}" -Plink clean install
-
-# package
-
-mvn --settings /etc/globi/.m2/settings.xml -Ddataset.dir="${ELTON_DATASET_DIR}" -Pexport-all clean install
+run_step compile
+run_step link
+run_step package
