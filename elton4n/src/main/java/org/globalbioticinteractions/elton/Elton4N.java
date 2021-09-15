@@ -9,6 +9,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.Version;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
@@ -91,7 +92,7 @@ public class Elton4N {
     private void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
         Factories factoriesNeo4j = new Factories() {
             final GraphServiceFactory factory =
-                    new GraphServiceFactoryImpl("./");
+                    new GraphServiceFactoryImpl(cmdLine.getOptionValue(CmdOptionConstants.OPTION_GRAPHDB_DIR,"./"));
 
             final NodeFactoryFactory nodeFactoryFactory = StringUtils.equals("2", neo4jVersion)
                     ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(factory)
@@ -114,6 +115,8 @@ public class Elton4N {
             GraphServiceFactory graphServiceFactory = factoriesNeo4j.getGraphServiceFactory();
 
             List<Cmd> steps = new ArrayList<>();
+
+            LOG.info("processing steps: [" + StringUtils.join(cmdLine.getArgList(), CharsetConstant.SEPARATOR) + "]");
 
             if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_COMPILE)) {
                 steps.add(new CmdImportDatasets(

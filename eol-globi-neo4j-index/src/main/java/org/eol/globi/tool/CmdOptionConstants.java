@@ -6,4 +6,5 @@ public class CmdOptionConstants {
     public static final String OPTION_NEO4J_VERSION = "neo4jVersion";
     public static final String OPTION_TAXON_CACHE_PATH = "taxonCache";
     public static final String OPTION_TAXON_MAP_PATH = "taxonMap";
+    public static final String OPTION_GRAPHDB_DIR = "graphDbDir";
 }
