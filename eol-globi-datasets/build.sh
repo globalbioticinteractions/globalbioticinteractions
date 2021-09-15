@@ -14,4 +14,4 @@ function run_step {
 
 run_step compile
 run_step link
-run_step package
+run_step export-all
