@@ -85,18 +85,7 @@ public class Elton4N {
                 ? "2"
                 : cmdLine.getOptionValue(CmdOptionConstants.OPTION_NEO4J_VERSION, "2");
 
-        Optional<String> aPackage = Stream.of(
-                cmdLine == null || cmdLine.getArgs() == null
-                        ? new String[0]
-                        : cmdLine.getArgs())
-                .filter(arg -> StringUtils.equals(arg, "normalize"))
-                .findFirst();
-
-        if (aPackage.isPresent()) {
-            new Normalizer().run(cmdLine);
-        } else {
-            importWithVersion(cmdLine, neo4jVersion);
-        }
+        importWithVersion(cmdLine, neo4jVersion);
     }
 
     private void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
