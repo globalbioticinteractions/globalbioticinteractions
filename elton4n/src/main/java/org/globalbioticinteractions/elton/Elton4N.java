@@ -89,7 +89,7 @@ public class Elton4N {
                 cmdLine == null || cmdLine.getArgs() == null
                         ? new String[0]
                         : cmdLine.getArgs())
-                .filter(arg -> StringUtils.equals(arg, "package"))
+                .filter(arg -> StringUtils.equals(arg, "normalize"))
                 .findFirst();
 
         if (aPackage.isPresent()) {
