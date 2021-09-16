@@ -23,8 +23,16 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
         }
     }
 
-    private String format(JsonNode jsonNode) throws IOException {
+    private String format(JsonNode resultNode) throws IOException {
         List<String> columnNames = new ArrayList<String>();
+
+        JsonNode jsonNode = resultNode;
+        if (resultNode.has("results")) {
+            JsonNode results = resultNode.get("results");
+            if (results.isArray() && results.size() == 1) {
+                jsonNode = results.get(0);
+            }
+        }
 
         JsonNode columns = jsonNode.get("columns");
         if (columns == null) {
@@ -76,7 +84,9 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 resultList.add(taxon);
             }
         }
-        addAllDataColumns(jsonNode, columnNames, resultList);
+        if (resultList.size() > 0) {
+            addAllDataColumns(jsonNode, columnNames, resultList);
+        }
         return new ObjectMapper().writeValueAsString(resultList);
     }
 

@@ -1,6 +1,5 @@
 package org.eol.globi.server.util;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
@@ -9,8 +8,8 @@ import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class ResultFormatterFactoryTest {
 
