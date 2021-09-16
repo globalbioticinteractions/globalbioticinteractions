@@ -169,8 +169,8 @@ public class NormalizerTest extends GraphDBTestCase {
             tx.success();
         }
 
-        String baseDir = "target/normalizer-test/";
-        FileUtils.deleteQuietly(new File(baseDir));
+        File baseDir = new File("target/normalizer-test/");
+        FileUtils.deleteQuietly(baseDir);
         try (Transaction tx = getGraphDb().beginTx()) {
             new GraphExporterImpl()
                     .export(getGraphDb(), baseDir);

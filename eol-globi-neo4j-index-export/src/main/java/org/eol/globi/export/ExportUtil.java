@@ -17,26 +17,24 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 
 public final class ExportUtil {
 
-    public static void export(GraphDatabaseService graphService, String filename, String cypherQuery, ValueJoiner joiner) throws StudyImporterException {
-        export(graphService, filename, Collections.singletonList(cypherQuery), joiner);
+    public static void export(GraphDatabaseService graphService, File exportFile, String cypherQuery, ValueJoiner joiner) throws StudyImporterException {
+        export(graphService, exportFile, Collections.singletonList(cypherQuery), joiner);
     }
 
-    public static void export(GraphDatabaseService graphService, String filename, List<String> cypherQueries, ValueJoiner joiner) throws StudyImporterException {
+    public static void export(GraphDatabaseService graphService, File file, List<String> cypherQueries, ValueJoiner joiner) throws StudyImporterException {
         try {
-            File file = new File(filename);
-            mkdirIfNeeded(file.getParent());
+            mkdirIfNeeded(file.getParentFile());
             final FileOutputStream out = new FileOutputStream(file);
             GZIPOutputStream os = new GZIPOutputStream(out);
             final Writer writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
@@ -49,7 +47,7 @@ public final class ExportUtil {
             IOUtils.closeQuietly(writer);
             IOUtils.closeQuietly(os);
         } catch (IOException e) {
-            throw new StudyImporterException("failed to export to [" + filename + "]", e);
+            throw new StudyImporterException("failed to export to [" + file.getAbsolutePath() + "]", e);
         }
     }
 
@@ -164,10 +162,9 @@ public final class ExportUtil {
         appender.append(Stream.of(values));
     }
 
-    static void mkdirIfNeeded(String baseDir) throws IOException {
-        final File parentDir = new File(baseDir);
-        if (!parentDir.exists()) {
-            FileUtils.forceMkdir(parentDir);
+    static void mkdirIfNeeded(File dir) throws IOException {
+        if (!dir.exists()) {
+            FileUtils.forceMkdir(dir);
         }
     }
 

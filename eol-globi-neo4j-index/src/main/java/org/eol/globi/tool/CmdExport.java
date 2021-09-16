@@ -9,13 +9,13 @@ import java.io.File;
 public class CmdExport implements Cmd {
 
     private final GraphServiceFactory factory;
-    private String baseDir;
+    private File baseDir;
 
     public CmdExport(GraphServiceFactory factory) {
-        this(factory, new File(".").getAbsolutePath());
+        this(factory, new File("."));
     }
 
-    public CmdExport(GraphServiceFactory factory, String baseDir) {
+    public CmdExport(GraphServiceFactory factory, File baseDir) {
         this.factory = factory;
         this.baseDir = baseDir;
     }

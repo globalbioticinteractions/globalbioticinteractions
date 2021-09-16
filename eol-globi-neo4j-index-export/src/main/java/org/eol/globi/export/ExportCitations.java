@@ -3,6 +3,8 @@ package org.eol.globi.export;
 import org.eol.globi.data.StudyImporterException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.File;
+
 public class ExportCitations implements GraphExporter {
 
     private final String filename;
@@ -17,8 +19,8 @@ public class ExportCitations implements GraphExporter {
             "RETURN study.doi as doi, study.citation as citation";
 
     @Override
-    public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        ExportUtil.export(graphService, filename, CYPHER_QUERY, joiner);
+    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
+        ExportUtil.export(graphService, new File(baseDir, filename), CYPHER_QUERY, joiner);
     }
 
 }

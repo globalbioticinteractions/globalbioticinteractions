@@ -49,9 +49,8 @@ public class SiteMapUtils {
         return maps;
     }
 
-    public static void generateSiteMap(Set<String> names, String baseDirPath, String queryParamName, String siteMapLocation) throws StudyImporterException {
+    public static void generateSiteMap(Set<String> names, File baseDir, String queryParamName, String siteMapLocation) throws StudyImporterException {
         try {
-            final File baseDir = new File(baseDirPath);
             FileUtils.forceMkdir(baseDir);
             generateSiteMapFor(queryParamName, names, baseDir, siteMapLocation);
         } catch (IOException e) {

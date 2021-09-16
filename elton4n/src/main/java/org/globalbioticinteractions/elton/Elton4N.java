@@ -148,7 +148,7 @@ public class Elton4N {
             }
             if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_PACKAGE)) {
                 String exportDir = cmdLine.getOptionValue(CmdOptionConstants.OPTION_EXPORT_DIR, ".");
-                steps.add(new CmdExport(graphServiceFactory, exportDir));
+                steps.add(new CmdExport(graphServiceFactory, new File(exportDir)));
 
             }
 

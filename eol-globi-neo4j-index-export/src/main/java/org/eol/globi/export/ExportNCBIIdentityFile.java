@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,9 +15,9 @@ public class ExportNCBIIdentityFile implements GraphExporter {
     public static final String PROVIDER_ID = "9426";
 
     @Override
-    public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
+    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         try {
-            streamTo(new FileOutputStream(baseDir + "providerinfo.xml"));
+            streamTo(new FileOutputStream(new File(baseDir, "providerinfo.xml")));
         } catch (IOException e) {
             throw new StudyImporterException(e);
         }

@@ -14,6 +14,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,7 @@ import java.util.Set;
 class ExporterSiteMapForNames implements GraphExporter {
 
     @Override
-    public void export(GraphDatabaseService graphDatabase, String baseDir) throws StudyImporterException {
+    public void export(GraphDatabaseService graphDatabase, File baseDir) throws StudyImporterException {
         Set<String> names = new HashSet<String>();
         names.add("Homo sapiens");
 

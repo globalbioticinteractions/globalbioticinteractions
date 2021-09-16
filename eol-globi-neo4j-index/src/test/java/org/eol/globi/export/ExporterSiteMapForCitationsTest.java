@@ -22,7 +22,7 @@ public class ExporterSiteMapForCitationsTest extends ExporterSiteMapForNamesTest
 
         final GraphExporter siteMapForCitationsExporter = new ExporterSiteMapForCitations();
 
-        siteMapForCitationsExporter.export(getGraphDb(), baseDirCitations.getAbsolutePath());
+        siteMapForCitationsExporter.export(getGraphDb(), baseDirCitations);
 
         final String substring = "http://www.globalbioticinteractions.org/?accordingTo=" + "https://doi.org/10.some/doi";
         assertSiteMap(baseDirCitations, substring, "https://depot.globalbioticinteractions.org/snapshot/target/data/sitemap/citations/sitemap.xml.gz");

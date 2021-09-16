@@ -8,6 +8,7 @@ import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -131,8 +132,8 @@ public class ExportFlatInteractions implements GraphExporter {
     }
 
     @Override
-    public void export(GraphDatabaseService graphService, String baseDir) throws StudyImporterException {
-        ExportUtil.export(graphService, filename, createExportQueries(), joiner);
+    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
+        ExportUtil.export(graphService, new File(baseDir, filename), createExportQueries(), joiner);
     }
 
     void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {

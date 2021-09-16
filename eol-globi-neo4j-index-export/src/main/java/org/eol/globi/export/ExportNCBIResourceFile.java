@@ -7,6 +7,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,7 +25,7 @@ public class ExportNCBIResourceFile implements GraphExporter {
 
 
     @Override
-    public void export(GraphDatabaseService graphService, final String baseDir) throws StudyImporterException {
+    public void export(GraphDatabaseService graphService, final File baseDir) throws StudyImporterException {
         OutputStreamFactory fileFactory = new OutputStreamFactory() {
             @Override
             public OutputStream create(int i) throws IOException {
@@ -112,8 +113,8 @@ public class ExportNCBIResourceFile implements GraphExporter {
         }
     }
 
-    protected String nameForResourceFile(String baseDir, int i) {
-        return baseDir + "resources_" + i + ".xml";
+    protected File nameForResourceFile(File baseDir, int i) {
+        return new File(baseDir,"resources_" + i + ".xml");
     }
 
     public int getLinksPerResourceFile() {
