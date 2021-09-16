@@ -68,6 +68,8 @@
                         </argument>
                         <argument>-datasetDir</argument>
                         <argument>${dataset.dir}</argument>
+                        <argument>-exportDir</argument>
+                        <argument>${data.dir}</argument>
                         <argument>-neo4jVersion</argument>
                         <argument>2</argument>
                         <argument>-taxonCache</argument>
