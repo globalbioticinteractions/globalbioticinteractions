@@ -9,7 +9,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.Version;
-import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
@@ -26,7 +25,6 @@ import org.eol.globi.tool.Factories;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j2;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j3;
-import org.eol.globi.tool.Normalizer;
 import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public class Elton4N {
     private static final Logger LOG = LoggerFactory.getLogger(Elton4N.class);
@@ -70,7 +66,8 @@ public class Elton4N {
 
     private static Options getOptions() {
         Options options = new Options();
-        options.addOption(CmdOptionConstants.OPTION_DATASET_DIR, true, "specifies location of dataset cache");
+        options.addOption(CmdOptionConstants.OPTION_DATASET_DIR, true, "specifies (input) datasets location");
+        options.addOption(CmdOptionConstants.OPTION_EXPORT_DIR, true, "specifies data export location");
         options.addOption(CmdOptionConstants.OPTION_NEO4J_VERSION, true, "specifies version of Neo4j to use");
         options.addOption(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, true, "specifies location of taxon cache to use");
         options.addOption(CmdOptionConstants.OPTION_TAXON_MAP_PATH, true, "specifies location of taxon map to use");
@@ -127,10 +124,19 @@ public class Elton4N {
             }
 
             if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_LINK)) {
+                String taxonCachePath = cmdLine.getOptionValue(
+                        CmdOptionConstants.OPTION_TAXON_CACHE_PATH,
+                        "taxonCache.tsv.gz"
+                );
+                String taxonMapPath = cmdLine.getOptionValue(
+                        CmdOptionConstants.OPTION_TAXON_MAP_PATH,
+                        "taxonMap.tsv.gz"
+                );
                 steps.addAll(Arrays.asList(
-                        new CmdInterpretTaxa(graphServiceFactory,
-                                cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, "taxonCache.tsv.gz"),
-                                cmdLine.getOptionValue(CmdOptionConstants.OPTION_TAXON_MAP_PATH, "taxonMap.tsv.gz")
+                        new CmdInterpretTaxa(
+                                graphServiceFactory,
+                                taxonCachePath,
+                                taxonMapPath
                         ),
                         new CmdIndexTaxa(graphServiceFactory),
                         new CmdIndexTaxonStrings(graphServiceFactory),
@@ -138,7 +144,8 @@ public class Elton4N {
                 ));
             }
             if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_PACKAGE)) {
-                steps.add(new CmdExport(graphServiceFactory, "./target/export/"));
+                String exportDir = cmdLine.getOptionValue(CmdOptionConstants.OPTION_EXPORT_DIR, ".");
+                steps.add(new CmdExport(graphServiceFactory, exportDir));
 
             }
 
