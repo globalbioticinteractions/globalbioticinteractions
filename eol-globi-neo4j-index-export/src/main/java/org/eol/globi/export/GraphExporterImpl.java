@@ -92,19 +92,19 @@ public class GraphExporterImpl implements GraphExporter {
         exportSupportingInteractions(
                 graphService,
                 formatBaseDir,
-                new File(formatBaseDir, "interactions." + extension + ".gz").getAbsolutePath(),
+                "interactions." + extension + ".gz",
                 joiner);
 
         exportRefutedInteractions(
                 graphService,
                 formatBaseDir,
-                new File(formatBaseDir,"refuted-interactions." + extension + ".gz").getAbsolutePath(),
+                "refuted-interactions." + extension + ".gz",
                 joiner);
 
         exportCitations(
                 graphService,
                 formatBaseDir,
-                new File(formatBaseDir, "citations." + extension + ".gz").getAbsolutePath(),
+                "citations." + extension + ".gz",
                 joiner);
     }
 
