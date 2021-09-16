@@ -1,5 +1,9 @@
 package org.eol.globi.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -29,22 +33,37 @@ public class CypherUtil {
     public static HttpPost getCypherRequest(CypherQuery query) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(getCypherURI());
         HttpUtil.addJsonHeaders(httpPost);
-        httpPost.setEntity(new StringEntity(wrapQuery(query)));
+        String queryJson = wrapQuery(query);
+        System.out.println(queryJson);
+        httpPost.setEntity(new StringEntity(queryJson));
         return httpPost;
     }
 
     private static String getCypherURI() {
         String value = System.getProperty("neo4j.cypher.uri");
         return StringUtils.isBlank(value)
-                ? "https://neo4j.globalbioticinteractions.org/db/data/cypher"
+                ? "https://neo4j.globalbioticinteractions.org/db/data/transaction/commit"
                 : StringUtils.trim(value);
     }
 
     private static String wrapQuery(CypherQuery cypherQuery) {
-        String query = "{\"query\":\"";
-        query += cypherQuery.getVersionedQuery();
-        query += " \", \"params\": {" + buildJSONParamList(cypherQuery.getParams()) + " } }";
-        return query;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode req = objectMapper.createObjectNode();
+
+        ArrayNode statements = objectMapper.createArrayNode();
+        req.set("statements", statements);
+
+        ObjectNode statementObj = objectMapper.createObjectNode();
+        statementObj.put("statement", cypherQuery.getVersionedQuery());
+        statements.add(statementObj);
+
+        ObjectNode parameters = objectMapper.createObjectNode();
+        statementObj.set("parameters", parameters);
+        for (Map.Entry<String, String> entry : cypherQuery.getParams().entrySet()) {
+            parameters.put(entry.getKey(), entry.getValue());
+        }
+        return req.toPrettyString();
     }
 
     private static String buildJSONParamList(Map<String, String> paramMap) {

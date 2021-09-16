@@ -1,5 +1,6 @@
 package org.eol.globi.server.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -152,12 +153,16 @@ public class RequestHelper {
         return mapper.readTree(content);
     }
 
-    public static boolean emptyData(String body) throws IOException {
+    static boolean emptyData(String body) throws IOException {
         return !nonEmptyData(body);
     }
 
-    public static boolean nonEmptyData(String body) throws IOException {
+    static boolean nonEmptyData(String body) throws IOException {
         JsonNode result = parse(body);
+        return nonEmptyData(result);
+    }
+
+    public static boolean nonEmptyData(JsonNode result) {
         boolean nonEmpty = false;
         if (result.has("data")) {
             JsonNode data = result.get("data");
@@ -166,5 +171,31 @@ public class RequestHelper {
             }
         }
         return nonEmpty;
+    }
+
+    public static boolean nonEmptyResults(String responseString) throws JsonProcessingException {
+        boolean nonEmpty = false;
+        JsonNode jsonNode = new ObjectMapper().readTree(responseString);
+        if (jsonNode.has("results")) {
+            JsonNode results = jsonNode.get("results");
+            if (results.isArray() && results.size() == 1) {
+                nonEmpty = nonEmptyData(results.get(0));
+            }
+
+        }
+        return nonEmpty;
+    }
+
+    public static void throwOnError(String errorString) throws IOException {
+        JsonNode jsonNode = new ObjectMapper().readTree(errorString);
+
+        if (jsonNode.has("errors")) {
+            JsonNode errors = jsonNode.get("errors");
+            for (JsonNode error : errors) {
+                if (error.has("message")) {
+                    throw new IOException(errors.toPrettyString());
+                }
+            }
+        }
     }
 }

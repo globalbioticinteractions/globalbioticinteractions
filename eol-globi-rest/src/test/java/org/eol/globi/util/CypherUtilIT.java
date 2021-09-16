@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.ProxyOutputStream;
@@ -8,12 +9,17 @@ import org.eol.globi.server.util.RequestHelper;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertFalse;
+
 public class CypherUtilIT {
 
     @Test
@@ -39,10 +45,10 @@ public class CypherUtilIT {
                     System.out.println(".");
                 }
             }
-
         };
 
-        IOUtils.copy(execute.getEntity().getContent(), proxyOutputStream);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        IOUtils.copy(execute.getEntity().getContent(), os);
         proxyOutputStream.flush();
         proxyOutputStream.close();
     }
@@ -66,8 +72,9 @@ public class CypherUtilIT {
         HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_2_3));
 
         String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
-        boolean nonEmpty = RequestHelper.nonEmptyData(body);
-        assertThat(nonEmpty, Is.is(true));
+        System.out.println(body);
+        assertTrue(RequestHelper.nonEmptyResults(body));
+        assertThat(body, containsString("http://arctos.database.museum/guid/MSB:Para:1678"));
     }
 
     @Test
@@ -89,8 +96,21 @@ public class CypherUtilIT {
         HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_2_3));
 
         String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
-        boolean nonEmpty = RequestHelper.nonEmptyData(body);
-        assertThat(nonEmpty, Is.is(false));
+        assertThat(RequestHelper.nonEmptyResults(body), Is.is(false));
     }
 
+
+    @Test
+    public void emptyData2() throws IOException {
+        String query = "START study = node:studies('*:*') " +
+                "RETURN study.citation " +
+                "LIMIT 1";
+        HashMap<String, String> params = new HashMap<String, String>() {{
+            put("accordingTo", "http://arctos.database.museum/guid/MSB:Para:1678999999999999");
+        }};
+        HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_2_3));
+
+        String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
+        System.out.println(new ObjectMapper().readTree(body).toPrettyString());
+    }
 }
