@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.server.QueryType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 public class RequestHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(RequestHelper.class);
+
 
     private static final List<String> POINT_PARAM = new ArrayList<String>() {
         {
@@ -196,7 +200,7 @@ public class RequestHelper {
             JsonNode errors = jsonNode.get("errors");
             for (JsonNode error : errors) {
                 if (error.has("message")) {
-                    System.out.println(jsonNode.toPrettyString());
+                    LOG.error(jsonNode.toPrettyString());
                     throw new IOException(errors.toPrettyString());
                 }
             }
