@@ -91,7 +91,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     public HashMap<String, String> paramForName(@PathVariable("taxonName") final String taxonName) {
         return new HashMap<String, String>() {
             {
-                put("taxonPathQuery", "path:\\\"" + CypherQueryBuilder.escapeWhitespace(taxonName) + "\\\"");
+                put("taxonPathQuery", "path:\"" + CypherQueryBuilder.escapeWhitespace(taxonName) + "\"");
                 put("taxonName", taxonName);
             }
         };

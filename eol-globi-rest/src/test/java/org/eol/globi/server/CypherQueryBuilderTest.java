@@ -179,7 +179,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + hasTargetTaxon("Arthropoda") +
                 EXPECTED_RETURN_CLAUSE));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class CypherQueryBuilderTest {
 
         String concatInteractionTypes = InteractUtil.allInteractionsCypherClause();
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START taxon = node:taxonPaths({taxon_name}) MATCH taxon-[rel:" + concatInteractionTypes + "]->otherTaxon RETURN distinct(type(rel)) as interaction_type"));
-        assertThat(query.getParams().toString(), is(is("{taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\"}")));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + hasTargetTaxon("Arthropoda") +
                 EXPECTED_RETURN_CLAUSE_DISTINCT));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -250,7 +250,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -289,7 +289,7 @@ public class CypherQueryBuilderTest {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE " + hasTargetTaxon("Arthropoda") + "AND " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\", source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=path:\"Arthropoda\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -309,7 +309,7 @@ public class CypherQueryBuilderTest {
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -329,7 +329,7 @@ public class CypherQueryBuilderTest {
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"http://inaturalist.org/bla\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"http://inaturalist.org/bla\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -350,7 +350,7 @@ public class CypherQueryBuilderTest {
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is(
-                "{accordingTo=externalId:\\\"10.1234/4325\\\" externalId:\\\"10.332/222\\\" externalId:\\\"10.444/222\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+                "{accordingTo=externalId:\"10.1234/4325\" externalId:\"10.332/222\" externalId:\"10.444/222\", target_taxon_name=path:\"Arthropoda\"}")));
 
     }
 
@@ -368,7 +368,7 @@ public class CypherQueryBuilderTest {
         assertThat(query.getVersionedQuery(), is(
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|HAS_HOST|INTERACTS_WITH|HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|ACQUIRES_NUTRIENTS_FROM|PROVIDES_NUTRIENTS_FOR|HAS_VECTOR|VECTOR_OF|VISITED_BY|VISITS|FLOWERS_VISITED_BY|VISITS_FLOWERS_OF|INHABITED_BY|INHABITS|ADJACENT_TO|CREATES_HABITAT_FOR|HAS_HABITAT|LIVED_ON_BY|LIVES_ON|LIVED_INSIDE_OF_BY|LIVES_INSIDE_OF|LIVED_NEAR_BY|LIVES_NEAR|LIVED_UNDER_BY|LIVES_UNDER|LIVES_WITH|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|HYPERPARASITOID_OF|HAS_HYPERPARASITOID|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|GUEST_OF|HAS_GUEST_OF|FARMED_BY|FARMS|DAMAGED_BY|DAMAGES|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|KILLED_BY|KILLS|EPIPHITE_OF|HAS_EPIPHITE|LAYS_EGGS_ON|HAS_EGGS_LAYED_ON_BY|LAYS_EGGS_IN|HAS_EGGS_LAYED_IN_BY|CO_OCCURS_WITH|CO_ROOSTS_WITH|COMMENSALIST_OF|MUTUALIST_OF|AGGRESSOR_OF|HAS_AGGRESSOR|RELATED_TO]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc RETURN sourceTaxon.name as source_taxon_name,sourceSpecimen.sexLabel as source_specimen_sex"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"http://arctos.database.museum/guid/MSB:Mamm:79902\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"http://arctos.database.museum/guid/MSB:Mamm:79902\"}")));
 
     }
 
@@ -418,7 +418,7 @@ public class CypherQueryBuilderTest {
                 ",targetTaxon.name as target_taxon_name" +
                 ",collected_rel.dateInUnixEpoch as collection_time_in_unix_epoch"));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=path:\\\"Ariopsis\\\\ felis\\\"}"));
+                is("{source_taxon_name=path:\"Ariopsis felis\"}"));
 
     }
 
@@ -440,7 +440,7 @@ public class CypherQueryBuilderTest {
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon " +
                         "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"http://inaturalist.org/bla\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"http://inaturalist.org/bla\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -457,7 +457,7 @@ public class CypherQueryBuilderTest {
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(RELATED_TO) + "]->targetTaxon " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -475,7 +475,7 @@ public class CypherQueryBuilderTest {
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
             put("source_taxon_prefix", "somePrefix.*");
             put("target_taxon_prefix", "somePrefix.*");
         }};
@@ -493,8 +493,8 @@ public class CypherQueryBuilderTest {
 
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("source_taxon_name", "path:\\\"urn:catalog:AMNH:Mammals:M-39582\\\"");
-            put("target_taxon_name", "path:\\\"Paradyschiria\\\\ lineata\\\\ Kessel,\\\\ 1925\\\"");
+            put("source_taxon_name", "path:\"urn:catalog:AMNH:Mammals:M-39582\"");
+            put("target_taxon_name", "path:\"Paradyschiria lineata Kessel, 1925\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -514,7 +514,7 @@ public class CypherQueryBuilderTest {
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"
         ));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -540,8 +540,8 @@ public class CypherQueryBuilderTest {
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon, count(interaction) as interactionCount, count(distinct(id(study))) as studyCount, count(distinct(dataset.citation)) as sourceCount " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interactionCount as number_of_interactions,studyCount as number_of_studies,sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("accordingTo", "namespace:\\\"some\\/namespace\\\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
+            put("accordingTo", "namespace:\"some\\/namespace\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -577,8 +577,8 @@ public class CypherQueryBuilderTest {
                 "studyCount as number_of_studies," +
                 "sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("accordingTo", "namespace:\\\"some\\/namespace\\\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
+            put("accordingTo", "namespace:\"some\\/namespace\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -615,8 +615,8 @@ public class CypherQueryBuilderTest {
                         "studyCount as number_of_studies," +
                         "sourceCount as number_of_sources"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
-            put("accordingTo", "externalId:\\\"someSource\\\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
+            put("accordingTo", "externalId:\"someSource\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -636,7 +636,7 @@ public class CypherQueryBuilderTest {
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(RELATED_TO) + "]->targetTaxon " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "name:\\\"Arthropoda\\\"");
+            put("target_taxon_name", "name:\"Arthropoda\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -656,7 +656,7 @@ public class CypherQueryBuilderTest {
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(RELATED_TO) + "]->targetTaxon " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "name:\\\"Arthropoda\\\"");
+            put("target_taxon_name", "name:\"Arthropoda\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -675,7 +675,7 @@ public class CypherQueryBuilderTest {
                 "MATCH sourceTaxon-[interaction:" + InteractUtil.interactionsCypherClause(RELATED_TO) + "]->targetTaxon " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.label as interaction_type"));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -698,8 +698,8 @@ public class CypherQueryBuilderTest {
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name,interaction.count as number_of_interactions"
         ));
         Map<String, String> expected = new HashMap<String, String>() {{
-            put("source_taxon_name", "path:\\\"Mammalia\\\"");
-            put("target_taxon_name", "path:\\\"Arthropoda\\\"");
+            put("source_taxon_name", "path:\"Mammalia\"");
+            put("target_taxon_name", "path:\"Arthropoda\"");
         }};
         assertThat(query.getParams(), is(expected));
     }
@@ -720,7 +720,7 @@ public class CypherQueryBuilderTest {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE " + hasTargetTaxon("Arthropoda") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"http://inaturalist.org/bla\\\" externalId:\\\"http://inaturalist.org/bla2\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"http://inaturalist.org/bla\" externalId:\"http://inaturalist.org/bla2\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -739,7 +739,7 @@ public class CypherQueryBuilderTest {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\", source_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -759,7 +759,7 @@ public class CypherQueryBuilderTest {
                         EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING +
                         "WHERE " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\", source_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -779,7 +779,7 @@ public class CypherQueryBuilderTest {
                         EXPECTED_MATCH_CLAUSE_DISTINCT_REFUTING_AND_SUPPORTING +
                         "WHERE " + hasTaxon("Arthropoda", "source") +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\", source_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -799,7 +799,7 @@ public class CypherQueryBuilderTest {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE (exists(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda']) " +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\", source_taxon_name=name:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=name:\"Arthropoda\"}")));
     }
 
     @Test
@@ -819,7 +819,7 @@ public class CypherQueryBuilderTest {
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WHERE (exists(sourceTaxon.name) AND sourceTaxon.name IN ['Arthropoda']) " +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\", source_taxon_name=name:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\", source_taxon_name=name:\"Arthropoda\"}")));
     }
 
     @Test
@@ -839,7 +839,7 @@ public class CypherQueryBuilderTest {
                 "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta']) " +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=name:\"Arthropoda\", target_taxon_name=name:\"Insecta\"}")));
     }
 
     @Test
@@ -871,7 +871,7 @@ public class CypherQueryBuilderTest {
                 "WHERE (exists(targetTaxon.name) AND targetTaxon.name IN ['Insecta']) " +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=externalId:\\\"EOL:123\\\", target_taxon_name=name:\\\"Insecta\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=externalId:\"EOL:123\", target_taxon_name=name:\"Insecta\"}")));
     }
 
     @Test
@@ -892,7 +892,7 @@ public class CypherQueryBuilderTest {
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some\\\\ name\\\", target_taxon_name=name:\\\"Insecta\\\"}"));
+                is("{source_taxon_name=externalId:\"EOL:123\" OR name:\"some name\", target_taxon_name=name:\"Insecta\"}"));
     }
 
     @Test
@@ -914,8 +914,8 @@ public class CypherQueryBuilderTest {
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(), is(is("{" +
-                "source_taxon_name=name:\\\"Arthropoda\\\"," +
-                " target_taxon_name=externalId:\\\"EOL:123\\\" OR name:\\\"some\\\\ name\\\"}")));
+                "source_taxon_name=name:\"Arthropoda\"," +
+                " target_taxon_name=externalId:\"EOL:123\" OR name:\"some name\"}")));
     }
 
 
@@ -937,7 +937,7 @@ public class CypherQueryBuilderTest {
                 " OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc" +
                 " RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=name:\\\"Arthropoda\\\", target_taxon_name=name:\\\"FOO:123\\\" OR name:\\\"some\\\\ name\\\"}"));
+                is("{source_taxon_name=name:\"Arthropoda\", target_taxon_name=name:\"FOO:123\" OR name:\"some name\"}"));
     }
 
     @Test
@@ -954,7 +954,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\"}")));
     }
 
     @Test
@@ -971,7 +971,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         EXPECTED_MATCH_CLAUSE_DISTINCT +
                         "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN sourceTaxon.name as source_taxon_name,targetTaxon.name as target_taxon_name"));
-        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\\\"foo\\\" externalId:\\\"gomexsi.edu\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{accordingTo=externalId:\"foo\" externalId:\"gomexsi.edu\"}")));
     }
 
     @Test
@@ -990,7 +990,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_MATCH_CLAUSE_SPATIAL +
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + hasTargetTaxon("Arthropoda") +
                 "WITH distinct targetTaxon, interaction.label as iType, sourceTaxon RETURN targetTaxon.name as target_taxon_name,sourceTaxon.name as source_taxon_name,sourceTaxon.pathNames as source_taxon_path_ranks"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -1009,7 +1009,7 @@ public class CypherQueryBuilderTest {
                 "WHERE " + hasTargetTaxon("Arthropoda") +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "RETURN targetTaxon.name as target_taxon_name,study.citation as study_citation"));
-        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\\\"Enhydra\\\", target_taxon_name=path:\\\"Arthropoda\\\"}")));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Enhydra\", target_taxon_name=path:\"Arthropoda\"}")));
     }
 
     @Test
@@ -1170,7 +1170,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\", target_taxon_name=path:\\\"Arthropoda\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\", target_taxon_name=path:\"Arthropoda\"}"));
     }
 
     @Test
@@ -1203,7 +1203,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{target_taxon_name=path:\\\"Arthropoda\\\"}"));
+        assertThat(query.getParams().toString(), is("{target_taxon_name=path:\"Arthropoda\"}"));
     }
 
     @Test
@@ -1223,7 +1223,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Arthropoda\", target_taxon_name=path:\"Mammalia\"}"));
     }
 
     @Test
@@ -1242,7 +1242,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE_DISTINCT;
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Arthropoda\", target_taxon_name=path:\"Mammalia\"}"));
     }
 
 
@@ -1263,7 +1263,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Arthropoda\", target_taxon_name=path:\"Mammalia\"}"));
     }
 
     @Test
@@ -1283,7 +1283,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Arthropoda\", target_taxon_name=path:\"Mammalia\"}"));
     }
 
     @Test
@@ -1304,7 +1304,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Arthropoda\", target_taxon_name=path:\"Mammalia\"}"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -1337,7 +1337,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Arthropoda\\\", target_taxon_name=path:\\\"Mammalia\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Arthropoda\", target_taxon_name=path:\"Mammalia\"}"));
     }
 
     @Test
@@ -1357,7 +1357,7 @@ public class CypherQueryBuilderTest {
                 "RETURN sourceTaxon.name as source_taxon_name,sourceTaxon.externalId as source_taxon_external_id,targetTaxon.name as target_taxon_name,targetTaxon.externalId as target_taxon_external_id,interaction.label as interaction_type,interaction.count as number_of_interactions";
         query = buildInteractionQuery(params, MULTI_TAXON_DISTINCT_BY_NAME_ONLY);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Animalia\\\", target_taxon_name=path:\\\"Animalia\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Animalia\", target_taxon_name=path:\"Animalia\"}"));
     }
 
     @Test
@@ -1374,7 +1374,7 @@ public class CypherQueryBuilderTest {
                 EXPECTED_RETURN_CLAUSE;
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(), is(expectedQuery));
-        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\\\"Actinopterygii\\\" OR path:\\\"Chordata\\\"}"));
+        assertThat(query.getParams().toString(), is("{source_taxon_name=path:\"Actinopterygii\" OR path:\"Chordata\"}"));
     }
 
     @Test
@@ -1404,7 +1404,7 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 AND " + HAS_TARGET_TAXON_PLANTAE + expectedReturnClause()));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=path:\\\"Homo\\\\ sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+                is("{source_taxon_name=path:\"Homo sapiens\", target_taxon_name=path:\"Plantae\"}"));
     }
 
     @Test
@@ -1418,7 +1418,7 @@ public class CypherQueryBuilderTest {
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=path:\\\"Homo\\\\ sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+                is("{source_taxon_name=path:\"Homo sapiens\", target_taxon_name=path:\"Plantae\"}"));
     }
 
     @Test
@@ -1431,7 +1431,7 @@ public class CypherQueryBuilderTest {
                 "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                 "WHERE " + HAS_TARGET_TAXON_PLANTAE + "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=path:\\\"Homo\\\\ sapiens\\\", target_taxon_name=path:\\\"Plantae\\\"}"));
+                is("{source_taxon_name=path:\"Homo sapiens\", target_taxon_name=path:\"Plantae\"}"));
     }
 
     @Test
@@ -1447,7 +1447,7 @@ public class CypherQueryBuilderTest {
                 "OPTIONAL MATCH " +
                 "sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=path:\\\"Homo\\\\ sapiens\\\"}"));
+                is("{source_taxon_name=path:\"Homo sapiens\"}"));
     }
 
     @Test
@@ -1463,7 +1463,7 @@ public class CypherQueryBuilderTest {
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " + expectedReturnClause()));
 
         assertThat(query.getParams().toString(),
-                is("{source_taxon_name=path:\\\"Homo\\\\ sapiens\\\"}"));
+                is("{source_taxon_name=path:\"Homo sapiens\"}"));
     }
 
     @Test
@@ -1478,8 +1478,8 @@ public class CypherQueryBuilderTest {
 
         Map<String, String> params1 = query.getParams();
         assertThat(params1.size(), is(2));
-        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo\\\\ sapiens\\\""));
-        assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
+        assertThat(params1.get("source_taxon_name"), is("path:\"Homo sapiens\""));
+        assertThat(params1.get("target_taxon_name"), is("path:\"Plantae\""));
 
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
                 "START " +
@@ -1497,8 +1497,8 @@ public class CypherQueryBuilderTest {
 
         Map<String, String> params1 = query.getParams();
         assertThat(params1.size(), is(2));
-        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo\\\\ sapiens\\\""));
-        assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
+        assertThat(params1.get("source_taxon_name"), is("path:\"Homo sapiens\""));
+        assertThat(params1.get("target_taxon_name"), is("path:\"Plantae\""));
 
 
         assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
@@ -1519,8 +1519,8 @@ public class CypherQueryBuilderTest {
 
         Map<String, String> params1 = query.getParams();
         assertThat(params1.size(), is(2));
-        assertThat(params1.get("source_taxon_name"), is("path:\\\"Homo\\\\ sapiens\\\""));
-        assertThat(params1.get("target_taxon_name"), is("path:\\\"Plantae\\\""));
+        assertThat(params1.get("source_taxon_name"), is("path:\"Homo sapiens\""));
+        assertThat(params1.get("target_taxon_name"), is("path:\"Plantae\""));
 
         String expectedQuery = CYPHER_VERSION +
                 "START " +
@@ -1647,19 +1647,19 @@ public class CypherQueryBuilderTest {
                 EXPECTED_ACCORDING_TO_START_CLAUSE +
                         "MATCH study-[:COLLECTED]->specimen-[:COLLECTED_AT]->location WITH " +
                         "DISTINCT(location) as loc RETURN loc.latitude as latitude, loc.longitude as longitude, loc.footprintWKT as footprintWKT"));
-        assertThat(query.getParams().toString(), is("{accordingTo=externalId:\\\"some\\\\ source\\\"}"));
+        assertThat(query.getParams().toString(), is("{accordingTo=externalId:\"some source\"}"));
     }
 
     @Test
     public void regexAccordingToGoMexSI() {
         String regex = CypherQueryBuilder.matchReferenceOrDataset(Collections.singletonList("http://gomexsi.tamucc.edu"));
-        assertThat(regex, is("externalId:\\\"http://gomexsi.tamucc.edu\\\" externalId:\\\"http://gomexsi.tamucc.edu/\\\""));
+        assertThat(regex, is("externalId:\"http://gomexsi.tamucc.edu\" externalId:\"http://gomexsi.tamucc.edu/\""));
 
         regex = CypherQueryBuilder.matchReferenceOrDataset(Arrays.<String>asList("http://gomexsi.tamucc.edu", "https://example.com"));
-        assertThat(regex, is("externalId:\\\"http://gomexsi.tamucc.edu\\\" externalId:\\\"https://example.com\\\" externalId:\\\"http://gomexsi.tamucc.edu/\\\""));
+        assertThat(regex, is("externalId:\"http://gomexsi.tamucc.edu\" externalId:\"https://example.com\" externalId:\"http://gomexsi.tamucc.edu/\""));
 
         regex = CypherQueryBuilder.matchReferenceOrDataset(Collections.singletonList("https://example.com"));
-        assertThat(regex, is("externalId:\\\"https://example.com\\\""));
+        assertThat(regex, is("externalId:\"https://example.com\""));
     }
 
     @Test

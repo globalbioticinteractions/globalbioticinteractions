@@ -237,23 +237,24 @@ public class CypherQueryBuilder {
             }
             lucenePathQuery
                     .append(selectorPrefixForName(taxonSelector, isExactMatch))
-                    .append("\\\"")
+                    .append("\"")
                     // see https://stackoverflow.com/questions/25450308/full-text-search-in-neo4j-with-spaces
                     .append(escapeWhitespace(taxonSelector))
-                    .append("\\\"");
+                    .append("\"");
             count++;
         }
         return lucenePathQuery.toString();
     }
 
     public static String escapeWhitespace(String taxonSelector) {
-        return StringUtils.replace(taxonSelector, " ", "\\\\ ");
+        // disable whitespace escaper
+        return taxonSelector;
     }
 
     protected static String strictExternalIdMatch(List<String> terms) {
         List<String> quotedTerms = new ArrayList<String>();
         for (String term : terms) {
-            quotedTerms.add("externalId:\\\"" + escapeWhitespace(term) + "\\\"");
+            quotedTerms.add("externalId:\"" + escapeWhitespace(term) + "\"");
         }
         return orNestedTerms(quotedTerms);
     }
@@ -281,7 +282,7 @@ public class CypherQueryBuilder {
                 paramMap.put("accordingTo", matchReferenceOrDataset(DOIs));
             } else if (isAccordingToNamespaceQuery(accordingTo)) {
                 List<String> namespaces = getNamespaces(accordingTo);
-                paramMap.put("accordingTo", "namespace:\\\"" + orNestedTerms(namespaces) + "\\\"");
+                paramMap.put("accordingTo", "namespace:\"" + orNestedTerms(namespaces) + "\"");
             } else {
                 paramMap.put("accordingTo", matchReferenceOrDataset(accordingTo));
             }
