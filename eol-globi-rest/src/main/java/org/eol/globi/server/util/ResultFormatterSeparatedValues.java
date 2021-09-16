@@ -164,6 +164,13 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
         } catch (IOException e) {
             throw new ResultFormattingException("failed to parse result", e);
         }
+
+        try {
+            RequestHelper.throwOnError(jsonNode);
+        } catch (IOException e) {
+            throw new ResultFormattingException("result has errors", e);
+        }
+
         StringBuilder resultBuilder = new StringBuilder();
         writeArray(jsonNode, resultBuilder, "columns");
         JsonNode rows = jsonNode.get("data");

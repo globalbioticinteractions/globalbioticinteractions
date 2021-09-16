@@ -1,5 +1,6 @@
 package org.eol.globi.server.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.server.CypherQueryBuilder;
@@ -17,14 +18,14 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
     public String format(String result) throws ResultFormattingException {
         try {
             JsonNode jsonNode = RequestHelper.parse(result);
-            System.out.println(jsonNode.toPrettyString());
-            return format(jsonNode);
+            RequestHelper.throwOnError(jsonNode);
+            return format(jsonNode)     ;
         } catch (IOException e) {
-            throw new ResultFormattingException("failed to format result", e);
+            throw new ResultFormattingException("cannot for an error message", e);
         }
     }
 
-    private String format(JsonNode resultNode) throws IOException {
+    private String format(JsonNode resultNode) throws ResultFormattingException {
         List<String> columnNames = new ArrayList<String>();
 
         JsonNode jsonNode = resultNode;
@@ -88,7 +89,11 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
         if (resultList.size() > 0) {
             addAllDataColumns(jsonNode, columnNames, resultList);
         }
-        return new ObjectMapper().writeValueAsString(resultList);
+        try {
+            return new ObjectMapper().writeValueAsString(resultList);
+        } catch (JsonProcessingException e) {
+            throw new ResultFormattingException("failed to format result", e);
+        }
     }
 
     private void addAllDataColumns(JsonNode jsonNode, List<String> columnNames, List<Map<String, Object>> interactions) {

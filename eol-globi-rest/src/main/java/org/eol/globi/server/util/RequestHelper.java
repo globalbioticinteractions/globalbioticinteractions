@@ -188,7 +188,10 @@ public class RequestHelper {
 
     public static void throwOnError(String errorString) throws IOException {
         JsonNode jsonNode = new ObjectMapper().readTree(errorString);
+        throwOnError(jsonNode);
+    }
 
+    public static void throwOnError(JsonNode jsonNode) throws IOException {
         if (jsonNode.has("errors")) {
             JsonNode errors = jsonNode.get("errors");
             for (JsonNode error : errors) {

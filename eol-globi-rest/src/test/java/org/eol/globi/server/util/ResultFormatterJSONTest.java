@@ -2,7 +2,6 @@ package org.eol.globi.server.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -23,6 +22,13 @@ public class ResultFormatterJSONTest {
         assertThat(formatted, is(ResultFormatterJSONv2Test.oldTaxonQueryResult()));
 
 
+    }
+
+    @Test(expected = ResultFormattingException.class)
+    public void throwOnError() throws ResultFormattingException {
+        String result = RequestHelperTest.getErrorResult();
+
+        new ResultFormatterJSON().format(result);
     }
 
     @Test
@@ -46,6 +52,15 @@ public class ResultFormatterJSONTest {
         assertThat(IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name()),
                 is(ResultFormatterJSONv2Test.oldTaxonQueryResult()));
 
+
+    }
+
+    @Test(expected = ResultFormattingException.class)
+    public void throwOnErrorStreaming() throws IOException {
+        String result = RequestHelperTest.getErrorResult();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        new ResultFormatterJSON().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
 
     }
 

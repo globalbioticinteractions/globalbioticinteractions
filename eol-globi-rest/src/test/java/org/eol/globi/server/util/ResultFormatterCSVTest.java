@@ -24,6 +24,11 @@ public class ResultFormatterCSVTest {
         assertThat(format, is("\"loc.latitude\",\"loc.longitude\"\n-25.0,135.0\n40.9777996,-79.5252906\n"));
     }
 
+    @Test(expected = ResultFormattingException.class)
+    public void throwOnError() throws ResultFormattingException {
+        new ResultFormatterCSV().format(RequestHelperTest.getErrorResult());
+    }
+
     @Test
     public void toCSVOutputStream() throws ResultFormattingException {
         InputStream is = IOUtils.toInputStream(CSV_NUMERIC_VALUES, StandardCharsets.UTF_8);

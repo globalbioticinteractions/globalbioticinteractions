@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.io.IOUtils;
+import sun.misc.Request;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,13 +16,16 @@ public class ResultFormatterJSON implements ResultFormatterStreaming {
 
     @Override
     public String format(String s) throws ResultFormattingException {
-        String formatted = s;
+        String formatted;
         try {
             JsonNode jsonNode = new ObjectMapper().readTree(s);
+            RequestHelper.throwOnError(jsonNode);
             formatted = pruneResultsIfNeeded(jsonNode)
                     .toPrettyString();
         } catch (JsonProcessingException e) {
             throw new ResultFormattingException("failed to parse", e);
+        } catch (IOException e) {
+            throw new ResultFormattingException("found errors in response", e);
         }
         return formatted;
     }
@@ -41,7 +45,9 @@ public class ResultFormatterJSON implements ResultFormatterStreaming {
     public void format(InputStream is, OutputStream os) throws ResultFormattingException {
         try (InputStream inputStream = is) {
             // needs to be more efficient - in a streaming mapper, rather than serializing the in memory string
-            JsonNode jsonNode = pruneResultsIfNeeded(new ObjectMapper().readTree(inputStream));
+            JsonNode jsonNode1 = new ObjectMapper().readTree(inputStream);
+            RequestHelper.throwOnError(jsonNode1);
+            JsonNode jsonNode = pruneResultsIfNeeded(jsonNode1);
             IOUtils.copy(IOUtils.toInputStream(jsonNode.toPrettyString(), StandardCharsets.UTF_8), os);
             os.flush();
         } catch (IOException e) {
