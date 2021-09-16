@@ -90,7 +90,8 @@ public class HttpUtil {
                 .setConnectTimeout(soTimeoutMs)
                 .build();
 
-        return HttpClientBuilder.create()
+        return HttpClientBuilder
+                .create()
                 .setRetryHandler(new DefaultHttpRequestRetryHandler())
                 .setUserAgent("globalbioticinteractions/" + Version.getVersion() + " (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)")
                 .setServiceUnavailableRetryStrategy(new CustomServiceUnavailableStrategy())

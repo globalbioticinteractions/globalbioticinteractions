@@ -35,7 +35,9 @@ public class CypherUtil {
 
     private static String getCypherURI() {
         String value = System.getProperty("neo4j.cypher.uri");
-        return StringUtils.isBlank(value) ? "https://neo4j.globalbioticinteractions.org/db/data/cypher" : StringUtils.trim(value);
+        return StringUtils.isBlank(value)
+                ? "https://neo4j.globalbioticinteractions.org/db/data/cypher"
+                : StringUtils.trim(value);
     }
 
     private static String wrapQuery(CypherQuery cypherQuery) {

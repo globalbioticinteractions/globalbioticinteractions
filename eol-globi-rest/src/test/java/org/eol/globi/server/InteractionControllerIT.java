@@ -24,6 +24,7 @@ public class InteractionControllerIT extends ITBase {
     public void listPreyForPredator() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn";
         String response = HttpUtil.getRemoteJson(uri);
+        assertThat(response, containsString("Homo sapiens"));
         assertThat(response, is(not(nullValue())));
     }
 
