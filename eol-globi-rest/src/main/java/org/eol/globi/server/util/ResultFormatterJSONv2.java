@@ -16,8 +16,8 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
     @Override
     public String format(String result) throws ResultFormattingException {
         try {
-            System.out.println(result);
             JsonNode jsonNode = RequestHelper.parse(result);
+            System.out.println(jsonNode.toPrettyString());
             return format(jsonNode);
         } catch (IOException e) {
             throw new ResultFormattingException("failed to format result", e);
