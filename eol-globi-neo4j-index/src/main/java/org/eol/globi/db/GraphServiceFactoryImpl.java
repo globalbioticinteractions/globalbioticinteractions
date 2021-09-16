@@ -38,7 +38,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
     }
 
     private static GraphDatabaseService startNeo4j(String baseDir) {
-        File storeDir = new File(baseDir + "graph.db");
+        File storeDir = new File(baseDir, "graph.db");
         System.err.print("neo4j starting at [" + storeDir.getAbsolutePath() + "]...");
 
         final GraphDatabaseService graphService = new GraphDatabaseFactory()

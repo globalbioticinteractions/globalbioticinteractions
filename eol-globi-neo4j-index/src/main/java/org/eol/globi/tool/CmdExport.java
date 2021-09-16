@@ -4,13 +4,15 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.export.GraphExporterImpl;
 
+import java.io.File;
+
 public class CmdExport implements Cmd {
 
     private final GraphServiceFactory factory;
     private String baseDir;
 
     public CmdExport(GraphServiceFactory factory) {
-        this(factory, "./");
+        this(factory, new File(".").getAbsolutePath());
     }
 
     public CmdExport(GraphServiceFactory factory, String baseDir) {

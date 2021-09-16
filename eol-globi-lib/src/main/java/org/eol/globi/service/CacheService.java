@@ -10,7 +10,7 @@ import static org.eol.globi.service.CacheServiceUtil.createCacheDir;
 
 public class CacheService {
 
-    private File cacheDir = new File("./target/term-cache");
+    private File cacheDir = new File("target/term-cache");
 
     public DB initDb(String cacheName) throws IOException {
         File mapdbCacheDir = getMapDBDir();

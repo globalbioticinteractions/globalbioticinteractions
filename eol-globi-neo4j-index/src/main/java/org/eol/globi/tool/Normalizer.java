@@ -18,6 +18,8 @@ import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 public class Normalizer {
     private static final Logger LOG = LoggerFactory.getLogger(Normalizer.class);
     private static final String OPTION_HELP = "h";
@@ -71,7 +73,8 @@ public class Normalizer {
 
     public void run(CommandLine cmdLine) throws StudyImporterException {
 
-        GraphServiceFactoryImpl graphServiceFactory = new GraphServiceFactoryImpl("./");
+        GraphServiceFactoryImpl graphServiceFactory
+                = new GraphServiceFactoryImpl(new File(".").getAbsolutePath());
 
         try {
             indexDatasets(cmdLine, graphServiceFactory);

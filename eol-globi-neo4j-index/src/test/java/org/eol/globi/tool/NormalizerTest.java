@@ -169,7 +169,7 @@ public class NormalizerTest extends GraphDBTestCase {
             tx.success();
         }
 
-        String baseDir = "./target/normalizer-test/";
+        String baseDir = "target/normalizer-test/";
         FileUtils.deleteQuietly(new File(baseDir));
         try (Transaction tx = getGraphDb().beginTx()) {
             new GraphExporterImpl()

@@ -48,7 +48,7 @@ public class TaxonCacheServiceTest {
 
     @Before
     public void createMapDBFolder() throws IOException {
-        mapdbDir = new File("./target/mapdb" + new Random().nextLong());
+        mapdbDir = new File("target/mapdb" + new Random().nextLong());
     }
 
     @After

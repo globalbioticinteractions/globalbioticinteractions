@@ -29,6 +29,7 @@ import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,7 +90,9 @@ public class Elton4N {
     private void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
         Factories factoriesNeo4j = new Factories() {
             final GraphServiceFactory factory =
-                    new GraphServiceFactoryImpl(cmdLine.getOptionValue(CmdOptionConstants.OPTION_GRAPHDB_DIR,"./"));
+                    new GraphServiceFactoryImpl(
+                            cmdLine.getOptionValue(CmdOptionConstants.OPTION_GRAPHDB_DIR,
+                            new File(".").getAbsolutePath()));
 
             final NodeFactoryFactory nodeFactoryFactory = StringUtils.equals("2", neo4jVersion)
                     ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(factory)
