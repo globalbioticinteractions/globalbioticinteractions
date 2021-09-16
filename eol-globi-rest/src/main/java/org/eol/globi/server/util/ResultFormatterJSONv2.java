@@ -125,7 +125,13 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
         return false;
     }
 
-    private void parseRow(List<String> columnNames, JsonNode row, Map<String, Object> interaction, Map<String, String> sourceTaxon, Map<String, String> targetTaxon, List<Map<String, String>> targetTaxa, int i) {
+    private void parseRow(List<String> columnNames,
+                          JsonNode row,
+                          Map<String, Object> interaction,
+                          Map<String, String> sourceTaxon,
+                          Map<String, String> targetTaxon,
+                          List<Map<String, String>> targetTaxa,
+                          int i) {
         String colName = columnNames.get(i);
         final JsonNode value = row.get(i);
         if (ResultField.INTERACTION_TYPE.getLabel().equals(colName)) {

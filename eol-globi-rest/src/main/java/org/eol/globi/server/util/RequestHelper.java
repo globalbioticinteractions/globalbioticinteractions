@@ -154,6 +154,7 @@ public class RequestHelper {
 
     public static JsonNode parse(String content) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        LOG.info(content);
         return mapper.readTree(content);
     }
 
