@@ -164,6 +164,15 @@ public class InteractionControllerIT extends ITBase {
     }
 
     @Test
+    public void predatorsOfHumans() throws IOException {
+        String uri = getURLPrefix() + "interaction?sourceTaxon=Homo%20sapiens&interactionType=preyedUponBy";
+        String response = HttpUtil.getRemoteJson(uri);
+        assertThat(response, is(not(nullValue())));
+        assertThat(response, containsString("Homo sapiens"));
+    }
+
+
+    @Test
     public void listPreyObservationsLocation() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?includeObservations=true&lat=12.3&lng=12.5";
         String response = HttpUtil.getRemoteJson(uri);

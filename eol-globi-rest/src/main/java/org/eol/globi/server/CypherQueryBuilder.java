@@ -247,7 +247,7 @@ public class CypherQueryBuilder {
     }
 
     public static String escapeWhitespace(String taxonSelector) {
-        return StringUtils.replace(taxonSelector, " ", "\\ ");
+        return StringUtils.replace(taxonSelector, " ", "\\\\\\\\ ");
     }
 
     protected static String strictExternalIdMatch(List<String> terms) {

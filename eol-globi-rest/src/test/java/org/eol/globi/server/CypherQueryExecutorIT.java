@@ -14,7 +14,7 @@ public class CypherQueryExecutorIT {
 
     @Test
     public void executeQuery() throws IOException {
-        CypherQuery query = new CypherQuery("CYPHER 2.3 START sourceTaxon = node:taxonPaths('path:\\\"Homo sapiens\\\"') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name SKIP 0 LIMIT 1024");
+        CypherQuery query = new CypherQuery("START sourceTaxon = node:taxonPaths('path:\\\"Homo sapiens\\\"') MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,collect(distinct(targetTaxon.name)) as target_taxon_name SKIP 0 LIMIT 1024");
 
         String execute = new CypherQueryExecutor(query).execute(null);
 

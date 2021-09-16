@@ -116,7 +116,7 @@ public class Elton4N {
 
             List<Cmd> steps = new ArrayList<>();
 
-            LOG.info("processing steps: [" + StringUtils.join(cmdLine.getArgList(), CharsetConstant.SEPARATOR) + "]");
+            LOG.info("processing steps: [" + StringUtils.join(cmdLine.getArgList(), ", ") + "]");
 
             if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_NAME_COMPILE)) {
                 steps.add(new CmdImportDatasets(
