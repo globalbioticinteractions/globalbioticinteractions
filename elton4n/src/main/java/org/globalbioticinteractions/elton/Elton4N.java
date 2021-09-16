@@ -88,11 +88,14 @@ public class Elton4N {
     }
 
     private void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
+        final String graphDbDirPath = cmdLine.getOptionValue(
+                CmdOptionConstants.OPTION_GRAPHDB_DIR,
+                "graph.db"
+        );
         Factories factoriesNeo4j = new Factories() {
             final GraphServiceFactory factory =
                     new GraphServiceFactoryImpl(
-                            cmdLine.getOptionValue(CmdOptionConstants.OPTION_GRAPHDB_DIR,
-                            new File(".").getAbsolutePath()));
+                            new File(graphDbDirPath));
 
             final NodeFactoryFactory nodeFactoryFactory = StringUtils.equals("2", neo4jVersion)
                     ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(factory)

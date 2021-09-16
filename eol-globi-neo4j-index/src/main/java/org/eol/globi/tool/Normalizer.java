@@ -74,7 +74,7 @@ public class Normalizer {
     public void run(CommandLine cmdLine) throws StudyImporterException {
 
         GraphServiceFactoryImpl graphServiceFactory
-                = new GraphServiceFactoryImpl(new File(".").getAbsolutePath());
+                = new GraphServiceFactoryImpl(new File("graph.db"));
 
         try {
             indexDatasets(cmdLine, graphServiceFactory);
