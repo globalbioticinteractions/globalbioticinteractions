@@ -70,7 +70,7 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 List<Map<String, String>> targetTaxa = new ArrayList<>();
 
 
-                JsonNode row = rowAndMeta.has("row") ? rowAndMeta.get("row") : rowAndMeta;
+                JsonNode row = getRow(rowAndMeta);
                 if (!row.isArray()) {
                     throw new ResultFormattingException("expected row value array, but none found in [" + rowAndMeta.toPrettyString() + "]");
                 }
@@ -95,7 +95,8 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 }
             }
         } else if (isTaxonQuery(columnNames)) {
-            for (JsonNode row : rowsAndMetas) {
+            for (JsonNode rowAndMeta : rowsAndMetas) {
+                JsonNode row = getRow(rowAndMeta);
                 Map<String, Object> taxon = new TreeMap<String, Object>();
                 for (int i = 0; i < row.size(); i++) {
                     taxon.put(columns.get(i).asText(), row.get(i).asText());
@@ -112,11 +113,16 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
         }
     }
 
+    private JsonNode getRow(JsonNode rowAndMeta) {
+        return rowAndMeta.has("row") ? rowAndMeta.get("row") : rowAndMeta;
+    }
+
     private void addAllDataColumns(JsonNode jsonNode, List<String> columnNames, List<Map<String, Object>> interactions) {
-        JsonNode rows = jsonNode.get("data");
-        for (int j = 0; j < rows.size(); j++) {
+        JsonNode rowsAndMetas = jsonNode.get("data");
+        for (int j = 0; j < rowsAndMetas.size(); j++) {
             Map<String, Object> values = new HashMap<String, Object>();
-            JsonNode row = rows.get(j);
+            JsonNode rowAndMeta = rowsAndMetas.get(j);
+            JsonNode row = getRow(rowAndMeta);
             for (int k = 0; k < row.size(); k++) {
                 values.put(columnNames.get(k), row.get(k));
             }

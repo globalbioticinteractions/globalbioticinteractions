@@ -157,11 +157,16 @@ public class ResultFormatterJSONv2Test {
         assertThat(jsonNode.isArray(), is(true));
 
         JsonNode isopoda = jsonNode.get(0);
+        assertThat(isopoda.get("source_taxon_external_id").asText(), is("GBIF:9203090"));
+        assertThat(isopoda.get("source_taxon_name").asText(), is("Glypthelmins pennsylvaniensis"));
         assertThat(isopoda.get("source").get("id").asText(), is("GBIF:9203090"));
         assertThat(isopoda.get("source").get("name").asText(), is("Glypthelmins pennsylvaniensis"));
+        assertThat(isopoda.get("target_taxon_external_id").asText(), is("EOL:1048370"));
+        assertThat(isopoda.get("target_taxon_name").asText(), is("Pseudacris triseriata"));
         assertThat(isopoda.get("target").get("id").asText(), is("EOL:1048370"));
         assertThat(isopoda.get("target").get("name").asText(), is("Pseudacris triseriata"));
         assertThat(isopoda.get("type").asText(), is("parasiteOf"));
+        assertThat(isopoda.get("interaction_type").asText(), is("parasiteOf"));
 
     }
 
