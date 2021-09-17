@@ -3,6 +3,8 @@ package org.eol.globi.server;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,16 +20,24 @@ import java.util.Map;
 @Controller
 public class InteractionController {
 
+    private final static Logger LOG = LoggerFactory.getLogger(InteractionController.class);
+
+
     @RequestMapping(value = "/exists", method = {RequestMethod.GET, RequestMethod.HEAD})
     @ResponseBody
     protected String atLeastOneInteraction(HttpServletRequest request) throws IOException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/401
         Map parameterMap = getParamMap(request);
-        CypherQuery query = CypherQueryBuilder.buildInteractionQuery(parameterMap, QueryType.forParams(parameterMap));
+        CypherQuery query = CypherQueryBuilder
+                .buildInteractionQuery(
+                        parameterMap,
+                        QueryType.forParams(parameterMap)
+                );
+
         CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(query, 0, 1);
         String s = CypherUtil.executeRemote(pagedQuery);
 
-        if (RequestHelper.nonEmptyResults(s)) {
+        if (!RequestHelper.nonEmptyResults(s)) {
             throw new ResourceNotFoundException("no results for query with params: " + parameterMap);
         }
         return "OK";

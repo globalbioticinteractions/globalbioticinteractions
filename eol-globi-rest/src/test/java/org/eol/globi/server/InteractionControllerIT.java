@@ -21,6 +21,22 @@ import static org.hamcrest.CoreMatchers.containsString;
 public class InteractionControllerIT extends ITBase {
 
     @Test
+    public void exists() throws IOException {
+        String uri = getURLPrefix() + "exists?accordingTo=globi:globalbioticinteractions/template-dataset";
+        String response = HttpUtil.getRemoteJson(uri);
+        assertThat(response, containsString("OK"));
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
+    public void notExists() throws IOException {
+        String uri = getURLPrefix() + "exists?accordingTo=globi:globalbioticinteractions/templatzzzze";
+        String response = HttpUtil.getRemoteJson(uri);
+        assertThat(response, not(containsString("OK")));
+        assertThat(response, is(not(nullValue())));
+    }
+
+    @Test
     public void listPreyForPredator() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn";
         String response = HttpUtil.getRemoteJson(uri);
