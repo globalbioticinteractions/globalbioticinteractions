@@ -16,13 +16,20 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
 
     @Override
     public String format(String result) throws ResultFormattingException {
+        JsonNode jsonNode;
         try {
-            JsonNode jsonNode = RequestHelper.parse(result);
-            RequestHelper.throwOnError(jsonNode);
-            return format(jsonNode)     ;
+            jsonNode = RequestHelper.parse(result);
         } catch (IOException e) {
             throw new ResultFormattingException("cannot for an error message", e);
         }
+
+        try {
+            RequestHelper.throwOnError(jsonNode);
+        } catch (IOException e) {
+            throw new ResultFormattingException("result contains errors", e);
+        }
+        return format(jsonNode);
+
     }
 
     private String format(JsonNode resultNode) throws ResultFormattingException {
@@ -60,12 +67,18 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 Map<String, String> targetTaxon = new HashMap<String, String>();
                 interaction.put("target", targetTaxon);
 
-                List<Map<String, String>> targetTaxa = new ArrayList<Map<String, String>>();
+                List<Map<String, String>> targetTaxa = new ArrayList<>();
 
-                JsonNode row = rowAndMeta.get("row");
-                if (row == null) {
+
+                JsonNode row = rowAndMeta.has("row") ? rowAndMeta.get("row") : rowAndMeta;
+                if (!row.isArray()) {
                     throw new ResultFormattingException("expected row value array, but none found in [" + rowAndMeta.toPrettyString() + "]");
                 }
+
+                if (row.size() != columnNames.size()) {
+                    throw new ResultFormattingException("number of values and columns do not match for [" + rowAndMeta.toPrettyString() + "]");
+                }
+
                 for (int i = 0; i < row.size(); i++) {
                     parseRow(columnNames, row, interaction, sourceTaxon, targetTaxon, targetTaxa, i);
                 }
@@ -90,9 +103,8 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 resultList.add(taxon);
             }
         }
-        if (resultList.size() > 0) {
-            addAllDataColumns(jsonNode, columnNames, resultList);
-        }
+        addAllDataColumns(jsonNode, columnNames, resultList);
+
         try {
             return new ObjectMapper().writeValueAsString(resultList);
         } catch (JsonProcessingException e) {
