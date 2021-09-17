@@ -89,6 +89,7 @@ public class CypherUtil {
     public static String executeRemote(CypherQuery query) throws IOException {
         StopWatch stopWatch = logQueryStart(query);
         String result = executeCypherQuery(query);
+        LOG.info(result);
         logQueryFinish(query, stopWatch);
         return result;
     }
