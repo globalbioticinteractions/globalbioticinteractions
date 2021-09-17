@@ -96,13 +96,15 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
                     if (inValueArray) {
                         inValueArray = false;
                     } else if (inRowArray) {
-                        addNewline(lineBuffer);
-                        lineBuffer.writeTo(os);
-                        lineBuffer = new ByteArrayOutputStream();
+                        if (lineBuffer.size() > 0) {
+                            addNewline(lineBuffer);
+                            lineBuffer.writeTo(os);
+                        }
                         endOfData = endOfLine;
                         endOfLine = true;
                         inRowArray = false;
                     }
+                    lineBuffer = new ByteArrayOutputStream();
 
 
                 }
