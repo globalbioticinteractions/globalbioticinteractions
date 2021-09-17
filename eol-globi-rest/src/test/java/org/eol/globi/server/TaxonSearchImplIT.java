@@ -160,7 +160,7 @@ public class TaxonSearchImplIT extends ITBase {
     @Test
     public void taxonLinks2() throws IOException {
         Collection<String> links = new TaxonSearchImpl().taxonLinks("Enhydra lutris nereis", null);
-        assertThat(links, CoreMatchers.hasItem("http://www.marinespecies.org/aphia.php?p=taxdetails&id=242601"));
+        assertThat(links, CoreMatchers.hasItem("https://www.marinespecies.org/aphia.php?p=taxdetails&id=242601"));
     }
 
     @Test

@@ -35,9 +35,7 @@ public class TaxonSearchUtil {
         Collection<String> links = new HashSet<>();
         if (rowsAndMetas != null) {
             for (JsonNode rowAndMeta : rowsAndMetas) {
-                if (rowAndMeta.isArray() && rowAndMeta.size() > 1) {
-                    addLinksFromNode(links, RequestHelper.getRow(rowAndMeta), linkMapper);
-                }
+                addLinksFromNode(links, RequestHelper.getRow(rowAndMeta), linkMapper);
             }
         }
         return links;

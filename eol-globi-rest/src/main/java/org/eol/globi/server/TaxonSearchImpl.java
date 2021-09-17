@@ -107,20 +107,19 @@ public class TaxonSearchImpl implements TaxonSearch {
 
     @Override
     public Collection<String> findTaxonIds(String scientificName) throws IOException {
-        return TaxonSearchUtil.linksForTaxonName(scientificName, null, new TaxonSearchUtil.LinkMapper() {
-
-            @Override
-            public String linkForNode(JsonNode node) {
-                String link = null;
-                String externalId = textOrNull(node, 0);
-                String externalUrl = textOrNull(node,1);
-                if (StringUtils.isNotBlank(externalId)) {
-                    link = externalId;
-                } else if (StringUtils.isNotBlank(externalUrl)) {
-                    link = externalUrl;
-                }
-                return link;
+        return TaxonSearchUtil.linksForTaxonName(
+                scientificName,
+                null,
+                node -> {
+            String link = null;
+            String externalId = textOrNull(node, 0);
+            String externalUrl = textOrNull(node,1);
+            if (StringUtils.isNotBlank(externalId)) {
+                link = externalId;
+            } else if (StringUtils.isNotBlank(externalUrl)) {
+                link = externalUrl;
             }
+            return link;
         });
     }
 
