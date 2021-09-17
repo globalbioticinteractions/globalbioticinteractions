@@ -154,12 +154,7 @@ public class RequestHelper {
 
     public static JsonNode parse(String content) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        LOG.info(content);
         return mapper.readTree(content);
-    }
-
-    static boolean emptyData(String body) throws IOException {
-        return !nonEmptyData(body);
     }
 
     static boolean nonEmptyData(String body) throws IOException {

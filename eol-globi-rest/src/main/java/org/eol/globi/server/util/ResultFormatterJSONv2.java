@@ -44,14 +44,14 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             columnNames.add(column.asText());
         }
 
-        JsonNode data = jsonNode.get("data");
-        if (data == null) {
-            throw new IllegalArgumentException("data array expected, but not found");
+        JsonNode rowsAndMetas = jsonNode.get("data");
+        if (rowsAndMetas == null) {
+            throw new IllegalArgumentException("data array expected, but none found");
         }
 
         List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
         if (isInteractionQuery(columnNames)) {
-            for (JsonNode row : data) {
+            for (JsonNode rowAndMeta : rowsAndMetas) {
                 Map<String, Object> interaction = new HashMap<String, Object>();
 
                 Map<String, String> sourceTaxon = new HashMap<String, String>();
@@ -62,6 +62,10 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
 
                 List<Map<String, String>> targetTaxa = new ArrayList<Map<String, String>>();
 
+                JsonNode row = rowAndMeta.get("row");
+                if (row == null) {
+                    throw new ResultFormattingException("expected row value array, but none found in [" + rowAndMeta.toPrettyString() + "]");
+                }
                 for (int i = 0; i < row.size(); i++) {
                     parseRow(columnNames, row, interaction, sourceTaxon, targetTaxon, targetTaxa, i);
                 }
@@ -78,7 +82,7 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
                 }
             }
         } else if (isTaxonQuery(columnNames)) {
-            for (JsonNode row : data) {
+            for (JsonNode row : rowsAndMetas) {
                 Map<String, Object> taxon = new TreeMap<String, Object>();
                 for (int i = 0; i < row.size(); i++) {
                     taxon.put(columns.get(i).asText(), row.get(i).asText());
