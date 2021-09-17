@@ -144,12 +144,6 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.MSW, url), is("12100795"));
     }
 
-    @Test
-    public void getExternalId() {
-        assertThat(ExternalIdUtil.getUrlFromExternalId("{ \"data\": [[]]}"), is("{}"));
-        assertThat(ExternalIdUtil.getUrlFromExternalId("{ \"data\": []}"), is("{}"));
-        assertThat(ExternalIdUtil.getUrlFromExternalId("{}"), is("{}"));
-    }
 
     @Test
     public void buildCitation() {

@@ -85,4 +85,17 @@ public class ResultFormatterCSVTest {
 
     }
 
+    @Test
+    public void toCSVWithNewJSONArray() throws ResultFormattingException {
+        String json = RequestHelperTest.getSuccessfulResult();
+        InputStream is = IOUtils.toInputStream(json, StandardCharsets.UTF_8);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        new ResultFormatterCSV().format(is, os);
+        String expectedValue = "\"study.citation\"\n" +
+                "\"Severe acute respiratory syndrome coronavirus 2 isolate hCoV-19/Netherlands/Gelderland_68/2020 genome assembly, complete genome: monopartite\"\n";
+        assertThat(new String(os.toByteArray(), StandardCharsets.UTF_8),
+                startsWith(expectedValue));
+
+    }
+
 }

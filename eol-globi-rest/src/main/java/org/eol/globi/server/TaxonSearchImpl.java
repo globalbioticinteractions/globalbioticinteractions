@@ -2,8 +2,8 @@ package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
@@ -49,27 +49,27 @@ public class TaxonSearchImpl implements TaxonSearch {
     }
 
     public Map<String, String> toMap(String response) throws IOException {
-        JsonNode node = new ObjectMapper().readTree(response);
-        JsonNode dataNode = node.get("data");
+        JsonNode rowsAndMetas = RequestHelper.getRowsAndMetas(response);
         Map<String, String> props = NO_PROPERTIES;
 
-        if (dataNode != null && dataNode.size() > 0) {
+        if (rowsAndMetas != null && rowsAndMetas.size() > 0) {
             props = new HashMap<>();
-            JsonNode first = dataNode.get(0);
-            props.put(PropertyAndValueDictionary.NAME, textOrEmpty(first, 0));
-            props.put(PropertyAndValueDictionary.COMMON_NAMES, textOrEmpty(first, 1));
-            props.put(PropertyAndValueDictionary.PATH, textOrEmpty(first, 2));
-            final String externalId = textOrEmpty(first, 3);
+            JsonNode rowAndMeta = rowsAndMetas.get(0);
+            JsonNode row = RequestHelper.getRow(rowAndMeta);
+            props.put(PropertyAndValueDictionary.NAME, textOrEmpty(row, 0));
+            props.put(PropertyAndValueDictionary.COMMON_NAMES, textOrEmpty(row, 1));
+            props.put(PropertyAndValueDictionary.PATH, textOrEmpty(row, 2));
+            final String externalId = textOrEmpty(row, 3);
             props.put(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
 
-            final String externalURL = textOrEmpty(first, 4);
+            final String externalURL = textOrEmpty(row, 4);
             if (StringUtils.isNotBlank(externalId) && StringUtils.isBlank(externalURL)) {
                 props.put(PropertyAndValueDictionary.EXTERNAL_URL, StringUtils.defaultString(ExternalIdUtil.urlForExternalId(externalId)));
             } else {
                 props.put(PropertyAndValueDictionary.EXTERNAL_URL, externalURL);
             }
 
-            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, textOrEmpty(first, 5));
+            props.put(PropertyAndValueDictionary.THUMBNAIL_URL, textOrEmpty(row, 5));
         }
         return props;
     }

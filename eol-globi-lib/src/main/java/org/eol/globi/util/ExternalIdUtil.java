@@ -2,6 +2,7 @@ package org.eol.globi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.protocol.RequestDefaultHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.client.utils.URIBuilder;
@@ -155,28 +156,6 @@ public class ExternalIdUtil {
             }
         }
         return provider;
-    }
-
-    public static String getUrlFromExternalId(String jsonString) {
-        String externalId = null;
-        try {
-            JsonNode jsonNode = new ObjectMapper().readTree(jsonString);
-            JsonNode data = jsonNode.get("data");
-            if (data != null) {
-                for (JsonNode row : data) {
-                    for (JsonNode cell : row) {
-                        externalId = cell.asText();
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return buildJsonUrl(urlForExternalId(externalId));
-    }
-
-    public static String buildJsonUrl(String url) {
-        return StringUtils.isBlank(url) ? "{}" : "{\"url\":\"" + url + "\"}";
     }
 
     public static String toCitation(String contributor, String description, String publicationYear) {

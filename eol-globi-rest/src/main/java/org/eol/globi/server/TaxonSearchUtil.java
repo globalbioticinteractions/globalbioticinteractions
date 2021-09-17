@@ -2,10 +2,12 @@ package org.eol.globi.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.springframework.web.bind.annotation.PathVariable;
+import sun.misc.Request;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -29,13 +31,12 @@ public class TaxonSearchUtil {
         final CypherQuery pagedQuery = createPagedQuery(taxonPath, request);
 
         final String response = CypherUtil.executeRemote(pagedQuery);
-        JsonNode node = new ObjectMapper().readTree(response);
-        JsonNode dataNode = node.get("data");
+        JsonNode rowsAndMetas = RequestHelper.getRowsAndMetas(response);
         Collection<String> links = new HashSet<>();
-        if (dataNode != null) {
-            for (JsonNode jsonNode : dataNode) {
-                if (jsonNode.isArray() && jsonNode.size() > 1) {
-                    addLinksFromNode(links, jsonNode, linkMapper);
+        if (rowsAndMetas != null) {
+            for (JsonNode rowAndMeta : rowsAndMetas) {
+                if (rowAndMeta.isArray() && rowAndMeta.size() > 1) {
+                    addLinksFromNode(links, RequestHelper.getRow(rowAndMeta), linkMapper);
                 }
             }
         }

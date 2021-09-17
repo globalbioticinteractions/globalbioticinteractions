@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.server.QueryType;
+import org.eol.globi.util.ExternalIdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,5 +202,50 @@ public class RequestHelper {
                 }
             }
         }
+    }
+
+    public static JsonNode getRow(JsonNode rowAndMeta) {
+        return rowAndMeta.has("row") ? rowAndMeta.get("row") : rowAndMeta;
+    }
+
+    public static JsonNode getFirstResult(JsonNode resultNode) {
+        JsonNode jsonNode = resultNode;
+        if (resultNode.has("results")) {
+            JsonNode results = resultNode.get("results");
+            if (results.isArray() && results.size() == 1) {
+                jsonNode = results.get(0);
+            }
+        }
+        return jsonNode;
+    }
+
+    public static String getUrlFromExternalId(String jsonString) {
+        String externalId = null;
+        try {
+            JsonNode results = new ObjectMapper().readTree(jsonString);
+            JsonNode firstResult = RequestHelper.getFirstResult(results);
+
+            JsonNode data = firstResult.get("data");
+            if (data != null) {
+                for (JsonNode rowAndMetaData : data) {
+                    for (JsonNode cell : RequestHelper.getRow(rowAndMetaData)) {
+                        externalId = cell.asText();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return buildJsonUrl(ExternalIdUtil.urlForExternalId(externalId));
+    }
+
+    public static String buildJsonUrl(String url) {
+        return StringUtils.isBlank(url) ? "{}" : "{\"url\":\"" + url + "\"}";
+    }
+
+    public static JsonNode getRowsAndMetas(String response) throws JsonProcessingException {
+        JsonNode results = new ObjectMapper().readTree(response);
+        JsonNode node = getFirstResult(results);
+        return node.get("data");
     }
 }

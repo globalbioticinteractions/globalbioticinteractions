@@ -173,10 +173,10 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
 
         StringBuilder resultBuilder = new StringBuilder();
         writeArray(jsonNode, resultBuilder, "columns");
-        JsonNode rows = jsonNode.get("data");
-        if (rows.isArray()) {
-            for (int j = 0; j < rows.size(); j++) {
-                handleJsonRow(resultBuilder, rows, j);
+        JsonNode rowsAndMetas = jsonNode.get("data");
+        if (rowsAndMetas.isArray()) {
+            for (int j = 0; j < rowsAndMetas.size(); j++) {
+                handleJsonRow(resultBuilder, rowsAndMetas, j);
 
             }
         }
@@ -198,9 +198,9 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
         At most one columns may contain an array.
 
         */
-    private void handleJsonRow(StringBuilder resultBuilder, JsonNode rows, int j) {
-        JsonNode row = rows.get(j);
-        List<String> rowValues = new ArrayList<String>(rows.size());
+    private void handleJsonRow(StringBuilder resultBuilder, JsonNode rowsAndMetas, int j) {
+        JsonNode row = RequestHelper.getRow(rowsAndMetas.get(j));
+        List<String> rowValues = new ArrayList<>(rowsAndMetas.size());
         List<String> arrayCell = null;
         Integer arrayCellIndex = null;
 

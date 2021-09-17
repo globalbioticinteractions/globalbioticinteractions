@@ -12,14 +12,15 @@ public class ResultFormatterSVG implements ResultFormatter {
 
     @Override
     public String format(final String content) throws ResultFormattingException {
-        JsonNode results;
+        JsonNode rowsAndMeta;
         try {
-            results = RequestHelper.parse(content);
+            rowsAndMeta = RequestHelper.getRowsAndMetas(content);
+
         } catch (IOException e) {
             throw new ResultFormattingException("failed to parse", e);
         }
-        JsonNode rows = results.get("data");
-        String badge = rows != null && rows.size() > 0 ? "known.svg" : "unknown.svg";
+
+        String badge = rowsAndMeta != null && rowsAndMeta.size() > 0 ? "known.svg" : "unknown.svg";
         try {
             return IOUtils.toString(getClass().getResourceAsStream(badge), StandardCharsets.UTF_8);
         } catch (IOException e) {

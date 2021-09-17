@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.eol.globi.util.ExternalIdUtil;
@@ -24,13 +25,13 @@ public class CypherProxyController {
     @RequestMapping(value = "/findExternalUrlForTaxon/{taxonName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForTaxonWithName(HttpServletRequest request, @PathVariable("taxonName") String taxonName) throws IOException {
-        return ExternalIdUtil.getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForTaxonNew(request, taxonName)));
+        return RequestHelper.getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForTaxonNew(request, taxonName)));
     }
 
     @RequestMapping(value = "/findExternalUrlForStudy/{studyTitle}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForStudyWithTitle(HttpServletRequest request, @PathVariable("studyTitle") String taxonName) throws IOException {
-        return ExternalIdUtil.getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForStudyNew(request, taxonName)));
+        return RequestHelper.getUrlFromExternalId(CypherUtil.executeRemote(findExternalIdForStudyNew(request, taxonName)));
     }
 
     @RequestMapping(value = "/findExternalIdForTaxon/{taxonName}", method = RequestMethod.GET)
@@ -50,7 +51,7 @@ public class CypherProxyController {
     @RequestMapping(value = "/findExternalUrlForExternalId/{externalId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String findExternalLinkForExternalId(@PathVariable("externalId") String externalId) {
-        return ExternalIdUtil.buildJsonUrl(ExternalIdUtil.urlForExternalId(externalId));
+        return RequestHelper.buildJsonUrl(ExternalIdUtil.urlForExternalId(externalId));
     }
 
     @RequestMapping(value = "/shortestPathsBetweenTaxon/{startTaxon}/andTaxon/{endTaxon}", method = RequestMethod.GET)
