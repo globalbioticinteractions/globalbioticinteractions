@@ -6,15 +6,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.neo4j.driver.v1.AccessMode;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.Statement;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.StatementResultCursor;
-import org.neo4j.driver.v1.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
@@ -26,8 +17,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
 public class CypherUtil {
@@ -36,21 +25,6 @@ public class CypherUtil {
     private static final Logger LOG = LoggerFactory.getLogger(CypherUtil.class);
 
     public static String executeCypherQuery(CypherQuery query) throws IOException {
-
-        Driver driver = GraphDatabase.driver(
-                "bolt://preston:7687",
-                AuthTokens.none()
-        );
-
-        Session session = driver.session(AccessMode.READ);
-        try (Transaction transaction = session.beginTransaction()) {
-            Statement statement = new Statement(query.getVersionedQuery(), new TreeMap<>(query.getParams()));
-            StatementResult run = transaction
-                    .run(statement);
-            run.stream().map(r -> r.asMap()).forEach(System.out::println);
-            transaction.success();
-        }
-
         HttpPost httpPost = getCypherRequest(query);
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
