@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.IOUtils;
 import sun.misc.Request;
 
@@ -35,7 +37,20 @@ public class ResultFormatterJSON implements ResultFormatterStreaming {
         if (jsonNode.has("results")) {
             JsonNode results = jsonNode.get("results");
             if (results.isArray() && results.size() == 1) {
-                pruned = results.get(0);
+                ObjectMapper objMapper = new ObjectMapper();
+                ObjectNode objNode = objMapper.createObjectNode();
+                JsonNode firstResult = results.get(0);
+                objNode.set("columns", firstResult.get("columns"));
+                ArrayNode rows = objMapper.createArrayNode();
+                for (JsonNode rowsAndMetas : firstResult.get("data")) {
+                    if (rowsAndMetas.has("row")) {
+                        rows.add(rowsAndMetas.get("row"));
+                    } else if (rowsAndMetas.isArray()) {
+                        rows.add(rowsAndMetas);
+                    }
+                }
+                objNode.set("data", rows);
+                pruned = objNode;
             }
         }
         return pruned;

@@ -14,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 public class ResultFormatterJSONTest {
 
     @Test
-    public void convertNewToOld() throws JsonProcessingException, ResultFormattingException {
+    public void convertNewToOld() throws ResultFormattingException {
         String result = ResultFormatterJSONv2Test.newTaxonQueryResult();
 
         String formatted = new ResultFormatterJSON().format(result);
@@ -51,6 +51,22 @@ public class ResultFormatterJSONTest {
 
         assertThat(IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name()),
                 is(ResultFormatterJSONv2Test.oldTaxonQueryResult()));
+
+
+    }
+
+    @Test
+    public void convertNewInteractionToOldStreaming() throws IOException {
+        String result = RequestHelperTest.getSuccessfulResult();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        new ResultFormatterJSON().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
+
+        assertThat(IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name()),
+                is("{\n" +
+                        "  \"columns\" : [ \"study.citation\" ],\n" +
+                        "  \"data\" : [ [ \"Severe acute respiratory syndrome coronavirus 2 isolate hCoV-19/Netherlands/Gelderland_68/2020 genome assembly, complete genome: monopartite\" ] ]\n" +
+                        "}"));
 
 
     }
