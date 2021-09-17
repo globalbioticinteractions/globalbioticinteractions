@@ -1,6 +1,5 @@
 package org.eol.globi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.ProxyOutputStream;
@@ -72,7 +71,7 @@ public class CypherUtilIT {
         HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_2_3));
 
         String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
-        assertFalse(RequestHelper.emptyResults(body));
+        assertFalse(RequestHelper.emptyData(body));
         assertThat(body, containsString("http://arctos.database.museum/guid/MSB:Para:1678"));
     }
 
@@ -95,7 +94,7 @@ public class CypherUtilIT {
         HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_2_3));
 
         String body = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
-        assertThat(RequestHelper.emptyResults(body), Is.is(true));
+        assertThat(RequestHelper.emptyData(body), Is.is(true));
     }
 
 

@@ -158,7 +158,7 @@ public class RequestHelper {
         return mapper.readTree(content);
     }
 
-    private static boolean emptyResults(JsonNode result) {
+    private static boolean emptyData(JsonNode result) {
         boolean empty = true;
         if (result.has("data")) {
             JsonNode data = result.get("data");
@@ -169,13 +169,18 @@ public class RequestHelper {
         return empty;
     }
 
-    public static boolean emptyResults(String responseString) throws JsonProcessingException {
-        boolean empty = true;
+    public static boolean emptyData(String responseString) throws JsonProcessingException {
         JsonNode jsonNode = new ObjectMapper().readTree(responseString);
+        return emptyDataForResults(jsonNode)
+                && emptyData(jsonNode);
+    }
+
+    private static boolean emptyDataForResults(JsonNode jsonNode) {
+        boolean empty = true;
         if (jsonNode.has("results")) {
             JsonNode results = jsonNode.get("results");
             if (results.isArray() && results.size() == 1) {
-                empty = emptyResults(results.get(0));
+                empty = emptyData(results.get(0));
             }
         }
         return empty;
