@@ -1,5 +1,6 @@
 package org.eol.globi.server.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.server.CypherTestUtil;
@@ -119,11 +120,11 @@ public class ResultFormatterJSONv2Test {
 
     }
 
-    public static String oldTaxonQueryResult() {
-        return "{\n" +
+    static String oldTaxonQueryResult() throws JsonProcessingException {
+        return new ObjectMapper().readTree("{\n" +
                 "  \"columns\" : [ \"taxon_name\", \"taxon_common_names\", \"taxon_external_id\", \"taxon_path\", \"taxon_path_ids\", \"taxon_path_ranks\" ],\n" +
                 "  \"data\" : [ [ \"Isopoda\", \"Asseln @de | isopods @en | Siirat @fi | Isopoda @fr | zeepissebedden @nl | gråsuggor och tånglöss @sv | \", \"EOL:7230\", \"Animalia | Arthropoda | Malacostraca | Isopoda\", \"EOL:1 | EOL:164 | EOL:1157 | EOL:7230\", \"kingdom | phylum | class | order\" ] ]" +
-                "\n}";
+                "\n}").toString();
     }
 
     @Test

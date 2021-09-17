@@ -1,6 +1,7 @@
 package org.eol.globi.server.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import static org.hamcrest.core.Is.is;
 public class ResultFormatterJSONTest {
 
     @Test
-    public void convertNewToOld() throws ResultFormattingException {
+    public void convertNewToOld() throws ResultFormattingException, JsonProcessingException {
         String result = ResultFormatterJSONv2Test.newTaxonQueryResult();
 
         String formatted = new ResultFormatterJSON().format(result);
@@ -63,10 +64,10 @@ public class ResultFormatterJSONTest {
         new ResultFormatterJSON().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
 
         assertThat(IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name()),
-                is("{\n" +
+                is(new ObjectMapper().readTree("{\n" +
                         "  \"columns\" : [ \"study.citation\" ],\n" +
                         "  \"data\" : [ [ \"Severe acute respiratory syndrome coronavirus 2 isolate hCoV-19/Netherlands/Gelderland_68/2020 genome assembly, complete genome: monopartite\" ] ]\n" +
-                        "}"));
+                        "}").toString()));
 
 
     }

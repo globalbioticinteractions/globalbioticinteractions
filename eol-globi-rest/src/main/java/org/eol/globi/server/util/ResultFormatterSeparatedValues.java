@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -64,30 +65,34 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
         token = jsonParser.nextToken();
         if (START_ARRAY.equals(token)) {
             boolean isFirstValue = true;
-            boolean endOfLine = false;
-            boolean endOfData = false;
             boolean inValueArray = false;
             boolean inRowArray = false;
+            String currentFieldName = null;
             ByteArrayOutputStream lineBuffer = new ByteArrayOutputStream();
-            while ((token = jsonParser.nextToken()) != null && !endOfData) {
+            while ((token = jsonParser.nextToken()) != null) {
+                if (FIELD_NAME.equals(token)) {
+                    currentFieldName = jsonParser.getCurrentName();
+                }
                 if (START_ARRAY.equals(token)) {
-                    if (inRowArray) {
+                    if (inRowArray && !StringUtils.equals("meta", currentFieldName)) {
                         inValueArray = true;
                     } else {
-                        endOfLine = false;
-                        endOfData = false;
                         isFirstValue = true;
                         inRowArray = true;
                     }
                 } else if (isValue(token)) {
                     if (!isFirstValue && !inValueArray) {
-                        IOUtils.write(getFieldSeparator(), lineBuffer, StandardCharsets.UTF_8);
+                        if (!StringUtils.equals("meta", currentFieldName)) {
+                            IOUtils.write(getFieldSeparator(), lineBuffer, StandardCharsets.UTF_8);
+                        }
                     }
                     if (inValueArray) {
-                        lineBuffer.writeTo(os);
-                        IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
-                        writeValue(os, jsonParser, token);
-                        addNewline(os);
+                        if (lineBuffer.size() > 0) {
+                            lineBuffer.writeTo(os);
+                            IOUtils.write(getFieldSeparator(), os, StandardCharsets.UTF_8);
+                            writeValue(os, jsonParser, token);
+                            addNewline(os);
+                        }
                     } else {
                         writeValue(lineBuffer, jsonParser, token);
                     }
@@ -100,8 +105,6 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
                             addNewline(lineBuffer);
                             lineBuffer.writeTo(os);
                         }
-                        endOfData = endOfLine;
-                        endOfLine = true;
                         inRowArray = false;
                     }
                     lineBuffer = new ByteArrayOutputStream();
