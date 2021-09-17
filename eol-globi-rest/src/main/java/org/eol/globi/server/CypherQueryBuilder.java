@@ -556,21 +556,8 @@ public class CypherQueryBuilder {
     private static List<String> getNamespaces(List<String> accordingToParams) {
         Stream<String> namespaces = accordingToParams.stream()
                 .filter(accordingTo -> StringUtils.startsWith(accordingTo, "globi:"))
-                .map(accordingTo -> StringUtils.replaceOnce(accordingTo, "globi:", ""))
-                // since lucene 4.0 forward slashes need to be escaped
-                // see https://stackoverflow.com/questions/17798300/lucene-queryparser-with-in-query-criteria
-                // see https://lucene.apache.org/core/4_0_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Regexp_Searches
-                .map(accordingTo -> StringUtils.replace(accordingTo, "/", "\\/"));
+                .map(accordingTo -> StringUtils.replaceOnce(accordingTo, "globi:", ""));
         return namespaces.collect(Collectors.toList());
-    }
-
-    private static boolean hasAtLeastOneURL(List<String> accordingToParams) {
-        boolean hasAtLeastOneURL = false;
-        for (String s : accordingToParams) {
-            UrlValidator urlValidator = new UrlValidator();
-            hasAtLeastOneURL = hasAtLeastOneURL || urlValidator.isValid(s);
-        }
-        return hasAtLeastOneURL;
     }
 
     private static StringBuilder appendStartMatchWhereClauses(List<String> sourceTaxa, List<String> interactionTypes, List<String> targetTaxa, Map parameterMap, QueryType queryType) {
