@@ -37,7 +37,7 @@ public class InteractionController {
         CypherQuery pagedQuery = CypherQueryBuilder.createPagedQuery(query, 0, 1);
         String s = CypherUtil.executeRemote(pagedQuery);
 
-        if (!RequestHelper.nonEmptyResults(s)) {
+        if (RequestHelper.emptyResults(s)) {
             throw new ResourceNotFoundException("no results for query with params: " + parameterMap);
         }
         return "OK";

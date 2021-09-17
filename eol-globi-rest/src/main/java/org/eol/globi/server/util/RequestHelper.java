@@ -158,36 +158,30 @@ public class RequestHelper {
         return mapper.readTree(content);
     }
 
-    static boolean nonEmptyData(String body) throws IOException {
-        JsonNode result = parse(body);
-        return nonEmptyData(result);
-    }
-
-    public static boolean nonEmptyData(JsonNode result) {
-        boolean nonEmpty = false;
+    private static boolean emptyResults(JsonNode result) {
+        boolean empty = true;
         if (result.has("data")) {
             JsonNode data = result.get("data");
             if (data.isArray() && data.size() > 0) {
-                nonEmpty = true;
+                empty = false;
             }
         }
-        return nonEmpty;
+        return empty;
     }
 
-    public static boolean nonEmptyResults(String responseString) throws JsonProcessingException {
-        boolean nonEmpty = false;
+    public static boolean emptyResults(String responseString) throws JsonProcessingException {
+        boolean empty = true;
         JsonNode jsonNode = new ObjectMapper().readTree(responseString);
         if (jsonNode.has("results")) {
             JsonNode results = jsonNode.get("results");
             if (results.isArray() && results.size() == 1) {
-                nonEmpty = nonEmptyData(results.get(0));
+                empty = emptyResults(results.get(0));
             }
-
         }
-        return nonEmpty;
+        return empty;
     }
 
-    public static void throwOnError(String errorString) throws IOException {
+    static void throwOnError(String errorString) throws IOException {
         JsonNode jsonNode = new ObjectMapper().readTree(errorString);
         throwOnError(jsonNode);
     }

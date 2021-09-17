@@ -14,6 +14,7 @@ import java.util.Map;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 
 public class RequestHelperTest {
 
@@ -141,13 +142,13 @@ public class RequestHelperTest {
     @Test
     public void emptyData() throws IOException {
         String response = "{\"columns\":[\"source_taxon_external_id\",\"source_taxon_name\",\"source_taxon_path\",\"source_specimen_life_stage\",\"source_specimen_basis_of_record\",\"interaction_type\",\"target_taxon_external_id\",\"target_taxon_name\",\"target_taxon_path\",\"target_specimen_life_stage\",\"target_specimen_basis_of_record\",\"latitude\",\"longitude\",\"study_title\"],\"data\":[]}";
-        assertThat(RequestHelper.nonEmptyData(response), Is.is(false));
+        assertThat(RequestHelper.emptyResults(response), Is.is(true));
     }
 
     @Test
     public void nonEmptyData() throws IOException {
         String response = "{\"columns\":[\"source_taxon_external_id\",\"source_taxon_name\",\"source_taxon_path\",\"source_specimen_life_stage\",\"source_specimen_basis_of_record\",\"interaction_type\",\"target_taxon_external_id\",\"target_taxon_name\",\"target_taxon_path\",\"target_specimen_life_stage\",\"target_specimen_basis_of_record\",\"latitude\",\"longitude\",\"study_title\"],\"data\":[[\"EOL_V2:328629\",\"Phoca vitulina\",\"Animalia | Chordata | Mammalia | Carnivora | Phocidae | Phoca | Phoca vitulina\",null,\"PreservedSpecimen\",\"hasParasite\",\"EOL:2857069\",\"Ascarididae\",\"Animalia | Nematoda | Secernentea | Ascaridida | Ascarididae\",null,\"PreservedSpecimen\",null,null,\"http://arctos.database.museum/guid/MSB:Para:1678\"]]}";
-        assertThat(RequestHelper.nonEmptyData(response), Is.is(true));
+        assertThat(RequestHelper.emptyResults(response), Is.is(false));
     }
 
     @Test(expected = IOException.class)
@@ -170,11 +171,7 @@ public class RequestHelperTest {
 
     @Test
     public void nonEmptyResults() throws JsonProcessingException {
-        String responseString = getSuccessfulResult();
-
-        boolean nonEmpty = RequestHelper.nonEmptyResults(responseString);
-
-        assertTrue(nonEmpty);
+        assertFalse(RequestHelper.emptyResults(getSuccessfulResult()));
     }
 
     public static String getSuccessfulResult() {
