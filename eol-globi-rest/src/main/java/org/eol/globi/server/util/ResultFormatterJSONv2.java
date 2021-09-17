@@ -66,11 +66,11 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
 
                 JsonNode row = RequestHelper.getRow(rowAndMeta);
                 if (!row.isArray()) {
-                    throw new ResultFormattingException("expected row value array, but none found in [" + rowAndMeta.toPrettyString() + "]");
+                    throw new ResultFormattingException("expected row value array, but none found in [" + rowAndMeta.toString() + "]");
                 }
 
                 if (row.size() != columnNames.size()) {
-                    throw new ResultFormattingException("number of values and columns do not match for [" + rowAndMeta.toPrettyString() + "]");
+                    throw new ResultFormattingException("number of values and columns do not match for [" + rowAndMeta.toString() + "]");
                 }
 
                 for (int i = 0; i < row.size(); i++) {

@@ -23,7 +23,7 @@ public class ResultFormatterJSON implements ResultFormatterStreaming {
             JsonNode jsonNode = new ObjectMapper().readTree(s);
             RequestHelper.throwOnError(jsonNode);
             formatted = pruneResultsIfNeeded(jsonNode)
-                    .toPrettyString();
+                    .toString();
         } catch (JsonProcessingException e) {
             throw new ResultFormattingException("failed to parse", e);
         } catch (IOException e) {
@@ -63,7 +63,7 @@ public class ResultFormatterJSON implements ResultFormatterStreaming {
             JsonNode jsonNode1 = new ObjectMapper().readTree(inputStream);
             RequestHelper.throwOnError(jsonNode1);
             JsonNode jsonNode = pruneResultsIfNeeded(jsonNode1);
-            IOUtils.copy(IOUtils.toInputStream(jsonNode.toPrettyString(), StandardCharsets.UTF_8), os);
+            IOUtils.copy(IOUtils.toInputStream(jsonNode.toString(), StandardCharsets.UTF_8), os);
             os.flush();
         } catch (IOException e) {
             throw new ResultFormattingException("failed to format incoming stream", e);

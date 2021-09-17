@@ -3,6 +3,7 @@ package org.eol.globi.server;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.server.util.RequestHelper;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.HttpUtil;
 import org.hamcrest.CoreMatchers;
@@ -156,7 +157,7 @@ public class TaxonSearchImplIT extends ITBase {
     @Test
     public void taxonLinksPlazi2() throws IOException {
         Map<String, String> taxon = new TaxonSearchImpl().findTaxon("http://taxon-concept.plazi.org/id/Animalia/Anguillicola_crassus_Kuwahara_1974");
-        System.out.println(taxon);
+        assertThat(TaxonUtil.mapToTaxon(taxon).getPath(), containsString("Animalia"));
     }
 
     @Test

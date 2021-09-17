@@ -1,21 +1,19 @@
 package org.eol.globi.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -24,17 +22,17 @@ public class CypherUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(CypherUtil.class);
 
-    public static String executeCypherQuery(CypherQuery query) throws IOException {
+    private static String executeCypherQuery(CypherQuery query) throws IOException {
         HttpPost httpPost = getCypherRequest(query);
         BasicResponseHandler responseHandler = new BasicResponseHandler();
         return HttpUtil.getHttpClient().execute(httpPost, responseHandler);
     }
 
-    public static HttpPost getCypherRequest(CypherQuery query) throws UnsupportedEncodingException {
+    private static HttpPost getCypherRequest(CypherQuery query) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(getCypherURI());
         HttpUtil.addJsonHeaders(httpPost);
         String queryJson = wrapQuery(query);
-        System.out.println(queryJson);
+        LOG.info(queryJson);
         httpPost.setEntity(new StringEntity(queryJson));
         return httpPost;
     }
@@ -63,33 +61,12 @@ public class CypherUtil {
         for (Map.Entry<String, String> entry : cypherQuery.getParams().entrySet()) {
             parameters.put(entry.getKey(), entry.getValue());
         }
-        return req.toPrettyString();
-    }
-
-    private static String buildJSONParamList(Map<String, String> paramMap) {
-        StringBuilder builder = new StringBuilder();
-        if (paramMap != null) {
-            populateParams(paramMap, builder);
-        }
-        return builder.toString();
-    }
-
-    private static void populateParams(Map<String, String> paramMap, StringBuilder builder) {
-        Iterator<Map.Entry<String, String>> iterator = paramMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> param = iterator.next();
-            String jsonParam = "\"" + param.getKey() + "\" : \"" + param.getValue() + "\"";
-            builder.append(jsonParam);
-            if (iterator.hasNext()) {
-                builder.append(", ");
-            }
-        }
+        return req.toString();
     }
 
     public static String executeRemote(CypherQuery query) throws IOException {
         StopWatch stopWatch = logQueryStart(query);
         String result = executeCypherQuery(query);
-        LOG.info(result);
         logQueryFinish(query, stopWatch);
         return result;
     }

@@ -196,8 +196,8 @@ public class RequestHelper {
             JsonNode errors = jsonNode.get("errors");
             for (JsonNode error : errors) {
                 if (error.has("message")) {
-                    LOG.error(jsonNode.toPrettyString());
-                    throw new IOException(errors.toPrettyString());
+                    LOG.error(jsonNode.toString());
+                    throw new IOException(errors.toString());
                 }
             }
         }
