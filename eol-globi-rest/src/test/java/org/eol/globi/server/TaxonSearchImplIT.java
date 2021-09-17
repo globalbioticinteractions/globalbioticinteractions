@@ -2,12 +2,14 @@ package org.eol.globi.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.HttpUtil;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.Request;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
@@ -238,7 +240,7 @@ public class TaxonSearchImplIT extends ITBase {
     @Test
     public void findTaxonProxy() throws IOException {
         String response = new TaxonSearchImpl().findTaxonProxy("Ariopsis felis");
-        JsonNode resp = new ObjectMapper().readTree(response);
+        JsonNode resp = RequestHelper.getFirstResult(new ObjectMapper().readTree(response));
         JsonNode columns = resp.get("columns");
         assertThat(columns.get(0).asText(), is("name"));
         assertThat(columns.get(1).asText(), is("commonNames"));
@@ -246,7 +248,7 @@ public class TaxonSearchImplIT extends ITBase {
         assertThat(columns.get(3).asText(), is("externalId"));
         assertThat(columns.get(4).asText(), is("externalUrl"));
         assertThat(columns.get(5).asText(), is("thumbnailUrl"));
-        JsonNode info = resp.get("data").get(0);
+        JsonNode info = RequestHelper.getRow(resp.get("data").get(0));
         assertThat(info.get(0).asText(), is("Ariopsis felis"));
         assertThat(info.get(2).asText(), StringContains.containsString("Actinopterygii"));
         assertThat(info.get(3).asText(), StringContains.containsString(":"));
