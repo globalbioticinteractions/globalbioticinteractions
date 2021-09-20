@@ -24,14 +24,10 @@ import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
-public class InteractionExpander implements InteractionProcessor {
-
-    private final InteractionListener listener;
-    private final ImportLogger logger;
+public class InteractionExpander extends InteractionProcessorAbstract {
 
     public InteractionExpander(InteractionListener listener, ImportLogger logger) {
-        this.listener = listener;
-        this.logger = logger;
+        super(listener, logger);
     }
 
     @Override
@@ -40,13 +36,6 @@ public class InteractionExpander implements InteractionProcessor {
         for (Map<String, String> expandedLink : propertiesList) {
             addPlaceholderNamesIfNeeded(expandedLink);
             emit(expandedLink);
-        }
-    }
-
-    @Override
-    public void emit(Map<String, String> interaction) throws StudyImporterException {
-        if (listener != null) {
-            listener.on(interaction);
         }
     }
 

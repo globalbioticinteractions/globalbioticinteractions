@@ -17,14 +17,19 @@ import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
-public class InteractionValidator implements InteractionProcessor {
+public class InteractionValidator extends InteractionProcessorAbstract {
 
-    private final InteractionListener listener;
-    private final ImportLogger logger;
 
     public InteractionValidator(InteractionListener listener, ImportLogger logger) {
-        this.listener = listener;
-        this.logger = logger;
+        super(listener, logger);
+    }
+
+    @Override
+    public void on(Map<String, String> interaction) throws StudyImporterException {
+        if (interaction != null && isValidInteraction(interaction, this.logger)) {
+            org.eol.globi.process.LogUtil.logIfPossible(interaction, "biotic interaction found", this.logger);
+            emit(interaction);
+        }
     }
 
     private boolean isValidInteraction(Map<String, String> link, ImportLogger logger) {
@@ -104,16 +109,5 @@ public class InteractionValidator implements InteractionProcessor {
         };
     }
 
-    @Override
-    public void on(Map<String, String> interaction) throws StudyImporterException {
-        if (interaction != null && isValidInteraction(interaction, this.logger)) {
-            org.eol.globi.process.LogUtil.logIfPossible(interaction, "biotic interaction found", this.logger);
-            emit(interaction);
-        }
-    }
 
-    @Override
-    public void emit(Map<String, String> interaction) throws StudyImporterException {
-        listener.on(interaction);
-    }
 }

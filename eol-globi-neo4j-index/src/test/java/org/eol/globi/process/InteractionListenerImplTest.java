@@ -19,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_INSTITUTION_CODE;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,6 +61,37 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
         interactionListener.on(interaction);
 
         assertStudyCount(1L);
+
+    }
+
+    @Test
+    public void processFieldMuseum() throws StudyImporterException {
+        InteractionListenerImpl interactionListener = new InteractionListenerImpl(
+                nodeFactory,
+                null,
+                null,
+                null);
+        HashMap<String, String> interaction = new HashMap<>();
+        interaction.put(SOURCE_TAXON_NAME, "sourceName");
+        interaction.put(SOURCE_OCCURRENCE_ID, "1234");
+        interaction.put(SOURCE_INSTITUTION_CODE, "F");
+        interaction.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+        interaction.put(TARGET_TAXON_NAME, "targetName");
+        interaction.put(REFERENCE_ID, "citation");
+
+        assertStudyCount(0L);
+
+        interactionListener.on(interaction);
+
+        Result execute = getGraphDb()
+                .execute(
+                        "CYPHER 2.3 START study = node:studies('*:*') " +
+                                "MATCH study-[:COLLECTED]->specimen " +
+                                "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
+                                "RETURN count(distinct(study)) as study_count"
+                );
+
+        assertThat(execute.next().get("study_count"), Is.is(1L));
 
     }
 

@@ -3,6 +3,7 @@ package org.eol.globi.process;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.LogUtil;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.OccurrenceIdEnricher;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.InteractUtil;
@@ -32,6 +33,7 @@ public class InteractionListenerImpl implements InteractionListener {
         this.processors =
                 Arrays.asList(
                         new InteractionExpander(queue, logger),
+                        new OccurrenceIdEnricher(queue, logger),
                         createMappingListener(logger, dataset, queue),
                         new InteractionValidator(queue, logger),
                         new InteractionImporter(nodeFactory, logger, geoNamesService)
