@@ -1,6 +1,8 @@
 package org.eol.globi.server;
 
+import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.HttpUtil;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -47,5 +49,17 @@ public class CypherProxyControllerIT extends ITBase {
         assertThat(response, is(not(nullValue())));
     }
 
+    @Test
+    public void findShortestPaths() throws IOException {
+        CypherQuery cypherQuery = new CypherProxyController().findShortestPathsNew(null, "Homo sapiens", "Rattus rattus");
+        String externalLink = new CypherQueryExecutor(cypherQuery).execute(null);
+        assertThat(externalLink, CoreMatchers.containsString("Rattus rattus"));
+    }
+
+    @Test
+    public void findExternalLinkFoStudyWithTitle() throws IOException {
+        String externalLink = new CypherProxyController().findExternalLinkForStudyWithTitle(null, "bioinfo:ref:147884");
+        assertThat(externalLink, is("{\"url\":\"http://bioinfo.org.uk/html/b147884.htm\"}"));
+    }
 
 }
