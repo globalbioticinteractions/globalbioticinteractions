@@ -104,8 +104,10 @@ public class InteractUtilTest {
 
     @Test
     public void mapNotCaseSensitive() throws TermLookupServiceException {
-        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostOf"), is(InteractType.HOST_OF));
-        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostof"), is(InteractType.HOST_OF));
+        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostOf"),
+                is(InteractType.HOST_OF));
+        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostof"),
+                is(InteractType.HOST_OF));
     }
 
     @Test

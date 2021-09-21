@@ -71,9 +71,6 @@ public enum InteractType implements RelType {
     HYPERPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002553", "hyperparasiteOf", SUBJECT, OBJECT),
     HAS_HYPERPARASITE("http://purl.obolibrary.org/obo/RO_0002554", "hasHyperparasite", OBJECT, SUBJECT),
 
-    HYPERPARASITOID_OF("http://purl.obolibrary.org/obo/RO_0002553", "hyperparasitoidOf", SUBJECT, OBJECT),
-    HAS_HYPERPARASITOID("http://purl.obolibrary.org/obo/RO_0002554", "hasHyperparasitoid", OBJECT, SUBJECT),
-
     ECTOPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002632", "ectoparasiteOf", SUBJECT, OBJECT),
     HAS_ECTOPARASITE("http://purl.obolibrary.org/obo/RO_0002633", "hasEctoparasite", OBJECT, SUBJECT),
 
@@ -208,7 +205,6 @@ public enum InteractType implements RelType {
                 put(PARASITOID_OF, Arrays.asList(PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(ENDOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(ECTOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, LIVES_ON, ADJACENT_TO, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(HYPERPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(PARASITE_OF, Arrays.asList(ATE, DAMAGES, LIVES_WITH, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, HAS_HOST, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
                 put(ENDOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_INSIDE_OF, HAS_HOST, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
@@ -308,7 +304,6 @@ public enum InteractType implements RelType {
                 put(ENDOPARASITE_OF, HAS_ENDOPARASITE);
                 put(ECTOPARASITE_OF, HAS_ECTOPARASITE);
                 put(PARASITOID_OF, HAS_PARASITOID);
-                put(HYPERPARASITOID_OF, HAS_HYPERPARASITOID);
                 put(ENDOPARASITOID_OF, HAS_ENDOPARASITOID);
                 put(ECTOPARASITOID_OF, HAS_ECTOPARASITOID);
                 put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);

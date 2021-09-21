@@ -33,8 +33,21 @@ public class InteractTypeMapperFactoryForROTest {
 
     }
 
-
     @Test
+    public void caseInsensitiveName() throws TermLookupServiceException {
+
+        InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryForRO().create();
+
+        assertNotNull(interactTypeMapper);
+
+        InteractType interactsWithByName = interactTypeMapper.getInteractType("interactswith");
+        assertThat(interactsWithByName, is(InteractType.INTERACTS_WITH));
+
+    }
+
+
+        @Test
     public void ensureAllInteractTypesAreSupported() throws TermLookupServiceException {
         InteractTypeMapper interactTypeMapper
                 = new InteractTypeMapperFactoryForRO().create();

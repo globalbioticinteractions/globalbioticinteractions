@@ -26,8 +26,6 @@ endoparasiteOf,http://purl.obolibrary.org/obo/RO_0002634
 hasEndoparasite,http://purl.obolibrary.org/obo/RO_0002635
 hyperparasiteOf,http://purl.obolibrary.org/obo/RO_0002553
 hasHyperparasite,http://purl.obolibrary.org/obo/RO_0002554
-hyperparasitoidOf,http://purl.obolibrary.org/obo/RO_0002553
-hasHyperparasitoid,http://purl.obolibrary.org/obo/RO_0002554
 ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 hasEctoparasite,http://purl.obolibrary.org/obo/RO_0002633
 kleptoparasiteOf,http://purl.obolibrary.org/obo/RO_0008503

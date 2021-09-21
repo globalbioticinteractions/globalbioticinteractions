@@ -5,25 +5,21 @@ import org.junit.Test;
 import static org.eol.globi.domain.InteractType.ATE;
 import static org.eol.globi.domain.InteractType.CO_OCCURS_WITH;
 import static org.eol.globi.domain.InteractType.DAMAGED_BY;
-import static org.eol.globi.domain.InteractType.DISPERSAL_VECTOR_OF;
 import static org.eol.globi.domain.InteractType.EATEN_BY;
 import static org.eol.globi.domain.InteractType.ECTOPARASITE_OF;
 import static org.eol.globi.domain.InteractType.ENDOPARASITE_OF;
 import static org.eol.globi.domain.InteractType.FARMED_BY;
 import static org.eol.globi.domain.InteractType.FARMS;
 import static org.eol.globi.domain.InteractType.FLOWERS_VISITED_BY;
-import static org.eol.globi.domain.InteractType.HAS_DISPERAL_VECTOR;
 import static org.eol.globi.domain.InteractType.HAS_ECTOPARASITE;
 import static org.eol.globi.domain.InteractType.HAS_ENDOPARASITE;
 import static org.eol.globi.domain.InteractType.HAS_HYPERPARASITE;
-import static org.eol.globi.domain.InteractType.HAS_HYPERPARASITOID;
 import static org.eol.globi.domain.InteractType.HAS_PARASITE;
 import static org.eol.globi.domain.InteractType.HAS_PARASITOID;
 import static org.eol.globi.domain.InteractType.HAS_PATHOGEN;
 import static org.eol.globi.domain.InteractType.HAS_VECTOR;
 import static org.eol.globi.domain.InteractType.HOST_OF;
 import static org.eol.globi.domain.InteractType.HYPERPARASITE_OF;
-import static org.eol.globi.domain.InteractType.HYPERPARASITOID_OF;
 import static org.eol.globi.domain.InteractType.INTERACTS_WITH;
 import static org.eol.globi.domain.InteractType.KILLED_BY;
 import static org.eol.globi.domain.InteractType.KILLS;
@@ -40,12 +36,12 @@ import static org.eol.globi.domain.InteractType.VECTOR_OF;
 import static org.eol.globi.domain.InteractType.VISITS_FLOWERS_OF;
 import static org.eol.globi.domain.InteractType.typeOf;
 import static org.eol.globi.domain.InteractType.values;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 public class InteractTypeTest {
 
@@ -91,11 +87,11 @@ public class InteractTypeTest {
             assertThat("found missing path for interaction [" + type + "]", InteractType.typesOf(type), is(notNullValue()));
         }
 
-        assertThat(InteractType.typesOf(KILLS), hasItems(KILLS, PREYS_UPON, HYPERPARASITOID_OF, PARASITOID_OF));
+        assertThat(InteractType.typesOf(KILLS), hasItems(KILLS, PREYS_UPON, PARASITOID_OF));
         assertThat(InteractType.typesOf(PREYS_UPON), hasItems(PREYS_UPON));
-        assertThat(InteractType.typesOf(SYMBIONT_OF), hasItems(SYMBIONT_OF, PARASITE_OF, POLLINATES, POLLINATED_BY, HAS_PARASITE, HAS_PATHOGEN, PATHOGEN_OF, HAS_VECTOR, VECTOR_OF, ENDOPARASITE_OF, HAS_ENDOPARASITE, HYPERPARASITE_OF, HAS_HYPERPARASITE, HYPERPARASITOID_OF, HAS_HYPERPARASITOID, ECTOPARASITE_OF, HAS_ECTOPARASITE, PARASITOID_OF, HAS_PARASITOID, FARMED_BY, FARMS));
+        assertThat(InteractType.typesOf(SYMBIONT_OF), hasItems(SYMBIONT_OF, PARASITE_OF, POLLINATES, POLLINATED_BY, HAS_PARASITE, HAS_PATHOGEN, PATHOGEN_OF, HAS_VECTOR, VECTOR_OF, ENDOPARASITE_OF, HAS_ENDOPARASITE, HYPERPARASITE_OF, HAS_HYPERPARASITE, ECTOPARASITE_OF, HAS_ECTOPARASITE, PARASITOID_OF, HAS_PARASITOID, FARMED_BY, FARMS));
         assertThat(InteractType.typesOf(SYMBIONT_OF), not(hasItems(PREYS_UPON, KILLS, KILLED_BY, PREYED_UPON_BY, ATE, EATEN_BY)));
-        assertThat(InteractType.typesOf(PARASITE_OF), hasItems(PARASITE_OF, PATHOGEN_OF, ENDOPARASITE_OF, HYPERPARASITE_OF, HYPERPARASITOID_OF, ECTOPARASITE_OF, PARASITOID_OF));
+        assertThat(InteractType.typesOf(PARASITE_OF), hasItems(PARASITE_OF, PATHOGEN_OF, ENDOPARASITE_OF, HYPERPARASITE_OF, ECTOPARASITE_OF, PARASITOID_OF));
         assertThat(InteractType.typesOf(PARASITE_OF), not(hasItem(HOST_OF)));
     }
 

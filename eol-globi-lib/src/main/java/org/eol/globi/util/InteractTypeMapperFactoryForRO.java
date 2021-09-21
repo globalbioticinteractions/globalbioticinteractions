@@ -33,8 +33,8 @@ public class InteractTypeMapperFactoryForRO implements InteractTypeMapperFactory
         return InteractTypeMapperFactoryImpl.getTermLookupService(
                 termIgnoredServiceRO,
                 new ResourceServiceSingleResource(SUPPORTED_INTERACTION_TYPES),
-                "interaction_type_label",
                 "interaction_type_id",
+                "interaction_type_label",
                 "interaction_type_id",
                 URI.create(SUPPORTED_INTERACTION_TYPES));
     }
