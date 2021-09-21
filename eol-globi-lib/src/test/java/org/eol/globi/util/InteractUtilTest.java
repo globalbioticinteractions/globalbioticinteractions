@@ -137,7 +137,14 @@ public class InteractUtilTest {
 
     @Test(expected = TermLookupServiceException.class)
     public void createInteractionTermMapperUnknownResolvedId() throws StudyImporterException, TermLookupServiceException {
-        TermLookupService termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(new ResourceService() {
+
+        TermLookupService ignoredTermService = new TermLookupService() {
+            @Override
+            public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+                return null;
+            }
+        };
+        ResourceService resourceService = new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 return IOUtils.toInputStream(
@@ -145,7 +152,14 @@ public class InteractUtilTest {
                                 "someProvidedId,someProvidedName,someResolvedId,someResolvedName", StandardCharsets.UTF_8);
             }
 
-        }, "observation_field_id", "observation_field_id", "observation_field_name", "interaction_type_id", InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT, InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
+        };
+        TermLookupService termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(
+                ignoredTermService,
+                resourceService,
+                "observation_field_id",
+                "observation_field_name",
+                "interaction_type_id",
+                InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
 
         List<Term> someProvidedId = termLookupService.lookupTermByName("someProvidedId");
         assertThat(someProvidedId.size(), is(1));
@@ -155,26 +169,36 @@ public class InteractUtilTest {
 
     @Test
     public void createInteractionTermMapperValidTerm() throws StudyImporterException, TermLookupServiceException {
-        TermLookupService termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(new ResourceService() {
+        ResourceService testResourceService = new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
-                if (resourceName.equals(InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT)) {
-                    return IOUtils.toInputStream(
-                            "provided_interaction_type_id,provided_interaction_type_label,mapped_to_interaction_type_id,mapped_to_interaction_type_label\n" +
-                                    "someProvidedId,someProvidedName,http://purl.obolibrary.org/obo/RO_0002440,someResolvedName", StandardCharsets.UTF_8);
-                } else {
-                    return IOUtils.toInputStream(
-                            "interaction_type_ignored\n" +
-                                    "someIgnoredId", StandardCharsets.UTF_8);
-
-                }
+                return IOUtils.toInputStream(
+                        "provided_interaction_type_id,provided_interaction_type_label,mapped_to_interaction_type_id,mapped_to_interaction_type_label\n" +
+                                "someProvidedId,someProvidedName,http://purl.obolibrary.org/obo/RO_0002440,someResolvedName", StandardCharsets.UTF_8);
             }
 
-        }, "interaction_type_ignored",
+        };
+
+        ResourceService ignoredResourceService = new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return IOUtils.toInputStream(
+                        "interaction_type_ignored\n" +
+                                "someIgnoredId", StandardCharsets.UTF_8);
+            }
+
+        };
+
+        TermLookupService ignoredTermService = InteractTypeMapperFactoryImpl.getIgnoredTermService(ignoredResourceService,
+                "interaction_type_ignored",
+                InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT);
+
+        TermLookupService termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(
+                ignoredTermService,
+                testResourceService,
                 "provided_interaction_type_id",
                 "provided_interaction_type_label",
                 "mapped_to_interaction_type_id",
-                InteractTypeMapperFactoryImpl.TYPE_IGNORED_URI_DEFAULT,
                 InteractTypeMapperFactoryImpl.TYPE_MAP_URI_DEFAULT);
 
         List<Term> someProvidedId = termLookupService.lookupTermByName("someProvidedId");

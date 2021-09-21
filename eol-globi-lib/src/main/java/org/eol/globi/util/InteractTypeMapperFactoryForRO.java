@@ -7,7 +7,6 @@ import org.eol.globi.service.TermLookupServiceException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public class InteractTypeMapperFactoryForRO implements InteractTypeMapperFactory {
 
@@ -17,9 +16,10 @@ public class InteractTypeMapperFactoryForRO implements InteractTypeMapperFactory
 
     @Override
     public InteractTypeMapper create() throws TermLookupServiceException {
+        TermLookupService termIgnoredServiceRO = getTermIgnoredServiceRO();
         return new InteractTypeMapperImpl(
-                getTermIgnoredServiceRO(),
-                getTermLookupServiceRO());
+                termIgnoredServiceRO,
+                getTermLookupServiceRO(termIgnoredServiceRO));
     }
 
     private TermLookupService getTermIgnoredServiceRO() throws TermLookupServiceException {
@@ -29,14 +29,13 @@ public class InteractTypeMapperFactoryForRO implements InteractTypeMapperFactory
                 URI.create(IGNORED_LIST_DEFAULT));
     }
 
-    private TermLookupService getTermLookupServiceRO() throws TermLookupServiceException {
+    private TermLookupService getTermLookupServiceRO(TermLookupService termIgnoredServiceRO) throws TermLookupServiceException {
         return InteractTypeMapperFactoryImpl.getTermLookupService(
+                termIgnoredServiceRO,
                 new ResourceServiceSingleResource(SUPPORTED_INTERACTION_TYPES),
-                IGNORED_INTERACTION_TYPE_COLUMN_NAME,
                 "interaction_type_label",
                 "interaction_type_id",
                 "interaction_type_id",
-                URI.create(IGNORED_LIST_DEFAULT),
                 URI.create(SUPPORTED_INTERACTION_TYPES));
     }
 

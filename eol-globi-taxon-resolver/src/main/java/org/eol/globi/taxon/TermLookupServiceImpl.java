@@ -38,6 +38,11 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
             buildMapping(getMappingURIList());
         }
         List<Term> terms = mapping.get(normalize(name));
+        if (terms == null || terms.size() == 0) {
+            // attempt mapping denormalized name/id
+            terms = mapping.get(StringUtils.trim(name));
+        }
+
         return terms == null ? new ArrayList<Term>() {{
             add(new TermImpl(PropertyAndValueDictionary.NO_MATCH, name));
         }} : terms;

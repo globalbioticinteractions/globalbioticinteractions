@@ -13,14 +13,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -222,7 +221,7 @@ public class InteractTypeMapperFactoryImplTest {
             interactTypeMapperFactory.create();
         } catch (TermLookupServiceException ex) {
             assertThat(ex, is(instanceOf(TermLookupServiceConfigurationException.class)));
-            assertThat(ex.getMessage(), is("multiple mappings for [id]: [http://purl.obolibrary.org/obo/omit_0005582] were found, but only one unambiguous mapping is allowed"));
+            assertThat(ex.getMessage(), is("multiple mappings for [id]: [http://purl.obolibrary.org/obo/OMIT_0005582] were found, but only one unambiguous mapping is allowed"));
             throw ex;
         }
 
@@ -245,7 +244,7 @@ public class InteractTypeMapperFactoryImplTest {
             interactTypeMapperFactory.create();
         } catch (TermLookupServiceException ex) {
             assertThat(ex, is(instanceOf(TermLookupServiceConfigurationException.class)));
-            assertThat(ex.getMessage(), is("failed to map interaction type to [http://purl.obolibrary.org/obo/ro_000xxxx] on line [1]: interaction type unknown to GloBI"));
+            assertThat(ex.getMessage(), is("failed to map interaction type to [http://purl.obolibrary.org/obo/RO_000XXXX] on line [1]: interaction type unknown to GloBI"));
             throw ex;
         }
 
@@ -391,6 +390,23 @@ public class InteractTypeMapperFactoryImplTest {
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
         InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
         assertThat(interactTypeMapper.getInteractType("eats"), is(nullValue()));
+    }
+
+
+    @Test()
+    public void createInvalidTypeMape() throws TermLookupServiceException, IOException {
+        // reproduce https://github.com/qgroom/Vespa-velutina/issues/3
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(
+                        "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
+                        "stings,,participates in a biotic-biotic interaction with,http://purl.obolibrary.org/obo/RO_0002574\n" +
+                        "reproductively interferes with,,participates in a biotic-biotic interaction with,http://purl.obolibrary.org/obo/RO_0002574\n",
+                        StandardCharsets.UTF_8));
+
+        InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+        InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
+        assertThat(interactTypeMapper.getInteractType("stings"), is(InteractType.INTERACTS_WITH));
     }
 
 }

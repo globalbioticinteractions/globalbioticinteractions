@@ -67,7 +67,7 @@ public class InteractUtil {
         }
     }
 
-    public static String normalizeInteractionNameOrId(String name) {
+    public static String normalizeInteractionName(String name) {
         final String translate = removeQuotesAndBackslashes(name);
         return StringUtils.lowerCase(StringUtils.trim(translate));
     }

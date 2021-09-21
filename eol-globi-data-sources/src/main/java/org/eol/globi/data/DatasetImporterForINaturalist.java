@@ -87,12 +87,12 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
     private void retrieveDataParseResults() throws StudyImporterException {
         TermLookupService termLookupService;
         try {
-            termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(getDataset(),
-                    "observation_field_id",
+            termLookupService = InteractTypeMapperFactoryImpl.getTermLookupService(
+                    new TermLookupServiceNoOp(),
+                    getDataset(),
                     "observation_field_id",
                     "observation_field_name",
                     "interaction_type_id",
-                    URI.create("interaction_types_ignored.csv"),
                     URI.create("interaction_types.csv"));
         } catch (TermLookupServiceException e) {
             throw new StudyImporterException("failed to find interaction term mapping", e);
@@ -306,4 +306,10 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         return ISODateTimeFormat.dateTimeParser().withZoneUTC().parseDateTime(timeObservedAtUtc);
     }
 
+    private static class TermLookupServiceNoOp implements TermLookupService {
+        @Override
+        public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+            return null;
+        }
+    }
 }

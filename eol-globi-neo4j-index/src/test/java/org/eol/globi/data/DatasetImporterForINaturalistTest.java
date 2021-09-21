@@ -13,11 +13,13 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.Term;
+import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
+import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
-import org.eol.globi.util.NodeUtil;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,18 +30,18 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.data.DatasetImporterForINaturalist.PREFIX_OBSERVATION_FIELD;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
 
@@ -82,10 +84,19 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
         final ArrayList<String> typesIgnored = new ArrayList<>();
         final TreeMap<String, InteractType> typeMap = new TreeMap<>();
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
-                InteractTypeMapperFactoryImpl.getTermLookupService(typesIgnored, typeMap));
+                InteractTypeMapperFactoryImpl.getTermLookupService(getTermLookupServiceNoOp(), typeMap));
         resolveNames();
         Study study = nodeFactory.findStudy("INAT:45209");
         assertThat(study, is(nullValue()));
+    }
+
+    public TermLookupService getTermLookupServiceNoOp() {
+        return new TermLookupService() {
+            @Override
+            public List<Term> lookupTermByName(String name) throws TermLookupServiceException {
+                return null;
+            }
+        };
     }
 
     @Test
@@ -99,7 +110,7 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
             }
         };
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/sample_inaturalist_response.json"),
-                InteractTypeMapperFactoryImpl.getTermLookupService(typesIgnored, typeMap));
+                InteractTypeMapperFactoryImpl.getTermLookupService(getTermLookupServiceNoOp(), typeMap));
         resolveNames();
 
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(22));
@@ -170,7 +181,7 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
             }
         };
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/response_with_taxon_ids.json"),
-                InteractTypeMapperFactoryImpl.getTermLookupService(typesIgnored, typeMap));
+                InteractTypeMapperFactoryImpl.getTermLookupService(getTermLookupServiceNoOp(), typeMap));
         resolveNames();
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(10));
 
