@@ -1,10 +1,14 @@
 language: java
 jdk:
-  - openjdk8
+- openjdk8
 install: mvn --version
 before_script: "./.travis.version_if_tag.sh"
 after_success: "./.travis.deploy_if_tag.sh"
 sudo: false
 env:
   global:
-    secure: "R2s8l44GHYEMkQnjD8MjSKLcqMgAOAleMHqzJv2SEWSsXm5RUOqmytUZkC1ojKEREUL9wn73RVs6ny6l8jtOkmtVeur9pjny8k0Pttd4m5A1ydZwSHpSx4pkqwYOJxgPVrnYzSfjf6FxnkH0HCOaU5hnRZQua1Vphwt7i0vrQJo="
+  - secure: YugjPcHQzTA4pszKZNSa8qWaDBSldb3lBiU/7oLnrV5pp/bvDLpzUpPVe4hKZkHZTyPkcZJo3f1DnoEZYyj7XutDGgD7/toTOC0PSx4P4Pduii7G0IIvl65TrOS4H1nZ5zZEBTOcXW654K9j17RPNeFxLhdCWESBfP1Avj4U/9I=
+  - secure: Eu7ITsiJAyV+fWNH4aXE5W7dLd89meppgW6wQGKlEIMmpRuZqXl+Y6bsEKJriaZ8vW2zhrXMYe/nzrb9HFFi4ZPZO+D3YkYzG9brozguTo7t2bi29MYoqSd6UYeO89M8vmia3Q91TCmlSzf5n7JtfNCM/+buY8HpSagfS4FZiCE=
+  - secure: MpN0TsDaUf5pMQlGjb+33QsH70cKn+VfuzQ1R5P1aekaTdpnX3yD/PkDoPurOxSY1FkEuwgj9Fw0l32DGT40Y3/nK5sxBy5KdkeYFqqJXmfV+WRYU8Lmz1qhw+lLVOJH17ldJ1hCr41Dl8sInap9to0RzcABdxneFCdaymiwWhw=
+  - secure: LWWSQSUuWlovUJidClmzkzdv/rxy2XIqaZm816ZnA/DAuIPVbXXrsB59Tij9JWj+X4MFCuCYttACXvdtQZTcwehIkZ51k9wiX/k4jvCUVwvxvGo/QEHsBLZKPu65Xxq60UmTLqqtD2+4s2PhCEjDeT5Z9XV/x35RkIcoX4nohW4=
+  - secure: giGcNuuQe81YytE8xGVd322/NVdhoK2a42QrFAei2ev3KjpLzgDApWRibk4fXJ6H5JrnW1K6HUYWBwQApQaHR43YJV7Z4D4lkq2bkdYmAmRlYpom8V7CaicGFckq/Ekmf48NK/kSqczAs85Eg0FholgFAFHhJXTJlCRI7sOpUBQ=
