@@ -146,6 +146,8 @@ public enum InteractType implements RelType {
         put("http://purl.obolibrary.org/obo/RO_0001025", INTERACTS_WITH);
         put("http://purl.obolibrary.org/obo/RO_0002574", INTERACTS_WITH);
         put("http://purl.obolibrary.org/obo/RO_0002434", INTERACTS_WITH);
+        put("hasHyperparasitoid", HAS_HYPERPARASITE);
+        put("hyperparasitoidOf", HYPERPARASITE_OF);
     }};
 
 

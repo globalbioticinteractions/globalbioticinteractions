@@ -64,6 +64,12 @@ public class InteractTypeTest {
     }
 
     @Test
+    public void hyponyms() {
+        assertThat(typeOf("hasHyperparasitoid"), is(HAS_HYPERPARASITE));
+        assertThat(typeOf("hyperparasitoidOf"), is(HYPERPARASITE_OF));
+    }
+
+    @Test
     public void nativeTypesNotCaseSensitive() {
         assertThat(typeOf("interactsWith"), is(INTERACTS_WITH));
         assertThat(typeOf("interactswith"), is(INTERACTS_WITH));
