@@ -163,8 +163,8 @@ public class InteractionImporterTest extends GraphDBTestCase {
         try {
             interactionListener.on(link);
             assertThat(msgs.size(), is(2));
-            assertThat(msgs.get(0), startsWith("issue handling date range [2009-09/2003-09]: The end instant must be greater or equal to the start"));
-            assertThat(msgs.get(1), startsWith("issue handling date range [2009-09/2003-09]: The end instant must be greater or equal to the start"));
+            assertThat(msgs.get(0), startsWith("issue handling date range [2009-09/2003-09]: The end instant must be greater than the start instant"));
+            assertThat(msgs.get(1), startsWith("issue handling date range [2009-09/2003-09]: The end instant must be greater than the start instant"));
         } catch (StudyImporterException ex) {
             fail("should not throw on failing geoname lookup");
         }
