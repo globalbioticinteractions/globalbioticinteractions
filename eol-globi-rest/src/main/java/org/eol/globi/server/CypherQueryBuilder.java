@@ -93,6 +93,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_HAS_HABITAT = InteractType.HAS_HABITAT.getLabel();
     public static final String INTERACTION_CREATES_HABITAT_FOR = InteractType.CREATES_HABITAT_FOR.getLabel();
 
+    public static final String INTERACTION_ADJACENT_TO = InteractType.ADJACENT_TO.getLabel();
+
+
     public static final Map<String, InteractionTypeExternal> INTERACTION_TYPE_INTERNAL_EXTERNAL_MAP = new TreeMap<String, InteractionTypeExternal>() {
         {
             put(InteractType.ATE.toString(), InteractionTypeExternal.EATS);
@@ -122,6 +125,7 @@ public class CypherQueryBuilder {
 
             put(InteractType.HAS_HABITAT.toString(), InteractionTypeExternal.HAS_HABITAT);
             put(InteractType.CREATES_HABITAT_FOR.toString(), InteractionTypeExternal.CREATES_HABITAT_FOR);
+            put(InteractType.ADJACENT_TO.toString(), InteractionTypeExternal.ADJACENT_TO);
 
 
             put(InteractType.SYMBIONT_OF.toString(), InteractionTypeExternal.SYMBIONT_OF);
