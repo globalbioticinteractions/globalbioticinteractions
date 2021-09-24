@@ -101,8 +101,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
 
     // ex. notation used to indicate host of a specimen.
-    public static final Pattern EX_NOTATION = Pattern.compile("^ex.+\\W.*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex.+\\W.*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern EX_NOTATION = Pattern.compile("^ex[ .]+(.*)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex[ .]+.*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
     public static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
     public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
