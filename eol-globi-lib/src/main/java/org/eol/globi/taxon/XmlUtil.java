@@ -45,7 +45,7 @@ public class XmlUtil {
                 Node item = nodes.item(i);
                 Node firstChild = item.getFirstChild();
                 if (null != firstChild) {
-                    String nodeValue = firstChild.getNodeValue();
+                    String nodeValue = StringUtils.trim(firstChild.getNodeValue());
                     if (StringUtils.isNotBlank(nodeValue)) {
                         ranks.add(valuePrefix + nodeValue + valueSuffix);
                     }
