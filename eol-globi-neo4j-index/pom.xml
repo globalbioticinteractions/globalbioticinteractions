@@ -12,10 +12,6 @@
     <artifactId>eol-globi-neo4j-index</artifactId>
     <name>Global Biotic Interactions Neo4j Index Builder/Exporter</name>
 
-    <properties>
-        <app.main.class>org.eol.globi.tool.Normalizer</app.main.class>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -91,58 +87,4 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <manifestEntries>
-                                        <Main-Class>${app.main.class}</Main-Class>
-                                        <Implementation-Version>${project.version}@${mvngit.commit.sha}</Implementation-Version>
-                                        <Git-Commit-Sha>${mvngit.commit.sha}</Git-Commit-Sha>
-                                        <Git-Commit-Date>${mvngit.commit.committer.date}</Git-Commit-Date>
-                                        <Project-Version>${project.version}</Project-Version>
-                                    </manifestEntries>
-                                </transformer>
-                            </transformers>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>LICENSE</exclude>
-                                        <exclude>NOTICE</exclude>
-                                        <exclude>META-INF/README.txt</exclude>
-                                        <exclude>META-INF/README.md</exclude>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                        <exclude>META-INF/CHANGES.txt</exclude>
-                                        <exclude>META-INF/LICENSES.txt</exclude>
-                                        <exclude>META-INF/LICENSE.txt</exclude>
-                                        <exclude>META-INF/LICENSE</exclude>
-                                        <exclude>META-INF/DEPENDENCIES</exclude>
-                                        <exclude>META-INF/NOTICE.txt</exclude>
-                                        <exclude>META-INF/NOTICE</exclude>
-                                        <exclude>META-INF/ASL2.0</exclude>
-                                        <exclude>META-INF/maven/com.fasterxml.jackson.core/**/pom.*</exclude>
-                                        <exclude>META-INF/maven/com.google.guava/guava/pom.*</exclude>
-                                        <exclude>META-INF/*.SF</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

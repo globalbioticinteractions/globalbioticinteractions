@@ -1,15 +1,12 @@
 package org.eol.globi.server;
 
-import org.eol.globi.util.CypherQuery;
-import org.hamcrest.CoreMatchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.core.Is.is;
 
 public class CypherProxyControllerTest {
 

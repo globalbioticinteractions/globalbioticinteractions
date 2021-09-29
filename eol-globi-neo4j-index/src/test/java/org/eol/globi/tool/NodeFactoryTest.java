@@ -1,7 +1,5 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.DatasetImporterForSimons;
@@ -13,7 +11,6 @@ import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.StudyImporterTestFactory;
-import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.GraphExporterImpl;
@@ -36,39 +33,15 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-public class NormalizerTest extends GraphDBTestCase {
+public class NodeFactoryTest extends GraphDBTestCase {
 
-    private final static Logger LOG = LoggerFactory.getLogger(NormalizerTest.class);
+    private final static Logger LOG = LoggerFactory.getLogger(NodeFactoryTest.class);
 
     @Override
     public void afterGraphDBStart() {
         // stub
     }
 
-
-    @Test
-    public void handleOptions() throws ParseException {
-        CommandLine commandLine = Normalizer.parseOptions(new String[]{"-h"});
-        assertThat(commandLine.hasOption("h"), is(true));
-        commandLine = Normalizer.parseOptions(new String[]{"--help"});
-        assertThat(commandLine.hasOption("h"), is(true));
-
-        commandLine = Normalizer.parseOptions(new String[]{"--skipImport"});
-        assertThat(commandLine.hasOption("-skipImport"), is(true));
-        assertThat(commandLine.hasOption("skipImport"), is(true));
-
-        commandLine = Normalizer.parseOptions(new String[]{"-skipImport", "--skipExport"});
-        assertThat(commandLine.hasOption("-skipImport"), is(true));
-        assertThat(commandLine.hasOption("skipImport"), is(true));
-        assertThat(commandLine.hasOption("skipExport"), is(true));
-        assertThat(commandLine.hasOption("skipLink"), is(false));
-
-        commandLine = Normalizer.parseOptions(new String[]{"-skipLink", "--skipExport"});
-        assertThat(commandLine.hasOption("skipLink"), is(true));
-
-        commandLine = Normalizer.parseOptions(new String[]{"-datasetDir", "some/bla"});
-        assertThat(commandLine.getOptionValue("datasetDir"), is("some/bla"));
-    }
 
     @Test
     public void doSingleImportNeo4j2() throws StudyImporterException {
@@ -129,10 +102,6 @@ public class NormalizerTest extends GraphDBTestCase {
         assertFalse(nodes.hasNext());
         assertNotNull(graphService.getNodeById(1));
         assertNotNull(graphService.getNodeById(200));
-    }
-
-    private Normalizer createNormalizer() {
-        return new Normalizer();
     }
 
     @Test
