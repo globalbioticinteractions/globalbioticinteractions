@@ -1,17 +1,24 @@
 package org.eol.globi.server;
 
 import org.eol.globi.util.CypherQuery;
-import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.neo4j.harness.junit.Neo4jRule;
 
 import java.io.IOException;
 
-import static org.hamcrest.core.Is.is;
+import static org.eol.globi.server.CypherQueryBuilderTest.getNeo4jRule;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class ReportControllerTest {
 
     public static final String CYPHER_VERSION = "CYPHER 2.3 ";
+
+    @Rule
+    public Neo4jRule neo4j = getNeo4jRule();
+
+
 
     @Test
     public void distinctSourceNoPrefix() throws IOException {
@@ -31,7 +38,7 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().get("sourceId"), is("globi:someSourceId"));
-        CypherTestUtil.validate(source);
+        validate(source);
     }
 
     @Test
@@ -52,7 +59,7 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().get("sourceId"), is("bla:someSourceId"));
-        CypherTestUtil.validate(source);
+        validate(source);
     }
 
     @Test
@@ -80,8 +87,12 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().get("namespace"), is("some/name"));
-        CypherTestUtil.validate(source);
+        validate(source);
 
+    }
+
+    public void validate(CypherQuery source) {
+        CypherTestUtil.validate(source, neo4j.getGraphDatabaseService());
     }
 
     @Test
@@ -103,7 +114,7 @@ public class ReportControllerTest {
                 "report.nSources as number_of_sources, " +
                 "report.nTaxaNoMatch as number_of_distinct_taxa_no_match"));
 
-        CypherTestUtil.validate(source);
+        validate(source);
 
     }
 
@@ -130,7 +141,7 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().get("namespace"), is("some"));
-        CypherTestUtil.validate(source);
+        validate(source);
 
     }
 
@@ -157,7 +168,7 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().size(), is(0));
-        CypherTestUtil.validate(source);
+        validate(source);
 
     }
 
@@ -179,7 +190,7 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().size(), is(0));
-        CypherTestUtil.validate(source);
+        validate(source);
     }
 
     @Test
@@ -200,7 +211,7 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().get("source"), is("a source"));
-        CypherTestUtil.validate(source);
+        validate(source);
     }
 
     @Test
@@ -221,7 +232,7 @@ public class ReportControllerTest {
                 "SKIP 0 " +
                 "LIMIT 1024"));
         assertThat(source.getParams().size(), is(0));
-        CypherTestUtil.validate(source);
+        validate(source);
     }
 
 }

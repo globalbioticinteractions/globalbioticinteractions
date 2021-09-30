@@ -6,8 +6,10 @@ import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.InteractUtil;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.neo4j.graphdb.QueryExecutionException;
+import org.neo4j.harness.junit.Neo4jRule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +42,16 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.fail;
 
 public class CypherQueryBuilderTest {
+
+    @Rule
+    public Neo4jRule neo4j = getNeo4jRule();
+
+    public static Neo4jRule getNeo4jRule() {
+        return new Neo4jRule();
+//                .withConfig("dbms.connector.bolt.enabled", "false")
+//                .withConfig("dbms.connector.http.enabled", "false")
+//                .withConfig("dbms.connector.http.enabled", "false");
+    }
 
     private static String CYPHER_VERSION = "CYPHER 2.3 ";
 
@@ -156,7 +168,7 @@ public class CypherQueryBuilderTest {
     public void validateQuery() {
         if (query != null) {
             try {
-                //CypherTestUtil.validate(query);
+                validate(query);
             } catch (Throwable e) {
                 e.printStackTrace();
                 fail("query failed to validate: [" + e.getMessage() + "]");
@@ -1674,7 +1686,11 @@ public class CypherQueryBuilderTest {
     public void queryValidation() {
         String malformed = "malformed";
         CypherQuery cypherQuery = new CypherQuery(malformed);
-        CypherTestUtil.validate(cypherQuery);
+        validate(cypherQuery);
+    }
+
+    public void validate(CypherQuery cypherQuery) {
+        CypherTestUtil.validate(cypherQuery, neo4j.getGraphDatabaseService());
     }
 
     @Test

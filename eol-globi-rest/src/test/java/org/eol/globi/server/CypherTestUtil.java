@@ -11,7 +11,6 @@ import org.eol.globi.tool.CmdGenerateReport;
 import org.eol.globi.util.CypherQuery;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
 import org.slf4j.helpers.NOPLogger;
 
 import java.io.File;
@@ -29,9 +28,7 @@ public class CypherTestUtil {
             "[ \"Centropomus undecimalis\", 26.823367, -82.271067, 0.0, \"Blewett 2006\", 984584100000, 217081, \"ADULT\", null, null, null, null, null, \"Ariopsis felis\", \"preyedUponBy\" ], [ \"Centropomus undecimalis\", 26.688167, -82.245667, 0.0, \"Blewett 2006\", 971287200000, 216530, \"ADULT\", null, null, null, null, null, \"Ariopsis felis\", \"preyedUponBy\" ] ]\n" +
             "}";
 
-    public static void validate(CypherQuery cypherQuery) {
-        TestGraphDatabaseFactory testGraphDatabaseFactory = new TestGraphDatabaseFactory();
-        GraphDatabaseService graphDatabaseService = testGraphDatabaseFactory.newImpermanentDatabase();
+    public static void validate(CypherQuery cypherQuery, GraphDatabaseService graphDatabaseService) {
         try(Transaction tx = graphDatabaseService.beginTx()) {
             new NodeFactoryNeo4j2(graphDatabaseService);
             new NonResolvingTaxonIndex(graphDatabaseService);

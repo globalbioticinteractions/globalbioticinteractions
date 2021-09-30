@@ -20,9 +20,10 @@ import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
+import org.neo4j.harness.junit.Neo4jRule;
 
 import java.io.IOException;
 import java.net.URI;
@@ -37,6 +38,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 
 public abstract class GraphDBTestCaseAbstract {
+
+    @Rule
+    public Neo4jRule neo4j = new Neo4jRule();
+//            .withConfig("dbms.connector.bolt.enabled", "false")
+//            .withConfig("dbms.connector.http.enabled", "false")
+//            .withConfig("dbms.connector.http.enabled", "false");
+
 
     private GraphServiceFactory graphFactory;
 
@@ -133,7 +141,7 @@ public abstract class GraphDBTestCaseAbstract {
                 GraphServiceUtil.verifyState(graphDb);
 
                 if (this.graphDb == null) {
-                    this.graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+                    this.graphDb = neo4j.getGraphDatabaseService();
                 }
                 return this.graphDb;
             }
