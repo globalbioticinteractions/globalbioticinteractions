@@ -58,6 +58,8 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.OPEN_BIODIV.getIdPrefix(), "http://openbiodiv.net/");
         put(TaxonomyProvider.BOLD_BIN.getIdPrefix(), "http://bins.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:");
         put(TaxonomyProvider.BOLD_TAXON.getIdPrefix(), "http://www.boldsystems.org/index.php/Taxbrowser_Taxonpage?taxid=");
+        put(TaxonomyProvider.BATBASE_INTERACTION.getIdPrefix(), "https://batbase.org/interaction/");
+        put(TaxonomyProvider.BATBASE.getIdPrefix(), "https://batbase.org/taxon/");
     }};
 
     private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{

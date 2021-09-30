@@ -27,6 +27,8 @@ public enum TaxonomyProvider {
     FISHBASE_SPECCODE("FBC:FB:SpecCode:", "http://fishbase.org/summary/"),
     SEALIFEBASE_SPECCODE("FBC:SLB:SpecCode:", "http://sealifebase.org/Summary/SpeciesSummary.php?id="),
     BATPLANT("batbase:taxon:"),
+    BATBASE_INTERACTION("batbase:interaction:", "https://batbase.org/interaction/"),
+    BATBASE("batbase:taxon:", "https://batbase.org/taxon/"),
     OPEN_BIODIV("http://openbiodiv.net/"),
     MSW("MSW:", "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id="),
     GULFBASE("BioGoMx:"),

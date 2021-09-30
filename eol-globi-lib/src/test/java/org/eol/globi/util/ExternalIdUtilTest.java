@@ -68,6 +68,30 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void batBaseInteraction() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("https://batbase.org/interaction/123"),
+                is(TaxonomyProvider.BATBASE_INTERACTION)
+        );
+    }
+
+    @Test
+    public void batBaseInteraction2() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("batbase:interaction:123"),
+                is(TaxonomyProvider.BATBASE_INTERACTION)
+        );
+    }
+
+    @Test
+    public void batBaseInteraction3() {
+        assertThat(
+                ExternalIdUtil.urlForExternalId("batbase:interaction:123"),
+                is("https://batbase.org/interaction/123")
+        );
+    }
+
+    @Test
     public void plaziTaxonConcept() {
         assertThat(
                 ExternalIdUtil.taxonomyProviderFor("http://taxon-concept.plazi.org/id/Animalia/Caridae_Dana_1852"),

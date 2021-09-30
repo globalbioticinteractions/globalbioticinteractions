@@ -8,6 +8,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.JSONUtil;
 
 import java.io.IOException;
@@ -24,6 +25,9 @@ import java.util.TreeMap;
 
 public class DatasetImporterForBatBase extends DatasetImporterWithListener {
 
+    public static final String PRE_CITATION_OBJECT = "/2021-08-31";
+    public static final String POST_CITATION_OBJECT = "2021-09-01/";
+
     public DatasetImporterForBatBase(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
     }
@@ -31,13 +35,23 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
     @Override
     public void importStudy() throws StudyImporterException {
 
-        Map<String, String> sources;
+
         String baseUrl = getDataset().getOrDefault("url", getBaseURL());
+
+        Version version;
         try {
-            sources = parseSources(getDataset().retrieve(URI.create(baseUrl + "fetch/source")));
+            version = guessVersion(getDataset().retrieve(URI.create(baseUrl + "fetch/source")));
         } catch (IOException e) {
             throw new StudyImporterException("failed to access sources", e);
         }
+
+        Map<String, String> sources;
+        try {
+            sources = parseSources(getDataset().retrieve(URI.create(baseUrl + "fetch/source")), version);
+        } catch (IOException e) {
+            throw new StudyImporterException("failed to access sources", e);
+        }
+
 
         Map<String, Taxon> taxa;
         try {
@@ -57,7 +71,9 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
                     sources,
                     getInteractionListener(),
                     getDataset().retrieve(URI.create(baseUrl + "fetch/interaction")),
-                    locations, getPrefixer());
+                    locations,
+                    getPrefixer(),
+                    version);
         } catch (IOException e) {
             throw new StudyImporterException("failed to access interactions", e);
         }
@@ -69,31 +85,65 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
     }
 
 
-    static Map<String, String> parseCitations(String sourceChunk) throws IOException {
+    static Map<String, String> parseCitations(String sourceChunk, Version version) throws IOException {
         InputStream inputStream = IOUtils.toInputStream(sourceChunk, StandardCharsets.UTF_8);
-        return parseSources(inputStream);
+        return parseSources(inputStream, version);
     }
 
-    private static Map<String, String> parseSources(InputStream inputStream) throws IOException {
+    private static Map<String, String> parseSources(InputStream inputStream, Version version) throws IOException {
         Map<String, String> sourceCitations = new TreeMap<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(inputStream);
-        if (jsonNode.has("source")) {
-            JsonNode sources = jsonNode.get("source");
-            Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.fields();
-            while (taxonEntries.hasNext()) {
-                Map.Entry<String, JsonNode> next = taxonEntries.next();
-                JsonNode sourceValue = next.getValue();
-                if (sourceValue.isTextual()) {
-                    JsonNode sourceNode = objectMapper.readTree(sourceValue.asText());
-                    String id = JSONUtil.textValueOrNull(sourceNode, "id");
-                    String description = JSONUtil.textValueOrNull(sourceNode, "description");
-                    sourceCitations.put(id, description);
+
+        if (Version.PRE_CITATION_OBJECT_2020_12_13.equals(version)) {
+            if (jsonNode.has("source")) {
+                JsonNode sources = jsonNode.get("source");
+                Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.fields();
+                while (taxonEntries.hasNext()) {
+                    Map.Entry<String, JsonNode> next = taxonEntries.next();
+                    JsonNode sourceValue = next.getValue();
+                    if (sourceValue.isTextual()) {
+                        JsonNode sourceNode = objectMapper.readTree(sourceValue.asText());
+                        String id = JSONUtil.textValueOrNull(sourceNode, "id");
+                        String description = JSONUtil.textValueOrNull(sourceNode, "description");
+                        sourceCitations.put(id, description);
+                    }
+                }
+            }
+        } else if (Version.POST_CITATION_OBJECT_2020_12_13.equals(version)) {
+            if (jsonNode.has("citation")) {
+                JsonNode sources = jsonNode.get("citation");
+                Iterator<Map.Entry<String, JsonNode>> taxonEntries = sources.fields();
+                while (taxonEntries.hasNext()) {
+                    Map.Entry<String, JsonNode> next = taxonEntries.next();
+                    JsonNode sourceValue = next.getValue();
+                    if (sourceValue.isTextual()) {
+                        JsonNode sourceNode = objectMapper.readTree(sourceValue.asText());
+                        String id = JSONUtil.textValueOrNull(sourceNode, "id");
+                        String description = JSONUtil.textValueOrNull(sourceNode, "fullText");
+                        String sourceId = JSONUtil.textValueOrNull(sourceNode, "source");
+
+                        if (StringUtils.isNoneBlank(description) && StringUtils.isNoneBlank(sourceId)) {
+                            sourceCitations.put(sourceId, description);
+                        }
+                    }
                 }
             }
         }
+
         return sourceCitations;
+    }
+
+    private static Version guessVersion(InputStream inputStream) throws IOException {
+        Version version = Version.PRE_CITATION_OBJECT_2020_12_13;
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(inputStream);
+        if (jsonNode.has("citation")) {
+            version = Version.POST_CITATION_OBJECT_2020_12_13;
+        }
+
+        return version;
     }
 
     static Map<String, Taxon> parseTaxa(String taxonChunk, Prefixer prefixer) throws IOException {
@@ -169,7 +219,8 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
 
     }
 
-    private static Map<String, JsonNode> indexTaxonNodes(ObjectMapper objectMapper, JsonNode taxon) throws IOException {
+    private static Map<String, JsonNode> indexTaxonNodes(ObjectMapper objectMapper, JsonNode taxon) throws
+            IOException {
         Map<String, JsonNode> taxonNodes = new TreeMap<>();
         Iterator<Map.Entry<String, JsonNode>> taxonEntries = taxon.fields();
         while (taxonEntries.hasNext()) {
@@ -184,9 +235,15 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         return taxonNodes;
     }
 
-    static void parseInteractions(Map<String, Taxon> taxa, Map<String, String> sources, String interactionJson, InteractionListener testListener, Map<String, Map<String, String>> locations, Prefixer prefixer) throws IOException, StudyImporterException {
+    static void parseInteractions(Map<String, Taxon> taxa,
+                                  Map<String, String> sources,
+                                  String interactionJson,
+                                  InteractionListener testListener,
+                                  Map<String, Map<String, String>> locations,
+                                  Prefixer prefixer,
+                                  Version version) throws IOException, StudyImporterException {
         InputStream in = IOUtils.toInputStream(interactionJson, StandardCharsets.UTF_8);
-        parseInteractions(taxa, sources, testListener, in, locations, prefixer);
+        parseInteractions(taxa, sources, testListener, in, locations, prefixer, version);
     }
 
     public static void parseInteractions(Map<String, Taxon> taxa,
@@ -194,7 +251,8 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
                                          InteractionListener testListener,
                                          InputStream in,
                                          Map<String, Map<String, String>> locations,
-                                         Prefixer prefixer) throws IOException, StudyImporterException {
+                                         Prefixer prefixer,
+                                         Version version) throws IOException, StudyImporterException {
         final ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(in);
 
@@ -215,7 +273,6 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
                                     && StringUtils.isNotBlank(interactionTypeName)) {
 
                                 Map<String, String> interactionRecord = new TreeMap<>();
-
 
                                 String nativeInteractionType = prefixer.withPrefix("interactionTypeId:" + interactionTypeId);
                                 interactionRecord.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, nativeInteractionType);
@@ -251,10 +308,20 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
 
                                 String sourceId = JSONUtil.textValueOrNull(interactionNode, "source");
 
-                                interactionRecord.put(DatasetImporterForTSV.REFERENCE_ID, prefixer.withPrefix("source:" + sourceId));
                                 String citationString = sources.get(sourceId);
                                 if (StringUtils.isNotBlank(citationString)) {
                                     interactionRecord.put(DatasetImporterForTSV.REFERENCE_CITATION, citationString);
+                                }
+
+                                interactionRecord.put(DatasetImporterForTSV.REFERENCE_ID, prefixer.withPrefix("source:" + sourceId));
+                                if (Version.POST_CITATION_OBJECT_2020_12_13.equals(version)) {
+                                    String interactionId = JSONUtil.textValueOrNull(interactionNode, "id");
+                                    String referenceId = prefixer.withPrefix("interaction:" + interactionId);
+                                    interactionRecord.put(DatasetImporterForTSV.REFERENCE_ID, referenceId);
+                                    String s = ExternalIdUtil.urlForExternalId(referenceId);
+                                    if (StringUtils.isNoneBlank(s)) {
+                                        interactionRecord.put(DatasetImporterForTSV.REFERENCE_URL, s);
+                                    }
                                 }
 
                                 String locationId = JSONUtil.textValueOrNull(interactionNode, "location");
@@ -326,7 +393,8 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
         return taxonName;
     }
 
-    static Map<String, Map<String, String>> parseLocations(InputStream inputStream, Prefixer prefixer) throws IOException {
+    static Map<String, Map<String, String>> parseLocations(InputStream inputStream, Prefixer prefixer) throws
+            IOException {
         Map<String, Map<String, String>> locations = new TreeMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(inputStream);
@@ -378,6 +446,12 @@ public class DatasetImporterForBatBase extends DatasetImporterWithListener {
 
         }
         return properties;
+    }
+
+    enum Version {
+        // https://github.com/Eco-Interactions/BatBase/commit/9022408c1a68e108d0572b0905532fc5bb0c2ff2
+        PRE_CITATION_OBJECT_2020_12_13,
+        POST_CITATION_OBJECT_2020_12_13
     }
 
 
