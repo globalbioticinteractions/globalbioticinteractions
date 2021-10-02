@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.data.CharsetConstant;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
@@ -34,6 +35,7 @@ import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.StringUtils.splitPreserveAllTokens;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.commons.lang3.StringUtils.trim;
+import static org.eol.globi.domain.PropertyAndValueDictionary.AUTHORSHIP;
 import static org.eol.globi.domain.PropertyAndValueDictionary.COMMON_NAMES;
 import static org.eol.globi.domain.PropertyAndValueDictionary.EXTERNAL_ID;
 import static org.eol.globi.domain.PropertyAndValueDictionary.EXTERNAL_URL;
@@ -216,6 +218,8 @@ public class TaxonUtil {
         properties.put(prefix + NAME_SOURCE_URL, taxon.getNameSourceURL());
         properties.put(prefix + NAME_SOURCE_ACCESSED_AT, taxon.getNameSourceAccessedAt());
 
+        properties.put(prefix + AUTHORSHIP, taxon.getAuthorship());
+
         return Collections.unmodifiableMap(properties);
     }
 
@@ -247,6 +251,8 @@ public class TaxonUtil {
         taxon.setNameSource(properties.get(NAME_SOURCE));
         taxon.setNameSourceURL(properties.get(NAME_SOURCE_URL));
         taxon.setNameSourceAccessedAt(properties.get(NAME_SOURCE_ACCESSED_AT));
+
+        taxon.setAuthorship(properties.get(PropertyAndValueDictionary.AUTHORSHIP));
     }
 
     public static Taxon enrich(PropertyEnricher enricher, Taxon taxon) throws PropertyEnricherException {

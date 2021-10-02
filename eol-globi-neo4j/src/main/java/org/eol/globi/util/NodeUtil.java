@@ -14,8 +14,6 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.TransactionPerBatch;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -28,13 +26,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class NodeUtil {
-
-    public static final int TRANSACTION_BATCH_SIZE_DEFAULT = 1000;
 
     public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
         return node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;

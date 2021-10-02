@@ -14,6 +14,7 @@ public class TaxonImpl implements Taxon {
     private String nameSource;
     private String nameSourceURL;
     private String nameSourceAccessedAt;
+    private String authorship;
 
     public TaxonImpl(String name, String externalId) {
         this.name = name;
@@ -156,6 +157,16 @@ public class TaxonImpl implements Taxon {
     @Override
     public String getNameSourceAccessedAt() {
         return this.nameSourceAccessedAt;
+    }
+
+    @Override
+    public void setAuthorship(String authorship) {
+        this.authorship = authorship;
+    }
+
+    @Override
+    public String getAuthorship() {
+        return this.authorship;
     }
 
     @Override

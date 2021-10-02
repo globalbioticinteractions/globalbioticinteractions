@@ -122,11 +122,13 @@ public class TaxonUtilTest {
     @Test
     public void copyTaxon() {
         Taxon src = new TaxonImpl("name", "id");
+        src.setAuthorship("author, 2021");
         src.setStatus(new TermImpl("statusId", "statusLabel"));
         Taxon target = new TaxonImpl();
         TaxonUtil.copy(src, target);
         assertThat(target.getStatus().getId(), is("statusId"));
         assertThat(target.getStatus().getName(), is("statusLabel"));
+        assertThat(target.getAuthorship(), is("author, 2021"));
     }
 
     @Test

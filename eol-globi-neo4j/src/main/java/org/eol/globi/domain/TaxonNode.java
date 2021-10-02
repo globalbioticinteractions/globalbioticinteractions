@@ -142,6 +142,16 @@ public class TaxonNode extends NamedNode implements Taxon {
     }
 
     @Override
+    public void setAuthorship(String authorship) {
+
+    }
+
+    @Override
+    public String getAuthorship() {
+        return null;
+    }
+
+    @Override
     public String getId() {
         return getExternalId();
     }

@@ -1,7 +1,6 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.NodeFactory;
-import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.data.NodeFactoryNeo4j3;
 import org.eol.globi.db.GraphServiceFactory;
 import org.globalbioticinteractions.dataset.Dataset;

@@ -52,4 +52,8 @@ public interface Taxon extends Term {
     void setNameSourceAccessedAt(String dateString);
 
     String getNameSourceAccessedAt();
+
+    void setAuthorship(String authorship);
+
+    String getAuthorship();
 }
