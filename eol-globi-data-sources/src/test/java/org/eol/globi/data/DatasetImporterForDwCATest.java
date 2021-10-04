@@ -51,6 +51,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
@@ -286,6 +287,26 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void importRecordsFromResourceRelationshipArchiveRemarksOnly() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("fmnh-rr-8278596f-4d3f-4f82-8cd1-b5070fe1bc7c.zip");
+
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetImpl("some/namespace", resource.toURI(), inStream -> inStream));
+        studyImporterForDwCA.setInteractionListener(interaction -> {
+            assertThat(interaction.get(TARGET_TAXON_NAME), is("Glaucomys volans"));
+            assertThat(interaction.get(TARGET_OCCURRENCE_ID), is(nullValue()));
+            assertThat(interaction.get(SOURCE_TAXON_NAME), is("Orchopeas fulleri Traub, 1950"));
+            assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("8278596f-4d3f-4f82-8cd1-b5070fe1bc7c"));
+            recordCounter.incrementAndGet();
+            assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
+
+        });
+        studyImporterForDwCA.importStudy();
+        assertThat(recordCounter.get(), greaterThan(0));
+    }
+
+    @Test
     public void importRecordsFromArchiveWithAssociatedTaxa() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/eol/globi/data/AEC-DBCNet_DwC-A20160308-sample.zip");
         assertImportsSomethingOfType(resource.toURI()
@@ -307,7 +328,7 @@ public class DatasetImporterForDwCATest {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
                 assertThat(interaction.get(REFERENCE_URL), startsWith("http://arctos.database.museum/guid/"));
-                assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), anyOf(
+                assertThat(interaction.get(SOURCE_OCCURRENCE_ID), anyOf(
                         is("http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:183644?seid=158590"),
                         is("http://arctos.database.museum/guid/MVZ:Bird:58090?seid=657121")
@@ -875,7 +896,7 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(DatasetImporterForTSV.DECIMAL_LATITUDE), is("42.40000"));
                 assertThat(interaction.get(DatasetImporterForTSV.DECIMAL_LONGITUDE), is("-76.50000"));
                 assertThat(interaction.get(DatasetImporterForTSV.LOCALITY_NAME), is("Tompkins County"));
-                assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("urn:uuid:859e1708-d8e1-11e2-99a2-0026552be7ea"));
+                assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("urn:uuid:859e1708-d8e1-11e2-99a2-0026552be7ea"));
                 assertThat(interaction.get(DatasetImporterForTSV.SOURCE_COLLECTION_CODE), is(nullValue()));
                 assertThat(interaction.get(DatasetImporterForTSV.SOURCE_COLLECTION_ID), is(nullValue()));
                 assertThat(interaction.get(DatasetImporterForTSV.SOURCE_INSTITUTION_CODE), is("CUIC"));
@@ -905,7 +926,7 @@ public class DatasetImporterForDwCATest {
                 if (1 == numberOfFoundLinks.get()) {
                     assertThat(interaction.get(relatedResourceID.qualifiedName()), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
                     assertThat(interaction.get(SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
-                    assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
+                    assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
                     assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Ectoparasite of"));
                     assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
                     assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
@@ -917,7 +938,7 @@ public class DatasetImporterForDwCATest {
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("A. L. Tuttle | M. D. Tuttle"));
                 } else if (2 == numberOfFoundLinks.get()) {
                     assertThat(interaction.get(SOURCE_TAXON_NAME), is("Rhinolophus fumigatus aethiops"));
-                    assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("7048675a-b110-4baf-91a3-2db138316709"));
+                    assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("7048675a-b110-4baf-91a3-2db138316709"));
                     assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Host to"));
                     assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
                     assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
@@ -925,7 +946,7 @@ public class DatasetImporterForDwCATest {
                     assertThat(interaction.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("10d8d814-2afc-4cf2-9843-a2b719346179"));
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("G. Heinrich"));
                 } else if (8 == numberOfFoundLinks.get()) {
-                    assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
+                    assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("3efb94e7-5182-4dd3-bec5-aa838ba22b4f"));
                     assertThat(interaction.get(SOURCE_TAXON_NAME), is("Thamnophis fulvus"));
 
                     assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Stomach Contents of"));
@@ -959,7 +980,7 @@ public class DatasetImporterForDwCATest {
                 numberOfFoundLinks.incrementAndGet();
                 assertThat(interaction.get(relatedResourceID.qualifiedName()), is("http://n2t.net/ark:/65665/37d63a454-d948-4b1d-89db-89809887ef41"));
                 assertThat(interaction.get(SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
-                assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
+                assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
                 assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Ectoparasite of"));
                 assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
                 assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
@@ -991,7 +1012,7 @@ public class DatasetImporterForDwCATest {
                 numberOfFoundLinks.incrementAndGet();
                 if (1 == numberOfFoundLinks.get()) {
                     assertThat(interaction.get(SOURCE_TAXON_NAME), is("Trichobius parasparsus Wenzel, 1976"));
-                    assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
+                    assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("8afec7db-7b19-44f7-8ac8-8d98614e71d2"));
                     assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Ectoparasite of"));
                     assertThat(interaction.get(INTERACTION_TYPE_ID), is(nullValue()));
                     assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("PreservedSpecimen"));
@@ -1022,7 +1043,7 @@ public class DatasetImporterForDwCATest {
                 if (1 == numberOfFoundLinks.get()) {
                     assertThat(interaction.get(TaxonUtil.SOURCE_TAXON_ID), is("http://www.inaturalist.org/taxa/465153"));
                     assertThat(interaction.get(SOURCE_TAXON_NAME), is("Gorgonocephalus eucnemis"));
-                    assertThat(interaction.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("http://www.inaturalist.org/observations/2309983"));
+                    assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("http://www.inaturalist.org/observations/2309983"));
                     assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Eaten by"));
                     assertThat(interaction.get(INTERACTION_TYPE_ID), is("http://www.inaturalist.org/observation_fields/879"));
                     assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("HumanObservation"));
