@@ -5,12 +5,16 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionProcessorAbstract;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
 public class OccurrenceIdEnricher extends InteractionProcessorAbstract {
 
+
+    public static final List<String> FIELD_MUSEUM_INSTITUTION_CODES = Arrays.asList("F", "FMNH");
 
     public OccurrenceIdEnricher(InteractionListener listener, ImportLogger logger) {
         super(listener, logger);
@@ -46,7 +50,7 @@ public class OccurrenceIdEnricher extends InteractionProcessorAbstract {
         String referenceUrl
                 = interactions.getOrDefault(DatasetImporterForTSV.REFERENCE_URL, "");
 
-        if (StringUtils.equals("F", institutionCode)
+        if (FIELD_MUSEUM_INSTITUTION_CODES.contains(institutionCode)
                 && StringUtils.isNoneBlank(occId)
                 && StringUtils.isBlank(referenceUrl)) {
             try {

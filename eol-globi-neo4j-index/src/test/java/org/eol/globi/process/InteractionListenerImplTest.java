@@ -95,6 +95,37 @@ public class InteractionListenerImplTest extends GraphDBTestCase {
 
     }
 
+    @Test
+    public void processFieldMuseum2() throws StudyImporterException {
+        InteractionListenerImpl interactionListener = new InteractionListenerImpl(
+                nodeFactory,
+                null,
+                null,
+                null);
+        HashMap<String, String> interaction = new HashMap<>();
+        interaction.put(SOURCE_TAXON_NAME, "sourceName");
+        interaction.put(SOURCE_OCCURRENCE_ID, "1234");
+        interaction.put(SOURCE_INSTITUTION_CODE, "FMNH");
+        interaction.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+        interaction.put(TARGET_TAXON_NAME, "targetName");
+        interaction.put(REFERENCE_ID, "citation");
+
+        assertStudyCount(0L);
+
+        interactionListener.on(interaction);
+
+        Result execute = getGraphDb()
+                .execute(
+                        "CYPHER 2.3 START study = node:studies('*:*') " +
+                                "MATCH study-[:COLLECTED]->specimen " +
+                                "WHERE study.externalId = 'https://db.fieldmuseum.org/1234' " +
+                                "RETURN count(distinct(study)) as study_count"
+                );
+
+        assertThat(execute.next().get("study_count"), Is.is(1L));
+
+    }
+
     private String getTestMap() {
         return "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
                 "shouldBeMapped,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437";
