@@ -544,7 +544,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         for (Record coreRecord : core) {
             String id = coreRecord.id();
-            if (associationsMap.containsKey(id)) {
+            if (contains(associationsMap, id)) {
                 try {
                     Map<String, String> targetProperties = associationsMap.get(id);
                     TreeMap<String, String> interaction = new TreeMap<>();
@@ -562,6 +562,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 }
             }
         }
+    }
+
+    private static boolean contains(BTreeMap<String, Map<String, String>> associationsMap, String id) {
+        return StringUtils.isNoneBlank(id) && associationsMap.containsKey(id);
     }
 
     private static void importDescriptionExtension(Archive archive,
@@ -590,7 +594,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         for (Record coreRecord : core) {
             String id = coreRecord.id();
-            if (associationsMap.containsKey(id)) {
+            if (contains(associationsMap, id)) {
                 try {
                     Map<String, String> targetProperties = associationsMap.get(id);
                     String referenceCitation = targetProperties.get("http://purl.org/dc/terms/source");
@@ -686,7 +690,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                 String s = interaction.get(DWC_COREID);
                 Map<String, String> enrichedLink =
-                        StringUtils.isNoneBlank(s) && referenceMap.containsKey(s)
+                        contains(referenceMap, s)
                                 ? new TreeMap<String, String>(interaction) {{
                             putAll(referenceMap.get(s));
                         }}
@@ -767,7 +771,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
 
                 for (DwcTerm termType : termTypes) {
-                    if (termTypeIdPropMap.containsKey(termType.qualifiedName())) {
+                    String key = termType.qualifiedName();
+                    if (StringUtils.isNoneBlank(key) && termTypeIdPropMap.containsKey(key)) {
                         Map<String, Map<String, String>> propMap = termTypeIdPropMap.get(termType.qualifiedName());
 
                         populatePropertiesAssociatedWithId(
