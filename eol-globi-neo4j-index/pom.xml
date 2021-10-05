@@ -59,10 +59,9 @@
             <artifactId>cglib-nodep</artifactId>
             <version>2.2</version>
         </dependency>
-
         <dependency>
-            <groupId>org.neo4j.test</groupId>
-            <artifactId>neo4j-harness</artifactId>
+            <groupId>org.neo4j.community</groupId>
+            <artifactId>it-test-support</artifactId>
             <version>${neo4j.version}</version>
             <scope>test</scope>
         </dependency>
