@@ -1,21 +1,19 @@
 package org.eol.globi.data;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.RelationshipListener;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,36 +32,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
 
     @Test
     public void importLocalArctosArchive() throws StudyImporterException, IOException {
-        DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
-                .instantiateImporter(DatasetImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
-
-
-        ObjectNode configNode = new ObjectMapper().createObjectNode();
         URL resource = getClass().getResource("/org/eol/globi/data/rss/arctos_issue_461.zip");
-        assertNotNull(resource);
-        String rssContent = rssContent(resource.toString());
-        File directory = new File("target/tmp");
-        FileUtils.forceMkdir(directory);
-        File rss = File.createTempFile("rss", ".xml", directory);
-        FileUtils.writeStringToFile(rss, rssContent, StandardCharsets.UTF_8);
-        configNode.put("url", rss.toURI().toString());
-        configNode.put("hasDependencies", true);
-        dataset.setConfig(configNode);
-        importer.setDataset(dataset);
-        importStudy(importer);
+        importDwCViaRSS(resource);
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), greaterThan(0));
@@ -102,6 +84,17 @@ public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
 
     }
 
+    public void importDwCViaRSS(URL resource) throws StudyImporterException, IOException {
+        assertNotNull(resource);
+
+        DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
+                .instantiateImporter(DatasetImporterForRSS.class);
+        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+
+
+        importDwCAViaRSS(importer, dataset, resource);
+    }
+
     @Test
     public void importLocalMCZArchive() throws StudyImporterException, IOException {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
@@ -118,19 +111,9 @@ public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
             }
         };
 
-        ObjectNode configNode = new ObjectMapper().createObjectNode();
         URL resource = getClass().getResource("/org/eol/globi/data/rss/mcz_issue_659.zip");
         assertNotNull(resource);
-        String rssContent = rssContent(resource.toString());
-        File directory = new File("target/tmp");
-        FileUtils.forceMkdir(directory);
-        File rss = File.createTempFile("rss", ".xml", directory);
-        FileUtils.writeStringToFile(rss, rssContent, StandardCharsets.UTF_8);
-        configNode.put("url", rss.toURI().toString());
-        configNode.put("hasDependencies", true);
-        dataset.setConfig(configNode);
-        importer.setDataset(dataset);
-        importStudy(importer);
+        importDwCAViaRSS(importer, dataset, resource);
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), greaterThan(0));
@@ -200,6 +183,75 @@ public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
         assertThat(targetCatalogNumbers, hasItem("61297"));
 
     }
+
+    public void importDwCAViaRSS(DatasetImporter importer, DatasetLocal dataset, URL resource) throws IOException, StudyImporterException {
+        ObjectNode configNode = new ObjectMapper().createObjectNode();
+        String rssContent = rssContent(resource.toString());
+        File directory = new File("target/tmp");
+        FileUtils.forceMkdir(directory);
+        File rss = File.createTempFile("rss", ".xml", directory);
+        FileUtils.writeStringToFile(rss, rssContent, StandardCharsets.UTF_8);
+        configNode.put("url", rss.toURI().toString());
+        configNode.put("hasDependencies", true);
+
+        System.out.println(configNode.toString());
+        System.out.println(rssContent);
+
+        dataset.setConfig(configNode);
+        importer.setDataset(dataset);
+        importStudy(importer);
+    }
+
+    @Test
+    public void importLocalFieldMuseumResourceRelationArchive() throws StudyImporterException, IOException {
+        URL resource = getClass().getResource("/org/eol/globi/data/fmnh-rr-8278596f-4d3f-4f82-8cd1-b5070fe1bc7c.zip");
+        importDwCViaRSS(resource);
+
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), greaterThan(0));
+        StudyNode study = allStudies.get(0);
+        AtomicInteger counter = new AtomicInteger(0);
+
+        NodeUtil.handleCollectedRelationships(
+                new NodeTypeDirection(study.getUnderlyingNode()),
+                relationship -> {
+                    assertThat(relationship.getType().name(), is("COLLECTED"));
+
+                    SpecimenNode source = new SpecimenNode(relationship.getEndNode());
+                    Relationship singleRelationship
+                            = source
+                            .getUnderlyingNode()
+                            .getSingleRelationship(
+                                    NodeUtil.asNeo4j(InteractType.ECTOPARASITE_OF),
+                                    Direction.OUTGOING);
+
+                    if (singleRelationship != null) {
+
+                        SpecimenNode target = new SpecimenNode(singleRelationship.getEndNode());
+                        assertNotNull(target);
+                        assertNotNull(source);
+                        Node sourceOrigTaxon = source
+                                .getUnderlyingNode()
+                                .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
+                                .getEndNode();
+
+                        Node targetOrigTaxon = target
+                                .getUnderlyingNode()
+                                .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
+                                .getEndNode();
+
+                        assertThat(new TaxonNode(sourceOrigTaxon).getName(), is("Orchopeas fulleri Traub, 1950"));
+                        assertThat(new TaxonNode(targetOrigTaxon).getName(), is("Glaucomys volans"));
+
+                        counter.getAndIncrement();
+                    }
+
+                });
+
+
+        assertThat(counter.get(), is(1));
+    }
+
 
     private String rssContent(String resourceURL) {
         return "<rss version=\"2.0\">\n" +
