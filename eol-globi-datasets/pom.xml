@@ -38,8 +38,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>elton4n</artifactId>
             <version>${elton4n.version}</version>
-            <classifier>tsv</classifier>
-            <type>zip</type>
         </dependency>
     </dependencies>
 
