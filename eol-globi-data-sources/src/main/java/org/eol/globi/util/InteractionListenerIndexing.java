@@ -58,19 +58,25 @@ public class InteractionListenerIndexing implements InteractionListener {
         if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId))) {
             Map<String, String> enriched = InteractionListenerResolving.mapSourceToSource(interaction);
+            System.out.println("[" + sourceOccurrenceId + "] resolving");
             if (enriched.size() > 1) {
+                System.out.println("[" + sourceOccurrenceId + "] resolved");
                 interactionsWithUnresolvedOccurrenceIds.put(
                         Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId),
                         enriched);
             }
+            System.out.println("[" + sourceOccurrenceId + "] not resolved");
         } else if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId))) {
             Map<String, String> enriched = InteractionListenerResolving.mapSourceToTarget(interaction);
+            System.out.println("[" + sourceOccurrenceId + "] resolving");
             if (enriched.size() > 1) {
+                System.out.println("[" + sourceOccurrenceId + "] resolved");
                 interactionsWithUnresolvedOccurrenceIds.put(
                         Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId),
                         enriched);
             }
+            System.out.println("[" + sourceOccurrenceId + "] not resolved");
         }
     }
 

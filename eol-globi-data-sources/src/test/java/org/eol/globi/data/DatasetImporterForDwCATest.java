@@ -39,7 +39,7 @@ import static junit.framework.TestCase.assertNull;
 import static org.eol.globi.data.DatasetImporterForDwCA.EXTENSION_ASSOCIATED_TAXA;
 import static org.eol.globi.data.DatasetImporterForDwCA.EXTENSION_RESOURCE_RELATIONSHIP;
 import static org.eol.globi.data.DatasetImporterForDwCA.importAssociatedTaxaExtension;
-import static org.eol.globi.data.DatasetImporterForDwCA.importResourceRelationExtension;
+import static org.eol.globi.data.DatasetImporterForDwCA.importResourceRelationshipExtension;
 import static org.eol.globi.data.DatasetImporterForDwCA.mapReferenceInfo;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseAssociatedOccurrences;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseDynamicPropertiesForInteractionsOnly;
@@ -918,7 +918,7 @@ public class DatasetImporterForDwCATest {
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
         AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
-        importResourceRelationExtension(archive, new InteractionListener() {
+        importResourceRelationshipExtension(archive, new InteractionListener() {
 
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -973,7 +973,7 @@ public class DatasetImporterForDwCATest {
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
         AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
-        importResourceRelationExtension(archive, new InteractionListener() {
+        importResourceRelationshipExtension(archive, new InteractionListener() {
 
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -1005,7 +1005,7 @@ public class DatasetImporterForDwCATest {
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
         AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
-        importResourceRelationExtension(archive, new InteractionListener() {
+        importResourceRelationshipExtension(archive, new InteractionListener() {
 
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -1035,7 +1035,7 @@ public class DatasetImporterForDwCATest {
         Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
 
         AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
-        importResourceRelationExtension(archive, new InteractionListener() {
+        importResourceRelationshipExtension(archive, new InteractionListener() {
 
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {

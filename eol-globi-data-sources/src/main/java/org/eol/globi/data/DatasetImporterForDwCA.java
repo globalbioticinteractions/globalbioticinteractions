@@ -1,17 +1,17 @@
 package org.eol.globi.data;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.eol.globi.util.InteractTypeMapper;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
 import org.gbif.dwc.record.Record;
@@ -23,9 +23,9 @@ import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DwCAUtil;
+import org.globalbioticinteractions.util.MapDBUtil;
+import org.mapdb.BTreeMap;
 import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.HTreeMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,29 +96,29 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PHYLUM;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET;
 
 public class DatasetImporterForDwCA extends DatasetImporterWithListener {
-    public static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
-    public static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
-    public static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
+    static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
+    static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
+    private static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
 
     // ex. notation used to indicate host of a specimen.
-    public static final Pattern EX_NOTATION = Pattern.compile("^ex[ .]+(.*)", Pattern.CASE_INSENSITIVE);
-    public static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex[ .]+.*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
-    public static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
-    public static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
-    public static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
-    public static final String DWC_COREID = "dwc:coreid";
+    static final Pattern EX_NOTATION = Pattern.compile("^ex[ .]+(.*)", Pattern.CASE_INSENSITIVE);
+    static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex[ .]+.*", Pattern.CASE_INSENSITIVE);
+    static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
+    static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
+    private static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
+    private static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
+    private static final String DWC_COREID = "dwc:coreid";
 
-    public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN =
+    private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN =
             Pattern.compile("^([(][a-zA-Z ]+[)])[ ](.*)(http[s]{0,1}://mczbase.mcz.harvard.edu/guid/)([a-zA-Z0-9:-]+)");
-    public static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
+    private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
 
-    public static final Pattern MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN =
+    private static final Pattern MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN =
             Pattern.compile("^(.*)" +
                     "<a href=\"(.*)/SpecimenDetail.*collection_object_id=[0-9]+\">[ ]+" +
                     "([^<]+)</a>");
 
-    public static final Map<String, String> PATCHES_FOR_USNM_HOST_OCCURRENCE_REMARKS = new TreeMap<String, String>() {{
+    private static final Map<String, String> PATCHES_FOR_USNM_HOST_OCCURRENCE_REMARKS = new TreeMap<String, String>() {{
 
         String patchFile = "/org/eol/globi/data/usnm/usnm-patches.tsv";
         try {
@@ -176,16 +176,17 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                 InteractionListenerWithContext listenerWithContext = new InteractionListenerWithContext();
 
-                InteractionListener referencingListener = createReferenceEnricher(archive, listenerWithContext);
+                try (InteractionListenerClosable referencingListener = createReferenceEnricher(archive, listenerWithContext)) {
 
-                importDescriptionExtension(archive, referencingListener, getLogger());
+                    importDescriptionExtension(archive, referencingListener, getLogger());
 
-                importResourceRelationExtension(archive, referencingListener);
+                    importResourceRelationshipExtension(archive, referencingListener);
 
-                importAssociatedTaxaExtension(archive, referencingListener);
+                    importAssociatedTaxaExtension(archive, referencingListener);
 
-                int i = importCore(archive, listenerWithContext);
-                getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
+                    int i = importCore(archive, listenerWithContext);
+                    getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
+                }
             } finally {
                 removeDeleteOnShutdownHook(deleteOnShutdownHook);
                 if (dwcaFile != null && dwcaFile.exists() && dwcaFile.isFile()) {
@@ -246,7 +247,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     private void handleRecord(InteractionListener interactionListener, Record rec) throws StudyImporterException {
         List<Map<String, String>> interactionCandidates = new ArrayList<>();
-
 
         appendInteractionCandidatesIfAvailable(rec, interactionCandidates, DwcTerm.associatedTaxa, "");
 
@@ -523,42 +523,42 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener) {
         ArchiveFile extension = findResourceExtension(archive, EXTENSION_ASSOCIATED_TAXA);
         if (extension != null) {
-            ArchiveFile core = archive.getCore();
-
-
-            DB db = DBMaker
-                    .newMemoryDirectDB()
-                    .compressionEnable()
-                    .transactionDisable()
-                    .make();
-            final HTreeMap<String, Map<String, String>> associationsMap = db
-                    .createHashMap("assocMap")
-                    .make();
-
-            for (Record record : extension) {
-                Map<String, String> props = new TreeMap<>();
-                termsToMap(record, props);
-                associationsMap.put(record.id(), props);
+            final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap();
+            try {
+                ArchiveFile core = archive.getCore();
+                importTaxaExtension(interactionListener, extension, core, associationsMap);
+            } finally {
+                if (associationsMap != null) {
+                    associationsMap.close();
+                }
             }
+        }
+    }
 
-            for (Record coreRecord : core) {
-                String id = coreRecord.id();
-                if (associationsMap.containsKey(id)) {
-                    try {
-                        Map<String, String> targetProperties = associationsMap.get(id);
-                        TreeMap<String, String> interaction = new TreeMap<>();
+    private static void importTaxaExtension(InteractionListener interactionListener, ArchiveFile extension, ArchiveFile core, BTreeMap<String, Map<String, String>> associationsMap) {
+        for (Record record : extension) {
+            Map<String, String> props = new TreeMap<>();
+            termsToMap(record, props);
+            associationsMap.put(record.id(), props);
+        }
 
-                        mapAssociationProperties(targetProperties, interaction);
+        for (Record coreRecord : core) {
+            String id = coreRecord.id();
+            if (associationsMap.containsKey(id)) {
+                try {
+                    Map<String, String> targetProperties = associationsMap.get(id);
+                    TreeMap<String, String> interaction = new TreeMap<>();
 
-                        mapCoreProperties(coreRecord, interaction);
+                    mapAssociationProperties(targetProperties, interaction);
 
-                        interaction.put(RESOURCE_TYPES,
-                                StringUtils.join(Arrays.asList(core.getRowType().qualifiedName(), extension.getRowType().qualifiedName()), CharsetConstant.SEPARATOR));
+                    mapCoreProperties(coreRecord, interaction);
 
-                        interactionListener.on(interaction);
-                    } catch (StudyImporterException e) {
-                        //
-                    }
+                    interaction.put(RESOURCE_TYPES,
+                            StringUtils.join(Arrays.asList(core.getRowType().qualifiedName(), extension.getRowType().qualifiedName()), CharsetConstant.SEPARATOR));
+
+                    interactionListener.on(interaction);
+                } catch (StudyImporterException e) {
+                    //
                 }
             }
         }
@@ -569,61 +569,62 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                    ImportLogger logger) {
         ArchiveFile extension = findResourceExtension(archive, EXTENSION_DESCRIPTION);
         if (extension != null) {
-            ArchiveFile core = archive.getCore();
-
-            DB db = DBMaker
-                    .newMemoryDirectDB()
-                    .compressionEnable()
-                    .transactionDisable()
-                    .make();
-            final HTreeMap<String, Map<String, String>> associationsMap = db
-                    .createHashMap("assocMap")
-                    .make();
-
-            for (Record record : extension) {
-                Map<String, String> props = new TreeMap<>();
-                termsToMap(record, props);
-                associationsMap.put(record.id(), props);
+            final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap();
+            try {
+                ArchiveFile core = archive.getCore();
+                importDescriptionExtension(interactionListener, logger, extension, core, associationsMap);
+            } finally {
+                if (associationsMap != null) {
+                    associationsMap.close();
+                }
             }
+        }
+    }
 
-            for (Record coreRecord : core) {
-                String id = coreRecord.id();
-                if (associationsMap.containsKey(id)) {
-                    try {
-                        Map<String, String> targetProperties = associationsMap.get(id);
-                        String referenceCitation = targetProperties.get("http://purl.org/dc/terms/source");
-                        String descriptionType = targetProperties.get("http://purl.org/dc/terms/type");
+    private static void importDescriptionExtension(InteractionListener interactionListener, ImportLogger logger, ArchiveFile extension, ArchiveFile core, BTreeMap<String, Map<String, String>> associationsMap) {
+        for (Record record : extension) {
+            Map<String, String> props = new TreeMap<>();
+            termsToMap(record, props);
+            associationsMap.put(record.id(), props);
+        }
 
-                        if (isUnsupportedDescriptionType(descriptionType)) {
-                            if (logger != null) {
-                                logger.info(null, "ignoring unsupported taxon description of type [" + descriptionType + "]");
-                            }
-                        } else {
-                            String interactionTypeNameDefault = isEcologyDescription(descriptionType) ? null : "";
+        for (Record coreRecord : core) {
+            String id = coreRecord.id();
+            if (associationsMap.containsKey(id)) {
+                try {
+                    Map<String, String> targetProperties = associationsMap.get(id);
+                    String referenceCitation = targetProperties.get("http://purl.org/dc/terms/source");
+                    String descriptionType = targetProperties.get("http://purl.org/dc/terms/type");
 
-                            List<Map<String, String>> maps = AssociatedTaxaUtil.parseAssociatedTaxa(
-                                    targetProperties.get("http://purl.org/dc/terms/description"),
-                                    interactionTypeNameDefault);
-
-
-                            for (Map<String, String> map : maps) {
-                                TreeMap<String, String> interaction = new TreeMap<>(map);
-                                interaction.put(DWC_COREID, id);
-                                mapCoreProperties(coreRecord, interaction);
-                                if (StringUtils.isNotBlank(referenceCitation)) {
-                                    interaction.put(REFERENCE_CITATION, referenceCitation);
-                                    String urlString = ExternalIdUtil.urlForExternalId(referenceCitation);
-                                    if (ExternalIdUtil.isSupported(urlString)) {
-                                        interaction.put(REFERENCE_URL, urlString);
-                                    }
-                                }
-                                interactionListener.on(interaction);
-                            }
+                    if (isUnsupportedDescriptionType(descriptionType)) {
+                        if (logger != null) {
+                            logger.info(null, "ignoring unsupported taxon description of type [" + descriptionType + "]");
                         }
+                    } else {
+                        String interactionTypeNameDefault = isEcologyDescription(descriptionType) ? null : "";
 
-                    } catch (StudyImporterException e) {
-                        //
+                        List<Map<String, String>> maps = AssociatedTaxaUtil.parseAssociatedTaxa(
+                                targetProperties.get("http://purl.org/dc/terms/description"),
+                                interactionTypeNameDefault);
+
+
+                        for (Map<String, String> map : maps) {
+                            TreeMap<String, String> interaction = new TreeMap<>(map);
+                            interaction.put(DWC_COREID, id);
+                            mapCoreProperties(coreRecord, interaction);
+                            if (StringUtils.isNotBlank(referenceCitation)) {
+                                interaction.put(REFERENCE_CITATION, referenceCitation);
+                                String urlString = ExternalIdUtil.urlForExternalId(referenceCitation);
+                                if (ExternalIdUtil.isSupported(urlString)) {
+                                    interaction.put(REFERENCE_URL, urlString);
+                                }
+                            }
+                            interactionListener.on(interaction);
+                        }
                     }
+
+                } catch (StudyImporterException e) {
+                    //
                 }
             }
         }
@@ -648,25 +649,25 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return StringUtils.equalsIgnoreCase(descriptionType, "ecology");
     }
 
-    private static InteractionListener createReferenceEnricher(Archive archive, final InteractionListener interactionListener) {
-        return new InteractionListener() {
-            private Map<String, Map<String, String>> referenceMap = null;
+    private static InteractionListenerClosable createReferenceEnricher(Archive archive, final InteractionListener interactionListener) {
+        return new InteractionListenerClosable() {
+
+            private BTreeMap<String, Map<String, String>> referenceMap = null;
+
+            @Override
+            public void close() {
+                if (referenceMap != null) {
+                    referenceMap.close();
+                    referenceMap = null;
+                }
+            }
 
             private void initIfNeeded() {
                 if (referenceMap == null) {
-                    referenceMap = Collections.emptyMap();
+                    referenceMap = MapDBUtil.createBigMap();
 
                     ArchiveFile extension = findResourceExtension(archive, EXTENSION_REFERENCE);
                     if (extension != null) {
-                        DB db = DBMaker
-                                .newMemoryDirectDB()
-                                .compressionEnable()
-                                .transactionDisable()
-                                .make();
-                        referenceMap = db
-                                .createHashMap("referenceMap")
-                                .make();
-
                         for (Record record : extension) {
                             Map<String, String> props = new TreeMap<>();
                             termsToMap(record, props);
@@ -684,51 +685,50 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 initIfNeeded();
 
                 String s = interaction.get(DWC_COREID);
-                Map<String, String> enrichedLink = referenceMap.containsKey(s)
-                        ? new TreeMap(interaction) {{
-                    putAll(referenceMap.get(s));
-                }}
-                        : interaction;
+                Map<String, String> enrichedLink =
+                        StringUtils.isNoneBlank(s) && referenceMap.containsKey(s)
+                                ? new TreeMap<String, String>(interaction) {{
+                            putAll(referenceMap.get(s));
+                        }}
+                                : interaction;
                 interactionListener.on(enrichedLink);
             }
         };
 
     }
 
-    static void importResourceRelationExtension(Archive archive, InteractionListener interactionListener) {
+    static void importResourceRelationshipExtension(Archive archive, InteractionListener interactionListener) {
 
         ArchiveFile resourceExtension = findResourceRelationshipExtension(archive);
 
         if (resourceExtension != null) {
 
-            DB db = DBMaker
-                    .newMemoryDirectDB()
-                    .compressionEnable()
-                    .transactionDisable()
-                    .make();
+            final BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap = MapDBUtil.createBigMap();
+            final DB tmpDb1 = MapDBUtil.tmpDB();
+            final DB tmpDb2 = MapDBUtil.tmpDB();
 
-            final Map<String, Map<String, Map<String, String>>> termTypeIdPropertyMap = db
-                    .createHashMap("termIdPropMap")
-                    .make();
-
-            final Set<String> referencedSourceIds = db
-                    .createHashSet("sourceIdMap")
-                    .make();
-
-            final Set<String> referencedTargetIds = db
-                    .createHashSet("targetIdMap")
-                    .make();
-
-
-            collectRelatedResourceIds(resourceExtension, referencedSourceIds, referencedTargetIds);
-
-            final List<DwcTerm> termTypes = Arrays.asList(
-                    DwcTerm.occurrenceID, DwcTerm.taxonID);
-
-            resolveLocalResourceIds(archive, termTypeIdPropertyMap, referencedSourceIds, referencedTargetIds, termTypes);
-
-            importInteractionsFromResourceRelationships(interactionListener, resourceExtension, termTypeIdPropertyMap, termTypes);
+            try {
+                importResourceRelationshipExtension(archive, interactionListener, resourceExtension, termTypeIdPropertyMap, tmpDb1, tmpDb2);
+            } finally {
+                tmpDb1.close();
+                tmpDb2.close();
+                if (termTypeIdPropertyMap != null) {
+                    termTypeIdPropertyMap.close();
+                }
+            }
         }
+    }
+
+    private static void importResourceRelationshipExtension(Archive archive, InteractionListener interactionListener, ArchiveFile resourceExtension, BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap, DB tmpDb1, DB tmpDb2) {
+        final Set<String> referencedSourceIds = MapDBUtil.createBigSet(tmpDb1);
+        final Set<String> referencedTargetIds = MapDBUtil.createBigSet(tmpDb2);
+        collectRelatedResourceIds(resourceExtension, referencedSourceIds, referencedTargetIds);
+        final List<DwcTerm> termTypes = Arrays.asList(
+                DwcTerm.occurrenceID, DwcTerm.taxonID);
+
+        resolveLocalResourceIds(archive, termTypeIdPropertyMap, referencedSourceIds, referencedTargetIds, termTypes);
+
+        importInteractionsFromResourceRelationships(interactionListener, resourceExtension, termTypeIdPropertyMap, termTypes);
     }
 
     private static void importInteractionsFromResourceRelationships(InteractionListener interactionListener,
@@ -891,19 +891,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         for (Term term : terms) {
             props.putIfAbsent(term.qualifiedName(), record.value(term));
         }
-    }
-
-    private static String findRelationshipTypeIdByLabel(String relationship, InteractTypeMapper mapper) {
-
-        String relationshipKey = StringUtils.lowerCase(StringUtils.trim(relationship));
-
-        String relationshipId = null;
-        if (StringUtils.isNotBlank(relationship)) {
-            InteractType interactType = mapper.getInteractType(relationshipKey);
-            relationshipId = interactType == null ? null : interactType.getIRI();
-        }
-
-        return relationshipId;
     }
 
     private static void attemptLinkUsingTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap,
