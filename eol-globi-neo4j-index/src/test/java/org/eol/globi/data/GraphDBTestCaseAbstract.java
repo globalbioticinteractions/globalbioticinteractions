@@ -40,10 +40,10 @@ import static org.junit.Assert.assertNotNull;
 public abstract class GraphDBTestCaseAbstract {
 
     @Rule
-    public Neo4jRule neo4j = new Neo4jRule();
-//            .withConfig("dbms.connector.bolt.enabled", "false")
-//            .withConfig("dbms.connector.http.enabled", "false")
-//            .withConfig("dbms.connector.http.enabled", "false");
+    public Neo4jRule neo4j = new Neo4jRule()
+            .withConfig("dbms.connector.bolt.enabled", "false")
+            .withConfig("dbms.connector.http.enabled", "false")
+            .withConfig("dbms.connector.https.enabled", "false");
 
 
     private GraphServiceFactory graphFactory;
