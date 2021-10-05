@@ -28,7 +28,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.globalbioticinteractions</groupId>
             <artifactId>${project.artifactId}</artifactId>
             <version>${globi.tsv.version}</version>
             <classifier>tsv</classifier>
