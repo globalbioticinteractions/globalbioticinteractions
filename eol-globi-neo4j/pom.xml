@@ -37,10 +37,6 @@
                     <groupId>org.neo4j</groupId>
                     <artifactId>neo4j-jmx</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.neo4j</groupId>
-                    <artifactId>neo4j-udc</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
