@@ -28,14 +28,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.globalbioticinteractions</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>${project.artifactId}</artifactId>
             <version>${globi.tsv.version}</version>
             <classifier>tsv</classifier>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.globalbioticinteractions</groupId>
             <artifactId>elton4n</artifactId>
             <version>${elton4n.version}</version>
         </dependency>
