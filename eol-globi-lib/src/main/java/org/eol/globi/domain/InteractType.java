@@ -1,15 +1,10 @@
 package org.eol.globi.domain;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 import static org.eol.globi.domain.InteractType.InteractionRole.OBJECT;
 import static org.eol.globi.domain.InteractType.InteractionRole.SUBJECT;
@@ -126,63 +121,16 @@ public enum InteractType implements RelType {
 
     String iri;
     String label;
-    private final static Map<InteractType, InteractType> inverseMapFull;
 
-    static {
-        Map<InteractType, InteractType> inverseMap = new HashMap<InteractType, InteractType>() {
-            {
-                put(POLLINATES, POLLINATED_BY);
-                put(PATHOGEN_OF, HAS_PATHOGEN);
-                put(VECTOR_OF, HAS_VECTOR);
-                put(FLOWERS_VISITED_BY, VISITS_FLOWERS_OF);
-                put(LAYS_EGGS_ON, HAS_EGGS_LAYED_ON_BY);
-                put(LAYS_EGGS_IN, HAS_EGGS_LAYED_IN_BY);
-                put(VISITS, VISITED_BY);
-                put(INHABITED_BY, INHABITS);
-                put(FARMED_BY, FARMS);
-                put(CREATES_HABITAT_FOR, HAS_HABITAT);
-                put(LIVED_ON_BY, LIVES_ON);
-                put(LIVED_INSIDE_OF_BY, LIVES_INSIDE_OF);
-                put(LIVED_NEAR_BY, LIVES_NEAR);
-                put(LIVED_UNDER_BY, LIVES_UNDER);
-                put(LIVES_WITH, LIVES_WITH);
-                put(KLEPTOPARASITE_OF, HAS_KLEPTOPARASITE);
-                put(GUEST_OF, HAS_GUEST_OF);
-                put(PERCHING_ON, PERCHED_ON_BY);
-                put(HOST_OF, HAS_HOST);
-                put(PREYS_UPON, PREYED_UPON_BY);
-                put(ATE, EATEN_BY);
-                put(ACQUIRES_NUTRIENTS_FROM, PROVIDES_NUTRIENTS_FOR);
-                put(DAMAGED_BY, DAMAGES);
-                put(KILLS, KILLED_BY);
-                put(SYMBIONT_OF, SYMBIONT_OF);
-                put(INTERACTS_WITH, INTERACTS_WITH);
-                put(CO_OCCURS_WITH, CO_OCCURS_WITH);
-                put(CO_ROOSTS_WITH, CO_ROOSTS_WITH);
-                put(ADJACENT_TO, ADJACENT_TO);
-                put(PARASITE_OF, HAS_PARASITE);
-                put(HYPERPARASITE_OF, HAS_HYPERPARASITE);
-                put(ENDOPARASITE_OF, HAS_ENDOPARASITE);
-                put(ECTOPARASITE_OF, HAS_ECTOPARASITE);
-                put(PARASITOID_OF, HAS_PARASITOID);
-                put(ENDOPARASITOID_OF, HAS_ENDOPARASITOID);
-                put(ECTOPARASITOID_OF, HAS_ECTOPARASITOID);
-                put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);
-                put(EPIPHITE_OF, HAS_EPIPHITE);
-                put(COMMENSALIST_OF, COMMENSALIST_OF);
-                put(MUTUALIST_OF, MUTUALIST_OF);
-                put(RELATED_TO, RELATED_TO);
-                put(AGGRESSOR_OF, HAS_AGGRESSOR);
-            }
-        };
 
-        Map<InteractType, InteractType> swappedMap = new HashMap<InteractType, InteractType>();
-        for (Map.Entry<InteractType, InteractType> entry : inverseMap.entrySet()) {
-            swappedMap.put(entry.getValue(), entry.getKey());
-        }
-        inverseMap.putAll(swappedMap);
-        inverseMapFull = MapUtils.unmodifiableMap(inverseMap);
-    }
+    private final static Map<InteractType, InteractType> inverseOfPath
+            = InteractTypeUtil.initInverseOfPath();
+
+    private final static Map<InteractType, Collection<InteractType>> hasTypesPath
+            = InteractTypeUtil.initHasTypesPath();
+
+    private final static Map<InteractType, Collection<InteractType>> typeOfPath
+            = InteractTypeUtil.initTypeOfPath();
 
     public enum InteractionRole {
         OBJECT,
@@ -246,89 +194,15 @@ public enum InteractType implements RelType {
     }
 
     public static Collection<InteractType> hasTypes(InteractType type) {
-        final Map<InteractType, Collection<InteractType>> pathMap = new HashMap<InteractType, Collection<InteractType>>() {
-            {
-                put(RELATED_TO, new ArrayList<>());
-                put(INTERACTS_WITH, Arrays.asList(RELATED_TO, CO_OCCURS_WITH));
-                put(CO_OCCURS_WITH, Collections.singletonList(RELATED_TO));
-                put(CO_ROOSTS_WITH, Arrays.asList(CO_OCCURS_WITH, RELATED_TO));
-                put(ADJACENT_TO, Arrays.asList(RELATED_TO, CO_OCCURS_WITH));
-                put(PERCHING_ON, Arrays.asList(LIVES_ON, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(ATE, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(ACQUIRES_NUTRIENTS_FROM, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(PROVIDES_NUTRIENTS_FOR, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(SYMBIONT_OF, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(PREYS_UPON, Arrays.asList(ATE, KILLS, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(PATHOGEN_OF, Arrays.asList(PARASITE_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(DISPERSAL_VECTOR_OF, Arrays.asList(HOST_OF, SYMBIONT_OF, INTERACTS_WITH, VECTOR_OF, RELATED_TO, CO_OCCURS_WITH));
-                put(PARASITOID_OF, Arrays.asList(PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(ENDOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(ECTOPARASITOID_OF, Arrays.asList(PARASITOID_OF, PARASITE_OF, HAS_HOST, ATE, KILLS, LIVES_WITH, LIVES_ON, ADJACENT_TO, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(PARASITE_OF, Arrays.asList(ATE, DAMAGES, LIVES_WITH, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(HYPERPARASITE_OF, Arrays.asList(PARASITE_OF, ATE, DAMAGES, HAS_HOST, LIVES_WITH, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(ENDOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_INSIDE_OF, HAS_HOST, ATE, DAMAGES, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(ECTOPARASITE_OF, Arrays.asList(PARASITE_OF, LIVES_ON, ADJACENT_TO, ATE, HAS_HOST, DAMAGES, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(POLLINATES, Arrays.asList(VISITS_FLOWERS_OF, HAS_HOST, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(VISITS, Arrays.asList(HAS_HOST, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(LAYS_EGGS_ON, Arrays.asList(HAS_HOST, INTERACTS_WITH, VISITS, RELATED_TO, CO_OCCURS_WITH));
-                put(LAYS_EGGS_IN, Arrays.asList(HAS_HOST, INTERACTS_WITH, VISITS, RELATED_TO, CO_OCCURS_WITH));
-                put(VISITS_FLOWERS_OF, Arrays.asList(HAS_HOST, INTERACTS_WITH, VISITS, RELATED_TO, CO_OCCURS_WITH));
-                put(HOST_OF, Arrays.asList(SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(KLEPTOPARASITE_OF, Arrays.asList(INTERACTS_WITH, PARASITE_OF, SYMBIONT_OF, HAS_HOST, LIVES_WITH, ATE, DAMAGES, RELATED_TO, CO_OCCURS_WITH));
-                put(INHABITS, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(CREATES_HABITAT_FOR, Arrays.asList(INTERACTS_WITH, ADJACENT_TO, RELATED_TO, CO_OCCURS_WITH));
-                put(HAS_HABITAT, Arrays.asList(INTERACTS_WITH, ADJACENT_TO, RELATED_TO, CO_OCCURS_WITH));
-                put(LIVES_ON, Arrays.asList(INTERACTS_WITH, ADJACENT_TO, CREATES_HABITAT_FOR, RELATED_TO, CO_OCCURS_WITH));
-                put(LIVES_INSIDE_OF, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO, CO_OCCURS_WITH));
-                put(LIVES_NEAR, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO, CO_OCCURS_WITH));
-                put(LIVES_UNDER, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO, CO_OCCURS_WITH));
-                put(LIVES_WITH, Arrays.asList(INTERACTS_WITH, CREATES_HABITAT_FOR, RELATED_TO, CO_OCCURS_WITH));
-                put(GUEST_OF, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(FARMS, Arrays.asList(ATE, SYMBIONT_OF, INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(DAMAGES, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(KILLS, Arrays.asList(INTERACTS_WITH, RELATED_TO, CO_OCCURS_WITH));
-                put(EPIPHITE_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO, CO_OCCURS_WITH));
-                put(COMMENSALIST_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO, CO_OCCURS_WITH));
-                put(MUTUALIST_OF, Arrays.asList(INTERACTS_WITH, SYMBIONT_OF, RELATED_TO, CO_OCCURS_WITH));
-                put(AGGRESSOR_OF, Arrays.asList(RELATED_TO, CO_OCCURS_WITH));
-            }
-        };
-
-        Map<InteractType, Collection<InteractType>> invertedPathMap = new HashMap<InteractType, Collection<InteractType>>() {
-            {
-                for (Map.Entry<InteractType, Collection<InteractType>> entry : pathMap.entrySet()) {
-                    ArrayList<InteractType> invertedPath = new ArrayList<InteractType>();
-                    InteractType keyInverse = inverseOf(entry.getKey());
-                    if (keyInverse != entry.getKey()) {
-                        for (InteractType interactType : entry.getValue()) {
-                            InteractType inverse = inverseOf(interactType);
-                            if (null != inverse) {
-                                invertedPath.add(inverse);
-                            }
-                        }
-                        put(keyInverse, invertedPath);
-                    }
-                }
-            }
-        };
-        pathMap.putAll(invertedPathMap);
-        return pathMap.get(type);
+        return hasTypesPath.get(type);
     }
 
     public static Collection<InteractType> typesOf(InteractType type) {
-        Collection<InteractType> inversePath = new TreeSet<>();
-        inversePath.add(type);
-        for (InteractType interactType : values()) {
-            if (hasTypes(interactType).contains(type)) {
-                inversePath.add(interactType);
-            }
-        }
-        return inversePath;
+        return typeOfPath.get(type);
     }
 
     public static InteractType inverseOf(InteractType type) {
-        return inverseMapFull.get(type);
+        return inverseOfPath.get(type);
     }
 
 
