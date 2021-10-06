@@ -1,5 +1,6 @@
 package org.eol.globi.domain;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -125,6 +126,63 @@ public enum InteractType implements RelType {
 
     String iri;
     String label;
+    private final static Map<InteractType, InteractType> inverseMapFull;
+
+    static {
+        Map<InteractType, InteractType> inverseMap = new HashMap<InteractType, InteractType>() {
+            {
+                put(POLLINATES, POLLINATED_BY);
+                put(PATHOGEN_OF, HAS_PATHOGEN);
+                put(VECTOR_OF, HAS_VECTOR);
+                put(FLOWERS_VISITED_BY, VISITS_FLOWERS_OF);
+                put(LAYS_EGGS_ON, HAS_EGGS_LAYED_ON_BY);
+                put(LAYS_EGGS_IN, HAS_EGGS_LAYED_IN_BY);
+                put(VISITS, VISITED_BY);
+                put(INHABITED_BY, INHABITS);
+                put(FARMED_BY, FARMS);
+                put(CREATES_HABITAT_FOR, HAS_HABITAT);
+                put(LIVED_ON_BY, LIVES_ON);
+                put(LIVED_INSIDE_OF_BY, LIVES_INSIDE_OF);
+                put(LIVED_NEAR_BY, LIVES_NEAR);
+                put(LIVED_UNDER_BY, LIVES_UNDER);
+                put(LIVES_WITH, LIVES_WITH);
+                put(KLEPTOPARASITE_OF, HAS_KLEPTOPARASITE);
+                put(GUEST_OF, HAS_GUEST_OF);
+                put(PERCHING_ON, PERCHED_ON_BY);
+                put(HOST_OF, HAS_HOST);
+                put(PREYS_UPON, PREYED_UPON_BY);
+                put(ATE, EATEN_BY);
+                put(ACQUIRES_NUTRIENTS_FROM, PROVIDES_NUTRIENTS_FOR);
+                put(DAMAGED_BY, DAMAGES);
+                put(KILLS, KILLED_BY);
+                put(SYMBIONT_OF, SYMBIONT_OF);
+                put(INTERACTS_WITH, INTERACTS_WITH);
+                put(CO_OCCURS_WITH, CO_OCCURS_WITH);
+                put(CO_ROOSTS_WITH, CO_ROOSTS_WITH);
+                put(ADJACENT_TO, ADJACENT_TO);
+                put(PARASITE_OF, HAS_PARASITE);
+                put(HYPERPARASITE_OF, HAS_HYPERPARASITE);
+                put(ENDOPARASITE_OF, HAS_ENDOPARASITE);
+                put(ECTOPARASITE_OF, HAS_ECTOPARASITE);
+                put(PARASITOID_OF, HAS_PARASITOID);
+                put(ENDOPARASITOID_OF, HAS_ENDOPARASITOID);
+                put(ECTOPARASITOID_OF, HAS_ECTOPARASITOID);
+                put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);
+                put(EPIPHITE_OF, HAS_EPIPHITE);
+                put(COMMENSALIST_OF, COMMENSALIST_OF);
+                put(MUTUALIST_OF, MUTUALIST_OF);
+                put(RELATED_TO, RELATED_TO);
+                put(AGGRESSOR_OF, HAS_AGGRESSOR);
+            }
+        };
+
+        Map<InteractType, InteractType> swappedMap = new HashMap<InteractType, InteractType>();
+        for (Map.Entry<InteractType, InteractType> entry : inverseMap.entrySet()) {
+            swappedMap.put(entry.getValue(), entry.getKey());
+        }
+        inverseMap.putAll(swappedMap);
+        inverseMapFull = MapUtils.unmodifiableMap(inverseMap);
+    }
 
     public enum InteractionRole {
         OBJECT,
@@ -270,60 +328,7 @@ public enum InteractType implements RelType {
     }
 
     public static InteractType inverseOf(InteractType type) {
-        Map<InteractType, InteractType> inverseMap = new HashMap<InteractType, InteractType>() {
-            {
-                put(POLLINATES, POLLINATED_BY);
-                put(PATHOGEN_OF, HAS_PATHOGEN);
-                put(VECTOR_OF, HAS_VECTOR);
-                put(FLOWERS_VISITED_BY, VISITS_FLOWERS_OF);
-                put(LAYS_EGGS_ON, HAS_EGGS_LAYED_ON_BY);
-                put(LAYS_EGGS_IN, HAS_EGGS_LAYED_IN_BY);
-                put(VISITS, VISITED_BY);
-                put(INHABITED_BY, INHABITS);
-                put(FARMED_BY, FARMS);
-                put(CREATES_HABITAT_FOR, HAS_HABITAT);
-                put(LIVED_ON_BY, LIVES_ON);
-                put(LIVED_INSIDE_OF_BY, LIVES_INSIDE_OF);
-                put(LIVED_NEAR_BY, LIVES_NEAR);
-                put(LIVED_UNDER_BY, LIVES_UNDER);
-                put(LIVES_WITH, LIVES_WITH);
-                put(KLEPTOPARASITE_OF, HAS_KLEPTOPARASITE);
-                put(GUEST_OF, HAS_GUEST_OF);
-                put(PERCHING_ON, PERCHED_ON_BY);
-                put(HOST_OF, HAS_HOST);
-                put(PREYS_UPON, PREYED_UPON_BY);
-                put(ATE, EATEN_BY);
-                put(ACQUIRES_NUTRIENTS_FROM, PROVIDES_NUTRIENTS_FOR);
-                put(DAMAGED_BY, DAMAGES);
-                put(KILLS, KILLED_BY);
-                put(SYMBIONT_OF, SYMBIONT_OF);
-                put(INTERACTS_WITH, INTERACTS_WITH);
-                put(CO_OCCURS_WITH, CO_OCCURS_WITH);
-                put(CO_ROOSTS_WITH, CO_ROOSTS_WITH);
-                put(ADJACENT_TO, ADJACENT_TO);
-                put(PARASITE_OF, HAS_PARASITE);
-                put(HYPERPARASITE_OF, HAS_HYPERPARASITE);
-                put(ENDOPARASITE_OF, HAS_ENDOPARASITE);
-                put(ECTOPARASITE_OF, HAS_ECTOPARASITE);
-                put(PARASITOID_OF, HAS_PARASITOID);
-                put(ENDOPARASITOID_OF, HAS_ENDOPARASITOID);
-                put(ECTOPARASITOID_OF, HAS_ECTOPARASITOID);
-                put(DISPERSAL_VECTOR_OF, HAS_DISPERAL_VECTOR);
-                put(EPIPHITE_OF, HAS_EPIPHITE);
-                put(COMMENSALIST_OF, COMMENSALIST_OF);
-                put(MUTUALIST_OF, MUTUALIST_OF);
-                put(RELATED_TO, RELATED_TO);
-                put(AGGRESSOR_OF, HAS_AGGRESSOR);
-            }
-        };
-
-        final Map<InteractType, InteractType> swappedMap = new HashMap<InteractType, InteractType>();
-        for (Map.Entry<InteractType, InteractType> entry : inverseMap.entrySet()) {
-            swappedMap.put(entry.getValue(), entry.getKey());
-        }
-        inverseMap.putAll(swappedMap);
-
-        return inverseMap.get(type);
+        return inverseMapFull.get(type);
     }
 
 

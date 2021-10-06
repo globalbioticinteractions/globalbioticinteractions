@@ -707,12 +707,19 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         if (resourceExtension != null) {
 
-            final BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap = MapDBUtil.createBigMap();
+            final BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap
+                    = MapDBUtil.createBigMap();
             final DB tmpDb1 = MapDBUtil.tmpDB();
             final DB tmpDb2 = MapDBUtil.tmpDB();
 
             try {
-                importResourceRelationshipExtension(archive, interactionListener, resourceExtension, termTypeIdPropertyMap, tmpDb1, tmpDb2);
+                importResourceRelationshipExtension(
+                        archive,
+                        interactionListener,
+                        resourceExtension,
+                        termTypeIdPropertyMap,
+                        tmpDb1,
+                        tmpDb2);
             } finally {
                 tmpDb1.close();
                 tmpDb2.close();
@@ -723,7 +730,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static void importResourceRelationshipExtension(Archive archive, InteractionListener interactionListener, ArchiveFile resourceExtension, BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap, DB tmpDb1, DB tmpDb2) {
+    private static void importResourceRelationshipExtension(
+            Archive archive,
+            InteractionListener interactionListener,
+            ArchiveFile resourceExtension,
+            BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap,
+            DB tmpDb1,
+            DB tmpDb2) {
         final Set<String> referencedSourceIds = MapDBUtil.createBigSet(tmpDb1);
         final Set<String> referencedTargetIds = MapDBUtil.createBigSet(tmpDb2);
         collectRelatedResourceIds(resourceExtension, referencedSourceIds, referencedTargetIds);
