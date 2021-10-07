@@ -9,6 +9,7 @@ import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
+import org.eol.globi.util.InteractUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -730,9 +731,9 @@ public class TaxonUtil {
         if (StringUtils.isBlank(properties.get(SOURCE_TAXON_NAME))) {
             Taxon taxon = generateSourceTaxon(properties);
             if (taxon != null) {
-                properties.put(SOURCE_TAXON_NAME, taxon.getName());
-                properties.put(SOURCE_TAXON_RANK, taxon.getRank());
-                properties.put(SOURCE_TAXON_ID, taxon.getExternalId());
+                InteractUtil.putIfKeyNotExistsAndValueNotBlank(properties, SOURCE_TAXON_NAME, taxon.getName());
+                InteractUtil.putIfKeyNotExistsAndValueNotBlank(properties, SOURCE_TAXON_RANK, taxon.getRank());
+                InteractUtil.putIfKeyNotExistsAndValueNotBlank(properties, SOURCE_TAXON_ID, taxon.getExternalId());
             }
         }
 
@@ -752,9 +753,9 @@ public class TaxonUtil {
         if (StringUtils.isBlank(properties.get(TARGET_TAXON_NAME))) {
             Taxon taxon = generateTargetTaxon(properties);
             if (taxon != null) {
-                properties.put(TARGET_TAXON_NAME, taxon.getName());
-                properties.put(TARGET_TAXON_RANK, taxon.getRank());
-                properties.put(TARGET_TAXON_ID, taxon.getExternalId());
+                InteractUtil.putIfKeyNotExistsAndValueNotBlank(properties, TARGET_TAXON_NAME, taxon.getName());
+                InteractUtil.putIfKeyNotExistsAndValueNotBlank(properties, TARGET_TAXON_RANK, taxon.getRank());
+                InteractUtil.putIfKeyNotExistsAndValueNotBlank(properties, TARGET_TAXON_ID, taxon.getExternalId());
             }
         }
 
