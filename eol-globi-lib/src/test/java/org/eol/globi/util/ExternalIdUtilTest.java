@@ -25,9 +25,9 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("OTT:563163"), is("https://tree.opentreeoflife.org/opentree/ottol@563163"));
         assertThat(ExternalIdUtil.urlForExternalId("GBIF:2435035"), is("http://www.gbif.org/species/2435035"));
         assertThat(ExternalIdUtil.urlForExternalId("NBN:NHMSYS0000080189"), is("https://data.nbn.org.uk/Taxa/NHMSYS0000080189"));
-        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:10201332"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=10201332"));
-        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:1012185"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?gen_id=1012185"));
-        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:104889"), is("http://www.marine.csiro.au/mirrorsearch/ir_search.list_genera?fam_id=104889"));
+        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:10201332"), is("https://www.irmng.org/aphia.php?p=taxdetails&id=10201332"));
+        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:1012185"), is("https://www.irmng.org/aphia.php?p=taxdetails&id=1012185"));
+        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:104889"), is("https://www.irmng.org/aphia.php?p=taxdetails&id=104889"));
         assertThat(ExternalIdUtil.urlForExternalId("ITIS:104889"), is("http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=104889"));
         assertThat(ExternalIdUtil.urlForExternalId("urn:lsid:biodiversity.org.au:apni.taxon:168083"), is("http://id.biodiversity.org.au/apni.taxon/168083"));
         assertThat(ExternalIdUtil.urlForExternalId("INAT:4493862"), is("https://www.inaturalist.org/observations/4493862"));
@@ -159,6 +159,17 @@ public class ExternalIdUtilTest {
     @Test
     public void wormsTaxonId() {
         assertThat(ExternalIdUtil.taxonomyProviderFor("urn:lsid:marinespecies.org:taxname:123"), is(TaxonomyProvider.WORMS));
+    }
+
+    @Test
+    public void irmngId() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("urn:lsid:irmng.org:taxname:123"), is(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA));
+        assertThat(ExternalIdUtil.taxonomyProviderFor("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?fam_id=123"), is(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA));
+        assertThat(ExternalIdUtil.taxonomyProviderFor("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?gen_id=123"), is(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA));
+        assertThat(ExternalIdUtil.taxonomyProviderFor("http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=123"), is(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA));
+        assertThat(ExternalIdUtil.taxonomyProviderFor("https://www.irmng.org/aphia.php?p=taxdetails&id=123"), is(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA));
+        String id = ExternalIdUtil.stripPrefix(TaxonomyProvider.INTERIM_REGISTER_OF_MARINE_AND_NONMARINE_GENERA, "urn:lsid:irmng.org:taxname:123");
+        assertThat(id, is("123"));
     }
 
     @Test
