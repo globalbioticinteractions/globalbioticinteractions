@@ -51,14 +51,13 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     @Override
     void indexStudyNode(StudyNode studyNode) {
         studies.add(studyNode.getUnderlyingNode(), StudyConstant.TITLE, studyNode.getTitle());
-        studies.add(studyNode.getUnderlyingNode(), StudyConstant.TITLE_IN_NAMESPACE, getTitleInNamespace(studyNode));
+        studies.add(studyNode.getUnderlyingNode(), StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(studyNode));
 
     }
 
     @Override
     protected StudyNode findStudy(Study study) {
-        String titleNS = getTitleInNamespace(study);
-        final IndexHits<Node> nodes = studies.get(StudyConstant.TITLE_IN_NAMESPACE, titleNS);
+        final IndexHits<Node> nodes = studies.get(StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(study));
         Node foundStudyNode = nodes != null ? nodes.getSingle() : null;
         return foundStudyNode == null ? null : new StudyNode(foundStudyNode);
     }

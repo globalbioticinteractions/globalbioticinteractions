@@ -228,16 +228,6 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
 
     static Dataset embeddedDatasetFor(final Dataset datasetOrig,
                                       final String embeddedCitation,
-                                      final URI embeddedArchiveURI) {
-        return embeddedDatasetFor(
-                datasetOrig,
-                embeddedCitation,
-                embeddedArchiveURI,
-                Collections.emptyMap());
-    }
-
-    static Dataset embeddedDatasetFor(final Dataset datasetOrig,
-                                      final String embeddedCitation,
                                       final URI embeddedArchiveURI,
                                       final Map<String, String> properties) {
         String hasDependencies = datasetOrig.getOrDefault(HAS_DEPENDENCIES, "false");

@@ -222,7 +222,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             studyNode.createRelationshipTo(dataset, RelTypes.IN_DATASET);
         }
 
-        studyNode.getUnderlyingNode().setProperty(StudyConstant.TITLE_IN_NAMESPACE, getTitleInNamespace(study));
+        studyNode.getUnderlyingNode().setProperty(StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(study));
         return studyNode;
     }
 
@@ -321,11 +321,16 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract StudyNode findStudy(Study study);
 
-    String getTitleInNamespace(Study study) {
+    String getIdInNamespace(Study study) {
         String namespace = namespaceOrNull(study);
-        return StringUtils.isBlank(namespace)
+        String externalIdOrDOI = getExternalIdOrDOI(study);
+        String id = StringUtils.isBlank(externalIdOrDOI)
                 ? study.getTitle()
-                : "globi:" + namespace + "/" + study.getTitle();
+                : externalIdOrDOI;
+
+        return StringUtils.isBlank(namespace)
+                ? id
+                : "globi:" + namespace + "/" + id;
     }
 
 

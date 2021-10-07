@@ -375,6 +375,93 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     @Test
+    public void createStudyWithDifferentExternalId() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study1.setExternalId("foo:bar");
+        StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
+
+        StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study2.setExternalId("foo:baz");
+
+        StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
+
+        assertThat(study1Created.getExternalId(),is("foo:bar"));
+        assertThat(study2Created.getExternalId(),is("foo:baz"));
+    }
+
+    @Test
+    public void createStudyWithDifferentExternalIdInSameNamespace() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study1.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study1.setExternalId("foo:bar");
+        StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
+
+        StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study2.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study2.setExternalId("foo:baz");
+
+        StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
+
+        assertThat(study1Created.getExternalId(),is("foo:bar"));
+        assertThat(study2Created.getExternalId(),is("foo:baz"));
+    }
+
+    @Test
+    public void createStudyWithSameExternalIdInDifferentNamespace() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study1.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study1.setExternalId("foo:bar");
+        StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
+
+        StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study2.setOriginatingDataset(new DatasetImpl("name/spacz", URI.create("foo:bar"), is -> is));
+        study2.setExternalId("foo:bar");
+
+        StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
+
+        assertThat(study1Created.getExternalId(),is("foo:bar"));
+        assertThat(study1Created.getOriginatingDataset().getNamespace(),is("name/space"));
+        assertThat(study2Created.getExternalId(),is("foo:bar"));
+        assertThat(study2Created.getOriginatingDataset().getNamespace(),is("name/spacz"));
+    }
+
+    @Test
+    public void createStudyWithDifferentExternalIdInDifferentNamespace() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study1.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study1.setExternalId("foo:bar");
+        StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
+
+        StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study2.setOriginatingDataset(new DatasetImpl("name/spacz", URI.create("foo:bar"), is -> is));
+        study2.setExternalId("foo:baz");
+
+        StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
+
+        assertThat(study1Created.getExternalId(),is("foo:bar"));
+        assertThat(study1Created.getOriginatingDataset().getNamespace(),is("name/space"));
+        assertThat(study2Created.getExternalId(),is("foo:baz"));
+        assertThat(study2Created.getOriginatingDataset().getNamespace(),is("name/spacz"));
+    }
+
+    @Test
+    public void createStudyWithMatchingExternalIdDifferentTitle() throws NodeFactoryException {
+        StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
+        study1.setExternalId("foo:bar");
+        StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
+
+        StudyImpl study2 = new StudyImpl("myTitlez", new DOI("myDoi", "123"), null);
+        study2.setExternalId("foo:bar");
+
+        StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
+
+        assertThat(study1Created.getExternalId(),is("foo:bar"));
+        assertThat(study1Created.getTitle(),is("myTitle"));
+        assertThat(study2Created.getExternalId(),is("foo:bar"));
+        assertThat(study2Created.getTitle(),is("myTitle"));
+    }
+
+    @Test
     public void specimenWithNoName() throws NodeFactoryException {
         Specimen specimen = getNodeFactory().createSpecimen(getNodeFactory().createStudy(new StudyImpl("bla", null, null)), new TaxonImpl(null, "bla:123"));
         assertThat(NodeUtil.getClassifications(specimen).iterator().hasNext(), is(false));

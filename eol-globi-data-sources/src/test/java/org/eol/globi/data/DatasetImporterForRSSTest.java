@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -45,6 +43,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForRSSTest {
+
+    static Dataset embeddedDatasetFor(final Dataset datasetOrig,
+                                      final URI embeddedArchiveURI) {
+        return DatasetImporterForRSS.embeddedDatasetFor(
+                datasetOrig,
+                "some other citation",
+                embeddedArchiveURI,
+                Collections.emptyMap());
+    }
 
     @Test
     public void readRSS() throws StudyImporterException, IOException {
@@ -144,7 +151,7 @@ public class DatasetImporterForRSSTest {
 
     @Test
     public void embeddedDataset() throws IOException {
-        Dataset embeddedDataset = DatasetImporterForRSS.embeddedDatasetFor(getDatasetGroup(), "some other citation", URI.create("http://example.com/archive.zip"));
+        Dataset embeddedDataset = embeddedDatasetFor(getDatasetGroup(), URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
         assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "foo"), is("foo"));
         assertThat(embeddedDataset.getArchiveURI().toString(), is("http://example.com/archive.zip"));
@@ -152,7 +159,7 @@ public class DatasetImporterForRSSTest {
 
     @Test
     public void embeddedDatasetWithConfig() throws IOException {
-        Dataset embeddedDataset = DatasetImporterForRSS.embeddedDatasetFor(getDatasetGroupWithProperty(), "some other citation", URI.create("http://example.com/archive.zip"));
+        Dataset embeddedDataset = embeddedDatasetFor(getDatasetGroupWithProperty(), URI.create("http://example.com/archive.zip"));
         assertThat(embeddedDataset.getCitation(), is("some other citation"));
         assertThat(embeddedDataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"), is("false"));
         assertThat(embeddedDataset.getArchiveURI().toString(), is("http://example.com/archive.zip"));

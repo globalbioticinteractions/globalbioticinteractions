@@ -709,8 +709,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
             final BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap
                     = MapDBUtil.createBigMap();
-            final DB tmpDb1 = MapDBUtil.tmpDB();
-            final DB tmpDb2 = MapDBUtil.tmpDB();
+            final DB sourceIdDb = MapDBUtil.tmpDB();
+            final DB targetIdDb = MapDBUtil.tmpDB();
 
             try {
                 importResourceRelationshipExtension(
@@ -718,11 +718,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         interactionListener,
                         resourceExtension,
                         termTypeIdPropertyMap,
-                        tmpDb1,
-                        tmpDb2);
+                        sourceIdDb,
+                        targetIdDb);
             } finally {
-                tmpDb1.close();
-                tmpDb2.close();
+                sourceIdDb.close();
+                targetIdDb.close();
                 if (termTypeIdPropertyMap != null) {
                     termTypeIdPropertyMap.close();
                 }
@@ -735,17 +735,30 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             InteractionListener interactionListener,
             ArchiveFile resourceExtension,
             BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap,
-            DB tmpDb1,
-            DB tmpDb2) {
-        final Set<String> referencedSourceIds = MapDBUtil.createBigSet(tmpDb1);
-        final Set<String> referencedTargetIds = MapDBUtil.createBigSet(tmpDb2);
+            DB sourceIdDb,
+            DB targetIdDb) {
+        final Set<String> referencedSourceIds = MapDBUtil.createBigSet(sourceIdDb);
+        final Set<String> referencedTargetIds = MapDBUtil.createBigSet(targetIdDb);
+
         collectRelatedResourceIds(resourceExtension, referencedSourceIds, referencedTargetIds);
+
         final List<DwcTerm> termTypes = Arrays.asList(
                 DwcTerm.occurrenceID, DwcTerm.taxonID);
 
-        resolveLocalResourceIds(archive, termTypeIdPropertyMap, referencedSourceIds, referencedTargetIds, termTypes);
+        resolveLocalResourceIds(
+                archive,
+                termTypeIdPropertyMap,
+                referencedSourceIds,
+                referencedTargetIds,
+                termTypes
+        );
 
-        importInteractionsFromResourceRelationships(interactionListener, resourceExtension, termTypeIdPropertyMap, termTypes);
+        importInteractionsFromResourceRelationships(
+                interactionListener,
+                resourceExtension,
+                termTypeIdPropertyMap,
+                termTypes
+        );
     }
 
     private static void importInteractionsFromResourceRelationships(InteractionListener interactionListener,

@@ -128,7 +128,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     protected StudyNode findStudy(Study study) {
         Node node = getGraphDb().findNode(NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE,
-                getTitleInNamespace(study));
+                getIdInNamespace(study));
 
         return node == null
                 ? null
@@ -173,7 +173,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         Node node = getGraphDb()
                 .findNode(NodeLabel.Reference,
                         StudyConstant.TITLE_IN_NAMESPACE,
-                        getTitleInNamespace(study));
+                        getIdInNamespace(study));
 
         return node == null
                 ? createStudy(study)
