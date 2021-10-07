@@ -313,13 +313,8 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
                 : null;
     }
 
-    @Deprecated
     @Override
-    public StudyNode findStudy(String title) {
-        return findStudy(new StudyImpl(title));
-    }
-
-    protected abstract StudyNode findStudy(Study study);
+    public abstract StudyNode findStudy(Study study);
 
     String getIdInNamespace(Study study) {
         String namespace = namespaceOrNull(study);

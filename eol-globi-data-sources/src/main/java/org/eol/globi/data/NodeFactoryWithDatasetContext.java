@@ -77,8 +77,8 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     }
 
     @Override
-    public Study findStudy(String title) {
-        return factory.findStudy(title);
+    public Study findStudy(Study study) {
+        return factory.findStudy(study);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ExporterMeasurementOrFactTest extends GraphDBTestCase {
                         "globi:occur:volume:X\tglobi:occur:X\tyes\t\t\tvolume\t18.0\thttp://purl.obolibrary.org/obo/UO_0000098\t\t\t1992-03-30T08:00:00Z\t\t\t\tmyStudy\t\t\tglobi:ref:X\n";
 
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 

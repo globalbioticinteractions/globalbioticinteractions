@@ -53,7 +53,7 @@ public class ExporterOccurrenceAggregatesTest extends GraphDBTestCase {
         createTestData(123.0);
         resolveNames();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 

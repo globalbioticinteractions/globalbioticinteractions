@@ -56,7 +56,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected StudyNode findStudy(Study study) {
+    public StudyNode findStudy(Study study) {
         final IndexHits<Node> nodes = studies.get(StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(study));
         Node foundStudyNode = nodes != null ? nodes.getSingle() : null;
         return foundStudyNode == null ? null : new StudyNode(foundStudyNode);

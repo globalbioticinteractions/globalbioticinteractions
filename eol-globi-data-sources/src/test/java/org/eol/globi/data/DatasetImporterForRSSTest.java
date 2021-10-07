@@ -391,7 +391,7 @@ public class DatasetImporterForRSSTest {
         }
 
         @Override
-        public Study findStudy(String title) {
+        public Study findStudy(Study study) {
             return null;
         }
 

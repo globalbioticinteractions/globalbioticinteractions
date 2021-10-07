@@ -125,7 +125,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected StudyNode findStudy(Study study) {
+    public StudyNode findStudy(Study study) {
         Node node = getGraphDb().findNode(NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE,
                 getIdInNamespace(study));

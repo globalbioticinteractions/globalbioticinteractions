@@ -28,7 +28,7 @@ public class ExporterTaxaDistinctTest extends GraphDBTestCase {
         taxonIndex.getOrCreateTaxon(new TaxonImpl("ThemFishes", "no:match"));
         resolveNames();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
 
         String actual = exportStudy(myStudy1);
         assertThat(actual, containsString("EOL:123\tCanis lupus\t\t\t\t\t\t\t\t\thttp://eol.org/pages/123\t\t\t\t"));

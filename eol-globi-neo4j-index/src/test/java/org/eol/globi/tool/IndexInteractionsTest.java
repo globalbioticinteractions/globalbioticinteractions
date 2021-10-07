@@ -60,7 +60,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         new IndexInteractions(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j2(getGraphDb());
-        StudyImpl study1 = new StudyImpl("some study", null, "come citation");
+        StudyImpl study1 = new StudyImpl("some study", new DOI("123.23", "222"), "come citation");
         study1.setOriginatingDataset(new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream));
         StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
 

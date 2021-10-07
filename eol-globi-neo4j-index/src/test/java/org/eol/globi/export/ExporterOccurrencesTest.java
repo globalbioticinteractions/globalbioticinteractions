@@ -27,7 +27,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 
@@ -53,7 +53,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         resolveNames();
         String expected = getExpectedData();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 
@@ -73,7 +73,7 @@ public class ExporterOccurrencesTest extends GraphDBTestCase {
         String expected = getExpectedHeader();
         expected += getExpectedData();
 
-        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy("myStudy");
+        StudyNode myStudy1 = (StudyNode) nodeFactory.findStudy(new StudyImpl("myStudy"));
 
         StringWriter row = new StringWriter();
 

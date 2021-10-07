@@ -6,7 +6,10 @@ import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
@@ -20,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TreeMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -81,8 +85,16 @@ public class DatasetImporterForWrastTest extends GraphDBTestCase {
         assertNotNull(nodeFactory.findSeason("spring"));
         assertNotNull(nodeFactory.findSeason("fall"));
 
-        Study foundStudy = nodeFactory.findStudy("Wrast 2008");
+        AtomicReference<StudyNode> foundStudyRef = new AtomicReference<>();
+        NodeUtil.findStudies(getGraphDb(), new NodeListener() {
+            @Override
+            public void on(Node node) {
+                foundStudyRef.set(new StudyNode(node));
+            }
+        });
+        StudyNode foundStudy = foundStudyRef.get();
         assertNotNull(foundStudy);
+        assertThat(foundStudy.getTitle(), is("Wrast 2008"));
 
         RelationshipListener handler = relationship -> {
             Date unixEpochProperty = null;

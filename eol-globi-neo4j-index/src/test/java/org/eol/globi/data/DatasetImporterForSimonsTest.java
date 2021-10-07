@@ -7,6 +7,7 @@ import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -64,14 +65,14 @@ public class DatasetImporterForSimonsTest extends GraphDBTestCase {
         assertNotNull(taxonIndex.findTaxonByName("Halieutichthys aculeatus"));
         assertNotNull(taxonIndex.findTaxonByName("Ampelisca sp. (abdita complex)"));
 
-        assertNotNull(nodeFactory.findStudy("Simons 1997"));
+        assertNotNull(nodeFactory.findStudy(new StudyImpl("Simons 1997")));
 
         assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_1, LONG_1, -60.0d, null)));
         assertNotNull(nodeFactory.findLocation(new LocationImpl(LAT_2, LONG_2, -20.0d, null)));
 
         assertNotNull(nodeFactory.findSeason("summer"));
 
-        StudyNode foundStudy = (StudyNode) nodeFactory.findStudy("Simons 1997");
+        StudyNode foundStudy = (StudyNode) nodeFactory.findStudy(new StudyImpl("Simons 1997"));
         assertNotNull(foundStudy);
 
         RelationshipListener handler = rel -> {

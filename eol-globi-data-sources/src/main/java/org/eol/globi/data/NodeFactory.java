@@ -31,7 +31,7 @@ public interface NodeFactory extends AutoCloseable {
 
     Study getOrCreateStudy(Study study) throws NodeFactoryException;
 
-    Study findStudy(String title);
+    Study findStudy(Study study);
 
     Season findSeason(String seasonName);
 

@@ -8,6 +8,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -26,18 +27,18 @@ import org.neo4j.graphdb.Result;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
@@ -80,10 +81,10 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
                 || (recordNumber > 24220 && recordNumber < 24340));
         importStudy(importer);
 
-        Study vectorStudy = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:153303");
+        Study vectorStudy = nodeFactory.findStudy(new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:153303"));
         assertThat(vectorStudy, is(notNullValue()));
 
-        StudyNode study = (StudyNode) nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
+        StudyNode study = (StudyNode) nodeFactory.findStudy(new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527"));
 
         AtomicBoolean success = new AtomicBoolean(false);
         NodeUtil.handleCollectedRelationships(
@@ -130,11 +131,15 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
         }}, new TreeMap<>());
         resolveNames();
 
-        Study study = nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60536");
+        StudyImpl study2 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60536");
+        study2.setExternalId("http://bioinfo.org.uk/html/b60536.htm");
+        Study study = nodeFactory.findStudy(study2);
         assertNotNull(study);
         assertThat(study.getExternalId(), is("http://bioinfo.org.uk/html/b60536.htm"));
-        assertNull(nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:bla"));
-        StudyNode study1 = (StudyNode) nodeFactory.findStudy(TaxonomyProvider.BIO_INFO + "ref:60527");
+        assertNull(nodeFactory.findStudy(new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:bla")));
+        StudyImpl study3 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527");
+        study3.setExternalId("http://bioinfo.org.uk/html/b60527.htm");
+        StudyNode study1 = (StudyNode) nodeFactory.findStudy(study3);
         assertThat(study1.getCitation(), is("citation A"));
         assertThat(study1, is(notNullValue()));
         List<Node> specimenList = new ArrayList<Node>();

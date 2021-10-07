@@ -11,6 +11,7 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.domain.Term;
@@ -86,7 +87,7 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
         importer.parseJSON(getClass().getResourceAsStream("inaturalist/unsupported_interaction_type_inaturalist_response.json"),
                 InteractTypeMapperFactoryImpl.getTermLookupService(getTermLookupServiceNoOp(), typeMap));
         resolveNames();
-        Study study = nodeFactory.findStudy("INAT:45209");
+        Study study = nodeFactory.findStudy(new StudyImpl("INAT:45209"));
         assertThat(study, is(nullValue()));
     }
 
@@ -115,12 +116,16 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
 
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(22));
 
-        Study anotherStudy = nodeFactory.findStudy("INAT:831");
+        StudyImpl study = new StudyImpl("INAT:831");
+        study.setExternalId("https://www.inaturalist.org/observations/831");
+        Study anotherStudy = nodeFactory.findStudy(study);
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getCitation(), containsString("Ken-ichi Ueda. 2008. Argiope eating Orthoptera. iNaturalist.org. Accessed at <https://www.inaturalist.org/observations/831> on "));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/831"));
 
-        anotherStudy = nodeFactory.findStudy("INAT:97380");
+        StudyImpl study1 = new StudyImpl("INAT:97380");
+        study1.setExternalId("https://www.inaturalist.org/observations/97380");
+        anotherStudy = nodeFactory.findStudy(study1);
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getCitation(), containsString("annetanne. 2012. Misumena vatia eating Eristalis nemorum."));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/97380"));
@@ -185,7 +190,9 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
         resolveNames();
         assertThat(NodeUtil.findAllStudies(getGraphDb()).size(), is(10));
 
-        Study anotherStudy = nodeFactory.findStudy("INAT:2366807");
+        StudyImpl study = new StudyImpl("INAT:2366807");
+        study.setExternalId("https://www.inaturalist.org/observations/2366807");
+        Study anotherStudy = nodeFactory.findStudy(study);
         assertThat(anotherStudy, is(notNullValue()));
         assertThat(anotherStudy.getExternalId(), is("https://www.inaturalist.org/observations/2366807"));
 

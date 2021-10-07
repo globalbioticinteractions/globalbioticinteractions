@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForRobledoTest extends GraphDBTestCase {
 
     @Test
-    public void createAndPopulateStudy() throws StudyImporterException, NodeFactoryException {
+    public void createAndPopulateStudy() throws StudyImporterException {
         DatasetImporterForRobledo importer = new DatasetImporterForRobledo(new ParserFactoryLocal(), nodeFactory);
 
         importStudy(importer);
@@ -29,7 +29,7 @@ public class DatasetImporterForRobledoTest extends GraphDBTestCase {
         assertNotNull(taxonIndex.findTaxonByName("Heliconia imbricata"));
         assertNotNull(taxonIndex.findTaxonByName("Renealmia alpinia"));
 
-        assertNotNull(nodeFactory.findStudy(study.getTitle()));
+        assertNotNull(nodeFactory.findStudy(study));
 
         AtomicInteger count = new AtomicInteger(0);
         NodeUtil.handleCollectedRelationships(
