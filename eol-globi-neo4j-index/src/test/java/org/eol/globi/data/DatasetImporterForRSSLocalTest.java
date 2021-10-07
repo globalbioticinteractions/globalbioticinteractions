@@ -194,9 +194,6 @@ public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
         configNode.put("url", rss.toURI().toString());
         configNode.put("hasDependencies", true);
 
-        System.out.println(configNode.toString());
-        System.out.println(rssContent);
-
         dataset.setConfig(configNode);
         importer.setDataset(dataset);
         importStudy(importer);

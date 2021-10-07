@@ -873,7 +873,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 .map(StringUtils::trim)
                 .filter(x -> StringUtils.startsWith(x, "scientificName:"))
                 .findFirst()
-                .map(x -> RegExUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
+                .map(x -> StringUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
     }
 
     private static void resolveLocalResourceIds(Archive archive,
