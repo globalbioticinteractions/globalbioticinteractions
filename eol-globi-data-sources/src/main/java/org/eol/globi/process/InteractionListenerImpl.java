@@ -32,6 +32,7 @@ public class InteractionListenerImpl implements InteractionListener {
 
         this.processors =
                 Arrays.asList(
+                        new TaxonNameEnricher(queue, logger),
                         new InteractionExpander(queue, logger),
                         new OccurrenceIdEnricher(queue, logger),
                         createMappingListener(logger, dataset, queue),

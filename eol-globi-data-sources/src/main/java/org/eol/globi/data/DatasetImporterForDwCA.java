@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.Taxon;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
@@ -871,7 +873,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 .map(StringUtils::trim)
                 .filter(x -> StringUtils.startsWith(x, "scientificName:"))
                 .findFirst()
-                .map(x -> StringUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
+                .map(x -> RegExUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
     }
 
     private static void resolveLocalResourceIds(Archive archive,

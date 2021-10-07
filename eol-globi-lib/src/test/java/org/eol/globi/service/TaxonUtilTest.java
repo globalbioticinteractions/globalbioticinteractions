@@ -597,14 +597,44 @@ public class TaxonUtilTest {
     public void enrichTaxonNames2() {
         HashMap<String, String> properties = new HashMap<String, String>() {{
             put("sourceTaxonGenus", "some_genus");
+            put("sourceTaxonGenusId", "id:1234");
         }};
         Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
 
         assertThat(enriched.get("sourceTaxonGenus"), is("some_genus"));
         assertThat(enriched.get("sourceTaxonGenusName"), is("some_genus"));
         assertThat(enriched.get("sourceTaxonName"), is("some_genus"));
+        assertThat(enriched.get("sourceTaxonRank"), is("genus"));
         assertThat(enriched.get("sourceTaxonPath"), is("some_genus"));
         assertThat(enriched.get("sourceTaxonPathNames"), is("genus"));
+    }
+
+    @Test
+    public void enrichTaxonNames4() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceTaxonClassName", "some_class");
+            put("sourceTaxonSubclass", "some_subclass");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonName"), is("some_subclass"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_class | some_subclass"));
+        assertThat(enriched.get("sourceTaxonPathNames"), is("class | subclass"));
+        assertThat(enriched.get("sourceTaxonRank"), is("subclass"));
+    }
+
+    @Test
+    public void enrichTaxonNames5() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceTaxonSpeciesName", "Homo sapiens");
+            put("sourceTaxonSubclass", "some_subclass");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonName"), is("Homo sapiens"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_subclass | Homo sapiens"));
+        assertThat(enriched.get("sourceTaxonPathNames"), is("subclass | species"));
+        assertThat(enriched.get("sourceTaxonRank"), is("species"));
     }
 
     @Test

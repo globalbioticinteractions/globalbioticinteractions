@@ -252,12 +252,8 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
                 InteractUtil.putIfKeyNotExistsAndValueNotBlank(link, label, parser.getValueByLabel(label));
             }
 
-            interactionListener.on(TaxonUtil.enrichTaxonNames(link));
+            interactionListener.on(link);
         }
-    }
-
-    private void doIdentifyMap(LabeledCSVParser parser, Map<String, String> link, String propertyName) {
-        InteractUtil.putNotBlank(link, propertyName, StringUtils.trim(parser.getValueByLabel(propertyName)));
     }
 
     private void attemptToGenerateReferencePropertiesIfMissing(String namespace, Map<String, String> link) {

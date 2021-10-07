@@ -28,19 +28,20 @@ import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_NAMES;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIES;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 
-public class InteractionExpanderTest {
+public class TaxonNameEnricherTest {
 
     @Test
     public void importWithMissingTargetTaxonButAvailableInstitutionCollectionCatalogTriple() throws StudyImporterException {
         List<String> msgs = new ArrayList<>();
         List<Map<String, String>> received = new ArrayList<>();
-        final InteractionListener listener = new InteractionExpander(
+        final InteractionListener listener = new TaxonNameEnricher(
                 interaction -> received.add(interaction),
                 new NullImportLogger() {
                     @Override
@@ -86,10 +87,49 @@ public class InteractionExpanderTest {
     }
 
     @Test
+    public void detectHigherOrderTaxa() throws StudyImporterException {
+        List<String> msgs = new ArrayList<>();
+        List<Map<String, String>> received = new ArrayList<>();
+        final InteractionListener listener = new TaxonNameEnricher(
+                interaction -> received.add(interaction),
+                new NullImportLogger() {
+                    @Override
+                    public void info(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
+
+                    @Override
+                    public void warn(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
+
+                    @Override
+                    public void severe(LogContext ctx, String message) {
+                        msgs.add(message);
+                    }
+                });
+        final TreeMap<String, String> link = new TreeMap<>();
+        link.put(SOURCE_TAXON_SPECIES, "Donald duck");
+        link.put(DatasetImporterForTSV.INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+        link.put(DATASET_CITATION, "some source ref");
+        link.put(REFERENCE_ID, "123");
+        link.put(REFERENCE_CITATION, "");
+
+        listener.on(link);
+
+        assertThat(received.size(), is(1));
+
+        Map<String, String> receivedInteraction = received.get(0);
+        assertThat(receivedInteraction.get(SOURCE_TAXON_NAME),
+                is("Donald duck"));
+
+    }
+
+    @Test
     public void importWithMissingSourceTaxonButAvailableInstitutionCollectionCatalogTriple() throws StudyImporterException {
         List<String> msgs = new ArrayList<>();
         List<Map<String, String>> received = new ArrayList<>();
-        final InteractionListener listener = new InteractionExpander(
+        final InteractionListener listener = new TaxonNameEnricher(
                 interaction -> received.add(interaction),
                 new NullImportLogger() {
                     @Override

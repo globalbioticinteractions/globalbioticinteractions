@@ -34,42 +34,7 @@ public class InteractionExpander extends InteractionProcessorAbstract {
     public void on(Map<String, String> interaction) throws StudyImporterException {
         List<Map<String, String>> propertiesList = AssociatedTaxaUtil.expandIfNeeded(interaction);
         for (Map<String, String> expandedLink : propertiesList) {
-            addPlaceholderNamesIfNeeded(expandedLink);
             emit(expandedLink);
-        }
-    }
-
-    private void addPlaceholderNamesIfNeeded(Map<String, String> expandedLink) {
-        if (InteractionValidator.createSourceTaxonPredicate(null).negate().test(expandedLink)) {
-            Stream<String> placeholderNames = Stream.of(
-                    SOURCE_INSTITUTION_CODE,
-                    SOURCE_COLLECTION_CODE,
-                    SOURCE_COLLECTION_ID,
-                    SOURCE_CATALOG_NUMBER,
-                    SOURCE_OCCURRENCE_ID);
-            addPlaceholderNamesIfPossible(expandedLink, placeholderNames, "source", SOURCE_TAXON_NAME);
-        }
-        if (InteractionValidator.createTargetTaxonPredicate(null).negate().test(expandedLink)) {
-            Stream<String> placeholderNames = Stream.of(
-                    TARGET_INSTITUTION_CODE,
-                    TARGET_COLLECTION_CODE,
-                    TARGET_COLLECTION_ID,
-                    TARGET_CATALOG_NUMBER,
-                    TARGET_OCCURRENCE_ID);
-            addPlaceholderNamesIfPossible(expandedLink, placeholderNames, "target", TARGET_TAXON_NAME);
-        }
-    }
-
-    private void addPlaceholderNamesIfPossible(Map<String, String> expandedLink, Stream<String> placeholderNames, String sourceOrTarget, String nameToBeFilled) {
-        final String placeholderMessage = " using institutionCode/collectionCode/collectionId/catalogNumber/occurrenceId as placeholder";
-
-        String targetNamePlaceholder = placeholderNames
-                .map(expandedLink::get)
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
-        if (StringUtils.isNotBlank(targetNamePlaceholder)) {
-            expandedLink.putIfAbsent(nameToBeFilled, targetNamePlaceholder);
-            LogUtil.logWarningIfPossible(expandedLink, sourceOrTarget + " taxon name missing:" + placeholderMessage, logger);
         }
     }
 

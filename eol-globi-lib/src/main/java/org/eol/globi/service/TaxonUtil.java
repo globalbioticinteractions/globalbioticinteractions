@@ -581,30 +581,48 @@ public class TaxonUtil {
     }
 
 
-    public static String generateTaxonName(Map<String, String> properties,
-                                           List<String> higherOrderRankKeys,
-                                           String genusKey,
-                                           String specificEpithetKey,
-                                           String subspecificEpithetKey,
-                                           String speciesKey,
-                                           String commonNameKey) {
+    public static Taxon generateTaxonName(Map<String, String> properties,
+                                          List<String> higherOrderRankKeys,
+                                          String genusKey,
+                                          String specificEpithetKey,
+                                          String subspecificEpithetKey,
+                                          String speciesKey,
+                                          String commonNameKey) {
 
-        String taxonName = generateSpeciesName(properties, genusKey, specificEpithetKey, subspecificEpithetKey, speciesKey);
+        String prefix = StringUtils.getCommonPrefix((String[]) higherOrderRankKeys.toArray());
+
+        Taxon taxon = generateSpecies(properties, genusKey, specificEpithetKey, subspecificEpithetKey, speciesKey);
+
+        String taxonName = taxon == null ? null : taxon.getName();
 
         if (isBlank(taxonName)) {
+            String taxonRank = null;
             for (String rankName : higherOrderRankKeys) {
                 String name = getRankValue(properties, rankName);
 
                 if (isNotBlank(name)) {
                     taxonName = name;
+                    taxonRank = parseRank(rankName, prefix);
                     break;
                 }
             }
             if (isBlank(taxonName)) {
                 taxonName = getRankValue(properties, commonNameKey);
+                taxonRank = parseRank(commonNameKey, prefix);
+            }
+
+            if (StringUtils.isNotBlank(taxonName)) {
+                taxon = new TaxonImpl(taxonName);
+                taxon.setName(taxonName);
+                taxon.setRank(taxonRank);
             }
         }
-        return taxonName;
+
+        return taxon;
+    }
+
+    public static String parseRank(String rankKey, String prefix) {
+        return StringUtils.lowerCase(StringUtils.removeEnd(StringUtils.removeStart(rankKey, prefix), "Name"));
     }
 
     public static String getRankValue(Map<String, String> properties, String rankName) {
@@ -629,6 +647,20 @@ public class TaxonUtil {
                                              String specificEpithetKey,
                                              String subspecificEpithetKey,
                                              String speciesKey) {
+        return generateSpecies(
+                properties,
+                genusKey,
+                specificEpithetKey,
+                subspecificEpithetKey,
+                speciesKey
+        ).getName();
+    }
+
+    public static Taxon generateSpecies(Map<String, String> properties,
+                                        String genusKey,
+                                        String specificEpithetKey,
+                                        String subspecificEpithetKey,
+                                        String speciesKey) {
         String speciesName = null;
         if (isNotBlank(genusKey)
                 && hasRankValue(properties, genusKey)
@@ -643,10 +675,22 @@ public class TaxonUtil {
                 && hasRankValue(properties, speciesKey)) {
             speciesName = trim(getRankValue(properties, speciesKey));
         }
-        return speciesName;
+        TaxonImpl taxon = new TaxonImpl(speciesName);
+        String[] parts = split(taxon.getName(), " ");
+        if (parts != null && parts.length == 2) {
+            taxon.setRank(StringUtils.lowerCase(SPECIES));
+        } else if (parts != null && parts.length > 2) {
+            taxon.setRank(StringUtils.lowerCase("subspecies"));
+
+        }
+        return taxon;
     }
 
     public static String generateSourceTaxonName(Map<String, String> properties) {
+        return generateSourceTaxon(properties).getName();
+    }
+
+    public static Taxon generateSourceTaxon(Map<String, String> properties) {
         return generateTaxonName(properties,
                 SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS,
                 SOURCE_TAXON_GENUS,
@@ -657,6 +701,10 @@ public class TaxonUtil {
     }
 
     public static String generateTargetTaxonName(Map<String, String> properties) {
+        return generateTargetTaxon(properties).getName();
+    }
+
+    public static Taxon generateTargetTaxon(Map<String, String> properties) {
         return generateTaxonName(properties,
                 TARGET_TAXON_HIGHER_ORDER_RANK_KEYS,
                 TARGET_TAXON_GENUS,
@@ -680,7 +728,12 @@ public class TaxonUtil {
 
     public static Map<String, String> enrichIfNeeded(Map<String, String> properties) {
         if (StringUtils.isBlank(properties.get(SOURCE_TAXON_NAME))) {
-            properties.put(SOURCE_TAXON_NAME, generateSourceTaxonName(properties));
+            Taxon taxon = generateSourceTaxon(properties);
+            if (taxon != null) {
+                properties.put(SOURCE_TAXON_NAME, taxon.getName());
+                properties.put(SOURCE_TAXON_RANK, taxon.getRank());
+                properties.put(SOURCE_TAXON_ID, taxon.getExternalId());
+            }
         }
 
         if (StringUtils.isBlank(properties.get(SOURCE_TAXON_PATH))) {
@@ -697,7 +750,12 @@ public class TaxonUtil {
         }
 
         if (StringUtils.isBlank(properties.get(TARGET_TAXON_NAME))) {
-            properties.put(TARGET_TAXON_NAME, generateTargetTaxonName(properties));
+            Taxon taxon = generateTargetTaxon(properties);
+            if (taxon != null) {
+                properties.put(TARGET_TAXON_NAME, taxon.getName());
+                properties.put(TARGET_TAXON_RANK, taxon.getRank());
+                properties.put(TARGET_TAXON_ID, taxon.getExternalId());
+            }
         }
 
         if (StringUtils.isBlank(properties.get(TARGET_TAXON_PATH))) {

@@ -55,9 +55,4 @@ public class InteractionListenerCollectUnresolvedOccurrenceIds implements Intera
                 && interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
     }
 
-    public static boolean hasInteractionTerms(Map<String, String> interaction) {
-        return interaction.containsKey(DatasetImporterForTSV.INTERACTION_TYPE_ID)
-                || interaction.containsKey(DatasetImporterForTSV.INTERACTION_TYPE_NAME);
-    }
-
 }
