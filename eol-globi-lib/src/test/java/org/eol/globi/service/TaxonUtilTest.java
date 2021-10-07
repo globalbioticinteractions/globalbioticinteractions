@@ -41,6 +41,65 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void resolveSubclassName() {
+        Map<String, String> properties = new TreeMap<String, String>() {{
+            put("sourceTaxonClassName", "Arachnida");
+            put("sourceTaxonSubclassName", "Acari");
+        }};
+
+        String name = TaxonUtil.generateSourceTaxonName(properties);
+        assertThat(name, is("Acari"));
+
+    }
+
+    @Test
+    public void resolveSubclassName2() {
+        Map<String, String> properties = new TreeMap<String, String>() {{
+            put("sourceTaxonClassName", "Arachnida");
+            put("sourceTaxonSubclass", "Acari");
+        }};
+
+        String name = TaxonUtil.generateSourceTaxonName(properties);
+        assertThat(name, is("Acari"));
+
+    }
+
+    @Test
+    public void resolveSubclassName3() {
+        Map<String, String> properties = new TreeMap<String, String>() {{
+            put("sourceTaxonClass", "Arachnida");
+            put("sourceTaxonSubclassName", "Acari");
+        }};
+
+        String name = TaxonUtil.generateSourceTaxonName(properties);
+        assertThat(name, is("Acari"));
+
+    }
+    @Test
+    public void generateSourceTaxonPath2() {
+        Map<String, String> properties = new TreeMap<String, String>() {{
+            put("sourceTaxonClass", "Arachnida");
+            put("sourceTaxonSubclassName", "Acari");
+        }};
+
+        String name = TaxonUtil.generateSourceTaxonPath(properties);
+        assertThat(name, is("Arachnida | Acari"));
+
+    }
+
+    @Test
+    public void generateSourceTaxonPath3() {
+        Map<String, String> properties = new TreeMap<String, String>() {{
+            put("sourceTaxonClassName", "Arachnida");
+            put("sourceTaxonSubclass", "Acari");
+        }};
+
+        String name = TaxonUtil.generateSourceTaxonPath(properties);
+        assertThat(name, is("Arachnida | Acari"));
+
+    }
+
+    @Test
     public void anotherHomonym() {
         TaxonImpl taxon = new TaxonImpl();
 

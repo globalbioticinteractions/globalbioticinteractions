@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
@@ -504,12 +505,15 @@ public class TaxonUtil {
                                             String speciesRank) {
         Stream<String> rankValues = allRanks
                 .stream()
-                .map(properties::get)
+                .map(rankName -> getRankValue(properties, rankName))
                 .filter(StringUtils::isNotBlank);
 
         String species = trim(generateSpeciesName(properties, genusRank, specificEpithetRank, subspecificEpithetRank, speciesRank));
 
-        Stream<String> ranksWithSpecies = isBlank(species) ? rankValues : Stream.concat(rankValues, Stream.of(species));
+        Stream<String> ranksWithSpecies = isBlank(species)
+                ? rankValues
+                : Stream.concat(rankValues, Stream.of(species));
+
         return ranksWithSpecies
                 .collect(Collectors.joining(CharsetConstant.SEPARATOR));
     }
@@ -523,7 +527,7 @@ public class TaxonUtil {
                                                 String speciesRank) {
         Stream<String> rankLabels = allRanks
                 .stream()
-                .map(x -> Pair.of(x, properties.get(x)))
+                .map(x -> Pair.of(x, getRankValue(properties, x)))
                 .filter(x -> isNotBlank(x.getValue()))
                 .map(x -> lowerCase(replacePattern(replace(x.getKey(), keyPrefix, ""), NAME_SUFFIX + "$", "")));
 
@@ -589,17 +593,35 @@ public class TaxonUtil {
 
         if (isBlank(taxonName)) {
             for (String rankName : higherOrderRankKeys) {
-                final String name = properties.get(rankName);
+                String name = getRankValue(properties, rankName);
+
                 if (isNotBlank(name)) {
                     taxonName = name;
                     break;
                 }
             }
             if (isBlank(taxonName)) {
-                taxonName = properties.get(commonNameKey);
+                taxonName = getRankValue(properties, commonNameKey);
             }
         }
         return taxonName;
+    }
+
+    public static String getRankValue(Map<String, String> properties, String rankName) {
+        String name = properties.get(rankName);
+        if (isBlank(name) && StringUtils.endsWith(rankName, NAME_SUFFIX)) {
+            String rankNameTruncated = rankName.substring(0, rankName.length() - NAME_SUFFIX.length());
+            name = properties.get(rankNameTruncated);
+        }
+        return name;
+    }
+
+    public static boolean hasRankValue(Map<String, String> properties, String rankName) {
+        String name = properties.get(rankName);
+        if (isBlank(name) && !StringUtils.endsWith(rankName, NAME_SUFFIX)) {
+            name = properties.get(rankName + NAME_SUFFIX);
+        }
+        return StringUtils.isNoneBlank(name);
     }
 
     public static String generateSpeciesName(Map<String, String> properties,
@@ -609,17 +631,17 @@ public class TaxonUtil {
                                              String speciesKey) {
         String speciesName = null;
         if (isNotBlank(genusKey)
-                && properties.containsKey(genusKey)
+                && hasRankValue(properties, genusKey)
                 && isNotBlank(specificEpithetKey)
-                && isNotBlank(properties.get(specificEpithetKey))) {
+                && hasRankValue(properties, specificEpithetKey)) {
             List<String> speciesNameParts = Arrays.asList(
-                    properties.get(genusKey),
-                    properties.get(specificEpithetKey),
-                    properties.get(subspecificEpithetKey));
+                    getRankValue(properties, genusKey),
+                    getRankValue(properties, specificEpithetKey),
+                    getRankValue(properties, subspecificEpithetKey));
             speciesName = trim(join(speciesNameParts, " "));
         } else if (isNotBlank(speciesKey)
-                && properties.containsKey(speciesKey)) {
-            speciesName = trim(properties.get(speciesKey));
+                && hasRankValue(properties, speciesKey)) {
+            speciesName = trim(getRankValue(properties, speciesKey));
         }
         return speciesName;
     }
