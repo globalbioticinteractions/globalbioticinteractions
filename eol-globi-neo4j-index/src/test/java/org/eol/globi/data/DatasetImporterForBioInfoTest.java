@@ -81,10 +81,14 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
                 || (recordNumber > 24220 && recordNumber < 24340));
         importStudy(importer);
 
-        Study vectorStudy = nodeFactory.findStudy(new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:153303"));
+        StudyImpl study1 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:153303");
+        study1.setExternalId("http://bioinfo.org.uk/html/b153303.htm");
+        Study vectorStudy = nodeFactory.findStudy(study1);
         assertThat(vectorStudy, is(notNullValue()));
 
-        StudyNode study = (StudyNode) nodeFactory.findStudy(new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527"));
+        StudyImpl study2 = new StudyImpl(TaxonomyProvider.BIO_INFO + "ref:60527");
+        study2.setExternalId("http://bioinfo.org.uk/html/b60527.htm");
+        StudyNode study = (StudyNode) nodeFactory.findStudy(study2);
 
         AtomicBoolean success = new AtomicBoolean(false);
         NodeUtil.handleCollectedRelationships(
