@@ -139,7 +139,7 @@ public final class DateUtil {
             msg = "date [" + printDateTime(dateTime) + "] occurred in the first century AD";
         } else {
             try {
-                boolean b = hasStartDateAfterEndDate(eventDate);
+                hasStartDateAfterEndDate(eventDate);
             } catch (IllegalArgumentException ex) {
                 msg = "issue handling date range [" + eventDate + "]: " + ex.getMessage();
             }

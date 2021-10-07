@@ -14,6 +14,7 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractTypeMapper;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetProxy;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
@@ -352,18 +354,51 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 } else if ("http://eol.org/schema/taxonID".equals(column.getDataTypeId())) {
                     convertedValue = TaxonomyProvider.ID_PREFIX_EOL + value.trim();
                 } else if ("date".equals(column.getDataTypeBase())) {
-                    final DateTimeFormatter dateTimeFormatter = StringUtils.isNotBlank(column.getDataTypeFormat())
-                            ? DateTimeFormat.forPattern(column.getDataTypeFormat())
-                            : DateTimeFormat.fullDateTime();
-                    convertedValue = dateTimeFormatter.withZoneUTC()
-                            .parseDateTime(value)
-                            .toString(ISODateTimeFormat.dateTime().withZoneUTC());
+                    convertedValue = handleDateType(value, column);
                 } else {
                     convertedValue = value;
                 }
             }
         }
         return StringUtils.trim(convertedValue);
+    }
+
+    public static String handleDateType(String value, Column column) {
+        DateTime parsedDate = null;
+        String dataTypeFormat = column.getDataTypeFormat();
+        if (StringUtils.isBlank(dataTypeFormat)) {
+            parsedDate = DateTimeFormat.fullDateTime().withZoneUTC().parseDateTime(value);
+        } else {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormat
+                    .forPattern(dataTypeFormat)
+                    .withZoneUTC();
+            try {
+                parsedDate = dateTimeFormatter.parseDateTime(value);
+            } catch (IllegalArgumentException ex) {
+                if (StringUtils.equals(dataTypeFormat, "MM/dd/YYYY")) {
+                    List<String> formatAttempts = Arrays.asList("MM/YYYY", "YYYY");
+                    for (String formatAttempt : formatAttempts) {
+                        DateTimeFormatter dateTimeFormatterAltered = DateTimeFormat
+                                .forPattern(formatAttempt)
+                                .withZoneUTC();
+                        try {
+                            parsedDate = dateTimeFormatterAltered.parseDateTime(value);
+                        } catch (IllegalArgumentException e) {
+                            // ignore
+                        }
+                    }
+                    if (parsedDate == null) {
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        if (parsedDate == null) {
+            throw new IllegalArgumentException("failed to parse date [" + value + "]");
+        }
+
+        return parsedDate.toString(ISODateTimeFormat.dateTime().withZoneUTC());
     }
 
     private static String populateValueUrlOrNull(String value, Column column, String convertedValue) {

@@ -26,6 +26,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DatasetImporterForMetaTableTest {
 
     @Test
@@ -118,8 +119,6 @@ public class DatasetImporterForMetaTableTest {
         List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetImpl(null, URI.create(baseUrl), inStream -> inStream));
         assertThat(columnNames.size(), is(40));
     }
-
-
 
 
     @Test
@@ -242,6 +241,34 @@ public class DatasetImporterForMetaTableTest {
         DatasetImporterForMetaTable.parseValue("10-11 May-18", column);
     }
 
+
+    @Test
+    public void handleDateType() {
+        final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("MM/dd/YYYY");
+        String parsedString = DatasetImporterForMetaTable.handleDateType("02/01/1929", column);
+        assertThat(parsedString, is("1929-02-01T00:00:00.000Z"));
+    }
+
+    @Test
+    public void handleDateTypeTruncated() {
+        final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("MM/dd/YYYY");
+        String parsedString = DatasetImporterForMetaTable.handleDateType("1929", column);
+        assertThat(parsedString, is("1929-01-01T00:00:00.000Z"));
+    }
+
+    @Test
+    public void handleDateTypeTruncated2() {
+        final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("MM/dd/YYYY");
+        String parsedString = DatasetImporterForMetaTable.handleDateType("03/1929", column);
+        assertThat(parsedString, is("1929-03-01T00:00:00.000Z"));
+    }
+
     @Test
     public void parseValueEOL() {
         final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "string");
@@ -333,9 +360,9 @@ public class DatasetImporterForMetaTableTest {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 Map<URI, String> resourceMap = new HashMap<URI, String>() {{
-                   put(URI.create("interaction_types_ignored.csv"), "field_observation_id\nshouldBeIgnored");
-                   put(URI.create("interaction_types_mapping.csv"), "observation_field_name,observation_field_id,interaction_type_label,interaction_type_id\n" +
-                           "associated with,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437");
+                    put(URI.create("interaction_types_ignored.csv"), "field_observation_id\nshouldBeIgnored");
+                    put(URI.create("interaction_types_mapping.csv"), "observation_field_name,observation_field_id,interaction_type_label,interaction_type_id\n" +
+                            "associated with,,interactsWith, http://purl.obolibrary.org/obo/RO_0002437");
                 }};
 
                 String input = resourceMap.get(resourceName);
