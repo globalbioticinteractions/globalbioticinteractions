@@ -173,6 +173,12 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void irmngUrl() {
+        assertThat(ExternalIdUtil.urlForExternalId("IRMNG:123"),
+                is("https://www.irmng.org/aphia.php?p=taxdetails&id=123"));
+    }
+
+        @Test
     public void mammalSpeciesOfTheWorldId() {
         String url = "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=12100795";
         assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.MSW));

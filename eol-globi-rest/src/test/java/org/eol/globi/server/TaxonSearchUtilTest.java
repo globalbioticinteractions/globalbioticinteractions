@@ -51,4 +51,12 @@ public class TaxonSearchUtilTest {
         validate(query);
     }
 
+    @Test
+    public void linksForTaxonName() {
+        CypherQuery query = TaxonSearchUtil.createPagedQuery("Enhydra lutris", null);
+        assertThat(query.getVersionedQuery(), Is.is("CYPHER 2.3 START someTaxon = node:taxons({pathQuery}) MATCH someTaxon-[:SAME_AS*0..1]->taxon WHERE exists(taxon.externalId) WITH DISTINCT(taxon.externalId) as externalId, taxon.externalUrl as externalUrl RETURN externalId as taxon_external_id,externalUrl as taxon_external_url SKIP 0 LIMIT 30"));
+        assertThat(query.getParams().toString(), Is.is("{pathQuery=name:\"Enhydra lutris\"}"));
+        validate(query);
+    }
+
 }

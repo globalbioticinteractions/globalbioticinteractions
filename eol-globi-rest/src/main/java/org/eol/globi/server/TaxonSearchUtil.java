@@ -26,7 +26,9 @@ public class TaxonSearchUtil {
         String linkForNode(JsonNode node);
     }
 
-    public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath, HttpServletRequest request, LinkMapper linkMapper) throws IOException {
+    public static Collection<String> linksForTaxonName(@PathVariable("taxonPath") String taxonPath,
+                                                       HttpServletRequest request,
+                                                       LinkMapper linkMapper) throws IOException {
 
         final CypherQuery pagedQuery = createPagedQuery(taxonPath, request);
 
