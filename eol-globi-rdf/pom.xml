@@ -17,7 +17,7 @@
 
     <properties>
         <globi.data.version>1.1-SNAPSHOT</globi.data.version>
-        <fuseki.version>2.4.0</fuseki.version>
+        <fuseki.version>4.2.0</fuseki.version>
         <fuseki.artifactId>apache-jena-fuseki</fuseki.artifactId>
         <fuseki.dir>${project.build.directory}/${fuseki.artifactId}-${fuseki.version}</fuseki.dir>
     </properties>
