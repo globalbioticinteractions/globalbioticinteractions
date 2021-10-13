@@ -232,7 +232,6 @@
                                             <outputDirectory>${shapefiles.dir}/tsv</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>
@@ -306,7 +305,6 @@
                                             <outputDirectory>${data.dir}</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>
