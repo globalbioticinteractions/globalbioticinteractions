@@ -160,33 +160,6 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         return nullValueArray;
     }
 
-    static String generateReferenceCitation(Map<String, String> properties) {
-        StringBuilder citation = new StringBuilder();
-        append(citation, properties.get(AUTHOR), ", ");
-        append(citation, properties.get(YEAR), ". ");
-        append(citation, properties.get(TITLE), ". ");
-        append(citation, properties.get(JOURNAL), properties.containsKey(VOLUME) || properties.containsKey(NUMBER) || properties.containsKey(PAGES) ? ", " : ". ");
-        append(citation, properties.get(VOLUME), properties.containsKey(NUMBER) ? "(" : (properties.containsKey(PAGES) ? ", " : ". "));
-        append(citation, properties.get(NUMBER), properties.containsKey(VOLUME) ? ")" : "");
-        if (properties.containsKey(NUMBER)) {
-            citation.append(properties.containsKey(PAGES) ? ", " : ".");
-        }
-        append(citation, properties.get(PAGES), ". ", "pp.");
-        return StringUtils.trim(citation.toString());
-    }
-
-    public static void append(StringBuilder citation, String value, String suffix, String prefix) {
-        if (StringUtils.isNotBlank(value)) {
-            citation.append(prefix);
-            citation.append(value);
-            citation.append(suffix);
-        }
-    }
-
-    public static void append(StringBuilder citation, String value, String continuation) {
-        append(citation, value, continuation, "");
-    }
-
 
     public static InteractType generateInteractionType(Map<String, String> properties, InteractTypeMapper mapper) {
         final String interactionTypeName = properties.get(DatasetImporterForTSV.INTERACTION_TYPE_NAME);

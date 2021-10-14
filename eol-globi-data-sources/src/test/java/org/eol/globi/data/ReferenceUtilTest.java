@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.CitationUtil;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.StringEndsWith.endsWith;
@@ -83,6 +85,78 @@ public class ReferenceUtilTest {
 
         String citation = CitationUtil.citationFor(dataset);
         assertThat(citation, is("http://gomexsi.tamucc.edu"));
+    }
+
+    @Test
+    public void generateReferenceAndReferenceId() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(DatasetImporterForMetaTable.AUTHOR, "Johnny");
+                put(DatasetImporterForMetaTable.TITLE, "My first pony");
+                put(DatasetImporterForMetaTable.YEAR, "1981");
+                put(DatasetImporterForMetaTable.JOURNAL, "journal of bla");
+            }
+        };
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla."));
+        properties.put(DatasetImporterForMetaTable.VOLUME, "123");
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla, 123."));
+        properties.put(DatasetImporterForMetaTable.NUMBER, "11");
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla, 123(11)."));
+        properties.put(DatasetImporterForMetaTable.PAGES, "33");
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla, 123(11), pp.33."));
+
+    }
+
+    @Test
+    public void generateReferenceCitation() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(DatasetImporterForTSV.REFERENCE_URL, "https://example.org/");
+            }
+        };
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("https://example.org/"));
+
+    }
+
+    @Test
+    public void generateReferenceCitationFromDOI() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(DatasetImporterForTSV.REFERENCE_DOI, "10.12/345");
+            }
+        };
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("doi:10.12/345"));
+
+    }
+
+    @Test
+    public void generateReferenceCitationFromDOINotURL() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(DatasetImporterForTSV.REFERENCE_DOI, "10.12/345");
+                put(DatasetImporterForTSV.REFERENCE_URL, "https://example.org/");
+            }
+        };
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("doi:10.12/345"));
+
+    }
+
+    @Test
+    public void generateReferenceCitationFromURLNotMalformedDOI() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put(DatasetImporterForTSV.REFERENCE_DOI, "foo");
+                put(DatasetImporterForTSV.REFERENCE_URL, "https://example.org/");
+            }
+        };
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("https://example.org/"));
+
     }
 
 

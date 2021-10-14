@@ -292,25 +292,15 @@ public class DatasetImporterForMetaTableTest {
         };
     }
 
+
     @Test
-    public void generateReferenceAndReferenceId() {
-        final HashMap<String, String> properties = new HashMap<String, String>() {
-            {
-                put(DatasetImporterForMetaTable.AUTHOR, "Johnny");
-                put(DatasetImporterForMetaTable.TITLE, "My first pony");
-                put(DatasetImporterForMetaTable.YEAR, "1981");
-                put(DatasetImporterForMetaTable.JOURNAL, "journal of bla");
-            }
-        };
-
-        assertThat(DatasetImporterForMetaTable.generateReferenceCitation(properties), is("Johnny, 1981. My first pony. journal of bla."));
-        properties.put(DatasetImporterForMetaTable.VOLUME, "123");
-        assertThat(DatasetImporterForMetaTable.generateReferenceCitation(properties), is("Johnny, 1981. My first pony. journal of bla, 123."));
-        properties.put(DatasetImporterForMetaTable.NUMBER, "11");
-        assertThat(DatasetImporterForMetaTable.generateReferenceCitation(properties), is("Johnny, 1981. My first pony. journal of bla, 123(11)."));
-        properties.put(DatasetImporterForMetaTable.PAGES, "33");
-
-        assertThat(DatasetImporterForMetaTable.generateReferenceCitation(properties), is("Johnny, 1981. My first pony. journal of bla, 123(11), pp.33."));
+    public void generateReferenceUrl() {
+        final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("referenceUrl", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setOriginalName("pmid");
+        column.setDataTypeBase("string");
+        column.setValueUrl("https://www.ncbi.nlm.nih.gov/pubmed/{referenceUrl}");
+        String parsedString = DatasetImporterForMetaTable.parseValue("123", column);
+        assertThat(parsedString, is("https://www.ncbi.nlm.nih.gov/pubmed/123"));
 
     }
 

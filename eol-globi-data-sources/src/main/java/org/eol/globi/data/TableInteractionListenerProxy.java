@@ -26,7 +26,7 @@ public class TableInteractionListenerProxy implements InteractionListener {
 
                 final String referenceCitation =
                         StringUtils.isBlank(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION))
-                        ? DatasetImporterForMetaTable.generateReferenceCitation(interaction)
+                        ? ReferenceUtil.generateReferenceCitation(interaction)
                         : interaction.get(DatasetImporterForTSV.REFERENCE_CITATION);
 
                 put(DatasetImporterForTSV.REFERENCE_ID, dataSourceCitation + referenceCitation);
