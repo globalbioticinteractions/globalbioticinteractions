@@ -48,8 +48,9 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
         final GraphDatabaseService graphService = new GraphDatabaseFactory()
                 .setUserLogProvider(new Slf4jLogProvider())
                 .newEmbeddedDatabaseBuilder(graphDbDir)
-                .setConfig(GraphDatabaseSettings.keep_logical_logs, "500M size")
+                .setConfig(GraphDatabaseSettings.keep_logical_logs, "2 files")
                 .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "250M")
+                .setConfig(GraphDatabaseSettings.check_point_policy, "volumetric")
 //                .setConfig(GraphDatabaseSettings.check_point_interval_tx, "100000")
                 .newGraphDatabase();
 
