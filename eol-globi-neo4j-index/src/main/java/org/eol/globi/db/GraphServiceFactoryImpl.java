@@ -50,7 +50,10 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
                 .newEmbeddedDatabaseBuilder(graphDbDir)
                 .setConfig(GraphDatabaseSettings.keep_logical_logs, "keep_none")
                 .setConfig(GraphDatabaseSettings.logical_log_rotation_threshold, "250M")
-                .setConfig(GraphDatabaseSettings.check_point_policy, "volumetric")
+                // note that according to https://neo4j.com/developer/kb/checkpointing-and-log-pruning-interactions/#_triggering_of_checkpointing_and_pruning_events
+                // volumetric checkpointing is not supported in the community edition
+                //.setConfig(GraphDatabaseSettings.check_point_policy, "volumetric")
+                .setConfig(GraphDatabaseSettings.check_point_interval_time, "60s")
 //                .setConfig(GraphDatabaseSettings.check_point_interval_tx, "100000")
                 .newGraphDatabase();
 
