@@ -37,6 +37,7 @@ public class InteractionListenerImpl implements InteractionListener {
                         new OccurrenceIdEnricher(queue, logger),
                         createMappingListener(logger, dataset, queue),
                         new InteractionValidator(queue, logger),
+                        new DOIReferenceExtractor(queue, logger),
                         new InteractionImporter(nodeFactory, logger, geoNamesService)
                 );
     }
