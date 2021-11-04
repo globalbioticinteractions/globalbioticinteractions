@@ -43,7 +43,7 @@ public class LinkerOpenTreeOfLifeTest extends GraphDBTestCase {
 
             new LinkerTermMatcher((terms, termMatchListener) -> {
                 for (Term term : terms) {
-                    termMatchListener.foundTaxonForTerm(nodeID, term, taxon, NameType.SAME_AS);
+                    termMatchListener.foundTaxonForTerm(nodeID, term, NameType.SAME_AS, taxon);
                 }
             }, new GraphServiceFactoryProxy(getGraphDb()))
                     .index();

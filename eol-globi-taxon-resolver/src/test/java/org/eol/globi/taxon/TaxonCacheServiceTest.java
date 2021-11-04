@@ -156,7 +156,7 @@ public class TaxonCacheServiceTest {
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList("Green-winged teal")), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term term, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term term, NameType nameType, Taxon resolvedTaxon) {
                 assertThat(resolvedTaxon.getExternalId(), is("EOL:1276240"));
                 assertThat(resolvedTaxon.getName(), is("Anas crecca carolinensis"));
                 assertThat(resolvedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
@@ -173,7 +173,7 @@ public class TaxonCacheServiceTest {
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList("green-winged teal")), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 assertThat(resolvedTaxon.getExternalId(), is("EOL:1276240"));
                 assertThat(resolvedTaxon.getName(), is("Anas crecca carolinensis"));
                 assertThat(resolvedTaxon.getThumbnailUrl(), is("http://media.eol.org/content/2012/11/04/08/35791_98_68.jpg"));
@@ -191,7 +191,7 @@ public class TaxonCacheServiceTest {
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList("EOL:1276240")), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 assertThat(resolvedTaxon.getExternalId(), is("EOL:1276240"));
                 assertThat(resolvedTaxon.getName(), is("Anas crecca carolinensis"));
                 matched.set(true);
@@ -222,7 +222,7 @@ public class TaxonCacheServiceTest {
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList(name)), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 if (!matched.get()) {
                     assertThat(resolvedTaxon.getExternalId(), is("EOL:545931"));
                     assertThat(resolvedTaxon.getName(), is("Calyptra thalictri"));
@@ -241,7 +241,7 @@ public class TaxonCacheServiceTest {
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList("foo:bar")), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term term, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term term, NameType nameType, Taxon resolvedTaxon) {
                 assertThat(nameType, is(NameType.NONE));
                 matched.set(true);
             }
@@ -257,7 +257,7 @@ public class TaxonCacheServiceTest {
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(Collections.singletonList(new TermImpl("foo:bar", null)), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 assertThat(nameType, is(NameType.NONE));
                 matched.set(true);
             }
@@ -504,7 +504,7 @@ public class TaxonCacheServiceTest {
         List<Taxon> taxa = new ArrayList<>();
         taxonCacheService.match(Arrays.asList(new TermImpl(null, "Felis catus")), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 taxa.add(resolvedTaxon);
             }
         });
@@ -520,7 +520,7 @@ public class TaxonCacheServiceTest {
         List<Taxon> taxa = new ArrayList<>();
         taxonCacheService.match(Collections.singletonList(new TermImpl("EOL:327955", null)), new TermMatchListener() {
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 taxa.add(resolvedTaxon);
             }
         });
@@ -585,7 +585,7 @@ public class TaxonCacheServiceTest {
         cacheService.match(Collections.singletonList(searchTerm), new TermMatchListener() {
 
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 listIds.add(resolvedTaxon.getExternalId());
                 listNames.add(resolvedTaxon.getName());
             }
@@ -608,7 +608,7 @@ public class TaxonCacheServiceTest {
         cacheService.match(Collections.singletonList(new TermImpl("", "Homo sapiens")), new TermMatchListener() {
 
             @Override
-            public void foundTaxonForTerm(Long requestId, Term name, Taxon resolvedTaxon, NameType nameType) {
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
                 listIds.add(resolvedTaxon.getExternalId());
                 listNames.add(resolvedTaxon.getName());
             }
@@ -665,6 +665,6 @@ public class TaxonCacheServiceTest {
         cacheService.setCacheDir(mapdbDir);
 
         cacheService.match(Collections.singletonList(new TermImpl("EOL:1276240", null)),
-                (nodeId, name, taxon, nameType) -> assertThat(nameType, is(NameType.NONE)));
+                (nodeId, name, nameType, taxon) -> assertThat(nameType, is(NameType.NONE)));
     }
 }

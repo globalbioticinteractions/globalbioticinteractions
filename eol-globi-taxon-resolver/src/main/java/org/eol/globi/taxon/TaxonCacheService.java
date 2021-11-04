@@ -244,7 +244,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             Long nodeId = term instanceof TermRequestImpl ? ((TermRequestImpl) term).getNodeId() : null;
             if (!resolveName(termMatchListener, term, term.getId(), nodeId)) {
                 if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, term.getName(), nodeId)) {
-                    termMatchListener.foundTaxonForTerm(nodeId, term, new TaxonImpl(term.getId(), term.getName()), NameType.NONE);
+                    termMatchListener.foundTaxonForTerm(nodeId, term, NameType.NONE, new TaxonImpl(term.getId(), term.getName()));
                 }
             }
         }
@@ -266,7 +266,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                     Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
                         Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
-                        termMatchListener.foundTaxonForTerm(nodeId, term, resolvedTaxon, NameType.SAME_AS);
+                        termMatchListener.foundTaxonForTerm(nodeId, term, NameType.SAME_AS, resolvedTaxon);
                         hasResolved = true;
                     }
                 }

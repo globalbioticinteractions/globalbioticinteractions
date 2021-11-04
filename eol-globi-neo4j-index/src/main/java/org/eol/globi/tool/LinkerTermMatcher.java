@@ -67,7 +67,7 @@ public class LinkerTermMatcher implements IndexerNeo4j {
         }
         try {
             if (termRequests.size() > 0) {
-                termMatcher.match(termRequests, (nodeId, name, taxon, relType) -> {
+                termMatcher.match(termRequests, (nodeId, name, relType, taxon) -> {
                     TaxonNode taxonNode = nodeMap.get(nodeId);
                     if (taxonNode != null
                             && NameType.NONE != relType
