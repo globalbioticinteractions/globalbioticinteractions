@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.eol.globi.data.DatasetImporterForZOVER;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.ParserFactory;
@@ -162,6 +163,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("dbatvir", DatasetImporterForDBatVir.class);
                 put("pensoft", DatasetImporterForPensoft.class);
                 put("zenodo", DatasetImporterForZenodoMetadata.class);
+                put("zover", DatasetImporterForZOVER.class);
             }
         };
         Class<? extends DatasetImporter> anImporter = supportedFormats.get(format);
