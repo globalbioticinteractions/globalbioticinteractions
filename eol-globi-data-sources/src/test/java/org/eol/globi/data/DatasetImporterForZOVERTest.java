@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
@@ -27,7 +26,6 @@ import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
@@ -45,7 +43,7 @@ public class DatasetImporterForZOVERTest {
     public void retrieveTicks() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_TICK,
-                new TestResourceService()), "zover/tick.json"
+                new TestResourceService(), "http://www.mgc.ac.cn"), "zover/tick.json"
         );
     }
 
@@ -119,7 +117,7 @@ public class DatasetImporterForZOVERTest {
             public InputStream retrieve(URI resourceName) throws IOException {
                 return getClass().getResourceAsStream("zover/tick_viruses_35237.json");
             }
-        });
+        }, "http://www.mgc.ac.cn");
 
         List<Map<String, String>> interactions = new ArrayList<>();
 
@@ -157,14 +155,14 @@ public class DatasetImporterForZOVERTest {
     public void retrieveBats() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_CHIROPTERA,
-                new TestResourceService()), "zover/chiroptera.json");
+                new TestResourceService(), "http://www.mgc.ac.cn"), "zover/chiroptera.json");
     }
 
     @Test
     public void retrieveRodent() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_RODENT,
-                new TestResourceService())
+                new TestResourceService(), "http://www.mgc.ac.cn")
                 , "zover/rodent.json");
     }
 
@@ -172,7 +170,7 @@ public class DatasetImporterForZOVERTest {
     public void retrieveMosquito() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_MOSQUITO,
-                new TestResourceService()),
+                new TestResourceService(), "http://www.mgc.ac.cn"),
                 "zover/mosquito.json");
     }
 
@@ -180,7 +178,7 @@ public class DatasetImporterForZOVERTest {
     public void retrieveMosquitoVirusData() throws IOException {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_MOSQUITO, 35237L,
-                new TestResourceService()
+                new TestResourceService(), "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/mosquito_viruses_35237.json");
     }
@@ -190,7 +188,7 @@ public class DatasetImporterForZOVERTest {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_CHIROPTERA,
                 35237L,
-                new TestResourceService()
+                new TestResourceService(), "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/chiroptera_viruses_35237.json");
     }
@@ -200,7 +198,7 @@ public class DatasetImporterForZOVERTest {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_TICK,
                 35237L,
-                new TestResourceService()
+                new TestResourceService(), "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/tick_viruses_35237.json");
     }
@@ -210,7 +208,7 @@ public class DatasetImporterForZOVERTest {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_RODENT,
                 35237L,
-                new TestResourceService()
+                new TestResourceService(), "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/rodent_viruses_35237.json");
     }

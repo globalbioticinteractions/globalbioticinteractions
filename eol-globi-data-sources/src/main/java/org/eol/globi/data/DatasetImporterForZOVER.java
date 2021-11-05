@@ -52,10 +52,10 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
         super(parserFactory, nodeFactory);
     }
 
-    public static String getVirusData(String host, Long virusId, ResourceService resourceService) throws IOException {
+    public static String getVirusData(String host, Long virusId, ResourceService resourceService, String endpoint) throws IOException {
         return getData(host, "/ZOVER/json/",
                 "_viruses_" + virusId + ".json",
-                resourceService);
+                resourceService, endpoint);
     }
 
     public static void parseData(String hostLabel, InteractionListener listener, JsonNode jsonNode) throws StudyImporterException {
@@ -180,13 +180,14 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
     public void importStudy() throws StudyImporterException {
         for (String hostLabel : getDatabases()) {
             try {
-                String index = getContent(hostLabel, getDataset());
+                String endpoint = getDataset().getOrDefault("url", "http://www.mgc.ac.cn");
+                String index = getContent(hostLabel, getDataset(), endpoint);
                 JsonNode indexNode = new ObjectMapper().readTree(index);
 
                 List<Long> virusIds = new ArrayList<>();
                 DatasetImporterForZOVER.getLeafIds(indexNode, virusIds::add);
                 for (Long virusId : virusIds) {
-                    String virusData = getVirusData(hostLabel, virusId, getDataset());
+                    String virusData = getVirusData(hostLabel, virusId, getDataset(), endpoint);
                     JsonNode virusDataNode = new ObjectMapper().readTree(virusData);
                     DatasetImporterForZOVER.parseData(hostLabel, getInteractionListener(), virusDataNode);
                 }
@@ -196,14 +197,14 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
         }
     }
 
-    public static String getContent(String host, ResourceService resourceService) throws IOException {
+    public static String getContent(String host, ResourceService resourceService, String endpoint) throws IOException {
         String pathPrefix = "/cgi-bin/ZOVER/lineage2json1.pl?type=viruses&host=";
         String pathSuffix = "";
-        return getData(host, pathPrefix, pathSuffix, resourceService);
+        return getData(host, pathPrefix, pathSuffix, resourceService, endpoint);
     }
 
-    public static String getData(String host, String pathPrefix, String pathSuffix, ResourceService service) throws IOException {
-        String str = "http://www.mgc.ac.cn" + pathPrefix + host + pathSuffix;
+    public static String getData(String host, String pathPrefix, String pathSuffix, ResourceService service, String endpoint) throws IOException {
+        String str = endpoint + pathPrefix + host + pathSuffix;
         InputStream inputStream = service.retrieve(URI.create(str));
         if (inputStream == null) {
             throw new IOException("failed to access [" + str + "]");
