@@ -1,0 +1,23 @@
+[
+	{
+	"id":"29258",
+	"data":{"num":"441"},
+	"text":"ssDNA viruses",
+	"icon":"/VFs/v5/css_js/image/plugin_add.png",
+	"expanded":"true",
+	"children":[
+		{
+		"id":"687329",
+		"data":{"num":"1"},
+		"text":"<b><i>Anelloviridae</i></b>",
+		"icon":"/VFs/v5/css_js/image/plugin_add.png",
+		"children":[
+			{
+			"id":"363628",
+			"data":{"num":"1"},
+			"text":"unclassified Anelloviridae",
+			"icon":"/VFs/v5/css_js/image/plugin_disabled.png"
+			}
+		]}
+	]}
+]
