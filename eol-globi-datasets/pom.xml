@@ -24,7 +24,7 @@
         <neo4j.data.dir>${data.dir}/graph.db</neo4j.data.dir>
         <wagon-maven-plugin.version>2.0.0</wagon-maven-plugin.version>
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
-        <maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
+        <maven-dependency-plugin.version>${maven-assembly-plugin.version}</maven-dependency-plugin.version>
     </properties>
 
     <dependencies>
@@ -269,8 +269,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <!--<version>${maven-dependency-plugin.version}</version>-->
+                        <version>${maven-dependency-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-tool</id>
