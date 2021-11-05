@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.jena.atlas.io.IO;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.ResourceService;
 
@@ -58,7 +60,10 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
                 resourceService, endpoint);
     }
 
-    public static void parseData(String hostLabel, InteractionListener listener, JsonNode jsonNode) throws StudyImporterException {
+    public static void parseData(String hostLabel,
+                                 InteractionListener listener,
+                                 JsonNode jsonNode,
+                                 Long virusId) throws StudyImporterException {
         if (jsonNode.has("data")) {
             JsonNode data = jsonNode.get("data");
             for (JsonNode record : data) {
@@ -66,6 +71,7 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
                 appendVirus(record, properties);
                 appendHost(record, hostLabel, properties);
 
+                properties.put(StudyConstant.TITLE, "urn:lsid:cn.ac.mgc:tick:" + virusId);
                 properties.put(INTERACTION_TYPE_ID, InteractType.PATHOGEN_OF.getIRI());
                 properties.put(INTERACTION_TYPE_NAME, InteractType.PATHOGEN_OF.getLabel());
                 if (record.has("Country")) {
@@ -187,12 +193,16 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
                 List<Long> virusIds = new ArrayList<>();
                 DatasetImporterForZOVER.getLeafIds(indexNode, virusIds::add);
                 for (Long virusId : virusIds) {
-                    String virusData = getVirusData(hostLabel, virusId, getDataset(), endpoint);
-                    JsonNode virusDataNode = new ObjectMapper().readTree(virusData);
-                    DatasetImporterForZOVER.parseData(hostLabel, getInteractionListener(), virusDataNode);
+                    try {
+                        String virusData = getVirusData(hostLabel, virusId, getDataset(), endpoint);
+                        JsonNode virusDataNode = new ObjectMapper().readTree(virusData);
+                        DatasetImporterForZOVER.parseData(hostLabel, getInteractionListener(), virusDataNode, virusId);
+                    } catch (IOException e) {
+                        getLogger().warn(null, "failed to parse data for ZOVER database [" + hostLabel + "] virus [" + virusId + "]: [" + e.getMessage() + "]");
+                    }
                 }
             } catch (IOException e) {
-                throw new StudyImporterException("failed to import ZOVER database: [" + hostLabel + "]", e);
+                getLogger().warn(null, "failed to parse data for ZOVER database [" + hostLabel + "]: [" + e.getMessage() + "]");
             }
         }
     }

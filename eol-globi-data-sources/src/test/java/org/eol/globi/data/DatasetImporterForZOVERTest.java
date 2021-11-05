@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -112,7 +115,8 @@ public class DatasetImporterForZOVERTest {
     public void parseVirusHostRecord() throws IOException, StudyImporterException {
 
         String hostLabel = "tick";
-        String virusData = DatasetImporterForZOVER.getVirusData(hostLabel, 35237L, new ResourceService() {
+        long virusId = 35237L;
+        String virusData = DatasetImporterForZOVER.getVirusData(hostLabel, virusId, new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 return getClass().getResourceAsStream("zover/tick_viruses_35237.json");
@@ -131,7 +135,7 @@ public class DatasetImporterForZOVERTest {
 
 
         JsonNode jsonNode = new ObjectMapper().readTree(virusData);
-        DatasetImporterForZOVER.parseData(hostLabel, listener, jsonNode);
+        DatasetImporterForZOVER.parseData(hostLabel, listener, jsonNode, virusId);
 
         assertThat(interactions.size(), is(281));
 
@@ -147,6 +151,7 @@ public class DatasetImporterForZOVERTest {
         assertThat(first.get(LOCALITY_NAME), is("South Africa"));
         assertThat(first.get(INTERACTION_TYPE_NAME), is("pathogenOf"));
         assertThat(first.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002556"));
+        assertThat(first.get(StudyConstant.TITLE), is("urn:lsid:cn.ac.mgc:tick:35237"));
 
 
     }
@@ -181,6 +186,15 @@ public class DatasetImporterForZOVERTest {
                 new TestResourceService(), "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/mosquito_viruses_35237.json");
+    }
+
+    @Test
+    public void retrieveMosquitoVirusData35222() throws IOException {
+        String s = DatasetImporterForZOVER.getVirusData(
+                DatasetImporterForZOVER.ZOVER_MOSQUITO, 35222L,
+                new TestResourceService(), "http://www.mgc.ac.cn"
+        );
+        assertSame(s, "zover/mosquito_viruses_35222.json");
     }
 
     @Test
