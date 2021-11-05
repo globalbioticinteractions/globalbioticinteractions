@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.jena.atlas.io.IO;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.StudyConstant;
+import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.ResourceService;
 
@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
@@ -71,7 +72,7 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
                 appendVirus(record, properties);
                 appendHost(record, hostLabel, properties);
 
-                properties.put(StudyConstant.TITLE, "urn:lsid:cn.ac.mgc:tick:" + virusId);
+                properties.put(REFERENCE_ID, "urn:lsid:cn.ac.mgc:tick:" + virusId);
                 properties.put(INTERACTION_TYPE_ID, InteractType.PATHOGEN_OF.getIRI());
                 properties.put(INTERACTION_TYPE_NAME, InteractType.PATHOGEN_OF.getLabel());
                 if (record.has("Country")) {
@@ -114,12 +115,23 @@ public class DatasetImporterForZOVER extends DatasetImporterWithListener {
                 SOURCE_TAXON_PATH);
     }
 
-    public static void parseTaxon(JsonNode record, TreeMap<String, String> properties, String nameLabel, String idLabel, String familyLabel, String taxonName, String taxonId, String taxonPath) {
-        properties.put(taxonName, getValueOrNull(record, nameLabel));
-        putLongIfNotNull(properties, taxonId, getLongOrNull(record, idLabel));
+    public static void parseTaxon(JsonNode record,
+                                  TreeMap<String, String> properties,
+                                  String nameLabel,
+                                  String idLabel,
+                                  String familyLabel,
+                                  String taxonNameLabel,
+                                  String taxonIdLabel,
+                                  String taxonPathLabel) {
+
+        properties.put(taxonNameLabel, getValueOrNull(record, nameLabel));
+        Long longOrNull = getLongOrNull(record, idLabel);
+        if (longOrNull != null) {
+            properties.put(taxonIdLabel, TaxonomyProvider.ID_PREFIX_NCBI + longOrNull.toString());
+        }
         String virusFamilyName = getValueOrNull(record, familyLabel);
         if (StringUtils.isNoneBlank(virusFamilyName)) {
-            putIfNotNull(properties, taxonPath, virusFamilyName + CharsetConstant.SEPARATOR + getValueOrNull(record, nameLabel));
+            putIfNotNull(properties, taxonPathLabel, virusFamilyName + CharsetConstant.SEPARATOR + getValueOrNull(record, nameLabel));
         }
     }
 

@@ -28,6 +28,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
@@ -100,14 +101,15 @@ public class DatasetImporterForZOVERTest {
         Map<String, String> interaction = interactions.get(0);
 
         assertThat(interaction.get(SOURCE_TAXON_NAME), is("Torque teno Tadarida brasiliensis virus"));
-        assertThat(interaction.get(SOURCE_TAXON_ID), is("1543419"));
+        assertThat(interaction.get(SOURCE_TAXON_ID), is("NCBI:1543419"));
         assertThat(interaction.get(TARGET_TAXON_NAME), is("Tadarida brasiliensis"));
-        assertThat(interaction.get(TARGET_TAXON_ID), is("9438"));
+        assertThat(interaction.get(TARGET_TAXON_ID), is("NCBI:9438"));
         assertThat(interaction.get(INTERACTION_TYPE_NAME), is("pathogenOf"));
         assertThat(interaction.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002556"));
         assertThat(interaction.get(REFERENCE_CITATION), is(nullValue()));
         assertThat(interaction.get(REFERENCE_URL), is("https://www.ncbi.nlm.nih.gov/nuccore/KM434181"));
         assertThat(interaction.get(REFERENCE_DOI), is(nullValue()));
+        assertThat(interaction.get(REFERENCE_ID), is("urn:lsid:cn.ac.mgc:tick:363628"));
 
     }
 
@@ -141,19 +143,16 @@ public class DatasetImporterForZOVERTest {
 
         Map<String, String> first = interactions.get(0);
         assertThat(first.get(SOURCE_TAXON_NAME), is("African swine fever virus"));
-        assertThat(first.get(SOURCE_TAXON_ID), is("10497"));
+        assertThat(first.get(SOURCE_TAXON_ID), is("NCBI:10497"));
         assertThat(first.get(SOURCE_TAXON_PATH), is("Asfarviridae | African swine fever virus"));
-
-        assertThat(first.get(TARGET_TAXON_NAME), is("Ornithodoros porcinus"));
-        assertThat(first.get(TARGET_TAXON_ID), is("34594"));
-        assertThat(first.get(TARGET_TAXON_PATH), is("Ornithodoros | Ornithodoros porcinus"));
-        assertThat(first.get(REFERENCE_URL), is("https://www.ncbi.nlm.nih.gov/nuccore/GQ867183"));
-        assertThat(first.get(LOCALITY_NAME), is("South Africa"));
         assertThat(first.get(INTERACTION_TYPE_NAME), is("pathogenOf"));
         assertThat(first.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002556"));
-        assertThat(first.get(StudyConstant.TITLE), is("urn:lsid:cn.ac.mgc:tick:35237"));
-
-
+        assertThat(first.get(TARGET_TAXON_NAME), is("Ornithodoros porcinus"));
+        assertThat(first.get(TARGET_TAXON_ID), is("NCBI:34594"));
+        assertThat(first.get(TARGET_TAXON_PATH), is("Ornithodoros | Ornithodoros porcinus"));
+        assertThat(first.get(LOCALITY_NAME), is("South Africa"));
+        assertThat(first.get(REFERENCE_URL), is("https://www.ncbi.nlm.nih.gov/nuccore/GQ867183"));
+        assertThat(first.get(REFERENCE_ID), is("urn:lsid:cn.ac.mgc:tick:35237"));
     }
 
     @Test
