@@ -35,7 +35,7 @@ public class CypherUtilIT {
             put("accordingTo", "(?i).*(\\\\Qgomexsi\\\\E).*");
         }};
         HttpResponse execute = CypherUtil.execute(new CypherQuery(query, params, CypherUtil.CYPHER_VERSION_2_3));
-        ProxyOutputStream proxyOutputStream = new ProxyOutputStream(new NullOutputStream()) {
+        ProxyOutputStream proxyOutputStream = new ProxyOutputStream(NullOutputStream.NULL_OUTPUT_STREAM) {
             AtomicLong count = new AtomicLong(0L);
             @Override
             protected void beforeWrite(final int n) throws IOException {

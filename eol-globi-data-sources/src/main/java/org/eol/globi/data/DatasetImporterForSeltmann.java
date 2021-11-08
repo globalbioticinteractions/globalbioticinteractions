@@ -70,7 +70,7 @@ public class DatasetImporterForSeltmann extends NodeBasedImporter {
                 } else if (entry.getName().matches("(^|(.*/))occurrences.tsv$")) {
                     occTempFile = FileUtils.saveToTmpFile(zipInputStream, entry);
                 } else {
-                    IOUtils.copy(zipInputStream, new NullOutputStream());
+                    IOUtils.copy(zipInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
                 }
             }
             IOUtils.closeQuietly(zipInputStream);

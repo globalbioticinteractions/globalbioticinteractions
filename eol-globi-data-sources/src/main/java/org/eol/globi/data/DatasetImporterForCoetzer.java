@@ -66,7 +66,7 @@ public class DatasetImporterForCoetzer extends NodeBasedImporter {
                 } else if (entry.getName().matches("(^|(.*/))distribution.txt$")) {
                     distributionTempFile = FileUtils.saveToTmpFile(zipInputStream, entry);
                 } else {
-                    IOUtils.copy(zipInputStream, new NullOutputStream());
+                    IOUtils.copy(zipInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
                 }
             }
             IOUtils.closeQuietly(zipInputStream);

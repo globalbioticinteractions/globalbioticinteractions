@@ -52,7 +52,7 @@ public class ResourceUtilTest {
             }
         });
         assertNotNull(inputStream);
-        IOUtils.copy(inputStream, new NullOutputStream());
+        IOUtils.copy(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
         inputStream.close();
 
         assertThat(counter.get(), greaterThan(100L));

@@ -96,7 +96,7 @@ public class DatasetImporterForGlobalWebDb extends DatasetImporterWithListener {
                 if (entry.getName().matches("WEB.*\\.csv$")) {
                     matrix.onMatrix(IOUtils.toString(zipInputStream, StandardCharsets.UTF_8));
                 } else {
-                    IOUtils.copy(zipInputStream, new NullOutputStream());
+                    IOUtils.copy(zipInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
                 }
             }
         } catch (IOException e) {

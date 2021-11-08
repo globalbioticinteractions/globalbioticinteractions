@@ -102,7 +102,7 @@ public class DatasetImporterForRaymond extends NodeBasedImporter {
                     sourcesFile = File.createTempFile("raymondSources", ".csv");
                     sourcesParser = CSVTSVUtil.createParser(sourcesFile, zis);
                 } else {
-                    IOUtils.copy(zis, new NullOutputStream());
+                    IOUtils.copy(zis, NullOutputStream.NULL_OUTPUT_STREAM);
                 }
             }
             if (sourcesParser == null) {

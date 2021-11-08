@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TestHashUtil {
     public static void assertContentHash(InputStream retrieve, String expectedHash) throws IOException {
         try {
-            String actualHash = CacheUtil.calculateContentHash(retrieve, new NullOutputStream());
+            String actualHash = CacheUtil.calculateContentHash(retrieve, NullOutputStream.NULL_OUTPUT_STREAM);
             assertThat(actualHash, is(expectedHash));
         } catch (NoSuchAlgorithmException e) {
             fail("failed to verify hashes: [" + e.getMessage() + "]");

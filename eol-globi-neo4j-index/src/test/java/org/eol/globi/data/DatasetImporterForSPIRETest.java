@@ -1,6 +1,6 @@
 package org.eol.globi.data;
 
-import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
+import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;

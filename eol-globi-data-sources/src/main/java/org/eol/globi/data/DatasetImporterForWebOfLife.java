@@ -79,7 +79,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
                 } else if (entry.getName().matches(".*\\.csv$")) {
                     networkTempFileMap.put(entry.getName().replace(".csv", ""), FileUtils.saveToTmpFile(zipInputStream, entry));
                 } else {
-                    IOUtils.copy(zipInputStream, new NullOutputStream());
+                    IOUtils.copy(zipInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
                 }
             }
 

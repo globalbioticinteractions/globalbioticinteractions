@@ -77,7 +77,7 @@ public class DatasetRegistryLocalTest {
         CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), inStream -> inStream);
         InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
-        String actualHash = CacheUtil.calculateContentHash(inputStream, new NullOutputStream());
+        String actualHash = CacheUtil.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
         assertThat(actualHash, is("6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2"));
     }
 
