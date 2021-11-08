@@ -32,6 +32,9 @@ public enum InteractionTypeExternal {
     HAS_HABITAT(CypherQueryBuilder.INTERACTION_HAS_HABITAT, "inhabitant", "habitat", InteractType.HAS_HABITAT),
     CREATES_HABITAT_FOR(CypherQueryBuilder.INTERACTION_CREATES_HABITAT_FOR, "habitat", "inhabitant", InteractType.CREATES_HABITAT_FOR),
 
+    EPIPHITE_OF(InteractType.EPIPHITE_OF.getLabel(), "plant/algae", "host plant", InteractType.EPIPHITE_OF),
+    HAS_EPIPHITE(InteractType.HAS_EPIPHITE.getLabel(), "plant", "plant/algae", InteractType.HAS_EPIPHITE),
+
     SYMBIONT_OF(CypherQueryBuilder.INTERACTION_SYMBIONT_OF, "symbiont", "symbiont", InteractType.SYMBIONT_OF),
     MUTUALIST_OF(CypherQueryBuilder.INTERACTION_MUTUALIST_OF, "mutualist", "mutualist", InteractType.MUTUALIST_OF),
     COMMENSALIST_OF(CypherQueryBuilder.INTERACTION_COMMENSALIST_OF, "commensalist", "commensalist", InteractType.COMMENSALIST_OF),

@@ -123,6 +123,9 @@ public class CypherQueryBuilder {
             put(InteractType.DISPERSAL_VECTOR_OF.toString(), InteractionTypeExternal.DISPERSAL_VECTOR_OF);
             put(InteractType.HAS_DISPERAL_VECTOR.toString(), InteractionTypeExternal.HAS_DISPERSAL_VECTOR);
 
+            put(InteractType.HAS_EPIPHITE.toString(), InteractionTypeExternal.HAS_EPIPHITE);
+            put(InteractType.EPIPHITE_OF.toString(), InteractionTypeExternal.EPIPHITE_OF);
+
             put(InteractType.HAS_HABITAT.toString(), InteractionTypeExternal.HAS_HABITAT);
             put(InteractType.CREATES_HABITAT_FOR.toString(), InteractionTypeExternal.CREATES_HABITAT_FOR);
             put(InteractType.ADJACENT_TO.toString(), InteractionTypeExternal.ADJACENT_TO);
