@@ -19,6 +19,8 @@
         <mapdb.version>1.0.9</mapdb.version>
         <jena.version>3.17.0</jena.version>
         <commons-io.version>2.7</commons-io.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-lang3.version>3.11</commons-lang3.version>
         <httpcomponents.version>4.5.13</httpcomponents.version>
         <slf4j.version>1.7.30</slf4j.version>
         <jackson.version>2.12.4</jackson.version>
