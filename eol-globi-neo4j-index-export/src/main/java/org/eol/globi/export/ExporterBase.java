@@ -3,14 +3,13 @@ package org.eol.globi.export;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.DateUtil;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Stream;
 
 public abstract class ExporterBase extends DarwinCoreExporter {
@@ -81,13 +80,10 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
 
     protected void addCollectionDate(Map<String, String> writer, Relationship collectedRelationship, String datePropertyName) throws IOException {
-        Calendar instance;
         if (collectedRelationship.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
             Long epoch = (Long) collectedRelationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
             Date date = new Date(epoch);
-            instance = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            instance.setTime(date);
-            writer.put(datePropertyName, javax.xml.bind.DatatypeConverter.printDateTime(instance));
+            writer.put(datePropertyName, DateUtil.printDate(date));
         }
 
     }
