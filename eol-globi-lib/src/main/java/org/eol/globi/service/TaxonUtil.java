@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.data.CharsetConstant;
@@ -590,7 +592,12 @@ public class TaxonUtil {
                                           String speciesKey,
                                           String commonNameKey) {
 
-        String prefix = StringUtils.getCommonPrefix((String[]) higherOrderRankKeys.toArray());
+        String[] rankKeys = new String[higherOrderRankKeys.size()];
+        for (int i = 0; i < higherOrderRankKeys.size(); i++) {
+            rankKeys[i] = higherOrderRankKeys.get(i);
+        }
+
+        String prefix = StringUtils.getCommonPrefix(rankKeys);
 
         Taxon taxon = generateSpecies(properties, genusKey, specificEpithetKey, subspecificEpithetKey, speciesKey);
 
