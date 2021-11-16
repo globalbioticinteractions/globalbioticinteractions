@@ -592,12 +592,9 @@ public class TaxonUtil {
                                           String speciesKey,
                                           String commonNameKey) {
 
-        String[] rankKeys = new String[higherOrderRankKeys.size()];
-        for (int i = 0; i < higherOrderRankKeys.size(); i++) {
-            rankKeys[i] = higherOrderRankKeys.get(i);
-        }
-
-        String prefix = StringUtils.getCommonPrefix(rankKeys);
+        String prefix = StringUtils.getCommonPrefix(
+                higherOrderRankKeys.toArray(new String[0])
+        );
 
         Taxon taxon = generateSpecies(properties, genusKey, specificEpithetKey, subspecificEpithetKey, speciesKey);
 
