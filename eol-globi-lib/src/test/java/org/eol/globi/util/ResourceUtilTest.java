@@ -28,19 +28,25 @@ public class ResourceUtilTest {
 
     @Test
     public void localJarResource() throws IOException {
-        URL resource = getClass().getResource("/java/lang/String.class");
-        InputStream inputStream = ResourceUtil.asInputStream(resource.toString());
+        String resource = getSomeJarFileURL();
+        InputStream inputStream = ResourceUtil.asInputStream(resource);
         assertNotNull(inputStream);
         inputStream.close();
         assertThat(inputStream.available(), is(0));
 
     }
 
+    private String getSomeJarFileURL() {
+        URL resource = getClass().getResource("some.jar");
+        assertNotNull(resource);
+        return "jar:" + resource.toString() + "!/META-INF/MANIFEST.MF";
+    }
+
     @Test
     public void localJarResourceWithInputStreamFactory() throws URISyntaxException, IOException {
-        URL resource = getClass().getResource("/java/lang/String.class");
+        String jarResource = getSomeJarFileURL();
         AtomicLong counter = new AtomicLong(0);
-        InputStream inputStream = ResourceUtil.asInputStream(resource.toString(), new InputStreamFactory() {
+        InputStream inputStream = ResourceUtil.asInputStream(jarResource, new InputStreamFactory() {
             @Override
             public InputStream create(InputStream inStream) throws IOException {
                 return new ProxyInputStream(inStream) {
@@ -55,15 +61,15 @@ public class ResourceUtilTest {
         IOUtils.copy(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
         inputStream.close();
 
-        assertThat(counter.get(), greaterThan(100L));
+        assertThat(counter.get(), is(62L));
 
     }
 
     @Test
     public void kaboomWithInputStreamFactory() throws URISyntaxException {
-        URL resource = getClass().getResource("/java/lang/String.class");
+        String jarResource = getSomeJarFileURL();
         try {
-            ResourceUtil.asInputStream(resource.toString(), new InputStreamFactory() {
+            ResourceUtil.asInputStream(jarResource, new InputStreamFactory() {
                 @Override
                 public InputStream create(InputStream inStream) throws IOException {
                     throw new IOException("kaboom!");
