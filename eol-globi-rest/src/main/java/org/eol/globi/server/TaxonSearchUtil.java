@@ -1,13 +1,11 @@
 package org.eol.globi.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.server.util.RequestHelper;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.util.CypherQuery;
 import org.eol.globi.util.CypherUtil;
 import org.springframework.web.bind.annotation.PathVariable;
-import sun.misc.Request;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
