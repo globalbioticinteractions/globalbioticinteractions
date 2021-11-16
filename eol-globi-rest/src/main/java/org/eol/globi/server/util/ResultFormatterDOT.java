@@ -1,6 +1,7 @@
 package org.eol.globi.server.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public class ResultFormatterDOT implements ResultFormatter {
     protected static String getSafeLabel(String string) {
-        return StringUtils.replaceAll(string, "\\W", "_");
+        return RegExUtils.replaceAll(string, "\\W", "_");
     }
 
     /*

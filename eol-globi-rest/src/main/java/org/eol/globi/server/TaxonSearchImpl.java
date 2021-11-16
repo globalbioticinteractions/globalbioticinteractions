@@ -1,5 +1,6 @@
 package org.eol.globi.server;
 
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -181,7 +182,7 @@ public class TaxonSearchImpl implements TaxonSearch {
     @ResponseBody
     public Collection<String> taxonLinks2(HttpServletRequest request) throws IOException {
         String path = getEscapedPathFromRequest(request);
-        String taxonPath = StringUtils.replacePattern(path, "^/taxonLinks/", "");
+        String taxonPath = RegExUtils.replacePattern(path, "^/taxonLinks/", "");
         return taxonLinks(taxonPath, request);
     }
 
