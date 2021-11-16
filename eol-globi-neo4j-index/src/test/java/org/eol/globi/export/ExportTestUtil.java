@@ -12,21 +12,20 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.util.DateUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportTestUtil {
     public static StudyNode createTestData(NodeFactory factory) throws NodeFactoryException, ParseException {
         return createTestData(123.4, factory);
@@ -63,8 +62,7 @@ public class ExportTestUtil {
     }
 
     protected static Date utcTestDate() {
-        Calendar calendar = DatatypeConverter.parseDateTime("1992-03-30T08:00:00Z");
-        return calendar.getTime();
+        return DateUtil.parseDateUTC("1992-03-30T08:00:00Z").toDate();
     }
 
     public static TaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, GraphDatabaseService graphDb) {
