@@ -752,4 +752,14 @@ public class TaxonUtilTest {
         assertThat(TaxonUtil.expandTaxonColumnNameIfNeeded("sourceTaxonSpecies"), is("sourceTaxonSpeciesName"));
     }
 
+    @Test
+    public void hasLiteratureReference() {
+        TaxonImpl taxon = new TaxonImpl(
+                "http://treatment.plazi.org/id/C04787D4FFE1FFCBFF07FAF96581CAEB",
+                "http://treatment.plazi.org/id/C04787D4FFE1FFCBFF07FAF96581CAEB"
+        );
+
+        assertTrue(TaxonUtil.hasLiteratureReference(taxon));
+    }
+
 }
