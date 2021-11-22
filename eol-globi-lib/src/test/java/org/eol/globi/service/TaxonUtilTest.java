@@ -610,6 +610,22 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void enrichTaxonNamesSubGenus() {
+        HashMap<String, String> properties = new HashMap<String, String>() {{
+            put("sourceTaxonSubgenus", "some_subgenus");
+            put("sourceTaxonSubgenusId", "id:12345");
+        }};
+        Map<String, String> enriched = TaxonUtil.enrichTaxonNames(properties);
+
+        assertThat(enriched.get("sourceTaxonSubgenus"), is("some_subgenus"));
+        assertThat(enriched.get("sourceTaxonSubgenusName"), is("some_subgenus"));
+        assertThat(enriched.get("sourceTaxonName"), is("some_subgenus"));
+        assertThat(enriched.get("sourceTaxonRank"), is("subgenus"));
+        assertThat(enriched.get("sourceTaxonPath"), is("some_subgenus"));
+        assertThat(enriched.get("sourceTaxonPathNames"), is("subgenus"));
+    }
+
+    @Test
     public void enrichTaxonNames4() {
         HashMap<String, String> properties = new HashMap<String, String>() {{
             put("sourceTaxonClassName", "some_class");

@@ -50,6 +50,8 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", sourceTaxon.pathNames as sourceTaxonPathRankNames" +
                 ", sourceTaxon.speciesName as sourceTaxonSpeciesName" +
                 ", sourceTaxon.speciesId as sourceTaxonSpeciesId" +
+                ", sourceTaxon.subgenusName as sourceTaxonSubgenusName" +
+                ", sourceTaxon.subgenusId as sourceTaxonSubgenusId" +
                 ", sourceTaxon.genusName as sourceTaxonGenusName" +
                 ", sourceTaxon.genusId as sourceTaxonGenusId" +
                 ", sourceTaxon.familyName as sourceTaxonFamilyName" +
@@ -88,6 +90,8 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", targetTaxon.pathNames as targetTaxonPathRankNames" +
                 ", targetTaxon.speciesName as targetTaxonSpeciesName" +
                 ", targetTaxon.speciesId as targetTaxonSpeciesId" +
+                ", targetTaxon.subgenusName as targetTaxonSubgenusName" +
+                ", targetTaxon.subgenusId as targetTaxonSubgenusId" +
                 ", targetTaxon.genusName as targetTaxonGenusName" +
                 ", targetTaxon.genusId as targetTaxonGenusId" +
                 ", targetTaxon.familyName as targetTaxonFamilyName" +
