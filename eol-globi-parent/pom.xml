@@ -18,7 +18,7 @@
         <lucene.version>5.5.5</lucene.version>
         <mapdb.version>1.0.9</mapdb.version>
         <jena.version>3.17.0</jena.version>
-        <commons-io.version>2.7</commons-io.version>
+        <commons-io.version>2.10.0</commons-io.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <httpcomponents.version>4.5.13</httpcomponents.version>
