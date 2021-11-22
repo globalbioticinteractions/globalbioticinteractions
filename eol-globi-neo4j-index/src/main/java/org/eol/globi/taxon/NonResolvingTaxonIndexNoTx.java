@@ -22,7 +22,16 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private Index<Node> taxons = null;
 
-    private static final String[] RANKS = new String[]{"kingdom", "phylum", "class", "order", "family", "genus", "species"};
+    private static final String[] RANKS = new String[]{
+            "kingdom",
+            "phylum",
+            "class",
+            "order",
+            "family",
+            "genus",
+            "subgenus",
+            "species"
+    };
 
     public NonResolvingTaxonIndexNoTx(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
