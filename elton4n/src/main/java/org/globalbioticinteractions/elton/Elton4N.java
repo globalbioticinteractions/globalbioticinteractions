@@ -70,6 +70,7 @@ public class Elton4N {
         options.addOption(CmdOptionConstants.OPTION_DATASET_DIR, true, "specifies (input) datasets location");
         options.addOption(CmdOptionConstants.OPTION_EXPORT_DIR, true, "specifies data export location");
         options.addOption(CmdOptionConstants.OPTION_NEO4J_VERSION, true, "specifies version of Neo4j to use");
+        options.addOption(CmdOptionConstants.OPTION_GRAPHDB_DIR, true, "specifies location of neo4j graphdb");
         options.addOption(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, true, "specifies location of taxon cache to use");
         options.addOption(CmdOptionConstants.OPTION_TAXON_MAP_PATH, true, "specifies location of taxon map to use");
 
