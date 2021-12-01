@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
@@ -14,10 +13,9 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 
 public class GraphExporterImplTest extends GraphDBTestCase {
@@ -37,6 +35,7 @@ public class GraphExporterImplTest extends GraphDBTestCase {
         resolveNames();
 
         new GraphExporterImpl().export(getGraphDb(), tmpDir);
+        new GraphExporterInteractionsTSVImpl().export(getGraphDb(), tmpDir);
         assertThat(tmpDir.list().length, is(8));
 
     }
