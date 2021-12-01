@@ -38,6 +38,10 @@ public class GraphExporterImpl implements GraphExporter {
             throw new StudyImporterException("failed to create output dir [" + baseDir.getAbsolutePath() + "]", e);
         }
 
+        doExport(graphService, baseDir);
+    }
+
+    public void doExport(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         LOG.info("site maps generating... ");
         File siteMapDir = new File(baseDir, "sitemap");
 
@@ -60,14 +64,7 @@ public class GraphExporterImpl implements GraphExporter {
 
         exportNames(graphService, baseDir);
 
-        exportInteractionsAndCitations(
-                graphService,
-                baseDir,
-                "tsv",
-                new ExportUtil.TsvValueJoiner()
-        );
-
-        exportInteractionsAndCitations(
+        GraphExporterUtil.exportInteractionsAndCitations(
                 graphService,
                 baseDir,
                 "csv",
@@ -77,67 +74,6 @@ public class GraphExporterImpl implements GraphExporter {
         exportDataOntology(graphService, baseDir);
         exportDarwinCoreAggregatedByStudy(graphService, baseDir);
         exportDarwinCoreAll(graphService, baseDir);
-    }
-
-    private void exportInteractionsAndCitations(GraphDatabaseService graphService,
-                                                File baseDir,
-                                                String extension,
-                                                ExportUtil.ValueJoiner joiner) throws StudyImporterException {
-        File formatBaseDir = new File(baseDir, extension);
-        try {
-            FileUtils.forceMkdir(formatBaseDir);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to create export dir [" + formatBaseDir.getAbsolutePath() + "]", e);
-        }
-        exportSupportingInteractions(
-                graphService,
-                formatBaseDir,
-                "interactions." + extension + ".gz",
-                joiner);
-
-        exportRefutedInteractions(
-                graphService,
-                formatBaseDir,
-                "refuted-interactions." + extension + ".gz",
-                joiner);
-
-        exportCitations(
-                graphService,
-                formatBaseDir,
-                "citations." + extension + ".gz",
-                joiner);
-    }
-
-    private void exportSupportingInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename)
-                .export(graphService, baseDir);
-        stopWatch.stop();
-        LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
-    }
-
-    private void exportCitations(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        LOG.info("[" + filename + "] generating... ");
-        new ExportCitations(new ExportUtil.TsvValueJoiner(), filename)
-                .export(graphService, baseDir);
-        stopWatch.stop();
-        LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
-    }
-
-    private void exportRefutedInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename)
-                .setArgumentType(RelTypes.REFUTES)
-                .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
-                .export(graphService, baseDir);
-        stopWatch.stop();
-        LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
     private void exportNCBILinkOut(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {

@@ -2,23 +2,23 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
-import org.eol.globi.export.GraphExporterImpl;
+import org.eol.globi.export.GraphExporterInteractionsTSVImpl;
 
 import java.io.File;
 
-public class CmdExport implements Cmd {
+public class CmdExportInteractionsTSV implements Cmd {
 
     private final GraphServiceFactory factory;
     private File baseDir;
 
-    public CmdExport(GraphServiceFactory factory, File baseDir) {
+    public CmdExportInteractionsTSV(GraphServiceFactory factory, File baseDir) {
         this.factory = factory;
         this.baseDir = baseDir;
     }
 
     @Override
     public void run() throws StudyImporterException {
-        new GraphExporterImpl()
+        new GraphExporterInteractionsTSVImpl()
                 .export(factory.getGraphService(), baseDir);
     }
 }
