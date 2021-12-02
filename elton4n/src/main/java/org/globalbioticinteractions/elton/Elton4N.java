@@ -133,7 +133,9 @@ public class Elton4N {
                 ));
             }
 
-            CmdInterpretTaxa interpretTaxa = createInterpretTaxaCmd(cmdLine, graphServiceFactory);
+            String exportDir = cmdLine.getOptionValue(CmdOptionConstants.OPTION_EXPORT_DIR, ".");
+
+            CmdInterpretTaxa interpretTaxa = createInterpretTaxaCmd(cmdLine, graphServiceFactory, exportDir);
             if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_LINK_NAMES)) {
                 steps.add(interpretTaxa);
             }
@@ -150,7 +152,6 @@ public class Elton4N {
                 ));
             }
 
-            String exportDir = cmdLine.getOptionValue(CmdOptionConstants.OPTION_EXPORT_DIR, ".");
             CmdExportInteractionsTSV interactionsTSVExporter = new CmdExportInteractionsTSV(graphServiceFactory, new File(exportDir));
             if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_PACKAGE_INTERACTIONS_TSV)) {
                 steps.add(interactionsTSVExporter);
@@ -172,7 +173,9 @@ public class Elton4N {
         }
     }
 
-    private CmdInterpretTaxa createInterpretTaxaCmd(CommandLine cmdLine, GraphServiceFactory graphServiceFactory) {
+    private CmdInterpretTaxa createInterpretTaxaCmd(CommandLine cmdLine,
+                                                    GraphServiceFactory graphServiceFactory,
+                                                    String exportDir) {
         String taxonCachePath = cmdLine.getOptionValue(
                 CmdOptionConstants.OPTION_TAXON_CACHE_PATH,
                 "taxonCache.tsv.gz"
@@ -184,7 +187,8 @@ public class Elton4N {
         return new CmdInterpretTaxa(
                 graphServiceFactory,
                 taxonCachePath,
-                taxonMapPath
+                taxonMapPath,
+                new File(exportDir)
         );
     }
 
