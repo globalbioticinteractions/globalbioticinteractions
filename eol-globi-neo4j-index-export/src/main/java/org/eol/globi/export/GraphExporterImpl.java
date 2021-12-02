@@ -27,20 +27,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPOutputStream;
 
-public class GraphExporterImpl implements GraphExporter {
+public class GraphExporterImpl extends GraphExporterBase {
     private static final Logger LOG = LoggerFactory.getLogger(GraphExporterImpl.class);
 
     @Override
-    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
-        try {
-            FileUtils.forceMkdir(baseDir);
-        } catch (IOException e) {
-            throw new StudyImporterException("failed to create output dir [" + baseDir.getAbsolutePath() + "]", e);
-        }
-
-        doExport(graphService, baseDir);
-    }
-
     public void doExport(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         LOG.info("site maps generating... ");
         File siteMapDir = new File(baseDir, "sitemap");
