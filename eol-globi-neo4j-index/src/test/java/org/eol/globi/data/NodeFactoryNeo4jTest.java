@@ -15,6 +15,7 @@ import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Specimen;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
@@ -25,6 +26,7 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -39,6 +41,7 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -506,6 +509,29 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         getNodeFactory().createSpecimen(interaction, new TaxonImpl("donald duck", null));
 
         assertThat(interaction.getParticipants().size(), is(2));
+
+    }
+
+    @Test
+    public void interactionWitEventTime() throws NodeFactoryException {
+        initTaxonService();
+        StudyNode study = getNodeFactory().createStudy(new StudyImpl("bla", null, null));
+
+        SpecimenNode mickeyMouse = getNodeFactory().createSpecimen(study, new TaxonImpl("mickey mouse", null));
+        SpecimenNode donaldDuck = getNodeFactory().createSpecimen(study, new TaxonImpl("donald duck", null));
+
+        mickeyMouse.ate(donaldDuck);
+        getNodeFactory().setUnixEpochProperty(mickeyMouse, DateUtil.parseDateUTC("2021-01-05").toDate());
+
+        Iterable<Relationship> collectedRel = NodeFactoryNeo4j.getCollectedRel(mickeyMouse);
+        boolean checked = false;
+        for (Relationship relationship : collectedRel) {
+            assertThat(relationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(1609804800000L));
+            assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is("2021-01-05T00:00:00Z"));
+            checked = true;
+        }
+
+        assertThat(checked, is(true));
 
     }
 

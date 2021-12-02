@@ -31,6 +31,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.taxon.UberonLookupService;
+import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
@@ -345,11 +346,12 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
             Iterable<Relationship> rels = getCollectedRel(specimen);
             for (Relationship rel : rels) {
                 rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
+                rel.setProperty(SpecimenConstant.EVENT_DATE, DateUtil.printDate(date));
             }
         }
     }
 
-    private Iterable<Relationship> getCollectedRel(Specimen specimen) throws NodeFactoryException {
+    public static Iterable<Relationship> getCollectedRel(Specimen specimen) throws NodeFactoryException {
         Iterable<Relationship> rel = ((NodeBacked) specimen).getUnderlyingNode().getRelationships(Direction.INCOMING,
                 NodeUtil.asNeo4j(RelTypes.COLLECTED),
                 NodeUtil.asNeo4j(RelTypes.SUPPORTS),
