@@ -28,6 +28,7 @@ public final class WikidataUtil {
     private static Logger LOG = LoggerFactory.getLogger(WikidataUtil.class);
 
     public static final Map<TaxonomyProvider, String> PROVIDER_TO_WIKIDATA = new TreeMap<TaxonomyProvider, String>() {{
+        put(TaxonomyProvider.INDEX_FUNGORUM, "P1391");
         put(TaxonomyProvider.ITIS, "P815");
         put(TaxonomyProvider.NCBI, "P685");
         put(TaxonomyProvider.EOL, "P830");
@@ -43,6 +44,7 @@ public final class WikidataUtil {
         put(TaxonomyProvider.PLAZI, "P1992");
     }};
     public static final Map<String, TaxonomyProvider> WIKIDATA_TO_PROVIDER = new TreeMap<String, TaxonomyProvider>() {{
+        put("P1391", TaxonomyProvider.INDEX_FUNGORUM);
         put("P815", TaxonomyProvider.ITIS);
         put("P685", TaxonomyProvider.NCBI);
         put("P830", TaxonomyProvider.EOL);

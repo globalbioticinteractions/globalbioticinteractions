@@ -46,6 +46,22 @@ public class WikidataUtilTest {
     }
 
     @Test
+    public void lookupTaxonLinksIndexFungorum() throws IOException, URISyntaxException {
+        List<Taxon> relatedTaxonIds =
+                WikidataUtil.findRelatedTaxonIds("IF:7106");
+
+        final String ids = relatedTaxonIds
+                .stream()
+                .map(Taxon::getExternalId)
+                .sorted()
+                .collect(Collectors.joining("|"));
+        assertThat(ids, is("EOL:16498|GBIF:2616104|IF:7106|INAT_TAXON:327996|IRMNG:1312559|ITIS:14134|NBN:NHMSYS0001474393|NCBI:5598|WD:Q133266|WORMS:100208"));
+
+        final String names = relatedTaxonIds.stream().map(Taxon::getName).distinct().collect(Collectors.joining("|"));
+        assertThat(names, is("Homo sapiens"));
+    }
+
+    @Test
     public void lookupTaxonLinksByWDEntry() throws IOException, URISyntaxException {
         List<Taxon> relatedTaxonIds =
                 WikidataUtil.findRelatedTaxonIds("WD:Q15978631");
