@@ -114,9 +114,15 @@ public class WikidataUtilTest {
                 .map(Taxon::getExternalId)
                 .sorted()
                 .collect(Collectors.joining("|"));
+
         assertThat(ids, is("BOLDTaxon:12439|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
 
-        final String names = relatedTaxonIds.stream().map(Taxon::getName).distinct().collect(Collectors.joining("|"));
+        final String names = relatedTaxonIds
+                .stream()
+                .map(Taxon::getName)
+                .distinct()
+                .collect(Collectors.joining("|"));
+
         assertThat(names, is("Homo sapiens"));
     }
 
@@ -130,9 +136,15 @@ public class WikidataUtilTest {
                 .map(Taxon::getExternalId)
                 .sorted()
                 .collect(Collectors.joining("|"));
+
         assertThat(ids, is("EOL:16498|GBIF:2616104|IF:7106|INAT_TAXON:327996|IRMNG:1312559|ITIS:14134|NBN:NHMSYS0001474393|NCBI:5598|OTT:464790|WD:Q133266|WORMS:100208"));
 
-        final String names = relatedTaxonIds.stream().map(Taxon::getName).distinct().collect(Collectors.joining("|"));
+        final String names = relatedTaxonIds
+                .stream()
+                .map(Taxon::getName)
+                .distinct()
+                .collect(Collectors.joining("|"));
+
         assertThat(names, is("Alternaria"));
     }
 
@@ -141,10 +153,20 @@ public class WikidataUtilTest {
         List<Taxon> relatedTaxonIds =
                 WikidataUtil.findRelatedTaxonIds("WD:Q15978631");
 
-        final String ids = relatedTaxonIds.stream().map(Taxon::getExternalId).sorted().collect(Collectors.joining("|"));
+        final String ids = relatedTaxonIds
+                .stream()
+                .map(Taxon::getExternalId)
+                .sorted()
+                .collect(Collectors.joining("|"));
+
         assertThat(ids, is("BOLDTaxon:12439|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
 
-        final String names = relatedTaxonIds.stream().map(Taxon::getName).distinct().collect(Collectors.joining("|"));
+        final String names = relatedTaxonIds
+                .stream()
+                .map(Taxon::getName)
+                .distinct()
+                .collect(Collectors.joining("|"));
+
         assertThat(names, is("Homo sapiens"));
     }
 
