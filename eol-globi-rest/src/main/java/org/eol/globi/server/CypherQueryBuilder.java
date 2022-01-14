@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.eol.globi.server.util.ResultField.EVENT_DATE;
 import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
 import static org.eol.globi.server.util.ResultField.SOURCE_TAXON_NAME;
 import static org.eol.globi.server.util.ResultField.TARGET_TAXON_NAME;
@@ -681,6 +682,8 @@ public class CypherQueryBuilder {
         }
         return paramValues.stream()
                 .filter(StringUtils::isNotBlank)
+                // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/699#issuecomment-1013456658
+                .map(x -> StringUtils.equals(x, "collection_time_in_unix_epoch") ? EVENT_DATE.getLabel() : x)
                 .map(StringUtils::trim)
                 .collect(Collectors.toList());
     }

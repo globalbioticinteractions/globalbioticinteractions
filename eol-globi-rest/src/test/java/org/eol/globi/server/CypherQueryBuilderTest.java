@@ -390,7 +390,11 @@ public class CypherQueryBuilderTest {
             {
                 put("includeObservations", new String[]{"true"});
                 put("interactionType", new String[]{"pathogenOf"});
-                put("field", new String[]{"source_taxon_name", "target_taxon_name", "collection_time_in_unix_epoch"});
+                put("field", new String[]{
+                        "source_taxon_name",
+                        "target_taxon_name",
+                        "collection_time_in_unix_epoch"}
+                        );
             }
         };
 
