@@ -190,9 +190,9 @@ public class ResultFormatterJSONv2 implements ResultFormatter {
             if (value.isNumber()) {
                 interaction.put("altitude", value.asDouble());
             }
-        } else if (ResultField.COLLECTION_TIME_IN_UNIX_EPOCH.getLabel().equals(colName)) {
+        } else if (ResultField.EVENT_DATE.getLabel().equals(colName)) {
             if (value.isNumber()) {
-                interaction.put("time", value.asLong());
+                interaction.put("time", value.asText());
             }
         } else if (ResultField.STUDY_TITLE.getLabel().equals(colName)) {
             interaction.put("study", value.asText());

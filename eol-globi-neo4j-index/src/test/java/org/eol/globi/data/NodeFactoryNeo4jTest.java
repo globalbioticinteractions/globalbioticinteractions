@@ -526,7 +526,6 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         Iterable<Relationship> collectedRel = NodeFactoryNeo4j.getCollectedRel(mickeyMouse);
         boolean checked = false;
         for (Relationship relationship : collectedRel) {
-            assertThat(relationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(1609804800000L));
             assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is("2021-01-05T00:00:00Z"));
             checked = true;
         }

@@ -123,7 +123,7 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", loc.longitude as decimalLongitude" +
                 ", loc.localityId as localityId" +
                 ", loc.locality as localityName" +
-                ", c.dateInUnixEpoch as eventDateUnixEpoch" +
+                ", c.eventDate as eventDate" +
                 ", '" + argumentTypeId + "' as argumentTypeId" +
                 ", study.citation as referenceCitation" +
                 ", study.doi as referenceDoi" +

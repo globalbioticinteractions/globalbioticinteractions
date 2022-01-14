@@ -6,7 +6,7 @@ public enum ResultField {
     ALTITUDE("altitude"),
     FOOTPRINT_WKT("footprintWKT"),
     LOCALITY("locality"),
-    COLLECTION_TIME_IN_UNIX_EPOCH("collection_time_in_unix_epoch"),
+    EVENT_DATE("event_date"),
     STUDY_TITLE("study_title"),
     INTERACTION_TYPE("interaction_type"),
 

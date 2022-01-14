@@ -53,7 +53,7 @@ public class DatasetImporterForICESTest extends GraphDBTestCase {
         RelationshipListener handler = new RelationshipListener() {
             @Override
             public void on(Relationship rel) {
-                assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(DateUtil.parsePatternUTC("1981", "yyyy").toDate().getTime()));
+                assertThat(rel.getProperty(SpecimenConstant.EVENT_DATE), is("1981-01-01T00:00:00Z"));
                 Node specimen = rel.getEndNode();
                 assertNotNull(specimen);
                 Iterable<Relationship> relationships = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));

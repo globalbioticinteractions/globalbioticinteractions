@@ -47,7 +47,7 @@ public class DatasetImporterForCookTest extends GraphDBTestCase {
         AtomicBoolean foundFirstHost = new AtomicBoolean(false);
 
         RelationshipListener handler = relationship -> {
-            assertThat(relationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(notNullValue()));
+            assertThat(relationship.getProperty(SpecimenConstant.EVENT_DATE), is(notNullValue()));
             Node specimen = relationship.getEndNode();
             if (specimen.hasProperty(SpecimenConstant.LENGTH_IN_MM)) {
                 Object property = specimen.getProperty(SpecimenConstant.LENGTH_IN_MM);

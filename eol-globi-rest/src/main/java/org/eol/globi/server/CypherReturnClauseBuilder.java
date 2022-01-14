@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static org.eol.globi.server.CypherQueryBuilder.collectParamValues;
 import static org.eol.globi.server.util.ResultField.ALTITUDE;
-import static org.eol.globi.server.util.ResultField.COLLECTION_TIME_IN_UNIX_EPOCH;
+import static org.eol.globi.server.util.ResultField.EVENT_DATE;
 import static org.eol.globi.server.util.ResultField.FOOTPRINT_WKT;
 import static org.eol.globi.server.util.ResultField.INTERACTION_TYPE;
 import static org.eol.globi.server.util.ResultField.LATITUDE;
@@ -26,16 +26,16 @@ import static org.eol.globi.server.util.ResultField.LONGITUDE;
 import static org.eol.globi.server.util.ResultField.NUMBER_OF_INTERACTIONS;
 import static org.eol.globi.server.util.ResultField.NUMBER_OF_SOURCES;
 import static org.eol.globi.server.util.ResultField.NUMBER_OF_STUDIES;
-import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_CATALOG_NUMBER;
-import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_COLLECTION_CODE;
-import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_INSTITUTION_CODE;
-import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_OCCURRENCE_ID;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BASIS_OF_RECORD;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_BODY_PART_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_CATALOG_NUMBER;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_COLLECTION_CODE;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_INSTITUTION_CODE;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_LIFE_STAGE;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_LIFE_STAGE_ID;
+import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_OCCURRENCE_ID;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_PHYSIOLOGICAL_STATE_ID;
 import static org.eol.globi.server.util.ResultField.SOURCE_SPECIMEN_SEX;
@@ -54,16 +54,16 @@ import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_ID;
 import static org.eol.globi.server.util.ResultField.STUDY_SOURCE_LAST_SEEN_AT;
 import static org.eol.globi.server.util.ResultField.STUDY_TITLE;
 import static org.eol.globi.server.util.ResultField.STUDY_URL;
-import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_CATALOG_NUMBER;
-import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_COLLECTION_CODE;
-import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_INSTITUTION_CODE;
-import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_OCCURRENCE_ID;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BASIS_OF_RECORD;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BODY_PART;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_BODY_PART_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_CATALOG_NUMBER;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_COLLECTION_CODE;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_INSTITUTION_CODE;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_LIFE_STAGE;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_LIFE_STAGE_ID;
+import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_OCCURRENCE_ID;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_PHYSIOLOGICAL_STATE_ID;
 import static org.eol.globi.server.util.ResultField.TARGET_SPECIMEN_SEX;
@@ -96,7 +96,7 @@ public class CypherReturnClauseBuilder {
 
     private static final ResultField[] RETURN_FIELDS_SINGLE_TAXON_DEFAULT = new ResultField[]{
             SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME,
-            LATITUDE, LONGITUDE, ALTITUDE, STUDY_TITLE, COLLECTION_TIME_IN_UNIX_EPOCH,
+            LATITUDE, LONGITUDE, ALTITUDE, STUDY_TITLE, EVENT_DATE,
             SOURCE_SPECIMEN_ID,
             TARGET_SPECIMEN_ID,
             SOURCE_SPECIMEN_LIFE_STAGE,
@@ -300,7 +300,7 @@ public class CypherReturnClauseBuilder {
                         appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
                             {
                                 put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label");
-                                put(COLLECTION_TIME_IN_UNIX_EPOCH, ResultObject.COLLECTED_REL.getLabel() + ".dateInUnixEpoch");
+                                put(EVENT_DATE, ResultObject.COLLECTED_REL.getLabel() + ".eventDate");
 
                             }
                         }));
@@ -311,7 +311,7 @@ public class CypherReturnClauseBuilder {
                         appendStudyFields(new HashMap<ResultField, String>(defaultSelectors()) {
                             {
                                 put(INTERACTION_TYPE, ResultObject.INTERACTION.getLabel() + ".label");
-                                put(COLLECTION_TIME_IN_UNIX_EPOCH, ResultObject.COLLECTED_REL.getLabel() + ".dateInUnixEpoch");
+                                put(EVENT_DATE, ResultObject.COLLECTED_REL.getLabel() + ".eventDate");
                                 put(NUMBER_OF_INTERACTIONS, "1");
                                 put(NUMBER_OF_STUDIES, "1");
                                 put(NUMBER_OF_SOURCES, "1");

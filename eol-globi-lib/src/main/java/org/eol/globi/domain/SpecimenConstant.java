@@ -7,7 +7,6 @@ public final class SpecimenConstant  {
     public static final String VOLUME_IN_ML = "volumeInMilliLiter";
     public static final String STOMACH_VOLUME_ML = "stomachVolumeInMilliLiter";
 
-    public static final String DATE_IN_UNIX_EPOCH = "dateInUnixEpoch";
     public static final String EVENT_DATE = "eventDate";
 
     public static final String BASIS_OF_RECORD_LABEL = "basisOfRecordLabel";

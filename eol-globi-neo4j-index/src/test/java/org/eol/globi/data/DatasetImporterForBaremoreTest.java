@@ -65,7 +65,7 @@ public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
     private int validateSpecimen(StudyNode study) {
         AtomicInteger totalRels = new AtomicInteger(0);
         RelationshipListener handler = rel -> {
-            assertTrue(rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH));
+            assertTrue(rel.hasProperty(SpecimenConstant.EVENT_DATE));
             Node specimen = rel.getEndNode();
             assertNotNull(specimen);
             Iterable<Relationship> rels = specimen.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(InteractType.ATE));

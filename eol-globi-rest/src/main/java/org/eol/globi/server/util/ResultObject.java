@@ -106,7 +106,7 @@ public enum ResultObject {
             put(ResultField.STUDY_SOURCE_LAST_SEEN_AT, DATASET);
             put(ResultField.STUDY_SOURCE_ID, DATASET);
 
-            put(ResultField.COLLECTION_TIME_IN_UNIX_EPOCH, COLLECTED_REL);
+            put(ResultField.EVENT_DATE, COLLECTED_REL);
             put(ResultField.INTERACTION_TYPE, INTERACTION);
 
             put(ResultField.TAXON_NAME, TAXON);

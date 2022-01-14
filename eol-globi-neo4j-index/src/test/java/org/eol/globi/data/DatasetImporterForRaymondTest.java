@@ -69,7 +69,7 @@ public class DatasetImporterForRaymondTest extends GraphDBTestCase {
                     next -> {
                         Specimen specimen = new SpecimenNode(next.getEndNode());
                         assertThat(specimen.getSampleLocation().getLongitude(), is (-61.66666667d));
-                        assertThat(next.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(not(nullValue())));
+                        assertThat(next.getProperty(SpecimenConstant.EVENT_DATE), is(not(nullValue())));
                         foundAtLeastOne.set(true);
                     });
         }

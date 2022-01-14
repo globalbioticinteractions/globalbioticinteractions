@@ -153,7 +153,7 @@ public class DatasetImporterForINaturalistTest extends GraphDBTestCase {
             assertThat(locationRel.getEndNode().getProperty("longitude"), is(-72.542556));
 
             Relationship collectedRel = sourceSpecimen.getSingleRelationship(NodeUtil.asNeo4j(RelTypes.COLLECTED), Direction.INCOMING);
-            assertThat((Long) collectedRel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(any(Long.class)));
+            assertThat((String) collectedRel.getProperty(SpecimenConstant.EVENT_DATE), is(any(String.class)));
 
         }
     }

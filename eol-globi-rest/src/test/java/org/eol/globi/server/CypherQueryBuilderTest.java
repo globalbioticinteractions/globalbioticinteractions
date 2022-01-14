@@ -81,7 +81,7 @@ public class CypherQueryBuilderTest {
     }
 
     private static String expectedReturnClause() {
-        return "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,targetTaxon.name as target_taxon_name,loc.latitude as latitude,loc.longitude as longitude,loc.altitude as altitude,study.title as study_title,collected_rel.dateInUnixEpoch as collection_time_in_unix_epoch,ID(sourceSpecimen) as tmp_and_unique_source_specimen_id,ID(targetSpecimen) as tmp_and_unique_target_specimen_id,sourceSpecimen.lifeStageLabel as source_specimen_life_stage,targetSpecimen.lifeStageLabel as target_specimen_life_stage,sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record,targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record,sourceSpecimen.bodyPartLabel as source_specimen_body_part,targetSpecimen.bodyPartLabel as target_specimen_body_part,sourceSpecimen.physiologicalStateLabel as source_specimen_physiological_state,targetSpecimen.physiologicalStateLabel as target_specimen_physiological_state,targetSpecimen.totalNumberConsumed as target_specimen_total_count,targetSpecimen.totalNumberConsumedPercent as target_specimen_total_count_percent,targetSpecimen.totalVolumeInMl as target_specimen_total_volume_ml,targetSpecimen.totalVolumePercent as target_specimen_total_volume_ml_percent,targetSpecimen.frequencyOfOccurrence as target_specimen_frequency_of_occurrence,targetSpecimen.frequencyOfOccurrencePercent as target_specimen_frequency_of_occurrence_percent,loc.footprintWKT as footprintWKT,loc.locality as locality";
+        return "RETURN sourceTaxon.name as source_taxon_name,interaction.label as interaction_type,targetTaxon.name as target_taxon_name,loc.latitude as latitude,loc.longitude as longitude,loc.altitude as altitude,study.title as study_title,collected_rel.eventDate as event_date,ID(sourceSpecimen) as tmp_and_unique_source_specimen_id,ID(targetSpecimen) as tmp_and_unique_target_specimen_id,sourceSpecimen.lifeStageLabel as source_specimen_life_stage,targetSpecimen.lifeStageLabel as target_specimen_life_stage,sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record,targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record,sourceSpecimen.bodyPartLabel as source_specimen_body_part,targetSpecimen.bodyPartLabel as target_specimen_body_part,sourceSpecimen.physiologicalStateLabel as source_specimen_physiological_state,targetSpecimen.physiologicalStateLabel as target_specimen_physiological_state,targetSpecimen.totalNumberConsumed as target_specimen_total_count,targetSpecimen.totalNumberConsumedPercent as target_specimen_total_count_percent,targetSpecimen.totalVolumeInMl as target_specimen_total_volume_ml,targetSpecimen.totalVolumePercent as target_specimen_total_volume_ml_percent,targetSpecimen.frequencyOfOccurrence as target_specimen_frequency_of_occurrence,targetSpecimen.frequencyOfOccurrencePercent as target_specimen_frequency_of_occurrence_percent,loc.footprintWKT as footprintWKT,loc.locality as locality";
     }
 
     private static String expectedInteractionClause(InteractType... interactions) {
@@ -403,7 +403,31 @@ public class CypherQueryBuilderTest {
                 "RETURN " +
                 "sourceTaxon.name as source_taxon_name" +
                 ",targetTaxon.name as target_taxon_name" +
-                ",collected_rel.dateInUnixEpoch as collection_time_in_unix_epoch"));
+                ",collected_rel.eventDate as event_date"));
+        assertThat(query.getParams().toString(), is(is("{}")));
+
+    }
+
+    @Test
+    public void findInteractionsWithEventDate() {
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("includeObservations", new String[]{"true"});
+                put("interactionType", new String[]{"pathogenOf"});
+                put("field", new String[]{"source_taxon_name", "target_taxon_name", "event_date"});
+            }
+        };
+
+        query = buildInteractionQuery(params, QueryType.forParams(params));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION +
+                "START sourceTaxon = node:taxons('*:*') " +
+                "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PATHOGEN_OF]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
+                "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
+                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "RETURN " +
+                "sourceTaxon.name as source_taxon_name" +
+                ",targetTaxon.name as target_taxon_name" +
+                ",collected_rel.eventDate as event_date"));
         assertThat(query.getParams().toString(), is(is("{}")));
 
     }
@@ -428,7 +452,7 @@ public class CypherQueryBuilderTest {
                 "RETURN " +
                 "sourceTaxon.name as source_taxon_name" +
                 ",targetTaxon.name as target_taxon_name" +
-                ",collected_rel.dateInUnixEpoch as collection_time_in_unix_epoch"));
+                ",collected_rel.eventDate as event_date"));
         assertThat(query.getParams().toString(),
                 is("{source_taxon_name=path:\"Ariopsis felis\"}"));
 
@@ -1556,7 +1580,7 @@ public class CypherQueryBuilderTest {
         };
 
         query = spatialInfo(params);
-        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START loc = node:locations('latitude:*') WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study-[:IN_DATASET]->dataset, sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:COLLECTED_AT]->loc WHERE not(exists(interact.inverted)) RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.dateInUnixEpoch) as `number of interactions with timestamp`, count(distinct(loc)) as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
+        assertThat(query.getVersionedQuery(), is(CYPHER_VERSION + "START loc = node:locations('latitude:*') WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 WITH loc MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study-[:IN_DATASET]->dataset, sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:COLLECTED_AT]->loc WHERE not(exists(interact.inverted)) RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.eventDate) as `number of interactions with timestamp`, count(distinct(loc)) as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
         assertThat(query.getParams().toString(), is("{}"));
     }
 
@@ -1574,7 +1598,7 @@ public class CypherQueryBuilderTest {
                 "WHERE exists(loc.latitude) AND exists(loc.longitude) AND loc.latitude < 23.32 AND loc.longitude > -67.87 AND loc.latitude > 12.79 AND loc.longitude < -57.08 " +
                 "WITH loc MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study-[:IN_DATASET]->dataset, sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen-[:COLLECTED_AT]->loc " +
                 "WHERE not(exists(interact.inverted)) AND dataset.citation = {source} " +
-                "RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.dateInUnixEpoch) as `number of interactions with timestamp`, count(distinct(loc)) as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
+                "RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.eventDate) as `number of interactions with timestamp`, count(distinct(loc)) as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
         assertThat(query.getParams().toString(), is("{source=mySource}"));
     }
 
@@ -1586,7 +1610,7 @@ public class CypherQueryBuilderTest {
                 "sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen<-[c:COLLECTED]-study-[:IN_DATASET]->dataset, " +
                 "sourceSpecimen-[interact]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon " +
                 "WHERE not(exists(interact.inverted)) " +
-                "RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.dateInUnixEpoch) as `number of interactions with timestamp`, NULL as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
+                "RETURN count(distinct(study)) as `number of distinct studies`, count(interact) as `number of interactions`, count(distinct(sourceTaxon.name)) as `number of distinct source taxa (e.g. predators)`, count(distinct(targetTaxon.name)) as `number of distinct target taxa (e.g. prey)`, count(distinct(dataset)) as `number of distinct study sources`, count(c.eventDate) as `number of interactions with timestamp`, NULL as `number of distinct locations`, count(distinct(sourceTaxon.name + type(interact) + targetTaxon.name)) as `number of distinct interactions`"));
         assertThat(query.getParams().toString(), is("{}"));
     }
 

@@ -80,10 +80,9 @@ public abstract class ExporterBase extends DarwinCoreExporter {
 
 
     protected void addCollectionDate(Map<String, String> writer, Relationship collectedRelationship, String datePropertyName) throws IOException {
-        if (collectedRelationship.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
-            Long epoch = (Long) collectedRelationship.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
-            Date date = new Date(epoch);
-            writer.put(datePropertyName, DateUtil.printDate(date));
+        if (collectedRelationship.hasProperty(SpecimenConstant.EVENT_DATE)) {
+            String dateString = (String) collectedRelationship.getProperty(SpecimenConstant.EVENT_DATE);
+            writer.put(datePropertyName, dateString);
         }
 
     }

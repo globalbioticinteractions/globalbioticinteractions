@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.Environment;
@@ -36,6 +37,7 @@ import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.doi.DOI;
+import org.joda.time.DateTime;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -149,7 +151,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     private void extractTerms(String taxonName, Specimen specimen) throws NodeFactoryException {
-        String s = StringUtils.replacePattern(taxonName, "[^A-Za-z]", " ");
+        String s = RegExUtils.replacePattern(taxonName, "[^A-Za-z]", " ");
         String[] nameParts = StringUtils.split(s);
         for (String part : nameParts) {
             extractLifeStage(specimen, part);
@@ -345,7 +347,6 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         if (specimen != null && date != null) {
             Iterable<Relationship> rels = getCollectedRel(specimen);
             for (Relationship rel : rels) {
-                rel.setProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH, date.getTime());
                 rel.setProperty(SpecimenConstant.EVENT_DATE, DateUtil.printDate(date));
             }
         }
@@ -365,16 +366,16 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     @Override
     public Date getUnixEpochProperty(Specimen specimen) throws NodeFactoryException {
-        Date date = null;
+        DateTime date = null;
         Iterable<Relationship> rels = getCollectedRel(specimen);
         if (rels.iterator().hasNext()) {
             Relationship rel = rels.iterator().next();
-            if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
-                Long unixEpoch = (Long) rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH);
-                date = new Date(unixEpoch);
+            if (rel.hasProperty(SpecimenConstant.EVENT_DATE)) {
+                String unixEpoch = (String) rel.getProperty(SpecimenConstant.EVENT_DATE);
+                date = DateUtil.parseDateUTC(unixEpoch);
             }
         }
-        return date;
+        return date == null ? null : date.toDate();
     }
 
     @Override

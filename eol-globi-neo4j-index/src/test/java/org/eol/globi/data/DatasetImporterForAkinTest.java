@@ -74,9 +74,8 @@ public class DatasetImporterForAkinTest extends GraphDBTestCase {
         RelationshipListener relHandler = rel -> {
             assertThat(rel, is(not(nullValue())));
 
-            if (rel.hasProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH)) {
-                Date expectedDate = DateUtil.parsePatternUTC("1998-03-07", "yyyy-MM-dd").toDate();
-                assertThat(rel.getProperty(SpecimenConstant.DATE_IN_UNIX_EPOCH), is(expectedDate.getTime()));
+            if (rel.hasProperty(SpecimenConstant.EVENT_DATE)) {
+                assertThat(rel.getProperty(SpecimenConstant.EVENT_DATE), is("1998-03-07T00:00:00Z"));
 
                 Node specimenNode = rel.getEndNode();
                 assertThat(specimenNode.getProperty(SpecimenConstant.LENGTH_IN_MM), is(226.0));
