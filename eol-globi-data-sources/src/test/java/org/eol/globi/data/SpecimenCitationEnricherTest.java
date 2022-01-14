@@ -24,5 +24,19 @@ public class SpecimenCitationEnricherTest {
         assertThat(enriched.get(DatasetImporterForTSV.REFERENCE_CITATION), is("USNMENT123 some citation"));
     }
 
+    @Test
+    public void addUCSBIZCIdURL() {
+        Map<String, String> interactions = new TreeMap<String, String>() {{
+                put(DatasetImporterForTSV.SOURCE_CATALOG_NUMBER, "123");
+            put(DatasetImporterForTSV.SOURCE_INSTITUTION_CODE, "UCSB");
+            put(DatasetImporterForTSV.SOURCE_COLLECTION_CODE, "IZC");
+            put(DatasetImporterForTSV.REFERENCE_CITATION, "some citation");
+        }};
+
+        Map<String, String> enriched = SpecimenCitationEnricher.enrichCitationIfPossible(interactions);
+
+        assertThat(enriched.get(DatasetImporterForTSV.REFERENCE_CITATION), is("123 some citation"));
+    }
+
 
 }

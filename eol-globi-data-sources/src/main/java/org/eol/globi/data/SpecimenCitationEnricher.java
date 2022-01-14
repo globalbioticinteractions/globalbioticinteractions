@@ -65,6 +65,20 @@ public class SpecimenCitationEnricher extends InteractionProcessorAbstract {
             }
         }
 
+        if (StringUtils.equalsIgnoreCase(collectionCode, "IZC")
+                && StringUtils.equalsIgnoreCase(institutionCode, "UCSB")
+                && StringUtils.isNoneBlank(catalogueNumber)) {
+            try {
+                enriched = Optional.of(new TreeMap<String, String>(interactions) {{
+                    String specimenCitation = StringUtils.trim(catalogueNumber);
+                    put(DatasetImporterForTSV.REFERENCE_CITATION, StringUtils.prependIfMissing(referenceCitation, specimenCitation + " "));
+                }});
+            } catch (IllegalArgumentException ex) {
+                // ignore opportunistic url insertion
+            }
+        }
+
+
         return enriched;
     }
 
