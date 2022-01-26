@@ -52,7 +52,9 @@ public class SpecimenCitationEnricher extends InteractionProcessorAbstract {
         String referenceCitation
                 = interactions.getOrDefault(DatasetImporterForTSV.REFERENCE_CITATION, "");
 
-        if (StringUtils.equalsIgnoreCase(collectionCode, "urn:uuid:18e3cd08-a962-4f0a-b72c-9a0b3600c5ad")
+        List<String> usnmCollectionCodes = Arrays.asList("urn:uuid:18e3cd08-a962-4f0a-b72c-9a0b3600c5ad", "entomology");
+
+        if (usnmCollectionCodes.contains(StringUtils.trim(StringUtils.lowerCase(collectionCode)))
                 && StringUtils.equalsIgnoreCase(institutionCode, "USNM")
                 && StringUtils.isNoneBlank(catalogueNumber)) {
             try {
