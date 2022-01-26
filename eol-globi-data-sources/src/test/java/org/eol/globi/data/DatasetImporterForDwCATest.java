@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
+import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
@@ -522,6 +523,22 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Biomphalaria havanensis"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Biomphalaria"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("havanensis"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarks5() throws IOException {
+        String occurrenceRemarks = "{\"hostGen\":\"Acanthocybium\",\"hostSpec\":\"solandri\",\"hostBodyLoc\":\"\"arm pits\" of wahoo\",\"hostFldNo\":\"030913-15-4 & 5\"}";
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
+
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Acanthocybium solandri"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Acanthocybium"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("solandri"));
+        assertThat(properties.get(TARGET_BODY_PART_NAME), is("\"arm pits\" of wahoo"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
     }
