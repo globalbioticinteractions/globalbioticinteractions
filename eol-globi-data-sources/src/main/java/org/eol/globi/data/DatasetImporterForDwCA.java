@@ -147,7 +147,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     public static Map<String, String> parseKilledByWindow(String occurrenceRemarks) {
-        return new WindowRemarksParser(occurrenceRemarks).parse(occurrenceRemarks);
+        return new WindowRemarksParser().parse(occurrenceRemarks);
 
 
     }
@@ -172,7 +172,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     public static Map<String, String> parseKilledByCat(String occurrenceRemarks) {
-        return new CatRemarksParser(occurrenceRemarks).parse(occurrenceRemarks);
+        return new CatRemarksParser().parse(occurrenceRemarks);
     }
 
     public static Map<String, String> parseEuthanizedRemarks(String occurrenceRemarks) {
@@ -201,7 +201,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static Map<String, String> parseHitByVehicleRemarks(String occurrenceRemarks) {
         final Pattern HIT_BY_VEHICLE_NOTATION
                 = Pattern.compile(
-                ".*(hit by vehicle|hbv).*",
+                ".*(hit by vehicle|hbv|road kill|dor|dead on road).*",
                 Pattern.CASE_INSENSITIVE
         );
 
@@ -412,6 +412,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interactionCandidates.add(properties);
         }
         properties = parseEuthanizedRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+        properties = new AttackRemarksParser().parse(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
             appendResourceType(properties, DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
@@ -1196,12 +1201,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static class WindowRemarksParser implements RemarksParser {
-        private final String occurrenceRemarks;
-
-        public WindowRemarksParser(String occurrenceRemarks) {
-            this.occurrenceRemarks = occurrenceRemarks;
-        }
-
         @Override
         public Map<String, String> parse(String remarks) {
             final Pattern KILLED_BY_WINDOW
@@ -1212,7 +1211,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
             Map<String, String> properties = new TreeMap<>();
 
-            if (KILLED_BY_WINDOW.matcher(occurrenceRemarks).matches()) {
+            if (KILLED_BY_WINDOW.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "window");
 
                 properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
@@ -1225,11 +1224,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static class CatRemarksParser implements RemarksParser {
-        private final String occurrenceRemarks;
-
-        public CatRemarksParser(String occurrenceRemarks) {
-            this.occurrenceRemarks = occurrenceRemarks;
-        }
 
         @Override
         public Map<String, String> parse(String remarks) {
@@ -1241,11 +1235,34 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
             Map<String, String> properties = new TreeMap<>();
 
-            if (KILLED_BY_CAT.matcher(occurrenceRemarks).matches()) {
+            if (KILLED_BY_CAT.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "cat");
 
                 properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
                 properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+
+            }
+            return properties;
+
+        }
+    }
+
+    private static class AttackRemarksParser implements RemarksParser {
+        @Override
+        public Map<String, String> parse(String remarks) {
+            final Pattern KILLED_BY_CAT
+                    = Pattern.compile(
+                    ".*(attack).*",
+                    Pattern.CASE_INSENSITIVE
+            );
+
+            Map<String, String> properties = new TreeMap<>();
+
+            if (KILLED_BY_CAT.matcher(remarks).matches()) {
+                properties.put(TaxonUtil.TARGET_TAXON_NAME, "Animalia");
+
+                properties.put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
+                properties.put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
 
             }
             return properties;
@@ -1271,7 +1288,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             Map<String, String> properties = new TreeMap<>();
 
             if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
-                properties.put(TaxonUtil.TARGET_TAXON_NAME, "Homo sapiens");
+                properties.put(TaxonUtil.TARGET_TAXON_NAME, "euthanasia");
 
                 properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
                 properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());

@@ -576,7 +576,7 @@ public class DatasetImporterForDwCATest {
 
         Map<String, String> properties = DatasetImporterForDwCA.parseEuthanizedRemarks(occurrenceRemarks);
 
-        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("euthanasia"));
 
         assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
