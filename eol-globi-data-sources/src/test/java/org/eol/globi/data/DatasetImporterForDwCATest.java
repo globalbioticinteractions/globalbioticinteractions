@@ -543,6 +543,99 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/733
+    public void occurrenceRemarksHitByVehicle() throws IOException {
+        String occurrenceRemarks = "HBV (hit by vehicle), head trauma, shocky. Died 1/7/17.";
+
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseHitByVehicleRemarks(occurrenceRemarks);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("vehicle"));
+
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/733
+    public void occurrenceRemarksHitByCar() throws IOException {
+        String occurrenceRemarks = "blue card 2999; hit by car";
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseHitByCarRemarks(occurrenceRemarks);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("car"));
+
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/733
+    public void occurrenceRemarksEuthanized() throws IOException {
+        String occurrenceRemarks = "euthanized as part of cowbird control program";
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseEuthanizedRemarks(occurrenceRemarks);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
+
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/733
+    public void occurrenceRemarksKilledByHighVoltage() throws IOException {
+        String occurrenceRemarks = " Injury: probably high voltage trauma, injuries on right and left legs. Euthanized on arrival. Necropsied by Rocky Mountain Raptor Program. No ecto- or endoparasites found.";
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseHighVoltageRemarks(occurrenceRemarks);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("high voltage"));
+
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/733
+    public void occurrenceRemarksKilledByWindow() throws IOException {
+        String occurrenceRemarks = "window strike";
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseKilledByWindow(occurrenceRemarks);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("window"));
+
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/733
+    public void occurrenceRemarksKilledByDog() throws IOException {
+        String occurrenceRemarks = "NRBV, Dog kill";
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseKilledByDog(occurrenceRemarks);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("dog"));
+
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
+    }
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/733
+    public void occurrenceRemarksKilledByCat() throws IOException {
+        String occurrenceRemarks = "100 - 350 = 79.3g. Skull unoss - hv. molt - med fat. Cat kill. Stom. beetles - pine nuts.; t = 2xl reddish flesh";
+
+        Map<String, String> properties = DatasetImporterForDwCA.parseKilledByCat(occurrenceRemarks);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("cat"));
+
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.KILLED_BY.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.KILLED_BY.getIRI()));
+    }
+
+
+    @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarks4() throws IOException {
         String occurrenceRemarks = "{\"hostGen\":\"Tilapia\",\"hostSpec\":\"sparrmani\"}";

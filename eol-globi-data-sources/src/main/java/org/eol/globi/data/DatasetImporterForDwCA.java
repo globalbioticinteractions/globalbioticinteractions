@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.Taxon;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
@@ -142,6 +140,81 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
+    }
+
+    public static Map<String, String> parseHitByCarRemarks(String occurrenceRemarks) {
+        return new CarRemarksParser().parse(occurrenceRemarks);
+    }
+
+    public static Map<String, String> parseKilledByWindow(String occurrenceRemarks) {
+        return new WindowRemarksParser(occurrenceRemarks).parse(occurrenceRemarks);
+
+
+    }
+
+    public static Map<String, String> parseKilledByDog(String occurrenceRemarks) {
+        final Pattern KILLED_BY_WINDOW
+                = Pattern.compile(
+                ".*(dog kill).*",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Map<String, String> properties = new TreeMap<>();
+
+        if (KILLED_BY_WINDOW.matcher(occurrenceRemarks).matches()) {
+            properties.put(TaxonUtil.TARGET_TAXON_NAME, "dog");
+
+            properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
+            properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+
+        }
+        return properties;
+    }
+
+    public static Map<String, String> parseKilledByCat(String occurrenceRemarks) {
+        return new CatRemarksParser(occurrenceRemarks).parse(occurrenceRemarks);
+    }
+
+    public static Map<String, String> parseEuthanizedRemarks(String occurrenceRemarks) {
+        return new EuthanizedRemarksParser(occurrenceRemarks).parse(occurrenceRemarks);
+    }
+
+    public static Map<String, String> parseHighVoltageRemarks(String occurrenceRemarks) {
+        final Pattern EUTHANIZED_PATTERN
+                = Pattern.compile(
+                ".*(high voltage|hvt|high voltage trauma).*",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Map<String, String> properties = new TreeMap<>();
+
+        if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
+            properties.put(TaxonUtil.TARGET_TAXON_NAME, "high voltage");
+
+            properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
+            properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+
+        }
+        return properties;
+    }
+
+    public static Map<String, String> parseHitByVehicleRemarks(String occurrenceRemarks) {
+        final Pattern HIT_BY_VEHICLE_NOTATION
+                = Pattern.compile(
+                ".*(hit by vehicle|hbv).*",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Map<String, String> properties = new TreeMap<>();
+
+        if (HIT_BY_VEHICLE_NOTATION.matcher(occurrenceRemarks).matches()) {
+            properties.put(TaxonUtil.TARGET_TAXON_NAME, "vehicle");
+
+            properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
+            properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+
+        }
+        return properties;
     }
 
 
@@ -317,6 +390,51 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (StringUtils.isNotBlank(occurrenceRemarks)) {
             addUSNMStyleHostOccurrenceRemarks(interactionCandidates, occurrenceRemarks);
             addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(interactionCandidates, occurrenceRemarks);
+            addKilledByPetsRemarks(interactionCandidates, occurrenceRemarks);
+            addKilledByHumansRemarks(interactionCandidates, occurrenceRemarks);
+        }
+    }
+
+    private static void addKilledByHumansRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
+        Map<String, String> properties = parseKilledByWindow(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+        properties = parseHitByCarRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+        properties = parseHitByVehicleRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+        properties = parseEuthanizedRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+        properties = parseHighVoltageRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+
+
+    }
+
+    private static void addKilledByPetsRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
+        Map<String, String> properties = parseKilledByCat(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+        properties = parseKilledByDog(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
         }
     }
 
@@ -1055,6 +1173,112 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         appendResourceType(interaction, targetProperties.get(RESOURCE_TYPES));
 
 
+    }
+
+    private static class CarRemarksParser implements RemarksParser {
+        @Override
+        public Map<String, String> parse(String occurrenceRemarks) {
+            final Pattern HIT_BY_CAR_NOTATION
+                    = Pattern.compile(
+                    ".*(hit by car).*",
+                    Pattern.CASE_INSENSITIVE
+            );
+
+            Map<String, String> properties = new TreeMap<>();
+
+            if (HIT_BY_CAR_NOTATION.matcher(occurrenceRemarks).matches()) {
+                properties.put(TaxonUtil.TARGET_TAXON_NAME, "car");
+                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
+                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+            }
+            return properties;
+        }
+    }
+
+    private static class WindowRemarksParser implements RemarksParser {
+        private final String occurrenceRemarks;
+
+        public WindowRemarksParser(String occurrenceRemarks) {
+            this.occurrenceRemarks = occurrenceRemarks;
+        }
+
+        @Override
+        public Map<String, String> parse(String remarks) {
+            final Pattern KILLED_BY_WINDOW
+                    = Pattern.compile(
+                    ".*(window strike|window kill).*",
+                    Pattern.CASE_INSENSITIVE
+            );
+
+            Map<String, String> properties = new TreeMap<>();
+
+            if (KILLED_BY_WINDOW.matcher(occurrenceRemarks).matches()) {
+                properties.put(TaxonUtil.TARGET_TAXON_NAME, "window");
+
+                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
+                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+
+            }
+            return properties;
+
+        }
+    }
+
+    private static class CatRemarksParser implements RemarksParser {
+        private final String occurrenceRemarks;
+
+        public CatRemarksParser(String occurrenceRemarks) {
+            this.occurrenceRemarks = occurrenceRemarks;
+        }
+
+        @Override
+        public Map<String, String> parse(String remarks) {
+            final Pattern KILLED_BY_CAT
+                    = Pattern.compile(
+                    ".*(cat kill).*",
+                    Pattern.CASE_INSENSITIVE
+            );
+
+            Map<String, String> properties = new TreeMap<>();
+
+            if (KILLED_BY_CAT.matcher(occurrenceRemarks).matches()) {
+                properties.put(TaxonUtil.TARGET_TAXON_NAME, "cat");
+
+                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
+                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+
+            }
+            return properties;
+
+        }
+    }
+
+    private static class EuthanizedRemarksParser implements RemarksParser {
+        private final String occurrenceRemarks;
+
+        public EuthanizedRemarksParser(String occurrenceRemarks) {
+            this.occurrenceRemarks = occurrenceRemarks;
+        }
+
+        @Override
+        public Map<String, String> parse(String remarks) {
+            final Pattern EUTHANIZED_PATTERN
+                    = Pattern.compile(
+                    ".*(euthanized).*",
+                    Pattern.CASE_INSENSITIVE
+            );
+
+            Map<String, String> properties = new TreeMap<>();
+
+            if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
+                properties.put(TaxonUtil.TARGET_TAXON_NAME, "Homo sapiens");
+
+                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
+                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+
+            }
+            return properties;
+        }
     }
 
     private class InteractionListenerWithContext implements InteractionListener {
