@@ -35,6 +35,9 @@ public enum InteractionTypeExternal {
     EPIPHITE_OF(InteractType.EPIPHITE_OF.getLabel(), "plant/algae", "host plant", InteractType.EPIPHITE_OF),
     HAS_EPIPHITE(InteractType.HAS_EPIPHITE.getLabel(), "plant", "plant/algae", InteractType.HAS_EPIPHITE),
 
+    PROVIDES_NUTRIENTS_FOR(InteractType.PROVIDES_NUTRIENTS_FOR.getLabel(), "host", "consumer", InteractType.PROVIDES_NUTRIENTS_FOR),
+    ACQUIRES_NUTRIENTS_FROM(InteractType.ACQUIRES_NUTRIENTS_FROM.getLabel(), "consumer", "host", InteractType.ACQUIRES_NUTRIENTS_FROM),
+
     SYMBIONT_OF(CypherQueryBuilder.INTERACTION_SYMBIONT_OF, "symbiont", "symbiont", InteractType.SYMBIONT_OF),
     MUTUALIST_OF(CypherQueryBuilder.INTERACTION_MUTUALIST_OF, "mutualist", "mutualist", InteractType.MUTUALIST_OF),
     COMMENSALIST_OF(CypherQueryBuilder.INTERACTION_COMMENSALIST_OF, "commensalist", "commensalist", InteractType.COMMENSALIST_OF),
