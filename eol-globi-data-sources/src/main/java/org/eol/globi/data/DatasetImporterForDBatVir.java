@@ -30,7 +30,6 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
-import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_IDS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_NAMES;
@@ -45,6 +44,9 @@ import static org.eol.globi.util.JSONUtil.textValueOrEmpty;
 public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
 
     private static final int BATCH_SIZE_DEFAULT = -1;
+    public static final String RANK_STRAIN = "strain";
+    public static final String RANK_SPECIES = "species";
+    public static final String RANK_FAMILY = "family";
 
     public DatasetImporterForDBatVir(ParserFactory parserFactory, NodeFactory nodeFactory) {
         super(parserFactory, nodeFactory);
@@ -128,11 +130,11 @@ public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
                 String virusName = textValueOrEmpty(interactionNode, "Virus");
                 if (StringUtils.isNotBlank(strainName)) {
                     link.put(TARGET_TAXON_NAME, strainName);
-                    link.put(TARGET_TAXON_RANK, strainName);
+                    link.put(TARGET_TAXON_RANK, RANK_STRAIN);
                 } else if (StringUtils.isNotBlank(virusName)) {
                     if (StringUtils.isNotBlank(virusName)) {
                         link.put(TARGET_TAXON_NAME, virusName);
-                        link.put(TARGET_TAXON_RANK, virusName);
+                        link.put(TARGET_TAXON_RANK, RANK_SPECIES);
                     }
                 }
 
@@ -151,9 +153,9 @@ public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
                 link.put(TARGET_TAXON_PATH, targetTaxonPath);
 
                 String targetTaxonPathNames = Stream.of(
-                        "family",
-                        "species",
-                        "strain")
+                        RANK_FAMILY,
+                        RANK_SPECIES,
+                        RANK_STRAIN)
                         .map(StringUtils::trim)
                         .collect(Collectors.joining(CharsetConstant.SEPARATOR));
 
@@ -169,7 +171,11 @@ public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
                 link.put(TARGET_TAXON_PATH_IDS, targetTaxonPathIds);
 
 
-                setPropertyIfNotBlank(link, interactionNode, SOURCE_TAXON_NAME, "Bat");
+                String value1 = JSONUtil.textValueOrNull(interactionNode, "Bat");
+                if (StringUtils.isNotBlank(value1)) {
+                    link.put(org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME, value1);
+                    link.put(org.eol.globi.service.TaxonUtil.SOURCE_TAXON_RANK, "species");
+                }
                 String sourceTaxonId = getTaxonId(interactionNode, "b_tax");
                 if (StringUtils.isNotBlank(sourceTaxonId)) {
                     link.put(SOURCE_TAXON_ID, sourceTaxonId);
@@ -183,8 +189,8 @@ public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
                 link.put(SOURCE_TAXON_PATH, sourceTaxonPath);
 
                 String sourceTaxonPathNames = Stream.of(
-                        "family",
-                        "species")
+                        RANK_FAMILY,
+                        RANK_SPECIES)
                         .map(StringUtils::trim)
                         .collect(Collectors.joining(CharsetConstant.SEPARATOR));
 
@@ -253,13 +259,6 @@ public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
         }
         return taxonId;
 
-    }
-
-    private static void setPropertyIfNotBlank(Map<String, String> link, JsonNode interactionNode, String propertyLabel, String columnName) {
-        String value = JSONUtil.textValueOrNull(interactionNode, columnName);
-        if (StringUtils.isNotBlank(value)) {
-            link.put(propertyLabel, value);
-        }
     }
 
 

@@ -22,11 +22,13 @@ import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_IDS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PATH_NAMES;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_RANK;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_IDS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_NAMES;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_RANK;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetImporterForDBatVirTest {
@@ -60,6 +62,7 @@ public class DatasetImporterForDBatVirTest {
         assertThat(links.size(), Is.is(2));
 
         assertThat(links.get(0).get(SOURCE_TAXON_NAME), Is.is("Hipposideros caffer"));
+        assertThat(links.get(0).get(SOURCE_TAXON_RANK), Is.is("species"));
         assertThat(links.get(0).get(SOURCE_TAXON_ID), Is.is("NCBI:302402"));
         assertThat(links.get(0).get(SOURCE_TAXON_PATH), Is.is("Rhinolophidae | Hipposideros caffer"));
         assertThat(links.get(0).get(SOURCE_TAXON_PATH_IDS), Is.is(" | NCBI:302402"));
@@ -69,6 +72,7 @@ public class DatasetImporterForDBatVirTest {
         assertThat(links.get(0).get(INTERACTION_TYPE_NAME), Is.is("hostOf"));
 
         assertThat(links.get(0).get(TARGET_TAXON_NAME), Is.is("BatCoV5743/KEN/Kwale"));
+        assertThat(links.get(0).get(TARGET_TAXON_RANK), Is.is("strain"));
         assertThat(links.get(0).get(TARGET_TAXON_ID), Is.is("NCBI:1739614"));
         assertThat(links.get(0).get(TARGET_TAXON_PATH), Is.is("Coronaviridae | 229E-related bat coronavirus | BatCoV5743/KEN/Kwale"));
         assertThat(links.get(0).get(TARGET_TAXON_PATH_IDS), Is.is(" | NCBI:1739614 | "));
