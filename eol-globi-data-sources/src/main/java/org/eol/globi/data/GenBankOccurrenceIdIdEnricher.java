@@ -1,15 +1,11 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionProcessorAbstract;
-import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.HttpUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,13 +13,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,13 +116,13 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
     public Map<String, String> enrich(final Map<String, String> properties) throws StudyImporterException {
         Map<String, String> enrichedProperties = new HashMap<String, String>(properties);
 
-        enrichSourceOccurrenceId(properties, enrichedProperties);
-        enrichTargetOccurrenceId(properties, enrichedProperties);
+        enrichSourceOccurrenceId(enrichedProperties);
+        enrichTargetOccurrenceId(enrichedProperties);
 
         return Collections.unmodifiableMap(enrichedProperties);
     }
 
-    public void enrichTargetOccurrenceId(Map<String, String> properties, Map<String, String> enrichedProperties) throws StudyImporterException {
+    public void enrichTargetOccurrenceId(Map<String, String> enrichedProperties) throws StudyImporterException {
         String occurrenceId = enrichedProperties.get("targetOccurrenceId");
         if (isNuccoreId(occurrenceId)) {
             try (InputStream is = getResponse(parseNuccoreId(occurrenceId))) {
@@ -142,17 +134,19 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         InteractType.HOST_OF,
                         enrichedProperties);
             } catch (IOException e) {
-                throw new StudyImporterException("failed to resolve [" + occurrenceId + "]");
+                if (logger != null) {
+                    logger.warn(LogUtil.contextFor(enrichedProperties), "failed to resolve [" + occurrenceId + "]: " + e.getMessage());
+                }
             }
 
         }
     }
 
-    public void enrichSourceOccurrenceId(Map<String, String> properties, Map<String, String> enrichedProperties) throws StudyImporterException {
-        if (isNuccoreId(properties.get("sourceOccurrenceId"))) {
-            String sourceOccurrenceId = enrichedProperties.get("sourceOccurrenceId");
+    public void enrichSourceOccurrenceId(Map<String, String> enrichedProperties) throws StudyImporterException {
+        String occurrenceId = enrichedProperties.get("sourceOccurrenceId");
 
-            try (InputStream is = getResponse(parseNuccoreId(sourceOccurrenceId))) {
+        if (isNuccoreId(occurrenceId)) {
+            try (InputStream is = getResponse(parseNuccoreId(occurrenceId))) {
                 enrichWithGenBankRecord(is,
                         SOURCE_TAXON_NAME,
                         SOURCE_TAXON_ID,
@@ -161,7 +155,9 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         InteractType.HAS_HOST,
                         enrichedProperties);
             } catch (IOException e) {
-                throw new StudyImporterException("failed to resolve [" + sourceOccurrenceId + "]");
+                if (logger != null) {
+                    logger.warn(LogUtil.contextFor(enrichedProperties), "failed to resolve [" + occurrenceId + "]: " + e.getMessage());
+                }
             }
         }
     }
