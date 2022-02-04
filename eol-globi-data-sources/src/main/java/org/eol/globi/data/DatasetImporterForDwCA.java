@@ -581,8 +581,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 TreeMap<String, String> e = new TreeMap<String, String>() {
                     {
                         put(TARGET_OCCURRENCE_ID, matcher.group(TARGET_OCCURRENCE_ID));
-                        put(INTERACTION_TYPE_NAME, InteractType.RELATED_TO.getLabel());
-                        put(INTERACTION_TYPE_ID, InteractType.RELATED_TO.getIRI());
                     }
                 };
                 appendResourceType(e, DwcTerm.associatedSequences);

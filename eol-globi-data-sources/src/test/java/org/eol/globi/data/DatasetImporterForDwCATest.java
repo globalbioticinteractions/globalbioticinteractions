@@ -882,8 +882,6 @@ public class DatasetImporterForDwCATest {
 
         Map<String, String> properties = propertyList.get(0);
         assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://www.ncbi.nlm.nih.gov/nuccore/EU241637"));
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is("ecologicallyRelatedTo"));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002321"));
         assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedSequences"));
     }
 
