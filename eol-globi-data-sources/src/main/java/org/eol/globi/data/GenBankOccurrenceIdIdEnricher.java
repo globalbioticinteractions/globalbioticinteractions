@@ -46,50 +46,50 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                                         String localeField,
                                         InteractType interactType,
                                         Map<String, String> properties) throws IOException {
-        Reader reader = new InputStreamReader(is);
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        String line;
-        boolean inFeatures = false;
-        boolean inSource = false;
-        while ((line = bufferedReader.readLine()) != null) {
-            inFeatures = inFeatures || StringUtils.startsWith(line, "FEATURES");
-            inSource = inSource || StringUtils.startsWith(line, "     source");
-            if (inFeatures && inSource) {
-                if (!StringUtils.startsWith(line, " ")) {
-                    break;
-                }
-                Pattern organism = Pattern.compile("\\s+/organism=\"([^\"]+)\".*");
-                Matcher matcher = organism.matcher(line);
-                if (matcher.matches()) {
-                    properties.putIfAbsent(taxonNameField, matcher.group(1));
-                }
+        if (is != null) {
+            Reader reader = new InputStreamReader(is);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String line;
+            boolean inFeatures = false;
+            boolean inSource = false;
+            while ((line = bufferedReader.readLine()) != null) {
+                inFeatures = inFeatures || StringUtils.startsWith(line, "FEATURES");
+                inSource = inSource || StringUtils.startsWith(line, "     source");
+                if (inFeatures && inSource) {
+                    if (!StringUtils.startsWith(line, " ")) {
+                        break;
+                    }
+                    Pattern organism = Pattern.compile("\\s+/organism=\"([^\"]+)\".*");
+                    Matcher matcher = organism.matcher(line);
+                    if (matcher.matches()) {
+                        properties.putIfAbsent(taxonNameField, matcher.group(1));
+                    }
 
-                Pattern host = Pattern.compile("\\s+/host=\"([^\"]+)\".*");
-                matcher = host.matcher(line);
-                if (matcher.matches()) {
-                    String existingHostName = properties.get(hostTaxonNameField);
-                    String foundHostName = matcher.group(1);
-                    if (StringUtils.isBlank(existingHostName) || StringUtils.equals(existingHostName, foundHostName)) {
-                        properties.putIfAbsent(hostTaxonNameField, foundHostName);
-                        properties.putIfAbsent(INTERACTION_TYPE_NAME, interactType.getLabel());
-                        properties.putIfAbsent(INTERACTION_TYPE_ID, interactType.getIRI());
+                    Pattern host = Pattern.compile("\\s+/host=\"([^\"]+)\".*");
+                    matcher = host.matcher(line);
+                    if (matcher.matches()) {
+                        String existingHostName = properties.get(hostTaxonNameField);
+                        String foundHostName = matcher.group(1);
+                        if (StringUtils.isBlank(existingHostName) || StringUtils.equals(existingHostName, foundHostName)) {
+                            properties.putIfAbsent(hostTaxonNameField, foundHostName);
+                            properties.putIfAbsent(INTERACTION_TYPE_NAME, interactType.getLabel());
+                            properties.putIfAbsent(INTERACTION_TYPE_ID, interactType.getIRI());
+                        }
+                    }
+
+                    Pattern taxonId = Pattern.compile("\\s+/db_xref=\"taxon:([^\"]+)\".*");
+                    matcher = taxonId.matcher(line);
+                    if (matcher.matches()) {
+                        properties.putIfAbsent(taxonIdField, TaxonomyProvider.ID_PREFIX_NCBI + matcher.group(1));
+                    }
+
+                    Pattern country = Pattern.compile("\\s+/country=\"([^\"]+)\".*");
+                    matcher = country.matcher(line);
+                    if (matcher.matches()) {
+                        properties.putIfAbsent(localeField, matcher.group(1));
                     }
                 }
-
-                Pattern taxonId = Pattern.compile("\\s+/db_xref=\"taxon:([^\"]+)\".*");
-                matcher = taxonId.matcher(line);
-                if (matcher.matches()) {
-                    properties.putIfAbsent(taxonIdField, TaxonomyProvider.ID_PREFIX_NCBI + matcher.group(1));
-                }
-
-                Pattern country = Pattern.compile("\\s+/country=\"([^\"]+)\".*");
-                matcher = country.matcher(line);
-                if (matcher.matches()) {
-                    properties.putIfAbsent(localeField, matcher.group(1));
-                }
             }
-
-
         }
     }
 

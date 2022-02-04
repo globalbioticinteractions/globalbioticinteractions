@@ -46,39 +46,41 @@ public class INaturalistOccurrenceIdIdEnricher extends InteractionProcessorAbstr
                                                  String taxonRankField,
                                                  Map<String, String> properties) throws IOException {
 
-        JsonNode jsonNode =
-                new ObjectMapper().readTree(is);
+        if (is != null) {
+            JsonNode jsonNode =
+                    new ObjectMapper().readTree(is);
 
-        if (jsonNode.has("taxon")) {
-            JsonNode taxonNode = jsonNode.get("taxon");
+            if (jsonNode.has("taxon")) {
+                JsonNode taxonNode = jsonNode.get("taxon");
 
-            if (taxonNode.has("id")) {
-                properties.putIfAbsent(taxonIdField, TaxonomyProvider.INATURALIST_TAXON.getIdPrefix() + taxonNode.get("id").asText());
+                if (taxonNode.has("id")) {
+                    properties.putIfAbsent(taxonIdField, TaxonomyProvider.INATURALIST_TAXON.getIdPrefix() + taxonNode.get("id").asText());
+                }
+
+                if (taxonNode.has("name")) {
+                    properties.putIfAbsent(taxonNameField, taxonNode.get("name").asText());
+                }
+
+                if (taxonNode.has("rank")) {
+                    properties.putIfAbsent(taxonRankField, taxonNode.get("rank").asText());
+                }
             }
 
-            if (taxonNode.has("name")) {
-                properties.putIfAbsent(taxonNameField, taxonNode.get("name").asText());
+            if (jsonNode.has("observed_on")) {
+                properties.putIfAbsent(DatasetImporterForMetaTable.EVENT_DATE, jsonNode.get("observed_on").asText());
             }
 
-            if (taxonNode.has("rank")) {
-                properties.putIfAbsent(taxonRankField, taxonNode.get("rank").asText());
+            if (jsonNode.has("latitude")) {
+                properties.putIfAbsent(DatasetImporterForTSV.DECIMAL_LATITUDE, jsonNode.get("latitude").asText());
             }
-        }
 
-        if (jsonNode.has("observed_on")) {
-            properties.putIfAbsent(DatasetImporterForMetaTable.EVENT_DATE, jsonNode.get("observed_on").asText());
-        }
+            if (jsonNode.has("longitude")) {
+                properties.putIfAbsent(DatasetImporterForTSV.DECIMAL_LONGITUDE, jsonNode.get("longitude").asText());
+            }
 
-        if (jsonNode.has("latitude")) {
-            properties.putIfAbsent(DatasetImporterForTSV.DECIMAL_LATITUDE, jsonNode.get("latitude").asText());
-        }
-
-        if (jsonNode.has("longitude")) {
-            properties.putIfAbsent(DatasetImporterForTSV.DECIMAL_LONGITUDE, jsonNode.get("longitude").asText());
-        }
-
-        if (jsonNode.has("place_guess")) {
-            properties.putIfAbsent(LOCALITY_NAME, jsonNode.get("place_guess").asText());
+            if (jsonNode.has("place_guess")) {
+                properties.putIfAbsent(LOCALITY_NAME, jsonNode.get("place_guess").asText());
+            }
         }
 
     }
