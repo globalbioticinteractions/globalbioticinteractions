@@ -118,8 +118,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
     }
 
     private static boolean isNuccoreId(String id) {
-        Matcher matcher = NUCCORE_PREFIX.matcher(id);
-        return matcher.matches();
+        return StringUtils.isNotBlank(id) && NUCCORE_PREFIX.matcher(id).matches();
     }
 
     public Map<String, String> enrich(final Map<String, String> properties) throws StudyImporterException {
@@ -132,9 +131,9 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
     }
 
     public void enrichTargetOccurrenceId(Map<String, String> properties, Map<String, String> enrichedProperties) throws StudyImporterException {
-        if (isNuccoreId(properties.get("targetOccurrenceId"))) {
-            String sourceOccurrenceId = enrichedProperties.get("targetOccurrenceId");
-            try (InputStream is = getResponse(parseNuccoreId(sourceOccurrenceId))) {
+        String occurrenceId = enrichedProperties.get("targetOccurrenceId");
+        if (isNuccoreId(occurrenceId)) {
+            try (InputStream is = getResponse(parseNuccoreId(occurrenceId))) {
                 enrichWithGenBankRecord(is,
                         TARGET_TAXON_NAME,
                         TARGET_TAXON_ID,
@@ -143,7 +142,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         InteractType.HOST_OF,
                         enrichedProperties);
             } catch (IOException e) {
-                throw new StudyImporterException("failed to resolve [" + sourceOccurrenceId + "]");
+                throw new StudyImporterException("failed to resolve [" + occurrenceId + "]");
             }
 
         }
