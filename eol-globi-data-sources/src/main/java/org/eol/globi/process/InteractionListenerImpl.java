@@ -35,12 +35,12 @@ public class InteractionListenerImpl implements InteractionListener {
 
         this.processors =
                 Arrays.asList(
-                        new TaxonNameEnricher(queue, logger),
-                        new InteractionExpander(queue, logger),
-                        new SpecimenCitationEnricher(queue, logger),
                         new INaturalistOccurrenceIdIdEnricher(queue, logger, dataset),
                         new GenBankOccurrenceIdIdEnricher(queue, logger, dataset),
                         new OccurrenceIdEnricher(queue, logger),
+                        new TaxonNameEnricher(queue, logger),
+                        new InteractionExpander(queue, logger),
+                        new SpecimenCitationEnricher(queue, logger),
                         createMappingListener(logger, dataset, queue),
                         new InteractionValidator(queue, logger),
                         new DOIReferenceExtractor(queue, logger),

@@ -1,8 +1,6 @@
 package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
-import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.HttpUtil;
@@ -16,8 +14,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.eol.globi.data.DatasetImporterForMetaTable.EVENT_DATE;
-import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
-import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_RANK;
