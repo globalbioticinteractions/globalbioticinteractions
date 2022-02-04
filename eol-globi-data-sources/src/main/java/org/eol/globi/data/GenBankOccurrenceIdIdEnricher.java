@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
@@ -43,7 +44,8 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
         this.resourceService = resourceService;
     }
 
-    public static final String NUCCORE_PREFIX = "https://www.ncbi.nlm.nih.gov/nuccore/";
+    public static final Pattern NUCCORE_PREFIX = Pattern.compile("http[s]{0,1}://(www.){0,1}ncbi.nlm.nih.gov/nuccore/([^\\s]+)");
+
 
     static void enrichWithGenBankRecord(InputStream is,
                                         String taxonNameField,
@@ -108,11 +110,16 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
 
 
     private static String parseNuccoreId(String id) {
-        return StringUtils.replace(id, NUCCORE_PREFIX, "");
+        Matcher matcher = NUCCORE_PREFIX.matcher(id);
+        if (matcher.matches()) {
+            return matcher.group(2);
+        }
+        throw new IllegalStateException("failed to match [" + id + "]");
     }
 
     private static boolean isNuccoreId(String id) {
-        return StringUtils.startsWith(id, NUCCORE_PREFIX);
+        Matcher matcher = NUCCORE_PREFIX.matcher(id);
+        return matcher.matches();
     }
 
     public Map<String, String> enrich(final Map<String, String> properties) throws StudyImporterException {
@@ -132,7 +139,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         TARGET_TAXON_NAME,
                         TARGET_TAXON_ID,
                         SOURCE_TAXON_NAME,
-                        "localityName",
+                        LOCALITY_NAME,
                         InteractType.HOST_OF,
                         enrichedProperties);
             } catch (IOException e) {
@@ -151,7 +158,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         SOURCE_TAXON_NAME,
                         SOURCE_TAXON_ID,
                         TARGET_TAXON_NAME,
-                        "localityName",
+                        LOCALITY_NAME,
                         InteractType.HAS_HOST,
                         enrichedProperties);
             } catch (IOException e) {

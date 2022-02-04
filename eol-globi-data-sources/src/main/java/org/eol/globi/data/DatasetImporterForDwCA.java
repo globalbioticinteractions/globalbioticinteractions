@@ -330,9 +330,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         appendAssociatedOccurrencesIfAvailable(rec, interactionCandidates);
 
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/755#issuecomment-1029509362
-        if (StringUtils.contains("arctos",rec.value(DwcTerm.occurrenceID))) {
-            appendAssociatedSequencesIfAvailable(rec, interactionCandidates);
-        }
+        appendAssociatedSequencesIfAvailable(rec, interactionCandidates);
 
         String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
         try {
