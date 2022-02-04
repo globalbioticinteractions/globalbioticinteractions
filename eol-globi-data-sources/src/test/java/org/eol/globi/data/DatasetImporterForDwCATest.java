@@ -42,6 +42,7 @@ import static org.eol.globi.data.DatasetImporterForDwCA.importAssociatedTaxaExte
 import static org.eol.globi.data.DatasetImporterForDwCA.importResourceRelationshipExtension;
 import static org.eol.globi.data.DatasetImporterForDwCA.mapReferenceInfo;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseAssociatedOccurrences;
+import static org.eol.globi.data.DatasetImporterForDwCA.parseAssociatedSequences;
 import static org.eol.globi.data.DatasetImporterForDwCA.parseDynamicPropertiesForInteractionsOnly;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
@@ -870,6 +871,20 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedSequences() {
+        String associateOccurrences = "http://www.ncbi.nlm.nih.gov/nuccore/EU241637; http://www.ncbi.nlm.nih.gov/nuccore/EU241651; http://www.ncbi.nlm.nih.gov/nuccore/EU241689";
+        List<Map<String, String>> propertyList = parseAssociatedSequences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(3));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://www.ncbi.nlm.nih.gov/nuccore/EU241637"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("ecologicallyRelatedTo"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002321"));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedSequences"));
     }
 
 

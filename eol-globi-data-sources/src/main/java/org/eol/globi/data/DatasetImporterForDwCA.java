@@ -327,9 +327,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         appendInteractionCandidatesIfAvailable(rec, interactionCandidates, DwcTerm.habitat, null);
 
-        String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
-        if (StringUtils.isNotBlank(associatedOccurrences)) {
-            interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
+        appendAssociatedOccurrencesIfAvailable(rec, interactionCandidates);
+
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/755#issuecomment-1029509362
+        if (StringUtils.contains("arctos",rec.value(DwcTerm.occurrenceID))) {
+            appendAssociatedSequencesIfAvailable(rec, interactionCandidates);
         }
 
         String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
@@ -371,6 +373,20 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interactionListener.on(interactionProperties);
         }
 
+    }
+
+    private void appendAssociatedOccurrencesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates) {
+        String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
+        if (StringUtils.isNotBlank(associatedOccurrences)) {
+            interactionCandidates.addAll(parseAssociatedOccurrences(associatedOccurrences));
+        }
+    }
+
+    private void appendAssociatedSequencesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates) {
+        String associatedSequences = rec.value(DwcTerm.associatedSequences);
+        if (StringUtils.isNotBlank(associatedSequences)) {
+            interactionCandidates.addAll(parseAssociatedSequences(associatedSequences));
+        }
     }
 
     private String appendInteractionCandidatesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates, DwcTerm term, String interactionTypeNameDefault) {
@@ -550,6 +566,28 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             String relationshipTrimmed = StringUtils.trim(relationship);
             attemptToParseArctosAssocatedOccurrences(propertyList, relationshipTrimmed);
             attemptToParseMCZAssocatedOccurrences(propertyList, relationshipTrimmed);
+        }
+        return propertyList;
+    }
+
+    static List<Map<String, String>> parseAssociatedSequences(String s) {
+        List<Map<String, String>> propertyList = new ArrayList<>();
+
+        String[] relationships = StringUtils.split(s, ";");
+        for (String relationship : relationships) {
+            String relationshipTrimmed = StringUtils.trim(relationship);
+            Matcher matcher = Pattern.compile("^(?<targetOccurrenceId>http[s]{0,1}://www.ncbi.nlm.nih.gov/nuccore/[a-zA-Z0-9]+)").matcher(relationshipTrimmed);
+            if (matcher.find()) {
+                TreeMap<String, String> e = new TreeMap<String, String>() {
+                    {
+                        put(TARGET_OCCURRENCE_ID, matcher.group(TARGET_OCCURRENCE_ID));
+                        put(INTERACTION_TYPE_NAME, InteractType.RELATED_TO.getLabel());
+                        put(INTERACTION_TYPE_ID, InteractType.RELATED_TO.getIRI());
+                    }
+                };
+                appendResourceType(e, DwcTerm.associatedSequences);
+                propertyList.add(e);
+            }
         }
         return propertyList;
     }
