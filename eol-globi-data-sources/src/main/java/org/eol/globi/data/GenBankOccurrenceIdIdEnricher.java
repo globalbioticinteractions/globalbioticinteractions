@@ -67,7 +67,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                 Pattern organism = Pattern.compile("\\s+/organism=\"([^\"]+)\".*");
                 Matcher matcher = organism.matcher(line);
                 if (matcher.matches()) {
-                    properties.put(taxonNameField, matcher.group(1));
+                    properties.putIfAbsent(taxonNameField, matcher.group(1));
                 }
 
                 Pattern host = Pattern.compile("\\s+/host=\"([^\"]+)\".*");
@@ -76,22 +76,22 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                     String existingHostName = properties.get(hostTaxonNameField);
                     String foundHostName = matcher.group(1);
                     if (StringUtils.isBlank(existingHostName) || StringUtils.equals(existingHostName, foundHostName)) {
-                        properties.put(hostTaxonNameField, foundHostName);
-                        properties.put(INTERACTION_TYPE_NAME, interactType.getLabel());
-                        properties.put(INTERACTION_TYPE_ID, interactType.getIRI());
+                        properties.putIfAbsent(hostTaxonNameField, foundHostName);
+                        properties.putIfAbsent(INTERACTION_TYPE_NAME, interactType.getLabel());
+                        properties.putIfAbsent(INTERACTION_TYPE_ID, interactType.getIRI());
                     }
                 }
 
                 Pattern taxonId = Pattern.compile("\\s+/db_xref=\"taxon:([^\"]+)\".*");
                 matcher = taxonId.matcher(line);
                 if (matcher.matches()) {
-                    properties.put(taxonIdField, TaxonomyProvider.ID_PREFIX_NCBI + matcher.group(1));
+                    properties.putIfAbsent(taxonIdField, TaxonomyProvider.ID_PREFIX_NCBI + matcher.group(1));
                 }
 
                 Pattern country = Pattern.compile("\\s+/country=\"([^\"]+)\".*");
                 matcher = country.matcher(line);
                 if (matcher.matches()) {
-                    properties.put(localeField, matcher.group(1));
+                    properties.putIfAbsent(localeField, matcher.group(1));
                 }
             }
 
