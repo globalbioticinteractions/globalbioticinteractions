@@ -1,6 +1,8 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.globalbioticinteractions.dataset.DatasetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -98,10 +100,16 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
             throw new StudyImporterException("failed to find interaction term mapping", e);
         }
 
-        int previousResultCount = 0;
+        int previousResultCount;
         int pageNumber = 1;
         do {
-            URI uri = URI.create(INATURALIST_URL + "/observation_field_values.json?type=taxon&page=" + pageNumber + "&per_page=100&quality_grade=research");
+            String pageSizeString = getDataset().getOrDefault("pageSize", null);
+            long pageSize = NumberUtils.toLong(pageSizeString, 50);
+            URI uri = URI.create(INATURALIST_URL +
+                    "/observation_field_values.json?type=taxon" +
+                    "&page=" + pageNumber +
+                    "&per_page=" + pageSize +
+                    "&quality_grade=research");
 
             try (InputStream resource = getDataset().retrieve(uri)) {
                 previousResultCount = parseJSON(resource,
