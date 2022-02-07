@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
@@ -30,6 +32,11 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract {
 
     private final ResourceService resourceService;
+    public static final Pattern PATTERN_HOST = Pattern.compile("\\s+/host=\"([^\"]+)\".*");
+    public static final Pattern PATTERN_ORGANISM = Pattern.compile("\\s+/organism=\"([^\"]+)\".*");
+    public static final Pattern PATTERN_ISOLATION_SOURCE = Pattern.compile("\\s+/isolation_source=\"([^\"]+)\".*");
+    public static final Pattern PATTERN_TAXON_ID = Pattern.compile("\\s+/db_xref=\"taxon:([^\"]+)\".*");
+    public static final Pattern PATTERN_COUNTRY = Pattern.compile("\\s+/country=\"([^\"]+)\".*");
 
     public GenBankOccurrenceIdIdEnricher(InteractionListener listener, ImportLogger logger, ResourceService resourceService) {
         super(listener, logger);
@@ -43,6 +50,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                                         String taxonNameField,
                                         String taxonIdField,
                                         String hostTaxonNameField,
+                                        String hostBodyPartNameField,
                                         String localeField,
                                         InteractType interactType,
                                         Map<String, String> properties) throws IOException {
@@ -59,14 +67,12 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                     if (!StringUtils.startsWith(line, " ")) {
                         break;
                     }
-                    Pattern organism = Pattern.compile("\\s+/organism=\"([^\"]+)\".*");
-                    Matcher matcher = organism.matcher(line);
+                    Matcher matcher = PATTERN_ORGANISM.matcher(line);
                     if (matcher.matches()) {
                         properties.putIfAbsent(taxonNameField, matcher.group(1));
                     }
 
-                    Pattern host = Pattern.compile("\\s+/host=\"([^\"]+)\".*");
-                    matcher = host.matcher(line);
+                    matcher = PATTERN_HOST.matcher(line);
                     if (matcher.matches()) {
                         String existingHostName = properties.get(hostTaxonNameField);
                         String foundHostName = matcher.group(1);
@@ -77,14 +83,21 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         }
                     }
 
-                    Pattern taxonId = Pattern.compile("\\s+/db_xref=\"taxon:([^\"]+)\".*");
-                    matcher = taxonId.matcher(line);
+                    Matcher isolationSource = PATTERN_ISOLATION_SOURCE.matcher(line);
+                    if (isolationSource.matches()) {
+                        String existingHostBodyPart = properties.get(hostBodyPartNameField);
+                        String foundHostBodyPart = isolationSource.group(1);
+                        if (StringUtils.isBlank(existingHostBodyPart) || StringUtils.equals(existingHostBodyPart, foundHostBodyPart)) {
+                            properties.putIfAbsent(hostBodyPartNameField, foundHostBodyPart);
+                        }
+                    }
+
+                    matcher = PATTERN_TAXON_ID.matcher(line);
                     if (matcher.matches()) {
                         properties.putIfAbsent(taxonIdField, TaxonomyProvider.ID_PREFIX_NCBI + matcher.group(1));
                     }
 
-                    Pattern country = Pattern.compile("\\s+/country=\"([^\"]+)\".*");
-                    matcher = country.matcher(line);
+                    matcher = PATTERN_COUNTRY.matcher(line);
                     if (matcher.matches()) {
                         properties.putIfAbsent(localeField, matcher.group(1));
                     }
@@ -130,6 +143,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         TARGET_TAXON_NAME,
                         TARGET_TAXON_ID,
                         SOURCE_TAXON_NAME,
+                        SOURCE_BODY_PART_NAME,
                         LOCALITY_NAME,
                         InteractType.HOST_OF,
                         enrichedProperties);
@@ -151,6 +165,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
                         SOURCE_TAXON_NAME,
                         SOURCE_TAXON_ID,
                         TARGET_TAXON_NAME,
+                        TARGET_BODY_PART_NAME,
                         LOCALITY_NAME,
                         InteractType.HAS_HOST,
                         enrichedProperties);
