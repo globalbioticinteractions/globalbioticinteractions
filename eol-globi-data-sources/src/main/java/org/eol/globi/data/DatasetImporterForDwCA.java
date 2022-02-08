@@ -201,7 +201,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static Map<String, String> parseHitByVehicleRemarks(String occurrenceRemarks) {
         final Pattern HIT_BY_VEHICLE_NOTATION
                 = Pattern.compile(
-                ".*(hit by vehicle|hbv|road kill|dor|dead on road).*",
+                "(hit by vehicle|hbv|road kill|dead on road).*",
                 Pattern.CASE_INSENSITIVE
         );
 
