@@ -21,6 +21,7 @@ import static org.eol.globi.domain.TaxonomyProvider.BATBASE_INTERACTION;
 import static org.eol.globi.domain.TaxonomyProvider.BATPLANT;
 import static org.eol.globi.domain.TaxonomyProvider.BIODIVERSITY_AUSTRALIA;
 import static org.eol.globi.domain.TaxonomyProvider.BOLD_BIN;
+import static org.eol.globi.domain.TaxonomyProvider.CATALOGUE_OF_LIFE;
 import static org.eol.globi.domain.TaxonomyProvider.ENVO;
 import static org.eol.globi.domain.TaxonomyProvider.FISHBASE_CACHE;
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
@@ -60,6 +61,7 @@ public class WikidataUtilTest {
     @Test
     public void checkSupportForSupportedTaxonProviders() throws IOException, URISyntaxException {
         Collection<TaxonomyProvider> ignored = Arrays.asList(
+                CATALOGUE_OF_LIFE,
                 GEONAMES,
                 WIKIPEDIA,
                 ENVO,
