@@ -113,23 +113,7 @@ public class INaturalistOccurrenceIdIdEnricher extends InteractionProcessorAbstr
         return Collections.unmodifiableMap(enrichedProperties);
     }
 
-    public void enrichTargetOccurrenceId(Map<String, String> properties, Map<String, String> enrichedProperties) throws StudyImporterException {
-        String occurrenceId = enrichedProperties.get("targetOccurrenceId");
-        if (isINaturalistObservation(occurrenceId)) {
-            try (InputStream is = getResponse(createObservationUrl(occurrenceId))) {
-                enrichWithINaturalistObservation(is,
-                        TARGET_TAXON_NAME,
-                        TARGET_TAXON_ID,
-                        TARGET_TAXON_RANK,
-                        enrichedProperties);
-            } catch (IOException e) {
-                throw new StudyImporterException("failed to resolve [" + occurrenceId + "]", e);
-            }
-
-        }
-    }
-
-    public void enrichFields(Map<String, String> enrichedProperties, String taxonNameField, String taxonIdField, String taxonRankField, String occurrenceIdField) throws StudyImporterException {
+    private void enrichFields(Map<String, String> enrichedProperties, String taxonNameField, String taxonIdField, String taxonRankField, String occurrenceIdField) throws StudyImporterException {
         String occurrenceId = enrichedProperties.get(occurrenceIdField);
         if (isINaturalistObservation(occurrenceId)) {
             try (InputStream is = getResponse(createObservationUrl(occurrenceId))) {
