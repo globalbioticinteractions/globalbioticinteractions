@@ -60,6 +60,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.BOLD_TAXON.getIdPrefix(), "http://www.boldsystems.org/index.php/Taxbrowser_Taxonpage?taxid=");
         put(TaxonomyProvider.BATBASE_INTERACTION.getIdPrefix(), "https://batbase.org/interaction/");
         put(TaxonomyProvider.BATBASE.getIdPrefix(), "https://batbase.org/taxon/");
+        put(TaxonomyProvider.CATALOGUE_OF_LIFE.getIdPrefix(), "https://www.catalogueoflife.org/data/taxon/");
     }};
 
     private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{
