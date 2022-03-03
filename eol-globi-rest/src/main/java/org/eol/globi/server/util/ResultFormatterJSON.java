@@ -30,7 +30,7 @@ public class ResultFormatterJSON implements ResultFormatterStreaming {
         return formatted;
     }
 
-    private JsonNode pruneResultsIfNeeded(JsonNode jsonNode) {
+    public static JsonNode pruneResultsIfNeeded(JsonNode jsonNode) {
         JsonNode pruned = jsonNode;
         if (jsonNode.has("results")) {
             JsonNode results = jsonNode.get("results");

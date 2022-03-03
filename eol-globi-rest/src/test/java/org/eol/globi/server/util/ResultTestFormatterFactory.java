@@ -11,6 +11,7 @@ public class ResultTestFormatterFactory {
         put("tsv", new ResultFormatterTSV());
         put("json.v2", new ResultFormatterJSONv2());
         put("dot", new ResultFormatterDOT());
+        put("gs", new ResultFormatterGraphStreaming());
     }};
 
     public ResultFormatter create(String type) {

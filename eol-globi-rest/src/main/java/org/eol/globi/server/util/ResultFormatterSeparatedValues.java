@@ -1,6 +1,5 @@
 package org.eol.globi.server.util;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
 import static com.fasterxml.jackson.core.JsonToken.VALUE_TRUE;
 
 
-public abstract class ResultFormatterSeparatedValues implements ResultFormatterStreaming {
+public abstract class ResultFormatterSeparatedValues extends ResultFormatterStreamingImpl {
 
     abstract protected void addCSVSeparator(StringBuilder resultBuilder, boolean hasNext);
 
@@ -42,25 +40,7 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
     abstract protected void writeAsCSVCell(StringBuilder resultBuilder, JsonNode node);
 
     @Override
-    public void format(InputStream is, OutputStream os) throws ResultFormattingException {
-        try (InputStream inputStream = is) {
-            JsonFactory factory = new JsonFactory();
-            JsonParser jsonParser = factory.createJsonParser(inputStream);
-            JsonToken token;
-            while (!jsonParser.isClosed()
-                    && (token = jsonParser.nextToken()) != null) {
-                if (FIELD_NAME.equals(token) && "columns".equals(jsonParser.getCurrentName())) {
-                    handleHeader(os, jsonParser);
-                } else if (FIELD_NAME.equals(token) && "data".equals(jsonParser.getCurrentName())) {
-                    handleRows(os, jsonParser);
-                }
-            }
-        } catch (IOException e) {
-            throw new ResultFormattingException("failed to format incoming stream", e);
-        }
-    }
-
-    private void handleRows(OutputStream os, JsonParser jsonParser) throws IOException {
+    protected void handleRows(OutputStream os, JsonParser jsonParser) throws IOException {
         JsonToken token;
         token = jsonParser.nextToken();
         if (START_ARRAY.equals(token)) {
@@ -115,7 +95,8 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
         }
     }
 
-    public void handleHeader(OutputStream os, JsonParser jsonParser) throws IOException {
+    @Override
+    protected void handleHeader(OutputStream os, JsonParser jsonParser) throws IOException {
         JsonToken token;
         token = jsonParser.nextToken();
         if (START_ARRAY.equals(token)) {
@@ -152,7 +133,7 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
         }
     }
 
-    private boolean isValue(JsonToken token) {
+    public static boolean isValue(JsonToken token) {
         return VALUE_STRING.equals(token)
                 || VALUE_FALSE.equals(token)
                 || VALUE_NUMBER_FLOAT.equals(token)
@@ -177,7 +158,7 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
         }
 
         StringBuilder resultBuilder = new StringBuilder();
-        writeArray(jsonNode, resultBuilder, "columns");
+        writeArray(jsonNode, resultBuilder);
         JsonNode rowsAndMetas = jsonNode.get("data");
         if (rowsAndMetas.isArray()) {
             for (int j = 0; j < rowsAndMetas.size(); j++) {
@@ -256,8 +237,8 @@ public abstract class ResultFormatterSeparatedValues implements ResultFormatterS
     }
 
 
-    private void writeArray(JsonNode jsonNode, StringBuilder resultBuilder, String arrayName) {
-        JsonNode array = jsonNode.get(arrayName);
+    private void writeArray(JsonNode jsonNode, StringBuilder resultBuilder) {
+        JsonNode array = jsonNode.get("columns");
         if (array.isArray()) {
             writeArray(resultBuilder, array);
         }

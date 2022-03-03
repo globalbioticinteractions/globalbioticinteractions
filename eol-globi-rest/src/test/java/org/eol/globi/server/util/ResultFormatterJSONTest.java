@@ -16,11 +16,11 @@ public class ResultFormatterJSONTest {
 
     @Test
     public void convertNewToOld() throws ResultFormattingException, JsonProcessingException {
-        String result = ResultFormatterJSONv2Test.newTaxonQueryResult();
+        String result = ResultFormatterJSONTestUtil.newTaxonQueryResult();
 
         String formatted = new ResultFormatterJSON().format(result);
 
-        assertThat(formatted, is(ResultFormatterJSONv2Test.oldTaxonQueryResult()));
+        assertThat(formatted, is(ResultFormatterJSONTestUtil.oldTaxonQueryResult()));
 
 
     }
@@ -34,24 +34,24 @@ public class ResultFormatterJSONTest {
 
     @Test
     public void convertOldToOld() throws JsonProcessingException, ResultFormattingException {
-        String result = ResultFormatterJSONv2Test.oldTaxonQueryResult();
+        String result = ResultFormatterJSONTestUtil.oldTaxonQueryResult();
 
         String formatted = new ResultFormatterJSON().format(result);
 
-        assertThat(formatted, is(ResultFormatterJSONv2Test.oldTaxonQueryResult()));
+        assertThat(formatted, is(ResultFormatterJSONTestUtil.oldTaxonQueryResult()));
 
 
     }
 
     @Test
     public void convertNewToOldStreaming() throws IOException {
-        String result = ResultFormatterJSONv2Test.newTaxonQueryResult();
+        String result = ResultFormatterJSONTestUtil.newTaxonQueryResult();
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new ResultFormatterJSON().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
 
         assertThat(IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name()),
-                is(ResultFormatterJSONv2Test.oldTaxonQueryResult()));
+                is(ResultFormatterJSONTestUtil.oldTaxonQueryResult()));
 
 
     }
@@ -83,13 +83,13 @@ public class ResultFormatterJSONTest {
 
     @Test
     public void convertOldToOldStreaming() throws IOException {
-        String result = ResultFormatterJSONv2Test.oldTaxonQueryResult();
+        String result = ResultFormatterJSONTestUtil.oldTaxonQueryResult();
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new ResultFormatterJSON().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
 
         assertThat(IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name()),
-                is(ResultFormatterJSONv2Test.oldTaxonQueryResult()));
+                is(ResultFormatterJSONTestUtil.oldTaxonQueryResult()));
 
 
     }
