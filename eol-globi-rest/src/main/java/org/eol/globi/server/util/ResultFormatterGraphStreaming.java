@@ -3,7 +3,6 @@ package org.eol.globi.server.util;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -34,9 +33,11 @@ import static org.eol.globi.server.util.ResultFormatterSeparatedValues.isValue;
 
 public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl {
 
-    private List<String> header;
+    private List<String> header = new ArrayList<>();
 
     private AtomicLong counter = new AtomicLong(0);
+
+    private List<String> nodeIds = new ArrayList<>();
 
     @Override
     public String format(String s) throws ResultFormattingException {
@@ -129,8 +130,8 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         String edgeLabel = interaction.get(ResultField.INTERACTION_TYPE.getLabel());
         String predicate = edgeLabel;
 
-        writeNode(writer, objectMapper, sourceId, interaction.getOrDefault(ResultField.SOURCE_TAXON_NAME.getLabel(), sourceId));
-        writeNode(writer, objectMapper, targetId, interaction.getOrDefault(ResultField.TARGET_TAXON_NAME.getLabel(), targetId));
+        writeNodeIfNeeded(writer, objectMapper, sourceId, interaction.getOrDefault(ResultField.SOURCE_TAXON_NAME.getLabel(), sourceId));
+        writeNodeIfNeeded(writer, objectMapper, targetId, interaction.getOrDefault(ResultField.TARGET_TAXON_NAME.getLabel(), targetId));
 
         writeEdge(writer, objectMapper, sourceId, targetId, Long.toString(edgeId), edgeLabel, predicate);
     }
@@ -156,7 +157,14 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         writeObject(objectNode, writer);
     }
 
-    private void writeNode(Writer writer, ObjectMapper objectMapper, String sourceId, String label) throws IOException {
+    private void writeNodeIfNeeded(Writer writer, ObjectMapper objectMapper, String id, String label) throws IOException {
+        if (!nodeIds.contains(id)) {
+            writeNode(writer, objectMapper, id, label);
+            nodeIds.add(id);
+        }
+    }
+
+    private void writeNode(Writer writer, ObjectMapper objectMapper, String id, String label) throws IOException {
         ObjectNode objectNode = objectMapper.createObjectNode();
         ObjectNode nodeEntry = objectMapper.createObjectNode();
         ObjectNode sourceNode = objectMapper.createObjectNode();
@@ -165,7 +173,7 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
 //        sourceNode.set("size", new FloatNode(1));
         sourceNode.set("x", new IntNode((int) (random.nextFloat() * 1000)));
         sourceNode.set("y", new IntNode((int) (random.nextFloat() * 1000)));
-        nodeEntry.set(sourceId, sourceNode);
+        nodeEntry.set(id, sourceNode);
         objectNode.set("an", nodeEntry);
         writeObject(objectNode, writer);
     }
@@ -200,5 +208,6 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
     private void setHeader(List<String> header) {
         this.header = header;
         this.counter.set(0);
+        this.nodeIds.clear();
     }
 }

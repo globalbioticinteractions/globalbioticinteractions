@@ -36,7 +36,7 @@ public class ResultFormatterGraphStreamingTest {
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 
         assertThat(actual,
-                is(IOUtils.toString(getClass().getResourceAsStream("ariopsisFelis.gs"), StandardCharsets.UTF_8)));
+                is(IOUtils.toString(getClass().getResourceAsStream("ariopsisFelisDiet.gs"), StandardCharsets.UTF_8)));
     }
 
     @Test
