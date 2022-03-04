@@ -28,7 +28,7 @@ public class ResultFormatterGraphStreamingIT {
         String result = CypherUtil.executeRemote(q);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        new ResultFormatterGraphStreaming().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
+        ResultFormatterGraphStreamingTest.createFormatter().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
 
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 
@@ -52,7 +52,7 @@ public class ResultFormatterGraphStreamingIT {
         String result = CypherUtil.executeRemote(q);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        new ResultFormatterGraphStreaming().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
+        ResultFormatterGraphStreamingTest.createFormatter().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
 
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 

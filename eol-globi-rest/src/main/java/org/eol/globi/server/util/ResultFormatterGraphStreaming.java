@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.io.IOUtils;
@@ -38,6 +39,29 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
     private AtomicLong counter = new AtomicLong(0);
 
     private List<String> nodeIds = new ArrayList<>();
+
+    private RandomLong randomLong = new RandomLong() {
+        private Random random = new Random();
+        @Override
+        public long randomLong() {
+            return random.nextLong();
+        }
+    };
+
+    public RandomLong getRandomLong() {
+        return randomLong;
+    }
+
+    public void setRandomLong(RandomLong randomLong) {
+        this.randomLong = randomLong;
+    }
+
+
+    interface RandomLong {
+        long randomLong();
+    }
+
+
 
     @Override
     public String format(String s) throws ResultFormattingException {
@@ -177,10 +201,10 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         ObjectNode nodeEntry = objectMapper.createObjectNode();
         ObjectNode sourceNode = objectMapper.createObjectNode();
         sourceNode.set("label", new TextNode(label));
-        Random random = new Random(42);
+
 //        sourceNode.set("size", new FloatNode(1));
-        sourceNode.set("x", new IntNode((int) (random.nextFloat() * 1000)));
-        sourceNode.set("y", new IntNode((int) (random.nextFloat() * 1000)));
+        sourceNode.set("x", new LongNode(getRandomLong().randomLong()));
+        sourceNode.set("y", new LongNode(getRandomLong().randomLong()));
         nodeEntry.set(id, sourceNode);
         objectNode.set("an", nodeEntry);
         writeObject(objectNode, writer);
