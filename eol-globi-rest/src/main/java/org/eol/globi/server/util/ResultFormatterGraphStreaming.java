@@ -48,6 +48,8 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
 
     @Override
     protected void handleRows(OutputStream os, JsonParser jsonParser) throws IOException {
+        nodeIds.clear();
+        counter.set(0);
         JsonToken token = jsonParser.nextToken();
         if (START_ARRAY.equals(token)) {
             handleStreamingJson(os, jsonParser);
@@ -62,12 +64,13 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         boolean inRowArray = false;
         String currentFieldName = null;
         Map<String, String> interaction = new TreeMap<>();
+
         while ((token = jsonParser.nextToken()) != null) {
             if (FIELD_NAME.equals(token)) {
                 currentFieldName = jsonParser.getCurrentName();
             }
             if (START_ARRAY.equals(token)) {
-                if (inRowArray && !StringUtils.equals("meta", currentFieldName)) {
+                if (inRowArray && nonMetaField(currentFieldName)) {
                     inValueArray = true;
                 } else {
                     inRowArray = true;
@@ -76,13 +79,11 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
                 if (isValue(token)) {
                     if (inValueArray) {
                         writeNodesAndEdgeIfAvailable(jsonParser, token, interaction, writer);
-                    } else {
+                    } else if (nonMetaField(currentFieldName)) {
                         String headerLabel = header.get(interaction.size());
                         if (StringUtils.isNotBlank(headerLabel)) {
                             String tokenValue = getTokenValue(jsonParser, token);
-                            if (StringUtils.isNotBlank(tokenValue)) {
-                                interaction.put(headerLabel, tokenValue);
-                            }
+                            interaction.put(headerLabel, tokenValue);
                         }
                     }
                 } else if (END_ARRAY.equals(token)) {
@@ -98,6 +99,10 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
                 }
             }
         }
+    }
+
+    private boolean nonMetaField(String currentFieldName) {
+        return !StringUtils.equals("meta", currentFieldName);
     }
 
     private void writeNodesAndEdgeIfAvailable(JsonParser jsonParser, JsonToken token, Map<String, String> interaction, BufferedWriter writer) throws IOException {
@@ -126,14 +131,17 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
                 ResultField.TARGET_TAXON_NAME.getLabel(),
                 interaction.get(ResultField.TARGET_TAXON_EXTERNAL_ID.getLabel()));
 
-        long edgeId = counter.getAndIncrement();
-        String edgeLabel = interaction.get(ResultField.INTERACTION_TYPE.getLabel());
-        String predicate = edgeLabel;
+        if (StringUtils.isNotBlank(sourceId)
+                && StringUtils.isNotBlank(targetId)) {
+            long edgeId = counter.getAndIncrement();
+            String edgeLabel = interaction.get(ResultField.INTERACTION_TYPE.getLabel());
+            String predicate = edgeLabel;
 
-        writeNodeIfNeeded(writer, objectMapper, sourceId, interaction.getOrDefault(ResultField.SOURCE_TAXON_NAME.getLabel(), sourceId));
-        writeNodeIfNeeded(writer, objectMapper, targetId, interaction.getOrDefault(ResultField.TARGET_TAXON_NAME.getLabel(), targetId));
+            writeNodeIfNeeded(writer, objectMapper, sourceId, interaction.getOrDefault(ResultField.SOURCE_TAXON_NAME.getLabel(), sourceId));
+            writeNodeIfNeeded(writer, objectMapper, targetId, interaction.getOrDefault(ResultField.TARGET_TAXON_NAME.getLabel(), targetId));
 
-        writeEdge(writer, objectMapper, sourceId, targetId, Long.toString(edgeId), edgeLabel, predicate);
+            writeEdge(writer, objectMapper, sourceId, targetId, Long.toString(edgeId), edgeLabel, predicate);
+        }
     }
 
     private String getId(Map<String, String> interaction, String label, String id) {
@@ -186,15 +194,14 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
 
     @Override
     protected void handleHeader(OutputStream os, JsonParser jsonParser) throws IOException {
+        header.clear();
         JsonToken token;
-        List<String> header = new ArrayList<>();
         token = jsonParser.nextToken();
         if (START_ARRAY.equals(token)) {
             while ((token = jsonParser.nextToken()) != null && !END_ARRAY.equals(token)) {
                 header.add(getTokenValue(jsonParser, token));
             }
         }
-        setHeader(header);
     }
 
     private String getTokenValue(JsonParser jsonParser, JsonToken token) throws IOException {
@@ -205,9 +212,4 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         return text;
     }
 
-    private void setHeader(List<String> header) {
-        this.header = header;
-        this.counter.set(0);
-        this.nodeIds.clear();
-    }
 }

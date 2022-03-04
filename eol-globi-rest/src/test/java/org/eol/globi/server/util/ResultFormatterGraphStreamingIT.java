@@ -46,7 +46,11 @@ public class ResultFormatterGraphStreamingIT {
             put(ParamName.INCLUDE_OBSERVATIONS.getName(), "true");
             put("limit", "10");
         }};
-        CypherQuery q = InteractionController.createQuery("Enhydra lutris", "eats", "Animalia", params);
+        CypherQuery q = InteractionController.createQuery(
+                "Enhydra lutris",
+                "eats",
+                "Animalia",
+                params);
 
         String result = CypherUtil.executeRemote(q);
 

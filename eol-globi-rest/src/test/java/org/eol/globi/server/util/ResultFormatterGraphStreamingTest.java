@@ -52,6 +52,21 @@ public class ResultFormatterGraphStreamingTest {
                 is(IOUtils.toString(getClass().getResourceAsStream("enhydraLutrisDietObservations.gs"), StandardCharsets.UTF_8)));
     }
 
+    @Test
+    public void toEnhydraDietObservationsToGraphStreaming() throws IOException {
+        String result = IOUtils.toString(getClass().getResourceAsStream("enhydraDietObservationsCypher.json"), StandardCharsets.UTF_8);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        new ResultFormatterGraphStreaming().format(IOUtils.toInputStream(result, StandardCharsets.UTF_8), os);
+
+        String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
+
+        //IOUtils.write(actual, new FileOutputStream("/home/jorrit/proj/globi/eol-globi-data/eol-globi-rest/src/test/resources/org/eol/globi/server/util/enhydraDietObservations.gs"), StandardCharsets.UTF_8);
+
+        assertThat(actual,
+                is(IOUtils.toString(getClass().getResourceAsStream("enhydraDietObservations.gs"), StandardCharsets.UTF_8)));
+    }
+
     @Test(expected = ResultFormattingException.class)
     public void throwOnErrorStreaming() throws IOException {
         String result = RequestHelperTest.getErrorResult();

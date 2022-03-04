@@ -8,9 +8,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,6 +36,8 @@ public abstract class ResultFormatterStreamingImpl implements ResultFormatterStr
 
     @Override
     public void format(InputStream is, OutputStream os) throws ResultFormattingException {
+        //is = cacheResults(is);
+
         try (InputStream inputStream = is) {
             JsonFactory factory = new JsonFactory();
             JsonParser jsonParser = factory.createParser(inputStream);
@@ -48,6 +55,24 @@ public abstract class ResultFormatterStreamingImpl implements ResultFormatterStr
         } catch (IOException e) {
             throw new ResultFormattingException("failed to format incoming stream", e);
         }
+    }
+
+    public InputStream cacheResults(InputStream is) throws ResultFormattingException {
+        File tempFile;
+        try (InputStream is2 = is){
+            tempFile = File.createTempFile("cypher", "json");
+            System.out.println("logging to [" + tempFile.getAbsolutePath() + "]");
+            IOUtils.copy(is2, new FileOutputStream(tempFile));
+        } catch (IOException e) {
+            throw new ResultFormattingException("bla", e);
+        }
+
+        try {
+            is = new FileInputStream(tempFile);
+        } catch (FileNotFoundException e) {
+            throw new ResultFormattingException("failed to open tmpfile", e);
+        }
+        return is;
     }
 
     abstract protected void handleRows(OutputStream os, JsonParser jsonParser) throws IOException;
