@@ -1,6 +1,5 @@
 package org.eol.globi.server.util;
 
-import com.sun.tools.javac.tree.TreeMaker;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.server.InteractionController;
 import org.eol.globi.server.ParamName;
@@ -9,7 +8,6 @@ import org.eol.globi.util.CypherUtil;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;

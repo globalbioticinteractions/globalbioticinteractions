@@ -44,24 +44,9 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         private Random random = new Random();
         @Override
         public long randomLong() {
-            return random.nextLong();
+            return (long) (random.nextFloat() * 1000.0);
         }
     };
-
-    public RandomLong getRandomLong() {
-        return randomLong;
-    }
-
-    public void setRandomLong(RandomLong randomLong) {
-        this.randomLong = randomLong;
-    }
-
-
-    interface RandomLong {
-        long randomLong();
-    }
-
-
 
     @Override
     public String format(String s) throws ResultFormattingException {
@@ -235,5 +220,22 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         }
         return text;
     }
+
+    public RandomLong getRandomLong() {
+        return randomLong;
+    }
+
+    public void setRandomLong(RandomLong randomLong) {
+        this.randomLong = randomLong;
+    }
+
+
+    interface RandomLong {
+        long randomLong();
+    }
+
+
+
+
 
 }
