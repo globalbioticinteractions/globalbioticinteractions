@@ -32,7 +32,7 @@
                 tsv=text/tab-separated-values;charset=UTF-8
                 dot=text/vnd.graphviz;charset=UTF-8
                 svg=image/svg+xml;charset=UTF-8
-                gs=text/vnd.gephi+gs;charset=UTF-8
+                gs=text/plain;charset=UTF-8
             </value>
         </property>
     </bean>
