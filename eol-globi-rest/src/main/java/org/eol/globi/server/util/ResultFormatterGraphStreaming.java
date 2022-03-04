@@ -109,7 +109,7 @@ public class ResultFormatterGraphStreaming extends ResultFormatterStreamingImpl 
         writeNodesAndEdge(writer, new TreeMap<String, String>(interaction) {{
             String headerLabel = header.get(interaction.size());
             if (StringUtils.isNotBlank(headerLabel)) {
-                interaction.put(headerLabel, getTokenValue(jsonParser, token));
+                put(headerLabel, getTokenValue(jsonParser, token));
             }
         }});
     }
