@@ -1,6 +1,7 @@
 package org.eol.globi.server.util;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -22,8 +23,7 @@ public class ResultFormatterGraphStreamingTest {
 
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 
-        assertThat(actual,
-                is(IOUtils.toString(getClass().getResourceAsStream("example.gs"), StandardCharsets.UTF_8)));
+        assertThat(actual, is(ensureLineFeedAndNewline("example.gs")));
     }
 
     @Test
@@ -35,8 +35,7 @@ public class ResultFormatterGraphStreamingTest {
 
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 
-        assertThat(actual,
-                is(IOUtils.toString(getClass().getResourceAsStream("ariopsisFelisDiet.gs"), StandardCharsets.UTF_8)));
+        assertThat(actual, is(ensureLineFeedAndNewline("ariopsisFelisDiet.gs")));
     }
 
     @Test
@@ -48,8 +47,7 @@ public class ResultFormatterGraphStreamingTest {
 
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 
-        assertThat(actual,
-                is(IOUtils.toString(getClass().getResourceAsStream("enhydraLutrisDietObservations.gs"), StandardCharsets.UTF_8)));
+        assertThat(actual, is(ensureLineFeedAndNewline("enhydraLutrisDietObservations.gs")));
     }
 
     @Test
@@ -64,7 +62,12 @@ public class ResultFormatterGraphStreamingTest {
         //IOUtils.write(actual, new FileOutputStream("/home/jorrit/proj/globi/eol-globi-data/eol-globi-rest/src/test/resources/org/eol/globi/server/util/enhydraDietObservations.gs"), StandardCharsets.UTF_8);
 
         assertThat(actual,
-                is(IOUtils.toString(getClass().getResourceAsStream("enhydraDietObservations.gs"), StandardCharsets.UTF_8)));
+                is(ensureLineFeedAndNewline("enhydraDietObservations.gs")));
+    }
+
+    public static String ensureLineFeedAndNewline(String resourceName) throws IOException {
+        String value = IOUtils.toString(ResultFormatterGraphStreamingTest.class.getResourceAsStream(resourceName), StandardCharsets.UTF_8);
+        return StringUtils.replace(value, "\r{0,1}\n", "\r\n");
     }
 
     @Test(expected = ResultFormattingException.class)

@@ -32,11 +32,8 @@ public class ResultFormatterGraphStreamingIT {
 
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 
-//        IOUtils.write(actual, new FileOutputStream("/home/jorrit/proj/globi/eol-globi-data/eol-globi-rest/src/test/resources/org/eol/globi/server/util/ariopsisFelis.gs"), StandardCharsets.UTF_8);
-
-
         assertThat(actual,
-                is(IOUtils.toString(getClass().getResourceAsStream("ariopsisFelisDiet.gs"), StandardCharsets.UTF_8)));
+                is(ResultFormatterGraphStreamingTest.ensureLineFeedAndNewline("ariopsisFelisDiet.gs")));
     }
 
     @Test
@@ -60,7 +57,7 @@ public class ResultFormatterGraphStreamingIT {
         String actual = IOUtils.toString(os.toByteArray(), StandardCharsets.UTF_8.name());
 
         assertThat(actual,
-                is(IOUtils.toString(getClass().getResourceAsStream("enhydraLutrisDietObservations.gs"), StandardCharsets.UTF_8)));
+                is(ResultFormatterGraphStreamingTest.ensureLineFeedAndNewline("enhydraLutrisDietObservations.gs")));
     }
 
 }
