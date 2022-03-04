@@ -1,13 +1,9 @@
 package org.eol.globi.server.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
