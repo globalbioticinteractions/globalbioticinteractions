@@ -25,8 +25,6 @@ import static org.apache.commons.lang3.StringUtils.replace;
 
 public final class WikidataUtil {
 
-    private static Logger LOG = LoggerFactory.getLogger(WikidataUtil.class);
-
     public static final Map<TaxonomyProvider, String> PROVIDER_TO_WIKIDATA = new TreeMap<TaxonomyProvider, String>() {{
         put(TaxonomyProvider.OPEN_TREE_OF_LIFE, "P9157");
         put(TaxonomyProvider.BOLD_TAXON, "P3606");
