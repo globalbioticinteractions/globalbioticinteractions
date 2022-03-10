@@ -1,12 +1,9 @@
 package org.eol.globi.data;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.globalbioticinteractions.dataset.DatasetUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -26,6 +23,8 @@ import org.eol.globi.util.InteractTypeMapperFactoryImpl;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,7 +103,7 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         int pageNumber = 1;
         do {
             String pageSizeString = getDataset().getOrDefault("pageSize", null);
-            long pageSize = NumberUtils.toLong(pageSizeString, 50);
+            long pageSize = NumberUtils.toLong(pageSizeString, 100);
             URI uri = URI.create(INATURALIST_URL +
                     "/observation_field_values.json?type=taxon" +
                     "&page=" + pageNumber +
