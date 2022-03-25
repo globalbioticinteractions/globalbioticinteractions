@@ -1,4 +1,4 @@
-Welcome to the Global Biotic Interactions (GloBI)
+Welcome to Global Biotic Interactions (GloBI)
 ======================================
 
 This mission of this project is to find efficient ways to normalize and integrate species interaction data to enable researchers and enthusiasts to answer questions like: Which species does an Angel Shark ( _Squatina squatina_ ) eat in the Gulf of Mexico? 
