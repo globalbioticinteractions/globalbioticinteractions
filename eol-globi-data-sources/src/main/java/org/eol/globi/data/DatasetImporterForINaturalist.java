@@ -103,7 +103,7 @@ public class DatasetImporterForINaturalist extends NodeBasedImporter {
         int pageNumber = 1;
         do {
             String pageSizeString = getDataset().getOrDefault("pageSize", null);
-            long pageSize = NumberUtils.toLong(pageSizeString, 100);
+            long pageSize = NumberUtils.toLong(pageSizeString, 50);
             URI uri = URI.create(INATURALIST_URL +
                     "/observation_field_values.json?type=taxon" +
                     "&page=" + pageNumber +
