@@ -519,7 +519,6 @@ public class DatasetImporterForDwCATest {
 
         Map<String, String> properties = DatasetImporterForDwCA.parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
 
-
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Biomphalaria havanensis"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_GENUS), is("Biomphalaria"));
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("havanensis"));
@@ -636,6 +635,7 @@ public class DatasetImporterForDwCATest {
     }
 
 
+
     @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarks4() throws IOException {
@@ -651,6 +651,22 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET), is("sparrmani"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HAS_HOST.getLabel()));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HAS_HOST.getIRI()));
+    }
+
+
+    @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
+    public void occurrenceRemarksAttackedByBird() throws IOException {
+        String occurrenceRemarks = "GWRC admit notes: \"attacked by bird, injured, hawk attacked pigeon by Library Park in Boulder, found in stream near library park/9th st bridge at 4:30 pm on 21 November 2014.\"";
+
+        ArrayList<Map<String, String>> candidates = new ArrayList<>();
+        DatasetImporterForDwCA.addCandidatesFromRemarks(candidates, occurrenceRemarks);
+
+        assertThat(candidates.size(), is(1));
+        Map<String, String> properties = candidates.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("bird"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
     }
 
     @Test

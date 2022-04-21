@@ -1,5 +1,7 @@
 package org.eol.globi.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.eol.globi.util.HttpUtil;
@@ -26,6 +28,14 @@ public class ImageServiceIT extends ITBase {
     public void imagesForName() throws IOException {
         String uri = getURLPrefix() + "imagesForName/Homo%20sapiens";
         assertThat(HttpUtil.getRemoteJson(uri), is(notNullValue()));
+    }
+
+    @Test
+    public void imagesForNameNCBI() throws IOException {
+        String uri = getURLPrefix() + "imagesForName/NCBI:1000587";
+        String remoteJson = HttpUtil.getRemoteJson(uri);
+        JsonNode jsonNode = new ObjectMapper().readTree(remoteJson);
+        assertThat(jsonNode.get("scientificName").asText(), is("Huitzilac virus"));
     }
 
     @Test

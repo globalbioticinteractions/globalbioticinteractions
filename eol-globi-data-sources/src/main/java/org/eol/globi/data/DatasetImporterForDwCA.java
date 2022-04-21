@@ -105,6 +105,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     static final Pattern REARED_EX_NOTATION = Pattern.compile("^reared ex[ .]+.*", Pattern.CASE_INSENSITIVE);
     static final Pattern PATTERN_ASSOCIATED_TAXA_IDEA = Pattern.compile("(\\w+)\\W+(\\w+)(:)(.*idae)");
     static final Pattern PATTERN_ASSOCIATED_TAXA_EAE = Pattern.compile("(.*eae):(.*):(.*)");
+
+
     private static final String EXTENSION_DESCRIPTION = "http://rs.gbif.org/terms/1.0/Description";
     private static final String EXTENSION_REFERENCE = "http://rs.gbif.org/terms/1.0/Reference";
     private static final String DWC_COREID = "dwc:coreid";
@@ -404,8 +406,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (StringUtils.isNotBlank(occurrenceRemarks)) {
             addUSNMStyleHostOccurrenceRemarks(interactionCandidates, occurrenceRemarks);
             addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(interactionCandidates, occurrenceRemarks);
-            addKilledByPetsRemarks(interactionCandidates, occurrenceRemarks);
-            addKilledByHumansRemarks(interactionCandidates, occurrenceRemarks);
+            String[] remarks = StringUtils.split(occurrenceRemarks, ";,.\":\'");
+            for (String remark : remarks) {
+                addKilledByPetsRemarks(interactionCandidates, remark);
+                addKilledByHumansRemarks(interactionCandidates, remark);
+            }
         }
     }
 
@@ -430,11 +435,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             appendResourceType(properties, DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
-        properties = new AttackRemarksParser().parse(occurrenceRemarks);
-        if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
-            interactionCandidates.add(properties);
-        }
         properties = parseHighVoltageRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
             appendResourceType(properties, DwcTerm.occurrenceRemarks);
@@ -455,6 +455,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             appendResourceType(properties, DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
+        properties = new AttackRemarksParser().parse(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+
     }
 
     private boolean isDependency() {
@@ -1274,29 +1280,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                 properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
                 properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
-
-            }
-            return properties;
-
-        }
-    }
-
-    private static class AttackRemarksParser implements RemarksParser {
-        @Override
-        public Map<String, String> parse(String remarks) {
-            final Pattern KILLED_BY_CAT
-                    = Pattern.compile(
-                    ".*(attack).*",
-                    Pattern.CASE_INSENSITIVE
-            );
-
-            Map<String, String> properties = new TreeMap<>();
-
-            if (KILLED_BY_CAT.matcher(remarks).matches()) {
-                properties.put(TaxonUtil.TARGET_TAXON_NAME, "Animalia");
-
-                properties.put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
 
             }
             return properties;

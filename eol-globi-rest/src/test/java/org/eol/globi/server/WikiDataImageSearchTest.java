@@ -44,6 +44,15 @@ public class WikiDataImageSearchTest {
     }
 
     @Test
+    public void lookupLionByNCBI2() throws IOException {
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("NCBI:1000587");
+        Assert.assertNotNull(taxonImage);
+        assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
+        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
+        assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
+    }
+
+    @Test
     public void createITISLionQuery() {
         String sparqlQuery = WikidataUtil.createSparqlQuery("ITIS:183803", "en");
         assertThat(sparqlQuery, is("SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
