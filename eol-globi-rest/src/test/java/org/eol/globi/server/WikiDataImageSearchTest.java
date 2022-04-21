@@ -1,27 +1,17 @@
 package org.eol.globi.server;
 
 import org.eol.globi.domain.TaxonImage;
-import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.SearchContext;
 import org.eol.globi.service.WikidataUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.isIn;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class WikiDataImageSearchTest {
 
@@ -42,7 +32,8 @@ public class WikiDataImageSearchTest {
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
         assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
     }
-    
+
+
     @Test
     public void createITISLionQuery() {
         String sparqlQuery = WikidataUtil.createSparqlQuery("ITIS:183803", "en");
