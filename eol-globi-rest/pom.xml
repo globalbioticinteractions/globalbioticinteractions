@@ -15,7 +15,7 @@
     <name>Global Biotic Interactions Rest Services</name>
 
     <properties>
-        <spring.version>3.2.18.RELEASE</spring.version>
+        <spring.version>5.3.18</spring.version>
         <aspectj.version>1.6.12</aspectj.version>
         <jetty.groupId>org.eclipse.jetty</jetty.groupId>
         <jetty.version>9.4.41.v20210516</jetty.version>
