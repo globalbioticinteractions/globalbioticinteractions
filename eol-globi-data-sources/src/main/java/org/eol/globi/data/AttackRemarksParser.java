@@ -51,26 +51,21 @@ public class AttackRemarksParser implements RemarksParser {
         Matcher matcher1 = ATTACKED_BY_PHRASE.matcher(remarks);
         if (matcher1.matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, matcher1.group(2));
-            properties.put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-            properties.put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+            properties.put(INTERACTION_TYPE_NAME, "attacked by");
         } else {
             Matcher matcher = ATTACKS_PHRASE.matcher(remarks);
             if (matcher.matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, matcher.group(2));
-                properties.put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+                properties.put(INTERACTION_TYPE_NAME, "attacks");
             } else if (CAT_ATTACK.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "cat");
-                properties.put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+                properties.put(INTERACTION_TYPE_NAME, "attacked by");
             } else if (DOG_ATTACK.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "dog");
-                properties.put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+                properties.put(INTERACTION_TYPE_NAME, "attacked by");
             } else if (ANIMAL_ATTACK.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "animal");
-                properties.put(INTERACTION_TYPE_NAME, InteractType.INTERACTS_WITH.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.INTERACTS_WITH.getIRI());
+                properties.put(INTERACTION_TYPE_NAME, "attacked by");
             }
         }
         return properties;

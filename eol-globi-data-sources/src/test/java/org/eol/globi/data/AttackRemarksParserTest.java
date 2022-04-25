@@ -1,13 +1,11 @@
 package org.eol.globi.data;
 
-import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -22,9 +20,17 @@ public class AttackRemarksParserTest {
         Map<String, String> properties = new AttackRemarksParser().parse(occurrenceRemarks);
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("maple"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacks"));
+    }
 
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+    @Test
+    // see https://github.com/globalbioticinteractions/scan/issues/6
+    public void occurrenceRemarkAttackingMoth() throws IOException {
+        String occurrenceRemarks = "attacking moth on spreading board";
+
+        Map<String, String> properties = new AttackRemarksParser().parse(occurrenceRemarks);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("moth on spreading board"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacks"));
     }
 
     @Test
@@ -35,9 +41,7 @@ public class AttackRemarksParserTest {
         Map<String, String> properties = new AttackRemarksParser().parse(occurrenceRemarks);
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("cat"));
-
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacked by"));
     }
 
     @Test
@@ -48,9 +52,7 @@ public class AttackRemarksParserTest {
         Map<String, String> properties = new AttackRemarksParser().parse(occurrenceRemarks);
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("TWO KITTNES IN GRASY AREA"));
-
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacked by"));
     }
 
     @Test
@@ -61,9 +63,7 @@ public class AttackRemarksParserTest {
         Map<String, String> properties = new AttackRemarksParser().parse(occurrenceRemarks);
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("dog"));
-
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacked by"));
     }
 
     @Test
@@ -72,11 +72,8 @@ public class AttackRemarksParserTest {
         String occurrenceRemarks = "attacked by unknown animal";
 
         Map<String, String> properties = new AttackRemarksParser().parse(occurrenceRemarks);
-
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("unknown animal"));
-
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacked by"));
     }
 
     @Test
@@ -87,9 +84,7 @@ public class AttackRemarksParserTest {
         Map<String, String> properties = new AttackRemarksParser().parse(occurrenceRemarks);
 
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Other"));
-
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacked by"));
     }
 
 
