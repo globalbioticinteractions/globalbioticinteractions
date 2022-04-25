@@ -64,7 +64,7 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
             }
         } else {
             String result = CypherUtil.executeRemote(cypherQuery);
-            StreamUtils.copy(formatter.format(result), contentType.getCharset(), outputMessage.getBody());
+            StreamUtils.copy(formatter.format(result), contentType.getCharSet(), outputMessage.getBody());
         }
     }
 
