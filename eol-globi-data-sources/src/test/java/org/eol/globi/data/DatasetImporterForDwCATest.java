@@ -635,7 +635,6 @@ public class DatasetImporterForDwCATest {
     }
 
 
-
     @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarks4() throws IOException {
@@ -665,8 +664,7 @@ public class DatasetImporterForDwCATest {
         assertThat(candidates.size(), is(1));
         Map<String, String> properties = candidates.get(0);
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("bird"));
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.INTERACTS_WITH.getLabel()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.INTERACTS_WITH.getIRI()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("attacked by"));
     }
 
     @Test
