@@ -188,6 +188,22 @@ public class InteractionControllerIT extends ITBase {
         assertThat(response, containsString("Homo sapiens"));
     }
 
+    @Test
+    public void predatorsOfHumansPathExtension() throws IOException {
+        String uri = getURLPrefix() + "interaction.tsv?sourceTaxon=Homo%20sapiens&interactionType=preyedUponBy";
+        String response = HttpUtil.getContent(uri);
+        assertThat(response, is(not(nullValue())));
+        assertThat(response, containsString("\tHomo sapiens"));
+    }
+
+    @Test
+    public void predatorsOfHumansArgumentType() throws IOException {
+        String uri = getURLPrefix() + "interaction?type=tsv&sourceTaxon=Homo%20sapiens&interactionType=preyedUponBy";
+        String response = HttpUtil.getContent(uri);
+        assertThat(response, is(not(nullValue())));
+        assertThat(response, containsString("\tHomo sapiens"));
+    }
+
 
     @Test
     public void listPreyObservationsLocation() throws IOException {
