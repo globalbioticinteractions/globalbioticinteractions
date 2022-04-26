@@ -1,6 +1,5 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.cli.CommandLine;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.globalbioticinteractions.dataset.DatasetRegistry;

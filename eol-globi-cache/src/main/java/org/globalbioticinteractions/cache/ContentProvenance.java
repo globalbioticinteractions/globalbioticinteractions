@@ -1,9 +1,6 @@
 package org.globalbioticinteractions.cache;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.net.URI;
-import java.util.Date;
 
 public class ContentProvenance {
 
