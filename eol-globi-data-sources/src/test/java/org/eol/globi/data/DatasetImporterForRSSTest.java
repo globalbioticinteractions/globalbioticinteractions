@@ -446,11 +446,6 @@ public class DatasetImporterForRSSTest {
         }
 
         @Override
-        public AuthorIdResolver getAuthorResolver() {
-            return null;
-        }
-
-        @Override
         public Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException {
             return null;
         }

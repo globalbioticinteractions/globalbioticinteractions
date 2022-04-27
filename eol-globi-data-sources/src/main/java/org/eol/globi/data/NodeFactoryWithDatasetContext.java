@@ -10,7 +10,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
-import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.TermLookupService;
 import org.globalbioticinteractions.dataset.Dataset;
 
@@ -129,11 +128,6 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     @Override
     public TermLookupService getTermLookupService() {
         return factory.getTermLookupService();
-    }
-
-    @Override
-    public AuthorIdResolver getAuthorResolver() {
-        return factory.getAuthorResolver();
     }
 
     @Override

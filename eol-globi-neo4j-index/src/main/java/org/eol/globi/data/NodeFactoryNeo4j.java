@@ -20,14 +20,11 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
-import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.EnvoLookupService;
-import org.eol.globi.service.ORCIDResolverImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
@@ -452,11 +449,6 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     public void setTermLookupService(TermLookupService termLookupService) {
         this.termLookupService = termLookupService;
-    }
-
-    @Override
-    public AuthorIdResolver getAuthorResolver() {
-        return new ORCIDResolverImpl();
     }
 
     @Override

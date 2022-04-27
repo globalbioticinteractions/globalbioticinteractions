@@ -1,5 +1,7 @@
 package org.eol.globi.data;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -8,8 +10,6 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -19,8 +19,6 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.DatasetLocal;
-import org.globalbioticinteractions.dataset.CitationUtil;
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,21 +54,11 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
             throw new StudyImporterException("failed to find sparql query", e);
         }
 
-        QueryExecution exec = QueryExecutionFactory.create(query, model);
-        try {
+        try (QueryExecution exec = QueryExecutionFactory.create(query, model)) {
             ResultSet results = exec.execSelect();
             while (results.hasNext()) {
                 QuerySolution solution = results.nextSolution();
                 String subj = solution.get("subj").asResource().getURI();
-                String creationDate = solution.get("creationDate").asLiteral().getString();
-                String authorURI = solution.get("author").toString();
-                String author;
-                try {
-                    author = getNodeFactory().getAuthorResolver().findFullName(authorURI);
-                } catch (IOException e) {
-                    throw new StudyImporterException("failed to query author URI [" + authorURI + "]");
-                }
-                final String source1 = author + ". " + new DateTime(parseDate(creationDate)).getYear() + ". " + CitationUtil.createLastAccessedString(getResourceURI().toString());
                 Study study = getNodeFactory().getOrCreateStudy(new StudyImpl(getResourceURI() + subj, null, subj));
                 study.setExternalId(subj);
                 Specimen source = createSpecimen(solution, study, "subjTaxon");
@@ -93,8 +81,6 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
             }
         } catch (NodeFactoryException e) {
             throw new StudyImporterException("failed to import jsonld data in [" + getResourceURI() + "]", e);
-        } finally {
-            exec.close();
         }
     }
 

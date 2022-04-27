@@ -53,8 +53,6 @@ public interface NodeFactory extends AutoCloseable {
 
     TermLookupService getTermLookupService();
 
-    AuthorIdResolver getAuthorResolver();
-
     Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException;
 
     Dataset getOrCreateDataset(Dataset dataset);
