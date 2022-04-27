@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import com.Ostermiller.util.Base64;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
@@ -17,6 +18,12 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class HttpUtilIT {
+
+    private static HttpGet withBasicAuthHeader(HttpGet request, String username, String password) {
+        String encode = Base64.encode(username + ":" + password);
+        request.addHeader("Authorization", "Basic " + encode);
+        return request;
+    }
 
     @Test(expected = ConnectTimeoutException.class)
     public void timeoutVeryShort() throws IOException {
@@ -72,7 +79,7 @@ public class HttpUtilIT {
         String username = "aladdin";
         String password = "opensesame";
         HttpGet get = new HttpGet("http://httpbin.org/basic-auth/aladdin/opensesame");
-        HttpUtil.withBasicAuthHeader(get, username, password);
+        withBasicAuthHeader(get, username, password);
 
         Header[] authorizations = get.getHeaders("Authorization");
         // see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization

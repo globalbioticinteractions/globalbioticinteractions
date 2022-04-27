@@ -175,9 +175,4 @@ public class HttpUtil {
         };
     }
 
-    public static HttpGet withBasicAuthHeader(HttpGet request, String username, String password) {
-        String encode = Base64.encode(username + ":" + password);
-        request.addHeader("Authorization", "Basic " + encode);
-        return request;
-    }
 }

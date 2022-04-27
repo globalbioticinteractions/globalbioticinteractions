@@ -28,45 +28,28 @@ import java.util.List;
 public class GitHubUtil {
     private static final Logger LOG = LoggerFactory.getLogger(GitHubUtil.class);
 
-    public static final String GITHUB_CLIENT_ID_JAVA_PROPERTY_NAME = "github.client.id";
-    public static final String GITHUB_CLIENT_SECRET_JAVA_PROPERTY_NAME = "github.client.secret";
-    public static final String GITHUB_CLIENT_ID_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_ID";
-    public static final String GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_SECRET";
-
-    private static String httpGet(String path, String query, ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
+    private static String httpGet(ResponseHandler<String> responseHandler, URI githubURI) throws URISyntaxException, IOException {
         HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
-        return doHttpGetWithBasicAuthIfCredentialsIfAvailable(
-                path,
-                query,
+        return doHttpGet(
                 httpClientBuilder,
-                getGitHubClientId(),
-                getGitHubClientSecret(),
-                responseHandler);
+                responseHandler, githubURI);
     }
 
-    static void doHttpGetWithBasicAuthIfCredentialsIfAvailable(String path,
-                                                               String query,
-                                                               HttpClientBuilder httpClientBuilder,
-                                                               String id,
-                                                               String secret) throws URISyntaxException, IOException {
-        doHttpGetWithBasicAuthIfCredentialsIfAvailable(path, query, httpClientBuilder, id, secret, new BasicResponseHandler());
+    static void doHttpGet(HttpClientBuilder httpClientBuilder, URI githubURI
+    ) throws URISyntaxException, IOException {
+        doHttpGet(httpClientBuilder, new BasicResponseHandler(), githubURI);
     }
 
-    private static String doHttpGetWithBasicAuthIfCredentialsIfAvailable(String path,
-                                                                         String query,
-                                                                         HttpClientBuilder httpClientBuilder,
-                                                                         String id,
-                                                                         String secret,
-                                                                         ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
+    private static String doHttpGet(HttpClientBuilder httpClientBuilder,
+                                    ResponseHandler<String> responseHandler,
+                                    URI githubURI) throws IOException {
         CloseableHttpClient build = httpClientBuilder.build();
+        URI requestUrl = githubURI;
+        return HttpUtil.executeAndRelease(new HttpGet(requestUrl), build, responseHandler);
+    }
 
-        URI requestUrl = new URI("https", null, "api.github.com", -1, path, query, null);
-
-        HttpGet request = StringUtils.isNotBlank(id) && StringUtils.isNotBlank(secret)
-                ? HttpUtil.withBasicAuthHeader(new HttpGet(requestUrl), id, secret)
-                : new HttpGet(requestUrl);
-
-        return HttpUtil.executeAndRelease(request, build, responseHandler);
+    public static URI getGitHubAPIEndpoint(String path, String query) throws URISyntaxException {
+        return new URI("https", null, "api.github.com", -1, path, query, null);
     }
 
     private static boolean hasInteractionData(String repoName, String globiFilename, String commitHash) throws IOException {
@@ -105,9 +88,8 @@ public class GitHubUtil {
                     "&per_page=100" +
                     "&page=" + page;
             String repositoriesThatMentionGloBI
-                    = httpGet("/search/repositories",
-                    query,
-                    new ResponseHandlerWithInputStreamFactory(inputStreamFactory));
+                    = httpGet(
+                    new ResponseHandlerWithInputStreamFactory(inputStreamFactory), getGitHubAPIEndpoint("/search/repositories", query));
             JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);
             if (jsonNode.has("total_count")) {
                 totalAvailable = jsonNode.get("total_count").asInt();
@@ -141,12 +123,6 @@ public class GitHubUtil {
         return GitClient.getLastCommitSHA1("https://github.com/" + repository, new ResponseHandlerWithInputStreamFactory(inputStreamFactory));
     }
 
-    private static String getGitHubClientSecret() {
-        return getPropertyOrEnvironmentVariable(
-                GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE,
-                GITHUB_CLIENT_SECRET_JAVA_PROPERTY_NAME);
-    }
-
     private static String getPropertyOrEnvironmentVariable(String environmentVariableName, String javaPropertyName) {
         String environmentVariable = System.getenv(environmentVariableName);
         String property = System.getProperty(javaPropertyName, environmentVariable);
@@ -156,18 +132,8 @@ public class GitHubUtil {
         return property;
     }
 
-    private static String getGitHubClientId() {
-        return getPropertyOrEnvironmentVariable(
-                GITHUB_CLIENT_ID_ENVIRONMENT_VARIABLE,
-                GITHUB_CLIENT_ID_JAVA_PROPERTY_NAME);
-    }
-
     private static String getBaseUrl(String repo, String lastCommitSHA) {
         return "https://raw.githubusercontent.com/" + repo + "/" + lastCommitSHA;
-    }
-
-    public static String getBaseUrlLastCommit(String repo) throws IOException, URISyntaxException {
-        return getBaseUrlLastCommit(repo, inputstream -> inputstream);
     }
 
     public static String getBaseUrlLastCommit(String repo, InputStreamFactory is) throws IOException, URISyntaxException {
