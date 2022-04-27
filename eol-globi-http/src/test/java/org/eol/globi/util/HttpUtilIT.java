@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 public class HttpUtilIT {
 
     private static HttpGet withBasicAuthHeader(HttpGet request, String username, String password) {

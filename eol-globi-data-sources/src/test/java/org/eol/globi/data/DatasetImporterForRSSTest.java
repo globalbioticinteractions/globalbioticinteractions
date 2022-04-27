@@ -1,9 +1,9 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.LabeledCSVParser;
-import org.apache.commons.lang3.tuple.Pair;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.Environment;
 import org.eol.globi.domain.Interaction;
 import org.eol.globi.domain.Location;
@@ -14,7 +14,6 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.process.InteractionListener;
-import org.eol.globi.service.AuthorIdResolver;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.InteractionListenerIndexing;
