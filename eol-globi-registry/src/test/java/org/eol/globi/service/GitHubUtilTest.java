@@ -34,7 +34,7 @@ public class GitHubUtilTest {
     }
 
     @Test
-    public void nonGloBIRepo() throws IOException, URISyntaxException {
+    public void nonGloBIRepo() throws IOException {
         String lastCommitSHA = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, new ResourceService() {
 
             @Override
