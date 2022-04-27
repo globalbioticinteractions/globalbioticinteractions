@@ -1,16 +1,18 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.util.HttpUtil;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.util.ResourceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -247,6 +249,13 @@ public class GeoNamesServiceImpl implements GeoNamesService {
     }};
     private Map<String, LatLng> pointCache = new ConcurrentHashMap<String, LatLng>();
 
+    private ResourceService service = new ResourceService() {
+        @Override
+        public InputStream retrieve(URI resourceName) throws IOException {
+            return ResourceUtil.asInputStream(resourceName, in -> in);
+        }
+    };
+
     @Override
     public boolean hasTermForLocale(String locality) {
         return locality != null && LOCALE_TO_GEONAMES.containsKey(locality);
@@ -321,9 +330,9 @@ public class GeoNamesServiceImpl implements GeoNamesService {
 
     public LatLng getCentroid(Long id) throws IOException {
         LatLng point = null;
-        String jsonString = HttpUtil.getRemoteJson("http://api.geonames.org/getJSON?formatted=true&geonameId=" + id + "&username=globi&style=full");
+        InputStream jsonStream = service.retrieve(URI.create("http://api.geonames.org/getJSON?formatted=true&geonameId=" + id + "&username=globi&style=full"));
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(jsonString);
+        JsonNode node = mapper.readTree(jsonStream);
         if (node.has("lat") && node.has("lng")) {
             double lat = Double.parseDouble(node.get("lat").asText());
             double lng = Double.parseDouble(node.get("lng").asText());

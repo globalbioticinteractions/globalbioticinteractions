@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class GeoNamesServiceImplTest {
 
     @Test
@@ -116,7 +117,7 @@ public class GeoNamesServiceImplTest {
     }
 
     @Test
-    public void parseGeoIdInvalidId () {
+    public void parseGeoIdInvalidId() {
         assertThat(GeoNamesServiceImpl.parseGeoId("GEO:"), is(nullValue()));
 
     }
