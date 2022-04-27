@@ -60,7 +60,7 @@ public class DatasetRegistryZenodoTest {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
         NodeList records = DatasetRegistryZenodo.getRecordNodeList(resourceAsStream);
         URI uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "jhammock/Layman-and-Allgeier-Lionfish");
-        assertThat(uri.toString(), is("https://zenodo.org/record/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
+            assertThat(uri.toString(), is("https://zenodo.org/record/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
         uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "globalbioticinteractions/template-dataset");
         assertThat(uri.toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
     }
