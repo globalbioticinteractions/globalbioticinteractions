@@ -29,7 +29,9 @@ public class INaturalistOccurrenceIdIdEnricher extends InteractionProcessorAbstr
 
     private final ResourceService resourceService;
 
-    public INaturalistOccurrenceIdIdEnricher(InteractionListener listener, ImportLogger logger, ResourceService resourceService) {
+    public INaturalistOccurrenceIdIdEnricher(InteractionListener listener,
+                                             ImportLogger logger,
+                                             ResourceService resourceService) {
         super(listener, logger);
         this.resourceService = resourceService;
     }

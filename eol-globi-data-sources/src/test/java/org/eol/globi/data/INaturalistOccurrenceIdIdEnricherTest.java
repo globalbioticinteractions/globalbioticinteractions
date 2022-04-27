@@ -1,15 +1,12 @@
 package org.eol.globi.data;
 
-import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,6 +24,7 @@ public class INaturalistOccurrenceIdIdEnricherTest {
 
     @Test
     public void lookupSourceOccurrenceId() throws StudyImporterException {
+
         Map<String, String> properties
                 = new INaturalistOccurrenceIdIdEnricher(null, null, getResourceService())
                 .enrich(new TreeMap<String, String>() {{
@@ -41,7 +39,7 @@ public class INaturalistOccurrenceIdIdEnricherTest {
         return new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
-                return IOUtils.toInputStream(HttpUtil.getContent(resourceName), StandardCharsets.UTF_8);
+                return getClass().getResourceAsStream("inat-2900976.json");
             }
         };
     }
@@ -98,4 +96,10 @@ public class INaturalistOccurrenceIdIdEnricherTest {
     }
 
 
+    private class ResourceStaticService implements ResourceService {
+        @Override
+        public InputStream retrieve(URI resourceName) throws IOException {
+            return getClass().getResourceAsStream("inat-2900976.json");
+        }
+    }
 }
