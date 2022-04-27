@@ -1,84 +1,72 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eol.globi.util.HttpUtil;
-import org.eol.globi.util.InputStreamFactory;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.tuple.Pair;
+import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.util.GitClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GitHubUtil {
     private static final Logger LOG = LoggerFactory.getLogger(GitHubUtil.class);
 
-    private static String httpGet(ResponseHandler<String> responseHandler, URI githubURI) throws URISyntaxException, IOException {
-        HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
-        return doHttpGet(
-                httpClientBuilder,
-                responseHandler, githubURI);
-    }
-
-    static void doHttpGet(HttpClientBuilder httpClientBuilder, URI githubURI
-    ) throws URISyntaxException, IOException {
-        doHttpGet(httpClientBuilder, new BasicResponseHandler(), githubURI);
-    }
-
-    private static String doHttpGet(HttpClientBuilder httpClientBuilder,
-                                    ResponseHandler<String> responseHandler,
-                                    URI githubURI) throws IOException {
-        CloseableHttpClient build = httpClientBuilder.build();
-        URI requestUrl = githubURI;
-        return HttpUtil.executeAndRelease(new HttpGet(requestUrl), build, responseHandler);
-    }
-
-    public static URI getGitHubAPIEndpoint(String path, String query) throws URISyntaxException {
-        return new URI("https", null, "api.github.com", -1, path, query, null);
-    }
-
-    private static boolean hasInteractionData(String repoName, String globiFilename, String commitHash) throws IOException {
-        HttpHead request = new HttpHead(getBaseUrl(repoName, commitHash) + "/" + globiFilename);
-        try {
-            HttpResponse execute = HttpUtil.getHttpClient().execute(request);
-            return execute.getStatusLine().getStatusCode() == 200;
-        } finally {
-            request.releaseConnection();
+    private static String retrieveAsString(URI githubURI, ResourceService resourceService) throws URISyntaxException, IOException {
+        try (InputStream is = resourceService.retrieve(githubURI)) {
+            return org.apache.commons.io.IOUtils.toString(is, StandardCharsets.UTF_8);
         }
     }
 
-    static List<String> find() throws URISyntaxException, IOException {
-        return find(inStream -> inStream);
+    public static URI getGitHubAPIEndpoint(String path, String query) throws URISyntaxException {
+        return new URI(
+                "https",
+                null,
+                "api.github.com",
+                -1,
+                path,
+                query,
+                null
+        );
     }
 
-    public static List<String> find(InputStreamFactory inputStreamFactory) throws URISyntaxException, IOException {
-        List<Pair<String, String>> globiRepos = searchGitHubForCandidateRepositories(inputStreamFactory);
+    private static boolean hasInteractionData(URI gloBIConfigURI, ResourceService resourceService) throws IOException {
+        try (InputStream is = resourceService.retrieve(gloBIConfigURI)) {
+            IOUtils.copy(is, NullOutputStream.NULL_OUTPUT_STREAM);
+            return true;
+        } catch (Throwable th) {
+            return false;
+        }
+    }
+
+    private static URI getGloBIConfigURI(String repoName, String globiFilename, String commitHash) {
+        return URI.create(getBaseUrl(repoName, commitHash) + "/" + globiFilename);
+    }
+
+    public static List<String> find(ResourceService resourceService) throws URISyntaxException, IOException {
+        List<Pair<String, String>> globiRepos = searchGitHubForCandidateRepositories(resourceService);
 
         List<String> reposWithData = new ArrayList<String>();
         for (Pair<String, String> globiRepo : globiRepos) {
-            if (isGloBIRepository(globiRepo.getKey(), globiRepo.getValue())) {
+            if (isGloBIRepository(globiRepo.getKey(), globiRepo.getValue(), resourceService)) {
                 reposWithData.add(globiRepo.getKey());
             }
         }
         return reposWithData;
     }
 
-    private static List<Pair<String, String>> searchGitHubForCandidateRepositories(InputStreamFactory inputStreamFactory) throws URISyntaxException, IOException {
+    private static List<Pair<String, String>> searchGitHubForCandidateRepositories(ResourceService resourceService) throws URISyntaxException, IOException {
         int page = 1;
         int totalAvailable = 0;
         List<Pair<String, String>> globiRepos = new ArrayList<>();
@@ -88,8 +76,10 @@ public class GitHubUtil {
                     "&per_page=100" +
                     "&page=" + page;
             String repositoriesThatMentionGloBI
-                    = httpGet(
-                    new ResponseHandlerWithInputStreamFactory(inputStreamFactory), getGitHubAPIEndpoint("/search/repositories", query));
+                    = retrieveAsString(
+                    getGitHubAPIEndpoint("/search/repositories", query),
+                    resourceService
+            );
             JsonNode jsonNode = new ObjectMapper().readTree(repositoriesThatMentionGloBI);
             if (jsonNode.has("total_count")) {
                 totalAvailable = jsonNode.get("total_count").asInt();
@@ -110,45 +100,39 @@ public class GitHubUtil {
         return globiRepos;
     }
 
-    static boolean isGloBIRepository(String globiRepo, String commitSHA) throws IOException {
-        return hasInteractionData(globiRepo, "globi.json", commitSHA)
-                || hasInteractionData(globiRepo, "globi-dataset.jsonld", commitSHA);
+    static boolean isGloBIRepository(String globiRepo, String commitSHA, ResourceService resourceService) throws IOException {
+        return hasInteractionData(getGloBIConfigURI(globiRepo, "globi.json", commitSHA), resourceService)
+                || hasInteractionData(getGloBIConfigURI(globiRepo, "globi-dataset.jsonld", commitSHA), new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, is -> is);
+            }
+        });
     }
 
-    static String lastCommitSHA(String repository) throws IOException, URISyntaxException {
-        return lastCommitSHA(repository, inputStream -> inputStream);
-    }
-
-    public static String lastCommitSHA(String repository, InputStreamFactory inputStreamFactory) throws IOException, URISyntaxException {
-        return GitClient.getLastCommitSHA1("https://github.com/" + repository, new ResponseHandlerWithInputStreamFactory(inputStreamFactory));
-    }
-
-    private static String getPropertyOrEnvironmentVariable(String environmentVariableName, String javaPropertyName) {
-        String environmentVariable = System.getenv(environmentVariableName);
-        String property = System.getProperty(javaPropertyName, environmentVariable);
-        if (StringUtils.isBlank(property)) {
-            LOG.warn("Please set java property [" + javaPropertyName + "] or environment variable [" + environmentVariableName + "] to avoid GitHub API rate limits");
-        }
-        return property;
+    public static String lastCommitSHA(String repository, ResourceService resourceService) throws IOException {
+        return GitClient.getLastCommitSHA1("https://github.com/" + repository, resourceService);
     }
 
     private static String getBaseUrl(String repo, String lastCommitSHA) {
         return "https://raw.githubusercontent.com/" + repo + "/" + lastCommitSHA;
     }
 
-    public static String getBaseUrlLastCommit(String repo, InputStreamFactory is) throws IOException, URISyntaxException {
-        String lastCommitSHA = lastCommitSHA(repo, is);
+    public static String getBaseUrlLastCommit(String repo, ResourceService resourceService) throws IOException, URISyntaxException {
+        String lastCommitSHA = lastCommitSHA(repo, resourceService);
         if (lastCommitSHA == null) {
             throw new IOException("failed to import github repo [" + repo + "]: no commits found.");
         }
         return getBaseUrl(repo, lastCommitSHA);
     }
 
-    public static Dataset getArchiveDataset(String namespace, String commitSha, InputStreamFactory inputStreamFactory) {
+    public static Dataset getArchiveDataset(String namespace, String commitSha, ResourceService resourceService) {
         return new DatasetImpl(
                 namespace,
-                URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip"),
-                inputStreamFactory);
+                resourceService,
+                URI.create("https://github.com/" + namespace + "/archive/" + commitSha + ".zip")
+        );
     }
 
 }

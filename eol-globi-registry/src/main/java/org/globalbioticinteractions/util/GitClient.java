@@ -1,31 +1,33 @@
 package org.globalbioticinteractions.util;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.CustomServiceUnavailableStrategy;
 import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 public class GitClient {
     private static CloseableHttpClient gitClient;
 
-    public static String getLastCommitSHA1(String baseUrl) throws IOException {
-        return getLastCommitSHA1(baseUrl, new BasicResponseHandler());
-    }
+    public static String getLastCommitSHA1(String baseUrl, ResourceService resourceService) throws IOException {
 
-    public static String getLastCommitSHA1(String baseUrl, ResponseHandler<String> handler) throws IOException {
-        if (gitClient == null) {
-            gitClient = createGitHttpClient();
+        URI baseURL = URI.create(baseUrl + "/info/refs?service=git-upload-pack");
+
+        String refs;
+        try (InputStream retrieve = resourceService.retrieve(baseURL)) {
+            refs = IOUtils.toString(retrieve, StandardCharsets.UTF_8);
         }
 
-        String refs = gitClient.execute(new HttpGet(baseUrl + "/info/refs?service=git-upload-pack"), handler);
+//        String refs = gitClient.execute(new HttpGet(baseURL), handler);
         String[] refsSplit = StringUtils.split(refs, "\n");
         if (refsSplit.length < 1) {
             throw new IOException("expected response with at least one newline, but got [" + refs + "]");
