@@ -1,8 +1,8 @@
 package org.eol.globi.taxon;
 
 import com.Ostermiller.util.CSVParse;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -11,13 +11,11 @@ import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.CSVTSVUtil;
-import org.eol.globi.util.HttpUtil;
 import org.eol.globi.util.InteractUtil;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +56,7 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
 
         for (URI uri : uriList) {
             try {
-                String response = contentToString(uri);
+                String response = ResourceUtil.contentToString(uri);
                 CSVParse parser = CSVTSVUtil.createExcelCSVParse(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
 
@@ -86,16 +84,6 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
                 throw new TermLookupServiceException("failed to retrieve mapping from [" + uriList + "]", e);
             }
         }
-    }
-
-    protected static String contentToString(URI uri) throws IOException {
-        String response;
-        if ("file".equals(uri.getScheme()) || "jar".equals(uri.getScheme())) {
-            response = IOUtils.toString(uri.toURL(), StandardCharsets.UTF_8);
-        } else {
-            response = HttpUtil.getContent(uri);
-        }
-        return response;
     }
 
     protected abstract boolean hasHeader();

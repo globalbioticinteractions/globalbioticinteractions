@@ -57,7 +57,7 @@ public class GitHubUtil {
     public static List<String> find(ResourceService resourceService) throws URISyntaxException, IOException {
         List<Pair<String, String>> globiRepos = searchGitHubForCandidateRepositories(resourceService);
 
-        List<String> reposWithData = new ArrayList<String>();
+        List<String> reposWithData = new ArrayList<>();
         for (Pair<String, String> globiRepo : globiRepos) {
             if (isGloBIRepository(globiRepo.getKey(), globiRepo.getValue(), resourceService)) {
                 reposWithData.add(globiRepo.getKey());

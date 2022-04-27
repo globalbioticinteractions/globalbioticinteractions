@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 public class ResourceUtil {
@@ -165,4 +166,13 @@ public class ResourceUtil {
                 || "https".equalsIgnoreCase(descriptor.getScheme());
     }
 
+    public static String contentToString(URI uri) throws IOException {
+        String response;
+        if ("file".equals(uri.getScheme()) || "jar".equals(uri.getScheme())) {
+            response = IOUtils.toString(uri.toURL(), StandardCharsets.UTF_8);
+        } else {
+            response = HttpUtil.getContent(uri);
+        }
+        return response;
+    }
 }

@@ -1,19 +1,16 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVPrint;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.util.CSVTSVUtil;
-import org.eol.globi.util.HttpUtil;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,10 +27,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
  * Note that Animal Diversity Web data tested below is currently assumed to be part of SPIRE.
@@ -168,38 +165,6 @@ public class DatasetImporterForVertNetTest extends GraphDBTestCase {
     public void testRequestURL() throws IOException, URISyntaxException {
         assertThat(createRequestURL(null, "stomach").toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22l%22:100,%22q%22:%22stomach%22%7D"));
         assertThat(createRequestURL(null, "associatedOccurrences", 10).toString(), is("http://api.vertnet-portal.appspot.com:80/api/search?q=%7B%22l%22:10,%22q%22:%22associatedOccurrences%22%7D"));
-    }
-
-    @Test
-    public void parseSingleRecord() {
-
-    }
-
-    @Ignore
-    @Test
-    public void importStomachData() throws URISyntaxException, IOException {
-        String oldCursor = null;
-        String cursor = null;
-        File file = File.createTempFile("vertnet", ".csv");
-        file.deleteOnExit();
-        LOG.info("writing to: [" + file.getAbsolutePath() + "]");
-        FileOutputStream fos = new FileOutputStream(file);
-        while (StringUtils.isBlank(cursor) || !StringUtils.equals(cursor, oldCursor)) {
-            List<String> stomachStrings = new ArrayList<String>();
-            URI uri = createRequestURL(cursor, "stomach");
-            HttpResponse resp = HttpUtil.getHttpClient().execute(new HttpGet(uri));
-
-            if (200 == resp.getStatusLine().getStatusCode()) {
-                String jsonString = IOUtils.toString(resp.getEntity().getContent(), StandardCharsets.UTF_8);
-                JsonNode jsonNode = parseResponse(stomachStrings, jsonString, fos);
-                if (jsonNode.hasNonNull("cursor")) {
-                    oldCursor = cursor;
-                    cursor = jsonNode.get("cursor").asText();
-                }
-            }
-            fos.flush();
-        }
-        fos.close();
     }
 
     private JsonNode parseResponse(List<String> stomachStrings, String jsonString, OutputStream outputStream) throws IOException {

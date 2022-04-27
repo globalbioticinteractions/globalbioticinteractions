@@ -1,5 +1,6 @@
 package org.eol.globi.taxon;
 
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class TermLookupServiceImplTest {
         assertNotNull(url);
         URI uri = URI.create("jar:" + url.toString() + "!/META-INF/MANIFEST.MF");
         assertThat(uri.getScheme(), is("jar"));
-        String manifest = TermLookupServiceImpl.contentToString(uri);
+        String manifest = ResourceUtil.contentToString(uri);
         assertThat(manifest, is(notNullValue()));
     }
 

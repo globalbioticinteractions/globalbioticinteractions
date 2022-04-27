@@ -4,7 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.HttpUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class GenBankOccurrenceIdIdEnricherTest {
         return new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
-                return IOUtils.toInputStream(HttpUtil.getContent(resourceName), StandardCharsets.UTF_8);
+                return ResourceUtil.asInputStream(resourceName, is -> is);
             }
         };
     }
