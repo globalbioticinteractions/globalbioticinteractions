@@ -33,7 +33,7 @@ public class GitHubUtil {
     public static final String GITHUB_CLIENT_ID_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_ID";
     public static final String GITHUB_CLIENT_SECRET_ENVIRONMENT_VARIABLE = "GITHUB_CLIENT_SECRET";
 
-    static String httpGet(String path, String query, ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
+    private static String httpGet(String path, String query, ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
         HttpClientBuilder httpClientBuilder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
         return doHttpGetWithBasicAuthIfCredentialsIfAvailable(
                 path,
@@ -44,20 +44,20 @@ public class GitHubUtil {
                 responseHandler);
     }
 
-    static String doHttpGetWithBasicAuthIfCredentialsIfAvailable(String path,
-                                                                 String query,
-                                                                 HttpClientBuilder httpClientBuilder,
-                                                                 String id,
-                                                                 String secret) throws URISyntaxException, IOException {
-        return doHttpGetWithBasicAuthIfCredentialsIfAvailable(path, query, httpClientBuilder, id, secret, new BasicResponseHandler());
+    static void doHttpGetWithBasicAuthIfCredentialsIfAvailable(String path,
+                                                               String query,
+                                                               HttpClientBuilder httpClientBuilder,
+                                                               String id,
+                                                               String secret) throws URISyntaxException, IOException {
+        doHttpGetWithBasicAuthIfCredentialsIfAvailable(path, query, httpClientBuilder, id, secret, new BasicResponseHandler());
     }
 
-    static String doHttpGetWithBasicAuthIfCredentialsIfAvailable(String path,
-                                                                 String query,
-                                                                 HttpClientBuilder httpClientBuilder,
-                                                                 String id,
-                                                                 String secret,
-                                                                 ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
+    private static String doHttpGetWithBasicAuthIfCredentialsIfAvailable(String path,
+                                                                         String query,
+                                                                         HttpClientBuilder httpClientBuilder,
+                                                                         String id,
+                                                                         String secret,
+                                                                         ResponseHandler<String> responseHandler) throws URISyntaxException, IOException {
         CloseableHttpClient build = httpClientBuilder.build();
 
         URI requestUrl = new URI("https", null, "api.github.com", -1, path, query, null);
@@ -79,7 +79,7 @@ public class GitHubUtil {
         }
     }
 
-    public static List<String> find() throws URISyntaxException, IOException {
+    static List<String> find() throws URISyntaxException, IOException {
         return find(inStream -> inStream);
     }
 

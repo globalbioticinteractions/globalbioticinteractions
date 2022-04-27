@@ -22,6 +22,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
 
 public class GeoNamesServiceImpl implements GeoNamesService {
+
+    private final ResourceService service;
+
+    public GeoNamesServiceImpl() {
+        this(resourceName -> ResourceUtil.asInputStream(resourceName, in -> in));
+    }
+
+    public GeoNamesServiceImpl(ResourceService service) {
+        this.service = service;
+    }
+
+
     private static final Logger LOG = LoggerFactory.getLogger(GeoNamesServiceImpl.class);
 
     public static final TermImpl GEO_TERM_EARTH = new TermImpl(GEONAMES.getIdPrefix() + "6295630", "Earth");
@@ -248,13 +260,6 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         put("Colombia", new TermImpl(GEONAMES.getIdPrefix() + "3686110", "Colombia"));
     }};
     private Map<String, LatLng> pointCache = new ConcurrentHashMap<String, LatLng>();
-
-    private ResourceService service = new ResourceService() {
-        @Override
-        public InputStream retrieve(URI resourceName) throws IOException {
-            return ResourceUtil.asInputStream(resourceName, in -> in);
-        }
-    };
 
     @Override
     public boolean hasTermForLocale(String locality) {
