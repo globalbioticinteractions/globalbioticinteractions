@@ -8,19 +8,22 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.UberonLookupService;
-import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,7 +40,13 @@ public class DatasetImporterForAkinTest extends GraphDBTestCase {
 
     @Test
     public void parseLifeStage() throws TermLookupServiceException {
-        UberonLookupService service = new UberonLookupService();
+        UberonLookupService service = new UberonLookupService(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, is -> is);
+            }
+        });
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("UBERON:0007379"));
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something eggs").get(0).getId(), is("UBERON:0007379"));
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something larvae").get(0).getId(), is("UBERON:0000069"));

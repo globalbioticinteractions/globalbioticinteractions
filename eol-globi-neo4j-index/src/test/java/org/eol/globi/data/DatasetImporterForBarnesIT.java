@@ -3,11 +3,16 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -18,7 +23,13 @@ public class DatasetImporterForBarnesIT extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {
-        return new UberonLookupService();
+        return new UberonLookupService(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, is -> is);
+            }
+        });
     }
 
     @Test

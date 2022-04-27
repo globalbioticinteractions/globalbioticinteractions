@@ -16,15 +16,19 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -40,7 +44,13 @@ public class ExporterRDFTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
-        return new EnvoLookupService();
+        return new EnvoLookupService(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, is -> is);
+            }
+        });
     }
 
     @Test

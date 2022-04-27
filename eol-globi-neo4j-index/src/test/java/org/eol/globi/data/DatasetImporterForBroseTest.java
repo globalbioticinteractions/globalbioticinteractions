@@ -7,15 +7,19 @@ import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -27,7 +31,13 @@ public class DatasetImporterForBroseTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {
-        return new UberonLookupService();
+        return new UberonLookupService(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, is -> is);
+            }
+        });
     }
 
     @Test

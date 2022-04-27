@@ -1,11 +1,17 @@
 package org.eol.globi.taxon;
 
+import org.eol.globi.service.ResourceService;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UberonLookupService extends TermLookupServiceImpl {
+
+    public UberonLookupService(ResourceService resourceService) {
+        super(resourceService);
+    }
 
     @Override
     protected List<URI> getMappingURIList() {

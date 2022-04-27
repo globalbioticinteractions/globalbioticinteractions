@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnvoLookupService extends TermLookupServiceImpl {
+    public EnvoLookupService(ResourceService resourceService) {
+        super(resourceService);
+    }
+
     @Override
     protected List<URI> getMappingURIList() {
         return new ArrayList<URI>() {{

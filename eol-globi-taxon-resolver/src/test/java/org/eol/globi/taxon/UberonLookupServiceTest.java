@@ -1,19 +1,28 @@
 package org.eol.globi.taxon;
 
 import org.eol.globi.domain.Term;
-import org.eol.globi.domain.TermImpl;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ResourceUtil;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UberonLookupServiceTest {
 
-    private UberonLookupService uberonLookupService = new UberonLookupService();
+    private UberonLookupService uberonLookupService = new UberonLookupService(new ResourceService() {
+
+        @Override
+        public InputStream retrieve(URI resourceName) throws IOException {
+            return ResourceUtil.asInputStream(resourceName, is -> is);
+        }
+    });
 
     @Test
     public void bodyPartMapping() throws TermLookupServiceException {

@@ -1,21 +1,23 @@
 package org.eol.globi.taxon;
 
 import com.Ostermiller.util.CSVParse;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.util.ResourceUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.InteractUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +27,15 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
     private static final Logger LOG = LoggerFactory.getLogger(TermLookupServiceImpl.class);
 
     private Map<String, List<Term>> mapping = null;
+    private final ResourceService resourceService;
 
     protected abstract List<URI> getMappingURIList();
 
     protected abstract char getDelimiter();
+
+    public TermLookupServiceImpl(ResourceService resourceService) {
+        this.resourceService = resourceService;
+    }
 
     @Override
     public List<Term> lookupTermByName(final String name) throws TermLookupServiceException {
@@ -56,7 +63,7 @@ public abstract class TermLookupServiceImpl implements TermLookupService {
 
         for (URI uri : uriList) {
             try {
-                String response = ResourceUtil.contentToString(uri);
+                String response = IOUtils.toString(resourceService.retrieve(uri), StandardCharsets.UTF_8);
                 CSVParse parser = CSVTSVUtil.createExcelCSVParse(new StringReader(response));
                 parser.changeDelimiter(getDelimiter());
 

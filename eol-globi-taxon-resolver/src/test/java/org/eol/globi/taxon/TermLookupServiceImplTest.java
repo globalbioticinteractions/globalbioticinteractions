@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TermLookupServiceImplTest {
 
     @Test
-    public void localURL() throws URISyntaxException, IOException {
+    public void localURL() throws IOException {
         URL url = getClass().getResource("some.jar");
         assertNotNull(url);
         URI uri = URI.create("jar:" + url.toString() + "!/META-INF/MANIFEST.MF");

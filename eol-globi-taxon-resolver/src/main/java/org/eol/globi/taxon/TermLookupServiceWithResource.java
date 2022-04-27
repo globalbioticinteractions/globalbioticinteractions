@@ -1,5 +1,7 @@
 package org.eol.globi.taxon;
 
+import org.eol.globi.service.ResourceService;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -9,8 +11,8 @@ public class TermLookupServiceWithResource extends TermLookupServiceImpl {
 
     private final String resourceName;
 
-    public TermLookupServiceWithResource(String resourceName) {
-        super();
+    public TermLookupServiceWithResource(String resourceName, ResourceService resourceService) {
+        super(resourceService);
         this.resourceName = resourceName;
     }
 
