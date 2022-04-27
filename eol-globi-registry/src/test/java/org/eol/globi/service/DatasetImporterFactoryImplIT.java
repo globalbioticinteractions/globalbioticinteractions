@@ -15,6 +15,7 @@ import org.eol.globi.data.DatasetImporterForPlanque;
 import org.eol.globi.data.DatasetImporterForSzoboszlai;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.DatasetImporterForWood;
+import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
@@ -149,7 +150,13 @@ public class DatasetImporterFactoryImplIT {
 
     @Test
     public void defaultTSVImporterCachedZenodo() throws StudyImporterException, DatasetRegistryException {
-        final DatasetRegistry datasetRegistry = new DatasetRegistryWithCache(new DatasetRegistryZenodo(inStream -> inStream), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets", inStream -> inStream));
+        final DatasetRegistry datasetRegistry = new DatasetRegistryWithCache(new DatasetRegistryZenodo(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
+            }
+        }), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets", inStream -> inStream));
         DatasetImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
         DatasetImporterForTSV importerTSV = (DatasetImporterForTSV) importer;
         assertThat(importerTSV.getSourceCitation(), containsString("doi.org"));

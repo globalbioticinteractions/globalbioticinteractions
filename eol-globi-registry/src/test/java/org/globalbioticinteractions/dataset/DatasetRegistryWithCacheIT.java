@@ -1,6 +1,8 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.hamcrest.core.Is;
 import org.junit.Before;
@@ -28,7 +30,13 @@ public class DatasetRegistryWithCacheIT {
     @Test
     public void zenodoTest() throws DatasetRegistryException, IOException {
         assertTemplateDataset("zenodo.org",
-                new DatasetRegistryZenodo(inStream -> inStream),
+                new DatasetRegistryZenodo(new ResourceService() {
+
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
+                    }
+                }),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 

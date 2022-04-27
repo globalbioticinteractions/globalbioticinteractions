@@ -93,9 +93,9 @@ public class DatasetRegistryZenodoTest {
     public void generateResumptionURI() throws SAXException, ParserConfigurationException, XPathExpressionException, IOException {
         String resumptionToken = ".eJwVjdEKgjAYhd_lv66YpaKCF0kpBFFaanUjU9caThfbolB699a5PIfvOxMoQloI0MJ1bN_2fORanu3a_nIGqpGC84qZGTaX2Lpddk5aOl3WF-i6pNH6nyg-z6NtWSePMYt5fi0f2aloDzW6OZkVJfu-G_M0DGEGT0wJBMbbvbGkCoLJfGvjfiki55SLGvOaCc0aNmgicaOZGJQBe6JxizU-SnJnHwMIzKp_0TBNVvD9_gDwrz-E.YT-SJQ.FVlu6cSWwJjBp3EhxXgxz0kmVCA";
 
-        String urlString = DatasetRegistryZenodo.generateResumptionURI(resumptionToken);
+        URI uri = DatasetRegistryZenodo.generateResumptionURI(resumptionToken);
 
-        assertThat(urlString, is("https://zenodo.org/oai2d?verb=ListRecords&resumptionToken=.eJwVjdEKgjAYhd_lv66YpaKCF0kpBFFaanUjU9caThfbolB699a5PIfvOxMoQloI0MJ1bN_2fORanu3a_nIGqpGC84qZGTaX2Lpddk5aOl3WF-i6pNH6nyg-z6NtWSePMYt5fi0f2aloDzW6OZkVJfu-G_M0DGEGT0wJBMbbvbGkCoLJfGvjfiki55SLGvOaCc0aNmgicaOZGJQBe6JxizU-SnJnHwMIzKp_0TBNVvD9_gDwrz-E.YT-SJQ.FVlu6cSWwJjBp3EhxXgxz0kmVCA"));
+        assertThat(uri.toString(), is("https://zenodo.org/oai2d?verb=ListRecords&resumptionToken=.eJwVjdEKgjAYhd_lv66YpaKCF0kpBFFaanUjU9caThfbolB699a5PIfvOxMoQloI0MJ1bN_2fORanu3a_nIGqpGC84qZGTaX2Lpddk5aOl3WF-i6pNH6nyg-z6NtWSePMYt5fi0f2aloDzW6OZkVJfu-G_M0DGEGT0wJBMbbvbGkCoLJfGvjfiki55SLGvOaCc0aNmgicaOZGJQBe6JxizU-SnJnHwMIzKp_0TBNVvD9_gDwrz-E.YT-SJQ.FVlu6cSWwJjBp3EhxXgxz0kmVCA"));
     }
 
 }

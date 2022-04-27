@@ -1,9 +1,13 @@
 package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceUtil;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -15,7 +19,13 @@ public class DatasetRegistryProxyIT {
     @Test
     public void zenodoGitHubTest() throws DatasetRegistryException {
         DatasetRegistryProxy proxy = new DatasetRegistryProxy(Arrays.asList(
-                new DatasetRegistryZenodo(inStream -> inStream),
+                new DatasetRegistryZenodo(new ResourceService() {
+
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
+                    }
+                }),
                 new DatasetRegistryGitHubArchive(inStream -> inStream))
         );
 

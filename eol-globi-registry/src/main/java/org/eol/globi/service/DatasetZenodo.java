@@ -12,6 +12,10 @@ public class DatasetZenodo extends DatasetImpl {
         super(namespace, zenodoGitHubArchives, inputStreamFactory);
     }
 
+    public DatasetZenodo(String namespace, ResourceService resourceService, URI latestArchive) {
+        super(namespace, resourceService, latestArchive);
+    }
+
     @Override
     public DOI getDOI() {
         return CitationUtil.getDOI(this);

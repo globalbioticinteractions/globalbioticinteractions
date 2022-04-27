@@ -5,13 +5,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.eol.globi.service.DatasetZenodo;
-import org.eol.globi.service.ResponseHandlerWithInputStreamFactory;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.taxon.XmlUtil;
-import org.eol.globi.util.HttpUtil;
-import org.eol.globi.util.InputStreamFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -42,10 +38,11 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
 
     private List<String> cachedFeed = null;
 
-    private final InputStreamFactory inputStreamFactory;
+    private final ResourceService resourceService;
 
-    public DatasetRegistryZenodo(InputStreamFactory inputStreamFactory) {
-        this.inputStreamFactory = inputStreamFactory;
+    public DatasetRegistryZenodo(ResourceService resourceService) {
+        this.resourceService = resourceService;
+
     }
 
     static String parseResumptionToken(InputStream is) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
@@ -53,8 +50,8 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         return StringUtils.isBlank(token) ? null : token;
     }
 
-    public static String generateResumptionURI(String resumptionToken) {
-        return ZENODO_LIST_RECORDS_PREFIX + "&resumptionToken=" + resumptionToken;
+    public static URI generateResumptionURI(String resumptionToken) {
+        return URI.create(ZENODO_LIST_RECORDS_PREFIX + "&resumptionToken=" + resumptionToken);
     }
 
     @Override
@@ -78,7 +75,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
                     = getMostRecentArchiveInNamespace(namespace, zenodoGitHubArchives);
             return latestArchive == null
                     ? null
-                    : new DatasetZenodo(namespace, latestArchive, getInputStreamFactory());
+                    : new DatasetZenodo(namespace, resourceService, latestArchive);
         } catch (XPathExpressionException | IOException e) {
             throw new DatasetRegistryException("failed to query archive url for [" + namespace + "]", e);
         }
@@ -118,7 +115,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
             String resumptionToken = null;
             List<String> cachedPages = new ArrayList<>();
             do {
-                String nextPage = getNextPage(getInputStreamFactory(), resumptionToken);
+                String nextPage = getNextPage(resumptionToken, resourceService);
                 try {
                     resumptionToken = parseResumptionToken(IOUtils.toInputStream(nextPage, StandardCharsets.UTF_8));
                 } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
@@ -129,10 +126,6 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
 
             setCachedFeed(cachedPages);
         }
-    }
-
-    private InputStreamFactory getInputStreamFactory() {
-        return inputStreamFactory;
     }
 
     static URI findLatestZenodoGitHubArchiveForNamespace(NodeList records, String namespace) throws XPathExpressionException, MalformedURLException {
@@ -157,7 +150,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         return latestArchiveURI;
     }
 
-    private static Map<String, List<Pair<Long, URI>>> findZenodoGitHubArchives(NodeList records) throws XPathExpressionException, MalformedURLException {
+    private static Map<String, List<Pair<Long, URI>>> findZenodoGitHubArchives(NodeList records) throws XPathExpressionException {
         Map<String, List<Pair<Long, URI>>> namespace2ZenodoPubs = new TreeMap<>();
         Long idMax = null;
         for (int i = 0; i < records.getLength(); i++) {
@@ -229,17 +222,15 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    static String getNextPage(InputStreamFactory factory, String resumptionToken) throws DatasetRegistryException {
+    static String getNextPage(String resumptionToken, ResourceService resourceService) throws DatasetRegistryException {
         try {
-            HttpClient httpClient = HttpUtil.getHttpClient();
-            String requestUrl = ZENODO_LIST_RECORDS_PREFIX + "&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3";
+            URI requestURI = URI.create(ZENODO_LIST_RECORDS_PREFIX + "&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3");
             if (StringUtils.isNoneBlank(resumptionToken)) {
-                requestUrl = generateResumptionURI(resumptionToken);
+                requestURI = generateResumptionURI(resumptionToken);
             }
-            return HttpUtil.executeAndRelease(
-                    new HttpGet(requestUrl),
-                    httpClient,
-                    new ResponseHandlerWithInputStreamFactory(factory));
+            try (InputStream retrieve = resourceService.retrieve(requestURI)) {
+                return IOUtils.toString(retrieve, StandardCharsets.UTF_8);
+            }
         } catch (IOException e) {
             throw new DatasetRegistryException("failed to find published github repos in zenodo", e);
         }

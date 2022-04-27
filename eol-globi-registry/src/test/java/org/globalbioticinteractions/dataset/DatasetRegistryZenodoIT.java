@@ -1,8 +1,11 @@
 package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 import static org.hamcrest.Matchers.containsString;
@@ -16,20 +19,38 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void zenodoDataFeed() throws DatasetRegistryException {
-        String feed = DatasetRegistryZenodo.getNextPage(in -> in, null);
+        String feed = DatasetRegistryZenodo.getNextPage(null, new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, in -> in);
+            }
+        });
         assertThat(feed, containsString("<?xml version"));
     }
 
     @Test
     public void unlikelyMatch() throws DatasetRegistryException {
-        DatasetRegistryZenodo datasetRegistryZenodo = new DatasetRegistryZenodo(in -> in);
+        DatasetRegistryZenodo datasetRegistryZenodo = new DatasetRegistryZenodo(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, in -> in);
+            }
+        });
         Dataset thisshouldnotexist = datasetRegistryZenodo.datasetFor("thisshouldnotexist");
         assertNull(thisshouldnotexist);
     }
 
     @Test
     public void extractGitHubReposArchives() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(inStream -> inStream)
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
+            }
+        })
                 .datasetFor("globalbioticinteractions/template-dataset");
 
         assertNotNull(dataset);
@@ -41,7 +62,13 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void extractGitHubReposArchives2() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(inStream -> inStream)
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
+            }
+        })
                 .datasetFor("millerse/Lara-C.-2006");
 
         assertThat(dataset, is(notNullValue()));
@@ -53,7 +80,13 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void extractGitHubReposArchives3() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(inStream -> inStream)
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceService() {
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
+            }
+        })
                 .datasetFor("millerse/Lichenous");
 
         assertThat(dataset, is(notNullValue()));
