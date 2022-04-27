@@ -2,13 +2,7 @@ package org.globalbioticinteractions.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.CustomServiceUnavailableStrategy;
-import org.eol.globi.util.HttpUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +10,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 public class GitClient {
-    private static CloseableHttpClient gitClient;
 
     public static String getLastCommitSHA1(String baseUrl, ResourceService resourceService) throws IOException {
 
@@ -27,7 +20,6 @@ public class GitClient {
             refs = IOUtils.toString(retrieve, StandardCharsets.UTF_8);
         }
 
-//        String refs = gitClient.execute(new HttpGet(baseURL), handler);
         String[] refsSplit = StringUtils.split(refs, "\n");
         if (refsSplit.length < 1) {
             throw new IOException("expected response with at least one newline, but got [" + refs + "]");
@@ -41,21 +33,6 @@ public class GitClient {
             throw new IOException("expected sha1 hash with length [" + sha1Length + "], but got [" + sha1Hash + "] with length [" + StringUtils.length(sha1Hash) + "] instead");
         }
         return sha1Hash;
-    }
-
-    private static CloseableHttpClient createGitHttpClient() {
-        RequestConfig config = RequestConfig.custom()
-                .setSocketTimeout(HttpUtil.TIMEOUT_SHORT)
-                .setConnectTimeout(HttpUtil.TIMEOUT_SHORT)
-                .build();
-
-        HttpClientBuilder clientBuilder = HttpClientBuilder.create()
-                .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
-                .setUserAgent("git/1.8.1")
-                .setServiceUnavailableRetryStrategy(new CustomServiceUnavailableStrategy())
-                .setDefaultRequestConfig(config);
-
-        return clientBuilder.build();
     }
 
 }
