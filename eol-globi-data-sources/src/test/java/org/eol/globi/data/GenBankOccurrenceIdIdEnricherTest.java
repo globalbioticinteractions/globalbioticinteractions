@@ -49,7 +49,7 @@ public class GenBankOccurrenceIdIdEnricherTest {
         return new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
+                return getClass().getResourceAsStream("genbank-EU241689.txt");
             }
         };
     }

@@ -1,0 +1,62 @@
+LOCUS       EU241689                 924 bp    cRNA    linear   VRL 26-JUL-2016
+DEFINITION  Andes virus isolate NK96865 nucleocapsid protein gene, partial cds.
+ACCESSION   EU241689
+VERSION     EU241689.1
+KEYWORDS    .
+SOURCE      Andes orthohantavirus
+  ORGANISM  Andes orthohantavirus
+            Viruses; Riboviria; Orthornavirae; Negarnaviricota;
+            Polyploviricotina; Ellioviricetes; Bunyavirales; Hantaviridae;
+            Mammantavirinae; Orthohantavirus.
+REFERENCE   1  (bases 1 to 924)
+  AUTHORS   Medina,R.A., Torres-Perez,F., Galeno,H., Navarrete,M., Vial,P.A.,
+            Palma,R.E., Ferres,M., Cook,J.A. and Hjelle,B.
+  TITLE     Ecology, genetic diversity, and phylogeographic structure of andes
+            virus in humans and rodents in Chile
+  JOURNAL   J. Virol. 83 (6), 2446-2459 (2009)
+   PUBMED   19116256
+REFERENCE   2  (bases 1 to 924)
+  AUTHORS   Medina,R.A., Torres-Perez,F., Galeno,H., Navarrete,M., Vial,P.A.,
+            Palma,R.E., Cook,J.A. and Hjelle,B.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (23-OCT-2007) Pathology and Biology Departments,
+            University of New Mexico, MSC08-4640, CRF 327, Albuquerque, NM
+            87131, USA
+FEATURES             Location/Qualifiers
+     source          1..924
+                     /organism="Andes orthohantavirus"
+                     /mol_type="viral cRNA"
+                     /isolate="NK96865"
+                     /host="Oligoryzomys longicaudatus"
+                     /db_xref="taxon:1980456"
+                     /segment="S"
+                     /country="Chile"
+     CDS             <1..>924
+                     /codon_start=2
+                     /product="nucleocapsid protein"
+                     /protein_id="ABY79078.1"
+                     /translation="TKLGELKRQLADLVAAQKLATKPVDPTGLEPDDHLKEKSSLRYG
+                     NVLDVNSIDLEEPSGQTADWKAIGAYILGFAIPIILKALYMLSTRGRQTVKDNKGTRI
+                     RFKDDSSFEEVNGIRKPKHLYVSMPTAQSTMKAEEITPGRFRTIACGLFPAQVKARNI
+                     ISPVMGVIGFGFFVKDWMDRIEEFLAAECPFLPKPKVASESFMSTNKMYFLNRQRQVN
+                     ESKVQDIVDLIDHAETESATLFTEIATPHSVWVFACAPDRCPPTALYVAGVPELGAFF
+                     SILQDMRNTIMASKSVGTAEEKLKKKSAFYQS"
+ORIGIN      
+        1 gaccaaactc ggagaactca agaggcagct tgcggatttg gtggcagctc agaaactggc
+       61 tacaaaacca gttgatccaa cagggcttga gcctgatgac catttaaagg agaaatcatc
+      121 tttaagatat gggaatgttc tggatgtcaa ctcaattgat ctagaagaac caagtgggca
+      181 gactgctgac tggaaggcta taggagcata tattctagga tttgcaatcc cgattatctt
+      241 aaaagcttta tacatgctgt caactcgtgg gagacaaact gtgaaggaca acaaagggac
+      301 caggataaga ttcaaagatg attcctcctt tgaagaggtc aatgggatac gcaaaccaaa
+      361 acatctttac gtttcaatgc caactgcaca atctacaatg aaagctgaag aaatcacacc
+      421 ggggcggttt aggacaattg cttgtggcct ttttccagca caggtcaaag ctaggaacat
+      481 aataagccct gtaatgggtg taattgggtt tggtttcttt gtgaaagact ggatggaccg
+      541 gatagaagaa ttcttggctg cagagtgccc atttttgcct aaaccaaagg tggcttctga
+      601 atcctttatg tccactaaca aaatgtattt cctaaacagg caaaggcagg tcaacgagtc
+      661 caaggttcaa gatatcgttg atttaataga tcatgctgaa actgagtctg ctaccttatt
+      721 cacggagatt gcaacacccc attcagtctg ggtgtttgca tgtgcacctg atcgatgccc
+      781 tccaactgca ttatatgttg caggtgttcc ggagttgggt gcatttttct ctattcttca
+      841 ggatatgcgg aataccatta tggcatccaa atctgtaggg actgcagaag aaaagttgaa
+      901 gaaaaaatct gcattttatc aatc
+//
+

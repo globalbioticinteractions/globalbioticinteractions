@@ -109,7 +109,8 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
     private InputStream getResponse(String id) throws IOException {
         String prefix = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=";
         String suffix = "&rettype=gb&retmode=text";
-        return resourceService.retrieve(URI.create(prefix + id + suffix));
+        return resourceService
+                .retrieve(URI.create(prefix + id + suffix));
 
     }
 
