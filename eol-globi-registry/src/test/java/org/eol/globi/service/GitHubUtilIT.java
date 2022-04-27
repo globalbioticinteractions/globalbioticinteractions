@@ -32,7 +32,7 @@ public class GitHubUtilIT {
     }
 
     @Test
-    public void findMostRecentCommit() throws IOException, URISyntaxException {
+    public void findMostRecentCommit() throws IOException {
         String sha = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, new ResourceService() {
 
             @Override
