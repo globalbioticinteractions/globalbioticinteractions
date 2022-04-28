@@ -10,15 +10,6 @@ import java.nio.charset.StandardCharsets;
 
 public class ResourceUtil {
 
-    public static InputStream asInputStream(String resource) throws IOException {
-        URI resource1 = URI.create(resource);
-        try {
-            return new ResourceServiceLocalAndRemote(inStream -> inStream).retrieve(resource1);
-        } catch (IOException ex) {
-            throw new IOException("issue accessing [" + resource1 + "]", ex);
-        }
-    }
-
     public static boolean isFileURI(URI resource) {
         return StringUtils.startsWith(resource.getScheme(), "file");
     }
