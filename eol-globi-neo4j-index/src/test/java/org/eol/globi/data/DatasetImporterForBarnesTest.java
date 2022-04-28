@@ -9,6 +9,7 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -28,17 +29,11 @@ public class DatasetImporterForBarnesTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {
-        return new UberonLookupService(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
+        return new UberonLookupService(new ResourceServiceLocal());
     }
 
     @Test
-    public void importHeadAndTail() throws IOException, NodeFactoryException, StudyImporterException {
+    public void importHeadAndTail() throws StudyImporterException {
         final String firstFourLines = "Record number\tIn-ref ID\tIndividual ID\tPredator\tPredator common name\tPredator  taxon\tPredator lifestage\tType of feeding interaction\tPredator length\tPredator length unit\tPredator dimension measured\tPredator standard length\tPredator fork length\tPredator total length\tPredator TL/FL/SL conversion reference\tStandardised predator length\tPredator measurement type\tPredator length-mass conversion method\tPredator length-mass conversion reference\tPredator quality of length-mass conversion\tPredator mass\tPredator mass unit\tPredator mass check\tPredator mass check diff\tPredator ratio mass/mass\tSI predator mass\tDiet coverage\tPrey\tPrey common name\tPrey taxon\tPrey length\tPrey length unit\tPrey conversion to length method\tPrey quality of conversion to length\tPrey conversion to length reference\tSI prey length\tPrey dimension measured\tPrey width\tPrey width unit\tPrey measurement type\tPrey mass\tPrey mass unit\tPrey mass check\tPrey mass check diff\tPrey ratio mass/mass\tSI prey mass\tPrey conversion to mass method\tPrey conversion to mass reference\tPrey quality of conversion to mass\tGeographic location\tLatitude\tLongitude\tDepth\tMean annual temp\tSD annual temp\tMean PP\tSD PP\tReference\tSpecific habitat\tNotes / assumptions\n" +
                 "1\tATSH063\t1\tRhizoprionodon terraenovae\tAtlantic sharpnose shark\tectotherm vertebrate\tadult\tpredacious/piscivorous\t7.8000E+02\tmm\tfork length\t7.5433E+02\t7.8000E+02\t9.3990E+02\tFishbase (species)\t9.3990E+01\tindividual\tM=0.0056SL^2.897 \tBonfil et al. (1990)\t1\t1.5399E+03\tg\t4.3453E+04\t4.1913E+04\t2.8218E+01\t1.5399E+03\tall\tteleosts/molluscs/crustaceans\tteleosts/molluscs/crustaceans\tmixed\t1.1259E+02\tmm\tn/a\t0\tn/a\t1.1259E+01\tlength\tn/a\tn/a\tindividual\t1.4274E+01\tg\t7.4699E+01\t6.0425E+01\t5.2333E+00\t1.4274E+01\tM=0.01L^3\tGeneralised\t5\t\"Apalachicola Bay, Florida\"\t29�40'N\t85�10'W\t30\t24.1\t4.2\t866\t214\tBethea et al (2004)\tCoastal Bay\tNone\n" +
                 "2\tATSH080\t2\tRhizoprionodon terraenovae\tAtlantic sharpnose shark\tectotherm vertebrate\tadult\tpredacious/piscivorous\t7.9000E+02\tmm\tfork length\t7.6400E+02\t7.9000E+02\t9.5195E+02\tFishbase (species)\t9.5195E+01\tindividual\tM=0.0056SL^2.897 \tBonfil et al. (1990)\t1\t1.5978E+03\tg\t4.5146E+04\t4.3548E+04\t2.8256E+01\t1.5978E+03\tall\tteleosts/molluscs/crustaceans\tteleosts/molluscs/crustaceans\tmixed\t8.4443E+01\tmm\tn/a\t0\tn/a\t8.4443E+00\tlength\tn/a\tn/a\tindividual\t6.0213E+00\tg\t3.1511E+01\t2.5490E+01\t5.2333E+00\t6.0213E+00\tM=0.01L^3\tGeneralised\t5\t\"Apalachicola Bay, Florida\"\t29�40'N\t85�10'W\t30\t24.1\t4.2\t866\t214\tBethea et al (2004)\tCoastal Bay\tNone\n" +

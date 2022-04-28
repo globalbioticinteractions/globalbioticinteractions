@@ -19,6 +19,7 @@ import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
@@ -44,13 +45,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
-        return new EnvoLookupService(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
+        return new EnvoLookupService(new ResourceServiceHTTP(is -> is));
     }
 
     @Test

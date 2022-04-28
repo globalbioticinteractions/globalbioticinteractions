@@ -14,6 +14,7 @@ import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -40,13 +41,7 @@ public class DatasetImporterForAkinTest extends GraphDBTestCase {
 
     @Test
     public void parseLifeStage() throws TermLookupServiceException {
-        UberonLookupService service = new UberonLookupService(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
+        UberonLookupService service = new UberonLookupService(new ResourceServiceLocal());
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("UBERON:0007379"));
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something eggs").get(0).getId(), is("UBERON:0007379"));
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something larvae").get(0).getId(), is("UBERON:0000069"));
