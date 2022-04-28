@@ -11,6 +11,7 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -31,17 +32,11 @@ public class DatasetImporterForBroseTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {
-        return new UberonLookupService(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
+        return new UberonLookupService(new ResourceServiceLocal());
     }
 
     @Test
-    public void importHeadAndTail() throws IOException, StudyImporterException {
+    public void importHeadAndTail() throws StudyImporterException {
         final String headAndTail = "Link ID\tLink reference \tBody size reference\tGeographic location\tGeneral habitat\tSpecific habitat\tLink methodology\tBody size methodology\tTaxonomy consumer\tLifestage consumer\tCommon name(s) consumer\tMetabolic category consumer\tType of feeding interaction\tMinimum length (m) consumer\tMean length (m) consumer\tMaximum length (m) consumer\tMinimum mass (g) consumer\tMean mass (g) consumer\tMaximum mass (g) consumer\tTaxonomy resource\tLifestage - resource\tCommon name(s) resource\tMetabolic category resource\tMinimum length (m) resource\tMean length (m) resource\tMaximum length (m) resource\tMinimum mass (g) resource\tMean mass (g) resource\tMaximum mass (g) resource\tConsumer/resource body mass ratio\tNotes\n" +
                 "1\tYodzis (1998)\tYodzis (1998)\tAfrica, Benguela ecosystem\tmarine\tpelagic food web\tpublished account\t\"published account; expert; regression\"\t-999\tadults\tBacteria\theterotrophic bacteria\therbivorous\t-999\t-999\t-999\t-999\t0.00000001\t-999\t-999\tadults\tPhytoplankton\tphoto-autotroph\t-999\t-999\t-999\t-999\t0.0001\t-999\t0.0001\t-999\n" +
                 "2\tYodzis (1998)\tYodzis (1998)\tAfrica, Benguela ecosystem\tmarine\tpelagic food web\tpublished account\t\"published account; expert; regression\"\t-999\tadults\tBenthic carnivores\tinvertebrate\tpredacious\t-999\t-999\t-999\t-999\t10\t-999\t-999\tadults\tBenthic filter feeders\tinvertebrate\t-999\t-999\t-999\t-999\t10\t-999\t1\t-999\n" +

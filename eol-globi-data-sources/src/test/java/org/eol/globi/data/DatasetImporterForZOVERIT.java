@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -19,7 +20,9 @@ public class DatasetImporterForZOVERIT {
     public void retrieveTicks() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_TICK,
-                new TestResourceService(), "http://www.mgc.ac.cn"), "zover/tick.json"
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"),
+                "zover/tick.json"
         );
     }
 
@@ -27,14 +30,17 @@ public class DatasetImporterForZOVERIT {
     public void retrieveBats() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_CHIROPTERA,
-                new TestResourceService(), "http://www.mgc.ac.cn"), "zover/chiroptera.json");
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"),
+                "zover/chiroptera.json");
     }
 
     @Test
     public void retrieveRodent() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_RODENT,
-                new TestResourceService(), "http://www.mgc.ac.cn")
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn")
                 , "zover/rodent.json");
     }
 
@@ -42,7 +48,8 @@ public class DatasetImporterForZOVERIT {
     public void retrieveMosquito() throws IOException {
         assertSame(DatasetImporterForZOVER.getContent(
                 DatasetImporterForZOVER.ZOVER_MOSQUITO,
-                new TestResourceService(), "http://www.mgc.ac.cn"),
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"),
                 "zover/mosquito.json");
     }
 
@@ -50,7 +57,8 @@ public class DatasetImporterForZOVERIT {
     public void retrieveMosquitoVirusData() throws IOException {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_MOSQUITO, 35237L,
-                new TestResourceService(), "http://www.mgc.ac.cn"
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/mosquito_viruses_35237.json");
     }
@@ -59,7 +67,8 @@ public class DatasetImporterForZOVERIT {
     public void retrieveMosquitoVirusData35222() throws IOException {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_MOSQUITO, 35222L,
-                new TestResourceService(), "http://www.mgc.ac.cn"
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/mosquito_viruses_35222.json");
     }
@@ -69,7 +78,8 @@ public class DatasetImporterForZOVERIT {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_CHIROPTERA,
                 35237L,
-                new TestResourceService(), "http://www.mgc.ac.cn"
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/chiroptera_viruses_35237.json");
     }
@@ -79,7 +89,8 @@ public class DatasetImporterForZOVERIT {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_TICK,
                 35237L,
-                new TestResourceService(), "http://www.mgc.ac.cn"
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/tick_viruses_35237.json");
     }
@@ -89,7 +100,8 @@ public class DatasetImporterForZOVERIT {
         String s = DatasetImporterForZOVER.getVirusData(
                 DatasetImporterForZOVER.ZOVER_RODENT,
                 35237L,
-                new TestResourceService(), "http://www.mgc.ac.cn"
+                new ResourceServiceHTTP(is -> is),
+                "http://www.mgc.ac.cn"
         );
         assertSame(s, "zover/rodent_viruses_35237.json");
     }
@@ -100,11 +112,4 @@ public class DatasetImporterForZOVERIT {
         assertThat(content, Is.is(expectedContent));
     }
 
-
-    private static class TestResourceService implements ResourceService {
-        @Override
-        public InputStream retrieve(URI resourceName) throws IOException {
-            return ResourceUtil.asInputStream(resourceName, in -> in);
-        }
-    }
 }
