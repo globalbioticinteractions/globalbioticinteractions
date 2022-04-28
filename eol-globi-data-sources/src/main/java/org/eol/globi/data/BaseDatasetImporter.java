@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
@@ -18,7 +19,7 @@ public abstract class BaseDatasetImporter implements DatasetImporter {
 
     private Dataset dataset;
 
-    private GeoNamesService geoNamesService = new GeoNamesServiceImpl();
+    private GeoNamesService geoNamesService = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is));
 
     private ImportLogger importLogger = new NullImportLogger();
     private String sourceCitationLastAccessed;

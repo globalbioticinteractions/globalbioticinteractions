@@ -3,6 +3,7 @@ package org.globalbioticinteractions.cache;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.InputStreamFactory;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.slf4j.Logger;
@@ -142,7 +143,9 @@ public class CacheLocalReadonly implements Cache {
     public InputStream retrieve(URI resourceURI) throws IOException {
         ContentProvenance contentProvenance = provenanceOf(resourceURI);
         URI resourceLocalURI = contentProvenance == null ? null : contentProvenance.getLocalURI();
-        return resourceLocalURI == null ? null : ResourceUtil.asInputStream(resourceLocalURI, getInputStreamFactory());
+        return resourceLocalURI == null
+                ? null
+                : new ResourceServiceLocal(getInputStreamFactory()).retrieve(resourceLocalURI);
     }
 
     private InputStreamFactory getInputStreamFactory() {

@@ -6,6 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.geo.LatLng;
+import org.eol.globi.util.ResourceServiceHTTP;
+import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.eol.globi.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +28,9 @@ public class GeoNamesServiceImpl implements GeoNamesService {
 
     private final ResourceService service;
 
-    public GeoNamesServiceImpl() {
-        this(resourceName -> ResourceUtil.asInputStream(resourceName, in -> in));
-    }
-
     public GeoNamesServiceImpl(ResourceService service) {
         this.service = service;
     }
-
 
     private static final Logger LOG = LoggerFactory.getLogger(GeoNamesServiceImpl.class);
 
