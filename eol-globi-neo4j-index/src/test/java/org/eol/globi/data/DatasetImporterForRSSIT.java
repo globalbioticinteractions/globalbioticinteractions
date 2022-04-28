@@ -3,6 +3,8 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CachePullThrough;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetWithCache;
@@ -22,7 +24,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
 
-        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(inStream -> inStream), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath()));
+        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(inStream -> inStream), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
@@ -42,7 +44,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
                 .instantiateImporter(DatasetImporterForRSS.class);
 
         final DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
-        DatasetWithCache datasetWithCache = new DatasetWithCache(dataset, new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath()));
+        DatasetWithCache datasetWithCache = new DatasetWithCache(dataset, new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 

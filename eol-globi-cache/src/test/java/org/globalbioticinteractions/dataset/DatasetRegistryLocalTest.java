@@ -2,6 +2,8 @@ package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullOutputStream;
+import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.junit.Test;
@@ -36,7 +38,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
 
         Dataset actual = registry.datasetFor("local");
@@ -74,7 +76,7 @@ public class DatasetRegistryLocalTest {
         assertThat(actual.getArchiveURI().toString(), is(localDatasetDir.toURI().toString()));
         assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
 
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), inStream -> inStream);
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), new ResourceServiceLocal(inStream -> inStream));
         InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
         String actualHash = CacheUtil.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
@@ -95,7 +97,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         Collection<String> availableNamespaces = registry.findNamespaces();
         assertThat(availableNamespaces, not(contains("local")));

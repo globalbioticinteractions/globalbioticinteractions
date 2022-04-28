@@ -3,6 +3,8 @@ package org.globalbioticinteractions.dataset;
 import org.apache.commons.io.FileUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.junit.After;
@@ -19,7 +21,6 @@ import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
@@ -58,7 +59,7 @@ public class DatasetRegistryWithCacheTest {
         Dataset dataset = Mockito.mock(Dataset.class);
         when(dataset.getNamespace()).thenReturn("some/namespace");
         when(dataset.getArchiveURI()).thenReturn(getClass().getResource("archive.zip").toURI());
-        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath, inStream -> inStream);
+        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream));
         return new DatasetWithCache(dataset, cache);
     }
 }

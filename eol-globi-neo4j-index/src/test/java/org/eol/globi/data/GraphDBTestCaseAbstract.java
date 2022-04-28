@@ -12,6 +12,8 @@ import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -77,7 +79,7 @@ public abstract class GraphDBTestCaseAbstract {
                 },
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
                         "target/datasets",
-                        inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
         return finder.datasetFor(namespace);
     }
 

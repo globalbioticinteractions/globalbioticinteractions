@@ -1,10 +1,10 @@
 package org.globalbioticinteractions.cache;
 
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.eol.globi.util.InputStreamFactory;
-import org.eol.globi.util.ResourceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,25 +15,27 @@ public class CachePullThrough implements Cache {
     private final static Logger LOG = LoggerFactory.getLogger(CachePullThrough.class);
     private final String namespace;
     private final String cachePath;
-    private final InputStreamFactory inputStreamFactory;
+    private ResourceService resourceServiceRemote;
+    private ResourceService resourceServiceLocal;
 
-    public CachePullThrough(String namespace, String cachePath) {
-        this(namespace, cachePath, inStream -> inStream);
-    }
-
-    public CachePullThrough(String namespace, String cachePath, InputStreamFactory factory) {
+    public CachePullThrough(String namespace,
+                            String cachePath,
+                            ResourceServiceLocalAndRemote resourceServiceRemote,
+                            ResourceServiceLocal resourceServiceLocal) {
         this.namespace = namespace;
         this.cachePath = cachePath;
-        this.inputStreamFactory = factory;
+        this.resourceServiceRemote = resourceServiceRemote;
+        this.resourceServiceLocal = resourceServiceLocal;
+
     }
 
-    static ContentProvenance cache(URI sourceURI, File cacheDir) throws IOException {
-        return CacheUtil.cache(sourceURI, cacheDir, inStream -> inStream);
+    static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService) throws IOException {
+        return CacheUtil.cache(sourceURI, cacheDir, resourceService);
     }
 
-    private ContentProvenance getContentProvenance(URI resourceName) throws IOException {
+    private ContentProvenance getContentProvenance(URI resourceName, ResourceService resourceService) throws IOException {
         File cacheDirForNamespace = CacheUtil.findOrMakeCacheDirForNamespace(cachePath, namespace);
-        ContentProvenance localResourceLocation = CacheUtil.cache(resourceName, cacheDirForNamespace, getInputStreamFactory());
+        ContentProvenance localResourceLocation = cache(resourceName, cacheDirForNamespace, resourceService);
 
         ContentProvenance contentProvenanceWithNamespace = new ContentProvenance(namespace, resourceName, localResourceLocation.getLocalURI(), localResourceLocation.getSha256(), localResourceLocation.getAccessedAt());
         ProvenanceLog.appendProvenanceLog(new File(cachePath), contentProvenanceWithNamespace);
@@ -47,15 +49,12 @@ public class CachePullThrough implements Cache {
 
     @Override
     public InputStream retrieve(URI resourceURI) throws IOException {
-        ContentProvenance provenance = getContentProvenance(resourceURI);
+        ContentProvenance provenance = getContentProvenance(resourceURI, resourceServiceRemote);
         URI localURI = provenance.getLocalURI();
         return localURI == null
                 ? null
-                : new ResourceServiceLocal(getInputStreamFactory()).retrieve(localURI);
+                : resourceServiceLocal.retrieve(localURI);
     }
 
-    private InputStreamFactory getInputStreamFactory() {
-        return inputStreamFactory;
-    }
 }
 

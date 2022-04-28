@@ -3,12 +3,12 @@ package org.globalbioticinteractions.cache;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.util.DateUtil;
-import org.eol.globi.util.InputStreamFactory;
-import org.eol.globi.util.ResourceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +25,9 @@ public final class CacheUtil {
     public static final String MIME_TYPE_GLOBI = "application/globi";
     public static final Logger LOG = LoggerFactory.getLogger(CacheUtil.class);
 
-    public static Cache cacheFor(String namespace, String cacheDir, InputStreamFactory inputStreamFactory) {
-        Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, inputStreamFactory);
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, inStream -> inStream);
+    public static Cache cacheFor(String namespace, String cacheDir, ResourceServiceLocalAndRemote resourceServiceRemote, ResourceServiceLocal resourceServiceLocal) {
+        Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote, resourceServiceLocal);
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, new ResourceServiceLocal(inStream -> inStream));
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
 
@@ -74,10 +74,10 @@ public final class CacheUtil {
         return String.format("%064x", new java.math.BigInteger(1, md.digest()));
     }
 
-    public static ContentProvenance cache(URI sourceURI, File cacheDir, InputStreamFactory factory) throws IOException {
+    public static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService) throws IOException {
         String msg = "caching [" + sourceURI + "]";
         LOG.info(msg + " started...");
-        InputStream inputStream = new ResourceServiceLocalAndRemote(factory).retrieve(sourceURI);
+        InputStream inputStream = resourceService.retrieve(sourceURI);
         ContentProvenance contentProvenance = cacheStream(inputStream, cacheDir);
         LOG.info(msg + " cached at [" + contentProvenance.getLocalURI().toString() + "]...");
         LOG.info(msg + " complete.");

@@ -1,9 +1,9 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
-import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.hamcrest.core.Is;
 import org.junit.Before;
@@ -43,7 +43,7 @@ public class DatasetRegistryWithCacheIT {
     }
 
     private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
+        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
@@ -55,7 +55,7 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void afrotropicalBees() throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
@@ -68,7 +68,7 @@ public class DatasetRegistryWithCacheIT {
     @Test
     public void hafnerTest() throws DatasetRegistryException, IOException {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)),
-                dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
+                dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
 

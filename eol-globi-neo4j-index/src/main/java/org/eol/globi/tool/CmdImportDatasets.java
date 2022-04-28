@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 
 public class CmdImportDatasets implements Cmd {
@@ -21,7 +22,7 @@ public class CmdImportDatasets implements Cmd {
 
     @Override
     public void run() throws StudyImporterException {
-        DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(datasetDir);
+        DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(datasetDir, new ResourceServiceLocal(inStream -> inStream));
         new IndexerDataset(registry, nodeFactoryFactory, graphServiceFactory).index();
     }
 

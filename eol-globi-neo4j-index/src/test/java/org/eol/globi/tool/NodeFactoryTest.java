@@ -15,6 +15,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.GraphExporterImpl;
 import org.eol.globi.taxon.NonResolvingTaxonIndexNoTx;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -121,7 +122,7 @@ public class NodeFactoryTest extends GraphDBTestCase {
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
 
         final IndexerDataset indexerDataset = new IndexerDataset(
-                DatasetRegistryUtil.getDatasetRegistry(datasetDirTest),
+                DatasetRegistryUtil.getDatasetRegistry(datasetDirTest, new ResourceServiceLocal(inStream -> inStream)),
                 nodeFactoryFactory,
                 getGraphFactory()
         );

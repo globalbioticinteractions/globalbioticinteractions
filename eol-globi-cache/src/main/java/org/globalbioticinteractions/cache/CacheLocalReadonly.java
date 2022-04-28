@@ -2,9 +2,8 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.util.InputStreamFactory;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +23,12 @@ public class CacheLocalReadonly implements Cache {
 
     private final String namespace;
     private final String cachePath;
-    private final InputStreamFactory inputStreamFactory;
+    private ResourceService resourceServiceLocal;
 
-    public CacheLocalReadonly(String namespace, String cachePath) {
-        this(namespace, cachePath, inStream -> inStream);
-    }
-
-    public CacheLocalReadonly(String namespace, String cachePath, InputStreamFactory factory) {
+    public CacheLocalReadonly(String namespace, String cachePath, ResourceService resourceServiceLocal) {
         this.namespace = namespace;
         this.cachePath = cachePath;
-        this.inputStreamFactory = factory;
+        this.resourceServiceLocal = resourceServiceLocal;
     }
 
     static URI getRemoteJarURIIfNeeded(URI remoteArchiveURI, URI localResourceURI) {
@@ -145,11 +140,7 @@ public class CacheLocalReadonly implements Cache {
         URI resourceLocalURI = contentProvenance == null ? null : contentProvenance.getLocalURI();
         return resourceLocalURI == null
                 ? null
-                : new ResourceServiceLocal(getInputStreamFactory()).retrieve(resourceLocalURI);
-    }
-
-    private InputStreamFactory getInputStreamFactory() {
-        return this.inputStreamFactory;
+                : resourceServiceLocal.retrieve(resourceLocalURI);
     }
 }
 

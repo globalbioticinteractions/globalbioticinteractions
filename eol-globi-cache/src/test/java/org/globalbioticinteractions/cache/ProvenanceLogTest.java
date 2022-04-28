@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +17,6 @@ import java.util.UUID;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -47,7 +46,7 @@ public class ProvenanceLogTest {
 
     @Test
     public void appendToProvenanceLog() throws IOException {
-        CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath());
+        CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath(), new ResourceServiceLocal(inStream -> inStream));
         assertNull(cache.provenanceOf(URI.create("http://example.com")));
 
         ContentProvenance meta = new ContentProvenance("some/namespace",
