@@ -16,7 +16,6 @@ public class ResourceUtilTest {
         assertThat(bobo.toString(), is("bobo"));
     }
 
-
     @Test
     public void relativeURI() {
         URI uri = ResourceUtil.getAbsoluteResourceURI(URI.create("some:/example/"), URI.create("/path"));

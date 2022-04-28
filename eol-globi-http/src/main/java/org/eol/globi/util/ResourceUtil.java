@@ -1,12 +1,8 @@
 package org.eol.globi.util;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 
 public class ResourceUtil {
 
@@ -33,15 +29,5 @@ public class ResourceUtil {
         return URI.create(contextNoSlashSuffix + "/" + resourceNameNoSlashPrefix);
     }
 
-
-    public static String contentToString(URI uri) throws IOException {
-        String response;
-        if ("file".equals(uri.getScheme()) || "jar".equals(uri.getScheme())) {
-            response = IOUtils.toString(uri.toURL(), StandardCharsets.UTF_8);
-        } else {
-            response = HttpUtil.getContent(uri);
-        }
-        return response;
-    }
 
 }

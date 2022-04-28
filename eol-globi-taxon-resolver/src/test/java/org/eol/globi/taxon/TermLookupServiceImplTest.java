@@ -1,12 +1,13 @@
 package org.eol.globi.taxon;
 
-import org.eol.globi.util.ResourceUtil;
+import org.apache.commons.io.IOUtils;
+import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.core.Is.is;
@@ -21,7 +22,13 @@ public class TermLookupServiceImplTest {
         assertNotNull(url);
         URI uri = URI.create("jar:" + url.toString() + "!/META-INF/MANIFEST.MF");
         assertThat(uri.getScheme(), is("jar"));
-        String manifest = ResourceUtil.contentToString(uri);
+        String response;
+        if ("file".equals(uri.getScheme()) || "jar".equals(uri.getScheme())) {
+            response = IOUtils.toString(uri.toURL(), StandardCharsets.UTF_8);
+        } else {
+            response = HttpUtil.getContent(uri);
+        }
+        String manifest = response;
         assertThat(manifest, is(notNullValue()));
     }
 
