@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public class ResourceServiceFTP implements ResourceService {
+public class ResourceServiceFTP extends ResourceServiceCaching {
     private final InputStreamFactory factory;
 
     public ResourceServiceFTP(InputStreamFactory factory) {
@@ -26,7 +26,7 @@ public class ResourceServiceFTP implements ResourceService {
             ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 
             return ftpClient.isConnected()
-                    ? ResourceUtil.cacheAndOpenStream(ftpClient.retrieveFileStream(resource.getPath()), factory)
+                    ? cacheAndOpenStream(ftpClient.retrieveFileStream(resource.getPath()), factory)
                     : null;
         } finally {
             if (ftpClient.isConnected()) {

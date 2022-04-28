@@ -43,7 +43,7 @@ public class ResourceUtilTest {
     }
 
     @Test
-    public void localJarResourceWithInputStreamFactory() throws URISyntaxException, IOException {
+    public void localJarResourceWithInputStreamFactory() throws IOException {
         String jarResource = getSomeJarFileURL();
         AtomicLong counter = new AtomicLong(0);
         InputStream inputStream = ResourceUtil.asInputStream(jarResource, new InputStreamFactory() {
