@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactory;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class ResourceServiceWithMapping implements ResourceService {
     @Override
     public InputStream retrieve(URI resourceName) throws IOException {
         URI absoluteResourceURI = DatasetUtil.mapResourceForDataset(dataset, resourceName);
-        return ResourceUtil.asInputStream(absoluteResourceURI, factory);
+        return new ResourceServiceLocalAndRemote(factory).retrieve(absoluteResourceURI);
     }
 
 }

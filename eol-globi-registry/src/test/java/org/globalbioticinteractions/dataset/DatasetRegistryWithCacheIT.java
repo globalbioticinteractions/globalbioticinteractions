@@ -31,13 +31,7 @@ public class DatasetRegistryWithCacheIT {
     @Test
     public void zenodoTest() throws DatasetRegistryException, IOException {
         assertTemplateDataset("zenodo.org",
-                new DatasetRegistryZenodo(new ResourceService() {
-
-                    @Override
-                    public InputStream retrieve(URI resourceName) throws IOException {
-                        return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
-                    }
-                }),
+                new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is)),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 

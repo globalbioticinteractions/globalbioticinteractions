@@ -1,74 +1,48 @@
 package org.globalbioticinteractions.dataset;
 
-import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetRegistryZenodoIT {
 
     @Test
     public void zenodoDataFeed() throws DatasetRegistryException {
-        String feed = DatasetRegistryZenodo.getNextPage(null, new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, in -> in);
-            }
-        });
+        String feed = DatasetRegistryZenodo.getNextPage(null, new ResourceServiceHTTP(is -> is));
         assertThat(feed, containsString("<?xml version"));
     }
 
     @Test
     public void unlikelyMatch() throws DatasetRegistryException {
-        DatasetRegistryZenodo datasetRegistryZenodo = new DatasetRegistryZenodo(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, in -> in);
-            }
-        });
+        DatasetRegistryZenodo datasetRegistryZenodo = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is));
         Dataset thisshouldnotexist = datasetRegistryZenodo.datasetFor("thisshouldnotexist");
         assertNull(thisshouldnotexist);
     }
 
     @Test
     public void extractGitHubReposArchives() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
-            }
-        })
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is))
                 .datasetFor("globalbioticinteractions/template-dataset");
 
         assertNotNull(dataset);
         URI uri = dataset
                 .getArchiveURI();
         assertThat(uri, is(notNullValue()));
-        assertThat(uri.toString(), is("https://zenodo.org/record/1436853/files/globalbioticinteractions/template-dataset-0.0.3.zip"));
+        assertThat(uri.toString(),
+                is("https://zenodo.org/record/1436853/files/globalbioticinteractions/template-dataset-0.0.3.zip"));
     }
 
     @Test
     public void extractGitHubReposArchives2() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
-            }
-        })
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is))
                 .datasetFor("millerse/Lara-C.-2006");
 
         assertThat(dataset, is(notNullValue()));
@@ -80,13 +54,7 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void extractGitHubReposArchives3() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, inStream -> inStream);
-            }
-        })
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is))
                 .datasetFor("millerse/Lichenous");
 
         assertThat(dataset, is(notNullValue()));

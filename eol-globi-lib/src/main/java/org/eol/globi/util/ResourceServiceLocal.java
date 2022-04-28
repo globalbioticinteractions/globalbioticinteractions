@@ -10,6 +10,9 @@ public class ResourceServiceLocal implements ResourceService {
 
     private final InputStreamFactory factory;
 
+    public ResourceServiceLocal() {
+        this(is -> is);
+    }
     public ResourceServiceLocal(InputStreamFactory factory) {
         this.factory = factory;
     }

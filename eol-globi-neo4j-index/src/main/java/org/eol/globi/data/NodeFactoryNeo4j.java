@@ -30,6 +30,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.DateUtil;
+import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -68,18 +69,24 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
 
-        this.termLookupService = new UberonLookupService(new ResourceServiceLocal());
+        InputStreamFactory inputStreamFactory = is -> is;
+        this.termLookupService = new UberonLookupService(new ResourceServiceLocal(inputStreamFactory));
+
         this.lifeStageLookupService
                 = new TermLookupServiceWithResource(
                 "life-stage-mapping.csv",
-                new ResourceServiceLocal()
+                new ResourceServiceLocal(inputStreamFactory)
         );
+
         this.bodyPartLookupService
                 = new TermLookupServiceWithResource(
                         "body-part-mapping.csv",
-                new ResourceServiceLocal()
+                new ResourceServiceLocal(inputStreamFactory)
         );
-        this.envoLookupService = new EnvoLookupService(new ResourceServiceHTTP(is -> is));
+
+        this.envoLookupService = new EnvoLookupService(
+                new ResourceServiceHTTP(inputStreamFactory)
+        );
 
     }
 
