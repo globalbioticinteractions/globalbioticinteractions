@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class CMECSServiceTest {
 
     @Test
@@ -41,11 +42,7 @@ public class CMECSServiceTest {
                 if (!StringUtils.endsWith(resourceName.toString(), "cmecs4.accdb")) {
                     throw new IOException("unexpected resource [" + resourceName + "]");
                 } else {
-                    try {
-                        return ResourceUtil.asInputStream(getClass().getResource("/org/eol/globi/service/cmecs4.accdb").toURI(), in -> in);
-                    } catch (URISyntaxException e) {
-                        throw new IOException("unexpected error", e);
-                    }
+                    return getClass().getResourceAsStream("/org/eol/globi/service/cmecs4.accdb");
                 }
             }
 

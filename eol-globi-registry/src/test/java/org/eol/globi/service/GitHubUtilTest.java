@@ -1,5 +1,7 @@
 package org.eol.globi.service;
 
+import org.eol.globi.util.ResourceServiceHTTP;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
@@ -17,38 +19,31 @@ public class GitHubUtilTest {
 
     @Test
     public void isGloBIRepo() throws IOException {
-        String lastCommitSHA = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, new ResourceService() {
+        String repo = GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV;
+        ResourceService resourceService = new ResourceServiceHTTP(is -> is);
+        String lastCommitSHA = GitHubUtil.lastCommitSHA(
+                repo,
+                resourceService
+        );
 
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, in -> in);
-            }
-        });
-        assertThat(GitHubUtil.isGloBIRepository(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, lastCommitSHA, new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        }), is(true));
+        assertThat(GitHubUtil.isGloBIRepository(repo,
+                lastCommitSHA,
+                resourceService),
+                is(true));
     }
 
     @Test
     public void nonGloBIRepo() throws IOException {
-        String lastCommitSHA = GitHubUtil.lastCommitSHA(GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV, new ResourceService() {
+        String repo = "ropensci/rgbif";
+        ResourceService resourceService = new ResourceServiceHTTP(is -> is);
 
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, in -> in);
-            }
-        });
-        assertThat(GitHubUtil.isGloBIRepository("ropensci/rgbif", lastCommitSHA, new ResourceService() {
+        String lastCommitSHA = GitHubUtil.lastCommitSHA(
+                repo,
+                resourceService
+        );
 
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        }), is(false));
+        assertThat(GitHubUtil.isGloBIRepository(repo, lastCommitSHA, resourceService),
+                is(false));
     }
 
 }

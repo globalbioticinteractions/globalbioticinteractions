@@ -3,6 +3,7 @@ package org.globalbioticinteractions.cache;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.util.DateUtil;
@@ -76,7 +77,7 @@ public final class CacheUtil {
     public static ContentProvenance cache(URI sourceURI, File cacheDir, InputStreamFactory factory) throws IOException {
         String msg = "caching [" + sourceURI + "]";
         LOG.info(msg + " started...");
-        InputStream inputStream = ResourceUtil.asInputStream(sourceURI.toString(), factory);
+        InputStream inputStream = new ResourceServiceLocalAndRemote(factory).retrieve(sourceURI);
         ContentProvenance contentProvenance = cacheStream(inputStream, cacheDir);
         LOG.info(msg + " cached at [" + contentProvenance.getLocalURI().toString() + "]...");
         LOG.info(msg + " complete.");
