@@ -1,17 +1,12 @@
 package org.eol.globi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.protocol.RequestDefaultHeaders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.http.client.utils.URIBuilder;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -98,10 +93,7 @@ public class ExternalIdUtil {
                 }
                 if (url != null) {
                     try {
-                        URIBuilder uriBuilder = new URIBuilder(url);
-                        uri = uriBuilder.build();
-//                        URL ur= new URL(url);
-//                        uri = new URI(ur.getProtocol(), ur.getUserInfo(), ur.getHost(), ur.getPort(), ur.getPath(), ur.getQuery(), ur.getRef());
+                        uri = new URI(url);
                     } catch (URISyntaxException e) {
                         //
                     }
