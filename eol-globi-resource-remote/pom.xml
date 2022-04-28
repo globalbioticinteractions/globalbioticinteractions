@@ -11,8 +11,8 @@
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>eol-globi-http</artifactId>
-    <name>Global Biotic Interactions Http Library</name>
+    <artifactId>eol-globi-resource-remote</artifactId>
+    <name>Global Biotic Interactions Remote Resource Access</name>
 
     <dependencies>
         <dependency>
