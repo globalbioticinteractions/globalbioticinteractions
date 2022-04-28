@@ -6,5 +6,5 @@ import java.net.URI;
 
 public interface ResourceServiceFactory {
 
-    public ResourceService serviceForResource(URI resource);
+    ResourceService serviceForResource(URI resource);
 }
