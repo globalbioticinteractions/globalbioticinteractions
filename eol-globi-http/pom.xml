@@ -17,18 +17,13 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>eol-globi-resource</artifactId>
+            <artifactId>eol-globi-resource-local</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ostermiller</groupId>
             <artifactId>utils</artifactId>
             <version>1.07.00</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
