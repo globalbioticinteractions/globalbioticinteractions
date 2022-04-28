@@ -17,6 +17,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.TermRequestImpl;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 
 public class TaxonCacheService extends CacheService implements PropertyEnricher, TermMatcher {
     private static final Logger LOG = LoggerFactory.getLogger(TaxonCacheService.class);
+    public static final ResourceServiceLocal RESOURCE_SERVICE = new ResourceServiceLocal();
 
     private BTreeMap<String, Map<String, String>> resolvedIdToTaxonMap = null;
 
@@ -168,7 +170,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
         StopWatch watch = new StopWatch();
         watch.start();
-        BufferedReader reader = CacheServiceUtil.createBufferedReader(taxonMap.getResource());
+        BufferedReader reader = CacheServiceUtil.createBufferedReader(
+                taxonMap.getResource(),
+                RESOURCE_SERVICE
+        );
 
         reader.lines()
                 .filter(taxonMap.getValidator())
@@ -290,7 +295,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final TermResource<Taxon> config) throws IOException {
 
         return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
-            private BufferedReader reader = CacheServiceUtil.createBufferedReader(config.getResource());
+            private BufferedReader reader = CacheServiceUtil.createBufferedReader(
+                    config.getResource(),
+                    RESOURCE_SERVICE
+            );
             private AtomicBoolean lineAvailable = new AtomicBoolean(false);
             private String currentLine = null;
 
