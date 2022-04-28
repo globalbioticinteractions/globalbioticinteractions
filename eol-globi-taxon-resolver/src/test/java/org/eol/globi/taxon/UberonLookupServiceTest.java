@@ -3,6 +3,7 @@ package org.eol.globi.taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -16,13 +17,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UberonLookupServiceTest {
 
-    private UberonLookupService uberonLookupService = new UberonLookupService(new ResourceService() {
-
-        @Override
-        public InputStream retrieve(URI resourceName) throws IOException {
-            return ResourceUtil.asInputStream(resourceName, is -> is);
-        }
-    });
+    private UberonLookupService uberonLookupService
+            = new UberonLookupService(new ResourceServiceLocal(is -> is));
 
     @Test
     public void bodyPartMapping() throws TermLookupServiceException {

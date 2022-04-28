@@ -66,7 +66,7 @@ public class DatasetRegistryWithCacheIT {
 
         assertThat(dataset.getArchiveURI().toString(), containsString("github.com"));
         assertThat(dataset.retrieve(URI.create("globi.json")), Is.is(notNullValue()));
-        assertThat(dataset.getCitation(), startsWith("Eardley C, Coetzer W. 2011. Catalogue of Afrotropical Bees."));
+        assertThat(dataset.getCitation(), startsWith("Eardley C, Coetzer W. 2016. Catalogue of Afrotropical Bees."));
 
     }
 

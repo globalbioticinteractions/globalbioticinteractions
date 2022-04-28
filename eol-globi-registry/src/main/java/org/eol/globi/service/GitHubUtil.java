@@ -101,14 +101,14 @@ public class GitHubUtil {
     }
 
     static boolean isGloBIRepository(String globiRepo, String commitSHA, ResourceService resourceService) throws IOException {
-        return hasInteractionData(getGloBIConfigURI(globiRepo, "globi.json", commitSHA), resourceService)
-                || hasInteractionData(getGloBIConfigURI(globiRepo, "globi-dataset.jsonld", commitSHA), new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
+        return hasInteractionData(getGloBIConfigURI(
+                globiRepo,
+                "globi.json",
+                commitSHA),
+                resourceService)
+                || hasInteractionData(
+                getGloBIConfigURI(globiRepo, "globi-dataset.jsonld", commitSHA),
+                resourceService);
     }
 
     public static String lastCommitSHA(String repository, ResourceService resourceService) throws IOException {

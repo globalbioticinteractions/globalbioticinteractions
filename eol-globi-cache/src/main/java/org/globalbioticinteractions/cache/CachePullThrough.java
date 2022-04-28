@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.cache;
 
+import org.eol.globi.util.ResourceServiceLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.util.InputStreamFactory;
@@ -48,7 +49,9 @@ public class CachePullThrough implements Cache {
     public InputStream retrieve(URI resourceURI) throws IOException {
         ContentProvenance provenance = getContentProvenance(resourceURI);
         URI localURI = provenance.getLocalURI();
-        return localURI == null ? null : ResourceUtil.asInputStream(localURI, getInputStreamFactory());
+        return localURI == null
+                ? null
+                : new ResourceServiceLocal(getInputStreamFactory()).retrieve(localURI);
     }
 
     private InputStreamFactory getInputStreamFactory() {
