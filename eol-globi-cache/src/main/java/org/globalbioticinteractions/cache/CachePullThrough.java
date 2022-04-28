@@ -1,8 +1,6 @@
 package org.globalbioticinteractions.cache;
 
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +18,8 @@ public class CachePullThrough implements Cache {
 
     public CachePullThrough(String namespace,
                             String cachePath,
-                            ResourceServiceLocalAndRemote resourceServiceRemote,
-                            ResourceServiceLocal resourceServiceLocal) {
+                            ResourceService resourceServiceRemote,
+                            ResourceService resourceServiceLocal) {
         this.namespace = namespace;
         this.cachePath = cachePath;
         this.resourceServiceRemote = resourceServiceRemote;

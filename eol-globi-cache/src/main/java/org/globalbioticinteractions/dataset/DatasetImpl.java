@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;

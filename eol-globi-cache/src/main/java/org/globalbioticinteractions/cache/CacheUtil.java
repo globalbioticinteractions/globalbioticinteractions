@@ -4,11 +4,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
+import org.eol.globi.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.eol.globi.util.DateUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +23,9 @@ public final class CacheUtil {
     public static final String MIME_TYPE_GLOBI = "application/globi";
     public static final Logger LOG = LoggerFactory.getLogger(CacheUtil.class);
 
-    public static Cache cacheFor(String namespace, String cacheDir, ResourceServiceLocalAndRemote resourceServiceRemote, ResourceServiceLocal resourceServiceLocal) {
+    public static Cache cacheFor(String namespace, String cacheDir, ResourceService resourceServiceRemote, ResourceService resourceServiceLocal) {
         Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote, resourceServiceLocal);
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, new ResourceServiceLocal(inStream -> inStream));
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, resourceServiceLocal);
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
 

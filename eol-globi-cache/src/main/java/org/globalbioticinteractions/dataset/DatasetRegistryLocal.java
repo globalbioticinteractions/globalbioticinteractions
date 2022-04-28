@@ -5,7 +5,7 @@ import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.InputStreamFactory;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ProvenanceLog;
@@ -112,7 +112,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
             @Override
             public Dataset datasetFor(String s) throws DatasetRegistryException {
-                Dataset dataset = new DatasetWithResourceMapping(namespace, sourceURI, new ResourceServiceLocalAndRemote(getInputStreamFactory()));
+                Dataset dataset = new DatasetWithResourceMapping(namespace, sourceURI, new ResourceServiceLocal(getInputStreamFactory()));
                 return new DatasetWithCache(dataset,
                         cacheFactory.cacheFor(dataset));
             }
