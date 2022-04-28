@@ -1,0 +1,37 @@
+package org.eol.globi.util;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.eol.globi.service.ResourceService;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+
+public class ResourceServiceFTP implements ResourceService {
+    private final InputStreamFactory factory;
+
+    public ResourceServiceFTP(InputStreamFactory factory) {
+        this.factory = factory;
+    }
+
+    @Override
+    public InputStream retrieve(URI resource) throws IOException {
+        FTPClient ftpClient = new FTPClient();
+        try {
+            ftpClient.connect(resource.getHost());
+            ftpClient.enterLocalPassiveMode();
+            ftpClient.login("anonymous", "info@globalbioticinteractions.org");
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
+            ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
+
+            return ftpClient.isConnected()
+                    ? ResourceUtil.cacheAndOpenStream(ftpClient.retrieveFileStream(resource.getPath()), factory)
+                    : null;
+        } finally {
+            if (ftpClient.isConnected()) {
+                ftpClient.disconnect();
+            }
+        }
+    }
+}

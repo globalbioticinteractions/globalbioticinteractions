@@ -11,6 +11,7 @@
     <modules>
         <module>eol-globi-parent</module>
         <module>eol-globi-jcoord</module>
+        <module>eol-globi-resource</module>
         <module>eol-globi-lib</module>
         <module>eol-globi-http</module>
         <module>eol-globi-cache</module>

@@ -2,16 +2,11 @@ package org.eol.globi.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
+import org.eol.globi.service.ResourceService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,23 +14,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 public class ResourceUtil {
 
-    public static final String SHAPEFILES_DIR = "shapefiles.dir";
-    private final static Logger LOG = LoggerFactory.getLogger(ResourceUtil.class);
+    public static final String DATA_DIR = "shapefiles.dir";
 
-    public static URI fromShapefileDir(String shapeFile) {
-        return fromShapefileDir(URI.create(shapeFile));
-    }
-
-    public static URI fromShapefileDir(URI shapeFile) {
+    public static URI fromDataDir(URI shapeFile) {
         URI resourceURI = null;
-        String shapeFileDir = System.getProperty(SHAPEFILES_DIR);
+        String shapeFileDir = System.getProperty(DATA_DIR);
         if (StringUtils.isNotBlank(shapeFileDir)) {
             File file = new File(shapeFileDir + shapeFile);
             resourceURI = file.toURI();
@@ -54,51 +42,16 @@ public class ResourceUtil {
     public static InputStream asInputStream(URI resource, InputStreamFactory factory) throws IOException {
         try {
             InputStream is;
-            if (isHttpURI(resource)) {
-                LOG.info("caching of [" + resource + "] started...");
-                is = getCachedRemoteInputStream(resource, factory);
-                LOG.info("caching of [" + resource + "] complete.");
-            } else if (isFileURI(resource)) {
-                is = factory.create(new FileInputStream(new File(resource)));
-            } else if (StringUtils.startsWith(resource.toString(), "jar:file:/")) {
-                URL url = resource.toURL();
-                URLConnection urlConnection = url.openConnection();
-                // Prevent leaking of jar file descriptors by disabling jar cache.
-                // see https://stackoverflow.com/a/36518430
-                urlConnection.setUseCaches(false);
-                is = factory.create(urlConnection.getInputStream());
-            } else if (StringUtils.startsWith(resource.getScheme(), "ftp")) {
-                FTPClient ftpClient = new FTPClient();
-                try {
-                    ftpClient.connect(resource.getHost());
-                    ftpClient.enterLocalPassiveMode();
-                    ftpClient.login("anonymous", "info@globalbioticinteractions.org");
-                    ftpClient.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
-                    ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 
-                    is = ftpClient.isConnected()
-                            ? cacheAndOpenStream(ftpClient.retrieveFileStream(resource.getPath()), factory)
-                            : null;
-                } finally {
-                    if (ftpClient.isConnected()) {
-                        ftpClient.disconnect();
-                    }
-                }
+            ResourceService resourceService = new ResourceServiceFactoryRemote(factory)
+                    .serviceForResource(resource);
+
+            if (resourceService != null) {
+                is = resourceService.retrieve(resource);
             } else {
-                String classpathResource = resource.toString();
-                if (StringUtils.startsWith(classpathResource, "classpath:")) {
-                    classpathResource = StringUtils.replace(classpathResource, "classpath:", "");
-                }
-                is = factory.create(ResourceUtil.class.getResourceAsStream(classpathResource));
-            }
-
-            if (is == null) {
-                final URI uri = fromShapefileDir(resource);
-                if (uri == null) {
-                    throw new IOException("failed to open resource [" + resource + "]");
-                } else {
-                    is = new FileInputStream(new File(uri));
-                }
+                resourceService = new ResourceServiceFactoryLocal(factory)
+                        .serviceForResource(resource);
+                is = resourceService.retrieve(resource);
             }
 
             if (StringUtils.endsWith(resource.toString(), ".gz")) {
@@ -121,7 +74,7 @@ public class ResourceUtil {
                 : absoluteURIFor(context, resourceName);
     }
 
-    private static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
+    public static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
         HttpGet request = new HttpGet(resourceURI);
         try {
             HttpResponse response = HttpUtil.getHttpClient().execute(request);
@@ -139,7 +92,7 @@ public class ResourceUtil {
 
     }
 
-    private static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory) throws IOException {
+    public static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory) throws IOException {
         File tempFile = File.createTempFile("globiRemote", "tmp");
         tempFile.deleteOnExit();
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
@@ -161,10 +114,6 @@ public class ResourceUtil {
         return URI.create(contextNoSlashSuffix + "/" + resourceNameNoSlashPrefix);
     }
 
-    private static boolean isHttpURI(URI descriptor) {
-        return "http".equalsIgnoreCase(descriptor.getScheme())
-                || "https".equalsIgnoreCase(descriptor.getScheme());
-    }
 
     public static String contentToString(URI uri) throws IOException {
         String response;
@@ -174,5 +123,28 @@ public class ResourceUtil {
             response = HttpUtil.getContent(uri);
         }
         return response;
+    }
+
+    private static class ResourceServiceFactoryLocal implements ResourceServiceFactory {
+
+        private final InputStreamFactory factory;
+
+        public ResourceServiceFactoryLocal(InputStreamFactory factory) {
+            this.factory = factory;
+        }
+
+        @Override
+        public ResourceService serviceForResource(URI resource) {
+            ResourceService resourceService = null;
+            if (isFileURI(resource)) {
+                resourceService = new ResourceServiceLocalFile(factory);
+            } else if (StringUtils.startsWith(resource.toString(), "jar:file:/")) {
+                resourceService = new ResourceServiceLocalJarResource(factory);
+            } else {
+                resourceService = new ResourceServiceClasspathResource(factory);
+            }
+
+            return resourceService;
+        }
     }
 }

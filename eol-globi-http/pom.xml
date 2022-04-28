@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-resource</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.ostermiller</groupId>
             <artifactId>utils</artifactId>
             <version>1.07.00</version>
