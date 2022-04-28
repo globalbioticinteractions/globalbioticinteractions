@@ -1,6 +1,7 @@
 package org.eol.globi.data;
 
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
@@ -11,12 +12,7 @@ public class GenBankOccurrenceIdIdEnricherIT extends GenBankOccurrenceIdIdEnrich
 
     @Override
     public ResourceService getResourceService() {
-        return new ResourceService() {
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        };
+        return new ResourceServiceHTTP(is -> is);
     }
 
 }

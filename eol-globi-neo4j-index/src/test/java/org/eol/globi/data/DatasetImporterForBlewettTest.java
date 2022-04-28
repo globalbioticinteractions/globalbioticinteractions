@@ -17,6 +17,7 @@ import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -57,13 +58,7 @@ public class DatasetImporterForBlewettTest extends GraphDBTestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {
-        return new UberonLookupService(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
+        return new UberonLookupService(new ResourceServiceLocal());
     }
 
     @Test
