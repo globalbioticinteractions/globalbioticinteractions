@@ -25,14 +25,14 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.EnvoLookupService;
-import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.ResourceServiceHTTP;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.doi.DOI;
@@ -46,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,34 +68,18 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
 
-        this.termLookupService = new UberonLookupService(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
-        this.lifeStageLookupService = new TermLookupServiceWithResource("life-stage-mapping.csv", new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
-        this.bodyPartLookupService = new TermLookupServiceWithResource("body-part-mapping.csv", new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
-        this.envoLookupService = new EnvoLookupService(new ResourceService() {
-
-            @Override
-            public InputStream retrieve(URI resourceName) throws IOException {
-                return ResourceUtil.asInputStream(resourceName, is -> is);
-            }
-        });
+        this.termLookupService = new UberonLookupService(new ResourceServiceLocal());
+        this.lifeStageLookupService
+                = new TermLookupServiceWithResource(
+                "life-stage-mapping.csv",
+                new ResourceServiceLocal()
+        );
+        this.bodyPartLookupService
+                = new TermLookupServiceWithResource(
+                        "body-part-mapping.csv",
+                new ResourceServiceLocal()
+        );
+        this.envoLookupService = new EnvoLookupService(new ResourceServiceHTTP(is -> is));
 
     }
 

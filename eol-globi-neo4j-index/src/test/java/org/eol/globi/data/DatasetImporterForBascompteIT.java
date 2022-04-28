@@ -4,6 +4,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
@@ -43,7 +44,11 @@ public class DatasetImporterForBascompteIT extends GraphDBTestCase {
 
     @Test
     public void getNetworkNames() throws IOException {
-        final List<URI> networkNames = DatasetImporterForWebOfLife.getNetworkNames(ResourceUtil.asInputStream(DatasetImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All"));
+        String resource = DatasetImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All";
+        final List<URI> networkNames = DatasetImporterForWebOfLife
+                .getNetworkNames(
+                        new ResourceServiceHTTP(is -> is).retrieve(URI.create(resource))
+                );
         assertThat(networkNames, hasItem(URI.create("A_HP_001")));
     }
 }
