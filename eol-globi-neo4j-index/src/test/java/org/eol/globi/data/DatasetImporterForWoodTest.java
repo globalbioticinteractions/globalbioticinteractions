@@ -3,8 +3,10 @@ package org.eol.globi.data;
 import org.apache.commons.io.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -39,7 +41,7 @@ public class DatasetImporterForWoodTest extends GraphDBTestCase {
                 "    \"longitude\": -162.70889\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
 
         DatasetImporterForWood wood = new DatasetImporterForWood(new ParserFactoryForDataset(dataset), nodeFactory);

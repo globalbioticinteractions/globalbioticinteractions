@@ -1,24 +1,24 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.InputStreamFactory;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
 
 public class DatasetImpl implements Dataset {
     private static final Logger LOG = LoggerFactory.getLogger(DatasetImpl.class);
 
     private final String namespace;
     private final URI archiveURI;
+
     private final ResourceService resourceService;
     private JsonNode config;
     private URI configURI;
@@ -27,12 +27,6 @@ public class DatasetImpl implements Dataset {
         this.namespace = namespace;
         this.archiveURI = archiveURI;
         this.resourceService = service;
-    }
-
-    public DatasetImpl(String namespace, URI archiveURI, final InputStreamFactory factory) {
-        this.namespace = namespace;
-        this.archiveURI = archiveURI;
-        this.resourceService = new ResourceServiceWithMapping(factory, this);
     }
 
     @Override
@@ -105,4 +99,10 @@ public class DatasetImpl implements Dataset {
     public String getExternalId() {
         return getArchiveURI().toString();
     }
+
+    public ResourceService getResourceService() {
+        return resourceService;
+    }
+
+
 }

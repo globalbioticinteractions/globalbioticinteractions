@@ -4,7 +4,9 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionValidator;
 import org.eol.globi.tool.NullImportLogger;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -21,7 +23,7 @@ public class DatasetImporterForBatBaseIT {
     public void importAll() throws StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);
         DatasetImporterForBatBase importer = new DatasetImporterForBatBase(null, null);
-        DatasetImpl dataset = new DatasetImpl("test/batplant", URI.create("classpath:/org/eol/globi/data/batplant/"), is -> is);
+        DatasetImpl dataset = new DatasetWithResourceMapping("test/batplant", URI.create("classpath:/org/eol/globi/data/batplant/"), new ResourceServiceLocalAndRemote(is -> is));
         importer.setDataset(dataset);
         importer.setInteractionListener(new InteractionValidator(new InteractionListener() {
             @Override

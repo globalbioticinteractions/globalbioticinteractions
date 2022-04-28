@@ -29,9 +29,11 @@ import org.eol.globi.taxon.NonResolvingTaxonIndex;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.doi.DOI;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -41,7 +43,6 @@ import org.neo4j.graphdb.Relationship;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -258,7 +259,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     protected void assertDataset(String citationKey) {
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         objectNode.put(citationKey, "some citation");
@@ -281,7 +282,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void addDatasetToStudy() throws NodeFactoryException, IOException {
         StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         dataset.setConfig(objectNode);
@@ -339,7 +340,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     private DatasetImpl datasetWithNamespace(String namespace) {
-        DatasetImpl dataset = new DatasetImpl(namespace, URI.create("some:uri"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         dataset.setConfig(objectNode);
@@ -349,7 +350,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void addDatasetToStudyNulls() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetImpl(null, null, inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, null, new ResourceServiceLocalAndRemote(inStream -> inStream));
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
@@ -359,7 +360,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void addDatasetToStudyNulls2() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", null, inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", null, new ResourceServiceLocalAndRemote(inStream -> inStream));
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
@@ -395,12 +396,12 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void createStudyWithDifferentExternalIdInSameNamespace() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study1.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
         study1.setExternalId("foo:bar");
         StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
 
         StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study2.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
         study2.setExternalId("foo:baz");
 
         StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
@@ -412,12 +413,12 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void createStudyWithSameExternalIdInDifferentNamespace() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study1.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
         study1.setExternalId("foo:bar");
         StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
 
         StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study2.setOriginatingDataset(new DatasetImpl("name/spacz", URI.create("foo:bar"), is -> is));
+        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/spacz", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
         study2.setExternalId("foo:bar");
 
         StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
@@ -431,12 +432,12 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     @Test
     public void createStudyWithDifferentExternalIdInDifferentNamespace() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study1.setOriginatingDataset(new DatasetImpl("name/space", URI.create("foo:bar"), is -> is));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
         study1.setExternalId("foo:bar");
         StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
 
         StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study2.setOriginatingDataset(new DatasetImpl("name/spacz", URI.create("foo:bar"), is -> is));
+        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/spacz", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
         study2.setExternalId("foo:baz");
 
         StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);

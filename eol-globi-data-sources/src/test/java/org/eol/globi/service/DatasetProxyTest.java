@@ -3,10 +3,11 @@ package org.eol.globi.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetProxy;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class DatasetProxyTest {
         URL original = getClass().getResource("/org/globalbioticinteractions/content/original.txt");
         URL proxied = getClass().getResource("/org/globalbioticinteractions/content/proxied.txt");
         JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"" + proxied.toURI() + "\" } }");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(null);
 
 
@@ -95,10 +96,10 @@ public class DatasetProxyTest {
     }
 
     public DatasetProxy getTestDataset(JsonNode config, JsonNode configProxy) {
-        DatasetImpl dataset = new DatasetImpl(
+        DatasetImpl dataset = new DatasetWithResourceMapping(
                 "some/namespace",
                 URI.create("http://example.com"),
-                inStream -> inStream);
+                new ResourceServiceLocalAndRemote(inStream -> inStream));
 
         dataset.setConfig(config);
 

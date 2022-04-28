@@ -9,7 +9,9 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -116,7 +118,7 @@ public class DatasetImporterForMetaTableTest {
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         String baseUrl = resource.toExternalForm().replaceFirst(metaTableDef + "$", "");
-        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetImpl(null, URI.create(baseUrl), inStream -> inStream));
+        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(inStream -> inStream)));
         assertThat(columnNames.size(), is(40));
     }
 

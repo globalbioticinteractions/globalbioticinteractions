@@ -3,7 +3,9 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,7 +25,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListenerTest() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"https://example.org/someResource\" }");
-        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://someurl"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override
@@ -42,7 +44,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListener2Test() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"https://example.org/someResource\" }");
-        DatasetImpl dataset = new DatasetImpl(null, URI.create("http://someurl"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://someurl"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override

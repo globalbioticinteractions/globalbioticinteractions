@@ -1,27 +1,24 @@
 package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.InputStreamFactory;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
-import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
 public class ResourceServiceWithMapping implements ResourceService {
-    private final InputStreamFactory factory;
     private final Dataset dataset;
+    private ResourceService resourceService;
 
-    public ResourceServiceWithMapping(InputStreamFactory factory, Dataset dataset) {
-        this.factory = factory;
+    public ResourceServiceWithMapping(Dataset dataset, ResourceService resourceService) {
         this.dataset = dataset;
+        this.resourceService = resourceService;
     }
 
     @Override
     public InputStream retrieve(URI resourceName) throws IOException {
         URI absoluteResourceURI = DatasetUtil.mapResourceForDataset(dataset, resourceName);
-        return new ResourceServiceLocalAndRemote(factory).retrieve(absoluteResourceURI);
+        return resourceService.retrieve(absoluteResourceURI);
     }
 
 }

@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceServiceLocal;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
-import org.eol.globi.util.ResourceUtil;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class DatasetImporterForMetaTableIT {
         org.junit.Assert.assertNotNull(resource);
 
         final JsonNode config = new ObjectMapper().readTree(clazz.getResourceAsStream(name));
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         final List<JsonNode> tables = DatasetImporterForMetaTable.collectTables(dataset);
         assertThat(tables.size(), is(1));
@@ -170,10 +170,10 @@ public class DatasetImporterForMetaTableIT {
         final InputStream inputStream
                 = new ResourceServiceHTTP(is -> is).retrieve(URI.create(resource));
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-        final Dataset dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         for (JsonNode table : DatasetImporterForMetaTable.collectTables(dataset)) {
-            DatasetImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetImpl(null, URI.create(baseUrl), inStream -> inStream), null);
+            DatasetImporterForMetaTable.importTable(interactionListener, tableFactory, table, new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(inStream -> inStream)), null);
         }
 
     }

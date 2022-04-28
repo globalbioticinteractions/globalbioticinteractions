@@ -10,8 +10,10 @@ import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.CacheService;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,7 +45,7 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
-                new DatasetImpl("az/source", URI.create("http://example.com"), inStream -> inStream));
+                new DatasetWithResourceMapping("az/source", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
@@ -53,9 +55,9 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         createStudy(study2);
 
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
-                new DatasetImpl("zother/source",
+                new DatasetWithResourceMapping("zother/source",
                         URI.create("http://example.com"),
-                        inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream)));
 
         StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
@@ -98,21 +100,21 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
     @Test
     public void generateStudySourceOrganizationReports() throws NodeFactoryException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
-                new DatasetImpl("az/source1", URI.create("http://example.com"), inStream -> inStream));
+                new DatasetWithResourceMapping("az/source1", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
 
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
 
         Dataset originatingDataset2 = nodeFactory.getOrCreateDataset(
-                new DatasetImpl("az/source2", URI.create("http://example.com"), inStream -> inStream));
+                new DatasetWithResourceMapping("az/source2", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
 
         StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDataset2);
         createStudy(study2);
 
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
-                new DatasetImpl("zother/source", URI.create("http://example.com"), inStream -> inStream));
+                new DatasetWithResourceMapping("zother/source", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
 
         StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
@@ -153,7 +155,7 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
 
     @Test
     public void generateCollectionReport() throws NodeFactoryException {
-        DatasetImpl originatingDataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl originatingDataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         Dataset originatingDatasetNode = nodeFactory.getOrCreateDataset(originatingDataset);
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDatasetNode);

@@ -2,8 +2,10 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
 import java.net.URI;
@@ -12,7 +14,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
@@ -20,7 +21,7 @@ public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
     @Test
     public void importStatic() throws StudyImporterException, URISyntaxException {
         DatasetImporter importer = new DatasetImporterForJSONLD(null, nodeFactory);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld"));
         importer.setDataset(dataset);
 
@@ -36,7 +37,7 @@ public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
     @Test(expected = StudyImporterException.class)
     public void importStaticInvalid() throws StudyImporterException, URISyntaxException {
         DatasetImporter importer = new DatasetImporterForJSONLD(null, nodeFactory);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld.invalid"));
         importer.setDataset(dataset);
 

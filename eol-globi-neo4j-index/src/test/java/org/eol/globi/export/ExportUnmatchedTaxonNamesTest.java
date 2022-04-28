@@ -16,8 +16,10 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
 
@@ -83,9 +85,9 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
 
     public NodeFactoryWithDatasetContext nodeFactoryWithDataset() {
         Dataset dataset = nodeFactory.getOrCreateDataset(
-                new DatasetImpl("some/namespace",
+                new DatasetWithResourceMapping("some/namespace",
                         URI.create("some:archive"),
-                        in -> in));
+                        new ResourceServiceLocalAndRemote(in -> in)));
 
         return new NodeFactoryWithDatasetContext(nodeFactory, dataset);
     }

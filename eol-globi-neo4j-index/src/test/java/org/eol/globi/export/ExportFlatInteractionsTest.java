@@ -12,7 +12,9 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +36,7 @@ public class ExportFlatInteractionsTest extends GraphDBTestCase {
     @Before
     public void init() throws IOException {
         super.startGraphDb();
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
     }
 

@@ -3,9 +3,11 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,7 +18,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -59,7 +60,7 @@ public class DatasetImporterForHurlbertTest extends GraphDBTestCase {
 
     public DatasetImporter doImport(final String namespace) throws StudyImporterException {
         DatasetImporter importer = new DatasetImporterForHurlbert(null, nodeFactory);
-        Dataset dataset = new DatasetImpl(namespace, URI.create("some:uri"), inStream -> inStream) {
+        Dataset dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream)) {
             @Override
             public InputStream retrieve(URI name){
                 return DatasetImporterForHurlbertTest.getResource();

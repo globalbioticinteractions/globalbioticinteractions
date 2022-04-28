@@ -3,7 +3,9 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -72,7 +74,7 @@ public class DatasetImporterForZenodoMetadataTest {
         });
 
 
-        final DatasetImpl dataset = new DatasetImpl("name/space", URI.create("some:uri"), in -> in) {
+        final DatasetImpl dataset = new DatasetWithResourceMapping("name/space", URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in)) {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 if (StringUtils.contains(resourceName.getHost(), "zenodo.org")) {

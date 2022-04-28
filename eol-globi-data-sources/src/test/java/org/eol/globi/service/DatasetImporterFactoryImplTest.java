@@ -3,9 +3,10 @@ package org.eol.globi.service;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.DatasetImporterForTSV;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URI;
@@ -26,7 +27,7 @@ public class DatasetImporterFactoryImplTest {
     @Test
     public void createImporter() throws StudyImporterException {
         DatasetImporter someImporter = new StudyImporterFactoryImpl(null)
-                .createImporter(new DatasetImpl("namespace", URI.create("some:uri"), is -> is));
+                .createImporter(new DatasetWithResourceMapping("namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(is -> is)));
 
         assertThat(someImporter, instanceOf(DatasetImporterForTSV.class));
     }

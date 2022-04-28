@@ -18,9 +18,11 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.InteractionListenerIndexing;
 import org.eol.globi.util.InteractionListenerResolving;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mapdb.DBMaker;
@@ -334,7 +336,7 @@ public class DatasetImporterForRSSTest {
 
     private DatasetImpl datasetFor(String configJson) throws IOException {
         JsonNode config = new ObjectMapper().readTree(configJson);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         return dataset;
     }

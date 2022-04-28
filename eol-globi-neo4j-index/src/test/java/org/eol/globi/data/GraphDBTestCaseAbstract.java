@@ -20,6 +20,7 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.After;
 import org.junit.Before;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -74,7 +75,7 @@ public abstract class GraphDBTestCaseAbstract {
 
                     @Override
                     public Dataset datasetFor(String namespace) throws DatasetRegistryException {
-                        return new DatasetImpl(namespace, URI.create("some:uri"), in -> in);
+                        return new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in));
                     }
                 },
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(),

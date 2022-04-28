@@ -7,8 +7,10 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -112,7 +114,7 @@ public class DatasetImporterForTSVTest extends GraphDBTestCase {
     }
 
     public DatasetImpl getDataset(TreeMap<URI, String> treeMap) {
-        return new DatasetImpl("someRepo", URI.create("http://example.com"), inStream -> inStream) {
+        return new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)) {
                 @Override
                 public InputStream retrieve(URI resource) throws IOException {
                     String input = treeMap.get(resource);

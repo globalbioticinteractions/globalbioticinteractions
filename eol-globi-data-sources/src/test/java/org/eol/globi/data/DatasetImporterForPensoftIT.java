@@ -9,8 +9,10 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.util.OpenBiodivClientImpl;
 import org.globalbioticinteractions.util.SparqlClient;
 import org.junit.Test;
@@ -38,7 +40,7 @@ public class DatasetImporterForPensoftIT {
     @Test
     public void importStudy() throws StudyImporterException, URISyntaxException {
         final DatasetImporterForPensoft importer = new DatasetImporterForPensoft(new ParserFactoryLocal(), null);
-        final Dataset dataset = new DatasetImpl("some/name", URI.create("some:uri"), in -> in);
+        final Dataset dataset = new DatasetWithResourceMapping("some/name", URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in));
         final ObjectNode objectNode = new ObjectMapper().createObjectNode();
         final URL resource = getClass().getResource("pensoft/annotated-tables-first-two.json");
         objectNode.put("url", resource.toURI().toString());

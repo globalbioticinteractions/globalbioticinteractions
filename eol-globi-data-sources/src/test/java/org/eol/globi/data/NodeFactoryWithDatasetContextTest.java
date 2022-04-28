@@ -3,9 +3,11 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -23,7 +25,7 @@ public class NodeFactoryWithDatasetContextTest {
     @Test
     public void createStudy() {
         NodeFactory factory = Mockito.mock(NodeFactory.class);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
 
         StudyImpl study = new StudyImpl("some title", new DOI("123", "abc"), "some citation");
@@ -41,10 +43,10 @@ public class NodeFactoryWithDatasetContextTest {
     @Test
     public void getOrCreateStudy() throws NodeFactoryException {
         NodeFactory factory = Mockito.mock(NodeFactory.class);
-        Dataset dataset = new DatasetImpl(
+        Dataset dataset = new DatasetWithResourceMapping(
                 "some/namespace",
                 URI.create("some:uri"),
-                inStream -> inStream);
+                new ResourceServiceLocalAndRemote(inStream -> inStream));
 
         NodeFactoryWithDatasetContext factoryWithDS =
                 new NodeFactoryWithDatasetContext(factory, dataset);
@@ -62,7 +64,7 @@ public class NodeFactoryWithDatasetContextTest {
     @Test
     public void getOrCreateStudyEmptyStudySource() throws NodeFactoryException {
         NodeFactory factory = Mockito.mock(NodeFactory.class);
-        Dataset dataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);
 
         factoryWithDS.getOrCreateStudy(new StudyImpl("some title"));

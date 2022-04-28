@@ -6,6 +6,7 @@ import org.eol.globi.data.StudyImporterException;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetProxy;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -51,7 +52,7 @@ public class DatasetImportUtilTest {
                 "    }]" +
                 "}";
 
-        final DatasetImpl datasetOrig = new DatasetImpl("name/space", URI.create("some:uri"), in -> in);
+        final DatasetImpl datasetOrig = new DatasetWithResourceMapping("name/space", URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in));
         JsonNode objectNode = new ObjectMapper().readTree(jsonConfig);
 
         datasetOrig.setConfig(objectNode);

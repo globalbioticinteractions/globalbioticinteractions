@@ -6,7 +6,9 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class DatasetImporterForPlanqueIT extends GraphDBTestCase {
                 "    \"referencesForLinks\": \"http://www.esapubs.org/archive/ecol/E095/124/revised/PairWise2References.txt\"\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetImpl("some/namespace", URI.create("http://example.com"), inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         importer.setDataset(dataset);
 

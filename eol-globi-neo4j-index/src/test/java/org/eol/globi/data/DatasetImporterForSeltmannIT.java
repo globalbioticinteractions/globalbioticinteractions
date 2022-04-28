@@ -6,12 +6,12 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
-import org.eol.globi.util.RelationshipListener;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,7 +20,6 @@ import java.util.List;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForSeltmannIT extends GraphDBTestCase {
 
@@ -44,7 +43,7 @@ public class DatasetImporterForSeltmannIT extends GraphDBTestCase {
     private void importArchive(String archiveName) throws StudyImporterException {
         DatasetImporterForSeltmann importer = new DatasetImporterForSeltmann(null, nodeFactory);
         URI archiveURI = URI.create(ARCHIVE_URI_PREFIX + archiveName);
-        DatasetImpl dataset = new DatasetImpl("some/namespace", archiveURI, inStream -> inStream);
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", archiveURI, new ResourceServiceLocalAndRemote(inStream -> inStream));
         createAndSetConfig(archiveURI, dataset);
         importer.setDataset(dataset);
 

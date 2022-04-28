@@ -18,7 +18,9 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -44,7 +46,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
         TaxonIndex taxonIndex = getOrCreateTaxonIndex();
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", new DOI("123.23", "222"), "some study citation");
-        NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetImpl("some/namespace", URI.create("https://some.uri"), inStream -> inStream));
+        NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetWithResourceMapping("some/namespace", URI.create("https://some.uri"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
         Study interaction = factory.getOrCreateStudy(study);
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
         Specimen donald = factory.createSpecimen(interaction, donaldTaxon);
@@ -61,7 +63,7 @@ public class IndexInteractionsTest extends GraphDBTestCase {
 
         NodeFactoryNeo4j nodeFactoryNeo4j = new NodeFactoryNeo4j2(getGraphDb());
         StudyImpl study1 = new StudyImpl("some study", new DOI("123.23", "222"), "come citation");
-        study1.setOriginatingDataset(new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
         StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
 
         assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));

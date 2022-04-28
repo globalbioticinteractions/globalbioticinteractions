@@ -1,7 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class EMLUtilTest {
 
     @Test
     public void metaToMetaTables() throws URISyntaxException, IOException {
-        Dataset origDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         String uriString = "jar:" + getClass().getResource("dwca.zip").toURI().toString() + "!/vampire-moth-dwca-c4549a1690b84595c88946f477057b9ab76e5360/eml.xml";
 
         JsonNode config = EMLUtil.datasetWithEML(origDataset, URI.create(uriString));
@@ -29,7 +29,7 @@ public class EMLUtilTest {
 
     @Test
     public void withEMLofINHS() throws URISyntaxException, IOException {
-        Dataset origDataset = new DatasetImpl("some/namespace", URI.create("some:uri"), inStream -> inStream);
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
 
 
         URI emlURI = getClass().getResource("inhs-eml.xml").toURI();
