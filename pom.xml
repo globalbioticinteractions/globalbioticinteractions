@@ -13,8 +13,8 @@
         <module>eol-globi-jcoord</module>
         <module>eol-globi-resource</module>
         <module>eol-globi-resource-local</module>
-        <module>eol-globi-lib</module>
         <module>eol-globi-http</module>
+        <module>eol-globi-lib</module>
         <module>eol-globi-cache</module>
         <module>eol-globi-registry</module>
         <module>eol-globi-data-sources</module>

@@ -37,6 +37,10 @@
                     <groupId>org.neo4j</groupId>
                     <artifactId>neo4j-jmx</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
