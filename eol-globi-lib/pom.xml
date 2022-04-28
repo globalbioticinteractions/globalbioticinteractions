@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>org.eol</groupId>
-            <artifactId>eol-globi-resource-remote</artifactId>
+            <artifactId>eol-globi-resource-local</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
