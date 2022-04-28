@@ -11,18 +11,11 @@ import java.nio.charset.StandardCharsets;
 public class ResourceUtil {
 
     public static InputStream asInputStream(String resource) throws IOException {
-        return asInputStream(resource, inStream -> inStream);
-    }
-
-    public static InputStream asInputStream(String resource, InputStreamFactory factory) throws IOException {
-        return asInputStream(URI.create(resource), factory);
-    }
-
-    public static InputStream asInputStream(URI resource, InputStreamFactory factory) throws IOException {
+        URI resource1 = URI.create(resource);
         try {
-            return new ResourceServiceLocalAndRemote(factory).retrieve(resource);
+            return new ResourceServiceLocalAndRemote(inStream -> inStream).retrieve(resource1);
         } catch (IOException ex) {
-            throw new IOException("issue accessing [" + resource + "]", ex);
+            throw new IOException("issue accessing [" + resource1 + "]", ex);
         }
     }
 
