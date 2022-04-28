@@ -1,8 +1,10 @@
 package org.eol.globi.util;
 
+import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.NullOutputStream;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -10,10 +12,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -93,6 +97,19 @@ public class ResourceServiceLocalJarResourceTest {
             assertThat(ex.getCause().getMessage(), is("kaboom!"));
         }
 
+    }
+
+    @Test
+    public void localJarURL() throws IOException {
+        URL url = getClass().getResource("some.jar");
+        TestCase.assertNotNull(url);
+        URI uri = URI.create("jar:" + url.toString() + "!/META-INF/MANIFEST.MF");
+        assertThat(uri.getScheme(), Is.is("jar"));
+        String response = null;
+        if ("file".equals(uri.getScheme()) || "jar".equals(uri.getScheme())) {
+            response = IOUtils.toString(uri.toURL(), StandardCharsets.UTF_8);
+        }
+        assertThat(response, Is.is(notNullValue()));
     }
 
 
