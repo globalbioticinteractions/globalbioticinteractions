@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.junit.Test;
 
 import java.net.URI;
@@ -16,17 +17,17 @@ public class DatasetRegistryGitHubIT {
     @Test
     public void discoverDatasetsInGitHub() throws DatasetRegistryException {
         AtomicBoolean usedStreamFactory = new AtomicBoolean(false);
-        Collection<String> urls = new DatasetRegistryGitHubArchive(inStream -> {
+        Collection<String> urls = new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> {
             usedStreamFactory.set(true);
             return inStream;
-        }).findNamespaces();
+        })).findNamespaces();
         assertThat(urls.size(), is(not(0)));
         assertThat(usedStreamFactory.get(), is(true));
     }
 
     @Test
     public void datasetFor() throws DatasetRegistryException {
-        URI uri = new DatasetRegistryGitHubArchive(inStream -> inStream).datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
+        URI uri = new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)).datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
         assertThat(uri.toString(), startsWith("https://github.com/globalbioticinteractions/template-dataset/archive/"));
         assertThat(uri.toString(), endsWith(".zip"));
     }

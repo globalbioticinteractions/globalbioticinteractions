@@ -2,19 +2,14 @@ package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.service.GitHubUtil;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class DatasetRegistryGitHubArchive extends DatasetRegistryGitHub {
 
-    public DatasetRegistryGitHubArchive(InputStreamFactory factory) {
-        super(new ResourceServiceHTTP(factory));
+    public DatasetRegistryGitHubArchive(ResourceService resourceService) {
+        super(resourceService);
     }
 
     @Override

@@ -19,7 +19,9 @@ public class GeoNamesServiceImplTest {
 
     @Test
     public void retrievePointForSpireLocalityAndCache() throws IOException {
-        GeoNamesService geoNamesServiceImpl = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is));
+        GeoNamesService geoNamesServiceImpl = new GeoNamesServiceImpl(
+                new ResourceServiceHTTP(is -> is)
+        );
         StopWatch watch = new StopWatch();
         watch.start();
         assertVenezuela(geoNamesServiceImpl);
@@ -37,7 +39,9 @@ public class GeoNamesServiceImplTest {
 
     @Test
     public void retrievePointForGEONAMEIdAndCache() throws IOException {
-        GeoNamesService geoNamesServiceImpl = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is));
+        GeoNamesService geoNamesServiceImpl = new GeoNamesServiceImpl(
+                new ResourceServiceHTTP(is -> is)
+        );
         StopWatch watch = new StopWatch();
         watch.start();
         LatLng point = lookupByGeoNameTerm(geoNamesServiceImpl);

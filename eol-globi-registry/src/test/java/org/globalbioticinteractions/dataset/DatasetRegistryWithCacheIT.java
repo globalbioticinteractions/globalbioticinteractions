@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.hamcrest.core.Is;
@@ -43,7 +44,7 @@ public class DatasetRegistryWithCacheIT {
     @Test
     public void templateDatasetGithub() throws DatasetRegistryException, IOException {
         assertTemplateDataset("github.com",
-                new DatasetRegistryGitHubArchive(inStream -> inStream),
+                new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 
@@ -60,7 +61,7 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void afrotropicalBees() throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(inStream -> inStream), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
@@ -72,7 +73,7 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void hafnerTest() throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(inStream -> inStream),
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)),
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, inStream -> inStream));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
