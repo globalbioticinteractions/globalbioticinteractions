@@ -18,7 +18,9 @@ public class DatasetImporterForRaymondIT extends GraphDBTestCase {
 
     @Test
     public void importStudy() throws StudyImporterException {
-        DatasetImporterForRaymond importer = new DatasetImporterForRaymond(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForRaymond importer = new DatasetImporterForRaymond(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
         importer.setGeoNamesService(new GeoNamesService() {
             @Override
             public boolean hasTermForLocale(String locality) {

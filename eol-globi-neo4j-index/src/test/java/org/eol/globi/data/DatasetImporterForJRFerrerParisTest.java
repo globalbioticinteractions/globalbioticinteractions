@@ -13,7 +13,9 @@ public class DatasetImporterForJRFerrerParisTest extends GraphDBTestCase {
     @Ignore(value = "too slow for regular use")
     @Test
     public void testFullImport() throws StudyImporterException {
-        DatasetImporterForJRFerrerParis studyImporterForJRFerrerParis = new DatasetImporterForJRFerrerParis(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForJRFerrerParis studyImporterForJRFerrerParis = new DatasetImporterForJRFerrerParis(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
         studyImporterForJRFerrerParis.importStudy();
 
         assertTrue(getSpecimenCount(getStudySingleton(getGraphDb())) > 0);

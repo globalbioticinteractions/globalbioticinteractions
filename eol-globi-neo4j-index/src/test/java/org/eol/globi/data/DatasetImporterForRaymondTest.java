@@ -52,7 +52,7 @@ public class DatasetImporterForRaymondTest extends GraphDBTestCase {
 
     @Test
     public void importPartialStudy() throws IOException, StudyImporterException {
-        DatasetImporterForRaymond importer = new DatasetImporterForRaymond(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForRaymond importer = new DatasetImporterForRaymond(new ParserFactoryLocal(getClass()), nodeFactory);
         LabeledCSVParser dietParser = CSVTSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfDiet()));
         LabeledCSVParser sourcesParser = CSVTSVUtil.createLabeledCSVParser(new StringReader(firstFewLinesOfSourcesAlteredToFitDietDataSample()));
         importer.importData(sourcesParser, dietParser);

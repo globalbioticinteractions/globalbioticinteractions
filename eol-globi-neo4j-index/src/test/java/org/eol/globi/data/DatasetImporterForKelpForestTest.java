@@ -14,7 +14,9 @@ public class DatasetImporterForKelpForestTest extends GraphDBTestCase {
     @Ignore("kelp forest not available on 1 Nov 2015: Caused by: org.apache.http.conn.HttpHostConnectException: Connect to kelpforest.ucsc.edu:80 [kelpforest.ucsc.edu/128.114.235.111] failed: Operation timed out")
     @Test
     public void importAll() throws StudyImporterException {
-        DatasetImporterForKelpForest importer = new DatasetImporterForKelpForest(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForKelpForest importer = new DatasetImporterForKelpForest(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
         importStudy(importer);
         assertSeaOtter();
     }

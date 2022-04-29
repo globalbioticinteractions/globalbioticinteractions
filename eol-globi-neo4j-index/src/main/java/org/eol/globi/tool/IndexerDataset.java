@@ -66,7 +66,7 @@ public class IndexerDataset implements IndexerNeo4j {
             LOG.info("found dataset namespaces: {" + namespacelist + "}");
 
             DatasetImporterForRegistry importer = new DatasetImporterForRegistry(
-                    new ParserFactoryLocal(),
+                    new ParserFactoryLocal(IndexerDataset.class),
                     nodeFactory,
                     registry);
             importer.setDatasetFilter(x -> !DatasetUtil.isDeprecated(x));

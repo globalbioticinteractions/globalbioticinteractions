@@ -16,8 +16,10 @@ public class DatasetImporterForStronaIT extends GraphDBTestCase {
 
 
     @Test
-    public void importFirst200() throws NodeFactoryException, StudyImporterException {
-        DatasetImporter importer = new DatasetImporterForStrona(new ParserFactoryLocal(), nodeFactory);
+    public void importFirst200() throws StudyImporterException {
+        DatasetImporter importer = new DatasetImporterForStrona(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
         importer.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {

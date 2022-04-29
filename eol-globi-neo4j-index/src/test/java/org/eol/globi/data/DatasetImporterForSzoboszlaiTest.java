@@ -29,7 +29,9 @@ public class DatasetImporterForSzoboszlaiTest extends GraphDBTestCase {
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        DatasetImporterForSzoboszlai studyImporterForSzoboszlai = new DatasetImporterForSzoboszlai(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForSzoboszlai studyImporterForSzoboszlai = new DatasetImporterForSzoboszlai(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
         studyImporterForSzoboszlai.setDataset(getTestDataset());
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
         TreeMap<Integer, LatLng> localeMap = new TreeMap<Integer, LatLng>();

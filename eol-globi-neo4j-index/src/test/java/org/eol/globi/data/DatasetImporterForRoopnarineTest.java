@@ -82,7 +82,9 @@ public class DatasetImporterForRoopnarineTest extends GraphDBTestCase {
     @Ignore("roopnarine imports eats more memory that other study imports")
     @Test
     public void importAll() throws StudyImporterException {
-        DatasetImporterForRoopnarine studyImporterFor = new DatasetImporterForRoopnarine(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForRoopnarine studyImporterFor = new DatasetImporterForRoopnarine(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
 
         studyImporterFor.importStudy();
 
