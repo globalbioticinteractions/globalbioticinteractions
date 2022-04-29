@@ -16,6 +16,7 @@ import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
@@ -124,7 +125,7 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
 
     private DatasetImporterForSPIRE createImporter() {
         DatasetImporterForSPIRE studyImporterForSPIRE = new DatasetImporterForSPIRE(null, nodeFactory);
-        studyImporterForSPIRE.setDataset(new DatasetLocal(inStream -> inStream));
+        studyImporterForSPIRE.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
         studyImporterForSPIRE.setGeoNamesService(new GeoNamesService() {
 
             @Override

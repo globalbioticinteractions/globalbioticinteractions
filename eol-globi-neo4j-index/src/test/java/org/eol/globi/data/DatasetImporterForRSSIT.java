@@ -24,7 +24,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
 
-        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(inStream -> inStream), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
@@ -43,7 +43,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
 
-        final DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+        final DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
         DatasetWithCache datasetWithCache = new DatasetWithCache(dataset, new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
@@ -65,7 +65,7 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
     public void importEasyArthoprodCapture() throws StudyImporterException {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
         rssUrl.put("rss", "http://amnh.begoniasociety.org/dwc/rss.xml");

@@ -9,19 +9,26 @@ import java.net.URI;
 public class ResourceServiceLocal implements ResourceService {
 
     private final InputStreamFactory factory;
+    private final Class classContext;
 
     public ResourceServiceLocal() {
-        this(is -> is);
+        this(is -> is, ResourceServiceLocal.class);
     }
+
     public ResourceServiceLocal(InputStreamFactory factory) {
+        this(factory, ResourceServiceLocal.class);
+    }
+
+    public ResourceServiceLocal(InputStreamFactory factory, Class classContext) {
         this.factory = factory;
+        this.classContext = classContext;
     }
 
     @Override
     public InputStream retrieve(URI resourceName) throws IOException {
         return resourceName == null
                 ? null
-                : new ResourceServiceFactoryLocal(factory)
+                : new ResourceServiceFactoryLocal(factory, classContext)
                 .serviceForResource(resourceName)
                 .retrieve(resourceName);
     }

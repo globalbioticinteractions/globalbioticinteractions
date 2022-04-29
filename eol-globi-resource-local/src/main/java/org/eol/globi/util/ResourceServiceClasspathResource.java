@@ -10,9 +10,15 @@ import java.net.URI;
 public class ResourceServiceClasspathResource implements ResourceService {
 
     private final InputStreamFactory factory;
+    private final Class clazz;
 
     public ResourceServiceClasspathResource(InputStreamFactory factory) {
+        this(factory, ResourceServiceClasspathResource.class);
+    }
+
+    public ResourceServiceClasspathResource(InputStreamFactory factory, Class clazz) {
         this.factory = factory;
+        this.clazz = clazz;
     }
 
     @Override
@@ -21,7 +27,7 @@ public class ResourceServiceClasspathResource implements ResourceService {
         if (StringUtils.startsWith(classpathResource, "classpath:")) {
             classpathResource = StringUtils.replace(classpathResource, "classpath:", "");
         }
-        InputStream is = factory.create(ResourceUtil.class.getResourceAsStream(classpathResource));
+        InputStream is = factory.create(clazz.getResourceAsStream(classpathResource));
         if (is == null) {
             is = new ResourceServiceDataDir().retrieve(resourceName);
         }

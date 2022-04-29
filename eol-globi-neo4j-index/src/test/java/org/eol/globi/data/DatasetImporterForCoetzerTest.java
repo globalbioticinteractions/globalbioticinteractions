@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
@@ -19,7 +20,7 @@ public class DatasetImporterForCoetzerTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         DatasetImporterForCoetzer importer = new DatasetImporterForCoetzer(null, nodeFactory);
-        DatasetImpl dataset = new DatasetLocal(inStream -> inStream);
+        DatasetImpl dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
         JsonNode config = new ObjectMapper().readTree("{\"citation\": \"source citation\", \"resources\": {\"archive\": \"coetzer/CatalogOfAfrotropicalBees.zip\"}}");
         dataset.setConfig(config);
         importer.setDataset(dataset);

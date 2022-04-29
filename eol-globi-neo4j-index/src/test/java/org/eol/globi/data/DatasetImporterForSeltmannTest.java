@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
-import org.eol.globi.util.RelationshipListener;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +27,7 @@ public class DatasetImporterForSeltmannTest extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException, IOException {
         DatasetImporterForSeltmann importer = new DatasetImporterForSeltmann(null, nodeFactory);
-        Dataset dataset = new DatasetLocal(inStream -> inStream);
+        Dataset dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
         JsonNode config = new ObjectMapper().readTree("{\"citation\": \"some citation\", \"resources\": {\"archive\": \"seltmann/testArchive.zip\"}}");
         dataset.setConfig(config);
         importer.setDataset(dataset);

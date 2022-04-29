@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.util.ResourceServiceLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,7 +37,7 @@ public class DatasetImporterForHechingerIT extends GraphDBTestCase {
                 "    \"links\": \"hechinger/Metaweb_Links.txt\"\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetLocal(inStream -> inStream);
+        DatasetImpl dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
         dataset.setConfig(config);
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         DatasetImporterForHechinger importer = new DatasetImporterForHechinger(parserFactory, nodeFactory);

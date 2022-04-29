@@ -9,8 +9,8 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
@@ -315,7 +315,8 @@ public class DatasetImporterForMetaTableTest {
         assertThat(columnNames.size(), is(86));
 
         DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, DatasetImporterForMetaTableTest.class));
 
         JsonNode phibaseConfig = new ObjectMapper().readTree("{\n" +
                 "  \"@context\": [\"http://www.w3.org/ns/csvw\", {\"@language\": \"en\"}],\n" +
@@ -348,7 +349,8 @@ public class DatasetImporterForMetaTableTest {
     @Test
     public void explicitNullValueForCatalogNumberUMMZI() throws IOException, StudyImporterException {
         DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream) {
+        DatasetLocal dataset = new DatasetLocal(
+                new ResourceServiceLocal(inStream -> inStream, DatasetImporterForMetaTableTest.class)) {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 Map<URI, String> resourceMap = new HashMap<URI, String>() {{
@@ -392,7 +394,9 @@ public class DatasetImporterForMetaTableTest {
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+        DatasetLocal dataset = new DatasetLocal(
+                new ResourceServiceLocal(inStream -> inStream, this.getClass())
+        );
 
         dataset.setConfig(config);
         importer.setDataset(dataset);

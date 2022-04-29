@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class IndexerDataset implements IndexerNeo4j {
                     nodeFactory,
                     registry);
             importer.setDatasetFilter(x -> !DatasetUtil.isDeprecated(x));
-            importer.setDataset(new DatasetLocal(inStream -> inStream));
+            importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
             importer.setLogger(new NullImportLogger());
             importer.importStudy();
 

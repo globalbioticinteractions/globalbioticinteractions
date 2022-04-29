@@ -4,6 +4,7 @@ import org.apache.commons.collections4.list.TreeList;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class DatasetImporterForGlobalWebDbTest {
     public void dietMatrix() throws StudyImporterException {
         List<String> matrices = new ArrayList<>();
         DatasetImporterForGlobalWebDb importer = new DatasetImporterForGlobalWebDb(null, null);
-        importer.setDataset(new DatasetLocal(inStream -> inStream));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
         importer
                 .importDietMatrices(URI.create("classpath:/org/eol/globi/data/globalwebdb-test.zip"), matrices::add);
         assertThat(matrices.size(), is(10));
@@ -40,7 +41,7 @@ public class DatasetImporterForGlobalWebDbTest {
     public void dietMatrices() throws StudyImporterException {
         final AtomicInteger count = new AtomicInteger();
         DatasetImporterForGlobalWebDb importer = new DatasetImporterForGlobalWebDb(null, null);
-        importer.setDataset(new DatasetLocal(inStream -> inStream));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
         importer
                 .importDietMatrices(URI.create("classpath:/org/eol/globi/data/globalwebdb-test.zip"), matrixString -> {
                     try {

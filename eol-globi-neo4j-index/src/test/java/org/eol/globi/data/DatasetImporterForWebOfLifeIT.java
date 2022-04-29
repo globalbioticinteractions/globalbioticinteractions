@@ -5,8 +5,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceUtil;
-import org.globalbioticinteractions.dataset.CitationUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,7 +16,6 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetImporterForWebOfLifeIT extends GraphDBTestCase {
@@ -25,7 +23,7 @@ public class DatasetImporterForWebOfLifeIT extends GraphDBTestCase {
     @Test
     public void importSome() throws StudyImporterException {
         DatasetImporterForWebOfLife importer = new DatasetImporterForWebOfLife(null, nodeFactory);
-        importer.setDataset(new DatasetLocal(inStream -> inStream));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
         importer.importNetworks(URI.create("weboflife/web-of-life_2016-01-15_192434.zip"));
         resolveNames();
 

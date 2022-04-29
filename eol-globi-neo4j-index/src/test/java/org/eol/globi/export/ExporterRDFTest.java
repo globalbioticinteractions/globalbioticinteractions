@@ -16,20 +16,17 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.GeoNamesService;
-import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -52,7 +49,7 @@ public class ExporterRDFTest extends GraphDBTestCase {
     public void exportSPIRE() throws IOException, StudyImporterException {
         DatasetImporterForSPIRE importer = new DatasetImporterForSPIRE(null, nodeFactory);
         importer.setFilter(recordNumber -> recordNumber < 5);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
         importer.setDataset(dataset);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override

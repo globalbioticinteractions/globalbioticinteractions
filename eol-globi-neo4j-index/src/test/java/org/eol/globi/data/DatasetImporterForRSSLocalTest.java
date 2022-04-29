@@ -14,6 +14,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,7 +90,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
 
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream);
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
 
 
         importDwCAViaRSS(importer, dataset, resource);
@@ -99,7 +100,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
     public void importLocalMCZArchive() throws StudyImporterException, IOException {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal(inStream -> inStream) {
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)) {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 if (resourceName.toString().endsWith("mapping.csv")) {

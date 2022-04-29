@@ -4,6 +4,7 @@ import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 import org.eol.globi.util.ResourceServiceHTTP;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 import org.eol.globi.geo.LatLng;
 
@@ -30,7 +31,7 @@ public class DatasetImporterForRaymondIT extends GraphDBTestCase {
             }
 
         });
-        importer.setDataset(new DatasetLocal(inStream -> inStream));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
         importStudy(importer);
 
         importer.setGeoNamesService(new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)));
