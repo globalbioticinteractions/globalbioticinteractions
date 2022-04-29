@@ -4,6 +4,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.eol.globi.data.DatasetImporterForSPIRETest;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.DatasetImporterForSPIRE;
@@ -49,7 +50,8 @@ public class ExporterRDFTest extends GraphDBTestCase {
     public void exportSPIRE() throws IOException, StudyImporterException {
         DatasetImporterForSPIRE importer = new DatasetImporterForSPIRE(null, nodeFactory);
         importer.setFilter(recordNumber -> recordNumber < 5);
-        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
+        DatasetLocal dataset =
+                new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, DatasetImporterForSPIRE.class));
         importer.setDataset(dataset);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override
