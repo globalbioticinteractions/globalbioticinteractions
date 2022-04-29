@@ -129,7 +129,10 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
 
         LabeledCSVParser labeledCSVParser = createParser(RELATIONS_STRING);
 
-        DatasetImporterForBioInfo importer = new DatasetImporterForBioInfo(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForBioInfo importer = new DatasetImporterForBioInfo(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
+
         importer.createRelations(labeledCSVParser, new TreeMap<String, String>() {{
             put("60527", "citation A");
             put("60536", "citation B");

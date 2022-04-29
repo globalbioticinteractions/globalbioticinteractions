@@ -29,7 +29,9 @@ public class DatasetImporterForBarnesIT extends GraphDBTestCase {
 
     @Test
     public void importOnceInAWhile() throws StudyImporterException {
-        DatasetImporterForBarnes studyImporterForBarnes = new DatasetImporterForBarnes(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForBarnes studyImporterForBarnes = new DatasetImporterForBarnes(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
         studyImporterForBarnes.setFilter(new ImportFilter() {
             @Override
             public boolean shouldImportRecord(Long recordNumber) {

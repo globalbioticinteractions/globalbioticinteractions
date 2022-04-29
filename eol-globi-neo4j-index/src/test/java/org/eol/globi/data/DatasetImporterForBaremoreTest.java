@@ -51,7 +51,9 @@ public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        DatasetImporterForBaremore studyImporter = new DatasetImporterForBaremore(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForBaremore studyImporter = new DatasetImporterForBaremore(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
 
         importStudy(studyImporter);
 

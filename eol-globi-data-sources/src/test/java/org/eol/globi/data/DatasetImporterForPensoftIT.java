@@ -39,7 +39,7 @@ public class DatasetImporterForPensoftIT {
 
     @Test
     public void importStudy() throws StudyImporterException, URISyntaxException {
-        final DatasetImporterForPensoft importer = new DatasetImporterForPensoft(new ParserFactoryLocal(), null);
+        final DatasetImporterForPensoft importer = new DatasetImporterForPensoft(new ParserFactoryLocal(getClass()), null);
         final Dataset dataset = new DatasetWithResourceMapping("some/name", URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in));
         final ObjectNode objectNode = new ObjectMapper().createObjectNode();
         final URL resource = getClass().getResource("pensoft/annotated-tables-first-two.json");

@@ -19,7 +19,7 @@ public class DatasetImporterForBellTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        DatasetImporter importer = new DatasetImporterForBell(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporter importer = new DatasetImporterForBell(new ParserFactoryLocal(getClass()), nodeFactory);
         importStudy(importer);
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), is(1));

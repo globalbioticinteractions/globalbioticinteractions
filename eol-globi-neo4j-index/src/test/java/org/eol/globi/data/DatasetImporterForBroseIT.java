@@ -28,7 +28,9 @@ public class DatasetImporterForBroseIT extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        DatasetImporterForBrose studyImporterForBrose = new DatasetImporterForBrose(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForBrose studyImporterForBrose = new DatasetImporterForBrose(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
         studyImporterForBrose.importStudy();
 
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());

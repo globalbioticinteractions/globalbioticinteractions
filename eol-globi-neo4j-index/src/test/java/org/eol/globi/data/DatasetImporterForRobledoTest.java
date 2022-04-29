@@ -21,7 +21,9 @@ public class DatasetImporterForRobledoTest extends GraphDBTestCase {
 
     @Test
     public void createAndPopulateStudy() throws StudyImporterException {
-        DatasetImporterForRobledo importer = new DatasetImporterForRobledo(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForRobledo importer = new DatasetImporterForRobledo(
+                new ParserFactoryLocal(getClass()), nodeFactory
+        );
 
         importStudy(importer);
         StudyNode study = getStudySingleton(getGraphDb());

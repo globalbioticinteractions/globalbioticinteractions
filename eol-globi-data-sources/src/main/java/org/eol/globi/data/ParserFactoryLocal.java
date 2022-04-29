@@ -10,7 +10,7 @@ public class ParserFactoryLocal extends ParserFactoryForDataset {
         super(dataset);
     }
 
-    public ParserFactoryLocal() {
+    private ParserFactoryLocal() {
         this(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
     }
     public ParserFactoryLocal(Class classContext) {

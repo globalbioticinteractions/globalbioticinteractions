@@ -40,7 +40,7 @@ public class ParserFactoryLocalTest {
     public void parseCompressedDataSet() throws IOException {
         LabeledCSVParser labeledCSVParser = null;
         try {
-            labeledCSVParser = new ParserFactoryLocal().createParser(DatasetImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
+            labeledCSVParser = new ParserFactoryLocal(getClass()).createParser(DatasetImporterForSimons.MISSISSIPPI_ALABAMA_DATA_SOURCE, "UTF-8");
             labeledCSVParser.getLine();
             assertFirstLine(labeledCSVParser);
             labeledCSVParser.getLine();

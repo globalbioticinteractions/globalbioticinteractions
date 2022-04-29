@@ -25,7 +25,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 public class DatasetImporterForCookTest extends GraphDBTestCase {
 
     @Test
-    public void importFirstFewLines() throws IOException, NodeFactoryException, StudyImporterException {
+    public void importFirstFewLines() throws StudyImporterException {
         String firstFiveLines = "\"Date\",\"Individual\",\"Fish Length\",\"Infected\",\"Iso 1\",\"Iso 2\",\"Iso 3\",\"Iso 4 \",\"Iso 5\",\"Iso #\",,\n" +
                 "8/10/2010,22,15.6,1,\"NA\",\"NA\",0,0,0,2,,\"Notes: All fish collected were Atlantic Croaker (Micropogonias undulatus) and measured in total length (cm). Isopods collected were Cymothoa excisa. For the Infected column 1= infected and 0= not infected. Numbers for the isopods are total length in cm and the Iso# represents the number of isopods found per fish. \"\n" +
                 "8/10/2010,1,14.7,1,1.6,0.67,0,0,0,2,,\n" +
@@ -33,7 +33,9 @@ public class DatasetImporterForCookTest extends GraphDBTestCase {
                 "8/10/2010,2,13.2,1,1.42,0.71,0.52,0.45,0,4,,\n";
 
 
-        DatasetImporterForCook importer = new DatasetImporterForCook(new TestParserFactory(firstFiveLines), nodeFactory);
+        DatasetImporterForCook importer = new DatasetImporterForCook(
+                new TestParserFactory(firstFiveLines), nodeFactory
+        );
         importStudy(importer);
         StudyNode study = getStudySingleton(getGraphDb());
 
@@ -73,7 +75,7 @@ public class DatasetImporterForCookTest extends GraphDBTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {
-        DatasetImporterForCook importer = new DatasetImporterForCook(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForCook importer = new DatasetImporterForCook(new ParserFactoryLocal(getClass()), nodeFactory);
         importStudy(importer);
         StudyNode study = getStudySingleton(getGraphDb());
 
