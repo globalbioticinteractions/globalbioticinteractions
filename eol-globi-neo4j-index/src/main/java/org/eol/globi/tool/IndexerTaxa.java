@@ -1,18 +1,13 @@
 package org.eol.globi.tool;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.opentree.OpenTreeTaxonIndex;
 import org.eol.globi.taxon.ResolvingTaxonIndexNoTx;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +46,6 @@ public class IndexerTaxa implements IndexerNeo4j {
 
             LOG.info("adding same and similar terms for resolved taxa...");
             List<IndexerNeo4j> linkers = new ArrayList<>();
-            //appendOpenTreeTaxonLinker(linkers);
 
             for (IndexerNeo4j linker : linkers) {
                 new IndexerTimed(linker)
