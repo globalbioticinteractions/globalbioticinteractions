@@ -8,15 +8,15 @@ import java.net.URI;
 public class ResourceServiceFactoryLocal implements ResourceServiceFactory {
 
     private final InputStreamFactory factory;
-    private final Class clazz;
+    private final Class classContext;
 
     public ResourceServiceFactoryLocal(InputStreamFactory factory) {
         this(factory, ResourceServiceFactoryLocal.class);
     }
 
-    public ResourceServiceFactoryLocal(InputStreamFactory factory, Class clazz) {
+    public ResourceServiceFactoryLocal(InputStreamFactory factory, Class classContext) {
         this.factory = factory;
-        this.clazz = clazz;
+        this.classContext = classContext;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ResourceServiceFactoryLocal implements ResourceServiceFactory {
         } else if (StringUtils.startsWith(resource.toString(), "jar:file:/")) {
             resourceService = new ResourceServiceLocalJarResource(factory);
         } else {
-            resourceService = new ResourceServiceClasspathResource(factory, clazz);
+            resourceService = new ResourceServiceClasspathResource(factory, classContext);
         }
 
         return resourceService;
