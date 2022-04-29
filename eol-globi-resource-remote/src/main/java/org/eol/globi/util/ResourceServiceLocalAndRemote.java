@@ -34,9 +34,6 @@ public class ResourceServiceLocalAndRemote implements ResourceService {
             throw new IOException("failed to open resource release to [" + resource.toString() + "]");
         }
 
-        if (StringUtils.endsWith(resource.toString(), ".gz")) {
-            is = new GZIPInputStream(is);
-        }
         return is;
     }
 }

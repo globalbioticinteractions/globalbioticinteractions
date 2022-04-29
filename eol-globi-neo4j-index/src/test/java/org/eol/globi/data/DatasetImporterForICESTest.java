@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForICESTest extends GraphDBTestCase {
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
-        DatasetImporterForICES studyImporterFor = new DatasetImporterForICES(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporterForICES studyImporterFor = new DatasetImporterForICES(new ParserFactoryLocal(getClass()), nodeFactory);
         studyImporterFor.setFilter(recordNumber -> recordNumber % 1000 == 0);
         studyImporterFor.importStudy();
 

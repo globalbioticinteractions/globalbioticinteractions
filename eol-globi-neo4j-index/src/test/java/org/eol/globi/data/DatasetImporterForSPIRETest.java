@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.hasItem;
 public class DatasetImporterForSPIRETest extends GraphDBTestCase {
 
     @Test
-    public void parseIllegalTitle() throws StudyImporterException {
+    public void parseIllegalTitle() {
         TreeMap<String, String> properties = new TreeMap<String, String>();
         DatasetImporterForSPIRE.parseTitlesAndAuthors("this is really not supported, and is unformatted", properties);
         assertThat(properties.get(StudyConstant.TITLE), is("this is really not su...e9154c16f07ad2470849d90a8a0b9dab"));
@@ -48,7 +48,7 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
     }
 
     @Test
-    public void parseAnotherYetYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
+    public void parseAnotherYetYetOtherTitlesAndAuthorsFormat() {
         Map<String, String> properties = new TreeMap<String, String>();
         String titlesAndAuthors = "G. A. Knox, Antarctic marine ecosystems. In: Antarctic Ecology, M. W. Holdgate, Ed. (Academic Press, New York, 1970) 1:69-96, from p. 87.";
         DatasetImporterForSPIRE.parseTitlesAndAuthors(titlesAndAuthors, properties);
@@ -57,7 +57,7 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
     }
 
     @Test
-    public void parseAnotherYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
+    public void parseAnotherYetOtherTitlesAndAuthorsFormat() {
         Map<String, String> properties = new TreeMap<String, String>();
         DatasetImporterForSPIRE.parseTitlesAndAuthors("B. A. Hawkins and R. D. Goeden, 1984.  Organization of a parasitoid community associated with a complex of galls on Atriplex spp. in southern California.  Ecol. Entomol. 9:271-292, from p. 274.", properties);
         assertThat(properties.get(StudyConstant.TITLE), is("Hawkins and Goeden, 1...fcebc21f82937fa4ab9f77a0ecbd62e3"));
@@ -65,7 +65,7 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
     }
 
     @Test
-    public void mergeIdenticalReferences() throws StudyImporterException {
+    public void mergeIdenticalReferences() {
         // see https://github.com/danielabar/globi-proto/issues/59#issuecomment-92150679
         Map<String, String> properties = new TreeMap<String, String>();
         DatasetImporterForSPIRE.parseTitlesAndAuthors("G. W. Minshall, Role of allochthonous detritus in the trophic structure\n" +
@@ -76,7 +76,7 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
     }
 
     @Test
-    public void parseYetOtherTitlesAndAuthorsFormat() throws StudyImporterException {
+    public void parseYetOtherTitlesAndAuthorsFormat() {
         Map<String, String> properties = new TreeMap<String, String>();
         DatasetImporterForSPIRE.parseTitlesAndAuthors("Townsend, CR, Thompson, RM, McIntosh, AR, Kilroy, C, Edwards, ED, Scarsbrook, MR. 1998.  Disturbance, resource supply and food-web architecture in streams.  Ecology Letters 1:200-209.", properties);
         assertThat(properties.get(StudyConstant.TITLE), is("Townsend, CR, Thompso...db61dcc043a135ac2fa8b440e11165e3"));
@@ -125,7 +125,7 @@ public class DatasetImporterForSPIRETest extends GraphDBTestCase {
 
     private DatasetImporterForSPIRE createImporter() {
         DatasetImporterForSPIRE studyImporterForSPIRE = new DatasetImporterForSPIRE(null, nodeFactory);
-        studyImporterForSPIRE.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
+        studyImporterForSPIRE.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, getClass())));
         studyImporterForSPIRE.setGeoNamesService(new GeoNamesService() {
 
             @Override

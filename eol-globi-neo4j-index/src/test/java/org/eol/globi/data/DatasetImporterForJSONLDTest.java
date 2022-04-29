@@ -2,6 +2,8 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.ResourceServiceClasspathResource;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
@@ -21,7 +23,11 @@ public class DatasetImporterForJSONLDTest extends GraphDBTestCase {
     @Test
     public void importStatic() throws StudyImporterException, URISyntaxException {
         DatasetImporter importer = new DatasetImporterForJSONLD(null, nodeFactory);
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping(
+                "some/namespace",
+                URI.create("http://example.com"),
+                new ResourceServiceLocal(inStream -> inStream, this.getClass())
+        );
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld"));
         importer.setDataset(dataset);
 

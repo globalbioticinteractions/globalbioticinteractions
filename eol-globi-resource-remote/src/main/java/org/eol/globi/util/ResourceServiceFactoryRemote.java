@@ -21,7 +21,9 @@ public class ResourceServiceFactoryRemote implements ResourceServiceFactory {
         } else if (StringUtils.startsWith(resource.getScheme(), "ftp")) {
             service = new ResourceServiceFTP(factory);
         }
-        return service;
+        return service == null
+                ? null
+                : new ResourceServiceGzipAware(service);
     }
 
     private boolean isHttpURI(URI descriptor) {

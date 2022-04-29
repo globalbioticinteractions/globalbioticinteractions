@@ -56,7 +56,8 @@ public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
 
     @Test
     public void importAbout600Records() throws StudyImporterException {
-        DatasetImporter importer = new StudyImporterTestFactory(nodeFactory).instantiateImporter((Class) DatasetImporterForBioInfo.class);
+        DatasetImporter importer = new StudyImporterTestFactory(nodeFactory, getClass())
+                .instantiateImporter(DatasetImporterForBioInfo.class);
         final List<String> msgs = new ArrayList<String>();
         importer.setLogger(new ImportLogger() {
             @Override

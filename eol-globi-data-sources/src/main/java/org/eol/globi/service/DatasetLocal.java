@@ -7,7 +7,7 @@ import java.net.URI;
 
 public class DatasetLocal extends DatasetImpl {
 
-    public DatasetLocal(ResourceServiceLocal service) {
+    public DatasetLocal(ResourceService service) {
         super("jhpoelen/eol-globidata", service, URI.create("classpath:/org/eol/globi/data"));
     }
 

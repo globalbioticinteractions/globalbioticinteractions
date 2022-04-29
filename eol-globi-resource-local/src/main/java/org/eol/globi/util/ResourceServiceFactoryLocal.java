@@ -21,7 +21,7 @@ public class ResourceServiceFactoryLocal implements ResourceServiceFactory {
 
     @Override
     public ResourceService serviceForResource(URI resource) {
-        ResourceService resourceService = null;
+        ResourceService resourceService;
         if (ResourceUtil.isFileURI(resource)) {
             resourceService = new ResourceServiceLocalFile(factory);
         } else if (StringUtils.startsWith(resource.toString(), "jar:file:/")) {
@@ -30,6 +30,7 @@ public class ResourceServiceFactoryLocal implements ResourceServiceFactory {
             resourceService = new ResourceServiceClasspathResource(factory, classContext);
         }
 
-        return resourceService;
+        return new ResourceServiceGzipAware(resourceService);
     }
+
 }

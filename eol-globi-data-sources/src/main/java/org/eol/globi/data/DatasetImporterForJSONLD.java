@@ -49,7 +49,7 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
         }
 
         Query query;
-        try (InputStream resource = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)).retrieve(URI.create("find-jsonld-interactions.rq"))) {
+        try (InputStream resource = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, this.getClass())).retrieve(URI.create("find-jsonld-interactions.rq"))) {
             query = QueryFactory.create(IOUtils.toString(resource, CharsetConstant.UTF8));
         } catch (Throwable e) {
             throw new StudyImporterException("failed to find sparql query", e);

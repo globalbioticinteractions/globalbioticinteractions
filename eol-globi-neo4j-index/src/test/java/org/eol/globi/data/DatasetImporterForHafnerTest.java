@@ -8,9 +8,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForHafnerTest extends GraphDBTestCase {
 
     @Test
-    public void importAll() throws StudyImporterException, NodeFactoryException {
+    public void importAll() throws StudyImporterException {
 
-        DatasetImporter importer = new DatasetImporterForHafner(new ParserFactoryLocal(), nodeFactory);
+        DatasetImporter importer = new DatasetImporterForHafner(new ParserFactoryLocal(getClass()), nodeFactory);
         importStudy(importer);
 
 

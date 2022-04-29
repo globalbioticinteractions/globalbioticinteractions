@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
 
     @Test
-    public void importLine() throws StudyImporterException, NodeFactoryException {
+    public void importLine() throws StudyImporterException {
         String csvContent = "\"Shark Id\",\"Date\",\"Survey type\",\"Shark TL\",\"Gape length (cm)\",\"Mat State\",\"Prey code\",\"Common name\",\"Prey No\",\"No in stomach\",\"SL (mm)\",\"FL\",\"TL\",\"VC\",\"Length\",\"Height\",\"Other measurement\",\"Measurement type\",\"Weight (g)\",\"% Dig\",\"Notes\"\n" +
                 "13,2/7/2003,\"Dependent\",68,,\"Juv\",\"ATCR\",\"Atlantic croaker\",1,1,,,,,,,,,2.81,90,\"1 pr eyes, otos.  Weighed with otos\"\n" +
                 "131,3/14/2003,\"Dependent\",68,,\"Juv\",\"ATCR\",\"Atlantic croaker\",4,1,,,,,,,,,8.25,90,\"Bones, scales, vert in pieces. 1 pair otos\"\n" +
@@ -32,7 +32,10 @@ public class DatasetImporterForBaremoreTest extends GraphDBTestCase {
                 "402,12/16/2003,\"Dependent\",97,,\"Mat\",\"ATCR\",\"Atlantic croaker\",1,1,,,,120,,,,,51.88,60,\n" +
                 "402,12/16/2003,\"Dependent\",97,,\"Mat\",\"ATCR\",\"Atlantic croaker\",2,1,,,,,,,,,6.28,90,\"W/ otos\"";
 
-        DatasetImporterForBaremore studyImporter = new DatasetImporterForBaremore(new TestParserFactory(csvContent), nodeFactory);
+        DatasetImporterForBaremore studyImporter = new DatasetImporterForBaremore(
+                new TestParserFactory(csvContent),
+                nodeFactory
+        );
 
         importStudy(studyImporter);
 
