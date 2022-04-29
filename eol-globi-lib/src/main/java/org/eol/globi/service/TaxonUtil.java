@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.data.CharsetConstant;
@@ -529,7 +530,7 @@ public class TaxonUtil {
                 .stream()
                 .map(x -> Pair.of(x, getRankValue(properties, x)))
                 .filter(x -> isNotBlank(x.getValue()))
-                .map(x -> lowerCase(replacePattern(replace(x.getKey(), keyPrefix, ""), NAME_SUFFIX + "$", "")));
+                .map(x -> lowerCase(RegExUtils.replacePattern(replace(x.getKey(), keyPrefix, ""), NAME_SUFFIX + "$", "")));
 
         String species = trim(generateSpeciesName(properties, genusRank, specificEpithetRank, subspecificEpithetRank, speciesRank));
         Stream<String> ranksWithSpecies = isBlank(species)

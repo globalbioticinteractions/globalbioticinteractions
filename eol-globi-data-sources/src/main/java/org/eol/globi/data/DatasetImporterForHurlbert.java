@@ -5,6 +5,7 @@ import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -251,7 +252,7 @@ public class DatasetImporterForHurlbert extends NodeBasedImporter {
         // Observation_Month of 6.3 versus 6.7 is the only way that these sets of records are distinguished
         // by some of our summary functions. [...]
 
-        return StringUtils.replacePattern(StringUtils.trim(month), "\\.[0-9]+$", "");
+        return RegExUtils.replacePattern(StringUtils.trim(month), "\\.[0-9]+$", "");
     }
 
     private static boolean notBlankOrNA(String str) {

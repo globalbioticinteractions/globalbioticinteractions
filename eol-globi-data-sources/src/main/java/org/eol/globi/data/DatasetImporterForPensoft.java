@@ -4,6 +4,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -222,7 +223,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
         JsonNode table_id = biodivTable.get("table_id");
         String tableUUID = null;
         if (table_id != null && table_id.isTextual()) {
-            tableUUID = StringUtils.replacePattern(table_id.asText(), "(<)|(>)|(http://openbiodiv.net/)", "");
+            tableUUID = RegExUtils.replacePattern(table_id.asText(), "(<)|(>)|(http://openbiodiv.net/)", "");
         }
         return tableUUID;
     }
@@ -280,7 +281,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
     }
 
     static String findCitationById(String articleId, SparqlClient openBiodivClient) throws IOException {
-        String articleURI = StringUtils.replacePattern(articleId, "[<>]", "");
+        String articleURI = RegExUtils.replacePattern(articleId, "[<>]", "");
         String bindStatement = "    BIND(<" + articleURI + "> AS ?article). \n";
         return findCitation(openBiodivClient, bindStatement);
     }
@@ -335,7 +336,7 @@ public class DatasetImporterForPensoft extends DatasetImporterWithListener {
 
     private static Map<String, String> parseTableReferences(final JsonNode biodivTable, SparqlClient sparqlClient) throws IOException {
         final String tableURI = biodivTable.has("table_id") ? biodivTable.get("table_id").asText() : "";
-        final String referenceUrl = StringUtils.replaceAll(tableURI, "[<>]", "");
+        final String referenceUrl = RegExUtils.replaceAll(tableURI, "[<>]", "");
         final String doiString = biodivTable.has("article_doi") ? biodivTable.get("article_doi").asText() : "";
         final String articleURI = biodivTable.has("article_id") ? biodivTable.get("article_id").asText() : "";
         if (StringUtils.isBlank(articleURI)) {

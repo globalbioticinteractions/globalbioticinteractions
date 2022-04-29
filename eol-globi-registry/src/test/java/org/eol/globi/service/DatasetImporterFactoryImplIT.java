@@ -3,18 +3,17 @@ package org.eol.globi.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.data.BaseDatasetImporter;
 import org.eol.globi.data.DatasetImporter;
-import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.DatasetImporterForRSS;
-import org.eol.globi.data.DatasetImporterForCoetzer;
 import org.eol.globi.data.DatasetImporterForGoMexSI2;
 import org.eol.globi.data.DatasetImporterForHafner;
 import org.eol.globi.data.DatasetImporterForHurlbert;
 import org.eol.globi.data.DatasetImporterForJSONLD;
 import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.DatasetImporterForPlanque;
+import org.eol.globi.data.DatasetImporterForRSS;
 import org.eol.globi.data.DatasetImporterForSzoboszlai;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.DatasetImporterForWood;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -23,8 +22,8 @@ import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetFactory;
-import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
+import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryGitHubArchive;
 import org.globalbioticinteractions.dataset.DatasetRegistryGitHubRemote;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
@@ -35,13 +34,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 
 public class DatasetImporterFactoryImplIT {
 
@@ -113,18 +111,6 @@ public class DatasetImporterFactoryImplIT {
         assertThat(importer, is(instanceOf(DatasetImporterForMetaTable.class)));
         assertThat(((DatasetImporterForMetaTable) importer).getConfig(), is(notNullValue()));
         assertThat(((DatasetImporterForMetaTable) importer).getBaseUrl(), startsWith("https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/"));
-    }
-
-    @Test
-    public void createAfrotropicalBees() throws StudyImporterException, DatasetRegistryException, IOException {
-        final DatasetRegistryGitHubRemote datasetFinderGitHubRemote = new DatasetRegistryGitHubRemote(inStream -> inStream);
-        String repo = "globalbioticinteractions/Catalogue-of-Afrotropical-Bees";
-        DatasetImporter importer = importerFor(datasetFinderGitHubRemote, repo);
-        assertThat(importer, is(notNullValue()));
-        assertThat(importer, is(instanceOf(DatasetImporterForCoetzer.class)));
-        assertThat(((DatasetImporterForCoetzer) importer).getDataset(), is(notNullValue()));
-        assertThat(((DatasetImporterForCoetzer) importer).getDataset().retrieve(URI.create("archive")), is(notNullValue()));
-
     }
 
     public DatasetImporter importerFor(DatasetRegistryGitHubRemote datasetFinderGitHubRemote, String repo) throws StudyImporterException, DatasetRegistryException {
