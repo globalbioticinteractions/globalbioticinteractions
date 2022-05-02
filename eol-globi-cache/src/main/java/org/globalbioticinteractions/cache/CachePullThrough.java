@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 public class CachePullThrough implements Cache {
-    private final static Logger LOG = LoggerFactory.getLogger(CachePullThrough.class);
     private final String namespace;
     private final String cachePath;
     private ResourceService resourceServiceRemote;
