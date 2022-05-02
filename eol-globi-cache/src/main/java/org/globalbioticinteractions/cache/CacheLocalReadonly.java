@@ -3,7 +3,6 @@ package org.globalbioticinteractions.cache;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +24,12 @@ public class CacheLocalReadonly implements Cache {
     private final String cachePath;
     private ResourceService resourceServiceLocal;
 
-    public CacheLocalReadonly(String namespace, String cachePath, ResourceService resourceServiceLocal) {
+    public CacheLocalReadonly(String namespace,
+                              String cachePath,
+                              ResourceService resourceService) {
         this.namespace = namespace;
         this.cachePath = cachePath;
-        this.resourceServiceLocal = resourceServiceLocal;
+        this.resourceServiceLocal = resourceService;
     }
 
     static URI getRemoteJarURIIfNeeded(URI remoteArchiveURI, URI localResourceURI) {

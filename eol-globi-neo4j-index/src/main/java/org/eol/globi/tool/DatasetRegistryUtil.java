@@ -15,6 +15,6 @@ public class DatasetRegistryUtil {
                 cacheDir,
                 resourceServiceLocal
         );
-        return new DatasetRegistryLocal(cacheDir, cacheFactory);
+        return new DatasetRegistryLocal(cacheDir, cacheFactory, new ResourceServiceLocal(inStream -> inStream));
     }
 }

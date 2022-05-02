@@ -38,7 +38,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)), new ResourceServiceLocal(inStream -> inStream));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)), new ResourceServiceLocal(inStream -> inStream));
 
 
         Dataset actual = registry.datasetFor("local");
@@ -97,7 +97,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)), new ResourceServiceLocal(inStream -> inStream));
 
         Collection<String> availableNamespaces = registry.findNamespaces();
         assertThat(availableNamespaces, not(contains("local")));

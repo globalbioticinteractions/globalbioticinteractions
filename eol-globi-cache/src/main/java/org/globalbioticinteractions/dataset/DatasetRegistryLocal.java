@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.CacheFactory;
@@ -25,16 +26,14 @@ public class DatasetRegistryLocal implements DatasetRegistry {
     private final static Logger LOG = LoggerFactory.getLogger(DatasetRegistryLocal.class);
     private final String cacheDir;
     private final CacheFactory cacheFactory;
-    private final InputStreamFactory inputStreamFactory;
+    private ResourceService resourceService;
 
-    public DatasetRegistryLocal(String cacheDir, CacheFactory cacheFactory) {
-        this(cacheDir, cacheFactory, inStream -> inStream);
-    }
-
-    public DatasetRegistryLocal(String cacheDir, CacheFactory cacheFactory, InputStreamFactory factory) {
+    public DatasetRegistryLocal(String cacheDir,
+                                CacheFactory cacheFactory,
+                                ResourceService resourceService) {
         this.cacheDir = cacheDir;
         this.cacheFactory = cacheFactory;
-        this.inputStreamFactory = factory;
+        this.resourceService = resourceService;
     }
 
     @Override
@@ -112,7 +111,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
             @Override
             public Dataset datasetFor(String s) throws DatasetRegistryException {
-                Dataset dataset = new DatasetWithResourceMapping(namespace, sourceURI, new ResourceServiceLocal(getInputStreamFactory()));
+                Dataset dataset = new DatasetWithResourceMapping(namespace, sourceURI, resourceService);
                 return new DatasetWithCache(dataset,
                         cacheFactory.cacheFor(dataset));
             }
@@ -124,10 +123,5 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
         return dataset;
     }
-
-    private InputStreamFactory getInputStreamFactory() {
-        return inputStreamFactory;
-    }
-
 
 }
