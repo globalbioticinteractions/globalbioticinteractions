@@ -24,7 +24,11 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
 
-        DatasetWithCache datasetWithCache = new DatasetWithCache(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)), new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+        DatasetWithCache datasetWithCache = new DatasetWithCache(
+                new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)),
+                new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(),
+                        new ResourceServiceLocalAndRemote(inStream -> inStream))
+        );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
@@ -44,7 +48,14 @@ public class DatasetImporterForRSSIT extends GraphDBTestCase {
                 .instantiateImporter(DatasetImporterForRSS.class);
 
         final DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
-        DatasetWithCache datasetWithCache = new DatasetWithCache(dataset, new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+        DatasetWithCache datasetWithCache = new DatasetWithCache(
+                dataset,
+                new CachePullThrough(
+                        "testing",
+                        tempFile.getParentFile().getAbsolutePath(),
+                        new ResourceServiceLocalAndRemote(inStream -> inStream)
+                )
+        );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 

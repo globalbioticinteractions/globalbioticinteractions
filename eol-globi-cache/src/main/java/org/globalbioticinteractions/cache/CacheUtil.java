@@ -24,7 +24,7 @@ public final class CacheUtil {
     public static final Logger LOG = LoggerFactory.getLogger(CacheUtil.class);
 
     public static Cache cacheFor(String namespace, String cacheDir, ResourceService resourceServiceRemote, ResourceService resourceServiceLocal) {
-        Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote, resourceServiceLocal);
+        Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote);
         CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, resourceServiceLocal);
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
