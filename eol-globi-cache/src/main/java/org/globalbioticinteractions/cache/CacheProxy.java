@@ -27,11 +27,22 @@ public class CacheProxy implements Cache {
     @Override
     public InputStream retrieve(URI resourceURI) throws IOException {
         InputStream is = null;
+        IOException thrown = null;
         for (Cache cache : caches) {
-            is = is == null
-                    ? cache.retrieve(resourceURI)
-                    : is;
+            try {
+                is = cache.retrieve(resourceURI);
+            } catch (IOException ex) {
+                thrown = ex;
+            }
+            if (is != null) {
+                break;
+            }
         }
+
+        if (is == null && thrown != null) {
+            throw thrown;
+        }
+
         return is;
     }
 }

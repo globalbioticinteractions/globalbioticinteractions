@@ -16,10 +16,18 @@ public class ResourceServiceRemote implements ResourceService {
 
     @Override
     public InputStream retrieve(URI resourceName) throws IOException {
-        return resourceName == null
-                ? null
-                : new ResourceServiceFactoryRemote(factory)
-                .serviceForResource(resourceName)
-                .retrieve(resourceName);
+        InputStream is = null;
+
+        if (resourceName != null) {
+            ResourceService resourceService = new ResourceServiceFactoryRemote(factory)
+                    .serviceForResource(resourceName);
+            if (resourceService == null) {
+                throw new IOException("cannot retrieve content of unsupported resource identifier [" + resourceName.toString() + "]");
+            } else {
+                is = resourceService.retrieve(resourceName);
+            }
+        }
+
+        return is;
     }
 }
