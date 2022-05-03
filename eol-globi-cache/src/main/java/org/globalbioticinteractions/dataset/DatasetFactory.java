@@ -61,6 +61,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
         }};
 
         Pair<URI, JsonNode> configPair = null;
+        IOException lastThrown = null;
         for (URI configResource : datasetHandlers.keySet()) {
             try {
                 DatasetConfigurer right = datasetHandlers.get(configResource);
@@ -70,11 +71,14 @@ public class DatasetFactory implements DatasetFactoryInterface {
                     break;
                 }
             } catch (IOException e) {
-                //
+                lastThrown = e;
             }
         }
         if (configPair == null) {
-            throw new DatasetRegistryException("failed to valid find dataset configuration in [" + StringUtils.join(datasetHandlers.keySet() + "]"));
+            String msg = "failed to valid find dataset configuration in [" + StringUtils.join(datasetHandlers.keySet() + "]");
+            throw lastThrown == null
+                    ? new DatasetRegistryException(msg)
+                    : new DatasetRegistryException(msg, lastThrown);
         }
 
         return configPair;
