@@ -1,6 +1,7 @@
 package org.eol.globi.server;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.eol.globi.server.util.InteractionTypeExternal;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.server.util.ResultFormatterCSV;
@@ -55,7 +56,7 @@ public class SchemaController {
     protected String jsonFields() {
         List<String> fields = new ArrayList<String>();
         for (ResultField resultField : ResultField.values()) {
-            fields.add("\"" + resultField.getLabel() + "\":{\"description\":\"" + resultField.getDescription() + "\"}");
+            fields.add("\"" + resultField.getLabel() + "\":{\"description\":\"" + StringEscapeUtils.escapeJson(resultField.getDescription()) + "\"}");
         }
         return "{" + StringUtils.join(fields, ",") + "}";
     }
@@ -64,7 +65,7 @@ public class SchemaController {
         List<String> fields = new ArrayList<String>();
         fields.add("name,description");
         for (ResultField resultField : ResultField.values()) {
-            fields.add("" + resultField.getLabel() + "," + resultField.getDescription() + "");
+            fields.add("" + resultField.getLabel() + "," + StringEscapeUtils.escapeCsv(resultField.getDescription()) + "");
         }
         return StringUtils.join(fields, "\n");
     }
