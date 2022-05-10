@@ -89,6 +89,40 @@ public class ImageServiceIT extends ITBase {
     }
 
     @Test
+    public void imagesForEOL2248() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=EOL_V2%3A2248";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+        assertThat(response, containsString("True oysters"));
+    }
+
+    @Test
+    public void imagesForEOL2248English() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=EOL_V2%3A2248&lang=en";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+        assertThat(response, containsString("True oysters"));
+    }
+
+    @Test
+    public void imagesForInsectaEnglish() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=Insecta&lang=en";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+        assertThat(response, containsString("Insects"));
+    }
+
+    @Test
+    public void imagesForInsectaDeutsch() throws IOException {
+        String uri = getURLPrefix() + "imagesForName?name=Insecta&lang=de";
+        String response = getRemoteJson(uri);
+        assertThat(response, is(notNullValue()));
+        assertThat(response, containsString("Insekten"));
+
+
+    }
+
+    @Test
     public void imagesForPlantae() throws IOException {
         String uri = getURLPrefix() + "imagesForName?name=Plantae";
         String response = getRemoteJson(uri);

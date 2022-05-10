@@ -9,6 +9,8 @@ import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
 import org.eol.globi.service.WikidataUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

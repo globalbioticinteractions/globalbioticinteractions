@@ -7,6 +7,8 @@ import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,8 @@ import java.util.stream.Stream;
 
 @Controller
 public class ImageService {
+
+    private final static Logger LOG = LoggerFactory.getLogger(WikiDataImageSearch.class);
 
     private ImageSearch imageSearch = new WikiDataImageSearch();
 
@@ -59,13 +63,18 @@ public class ImageService {
 
     private TaxonImage enrichWithImage(@RequestParam(value = "lang", required = false, defaultValue = "en") String preferredLanguage, TaxonImage taxonImage, Map<String, String> taxon, Collection<String> links) throws IOException {
         for (String id : links) {
-            taxonImage = imageSearch.lookupImageForExternalId(id, new SearchContext() {
+            try {
+                taxonImage = imageSearch.lookupImageForExternalId(id, new SearchContext() {
 
-                @Override
-                public String getPreferredLanguage() {
-                    return preferredLanguage;
-                }
-            });
+                    @Override
+                    public String getPreferredLanguage() {
+                        return preferredLanguage;
+                    }
+                });
+            } catch (IOException ex) {
+                LOG.warn("failed to lookup wikidata entry for [" + id + "]", ex);
+            }
+
             if (taxonImage != null) {
                 break;
             }
