@@ -22,11 +22,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>eol-globi-cache</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>eol-globi-resource-remote</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
