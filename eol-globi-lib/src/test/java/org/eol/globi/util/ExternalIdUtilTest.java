@@ -55,6 +55,11 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void catalogueOfLifeTaxon() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("COL:855LS"), is(TaxonomyProvider.CATALOGUE_OF_LIFE));
+    }
+
+    @Test
     public void stripIdPrefix() {
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.GBIF, "https://www.gbif.org/species/5110848"), is("5110848"));
     }
