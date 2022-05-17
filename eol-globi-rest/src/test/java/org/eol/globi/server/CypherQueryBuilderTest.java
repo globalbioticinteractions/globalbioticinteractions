@@ -370,7 +370,7 @@ public class CypherQueryBuilderTest {
         query = buildInteractionQuery(params, MULTI_TAXON_ALL);
         assertThat(query.getVersionedQuery(),
                 is(
-                        "CYPHER 2.3 START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|ATE|ENDOPARASITE_OF|HYPERPARASITE_OF|ECTOPARASITE_OF|KLEPTOPARASITE_OF|PARASITOID_OF|ENDOPARASITOID_OF|ECTOPARASITOID_OF|FARMS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc RETURN sourceSpecimen.sexId as source_specimen_sex_id"
+                        "CYPHER 2.3 START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|ATE|ENDOPARASITE_OF|HYPERPARASITE_OF|ECTOPARASITE_OF|KLEPTOPARASITE_OF|PARASITOID_OF|ENDOPARASITOID_OF|ECTOPARASITOID_OF|FARMS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc RETURN null as source_specimen_sex_id"
                 ));
         assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Enhydra lutris\"}")));
     }

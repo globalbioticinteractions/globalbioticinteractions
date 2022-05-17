@@ -331,7 +331,13 @@ public class CypherReturnClauseBuilderTest {
                 query,
                 QueryType.MULTI_TAXON_ALL,
                 parameterMap);
-        assertThat(query.toString(), is(" RETURN sourceTaxon.name as source_taxon_name,sourceSpecimen.sexLabel as source_specimen_sex,sourceSpecimen.sexId as source_specimen_sex_id,targetSpecimen.sexLabel as target_specimen_sex,targetSpecimen.sexId as target_specimen_sex_id,targetTaxon.name as target_taxon_name"));
+        assertThat(query.toString(), is(" RETURN " +
+                "sourceTaxon.name as source_taxon_name," +
+                "sourceSpecimen.sexLabel as source_specimen_sex," +
+                "null as source_specimen_sex_id," +
+                "targetSpecimen.sexLabel as target_specimen_sex," +
+                "null as target_specimen_sex_id," +
+                "targetTaxon.name as target_taxon_name"));
     }
 
     @Test
@@ -428,7 +434,47 @@ public class CypherReturnClauseBuilderTest {
                         });
                     }
                 });
-        assertThat(query.toString(), is(" RETURN sourceTaxon.name as source_taxon_name,sourceTaxon.path as source_taxon_path,sourceTaxon.pathIds as source_taxon_path_ids,sourceSpecimen.occurrenceId as source_specimen_occurrence_id,sourceSpecimen.institutionCode as source_specimen_institution_code,sourceSpecimen.collectionCode as source_specimen_collection_code,sourceSpecimen.catalogNumber as source_specimen_catalog_number,sourceSpecimen.lifeStageId as source_specimen_life_stage_id,sourceSpecimen.lifeStageLabel as source_specimen_life_stage,sourceSpecimen.physiologicalStateId as source_specimen_physiological_state_id,sourceSpecimen.physiologicalStateLabel as source_specimen_physiological_state,sourceSpecimen.bodyPartId as source_specimen_body_part_id,sourceSpecimen.bodyPartLabel as source_specimen_body_part,sourceSpecimen.sexId as source_specimen_sex_id,sourceSpecimen.sexLabel as source_specimen_sex,sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record,interaction.label as interaction_type,targetTaxon.name as target_taxon_name,targetTaxon.path as target_taxon_path,targetTaxon.pathIds as target_taxon_path_ids,targetSpecimen.occurrenceId as target_specimen_occurrence_id,targetSpecimen.institutionCode as target_specimen_institution_code,targetSpecimen.collectionCode as target_specimen_collection_code,targetSpecimen.catalogNumber as target_specimen_catalog_number,targetSpecimen.lifeStageId as target_specimen_life_stage_id,targetSpecimen.lifeStageLabel as target_specimen_life_stage,targetSpecimen.physiologicalStateId as target_specimen_physiological_state_id,targetSpecimen.physiologicalStateLabel as target_specimen_physiological_state,targetSpecimen.bodyPartId as target_specimen_body_part_id,targetSpecimen.bodyPartLabel as target_specimen_body_part,targetSpecimen.sexId as target_specimen_sex_id,targetSpecimen.sexLabel as target_specimen_sex,targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record,loc.latitude as latitude,loc.longitude as longitude,collected_rel.eventDate as event_date,study.citation as study_citation,study.externalId as study_url,dataset.citation as study_source_citation,dataset.archiveURI as study_source_archive_uri"));
+        assertThat(query.toString(), is(" RETURN " +
+                "sourceTaxon.name as source_taxon_name," +
+                "sourceTaxon.path as source_taxon_path," +
+                "sourceTaxon.pathIds as source_taxon_path_ids," +
+                "sourceSpecimen.occurrenceId as source_specimen_occurrence_id," +
+                "sourceSpecimen.institutionCode as source_specimen_institution_code," +
+                "sourceSpecimen.collectionCode as source_specimen_collection_code," +
+                "sourceSpecimen.catalogNumber as source_specimen_catalog_number," +
+                "sourceSpecimen.lifeStageId as source_specimen_life_stage_id," +
+                "sourceSpecimen.lifeStageLabel as source_specimen_life_stage," +
+                "sourceSpecimen.physiologicalStateId as source_specimen_physiological_state_id," +
+                "sourceSpecimen.physiologicalStateLabel as source_specimen_physiological_state," +
+                "sourceSpecimen.bodyPartId as source_specimen_body_part_id," +
+                "sourceSpecimen.bodyPartLabel as source_specimen_body_part," +
+                "null as source_specimen_sex_id," +
+                "sourceSpecimen.sexLabel as source_specimen_sex," +
+                "sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record," +
+                "interaction.label as interaction_type," +
+                "targetTaxon.name as target_taxon_name," +
+                "targetTaxon.path as target_taxon_path," +
+                "targetTaxon.pathIds as target_taxon_path_ids," +
+                "targetSpecimen.occurrenceId as target_specimen_occurrence_id," +
+                "targetSpecimen.institutionCode as target_specimen_institution_code," +
+                "targetSpecimen.collectionCode as target_specimen_collection_code," +
+                "targetSpecimen.catalogNumber as target_specimen_catalog_number," +
+                "targetSpecimen.lifeStageId as target_specimen_life_stage_id," +
+                "targetSpecimen.lifeStageLabel as target_specimen_life_stage," +
+                "targetSpecimen.physiologicalStateId as target_specimen_physiological_state_id," +
+                "targetSpecimen.physiologicalStateLabel as target_specimen_physiological_state," +
+                "targetSpecimen.bodyPartId as target_specimen_body_part_id," +
+                "targetSpecimen.bodyPartLabel as target_specimen_body_part," +
+                "null as target_specimen_sex_id," +
+                "targetSpecimen.sexLabel as target_specimen_sex," +
+                "targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record," +
+                "loc.latitude as latitude," +
+                "loc.longitude as longitude," +
+                "collected_rel.eventDate as event_date," +
+                "study.citation as study_citation," +
+                "study.externalId as study_url," +
+                "dataset.citation as study_source_citation," +
+                "dataset.archiveURI as study_source_archive_uri"));
     }
 
 
