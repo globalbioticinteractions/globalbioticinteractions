@@ -480,7 +480,11 @@ public class CypherReturnClauseBuilder {
     private static void appendReturnFields(StringBuilder query, List<ResultField> fields, Map<ResultField, String> selectors) {
         List<String> returnFields = new ArrayList<String>();
         for (ResultField field : fields) {
-            returnFields.add(selectors.get(field) + " as " + field);
+            if (field.isNull()) {
+                returnFields.add("null as " + field);
+            } else {
+                returnFields.add(selectors.get(field) + " as " + field);
+            }
         }
         query.append(StringUtils.join(returnFields, ","));
     }

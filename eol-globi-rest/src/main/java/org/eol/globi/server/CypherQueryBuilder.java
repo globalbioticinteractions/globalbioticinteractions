@@ -199,10 +199,20 @@ public class CypherQueryBuilder {
             if (i == 0) {
                 builder.append("RETURN distinct(").append(FIELD_MAP.get(fieldName)).append(") as ").append(fieldName);
             } else {
-                builder.append(", ").append(FIELD_MAP.get(fieldName)).append(" as ").append(fieldName);
+                appendReturnField(builder, fieldName);
             }
         }
         return new CypherQuery(builder.toString(), new HashMap<>());
+    }
+
+    public static void appendReturnField(StringBuilder builder, ResultField fieldName) {
+        builder.append(", ");
+        if (fieldName.isNull()) {
+            builder.append("null");
+        } else {
+            builder.append(FIELD_MAP.get(fieldName));
+        }
+        builder.append(" as ").append(fieldName);
     }
 
     protected static List<String> collectRequestedFields(Map params) {

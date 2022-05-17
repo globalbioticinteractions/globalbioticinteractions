@@ -376,6 +376,63 @@ public class CypherReturnClauseBuilderTest {
         };
     }
 
+    @Test
+    public void manyFields() {
+        StringBuilder query = new StringBuilder();
+        CypherReturnClauseBuilder.appendReturnClauseMap(
+                query,
+                QueryType.MULTI_TAXON_ALL,
+                new TreeMap<String, String[]>() {
+                    {
+                        put("field", new String[]{
+                                "source_taxon_name",
+                                "source_taxon_path",
+                                "source_taxon_path_ids",
+                                "source_specimen_occurrence_id",
+                                "source_specimen_institution_code",
+                                "source_specimen_collection_code",
+                                "source_specimen_catalog_number",
+                                "source_specimen_life_stage_id",
+                                "source_specimen_life_stage",
+                                "source_specimen_physiological_state_id",
+                                "source_specimen_physiological_state",
+                                "source_specimen_body_part_id",
+                                "source_specimen_body_part",
+                                "source_specimen_sex_id",
+                                "source_specimen_sex",
+                                "source_specimen_basis_of_record",
+                                "interaction_type",
+                                "target_taxon_name",
+                                "target_taxon_path",
+                                "target_taxon_path_ids",
+                                "target_specimen_occurrence_id",
+                                "target_specimen_institution_code",
+                                "target_specimen_collection_code",
+                                "target_specimen_catalog_number",
+                                "target_specimen_life_stage_id",
+                                "target_specimen_life_stage",
+                                "target_specimen_physiological_state_id",
+                                "target_specimen_physiological_state",
+                                "target_specimen_body_part_id",
+                                "target_specimen_body_part",
+                                "target_specimen_sex_id",
+                                "target_specimen_sex",
+                                "target_specimen_basis_of_record",
+                                "latitude",
+                                "longitude",
+                                "event_date",
+                                "study_citation",
+                                "study_url",
+                                "study_source_citation",
+                                "study_source_archive_uri"
+                        });
+                    }
+                });
+        assertThat(query.toString(), is(" RETURN sourceTaxon.name as source_taxon_name,sourceTaxon.path as source_taxon_path,sourceTaxon.pathIds as source_taxon_path_ids,sourceSpecimen.occurrenceId as source_specimen_occurrence_id,sourceSpecimen.institutionCode as source_specimen_institution_code,sourceSpecimen.collectionCode as source_specimen_collection_code,sourceSpecimen.catalogNumber as source_specimen_catalog_number,sourceSpecimen.lifeStageId as source_specimen_life_stage_id,sourceSpecimen.lifeStageLabel as source_specimen_life_stage,sourceSpecimen.physiologicalStateId as source_specimen_physiological_state_id,sourceSpecimen.physiologicalStateLabel as source_specimen_physiological_state,sourceSpecimen.bodyPartId as source_specimen_body_part_id,sourceSpecimen.bodyPartLabel as source_specimen_body_part,sourceSpecimen.sexId as source_specimen_sex_id,sourceSpecimen.sexLabel as source_specimen_sex,sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record,interaction.label as interaction_type,targetTaxon.name as target_taxon_name,targetTaxon.path as target_taxon_path,targetTaxon.pathIds as target_taxon_path_ids,targetSpecimen.occurrenceId as target_specimen_occurrence_id,targetSpecimen.institutionCode as target_specimen_institution_code,targetSpecimen.collectionCode as target_specimen_collection_code,targetSpecimen.catalogNumber as target_specimen_catalog_number,targetSpecimen.lifeStageId as target_specimen_life_stage_id,targetSpecimen.lifeStageLabel as target_specimen_life_stage,targetSpecimen.physiologicalStateId as target_specimen_physiological_state_id,targetSpecimen.physiologicalStateLabel as target_specimen_physiological_state,targetSpecimen.bodyPartId as target_specimen_body_part_id,targetSpecimen.bodyPartLabel as target_specimen_body_part,targetSpecimen.sexId as target_specimen_sex_id,targetSpecimen.sexLabel as target_specimen_sex,targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record,loc.latitude as latitude,loc.longitude as longitude,collected_rel.eventDate as event_date,study.citation as study_citation,study.externalId as study_url,dataset.citation as study_source_citation,dataset.archiveURI as study_source_archive_uri"));
+    }
+
+
+
     private TreeMap<String, String[]> unknownFields() {
         return new TreeMap<String, String[]>() {
             {

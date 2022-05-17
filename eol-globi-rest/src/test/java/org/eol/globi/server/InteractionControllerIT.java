@@ -204,6 +204,14 @@ public class InteractionControllerIT extends ITBase {
         assertThat(response, containsString("\tHomo sapiens"));
     }
 
+    @Test
+    public void readOnly() throws IOException {
+        String uri = getURLPrefix() + "interaction?type=csv&interactionType=eats&limit=4096&offset=0&refutes=false&includeObservations=true&sourceTaxon=Enhydra%20lutris&field=source_specimen_sex";
+        String response = HttpUtil.getContent(uri);
+        assertThat(response, is(not(nullValue())));
+        assertThat(response, containsString("\tHomo sapiens"));
+    }
+
 
     @Test
     public void listPreyObservationsLocation() throws IOException {

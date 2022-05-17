@@ -237,6 +237,145 @@ public class CypherQueryBuilderTest {
     }
 
     @Test
+    public void findInteractionsManyFields() {
+        Map<String, String[]> fieldParams = new HashMap<String, String[]>() {{
+            put("field", new String[]{
+                    "source_taxon_name",
+                    "source_taxon_path",
+                    "source_taxon_path_ids",
+                    "source_specimen_occurrence_id",
+                    "source_specimen_institution_code",
+                    "source_specimen_collection_code",
+                    "source_specimen_catalog_number",
+                    "source_specimen_life_stage_id",
+                    "source_specimen_life_stage",
+                    "source_specimen_physiological_state_id",
+                    "source_specimen_physiological_state",
+                    "source_specimen_body_part_id",
+                    "source_specimen_body_part",
+                    "source_specimen_sex_id",
+                    "source_specimen_sex",
+                    "source_specimen_basis_of_record",
+                    "interaction_type",
+                    "target_taxon_name",
+                    "target_taxon_path",
+                    "target_taxon_path_ids",
+                    "target_specimen_occurrence_id",
+                    "target_specimen_institution_code",
+                    "target_specimen_collection_code",
+                    "target_specimen_catalog_number",
+                    "target_specimen_life_stage_id",
+                    "target_specimen_life_stage",
+                    "target_specimen_physiological_state_id",
+                    "target_specimen_physiological_state",
+                    "target_specimen_body_part_id",
+                    "target_specimen_body_part",
+                    "target_specimen_sex_id",
+                    "target_specimen_sex",
+                    "target_specimen_basis_of_record",
+                    "latitude",
+                    "longitude",
+                    "event_date",
+                    "study_citation",
+                    "study_url",
+                    "study_source_citation",
+                    "study_source_archive_uri",
+            });
+        }};
+
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Enhydra lutris"});
+                put("refutes", new String[]{"false"});
+                put("interactionType", new String[]{"eats"});
+                put("includeObservations", new String[]{"true"});
+                put("limit", new String[]{"4096"});
+                put("offset", new String[]{"0"});
+
+            }
+        };
+        params.putAll(fieldParams);
+
+
+        query = buildInteractionQuery(params, MULTI_TAXON_ALL);
+        assertThat(query.getVersionedQuery(),
+                is(
+                        "CYPHER 2.3 START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|ATE|ENDOPARASITE_OF|HYPERPARASITE_OF|ECTOPARASITE_OF|KLEPTOPARASITE_OF|PARASITOID_OF|ENDOPARASITOID_OF|ECTOPARASITOID_OF|FARMS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
+                                "RETURN " +
+                                "sourceTaxon.name as source_taxon_name," +
+                                "sourceTaxon.path as source_taxon_path," +
+                                "sourceTaxon.pathIds as source_taxon_path_ids," +
+                                "sourceSpecimen.occurrenceId as source_specimen_occurrence_id," +
+                                "sourceSpecimen.institutionCode as source_specimen_institution_code," +
+                                "sourceSpecimen.collectionCode as source_specimen_collection_code," +
+                                "sourceSpecimen.catalogNumber as source_specimen_catalog_number," +
+                                "sourceSpecimen.lifeStageId as source_specimen_life_stage_id," +
+                                "sourceSpecimen.lifeStageLabel as source_specimen_life_stage," +
+                                "sourceSpecimen.physiologicalStateId as source_specimen_physiological_state_id," +
+                                "sourceSpecimen.physiologicalStateLabel as source_specimen_physiological_state," +
+                                "sourceSpecimen.bodyPartId as source_specimen_body_part_id," +
+                                "sourceSpecimen.bodyPartLabel as source_specimen_body_part," +
+                                "null as source_specimen_sex_id," +
+                                "sourceSpecimen.sexLabel as source_specimen_sex," +
+                                "sourceSpecimen.basisOfRecordLabel as source_specimen_basis_of_record," +
+                                "interaction.label as interaction_type," +
+                                "targetTaxon.name as target_taxon_name," +
+                                "targetTaxon.path as target_taxon_path," +
+                                "targetTaxon.pathIds as target_taxon_path_ids," +
+                                "targetSpecimen.occurrenceId as target_specimen_occurrence_id," +
+                                "targetSpecimen.institutionCode as target_specimen_institution_code," +
+                                "targetSpecimen.collectionCode as target_specimen_collection_code," +
+                                "targetSpecimen.catalogNumber as target_specimen_catalog_number," +
+                                "targetSpecimen.lifeStageId as target_specimen_life_stage_id," +
+                                "targetSpecimen.lifeStageLabel as target_specimen_life_stage," +
+                                "targetSpecimen.physiologicalStateId as target_specimen_physiological_state_id," +
+                                "targetSpecimen.physiologicalStateLabel as target_specimen_physiological_state," +
+                                "targetSpecimen.bodyPartId as target_specimen_body_part_id," +
+                                "targetSpecimen.bodyPartLabel as target_specimen_body_part," +
+                                "null as target_specimen_sex_id," +
+                                "targetSpecimen.sexLabel as target_specimen_sex," +
+                                "targetSpecimen.basisOfRecordLabel as target_specimen_basis_of_record," +
+                                "loc.latitude as latitude," +
+                                "loc.longitude as longitude," +
+                                "collected_rel.eventDate as event_date," +
+                                "study.citation as study_citation," +
+                                "study.externalId as study_url," +
+                                "dataset.citation as study_source_citation," +
+                                "dataset.archiveURI as study_source_archive_uri"
+                ));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Enhydra lutris\"}")));
+    }
+    @Test
+    public void findInteractionsSourceSexId() {
+        Map<String, String[]> fieldParams = new HashMap<String, String[]>() {{
+            put("field", new String[]{
+                    "source_specimen_sex_id"
+            });
+        }};
+
+        HashMap<String, String[]> params = new HashMap<String, String[]>() {
+            {
+                put("sourceTaxon", new String[]{"Enhydra lutris"});
+                put("refutes", new String[]{"false"});
+                put("interactionType", new String[]{"eats"});
+                put("includeObservations", new String[]{"true"});
+                put("limit", new String[]{"4096"});
+                put("offset", new String[]{"0"});
+
+            }
+        };
+        params.putAll(fieldParams);
+
+
+        query = buildInteractionQuery(params, MULTI_TAXON_ALL);
+        assertThat(query.getVersionedQuery(),
+                is(
+                        "CYPHER 2.3 START sourceTaxon = node:taxonPaths({source_taxon_name}) MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|ATE|ENDOPARASITE_OF|HYPERPARASITE_OF|ECTOPARASITE_OF|KLEPTOPARASITE_OF|PARASITOID_OF|ENDOPARASITOID_OF|ECTOPARASITOID_OF|FARMS]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc RETURN sourceSpecimen.sexId as source_specimen_sex_id"
+                ));
+        assertThat(query.getParams().toString(), is(is("{source_taxon_name=path:\"Enhydra lutris\"}")));
+    }
+
+    @Test
     public void findInteractionForSourceAndTargetTaxaLocationsDistinctTaxonNamesOnlyUsingCommaFields() {
         Map<String, String[]> fieldParams = new HashMap<String, String[]>() {{
             put("fields", new String[]{"source_taxon_name,target_taxon_name"});

@@ -190,7 +190,9 @@ public class InteractionImporter implements InteractionListener {
                                     String taxonPathLabel,
                                     String taxonPathNamesLabel,
                                     String sexLabel,
-                                    String sexId, String taxonRankLabel, String taxonPathIdsLabel) throws StudyImporterException {
+                                    String sexId,
+                                    String taxonRankLabel,
+                                    String taxonPathIdsLabel) throws StudyImporterException {
         String argumentTypeId = link.get(ARGUMENT_TYPE_ID);
         RelTypes[] argumentType = refutes(argumentTypeId)
                 ? new RelTypes[]{RelTypes.REFUTES}
@@ -221,32 +223,32 @@ public class InteractionImporter implements InteractionListener {
             taxon.setPathNames(taxonPathNames);
         }
 
-        Specimen source = nodeFactory.createSpecimen(study, taxon, argumentType);
-        setBasisOfRecordIfAvailable(link, source);
-        setDateTimeIfAvailable(link, source);
-        setBodyPartIfAvailable(link, source, bodyPartName, bodyPartId);
-        setLifeStageIfAvailable(link, source, lifeStageName, lifeStageId);
-        setSexIfAvailable(link, source, sexLabel, sexId);
-        return source;
+        Specimen specimen = nodeFactory.createSpecimen(study, taxon, argumentType);
+        setBasisOfRecordIfAvailable(link, specimen);
+        setDateTimeIfAvailable(link, specimen);
+        setBodyPartIfAvailable(link, specimen, bodyPartName, bodyPartId);
+        setLifeStageIfAvailable(link, specimen, lifeStageName, lifeStageId);
+        setSexIfAvailable(link, specimen, sexLabel, sexId);
+        return specimen;
     }
 
     private boolean refutes(String argumentTypeId) {
         return StringUtils.equalsIgnoreCase(argumentTypeId, PropertyAndValueDictionary.REFUTES);
     }
 
-    private void setLifeStageIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
+    private void setLifeStageIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String lifeStageName = link.get(name);
         final String lifeStageId = link.get(id);
         if (StringUtils.isNotBlank(lifeStageName) || StringUtils.isNotBlank(lifeStageId)) {
-            source.setLifeStage(new TermImpl(lifeStageId, lifeStageName));
+            specimen.setLifeStage(new TermImpl(lifeStageId, lifeStageName));
         }
     }
 
-    private void setSexIfAvailable(Map<String, String> link, Specimen source, String name, String id) {
+    private void setSexIfAvailable(Map<String, String> link, Specimen specimen, String name, String id) {
         final String sexName = link.get(name);
         final String sexId = link.get(id);
         if (StringUtils.isNotBlank(sexName) || StringUtils.isNotBlank(sexId)) {
-            source.setSex(new TermImpl(sexId, sexName));
+            specimen.setSex(new TermImpl(sexId, sexName));
         }
     }
 

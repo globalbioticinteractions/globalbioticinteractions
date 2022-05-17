@@ -118,12 +118,14 @@ public enum ResultField {
     SOURCE_SPECIMEN_SEX("source_specimen_sex",
             "Sex of the source (or subject) participating in the interaction (e.g., \"male\", \"female\""),
     SOURCE_SPECIMEN_SEX_ID("source_specimen_sex_id",
-            "External identifier of the sex of the source (or subject) participating in the interaction (e.g., \"http://purl.obolibrary.org/obo/UBERON_0003101\" identifies \"male organism\")"),
+            "External identifier of the sex of the source (or subject) participating in the interaction (e.g., \"http://purl.obolibrary.org/obo/UBERON_0003101\" identifies \"male organism\")",
+            true),
 
     TARGET_SPECIMEN_SEX("target_specimen_sex",
             "Sex of the target (or object) participating in the interaction (e.g., \"male\", \"female\""),
     TARGET_SPECIMEN_SEX_ID("target_specimen_sex_id",
-            "External identifier of the sex of the source (or subject) participating in the interaction (e.g., \"http://purl.obolibrary.org/obo/UBERON_0003101\" identifies \"male organism\")"),
+            "External identifier of the sex of the source (or subject) participating in the interaction (e.g., \"http://purl.obolibrary.org/obo/UBERON_0003101\" identifies \"male organism\")",
+            true),
 
     SOURCE_SPECIMEN_BASIS_OF_RECORD("source_specimen_basis_of_record",
             "Describes how the source (or subject) information was obtained. Similar to http://rs.tdwg.org/dwc/terms/basisOfRecord."),
@@ -180,14 +182,16 @@ public enum ResultField {
 
     private final String label;
     private final String description;
-
-    ResultField(String label) {
-        this(label, "a description of " + label);
-    }
+    private final boolean isNull;
 
     ResultField(String label, String description) {
+        this(label, description, false);
+    }
+
+    ResultField(String label, String description, boolean isNull) {
         this.label = label;
         this.description = description;
+        this.isNull = isNull;
     }
 
     public String toString() {
@@ -196,5 +200,9 @@ public enum ResultField {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isNull() {
+        return isNull;
     }
 }
