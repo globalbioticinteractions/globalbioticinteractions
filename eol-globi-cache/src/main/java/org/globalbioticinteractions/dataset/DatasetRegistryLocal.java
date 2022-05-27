@@ -67,7 +67,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         for (File accessFile : accessFiles) {
             try (FileInputStream is = new FileInputStream(accessFile)) {
                 ProvenanceLog.parseProvenanceStream(is, lineListener);
-            } catch (IOException e) {
+            } catch (IOException | DatasetRegistryException e) {
                 throw new DatasetRegistryException("failed to access [" + accessFile.getAbsolutePath() + "]", e);
             }
         }
@@ -85,14 +85,14 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             }
 
         };
-        File accessFile;
+        File accessFile = null;
         try {
             accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
             if (accessFile.exists()) {
                 ProvenanceLog.parseProvenanceStream(new FileInputStream(accessFile), provenanceEntryListener);
             }
         } catch (IOException e) {
-            throw new DatasetRegistryException("issue accessing provenance log", e);
+            throw new DatasetRegistryException("issue accessing provenance log [" + (accessFile == null ? "" : accessFile.getAbsolutePath()) + "]", e);
         }
         return sourceURI.get();
     }
