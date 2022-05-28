@@ -112,7 +112,7 @@ public class DatasetImporterForRSS extends NodeBasedImporter {
         try {
             URI rssURI = URI.create(StringUtils.isBlank(rss) ? "rss" : rss);
             feed = new SyndFeedInput().build(new XmlReader(datasetOrig.retrieve(rssURI)));
-        } catch (FeedException | IOException e) {
+        } catch (FeedException | IOException | IllegalArgumentException e) {
             throw new StudyImporterException("failed to read rss feed [" + rss + "]", e);
         }
         return feed;

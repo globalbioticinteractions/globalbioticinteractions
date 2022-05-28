@@ -75,6 +75,15 @@ public class DatasetImporterForRSSTest {
         assertFalse(DatasetImporterForRSS.shouldIncludeTitleInDatasetCollection("bla", dataset));
     }
 
+    @Test(expected = StudyImporterException.class)
+    public void malformedRSSFeed() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/collnet_malformed.xml\", " +
+                "\"hasDependencies\": true }";
+        final Dataset dataset = datasetFor(configJson);
+
+        DatasetImporterForRSS.getDatasets(dataset);
+    }
+
     @Test
     public void titleExcludePatternOnly() throws StudyImporterException, IOException {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_vertnet.xml\", " +
@@ -336,7 +345,10 @@ public class DatasetImporterForRSSTest {
 
     private DatasetImpl datasetFor(String configJson) throws IOException {
         JsonNode config = new ObjectMapper().readTree(configJson);
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping(
+                "some/namespace",
+                URI.create("http://example.com"),
+                new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         return dataset;
     }
