@@ -18,9 +18,9 @@ public class GraphExporterUtil {
 
 
     public static void exportInteractionsAndCitations(GraphDatabaseService graphService,
-                                                File baseDir,
-                                                String extension,
-                                                ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+                                                      File baseDir,
+                                                      String extension,
+                                                      ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         File formatBaseDir = new File(baseDir, extension);
         try {
             FileUtils.forceMkdir(formatBaseDir);
@@ -56,11 +56,13 @@ public class GraphExporterUtil {
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
-    private static void exportCitations(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private static void exportCitations(GraphDatabaseService graphService,
+                                        File baseDir, String filename,
+                                        ExportUtil.ValueJoiner joiner) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportCitations(new ExportUtil.TsvValueJoiner(), filename)
+        new ExportCitations(joiner, filename)
                 .export(graphService, baseDir);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
