@@ -62,9 +62,7 @@ damagedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 damages,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 isHabitatOf,,createsHabitatFor,http://purl.obolibrary.org/obo/RO_0008505
 feeding on,,eats,http://purl.obolibrary.org/obo/RO_0002470
-Collected from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+collected from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 host of,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
 from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 visiting,,visits,http://purl.obolibrary.org/obo/RO_0002618
-Visiting,,visits,http://purl.obolibrary.org/obo/RO_0002618
-Feeding on,,eats,http://purl.obolibrary.org/obo/RO_0002470
