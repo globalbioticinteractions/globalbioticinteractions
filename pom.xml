@@ -15,6 +15,7 @@
         <module>eol-globi-resource-local</module>
         <module>eol-globi-resource-remote</module>
         <module>eol-globi-lib</module>
+        <module>wikidata</module>
         <module>eol-globi-cache</module>
         <module>eol-globi-registry</module>
         <module>eol-globi-data-sources</module>

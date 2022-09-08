@@ -24,13 +24,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>eol-globi-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>eol-globi-resource-remote</artifactId>
+            <groupId>org.globalbioticinteractions</groupId>
+            <artifactId>wikidata</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
