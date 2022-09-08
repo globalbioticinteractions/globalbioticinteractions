@@ -20,6 +20,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>eol-globi-taxon-resolver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>eol-globi-data-sources</artifactId>
             <version>${project.version}</version>
         </dependency>
