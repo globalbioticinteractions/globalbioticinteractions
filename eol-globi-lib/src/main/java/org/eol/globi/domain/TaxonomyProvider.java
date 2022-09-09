@@ -41,7 +41,8 @@ public enum TaxonomyProvider {
     BOLD_TAXON("BOLDTaxon:", "http://www.boldsystems.org/index.php/Taxbrowser_Taxonpage?taxid="),
     PLAZI_TAXON_CONCEPT("PLAZITaxon:", "http://taxon-concept.plazi.org/id/"),
     PLAZI("PLAZI:", "http://treatment.plazi.org/id/"),
-    CATALOGUE_OF_LIFE("COL:", "https://www.catalogueoflife.org/data/taxon/`");
+    CATALOGUE_OF_LIFE("COL:", "https://www.catalogueoflife.org/data/taxon/"),
+    WORLD_OF_FLORA_ONLINE("WFO:", "http://www.worldfloraonline.org/taxon/wfo-");
 
     private final List<String> idPrefixes;
 
