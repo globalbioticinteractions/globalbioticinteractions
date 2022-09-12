@@ -32,7 +32,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.replace;
-import static org.apache.commons.lang3.StringUtils.replacePattern;
 import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.StringUtils.splitPreserveAllTokens;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -189,40 +188,41 @@ public class TaxonUtil {
     private static final String TARGET_TAXON_COMMON_NAME = TARGET_TAXON + "CommonName";
 
     public static Map<String, String> taxonToMap(Taxon taxon) {
-        return taxonToMap(taxon, "");
+        Map<String, String> properties = new HashMap<>();
+        if (taxon != null) {
+            putTaxonProperties(taxon, properties);
+        }
+        return Collections.unmodifiableMap(properties);
     }
 
-    private static Map<String, String> taxonToMap(Taxon taxon, String prefix) {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(prefix + NAME, taxon.getName());
-        properties.put(prefix + RANK, taxon.getRank());
-        properties.put(prefix + EXTERNAL_ID, taxon.getExternalId());
-        properties.put(prefix + PATH, taxon.getPath());
-        properties.put(prefix + PATH_IDS, taxon.getPathIds());
-        properties.put(prefix + PATH_NAMES, taxon.getPathNames());
-        properties.put(prefix + COMMON_NAMES, taxon.getCommonNames());
+    private static void putTaxonProperties(Taxon taxon, Map<String, String> properties) {
+        properties.put(NAME, taxon.getName());
+        properties.put(RANK, taxon.getRank());
+        properties.put(EXTERNAL_ID, taxon.getExternalId());
+        properties.put(PATH, taxon.getPath());
+        properties.put(PATH_IDS, taxon.getPathIds());
+        properties.put(PATH_NAMES, taxon.getPathNames());
+        properties.put(COMMON_NAMES, taxon.getCommonNames());
         if (isBlank(taxon.getExternalUrl()) && isNotBlank(taxon.getExternalId())) {
-            properties.put(prefix + EXTERNAL_URL, urlForExternalId(taxon.getExternalId()));
+            properties.put(EXTERNAL_URL, urlForExternalId(taxon.getExternalId()));
         } else {
-            properties.put(prefix + EXTERNAL_URL, taxon.getExternalUrl());
+            properties.put(EXTERNAL_URL, taxon.getExternalUrl());
         }
 
-        properties.put(prefix + THUMBNAIL_URL, taxon.getThumbnailUrl());
+        properties.put(THUMBNAIL_URL, taxon.getThumbnailUrl());
         Term status = taxon.getStatus();
         if (status != null
                 && isNotBlank(status.getId())
                 && isNotBlank(status.getName())) {
-            properties.put(prefix + STATUS_ID, status.getId());
-            properties.put(prefix + STATUS_LABEL, status.getName());
+            properties.put(STATUS_ID, status.getId());
+            properties.put(STATUS_LABEL, status.getName());
         }
 
-        properties.put(prefix + NAME_SOURCE, taxon.getNameSource());
-        properties.put(prefix + NAME_SOURCE_URL, taxon.getNameSourceURL());
-        properties.put(prefix + NAME_SOURCE_ACCESSED_AT, taxon.getNameSourceAccessedAt());
+        properties.put(NAME_SOURCE, taxon.getNameSource());
+        properties.put(NAME_SOURCE_URL, taxon.getNameSourceURL());
+        properties.put(NAME_SOURCE_ACCESSED_AT, taxon.getNameSourceAccessedAt());
 
-        properties.put(prefix + AUTHORSHIP, taxon.getAuthorship());
-
-        return Collections.unmodifiableMap(properties);
+        properties.put(AUTHORSHIP, taxon.getAuthorship());
     }
 
     public static void mapToTaxon(Map<String, String> properties, Taxon taxon) {

@@ -253,6 +253,12 @@ public class TaxonUtilTest {
     }
 
     @Test
+    public void nullTaxonToMap() {
+        Map<String, String> taxonMap = TaxonUtil.taxonToMap(null);
+        assertThat(taxonMap.isEmpty(), is(true));
+    }
+
+    @Test
     public void toTaxonImageWithPreferredLanguage() {
         assertTaxonImageEnrichment("de", "boo");
     }
