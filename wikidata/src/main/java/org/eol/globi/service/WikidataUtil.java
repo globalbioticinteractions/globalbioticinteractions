@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -91,11 +92,11 @@ public final class WikidataUtil {
                 }
             }
         }
-        return new ArrayList<String>(providers) {{
+        return Collections.unmodifiableList(new ArrayList<String>(providers) {{
             // manually add World of Flora Online;
             // see related https://github.com/globalbioticinteractions/nomer/issues/102
             add("P7715");
-        }};
+        }});
     }
 
     public static List<Taxon> findRelatedTaxonIds(String externalId) throws IOException, URISyntaxException {
