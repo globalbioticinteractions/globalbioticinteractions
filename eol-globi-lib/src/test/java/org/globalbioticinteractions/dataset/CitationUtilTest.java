@@ -8,9 +8,8 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class CitationUtilTest {
@@ -44,11 +43,11 @@ public class CitationUtilTest {
     public void citationDefaultFullIRI() throws IOException {
 
         Dataset dataset = Mockito.mock(Dataset.class);
-        when(dataset.getOrDefault(eq("dcterms:bibliographicCitation"), anyObject()))
+        when(dataset.getOrDefault(eq("dcterms:bibliographicCitation"), any()))
                 .thenReturn("citation3");
-        when(dataset.getOrDefault(eq("http://purl.org/dc/terms/bibliographicCitation"), anyObject()))
+        when(dataset.getOrDefault(eq("http://purl.org/dc/terms/bibliographicCitation"), any()))
                 .thenReturn("citation1");
-        when(dataset.getOrDefault(eq("citation"), anyObject()))
+        when(dataset.getOrDefault(eq("citation"), any()))
                 .thenReturn("citation2");
 
 
@@ -60,9 +59,9 @@ public class CitationUtilTest {
     public void citationDefaultFullIRI2() throws IOException {
 
         Dataset dataset = Mockito.mock(Dataset.class);
-        when(dataset.getOrDefault(eq("http://purl.org/dc/terms/bibliographicCitation"), anyObject()))
+        when(dataset.getOrDefault(eq("http://purl.org/dc/terms/bibliographicCitation"), any()))
                 .thenReturn("citation1");
-        when(dataset.getOrDefault(eq("citation"), anyObject()))
+        when(dataset.getOrDefault(eq("citation"), any()))
                 .thenReturn("citation2");
 
 
