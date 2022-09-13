@@ -9,7 +9,7 @@ import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.util.JSONUtil;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +64,7 @@ public class DatasetImporterForDBatVir extends DatasetImporterWithListener {
     }
 
     public static String scrubReferenceCitation(String refs) {
-        String citation = Jsoup.clean(refs, new Whitelist());
+        String citation = Jsoup.clean(refs, new Safelist());
         return StringUtils.replace(citation, "&nbsp;", "");
     }
 
