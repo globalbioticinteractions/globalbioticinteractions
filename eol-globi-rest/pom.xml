@@ -15,7 +15,7 @@
     <name>Global Biotic Interactions API</name>
 
     <properties>
-        <spring.version>3.2.18.RELEASE</spring.version>
+        <spring.version>5.2.22.RELEASE</spring.version>
         <aspectj.version>1.6.12</aspectj.version>
         <jetty.groupId>org.eclipse.jetty</jetty.groupId>
         <jetty.version>9.4.41.v20210516</jetty.version>
@@ -55,6 +55,10 @@
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jcl</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -131,6 +135,12 @@
             <artifactId>neo4j-harness</artifactId>
             <version>${neo4j.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
