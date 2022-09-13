@@ -18,6 +18,7 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.TermRequestImpl;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.globalbioticinteractions.taxon.TaxonSerializationUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -45,7 +46,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private static final Logger LOG = LoggerFactory.getLogger(TaxonCacheService.class);
     public static final ResourceServiceLocal RESOURCE_SERVICE = new ResourceServiceLocal();
 
-    private BTreeMap<String, Map<String, String>> resolvedIdToTaxonMap = null;
+    private BTreeMap<String, String[]> resolvedIdToTaxonMap = null;
 
     private TaxonLookupServiceImpl taxonLookupService = null;
 
@@ -93,12 +94,13 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             Taxon[] taxaMatched = lookupTerm(value);
             for (Taxon taxonMatch : taxaMatched) {
                 String resolvedId = taxonMatch.getExternalId();
-                Map<String, String> enrichedSingle = resolvedIdToTaxonMap.get(StringUtils.lowerCase(resolvedId));
+                String[] enrichedSingle = resolvedIdToTaxonMap.get(StringUtils.lowerCase(resolvedId));
                 if (enrichedSingle != null) {
                     if (enriched == null) {
                         enriched = new ArrayList<>();
                     }
-                    enriched.add(enrichedSingle);
+                    Taxon enrichedSingleTaxon = TaxonSerializationUtil.arrayToTaxon(enrichedSingle);
+                    enriched.add(TaxonUtil.taxonToMap(enrichedSingleTaxon));
                 }
 
             }
@@ -208,7 +210,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             StopWatch watch = new StopWatch();
             watch.start();
             String tmpTaxonCacheName = "taxonCacheById" + UUID.randomUUID();
-            BTreeMap<String, Map<String, String>> tmpResolvedIdToTaxonMap = null;
+            BTreeMap<String, String[]> tmpResolvedIdToTaxonMap = null;
             try {
                 tmpResolvedIdToTaxonMap = db
                         .createTreeMap(tmpTaxonCacheName)
@@ -268,9 +270,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                         .limit(getMaxTaxonLinks())
                         .collect(Collectors.toList());
                 for (String resolvedId : idsDistinct) {
-                    Map<String, String> resolved = resolvedIdToTaxonMap.get(resolvedId);
+                    String[] resolved = resolvedIdToTaxonMap.get(resolvedId);
                     if (resolved != null) {
-                        Taxon resolvedTaxon = TaxonUtil.mapToTaxon(resolved);
+                        Taxon resolvedTaxon = TaxonSerializationUtil.arrayToTaxon(resolved);
                         termMatchListener.foundTaxonForTerm(nodeId, term, NameType.SAME_AS, resolvedTaxon);
                         hasResolved = true;
                     }
@@ -292,9 +294,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return TaxonUtil.isNonEmptyValue(value) ? StringUtils.lowerCase(value) : PropertyAndValueDictionary.NO_MATCH;
     }
 
-    static public Iterator<Fun.Tuple2<String, Map<String, String>>> taxonCacheIterator(final TermResource<Taxon> config) throws IOException {
+    static public Iterator<Fun.Tuple2<String, String[]>> taxonCacheIterator(final TermResource<Taxon> config) throws IOException {
 
-        return new Iterator<Fun.Tuple2<String, Map<String, String>>>() {
+        return new Iterator<Fun.Tuple2<String, String[]>>() {
             private BufferedReader reader = CacheServiceUtil.createBufferedReader(
                     config.getResource(),
                     RESOURCE_SERVICE
@@ -322,10 +324,11 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             }
 
             @Override
-            public Fun.Tuple2<String, Map<String, String>> next() {
+            public Fun.Tuple2<String, String[]> next() {
                 final Taxon taxon = config.getParser().apply(currentLine);
                 lineAvailable.set(false);
-                return new Fun.Tuple2<>(valueOrNoMatch(taxon.getExternalId()), TaxonUtil.taxonToMap(taxon));
+                String[] taxonArray = TaxonSerializationUtil.taxonToArray(taxon);
+                return new Fun.Tuple2<>(valueOrNoMatch(taxon.getExternalId()), taxonArray);
             }
 
             public void remove() {

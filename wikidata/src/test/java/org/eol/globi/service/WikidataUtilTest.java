@@ -1,6 +1,5 @@
 package org.eol.globi.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
@@ -13,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static junit.framework.TestCase.assertNotNull;
 import static org.eol.globi.domain.TaxonomyProvider.ATLAS_OF_LIVING_AUSTRALIA;
 import static org.eol.globi.domain.TaxonomyProvider.AUSTRALIAN_FAUNAL_DIRECTORY;
 import static org.eol.globi.domain.TaxonomyProvider.BATBASE;
@@ -31,12 +29,11 @@ import static org.eol.globi.domain.TaxonomyProvider.OPEN_BIODIV;
 import static org.eol.globi.domain.TaxonomyProvider.PLAZI_TAXON_CONCEPT;
 import static org.eol.globi.domain.TaxonomyProvider.WIKIDATA;
 import static org.eol.globi.domain.TaxonomyProvider.WIKIPEDIA;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.isIn;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class WikidataUtilTest {
 

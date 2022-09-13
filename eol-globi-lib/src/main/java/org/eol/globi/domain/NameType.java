@@ -6,6 +6,7 @@ public enum NameType {
     SYNONYM_OF,
     COMMON_NAME_OF,
     HAS_ACCEPTED_NAME, // is a kind of "same as" or "equivalent" to
+    HAS_UNCHECKED_NAME, // possibly an accepted name, but not yet verified/checked
     HOMONYM_OF,
     NONE
 }
