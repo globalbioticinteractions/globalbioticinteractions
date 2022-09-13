@@ -91,7 +91,11 @@ public final class WikidataUtil {
                 }
             }
         }
-        return providers;
+        return new ArrayList<String>(providers) {{
+            // manually add World of Flora Online;
+            // see related https://github.com/globalbioticinteractions/nomer/issues/102
+            add("P7715");
+        }};
     }
 
     public static List<Taxon> findRelatedTaxonIds(String externalId) throws IOException, URISyntaxException {
