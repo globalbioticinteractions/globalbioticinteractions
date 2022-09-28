@@ -76,6 +76,7 @@ public class InteractTypeUtil  {
                put(InteractType.MUTUALIST_OF, InteractType.MUTUALIST_OF);
                put(InteractType.RELATED_TO, InteractType.RELATED_TO);
                put(InteractType.AGGRESSOR_OF, InteractType.HAS_AGGRESSOR);
+               put(InteractType.HEMIPARASITE_OF, InteractType.HAS_PARASITE);
            }
        };
 
@@ -134,6 +135,7 @@ public class InteractTypeUtil  {
                put(InteractType.COMMENSALIST_OF, Arrays.asList(InteractType.INTERACTS_WITH, InteractType.SYMBIONT_OF, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.MUTUALIST_OF, Arrays.asList(InteractType.INTERACTS_WITH, InteractType.SYMBIONT_OF, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.AGGRESSOR_OF, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
+               put(InteractType.HEMIPARASITE_OF, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH, InteractType.INTERACTS_WITH, InteractType.SYMBIONT_OF, InteractType.PARASITE_OF));
            }
        };
 
