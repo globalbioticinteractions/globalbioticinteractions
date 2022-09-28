@@ -47,3 +47,4 @@ ecologicallyRelatedTo,http://purl.obolibrary.org/obo/RO_0002321
 coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 acquiresNutrientsFrom,http://purl.obolibrary.org/obo/RO_0002457
 providesNutrientsFor,http://purl.obolibrary.org/obo/RO_0002469
+hemiparasiteOf,http://purl.obolibrary.org/obo/RO_0002237
