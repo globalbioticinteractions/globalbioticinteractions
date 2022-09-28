@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,12 +25,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 
-public class GenBankOccurrenceIdIdEnricherTest {
+public class OccurrenceIdIdEnricherGenBankTest {
 
     @Test
     public void lookupSourceOccurrenceId() throws StudyImporterException {
         Map<String, String> properties
-                = new GenBankOccurrenceIdIdEnricher(null, null, getResourceService())
+                = new OccurrenceIdIdEnricherGenBank(null, null, getResourceService())
                 .enrich(new TreeMap<String, String>() {{
                     put("sourceOccurrenceId", "https://www.ncbi.nlm.nih.gov/nuccore/EU241689");
                     put("targetTaxonName", "Oligoryzomys longicaudatus");
@@ -57,7 +56,7 @@ public class GenBankOccurrenceIdIdEnricherTest {
     @Test
     public void lookupTargetOccurrenceId() throws StudyImporterException {
         Map<String, String> properties
-                = new GenBankOccurrenceIdIdEnricher(null, null, getResourceService())
+                = new OccurrenceIdIdEnricherGenBank(null, null, getResourceService())
                 .enrich(new TreeMap<String, String>() {{
                     put("targetOccurrenceId", "https://www.ncbi.nlm.nih.gov/nuccore/EU241689");
                 }});
@@ -147,7 +146,7 @@ public class GenBankOccurrenceIdIdEnricherTest {
         Map<String, String> properties = new TreeMap<>();
 
         try {
-            GenBankOccurrenceIdIdEnricher.enrichWithGenBankRecord(is,
+            OccurrenceIdIdEnricherGenBank.enrichWithGenBankRecord(is,
                     taxonNameField,
                     taxonIdField,
                     hostTaxonNameField,
@@ -256,7 +255,7 @@ public class GenBankOccurrenceIdIdEnricherTest {
         Map<String, String> properties = new TreeMap<>();
 
         try {
-            GenBankOccurrenceIdIdEnricher.enrichWithGenBankRecord(is,
+            OccurrenceIdIdEnricherGenBank.enrichWithGenBankRecord(is,
                     taxonNameField,
                     taxonIdField,
                     hostTaxonNameField,

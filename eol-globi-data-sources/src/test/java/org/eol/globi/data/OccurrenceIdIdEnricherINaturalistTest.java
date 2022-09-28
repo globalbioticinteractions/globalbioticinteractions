@@ -20,13 +20,13 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_RANK;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class INaturalistOccurrenceIdIdEnricherTest {
+public class OccurrenceIdIdEnricherINaturalistTest {
 
     @Test
     public void lookupSourceOccurrenceId() throws StudyImporterException {
 
         Map<String, String> properties
-                = new INaturalistOccurrenceIdIdEnricher(null, null, getResourceService())
+                = new OccurrenceIdIdEnricherINaturalist(null, null, getResourceService())
                 .enrich(new TreeMap<String, String>() {{
                     put("sourceOccurrenceId", "https://www.inaturalist.org/observations/2900976");
                 }});
@@ -47,7 +47,7 @@ public class INaturalistOccurrenceIdIdEnricherTest {
     @Test
     public void lookupTargetOccurrenceId() throws StudyImporterException {
         Map<String, String> properties
-                = new INaturalistOccurrenceIdIdEnricher(null, null, getResourceService())
+                = new OccurrenceIdIdEnricherINaturalist(null, null, getResourceService())
                 .enrich(new TreeMap<String, String>() {{
                     put("targetOccurrenceId", "https://www.inaturalist.org/observations/2900976");
                 }});
@@ -74,7 +74,7 @@ public class INaturalistOccurrenceIdIdEnricherTest {
         Map<String, String> properties = new TreeMap<>();
 
         try {
-            INaturalistOccurrenceIdIdEnricher.enrichWithINaturalistObservation(is,
+            OccurrenceIdIdEnricherINaturalist.enrichWithINaturalistObservation(is,
                     taxonNameField,
                     taxonIdField,
                     taxonRankField,

@@ -25,11 +25,11 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_RANK;
 
-public class INaturalistOccurrenceIdIdEnricher extends InteractionProcessorAbstract {
+public class OccurrenceIdIdEnricherINaturalist extends InteractionProcessorAbstract {
 
     private final ResourceService resourceService;
 
-    public INaturalistOccurrenceIdIdEnricher(InteractionListener listener,
+    public OccurrenceIdIdEnricherINaturalist(InteractionListener listener,
                                              ImportLogger logger,
                                              ResourceService resourceService) {
         super(listener, logger);

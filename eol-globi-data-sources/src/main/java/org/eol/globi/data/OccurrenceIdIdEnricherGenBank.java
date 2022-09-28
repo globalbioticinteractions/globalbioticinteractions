@@ -29,7 +29,7 @@ import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
-public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract {
+public class OccurrenceIdIdEnricherGenBank extends InteractionProcessorAbstract {
 
     private final ResourceService resourceService;
     public static final Pattern PATTERN_HOST = Pattern.compile("\\s+/host=\"([^\"]+)\".*");
@@ -38,7 +38,7 @@ public class GenBankOccurrenceIdIdEnricher extends InteractionProcessorAbstract 
     public static final Pattern PATTERN_TAXON_ID = Pattern.compile("\\s+/db_xref=\"taxon:([^\"]+)\".*");
     public static final Pattern PATTERN_COUNTRY = Pattern.compile("\\s+/country=\"([^\"]+)\".*");
 
-    public GenBankOccurrenceIdIdEnricher(InteractionListener listener, ImportLogger logger, ResourceService resourceService) {
+    public OccurrenceIdIdEnricherGenBank(InteractionListener listener, ImportLogger logger, ResourceService resourceService) {
         super(listener, logger);
         this.resourceService = resourceService;
     }

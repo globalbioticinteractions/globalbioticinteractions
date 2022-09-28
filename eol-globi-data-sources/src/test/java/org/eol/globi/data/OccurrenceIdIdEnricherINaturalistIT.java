@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
-public class INaturalistOccurrenceIdIdEnricherIT extends INaturalistOccurrenceIdIdEnricherTest {
+public class OccurrenceIdIdEnricherINaturalistIT extends OccurrenceIdIdEnricherINaturalistTest {
 
     @Override
     public ResourceService getResourceService() {

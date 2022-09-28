@@ -1,7 +1,7 @@
 package org.eol.globi.process;
 
-import org.eol.globi.data.GenBankOccurrenceIdIdEnricher;
-import org.eol.globi.data.INaturalistOccurrenceIdIdEnricher;
+import org.eol.globi.data.OccurrenceIdIdEnricherGenBank;
+import org.eol.globi.data.OccurrenceIdIdEnricherINaturalist;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.LogUtil;
 import org.eol.globi.data.NodeFactory;
@@ -35,8 +35,8 @@ public class InteractionListenerImpl implements InteractionListener {
 
         this.processors =
                 Arrays.asList(
-                        new INaturalistOccurrenceIdIdEnricher(queue, logger, dataset),
-                        new GenBankOccurrenceIdIdEnricher(queue, logger, dataset),
+                        new OccurrenceIdIdEnricherINaturalist(queue, logger, dataset),
+                        new OccurrenceIdIdEnricherGenBank(queue, logger, dataset),
                         new OccurrenceIdEnricher(queue, logger),
                         new TaxonNameEnricher(queue, logger),
                         new InteractionExpander(queue, logger),
