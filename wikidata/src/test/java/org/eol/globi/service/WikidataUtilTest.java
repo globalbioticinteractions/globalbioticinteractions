@@ -27,6 +27,7 @@ import static org.eol.globi.domain.TaxonomyProvider.GULFBASE;
 import static org.eol.globi.domain.TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER;
 import static org.eol.globi.domain.TaxonomyProvider.OPEN_BIODIV;
 import static org.eol.globi.domain.TaxonomyProvider.PLAZI_TAXON_CONCEPT;
+import static org.eol.globi.domain.TaxonomyProvider.TERRESTRIAL_PARASITE_TRACKER;
 import static org.eol.globi.domain.TaxonomyProvider.WIKIDATA;
 import static org.eol.globi.domain.TaxonomyProvider.WIKIPEDIA;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,7 +57,8 @@ public class WikidataUtilTest {
                 OPEN_BIODIV,
                 GULFBASE,
                 BOLD_BIN,
-                PLAZI_TAXON_CONCEPT
+                PLAZI_TAXON_CONCEPT,
+                TERRESTRIAL_PARASITE_TRACKER
 
         );
         List<TaxonomyProvider> unsupported = new ArrayList<>();
