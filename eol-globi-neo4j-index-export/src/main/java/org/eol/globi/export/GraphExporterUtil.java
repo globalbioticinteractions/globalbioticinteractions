@@ -44,6 +44,12 @@ public class GraphExporterUtil {
                 formatBaseDir,
                 "citations." + extension + ".gz",
                 joiner);
+
+        exportDatasetNamespaces(
+                graphService,
+                formatBaseDir,
+                "datasets." + extension + ".gz",
+                joiner);
     }
 
     private static void exportSupportingInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
@@ -63,6 +69,18 @@ public class GraphExporterUtil {
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
         new ExportCitations(joiner, filename)
+                .export(graphService, baseDir);
+        stopWatch.stop();
+        LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
+    }
+
+    private static void exportDatasetNamespaces(GraphDatabaseService graphService,
+                                        File baseDir, String filename,
+                                        ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        LOG.info("[" + filename + "] generating... ");
+        new ExportNamespaces(joiner, filename)
                 .export(graphService, baseDir);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
