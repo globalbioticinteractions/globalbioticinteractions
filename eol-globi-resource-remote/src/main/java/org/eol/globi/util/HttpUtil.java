@@ -43,6 +43,8 @@ public class HttpUtil {
                     .create()
                     .disableCookieManagement()
                     .setDefaultRequestConfig(config)
+                    // for loading proxy config see https://github.com/globalbioticinteractions/nomer/issues/121
+                    .useSystemProperties()
                     .build();
         }
         return failFastHttpClient;
@@ -88,6 +90,8 @@ public class HttpUtil {
                 .setUserAgent("globalbioticinteractions/" + Version.getVersion() + " (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)")
                 .setServiceUnavailableRetryStrategy(new CustomServiceUnavailableStrategy())
                 .disableCookieManagement()
+               // for loading proxy config from system properties see https://github.com/globalbioticinteractions/nomer/issues/121
+                .useSystemProperties()
                 .setDefaultRequestConfig(config);
     }
 
