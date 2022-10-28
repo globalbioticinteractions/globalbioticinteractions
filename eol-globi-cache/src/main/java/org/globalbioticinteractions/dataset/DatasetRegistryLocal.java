@@ -8,7 +8,6 @@ import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.LineReaderFactory;
-import org.globalbioticinteractions.cache.LineReaderFactoryImpl;
 import org.globalbioticinteractions.cache.ProvenanceLog;
 import org.globalbioticinteractions.cache.ReverseLineReaderFactoryImpl;
 import org.slf4j.Logger;
@@ -103,7 +102,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
                     }
                 }
 
-                @Override
+                @Override   
                 public boolean shouldContinue() {
                     return sourceURI.get() == null;
                 }
