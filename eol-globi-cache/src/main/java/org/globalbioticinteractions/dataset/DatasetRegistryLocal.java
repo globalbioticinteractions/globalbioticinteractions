@@ -1,8 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.cache.CacheFactory;
@@ -14,12 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 public class DatasetRegistryLocal implements DatasetRegistry {
     private final static Logger LOG = LoggerFactory.getLogger(DatasetRegistryLocal.class);
@@ -48,42 +55,61 @@ public class DatasetRegistryLocal implements DatasetRegistry {
     }
 
     private Collection<String> collectNamespaces(File directory) throws DatasetRegistryException {
-        Collection<File> accessFiles = FileUtils.listFiles(directory, new FileFileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return ProvenanceLog.PROVENANCE_LOG_FILENAME.endsWith(file.getName());
-            }
-        }, TrueFileFilter.INSTANCE);
 
-        Collection<String> namespaces = new TreeSet<>();
+        try {
+            Collection<String> namespaces = new TreeSet<>();
 
-
-        for (File accessFile : accessFiles) {
-            try {
-                LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
-                final ProvenanceLog.ProvenanceEntryListener lineListener = new ProvenanceLog.ProvenanceEntryListener() {
-                    AtomicBoolean foundNamespace = new AtomicBoolean(false);
-                    @Override
-                    public void onValues(String[] values) {
-                        if (values.length >= 5
-                                && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
-                            namespaces.add(values[0]);
-                            foundNamespace.set(true);
+            Files.walkFileTree(
+                    directory.toPath(),
+                    EnumSet.of(FOLLOW_LINKS),
+                    3,
+                    new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file,
+                                                         BasicFileAttributes attrs) {
+                            if (file.endsWith(ProvenanceLog.PROVENANCE_LOG_FILENAME)) {
+                                try {
+                                    addNamespace(namespaces, file.toFile());
+                                } catch (DatasetRegistryException e) {
+                                    LOG.warn("failed to process [" + file.toFile().getAbsolutePath() + "]");
+                                }
+                            }
+                            return CONTINUE;
                         }
-                    }
-
-                    @Override
-                    public boolean shouldContinue() {
-                        return !foundNamespace.get();
-                    }
-                };
-
-                ProvenanceLog.parseProvenanceLogFile(accessFile, lineListener, lineReaderFactory);
-            } catch (DatasetRegistryException e) {
-                throw new DatasetRegistryException("failed to access [" + accessFile.getAbsolutePath() + "]", e);
-            }
+                    });
+            return namespaces;
+        } catch (IOException e) {
+            throw new DatasetRegistryException("failed to traverse directory tree starting at [" + directory.getAbsolutePath() + "]");
         }
-        return namespaces;
+
+
+    }
+
+    private void addNamespace(Collection<String> namespaces, File accessFile) throws DatasetRegistryException {
+        try {
+            LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
+            final ProvenanceLog.ProvenanceEntryListener lineListener = new ProvenanceLog.ProvenanceEntryListener() {
+                AtomicBoolean foundNamespace = new AtomicBoolean(false);
+
+                @Override
+                public void onValues(String[] values) {
+                    if (values.length >= 5
+                            && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
+                        namespaces.add(values[0]);
+                        foundNamespace.set(true);
+                    }
+                }
+
+                @Override
+                public boolean shouldContinue() {
+                    return !foundNamespace.get();
+                }
+            };
+
+            ProvenanceLog.parseProvenanceLogFile(accessFile, lineListener, lineReaderFactory);
+        } catch (DatasetRegistryException e) {
+            throw new DatasetRegistryException("failed to access [" + accessFile.getAbsolutePath() + "]", e);
+        }
     }
 
 
