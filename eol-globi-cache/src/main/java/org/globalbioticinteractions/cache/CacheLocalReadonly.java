@@ -48,33 +48,30 @@ public class CacheLocalReadonly implements Cache {
 
     public static ContentProvenance getContentProvenance(URI resourceURI, String cachePath, String namespace) {
         AtomicReference<ContentProvenance> meta = new AtomicReference<>(null);
-        File accessFile;
+        File accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cachePath);
         try {
             File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
 
             String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
-            accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cachePath);
             if (accessFile.exists()) {
-                try (InputStream is = new FileInputStream(accessFile)) {
-                    ProvenanceLog.parseProvenanceStream(is, new ProvenanceLog.ProvenanceEntryListener() {
-                        @Override
-                        public void onValues(String[] values) {
-                            if (values.length > 3) {
-                                URI sourceURI = URI.create(values[1]);
-                                String sha256 = values[2];
-                                String accessedAt = StringUtils.trim(values[3]);
-                                if (StringUtils.isNotBlank(sha256)) {
-                                    ContentProvenance provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace, namespace);
-                                    if (provenance != null) {
-                                        meta.set(provenance);
-                                    }
+                ProvenanceLog.parseProvenanceStream(accessFile, new ProvenanceLog.ProvenanceEntryListener() {
+                    @Override
+                    public void onValues(String[] values) {
+                        if (values.length > 3) {
+                            URI sourceURI = URI.create(values[1]);
+                            String sha256 = values[2];
+                            String accessedAt = StringUtils.trim(values[3]);
+                            if (StringUtils.isNotBlank(sha256)) {
+                                ContentProvenance provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace, namespace);
+                                if (provenance != null) {
+                                    meta.set(provenance);
                                 }
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
-        } catch (IOException | DatasetRegistryException e) {
+        } catch (DatasetRegistryException e) {
             LOG.error("unexpected exception on getting meta for [" + resourceURI + "]", e);
         }
         return meta.get();

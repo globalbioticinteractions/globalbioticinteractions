@@ -3,6 +3,7 @@ package org.globalbioticinteractions.dataset;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactory;
@@ -65,9 +66,9 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         };
 
         for (File accessFile : accessFiles) {
-            try (FileInputStream is = new FileInputStream(accessFile)) {
-                ProvenanceLog.parseProvenanceStream(is, lineListener);
-            } catch (IOException | DatasetRegistryException e) {
+            try {
+                ProvenanceLog.parseProvenanceStream(accessFile, lineListener);
+            } catch (DatasetRegistryException e) {
                 throw new DatasetRegistryException("failed to access [" + accessFile.getAbsolutePath() + "]", e);
             }
         }
@@ -85,14 +86,9 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             }
 
         };
-        File accessFile = null;
-        try {
-            accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
-            if (accessFile.exists()) {
-                ProvenanceLog.parseProvenanceStream(new FileInputStream(accessFile), provenanceEntryListener);
-            }
-        } catch (IOException e) {
-            throw new DatasetRegistryException("issue accessing provenance log [" + (accessFile == null ? "" : accessFile.getAbsolutePath()) + "]", e);
+        File accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
+        if (accessFile.exists()) {
+            ProvenanceLog.parseProvenanceStream(accessFile, provenanceEntryListener);
         }
         return sourceURI.get();
     }
