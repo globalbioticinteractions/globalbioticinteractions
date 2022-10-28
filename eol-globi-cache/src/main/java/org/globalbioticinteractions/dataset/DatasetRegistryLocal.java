@@ -3,24 +3,23 @@ package org.globalbioticinteractions.dataset;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
-import org.eol.globi.util.InputStreamFactory;
-import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.cache.LineReaderFactory;
+import org.globalbioticinteractions.cache.LineReaderFactoryImpl;
 import org.globalbioticinteractions.cache.ProvenanceLog;
+import org.globalbioticinteractions.cache.ReverseLineReaderFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DatasetRegistryLocal implements DatasetRegistry {
@@ -58,16 +57,29 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         }, TrueFileFilter.INSTANCE);
 
         Collection<String> namespaces = new TreeSet<>();
-        ProvenanceLog.ProvenanceEntryListener lineListener = values -> {
-            if (values.length >= 5
-                    && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
-                namespaces.add(values[0]);
-            }
-        };
+
 
         for (File accessFile : accessFiles) {
             try {
-                ProvenanceLog.parseProvenanceStream(accessFile, lineListener);
+                LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
+                final ProvenanceLog.ProvenanceEntryListener lineListener = new ProvenanceLog.ProvenanceEntryListener() {
+                    AtomicBoolean foundNamespace = new AtomicBoolean(false);
+                    @Override
+                    public void onValues(String[] values) {
+                        if (values.length >= 5
+                                && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
+                            namespaces.add(values[0]);
+                            foundNamespace.set(true);
+                        }
+                    }
+
+                    @Override
+                    public boolean shouldContinue() {
+                        return !foundNamespace.get();
+                    }
+                };
+
+                ProvenanceLog.parseProvenanceLogFile(accessFile, lineListener, lineReaderFactory);
             } catch (DatasetRegistryException e) {
                 throw new DatasetRegistryException("failed to access [" + accessFile.getAbsolutePath() + "]", e);
             }
@@ -78,17 +90,26 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
     private URI findLastCachedDatasetURI(String namespace) throws DatasetRegistryException {
         AtomicReference<URI> sourceURI = new AtomicReference<>();
-        ProvenanceLog.ProvenanceEntryListener provenanceEntryListener = values -> {
-            if (values.length > 4
-                    && StringUtils.equalsIgnoreCase(StringUtils.trim(values[0]), namespace)
-                    && StringUtils.equals(StringUtils.trim(values[4]), CacheUtil.MIME_TYPE_GLOBI)) {
-                sourceURI.set(URI.create(values[1]));
-            }
-
-        };
         File accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
         if (accessFile.exists()) {
-            ProvenanceLog.parseProvenanceStream(accessFile, provenanceEntryListener);
+            LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
+            final ProvenanceLog.ProvenanceEntryListener lineListener = new ProvenanceLog.ProvenanceEntryListener() {
+                @Override
+                public void onValues(String[] values) {
+                    if (values.length > 4
+                            && StringUtils.equalsIgnoreCase(StringUtils.trim(values[0]), namespace)
+                            && StringUtils.equals(StringUtils.trim(values[4]), CacheUtil.MIME_TYPE_GLOBI)) {
+                        sourceURI.set(URI.create(values[1]));
+                    }
+                }
+
+                @Override
+                public boolean shouldContinue() {
+                    return sourceURI.get() == null;
+                }
+            };
+
+            ProvenanceLog.parseProvenanceLogFile(accessFile, lineListener, lineReaderFactory);
         }
         return sourceURI.get();
     }

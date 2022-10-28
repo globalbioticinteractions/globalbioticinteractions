@@ -64,15 +64,10 @@ public class ProvenanceLog {
         return new File(dir, PROVENANCE_LOG_FILENAME);
     }
 
-    public static void parseProvenanceStream(File file, ProvenanceEntryListener listener) throws DatasetRegistryException {
-        LineReaderFactory lineReaderFactory = new LineReaderFactoryImpl();
-        parseProvenanceStream(file, listener, lineReaderFactory);
-    }
-
-    private static void parseProvenanceStream(File file, ProvenanceEntryListener listener, LineReaderFactory lineReaderFactory) throws DatasetRegistryException {
+    public static void parseProvenanceLogFile(File file, ProvenanceEntryListener listener, LineReaderFactory lineReaderFactory) throws DatasetRegistryException {
         try (LineReader lineReader = lineReaderFactory.createLineReader(file)) {
             String line;
-            while ((line = lineReader.readLine()) != null) {
+            while (listener.shouldContinue() && (line = lineReader.readLine()) != null) {
                 listener.onValues(CSVTSVUtil.splitTSV(line));
             }
         } catch (IOException e) {
@@ -82,6 +77,8 @@ public class ProvenanceLog {
 
     public interface ProvenanceEntryListener {
         void onValues(String[] values);
+
+        boolean shouldContinue();
     }
 
 }

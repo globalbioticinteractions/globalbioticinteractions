@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -54,7 +53,8 @@ public class CacheLocalReadonly implements Cache {
 
             String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
             if (accessFile.exists()) {
-                ProvenanceLog.parseProvenanceStream(accessFile, new ProvenanceLog.ProvenanceEntryListener() {
+                LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
+                ProvenanceLog.parseProvenanceLogFile(accessFile, new ProvenanceLog.ProvenanceEntryListener() {
                     @Override
                     public void onValues(String[] values) {
                         if (values.length > 3) {
@@ -69,7 +69,12 @@ public class CacheLocalReadonly implements Cache {
                             }
                         }
                     }
-                });
+
+                    @Override
+                    public boolean shouldContinue() {
+                        return meta.get() == null;
+                    }
+                }, lineReaderFactory);
             }
         } catch (DatasetRegistryException e) {
             LOG.error("unexpected exception on getting meta for [" + resourceURI + "]", e);
