@@ -38,10 +38,10 @@ import static org.apache.commons.lang3.StringUtils.trim;
 public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
     private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForGoMexSI2.class);
     public static final String GOMEXI_SOURCE_DESCRIPTION = "http://gomexsi.tamucc.edu";
-    public static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
-    public static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
-    public static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
-    public static final String GOMEXSI_NAMESPACE = "GOMEXSI:";
+    private static final String STOMACH_COUNT_TOTAL = "stomachCountTotal";
+    private static final String STOMACH_COUNT_WITH_FOOD = "stomachCountWithFood";
+    private static final String STOMACH_COUNT_WITHOUT_FOOD = "stomachCountWithoutFood";
+    private static final String GOMEXSI_NAMESPACE = "GOMEXSI:";
 
     private static final Collection KNOWN_INVALID_DOUBLE_STRINGS = new ArrayList<String>() {{
         add("na");
@@ -305,7 +305,7 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
         return footprintWKT;
     }
 
-    private Location enrichLocation(Study metaStudy, URI locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) {
+    private Location enrichLocation(Study metaStudy, URI locationResource, TermLookupService cmecsService, LabeledCSVParser parser, Location location, String habitatSystem, String habitatSubsystem, String habitatTidalZone) throws StudyImporterException {
         if (location != null) {
             List<Term> terms;
             String cmecsLabel = habitatSystem + " " + habitatSubsystem + " " + habitatTidalZone;
@@ -317,7 +317,7 @@ public class DatasetImporterForGoMexSI2 extends NodeBasedImporter {
                 }
                 getNodeFactory().addEnvironmentToLocation(location, terms);
             } catch (TermLookupServiceException e) {
-                getLogger().warn(metaStudy, msg);
+                throw new StudyImporterException("failed to build CMECS map", e);
             }
 
         }
