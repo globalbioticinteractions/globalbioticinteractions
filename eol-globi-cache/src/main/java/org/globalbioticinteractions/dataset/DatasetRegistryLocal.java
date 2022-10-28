@@ -102,7 +102,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
                     }
                 }
 
-                @Override   
+                @Override
                 public boolean shouldContinue() {
                     return sourceURI.get() == null;
                 }
