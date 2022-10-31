@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SIBLINGS;
 
 public class DatasetRegistryLocal implements DatasetRegistry {
     private final static Logger LOG = LoggerFactory.getLogger(DatasetRegistryLocal.class);
@@ -67,14 +68,16 @@ public class DatasetRegistryLocal implements DatasetRegistry {
                         @Override
                         public FileVisitResult visitFile(Path file,
                                                          BasicFileAttributes attrs) {
+                            FileVisitResult result = CONTINUE;
                             if (file.endsWith(ProvenanceLog.PROVENANCE_LOG_FILENAME)) {
                                 try {
                                     addNamespace(namespaces, file.toFile());
+                                    result = SKIP_SIBLINGS;
                                 } catch (DatasetRegistryException e) {
                                     LOG.warn("failed to process [" + file.toFile().getAbsolutePath() + "]");
                                 }
                             }
-                            return CONTINUE;
+                            return result;
                         }
                     });
             return namespaces;
