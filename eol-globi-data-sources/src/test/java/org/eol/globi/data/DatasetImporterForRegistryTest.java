@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,7 +25,7 @@ public class DatasetImporterForRegistryTest {
     public void throwOnMissingConfig() throws StudyImporterException {
         DatasetImporterForRegistry importer = new DatasetImporterForRegistry(null, null, new DatasetRegistry() {
             @Override
-            public Collection<String> findNamespaces() throws DatasetRegistryException {
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList("some/namespace");
             }
 
@@ -51,7 +50,7 @@ public class DatasetImporterForRegistryTest {
                 null,
                 new DatasetRegistry() {
                     @Override
-                    public Collection<String> findNamespaces() throws DatasetRegistryException {
+                    public Iterable<String> findNamespaces() throws DatasetRegistryException {
                         return Collections.singletonList("some/namespace");
                     }
 

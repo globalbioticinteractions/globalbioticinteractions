@@ -55,7 +55,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetRegistryException {
+    public Iterable<String> findNamespaces() throws DatasetRegistryException {
         try {
             Map<String, List<Pair<Long, URI>>> zenodoArchives = findZenodoArchives();
             return zenodoArchives == null

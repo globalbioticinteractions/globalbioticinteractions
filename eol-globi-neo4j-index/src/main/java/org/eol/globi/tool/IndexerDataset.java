@@ -60,7 +60,7 @@ public class IndexerDataset implements IndexerNeo4j {
 
     private static void indexDatasets(DatasetRegistry registry, NodeFactory nodeFactory) {
         try {
-            final Collection<String> namespaces = registry.findNamespaces();
+            final Iterable<String> namespaces = registry.findNamespaces();
 
             String namespacelist = StringUtils.join(namespaces, CharsetConstant.SEPARATOR);
             LOG.info("found dataset namespaces: {" + namespacelist + "}");

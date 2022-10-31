@@ -16,7 +16,6 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetRegistryWithCache;
@@ -30,7 +29,6 @@ import org.neo4j.test.TestGraphDatabaseFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,7 +67,7 @@ public abstract class GraphDBTestCaseAbstract {
         DatasetRegistry finder = new DatasetRegistryWithCache(
                 new DatasetRegistry() {
                     @Override
-                    public Collection<String> findNamespaces() throws DatasetRegistryException {
+                    public Iterable<String> findNamespaces() throws DatasetRegistryException {
                         return Collections.emptyList();
                     }
 

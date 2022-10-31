@@ -17,11 +17,13 @@ public class DatasetRegistryGitHubIT {
     @Test
     public void discoverDatasetsInGitHub() throws DatasetRegistryException {
         AtomicBoolean usedStreamFactory = new AtomicBoolean(false);
-        Collection<String> urls = new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> {
+        Iterable<String> urls = new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> {
             usedStreamFactory.set(true);
             return inStream;
         })).findNamespaces();
-        assertThat(urls.size(), is(not(0)));
+
+
+        assertThat(urls.iterator().hasNext(), is(true));
         assertThat(usedStreamFactory.get(), is(true));
     }
 

@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.jena.atlas.iterator.Iter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -29,7 +30,7 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
 
     @Override
     public void importStudy() throws StudyImporterException {
-        Collection<String> namespaces;
+        Iterable<String> namespaces;
         try {
             namespaces = getRegistry().findNamespaces();
         } catch (DatasetRegistryException e) {

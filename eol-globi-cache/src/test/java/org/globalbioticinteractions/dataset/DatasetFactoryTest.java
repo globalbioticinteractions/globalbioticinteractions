@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -25,7 +24,7 @@ public class DatasetFactoryTest {
     private Dataset datasetFor(String meta) throws DatasetRegistryException {
         final DatasetRegistry finder = new DatasetRegistry() {
             @Override
-            public Collection<String> findNamespaces() throws DatasetRegistryException {
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList("some/repo");
             }
 

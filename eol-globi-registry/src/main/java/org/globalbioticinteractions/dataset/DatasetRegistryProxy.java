@@ -25,10 +25,10 @@ public class DatasetRegistryProxy implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetRegistryException {
+    public Iterable<String> findNamespaces() throws DatasetRegistryException {
         Collection<String> namespacesAll = new ArrayList<>();
         for (DatasetRegistry registry : registries) {
-            Collection<String> namespaces = registry.findNamespaces();
+            Iterable<String> namespaces = registry.findNamespaces();
             Collection<String> newNamespaces = CollectionUtils.subtract(namespaces, namespacesAll);
             for (String newNamespace : newNamespaces) {
                 LOG.info("associating [" + newNamespace + "] with [" + registry.getClass().getSimpleName() + "]");

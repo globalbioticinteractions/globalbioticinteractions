@@ -6,8 +6,8 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,9 +24,13 @@ public class DatasetRegistryProxyTest {
         )
         );
 
-        assertThat(registry.findNamespaces().size(), is(2));
-        assertThat(registry.findNamespaces(), CoreMatchers.hasItem("one"));
-        assertThat(registry.findNamespaces(), CoreMatchers.hasItem("two"));
+
+        List<String> namespaces = new ArrayList<>();
+        registry.findNamespaces().forEach(namespaces::add);
+
+        assertThat(namespaces.size(), is(2));
+        assertThat(namespaces, CoreMatchers.hasItem("one"));
+        assertThat(namespaces, CoreMatchers.hasItem("two"));
 
         assertThat(registry.datasetFor("one").getNamespace(), is("one"));
         assertThat(registry.datasetFor("two").getNamespace(), is("one|two"));
@@ -39,8 +43,11 @@ public class DatasetRegistryProxyTest {
         )
         );
 
-        assertThat(registry.findNamespaces().size(), is(1));
-        assertThat(registry.findNamespaces(), CoreMatchers.hasItem("one"));
+        List<String> namespaces = new ArrayList<>();
+        registry.findNamespaces().forEach(namespaces::add);
+
+        assertThat(namespaces.size(), is(1));
+        assertThat(namespaces, CoreMatchers.hasItem("one"));
 
         registry.datasetFor("foo");
     }
@@ -56,7 +63,7 @@ public class DatasetRegistryProxyTest {
         }
 
         @Override
-        public Collection<String> findNamespaces() throws DatasetRegistryException {
+        public Iterable<String> findNamespaces() throws DatasetRegistryException {
             return namespaces;
         }
 
@@ -65,7 +72,7 @@ public class DatasetRegistryProxyTest {
             if (!namespaces.contains(namespace)) {
                 throw new DatasetRegistryException("no dataset for [" + namespace +"]");
             }
-            return new DatasetWithResourceMapping(StringUtils.join(findNamespaces(), "|"), URI.create("http://example.com/" + findNamespaces().size()), new ResourceServiceLocalAndRemote(inStream -> inStream));
+            return new DatasetWithResourceMapping(StringUtils.join(findNamespaces(), "|"), URI.create("http://example.com/" + namespaces.size()), new ResourceServiceLocalAndRemote(inStream -> inStream));
         }
     }
 }

@@ -99,8 +99,10 @@ public class DatasetRegistryLocalTest {
                         cacheDir.getAbsolutePath(),
                         new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)), new ResourceServiceLocal(inStream -> inStream));
 
-        Collection<String> availableNamespaces = registry.findNamespaces();
-        assertThat(availableNamespaces, not(contains("local")));
+        Iterable<String> availableNamespaces = registry.findNamespaces();
+        for (String availableNamespace : availableNamespaces) {
+            assertThat(availableNamespace, is(not("local")));
+        }
 
         try {
             registry.datasetFor("local");

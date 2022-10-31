@@ -2,8 +2,6 @@ package org.globalbioticinteractions.dataset;
 
 import org.globalbioticinteractions.cache.CacheFactory;
 
-import java.util.Collection;
-
 public class DatasetRegistryWithCache implements DatasetRegistry {
     private final DatasetRegistry registry;
 
@@ -14,7 +12,7 @@ public class DatasetRegistryWithCache implements DatasetRegistry {
         this.cacheFactory = factory;
     }
 
-    public Collection<String> findNamespaces() throws DatasetRegistryException {
+    public Iterable<String> findNamespaces() throws DatasetRegistryException {
         return getRegistry().findNamespaces();
     }
 

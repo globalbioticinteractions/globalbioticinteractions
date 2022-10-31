@@ -44,7 +44,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
     }
 
     @Override
-    public Collection<String> findNamespaces() throws DatasetRegistryException {
+    public Iterable<String> findNamespaces() throws DatasetRegistryException {
         File directory = new File(cacheDir);
         Collection<String> namespaces = Collections.emptyList();
         if (directory.exists() && directory.isDirectory()) {
@@ -150,7 +150,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         final URI sourceURI = findLastCachedDatasetURI(namespace);
         dataset = sourceURI == null ? null : new DatasetFactory(new DatasetRegistry() {
             @Override
-            public Collection<String> findNamespaces() throws DatasetRegistryException {
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList(namespace);
             }
 
