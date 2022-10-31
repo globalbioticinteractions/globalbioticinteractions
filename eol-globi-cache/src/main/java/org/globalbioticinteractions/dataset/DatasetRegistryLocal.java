@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import jdk.nashorn.internal.ir.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.cache.CacheFactory;
@@ -18,9 +19,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,25 +49,24 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
     @Override
     public Iterable<String> findNamespaces() throws DatasetRegistryException {
-        File directory = new File(cacheDir);
-        Collection<String> namespaces = Collections.emptyList();
-        if (directory.exists() && directory.isDirectory()) {
-            namespaces = collectNamespaces(directory);
-        } else {
-            LOG.warn("Directory [" + cacheDir + "] does not exist.");
-        }
+        List<String> namespaces = new ArrayList<>();
+        findNamespaces(namespaces::add);
         return namespaces;
     }
 
     @Override
     public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
-        for (String namespace : findNamespaces()) {
-            namespaceConsumer.accept(namespace);
+        File directory = new File(cacheDir);
+        Collection<String> namespaces = Collections.emptyList();
+        if (directory.exists() && directory.isDirectory()) {
+            namespaces = collectNamespaces(directory, namespaceConsumer);
+        } else {
+            LOG.warn("Directory [" + cacheDir + "] does not exist.");
         }
     }
 
 
-    private Collection<String> collectNamespaces(File directory) throws DatasetRegistryException {
+    private Collection<String> collectNamespaces(File directory, Consumer<String> namespaceConsumer) throws DatasetRegistryException {
 
         try {
             Collection<String> namespaces = new TreeSet<>();
@@ -80,7 +82,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
                             FileVisitResult result = CONTINUE;
                             if (file.endsWith(ProvenanceLog.PROVENANCE_LOG_FILENAME)) {
                                 try {
-                                    addNamespace(namespaces, file.toFile());
+                                    addNamespace(namespaces, file.toFile(), namespaceConsumer);
                                     result = SKIP_SIBLINGS;
                                 } catch (DatasetRegistryException e) {
                                     LOG.warn("failed to process [" + file.toFile().getAbsolutePath() + "]");
@@ -97,7 +99,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
     }
 
-    private void addNamespace(Collection<String> namespaces, File accessFile) throws DatasetRegistryException {
+    private void addNamespace(Collection<String> namespaces, File accessFile, Consumer<String> consumer) throws DatasetRegistryException {
         try {
             LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
             final ProvenanceLog.ProvenanceEntryListener lineListener = new ProvenanceLog.ProvenanceEntryListener() {
@@ -108,6 +110,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
                     if (values.length >= 5
                             && StringUtils.equals(values[4], CacheUtil.MIME_TYPE_GLOBI)) {
                         namespaces.add(values[0]);
+                        consumer.accept(values[0]);
                         foundNamespace.set(true);
                     }
                 }
