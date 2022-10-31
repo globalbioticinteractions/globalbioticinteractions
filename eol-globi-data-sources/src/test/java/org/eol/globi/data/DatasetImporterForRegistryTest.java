@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -28,6 +29,14 @@ public class DatasetImporterForRegistryTest {
             public Iterable<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList("some/namespace");
             }
+
+            @Override
+            public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                for (String namespace : findNamespaces()) {
+                    namespaceConsumer.accept(namespace);
+                }
+            }
+
 
             @Override
             public Dataset datasetFor(String namespace) throws DatasetRegistryException {
@@ -52,6 +61,13 @@ public class DatasetImporterForRegistryTest {
                     @Override
                     public Iterable<String> findNamespaces() throws DatasetRegistryException {
                         return Collections.singletonList("some/namespace");
+                    }
+
+                    @Override
+                    public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                        for (String namespace : findNamespaces()) {
+                            namespaceConsumer.accept(namespace);
+                        }
                     }
 
                     @Override

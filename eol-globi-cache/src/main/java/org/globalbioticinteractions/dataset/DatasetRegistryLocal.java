@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 import static java.nio.file.FileVisitResult.CONTINUE;
@@ -54,6 +55,14 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         }
         return namespaces;
     }
+
+    @Override
+    public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+        for (String namespace : findNamespaces()) {
+            namespaceConsumer.accept(namespace);
+        }
+    }
+
 
     private Collection<String> collectNamespaces(File directory) throws DatasetRegistryException {
 
@@ -152,6 +161,13 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             @Override
             public Iterable<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList(namespace);
+            }
+
+            @Override
+            public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                for (String namespace : findNamespaces()) {
+                    namespaceConsumer.accept(namespace);
+                }
             }
 
             @Override

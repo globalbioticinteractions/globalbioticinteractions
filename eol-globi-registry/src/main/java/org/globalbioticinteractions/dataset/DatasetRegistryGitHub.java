@@ -5,6 +5,7 @@ import org.eol.globi.service.ResourceService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.function.Consumer;
 
 public abstract class DatasetRegistryGitHub implements DatasetRegistry {
 
@@ -22,6 +23,14 @@ public abstract class DatasetRegistryGitHub implements DatasetRegistry {
             throw new DatasetRegistryException(e);
         }
     }
+
+    @Override
+    public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+        for (String namespace : findNamespaces()) {
+            namespaceConsumer.accept(namespace);
+        }
+    }
+
 
     public ResourceService getResourceService() {
         return resourceService;

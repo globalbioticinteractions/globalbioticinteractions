@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -66,6 +67,14 @@ public class DatasetRegistryProxyTest {
         public Iterable<String> findNamespaces() throws DatasetRegistryException {
             return namespaces;
         }
+
+        @Override
+        public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+            for (String namespace : findNamespaces()) {
+                namespaceConsumer.accept(namespace);
+            }
+        }
+
 
         @Override
         public Dataset datasetFor(String namespace) throws DatasetRegistryException {

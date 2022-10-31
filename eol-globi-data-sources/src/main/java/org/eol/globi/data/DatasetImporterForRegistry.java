@@ -37,7 +37,6 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
             throw new StudyImporterException("failed to discover datasets", e);
         }
 
-
         List<String> repositoriesWithIssues = new ArrayList<>();
         for (String namespace : namespaces) {
             try {

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class DatasetRegistryProxy implements DatasetRegistry {
 
@@ -39,6 +40,14 @@ public class DatasetRegistryProxy implements DatasetRegistry {
 
         return namespacesAll;
     }
+
+    @Override
+    public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+        for (String namespace : findNamespaces()) {
+            namespaceConsumer.accept(namespace);
+        }
+    }
+
 
     public void associateNamespaceWithRegistry(DatasetRegistry registry, String newNamespace) {
         if (registryForNamespace == null) {

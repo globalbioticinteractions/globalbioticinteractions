@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 public class DatasetRegistryZenodo implements DatasetRegistry {
     private static final String PREFIX_GITHUB_RELATION = "https://github.com/";
@@ -65,6 +66,14 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
             throw new DatasetRegistryException("failed to retrieve, or parse, list of Zenodo archives", e);
         }
     }
+
+    @Override
+    public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+        for (String namespace : findNamespaces()) {
+            namespaceConsumer.accept(namespace);
+        }
+    }
+
 
     @Override
     public Dataset datasetFor(String namespace) throws DatasetRegistryException {

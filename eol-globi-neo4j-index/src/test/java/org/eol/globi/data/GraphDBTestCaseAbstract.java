@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -70,6 +71,12 @@ public abstract class GraphDBTestCaseAbstract {
                     public Iterable<String> findNamespaces() throws DatasetRegistryException {
                         return Collections.emptyList();
                     }
+
+                    @Override
+                    public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                        //
+                    }
+
 
                     @Override
                     public Dataset datasetFor(String namespace) throws DatasetRegistryException {
