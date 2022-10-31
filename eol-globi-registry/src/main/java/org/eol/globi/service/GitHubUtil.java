@@ -38,7 +38,7 @@ public class GitHubUtil {
                 path,
                 query,
                 null
-        );
+        );  
     }
 
     private static boolean hasInteractionData(URI gloBIConfigURI, ResourceService resourceService) throws IOException {
