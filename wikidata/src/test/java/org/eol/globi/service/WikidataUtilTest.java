@@ -99,7 +99,7 @@ public class WikidataUtilTest {
                 .sorted()
                 .collect(Collectors.joining("|"));
 
-        assertThat(ids, is("BOLDTaxon:12439|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
+        assertThat(ids, is("BOLDTaxon:12439|COL:6MB3T|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
 
         final String names = relatedTaxonIds
                 .stream()
@@ -108,6 +108,28 @@ public class WikidataUtilTest {
                 .collect(Collectors.joining("|"));
 
         assertThat(names, is("Homo sapiens"));
+    }
+
+    @Test
+    public void lookupTaxonLinksPlant() throws IOException, URISyntaxException {
+        List<Taxon> relatedTaxonIds =
+                WikidataUtil.findRelatedTaxonIds("WD:Q332469");
+
+        final String ids = relatedTaxonIds
+                .stream()
+                .map(Taxon::getExternalId)
+                .sorted()
+                .collect(Collectors.joining("|"));
+
+        assertThat(ids, is("COL:99P2F|EOL:579775|GBIF:2925303|INAT_TAXON:50333|IRMNG:10206228|ITIS:32175|NCBI:126435|OTT:78889|WD:Q332469|WFO:wfo-0000223016"));
+
+        final String names = relatedTaxonIds
+                .stream()
+                .map(Taxon::getName)
+                .distinct()
+                .collect(Collectors.joining("|"));
+
+        assertThat(names, is("Lantana camara"));
     }
 
     @Test
@@ -121,7 +143,7 @@ public class WikidataUtilTest {
                 .sorted()
                 .collect(Collectors.joining("|"));
 
-        assertThat(ids, is("EOL:16498|GBIF:2616104|IF:7106|INAT_TAXON:327996|IRMNG:1312559|ITIS:14134|NBN:NHMSYS0001474393|NCBI:5598|OTT:464790|WD:Q133266|WORMS:100208"));
+        assertThat(ids, is("COL:SYV|EOL:16498|GBIF:2616104|IF:7106|INAT_TAXON:327996|IRMNG:1312559|ITIS:14134|NBN:NHMSYS0001474393|NCBI:5598|OTT:464790|WD:Q133266|WORMS:100208"));
 
         final String names = relatedTaxonIds
                 .stream()
@@ -143,7 +165,7 @@ public class WikidataUtilTest {
                 .sorted()
                 .collect(Collectors.joining("|"));
 
-        assertThat(ids, is("BOLDTaxon:12439|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
+        assertThat(ids, is("BOLDTaxon:12439|COL:6MB3T|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
 
         final String names = relatedTaxonIds
                 .stream()
