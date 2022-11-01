@@ -174,15 +174,12 @@ public class WikidataUtilTest {
     }
 
     @Test
-    public void createWikiDataLionQuery() {
+    public void createWikiDataLionQuery() throws IOException {
         String sparqlQuery = WikidataUtil.createSparqlQuery("WD:Q140", "en");
-        assertThat(sparqlQuery, is("SELECT ?item ?pic ?name WHERE {\n" +
-                "  wd:Q140 wdt:P18 ?pic .\n" +
-                "  SERVICE wikibase:label {\n" +
-                "    bd:serviceParam wikibase:language \"en\" .\n" +
-                "    wd:Q140 wdt:P1843 ?name .\n" +
-                "  }\n" +
-                "} limit 1"));
+
+        String expected = IOUtils.toString(getClass().getResourceAsStream("wikidata.sparql"), StandardCharsets.UTF_8);
+
+        assertThat(sparqlQuery, is(expected));
     }
 
 

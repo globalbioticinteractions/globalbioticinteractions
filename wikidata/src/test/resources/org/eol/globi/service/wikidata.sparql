@@ -1,0 +1,7 @@
+SELECT ?item ?pic ?name WHERE {
+  wd:Q140 wdt:P18 ?pic .
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "en" .
+    wd:Q140 wdt:P1843 ?name .
+  }
+} limit 1
