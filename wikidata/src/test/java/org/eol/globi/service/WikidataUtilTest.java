@@ -156,16 +156,12 @@ public class WikidataUtilTest {
     }
 
     @Test
-    public void createITISLionQuery() {
+    public void createITISLionQuery() throws IOException {
         String sparqlQuery = WikidataUtil.createSparqlQuery("ITIS:183803", "en");
-        assertThat(sparqlQuery, is("SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
-                "  ?wdpage wdt:P18 ?pic .\n" +
-                "  ?wdpage wdt:P815 \"183803\" .\n" +
-                "  SERVICE wikibase:label {\n" +
-                "   bd:serviceParam wikibase:language \"en\" .\n" +
-                "   ?wdpage wdt:P1843 ?name .\n" +
-                "  }\n" +
-                "} limit 1"));
+
+        String expectedQuery = IOUtils.toString(getClass().getResourceAsStream("itis.sparql"), StandardCharsets.UTF_8);
+
+        assertThat(sparqlQuery, is(expectedQuery));
     }
 
     @Test

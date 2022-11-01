@@ -1,0 +1,8 @@
+SELECT ?item ?pic ?name ?wdpage WHERE {
+  ?wdpage wdt:P18 ?pic .
+  ?wdpage wdt:P815 "183803" .
+  SERVICE wikibase:label {
+   bd:serviceParam wikibase:language "en" .
+   ?wdpage wdt:P1843 ?name .
+  }
+} limit 1
