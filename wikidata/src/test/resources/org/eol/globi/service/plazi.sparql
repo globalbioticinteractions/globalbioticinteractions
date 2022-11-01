@@ -1,6 +1,6 @@
 SELECT ?pic ?name ?wdpage WHERE {
-  OPTIONAL { ?wdpage wdt:P18 ?pic . }
   ?wdpage wdt:P1992 "885887A2FFC88A21F8B1FA48FB92DD65" .
+  OPTIONAL { ?wdpage wdt:P18 ?pic . }
   SERVICE wikibase:label {
    bd:serviceParam wikibase:language "en" .
    ?wdpage wdt:P1843 ?name .
