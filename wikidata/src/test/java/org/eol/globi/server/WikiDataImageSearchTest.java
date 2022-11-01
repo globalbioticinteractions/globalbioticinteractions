@@ -34,43 +34,6 @@ public class WikiDataImageSearchTest {
     }
 
 
-    @Test
-    public void createITISLionQuery() {
-        String sparqlQuery = WikidataUtil.createSparqlQuery("ITIS:183803", "en");
-        assertThat(sparqlQuery, is("SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
-                "  ?wdpage wdt:P18 ?pic .\n" +
-                "  ?wdpage wdt:P815 \"183803\" .\n" +
-                "  SERVICE wikibase:label {\n" +
-                "   bd:serviceParam wikibase:language \"en\" .\n" +
-                "   ?wdpage wdt:P1843 ?name .\n" +
-                "  }\n" +
-                "} limit 1"));
-    }
-
-    @Test
-    public void createPlaziRhinolophusDentiQuery() {
-        String sparqlQuery = WikidataUtil.createSparqlQuery("PLAZI:885887A2FFC88A21F8B1FA48FB92DD65", "en");
-        assertThat(sparqlQuery, is("SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
-                "  ?wdpage wdt:P18 ?pic .\n" +
-                "  ?wdpage wdt:P1992 \"885887A2FFC88A21F8B1FA48FB92DD65\" .\n" +
-                "  SERVICE wikibase:label {\n" +
-                "   bd:serviceParam wikibase:language \"en\" .\n" +
-                "   ?wdpage wdt:P1843 ?name .\n" +
-                "  }\n" +
-                "} limit 1"));
-    }
-
-    @Test
-    public void createWikiDataLionQuery() {
-        String sparqlQuery = WikidataUtil.createSparqlQuery("WD:Q140", "en");
-        assertThat(sparqlQuery, is("SELECT ?item ?pic ?name WHERE {\n" +
-                "  wd:Q140 wdt:P18 ?pic .\n" +
-                "  SERVICE wikibase:label {\n" +
-                "    bd:serviceParam wikibase:language \"en\" .\n" +
-                "    wd:Q140 wdt:P1843 ?name .\n" +
-                "  }\n" +
-                "} limit 1"));
-    }
 
     @Test
     public void lookupLionByITIS() throws IOException {
