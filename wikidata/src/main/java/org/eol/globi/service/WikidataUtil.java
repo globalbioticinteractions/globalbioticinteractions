@@ -41,8 +41,8 @@ public final class WikidataUtil {
         put(TaxonomyProvider.NBN, "P3240");
         put(TaxonomyProvider.MSW, "P959");
         put(TaxonomyProvider.PLAZI, "P1992");
-        put(TaxonomyProvider.WORLD_OF_FLORA_ONLINE, "P7715");
         put(TaxonomyProvider.CATALOGUE_OF_LIFE, "P10585");
+        put(TaxonomyProvider.WORLD_OF_FLORA_ONLINE, "P7715");
     }};
     public static final Map<String, TaxonomyProvider> WIKIDATA_TO_PROVIDER = new TreeMap<String, TaxonomyProvider>() {{
         put("P9157", TaxonomyProvider.OPEN_TREE_OF_LIFE);
