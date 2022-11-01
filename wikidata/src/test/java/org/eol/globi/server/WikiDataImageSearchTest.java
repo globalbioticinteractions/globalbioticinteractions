@@ -62,6 +62,20 @@ public class WikiDataImageSearchTest {
     }
 
     @Test
+    public void lookupSeaOtterEOLIdRetired() throws IOException {
+        Assert.assertNull(new WikiDataImageSearch().lookupImageForExternalId("EOL:242598"));
+    }
+
+    @Test
+    public void lookupSeaOtterEOLIdCurrent() throws IOException {
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("EOL:46559130");
+        Assert.assertNotNull(taxonImage);
+        assertThat(taxonImage.getCommonName(), is("Sea Otter @en"));
+        assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q41407"));
+        assertThat(taxonImage.getThumbnailURL(), is("https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20otter%20cropped.jpg?width=100"));
+    }
+
+    @Test
     public void northernBat() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("NBN:NHMSYS0000528007");
         Assert.assertNotNull(taxonImage);
