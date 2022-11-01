@@ -202,8 +202,8 @@ public final class WikidataUtil {
                     "} limit 1";
         } else if (taxonomyProvider != null && PROVIDER_TO_WIKIDATA.containsKey(taxonomyProvider)) {
             String taxonId = replace(externalId, taxonomyProvider.getIdPrefix(), "");
-            query = "SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
-                    "  ?wdpage wdt:P18 ?pic .\n" +
+            query = "SELECT ?pic ?name ?wdpage WHERE {\n" +
+                    "  OPTIONAL { ?wdpage wdt:P18 ?pic . }\n" +
                     "  ?wdpage wdt:" + PROVIDER_TO_WIKIDATA.get(taxonomyProvider) + " \"" + taxonId + "\" .\n" +
                     "  SERVICE wikibase:label {\n" +
                     "   bd:serviceParam wikibase:language \"" + preferredLanguage + "\" .\n" +
