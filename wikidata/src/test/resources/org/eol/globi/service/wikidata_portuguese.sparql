@@ -1,5 +1,7 @@
 SELECT ?pic ?name ?nameLabel WHERE {
-  wd:Q140 wdt:P1843 ?name .
   OPTIONAL { wd:Q140 wdt:P18 ?pic . }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "pt". }
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "pt".
+    wd:Q140 wdt:P1843 ?name .
+  }
 } limit 1

@@ -194,9 +194,11 @@ public final class WikidataUtil {
         if (TaxonomyProvider.WIKIDATA.equals(taxonomyProvider)) {
             String wikiDataId = replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
             query = "SELECT ?pic ?name ?nameLabel WHERE {\n" +
-                    "  wd:" + wikiDataId + " wdt:P1843 ?name .\n" +
                     "  OPTIONAL { wd:" + wikiDataId + " wdt:P18 ?pic . }\n" +
-                    "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + preferredLanguage + "\". }\n" +
+                    "  SERVICE wikibase:label {\n"+
+                    "    bd:serviceParam wikibase:language \"" + preferredLanguage + "\".\n" +
+                    "    wd:" + wikiDataId + " wdt:P1843 ?name .\n" +
+                    "  }\n" +
                     "} limit 1";
         } else if (taxonomyProvider != null && PROVIDER_TO_WIKIDATA.containsKey(taxonomyProvider)) {
             String taxonId = replace(externalId, taxonomyProvider.getIdPrefix(), "");
