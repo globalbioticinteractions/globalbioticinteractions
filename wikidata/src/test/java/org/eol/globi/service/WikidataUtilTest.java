@@ -41,7 +41,6 @@ public class WikidataUtilTest {
     @Test
     public void checkSupportForSupportedTaxonProviders() throws IOException, URISyntaxException {
         Collection<TaxonomyProvider> ignored = Arrays.asList(
-                CATALOGUE_OF_LIFE,
                 GEONAMES,
                 WIKIPEDIA,
                 ENVO,
