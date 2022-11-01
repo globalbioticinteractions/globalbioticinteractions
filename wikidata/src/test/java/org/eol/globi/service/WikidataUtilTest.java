@@ -1,11 +1,13 @@
 package org.eol.globi.service;
 
+import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -167,16 +169,12 @@ public class WikidataUtilTest {
     }
 
     @Test
-    public void createPlaziRhinolophusDentiQuery() {
+    public void createPlaziRhinolophusDentiQuery() throws IOException {
         String sparqlQuery = WikidataUtil.createSparqlQuery("PLAZI:885887A2FFC88A21F8B1FA48FB92DD65", "en");
-        assertThat(sparqlQuery, is("SELECT ?item ?pic ?name ?wdpage WHERE {\n" +
-                "  ?wdpage wdt:P18 ?pic .\n" +
-                "  ?wdpage wdt:P1992 \"885887A2FFC88A21F8B1FA48FB92DD65\" .\n" +
-                "  SERVICE wikibase:label {\n" +
-                "   bd:serviceParam wikibase:language \"en\" .\n" +
-                "   ?wdpage wdt:P1843 ?name .\n" +
-                "  }\n" +
-                "} limit 1"));
+
+        String expected = IOUtils.toString(getClass().getResourceAsStream("plazi.sparql"), StandardCharsets.UTF_8);
+
+        assertThat(sparqlQuery, is(expected));
     }
 
     @Test
