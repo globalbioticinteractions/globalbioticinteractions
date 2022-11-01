@@ -53,6 +53,15 @@ public class WikiDataImageSearchTest {
     }
 
     @Test
+    public void lookupSeaOtter() throws IOException {
+        TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q41407");
+        Assert.assertNotNull(taxonImage);
+        assertThat(taxonImage.getCommonName(), is("Sea Otter @en"));
+        assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q41407"));
+        assertThat(taxonImage.getThumbnailURL(), is("https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20otter%20cropped.jpg?width=100"));
+    }
+
+    @Test
     public void northernBat() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("NBN:NHMSYS0000528007");
         Assert.assertNotNull(taxonImage);
