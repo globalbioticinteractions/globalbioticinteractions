@@ -195,6 +195,15 @@ public class WikidataUtilTest {
     }
 
     @Test
+    public void createPlaziAnguillaAnguillaFrenchQuery() throws IOException {
+        String sparqlQuery = WikidataUtil.createSparqlQuery("PLAZI:94AA5349-EDA9-E45C-E646-5F479A5A4F1A", "fr");
+
+        String expected = IOUtils.toString(getClass().getResourceAsStream("plazi_french.sparql"), StandardCharsets.UTF_8);
+
+        assertThat(sparqlQuery, is(expected));
+    }
+
+    @Test
     public void createWikiDataLionEnglishQuery() throws IOException {
         String sparqlQuery = WikidataUtil.createSparqlQuery("WD:Q140", "en");
 

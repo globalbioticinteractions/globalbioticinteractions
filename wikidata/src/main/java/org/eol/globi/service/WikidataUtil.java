@@ -200,6 +200,16 @@ public final class WikidataUtil {
                     "  }\n" +
                     "  OPTIONAL { wd:" + wikiDataId + " wdt:P18 ?pic . }\n" +
                     "} limit 1";
+        } else if (TaxonomyProvider.PLAZI.equals(taxonomyProvider)) {
+            String taxonId = replace(externalId, taxonomyProvider.getIdPrefix(), "");
+            query = "SELECT ?pic ?wdpage ?wdpageLabel ?commonname  WHERE {\n" +
+                    "  ?wdpage wdt:P1992 \"" + taxonId + "\" .\n" +
+                    "  ?wdpage p:P1843 ?commonnamestatement .\n" +
+                    "  ?commonnamestatement ps:P1843 ?commonname .\n" +
+                    "  FILTER (LANG(?commonname) = \"" + preferredLanguage + "\")\n" +
+                    "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + preferredLanguage + "\". }\n" +
+                    "  OPTIONAL {?wdpage wdt:P18 ?pic .}\n" +
+                    "} limit 1";
         } else if (taxonomyProvider != null && PROVIDER_TO_WIKIDATA.containsKey(taxonomyProvider)) {
             String taxonId = replace(externalId, taxonomyProvider.getIdPrefix(), "");
             query = "SELECT ?pic ?name ?wdpage WHERE {\n" +

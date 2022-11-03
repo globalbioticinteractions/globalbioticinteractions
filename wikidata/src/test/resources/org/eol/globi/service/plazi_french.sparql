@@ -1,8 +1,8 @@
 SELECT ?pic ?wdpage ?wdpageLabel ?commonname  WHERE {
-  ?wdpage wdt:P1992 "885887A2FFC88A21F8B1FA48FB92DD65" .
+  ?wdpage wdt:P1992 "94AA5349-EDA9-E45C-E646-5F479A5A4F1A" .
   ?wdpage p:P1843 ?commonnamestatement .
   ?commonnamestatement ps:P1843 ?commonname .
-  FILTER (LANG(?commonname) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+  FILTER (LANG(?commonname) = "fr")
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
   OPTIONAL {?wdpage wdt:P18 ?pic .}
 } limit 1
