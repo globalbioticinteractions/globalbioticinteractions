@@ -12,4 +12,4 @@ test-output/
 .DS_Store
 ripple.log
 blueprints.log
-*.versionsBackup.xml
+*.versionsBackup
