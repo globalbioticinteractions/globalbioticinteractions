@@ -1,0 +1,7 @@
+SELECT ?pic ?name ?nameLabel WHERE {
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "{{LANG}}".
+    wd:{{ID}} wdt:P1843 ?name .
+  }
+  OPTIONAL { wd:{{ID}} wdt:P18 ?pic . }
+} limit 1

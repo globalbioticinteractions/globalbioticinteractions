@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>eol-globi-parent</artifactId>
+        <groupId>org.eol</groupId>
+        <version>0.24.5-SNAPSHOT</version>
+        <relativePath>../eol-globi-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>eol-globi-jcoord</artifactId>
+    <name>Global Biotic Interactions Wrapper for JCoord</name>
+    <packaging>pom</packaging>
+    <!-- note that this module was created to avoid including the mygrid repository for all artifacts -->
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.org.mygrid.resources.jcoord</groupId>
+            <artifactId>jcoord</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>globi-thirdparty-libs</id>
+            <name>GloBI Thirdparty Libraries</name>
+            <url>https://depot.globalbioticinteractions.org/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+</project>

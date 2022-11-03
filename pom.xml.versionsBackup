@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.eol</groupId>
+    <artifactId>eol-globi-data</artifactId>
+    <version>0.24.5-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Global Biotic Interactions</name>
+    <modules>
+        <module>eol-globi-parent</module>
+        <module>eol-globi-jcoord</module>
+        <module>eol-globi-resource</module>
+        <module>eol-globi-resource-local</module>
+        <module>eol-globi-resource-remote</module>
+        <module>eol-globi-lib</module>
+        <module>wikidata</module>
+        <module>eol-globi-cache</module>
+        <module>eol-globi-registry</module>
+        <module>eol-globi-data-sources</module>
+        <module>eol-globi-taxon-resolver</module>
+        <module>eol-globi-neo4j</module>
+        <module>eol-globi-neo4j-index-export</module>
+        <module>eol-globi-neo4j-index</module>
+        <module>eol-globi-rest</module>
+        <module>elton4n</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>generate-datasets</id>
+            <modules>
+                <module>eol-globi-datasets</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>rdf</id>
+            <modules>
+                <module>eol-globi-rdf</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.globalbioticinteractions</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>0.0.4</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <scm>
+        <connection>scm:git:git@github.com:globalbioticinteractions/globalbioticinteractions.git</connection>
+        <url>scm:git:git@github.com:globalbioticinteractions/globalbioticinteractions.git</url>
+        <developerConnection>scm:git:git@github.com:globalbioticinteractions/globalbioticinteractions
+        </developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>globi-release</id>
+            <name>Release Repository</name>
+            <url>s3://globi/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>globi-snapshot</id>
+            <name>Snapshot Repository</name>
+            <url>s3://globi/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+</project>

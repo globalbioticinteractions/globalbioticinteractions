@@ -1,0 +1,8 @@
+SELECT ?pic ?wdpage ?wdpageLabel ?commonname  WHERE {
+  ?wdpage wdt:P1992 "{{ID}}" .
+  ?wdpage p:P1843 ?commonnamestatement .
+  ?commonnamestatement ps:P1843 ?commonname .
+  FILTER (LANG(?commonname) = "{{LANG}}")
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "{{LANG}}". }
+  OPTIONAL {?wdpage wdt:P18 ?pic .}
+} limit 1

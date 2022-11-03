@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -14,6 +15,7 @@ import org.eol.globi.util.HttpUtil;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -191,35 +193,29 @@ public final class WikidataUtil {
 
         String query = null;
 
-        if (TaxonomyProvider.WIKIDATA.equals(taxonomyProvider)) {
-            String wikiDataId = replace(externalId, TaxonomyProvider.WIKIDATA.getIdPrefix(), "");
-            query = "SELECT ?pic ?name ?nameLabel WHERE {\n" +
-                    "  SERVICE wikibase:label {\n"+
-                    "    bd:serviceParam wikibase:language \"" + preferredLanguage + "\".\n" +
-                    "    wd:" + wikiDataId + " wdt:P1843 ?name .\n" +
-                    "  }\n" +
-                    "  OPTIONAL { wd:" + wikiDataId + " wdt:P18 ?pic . }\n" +
-                    "} limit 1";
-        } else if (TaxonomyProvider.PLAZI.equals(taxonomyProvider)) {
-            String taxonId = replace(externalId, taxonomyProvider.getIdPrefix(), "");
-            query = "SELECT ?pic ?wdpage ?wdpageLabel ?commonname  WHERE {\n" +
-                    "  ?wdpage wdt:P1992 \"" + taxonId + "\" .\n" +
-                    "  ?wdpage p:P1843 ?commonnamestatement .\n" +
-                    "  ?commonnamestatement ps:P1843 ?commonname .\n" +
-                    "  FILTER (LANG(?commonname) = \"" + preferredLanguage + "\")\n" +
-                    "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + preferredLanguage + "\". }\n" +
-                    "  OPTIONAL {?wdpage wdt:P18 ?pic .}\n" +
-                    "} limit 1";
-        } else if (taxonomyProvider != null && PROVIDER_TO_WIKIDATA.containsKey(taxonomyProvider)) {
-            String taxonId = replace(externalId, taxonomyProvider.getIdPrefix(), "");
-            query = "SELECT ?pic ?name ?wdpage WHERE {\n" +
-                    "  ?wdpage wdt:" + PROVIDER_TO_WIKIDATA.get(taxonomyProvider) + " \"" + taxonId + "\" .\n" +
-                    "  OPTIONAL { ?wdpage wdt:P18 ?pic . }\n" +
-                    "  SERVICE wikibase:label {\n" +
-                    "   bd:serviceParam wikibase:language \"" + preferredLanguage + "\" .\n" +
-                    "   ?wdpage wdt:P1843 ?name .\n" +
-                    "  }\n" +
-                    "} limit 1";
+        if (taxonomyProvider != null) {
+            String id = replace(externalId, taxonomyProvider.getIdPrefix(), "");
+
+            if (TaxonomyProvider.WIKIDATA.equals(taxonomyProvider)) {
+                query = generateSparql(preferredLanguage, taxonomyProvider, "wikidata.sparql.template", id);
+            } else if (TaxonomyProvider.PLAZI.equals(taxonomyProvider)) {
+                query = generateSparql(preferredLanguage, taxonomyProvider, "plazi.sparql.template", id);
+            } else if (PROVIDER_TO_WIKIDATA.containsKey(taxonomyProvider)) {
+                query = generateSparql(preferredLanguage, taxonomyProvider, "taxon.sparql.template", id);
+            }
+        }
+        return query;
+    }
+
+    private static String generateSparql(String preferredLanguage, TaxonomyProvider taxonomyProvider, String s, String wikiDataId) {
+        String query;
+        try {
+            String queryTemplate = IOUtils.toString(WikidataUtil.class.getResourceAsStream(s), StandardCharsets.UTF_8);
+            query = StringUtils.replace(StringUtils.replace(queryTemplate, "{{ID}}", wikiDataId),
+                    "{{LANG}}", preferredLanguage);
+
+        } catch (IOException e) {
+            throw new RuntimeException("failed to find sparql template [" + s + "] for [" + taxonomyProvider, e);
         }
         return query;
     }
