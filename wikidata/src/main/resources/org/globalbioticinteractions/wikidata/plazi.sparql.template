@@ -1,5 +1,5 @@
 SELECT ?pic ?wdpage ?wdpageLabel ?commonname  WHERE {
-  ?wdpage wdt:P1992 "{{ID}}" .
+  ?wdpage wdt:{{SCHEME}} "{{ID}}" .
   ?wdpage p:P1843 ?commonnamestatement .
   ?commonnamestatement ps:P1843 ?commonname .
   FILTER (LANG(?commonname) = "{{LANG}}")

@@ -1,4 +1,4 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.wikidata;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Taxon;

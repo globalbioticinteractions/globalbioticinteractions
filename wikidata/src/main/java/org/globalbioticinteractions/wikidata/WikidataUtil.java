@@ -1,4 +1,4 @@
-package org.eol.globi.service;
+package org.globalbioticinteractions.wikidata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -211,8 +211,11 @@ public final class WikidataUtil {
         String query;
         try {
             String queryTemplate = IOUtils.toString(WikidataUtil.class.getResourceAsStream(s), StandardCharsets.UTF_8);
-            query = StringUtils.replace(StringUtils.replace(queryTemplate, "{{ID}}", wikiDataId),
-                    "{{LANG}}", preferredLanguage);
+            query = StringUtils.replace(StringUtils.replace(
+                    StringUtils.replace(queryTemplate,
+                            "{{ID}}", wikiDataId),
+                    "{{LANG}}", preferredLanguage),
+                    "{{SCHEME}}", PROVIDER_TO_WIKIDATA.get(taxonomyProvider));
 
         } catch (IOException e) {
             throw new RuntimeException("failed to find sparql template [" + s + "] for [" + taxonomyProvider, e);

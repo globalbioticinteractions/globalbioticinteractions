@@ -1,8 +1,7 @@
-package org.eol.globi.server;
+package org.globalbioticinteractions.wikidata;
 
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.SearchContext;
-import org.eol.globi.service.WikidataUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

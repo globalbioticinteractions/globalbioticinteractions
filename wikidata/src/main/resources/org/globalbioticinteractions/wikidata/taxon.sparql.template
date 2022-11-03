@@ -1,5 +1,5 @@
 SELECT ?pic ?name ?wdpage WHERE {
-  ?wdpage wdt:P815 "{{ID}}" .
+  ?wdpage wdt:{{SCHEME}} "{{ID}}" .
   OPTIONAL { ?wdpage wdt:P18 ?pic . }
   SERVICE wikibase:label {
    bd:serviceParam wikibase:language "{{LANG}}" .

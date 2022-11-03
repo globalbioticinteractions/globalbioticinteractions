@@ -1,4 +1,4 @@
-package org.eol.globi.server;
+package org.globalbioticinteractions.wikidata;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
@@ -7,10 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.TaxonImage;
 import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
-import org.eol.globi.service.WikidataUtil;
 import org.eol.globi.util.ExternalIdUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

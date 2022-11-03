@@ -7,6 +7,7 @@ import org.eol.globi.service.ImageSearch;
 import org.eol.globi.service.SearchContext;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.globalbioticinteractions.wikidata.WikiDataImageSearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Controller
