@@ -12,7 +12,11 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>interactions.csv.gz</include>
+                <include>verbatim-interactions.csv.gz</include>
+                <include>refuted-interactions.csv.gz</include>
+                <include>refuted-verbatim-interactions.csv.gz</include>
                 <include>citations.csv.gz</include>
+                <include>datasets.csv.gz</include>
             </includes>
         </fileSet>
     </fileSets>

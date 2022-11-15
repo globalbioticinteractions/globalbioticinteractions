@@ -2,6 +2,7 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.util.InteractUtil;
@@ -18,25 +19,39 @@ public class ExportFlatInteractions implements GraphExporter {
     private final ExportUtil.ValueJoiner joiner;
     private final String filename;
 
+    public RelTypes getTaxonRelation() {
+        return taxonRelation;
+    }
+
+    private final RelTypes taxonRelation;
+
     private RelTypes argumentType = RelTypes.SUPPORTS;
     private String argumentTypeId = PropertyAndValueDictionary.SUPPORTS;
 
     public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename) {
+        this(joiner, filename, RelTypes.CLASSIFIED_AS);
+    }
+
+    public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename, RelTypes taxonRelation) {
         this.joiner = joiner;
         this.filename = filename;
+        this.taxonRelation = taxonRelation;
     }
 
     private List<String> createExportQueries() {
-        return Collections.singletonList(ExportFlatInteractions.createQuery(getArgumentType(), getArgumentTypeId()));
+        return Collections.singletonList(
+                ExportFlatInteractions.createQuery(
+                        getArgumentType(),
+                        getArgumentTypeId(),
+                        getTaxonRelation())
+        );
     }
 
-
-
-    private static String createQuery(RelTypes argumentTypeRel, String argumentTypeId) {
+    private static String createQuery(RelTypes argumentTypeRel, String argumentTypeId, RelTypes taxonRelation) {
         String argumentType = argumentTypeRel.name();
         return "CYPHER 2.3 START dataset = node:datasets('namespace:*') " +
-                "MATCH dataset<-[:IN_DATASET]-study-[c:" + argumentType + "]->sourceSpecimen-[:CLASSIFIED_AS]->sourceTaxon, " +
-                "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon " +
+                "MATCH dataset<-[:IN_DATASET]-study-[c:" + argumentType + "]->sourceSpecimen-[:" + taxonRelation.name() + "]->sourceTaxon, " +
+                "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:" + taxonRelation.name() + "]->targetTaxon " +
                 "WHERE NOT exists(r.inverted) " +
                 "WITH dataset, study, c, sourceSpecimen, sourceTaxon, targetSpecimen, targetTaxon, r " +
                 "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +

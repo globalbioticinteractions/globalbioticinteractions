@@ -31,13 +31,25 @@ public class GraphExporterUtil {
                 graphService,
                 formatBaseDir,
                 "interactions." + extension + ".gz",
-                joiner);
+                joiner, RelTypes.CLASSIFIED_AS);
+
+        exportSupportingInteractions(
+                graphService,
+                formatBaseDir,
+                "verbatim-interactions." + extension + ".gz",
+                joiner, RelTypes.ORIGINALLY_DESCRIBED_AS);
 
         exportRefutedInteractions(
                 graphService,
                 formatBaseDir,
                 "refuted-interactions." + extension + ".gz",
-                joiner);
+                joiner, RelTypes.CLASSIFIED_AS);
+
+        exportRefutedInteractions(
+                graphService,
+                formatBaseDir,
+                "refuted-verbatim-interactions." + extension + ".gz",
+                joiner, RelTypes.ORIGINALLY_DESCRIBED_AS);
 
         exportCitations(
                 graphService,
@@ -52,11 +64,11 @@ public class GraphExporterUtil {
                 joiner);
     }
 
-    private static void exportSupportingInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private static void exportSupportingInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner, RelTypes taxonRelation) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename)
+        new ExportFlatInteractions(joiner, filename, taxonRelation)
                 .export(graphService, baseDir);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
@@ -86,11 +98,11 @@ public class GraphExporterUtil {
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
 
-    private static void exportRefutedInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner) throws StudyImporterException {
+    private static void exportRefutedInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner, RelTypes taxonRelation) throws StudyImporterException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
-        new ExportFlatInteractions(joiner, filename)
+        new ExportFlatInteractions(joiner, filename, taxonRelation)
                 .setArgumentType(RelTypes.REFUTES)
                 .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
                 .export(graphService, baseDir);
