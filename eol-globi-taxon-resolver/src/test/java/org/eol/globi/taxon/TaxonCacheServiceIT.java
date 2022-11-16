@@ -5,6 +5,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,10 +36,7 @@ public class TaxonCacheServiceIT {
 
     @Test
     public void init10k() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService(
-                "/org/eol/globi/taxon/taxonCache10k.tsv.gz",
-                "/org/eol/globi/taxon/taxonMap10k.tsv.gz"
-        );
+        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCache10k.tsv.gz", "/org/eol/globi/taxon/taxonMap10k.tsv.gz", new ResourceServiceLocal());
         cacheService.setCacheDir(mapdbDir);
         StopWatch watch = new StopWatch();
         final TaxonImpl taxon = new TaxonImpl();

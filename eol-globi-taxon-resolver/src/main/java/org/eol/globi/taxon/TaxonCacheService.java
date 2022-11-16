@@ -15,6 +15,7 @@ import org.eol.globi.service.CacheService;
 import org.eol.globi.service.CacheServiceUtil;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.TermRequestImpl;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -24,6 +25,7 @@ import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.Engine;
 import org.mapdb.Fun;
+import org.mapdb.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,8 @@ import java.util.stream.Collectors;
 
 public class TaxonCacheService extends CacheService implements PropertyEnricher, TermMatcher {
     private static final Logger LOG = LoggerFactory.getLogger(TaxonCacheService.class);
-    public static final ResourceServiceLocal RESOURCE_SERVICE = new ResourceServiceLocal();
+
+    private final ResourceService resourceService;
 
     private BTreeMap<String, String[]> resolvedIdToTaxonMap = null;
 
@@ -56,14 +59,20 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
     private final TermResource<Taxon> taxonCache;
     private final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap;
 
-    public TaxonCacheService(final TermResource<Taxon> taxonCache, final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap) {
+    public TaxonCacheService(final TermResource<Taxon> taxonCache,
+                             final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap,
+                             final ResourceService resourceService) {
         this.taxonCache = taxonCache;
         this.taxonMap = taxonMap;
+        this.resourceService = resourceService;
     }
 
-    public TaxonCacheService(final String termResource, final String taxonMapResource) {
+    public TaxonCacheService(final String termResource,
+                             final String taxonMapResource,
+                             ResourceService resourceService) {
         this(TermResources.defaultTaxonCacheResource(termResource),
-                TermResources.defaultTaxonMapResource(taxonMapResource));
+                TermResources.defaultTaxonMapResource(taxonMapResource),
+                resourceService);
     }
 
     @Override
@@ -134,6 +143,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return externalId;
     }
 
+    private ResourceService getResourceService() {
+        return resourceService;
+    }
+
     private void lazyInit() {
         if (resolvedIdToTaxonMap == null || taxonLookupService == null) {
             init();
@@ -174,7 +187,7 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         watch.start();
         BufferedReader reader = CacheServiceUtil.createBufferedReader(
                 taxonMap.getResource(),
-                RESOURCE_SERVICE
+                getResourceService()
         );
 
         reader.lines()
@@ -216,8 +229,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                         .createTreeMap(tmpTaxonCacheName)
                         .pumpPresort(100000)
                         .pumpIgnoreDuplicates()
-                        .pumpSource(taxonCacheIterator(taxonCache))
+                        .pumpSource(taxonCacheIterator(taxonCache, getResourceService()))
                         .keySerializer(BTreeKeySerializer.STRING)
+                        .valueSerializer(Serializer.JAVA)
                         .make();
                 db.commit();
             } catch (IOException e) {
@@ -294,12 +308,13 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         return TaxonUtil.isNonEmptyValue(value) ? StringUtils.lowerCase(value) : PropertyAndValueDictionary.NO_MATCH;
     }
 
-    static public Iterator<Fun.Tuple2<String, String[]>> taxonCacheIterator(final TermResource<Taxon> config) throws IOException {
+    private static Iterator<Fun.Tuple2<String, String[]>> taxonCacheIterator(final TermResource<Taxon> config, ResourceService resourceService) throws IOException {
 
         return new Iterator<Fun.Tuple2<String, String[]>>() {
             private BufferedReader reader = CacheServiceUtil.createBufferedReader(
                     config.getResource(),
-                    RESOURCE_SERVICE
+                    resourceService
+
             );
             private AtomicBoolean lineAvailable = new AtomicBoolean(false);
             private String currentLine = null;

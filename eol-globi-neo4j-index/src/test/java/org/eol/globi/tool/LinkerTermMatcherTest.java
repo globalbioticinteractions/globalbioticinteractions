@@ -9,6 +9,7 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -50,9 +51,7 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
                 ((TaxonNode) createdTaxon).getUnderlyingNode(),
                 NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
 
-        TaxonCacheService taxonCacheService = new TaxonCacheService(
-                "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
-                "/org/eol/globi/taxon/taxonMapHolorchis.tsv");
+        TaxonCacheService taxonCacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheHolorchis.tsv", "/org/eol/globi/taxon/taxonMapHolorchis.tsv", new ResourceServiceLocal());
 
         new LinkerTermMatcher(taxonCacheService, new GraphServiceFactoryProxy(getGraphDb()))
                 .index();

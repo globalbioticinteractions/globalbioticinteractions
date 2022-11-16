@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.taxon.TaxonCacheService;
+import org.eol.globi.util.ResourceServiceLocal;
 
 import java.io.File;
 
@@ -27,7 +28,8 @@ public class CmdInterpretTaxa implements Cmd {
     public void run() throws StudyImporterException {
         final TaxonCacheService taxonCacheService = new TaxonCacheService(
                 taxonCachePath,
-                taxonMapPath
+                taxonMapPath,
+                new ResourceServiceLocal()
         );
         taxonCacheService.setCacheDir(cacheDir);
         IndexerNeo4j taxonIndexer = new IndexerTaxa(taxonCacheService, graphServiceFactory);

@@ -1,7 +1,5 @@
 package org.eol.globi.service;
 
-import org.eol.globi.util.ResourceServiceLocal;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
