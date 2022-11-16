@@ -26,6 +26,7 @@ public class CacheService {
         DBMaker dbMaker = DBMaker
                 .newFileDB(mapDBFile)
                 .mmapFileEnableIfSupported()
+                .mmapFileCleanerHackDisable()
                 .transactionDisable()
                 .closeOnJvmShutdown();
         return dbMaker
