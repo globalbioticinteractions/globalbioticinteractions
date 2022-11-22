@@ -5,7 +5,7 @@ This mission of this project is to find efficient ways to normalize and integrat
 
 Please see https://globalbioticinteractions.org or https://github.com/globalbioticinteractions/globalbioticinteractions/wiki for more information .
 
-[![Build Status](https://travis-ci.com/globalbioticinteractions/globalbioticinteractions.png)](https://travis-ci.com/globalbioticinteractions/globalbioticinteractions) [![Java CI](https://github.com/globalbioticinteractions/globalbioticinteractions/workflows/Java%20CI/badge.svg)](https://github.com/globalbioticinteractions/globalbioticinteractions/actions?query=workflow%3A%22Java+CI%22) [![DOI](https://zenodo.org/badge/2478263.svg)](https://zenodo.org/badge/latestdoi/2478263) 
+ [![Java CI](https://github.com/globalbioticinteractions/globalbioticinteractions/workflows/Java%20CI/badge.svg)](https://github.com/globalbioticinteractions/globalbioticinteractions/actions?query=workflow%3A%22Java+CI%22) [![DOI](https://zenodo.org/badge/2478263.svg)](https://zenodo.org/badge/latestdoi/2478263) 
 
 ## Citing GloBI
 
