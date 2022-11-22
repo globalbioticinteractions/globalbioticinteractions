@@ -16,7 +16,7 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void zenodoDataFeed() throws DatasetRegistryException {
-        String feed = DatasetRegistryZenodo.getNextPage(null, new ResourceServiceHTTP(is -> is));
+        String feed = DatasetRegistryZenodo.getNextPage(null, new ResourceServiceHTTP(is -> is), "oai_datacite3");
         assertThat(feed, containsString("<?xml version"));
     }
 

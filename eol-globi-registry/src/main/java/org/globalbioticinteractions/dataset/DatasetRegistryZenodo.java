@@ -41,6 +41,9 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
 
     private final ResourceService resourceService;
 
+    private String metadataPrefix = "oai_datacite3";
+
+
     public DatasetRegistryZenodo(ResourceService resourceService) {
         this.resourceService = resourceService;
 
@@ -124,7 +127,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
             String resumptionToken = null;
             List<String> cachedPages = new ArrayList<>();
             do {
-                String nextPage = getNextPage(resumptionToken, resourceService);
+                String nextPage = getNextPage(resumptionToken, resourceService, getMetadataPrefix());
                 try {
                     resumptionToken = parseResumptionToken(IOUtils.toInputStream(nextPage, StandardCharsets.UTF_8));
                 } catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
@@ -136,6 +139,16 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
             setCachedFeed(cachedPages);
         }
     }
+
+    public String getMetadataPrefix() {
+        return metadataPrefix;
+    }
+
+    public void setMetadataPrefix(String metadataPrefix) {
+        this.metadataPrefix = metadataPrefix;
+    }
+
+
 
     static URI findLatestZenodoGitHubArchiveForNamespace(NodeList records, String namespace) throws XPathExpressionException, MalformedURLException {
         Map<String, List<Pair<Long, URI>>> archives = findZenodoGitHubArchives(records);
@@ -231,9 +244,9 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    static String getNextPage(String resumptionToken, ResourceService resourceService) throws DatasetRegistryException {
+    static String getNextPage(String resumptionToken, ResourceService resourceService, String metadataPrefix) throws DatasetRegistryException {
         try {
-            URI requestURI = URI.create(ZENODO_LIST_RECORDS_PREFIX + "&set=user-globalbioticinteractions&metadataPrefix=oai_datacite3");
+            URI requestURI = URI.create(ZENODO_LIST_RECORDS_PREFIX + "&set=user-globalbioticinteractions&metadataPrefix=" + metadataPrefix);
             if (StringUtils.isNoneBlank(resumptionToken)) {
                 requestURI = generateResumptionURI(resumptionToken);
             }
