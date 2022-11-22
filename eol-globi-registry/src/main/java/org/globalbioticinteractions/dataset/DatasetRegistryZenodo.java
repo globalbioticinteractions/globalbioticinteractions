@@ -41,7 +41,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
 
     private final ResourceService resourceService;
 
-    private String metadataPrefix = "oai_datacite3";
+    private String metadataPrefix = "oai_datacite";
 
 
     public DatasetRegistryZenodo(ResourceService resourceService) {

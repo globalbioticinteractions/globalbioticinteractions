@@ -15,9 +15,25 @@ import static org.junit.Assert.assertNull;
 public class DatasetRegistryZenodoIT {
 
     @Test
-    public void zenodoDataFeed() throws DatasetRegistryException {
-        String feed = DatasetRegistryZenodo.getNextPage(null, new ResourceServiceHTTP(is -> is), "oai_datacite3");
+    public void zenodoDataFeedDatacite3() throws DatasetRegistryException {
+        String metadataPrefix = "oai_datacite3";
+        String feed = DatasetRegistryZenodo.getNextPage(
+                null,
+                new ResourceServiceHTTP(is -> is),
+                metadataPrefix);
         assertThat(feed, containsString("<?xml version"));
+        assertThat(feed, containsString("metadataPrefix=\"" + metadataPrefix + "\""));
+    }
+
+    @Test
+    public void zenodoDataFeedDatacite4() throws DatasetRegistryException {
+        String metadataPrefix = "oai_datacite";
+        String feed = DatasetRegistryZenodo.getNextPage(
+                null,
+                new ResourceServiceHTTP(is -> is),
+                metadataPrefix);
+        assertThat(feed, containsString("<?xml version"));
+        assertThat(feed, containsString("metadataPrefix=\"" + metadataPrefix + "\""));
     }
 
     @Test
