@@ -1,0 +1,4 @@
+#!/bin/sh
+if ! id elton4n > /dev/null 2>&1 ; then
+  useradd --system --user-group --home /var/lib/elton4n --shell /bin/bash elton4n
+fi

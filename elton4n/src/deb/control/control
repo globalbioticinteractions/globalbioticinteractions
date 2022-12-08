@@ -1,0 +1,8 @@
+Package: [[name]]
+Version: [[version]]
+Section: misc
+Priority: low
+Architecture: all
+Description: [[description]]
+Maintainer: GloBI Community <info@globalbioticinteractions.org>
+Depends: default-jre | java8-runtime
