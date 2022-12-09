@@ -7,7 +7,7 @@
     <parent>
         <artifactId>eol-globi-parent</artifactId>
         <groupId>org.eol</groupId>
-        <version>0.24.8</version>
+        <version>0.24.9-SNAPSHOT</version>
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
@@ -127,7 +127,19 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <artifactId>apt-repo</artifactId>
+                <groupId>org.m1theo</groupId>
+                <version>0.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>apt-repo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
