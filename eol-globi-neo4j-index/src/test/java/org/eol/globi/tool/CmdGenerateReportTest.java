@@ -19,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
 import java.io.IOException;
@@ -64,7 +65,7 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new CmdGenerateReport(cacheService).generateReportForSourceIndividuals();
+        getCmdGenerateReport().generateReportForSourceIndividuals();
 
         String escapedQuery = QueryParser.escape("globi:az/source");
         IndexHits<Node> reports = getGraphDb()
@@ -121,7 +122,7 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new CmdGenerateReport(cacheService).generateReportForSourceOrganizations();
+        getCmdGenerateReport().generateReportForSourceOrganizations();
 
         IndexHits<Node> reports = getGraphDb()
                 .index()
@@ -166,21 +167,33 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         createStudy(study2);
         resolveNames();
 
-        new CmdGenerateReport(cacheService).generateReportForCollection();
 
-        IndexHits<Node> reports = getGraphDb()
-                .index()
-                .forNodes("reports")
-                .query("*", "*");
+        getCmdGenerateReport()
+                .generateReportForCollection();
 
-        assertThat(reports.size(), is(1));
-        Node reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
-        assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+        try (Transaction tx = getGraphDb().beginTx()) {
+            IndexHits<Node> reports = getGraphDb()
+                    .index()
+                    .forNodes("reports")
+                    .query("*", "*");
+
+            assertThat(reports.size(), is(1));
+            Node reportNode = reports.getSingle();
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS), is(8));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA), is(3));
+            assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH), is(2));
+            tx.success();
+        }
+    }
+
+    private CmdGenerateReport getCmdGenerateReport() {
+        CmdGenerateReport cmdGenerateReport = new CmdGenerateReport();
+        cmdGenerateReport.setNodeFactoryFactory(factory -> nodeFactory);
+        cmdGenerateReport.setGraphServiceFactory(getGraphFactory());
+        return cmdGenerateReport;
     }
 
     protected Study createStudy(Study study1) throws NodeFactoryException {

@@ -2,6 +2,7 @@ package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.RelationshipListener;
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.domain.InteractType;
@@ -35,16 +36,7 @@ public class CmdGenerateReport extends CmdNeo4J {
 
     private static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 
-    private final CacheService cacheService;
-
-    public CmdGenerateReport() {
-        this(new CacheService());
-    }
-
-    public CmdGenerateReport(CacheService cacheService) {
-        super();
-        this.cacheService = cacheService;
-    }
+    private final CacheService cacheService = new CacheService();
 
     public void run() {
         run(LOG);
@@ -215,11 +207,11 @@ public class CmdGenerateReport extends CmdNeo4J {
 
     private void generateCollectionReport(DB reportCache) {
         final Set<Long> distinctTaxonIds = makeOrRemake(reportCache, "distinctTaxonIds");
-        final Set<Long> distinctTaxonIdsNoMatch = makeOrRemake(reportCache,"distinctTaxonIdsNoMatch");
+        final Set<Long> distinctTaxonIdsNoMatch = makeOrRemake(reportCache, "distinctTaxonIdsNoMatch");
         final Counter counter = new Counter();
         final Counter studyCounter = new Counter();
-        final Set<String> distinctSources = makeOrRemakeString(reportCache,"distinctSources");
-        final Set<String> distinctDatasets = makeOrRemakeString(reportCache,"distinctDatasets");
+        final Set<String> distinctSources = makeOrRemakeString(reportCache, "distinctSources");
+        final Set<String> distinctDatasets = makeOrRemakeString(reportCache, "distinctDatasets");
 
         NodeUtil.findStudies(getGraphDb(), studyNode -> {
             countInteractionsAndTaxa(distinctTaxonIds, counter, distinctTaxonIdsNoMatch, studyNode);
@@ -232,16 +224,18 @@ public class CmdGenerateReport extends CmdNeo4J {
             }
         });
 
-        final Node node = getGraphDb().createNode();
-        node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
-        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
-        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
-        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
-        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
-        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
-        node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
-        getGraphDb().index().forNodes("reports")
-                .add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+        try (Transaction tx = getGraphDb().beginTx()) {
+            final Node node = getGraphDb().createNode();
+            node.setProperty(PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_INTERACTIONS, counter.getCount() / 2);
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA, distinctTaxonIds.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DISTINCT_TAXA_NO_MATCH, distinctTaxonIdsNoMatch.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES, studyCounter.getCount());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES, distinctSources.size());
+            node.setProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS, distinctDatasets.size());
+            getGraphDb().index().forNodes("reports").add(node, PropertyAndValueDictionary.COLLECTION, GLOBI_COLLECTION_NAME);
+            tx.success();
+        }
     }
 
     private Set<Long> makeOrRemake(DB reportCache, String setName) {

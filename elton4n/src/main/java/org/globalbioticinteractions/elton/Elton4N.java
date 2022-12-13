@@ -3,7 +3,7 @@ package org.globalbioticinteractions.elton;
 import org.eol.globi.tool.CmdExport;
 import org.eol.globi.tool.CmdExportInteractionsTSV;
 import org.eol.globi.tool.CmdGenerateReport;
-import org.eol.globi.tool.CmdImportDatasets;
+import org.eol.globi.tool.CmdCompile;
 import org.eol.globi.tool.CmdIndexTaxa;
 import org.eol.globi.tool.CmdIndexTaxonStrings;
 import org.eol.globi.tool.CmdInterpretTaxa;
@@ -13,17 +13,12 @@ import picocli.CommandLine;
 
 import static java.lang.System.exit;
 
-
 @CommandLine.Command(name = "elton4n",
         versionProvider = Elton4N.class,
         subcommands = {
-                CmdImportDatasets.class,
-                CmdExport.class,
-                CmdExportInteractionsTSV.class,
-                CmdIndexTaxa.class,
-                CmdIndexTaxonStrings.class,
-                CmdGenerateReport.class,
-                CmdInterpretTaxa.class,
+                CmdCompile.class,
+                CmdLink.class,
+                CmdPackage.class,
                 CommandLine.HelpCommand.class
         },
         description = "compile, interpret, index, and repackage existing species interaction datasets using Neo4J",
@@ -59,3 +54,4 @@ public class Elton4N implements CommandLine.IVersionProvider {
     }
 
 }
+

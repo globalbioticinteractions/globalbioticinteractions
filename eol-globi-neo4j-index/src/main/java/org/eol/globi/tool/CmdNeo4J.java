@@ -17,29 +17,25 @@ import java.io.File;
 )
 public abstract class CmdNeo4J implements Cmd {
 
-    private final NodeFactoryFactory nodeFactoryFactory;
 
-    private final GraphServiceFactory graphServiceFactory;
+    private NodeFactoryFactory nodeFactoryFactory = null;
+
+    private static GraphServiceFactory graphServiceFactory = null;
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_GRAPHDB_DIR},
+            defaultValue = "./graph.db",
             description = "location of neo4j graph.db"
     )
-    private String graphDbDir = "./graph.db";
+    private String graphDbDir;
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_NEO4J_VERSION},
             description = "version neo4j index to use",
+            defaultValue = "2",
             hidden = true
     )
-    private String neo4jVersion = "2";
-
-
-    public CmdNeo4J() {
-        this.graphServiceFactory =
-                getGraphServiceFactory(graphDbDir);
-        this.nodeFactoryFactory = getNodeFactoryFactory(neo4jVersion, graphServiceFactory);
-    }
+    private String neo4jVersion;
 
     private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
         return StringUtils.equals("2", neo4jVersion)
@@ -53,11 +49,32 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
     protected NodeFactoryFactory getNodeFactoryFactory() {
+        if (this.nodeFactoryFactory == null) {
+            this.nodeFactoryFactory = getNodeFactoryFactory(neo4jVersion, getGraphServiceFactory());
+        }
         return nodeFactoryFactory;
     }
 
     protected GraphServiceFactory getGraphServiceFactory() {
+        if (this.graphServiceFactory == null) {
+            this.graphServiceFactory =
+                    getGraphServiceFactory(graphDbDir);
+        }
         return graphServiceFactory;
+    }
+
+    public void setNodeFactoryFactory(NodeFactoryFactory nodeFactoryFactory) {
+        this.nodeFactoryFactory = nodeFactoryFactory;
+    }
+
+    public void setGraphServiceFactory(GraphServiceFactory graphServiceFactory) {
+        this.graphServiceFactory = graphServiceFactory;
+    }
+
+    protected void configureAndRun(CmdNeo4J cmd) {
+        cmd.setGraphServiceFactory(getGraphServiceFactory());
+        cmd.setNodeFactoryFactory(getNodeFactoryFactory());
+        cmd.run();
     }
 
 }

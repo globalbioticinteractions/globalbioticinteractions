@@ -31,7 +31,7 @@ public class CmdInterpretTaxa extends CmdNeo4J {
             names = {CmdOptionConstants.OPTION_NAME_INDEX_DIR},
             description = "location of cached taxon index"
     )
-    private String cacheDir = "./taxonMap.tsv.gz";
+    private String cacheDir = "./taxonIndexCache";
 
 
 
