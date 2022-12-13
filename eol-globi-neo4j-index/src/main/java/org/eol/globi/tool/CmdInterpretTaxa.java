@@ -10,22 +10,10 @@ import java.io.File;
 
 @CommandLine.Command(
         name = "interpret",
-        aliases = {"link", "linkNames", "link-names"},
+        aliases = {"linkNames", "link-names"},
         description = "Interprets taxonomic names using provided translation tables (taxonCache/Map)."
 )
 public class CmdInterpretTaxa extends CmdNeo4J {
-
-    @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_TAXON_CACHE_PATH},
-            description = "location of taxonCache.tsv.gz"
-    )
-    private String taxonCachePath = "./taxonCache.tsv.gz";
-
-    @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_TAXON_MAP_PATH},
-            description = "location of taxonCache.tsv.gz"
-    )
-    private String taxonMapPath = "./taxonMap.tsv.gz";
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_NAME_INDEX_DIR},
@@ -33,13 +21,11 @@ public class CmdInterpretTaxa extends CmdNeo4J {
     )
     private String cacheDir = "./taxonIndexCache";
 
-
-
     @Override
     public void run() {
         final TaxonCacheService taxonCacheService = new TaxonCacheService(
-                taxonCachePath,
-                taxonMapPath,
+                getTaxonCachePath(),
+                getTaxonMapPath(),
                 new ResourceServiceLocal()
         );
         taxonCacheService.setCacheDir(new File(cacheDir));
@@ -50,4 +36,5 @@ public class CmdInterpretTaxa extends CmdNeo4J {
             throw new RuntimeException(e);
         }
     }
+
 }

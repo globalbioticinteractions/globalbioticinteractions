@@ -37,6 +37,19 @@ public abstract class CmdNeo4J implements Cmd {
     )
     private String neo4jVersion;
 
+    @CommandLine.Option(
+            names = {CmdOptionConstants.OPTION_TAXON_CACHE_PATH},
+            description = "location of taxonCache.tsv.gz"
+    )
+    private String taxonCachePath = "./taxonCache.tsv.gz";
+
+    @CommandLine.Option(
+            names = {CmdOptionConstants.OPTION_TAXON_MAP_PATH},
+            description = "location of taxonCache.tsv.gz"
+    )
+    private String taxonMapPath = "./taxonMap.tsv.gz";
+
+
     private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
         return StringUtils.equals("2", neo4jVersion)
                 ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(graphServiceFactory)
@@ -72,9 +85,28 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
     protected void configureAndRun(CmdNeo4J cmd) {
+        cmd.setTaxonCachePath(getTaxonCachePath());
+        cmd.setTaxonMapPath(getTaxonMapPath());
         cmd.setGraphServiceFactory(getGraphServiceFactory());
         cmd.setNodeFactoryFactory(getNodeFactoryFactory());
         cmd.run();
     }
+
+    public String getTaxonCachePath() {
+        return taxonCachePath;
+    }
+
+    public String getTaxonMapPath() {
+        return taxonMapPath;
+    }
+
+    public void setTaxonCachePath(String taxonCachePath) {
+        this.taxonCachePath = taxonCachePath;
+    }
+
+    public void setTaxonMapPath(String taxonMapPath) {
+        this.taxonMapPath = taxonMapPath;
+    }
+
 
 }
