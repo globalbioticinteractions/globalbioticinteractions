@@ -2,6 +2,7 @@ package org.eol.globi.server;
 
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.NodeFactoryNeo4j2;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.server.util.ResultField;
 import org.eol.globi.service.CacheService;
@@ -37,6 +38,18 @@ public class CypherTestUtil {
             File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
             cacheService.setCacheDir(cacheDir);
             CmdGenerateReport reportGenerator = new CmdGenerateReport();
+            reportGenerator.setGraphServiceFactory(new GraphServiceFactory() {
+                @Override
+                public GraphDatabaseService getGraphService() {
+                    return graphDatabaseService;
+                }
+
+                @Override
+                public void close() throws Exception {
+
+                }
+            });
+
 
             reportGenerator.run(NOPLogger.NOP_LOGGER);
             Map<String, Object> params =
