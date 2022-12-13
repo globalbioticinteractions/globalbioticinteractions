@@ -13,23 +13,21 @@ import java.util.List;
         name = "indexTaxa",
         description = "Creates neo4j index for (interpreted) taxonomic names."
 )
-public class CmdIndexTaxa implements Cmd {
-
-    private final GraphServiceFactory graphServiceFactory;
-
-    public CmdIndexTaxa(GraphServiceFactory graphServiceFactory) {
-        this.graphServiceFactory = graphServiceFactory;
-    }
+public class CmdIndexTaxa extends CmdNeo4J {
 
     @Override
-    public void run() throws StudyImporterException {
-        final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(graphServiceFactory.getGraphService());
-        final IndexerNeo4j nameResolver = new NameResolver(graphServiceFactory, taxonIndex);
-        final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(graphServiceFactory);
+    public void run() {
+        final NonResolvingTaxonIndex taxonIndex = new NonResolvingTaxonIndex(getGraphServiceFactory().getGraphService());
+        final IndexerNeo4j nameResolver = new NameResolver(getGraphServiceFactory(), taxonIndex);
+        final IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(getGraphServiceFactory());
 
         List<IndexerNeo4j> indexers = Arrays.asList(nameResolver, taxonInteractionIndexer);
         for (IndexerNeo4j indexer : indexers) {
-            indexer.index();
+            try {
+                indexer.index();
+            } catch (StudyImporterException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }

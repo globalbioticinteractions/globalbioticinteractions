@@ -30,24 +30,19 @@ import java.util.UUID;
         name = "report",
         description = "Generates reports/metadata of indexed datasets."
 )
-public class CmdGenerateReport implements Cmd {
+public class CmdGenerateReport extends CmdNeo4J {
     private static final Logger LOG = LoggerFactory.getLogger(CmdGenerateReport.class);
 
     private static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 
-    private final GraphDatabaseService graphService;
     private final CacheService cacheService;
 
-    private GraphDatabaseService getGraphDb() {
-        return this.graphService;
+    public CmdGenerateReport() {
+        this(new CacheService());
     }
 
-    public CmdGenerateReport(GraphDatabaseService graphService) {
-        this(graphService, new CacheService());
-    }
-
-    public CmdGenerateReport(GraphDatabaseService graphService, CacheService cacheService) {
-        this.graphService = graphService;
+    public CmdGenerateReport(CacheService cacheService) {
+        super();
         this.cacheService = cacheService;
     }
 
@@ -57,7 +52,7 @@ public class CmdGenerateReport implements Cmd {
 
     public void run(Logger log) {
 
-        TransactionPerBatch transactionPerBatch = new TransactionPerBatch(graphService);
+        TransactionPerBatch transactionPerBatch = new TransactionPerBatch(getGraphDb());
         transactionPerBatch.onStart();
         log.info("report for collection generating ...");
         generateReportForCollection();
@@ -74,6 +69,10 @@ public class CmdGenerateReport implements Cmd {
         log.info("report for source organizations done.");
 
         transactionPerBatch.onFinish();
+    }
+
+    private GraphDatabaseService getGraphDb() {
+        return getGraphServiceFactory().getGraphService();
     }
 
     void generateReportForSourceIndividuals() {

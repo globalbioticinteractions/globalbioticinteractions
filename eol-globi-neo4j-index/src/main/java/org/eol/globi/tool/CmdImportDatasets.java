@@ -1,29 +1,42 @@
 package org.eol.globi.tool;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.db.GraphServiceFactoryImpl;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
+import picocli.CommandLine;
 
-public class CmdImportDatasets implements Cmd {
+import java.io.File;
 
+@CommandLine.Command(
+        name = "compile",
+        aliases = {"import"},
+        description = "compile and import datasets into Neo4J"
+)
+public class CmdImportDatasets extends CmdNeo4J {
 
-    private final NodeFactoryFactory nodeFactoryFactory;
-    private final GraphServiceFactory graphServiceFactory;
-    private final String datasetDir;
+    @CommandLine.Option(
+            names = {CmdOptionConstants.OPTION_DATASET_DIR},
+            description = "location of Elton tracked datasets"
+    )
+    private String datasetDir = "./datasets";
 
-    public CmdImportDatasets(NodeFactoryFactory nodeFactoryFactory,
-                             GraphServiceFactory factory,
-                             String datasetDir) {
-        this.nodeFactoryFactory = nodeFactoryFactory;
-        this.graphServiceFactory = factory;
-        this.datasetDir = datasetDir;
-    }
 
     @Override
-    public void run() throws StudyImporterException {
-        DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(datasetDir, new ResourceServiceLocal(inStream -> inStream));
-        new IndexerDataset(registry, nodeFactoryFactory, graphServiceFactory).index();
+    public void run() {
+        DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(
+                datasetDir,
+                new ResourceServiceLocal(inStream -> inStream)
+        );
+
+        try {
+            new IndexerDataset(registry, getNodeFactoryFactory(), getGraphServiceFactory())
+                    .index();
+        } catch (StudyImporterException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

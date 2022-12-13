@@ -1,18 +1,5 @@
 package org.globalbioticinteractions.elton;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.Version;
-import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.db.GraphServiceFactory;
-import org.eol.globi.db.GraphServiceFactoryImpl;
-import org.eol.globi.tool.Cmd;
 import org.eol.globi.tool.CmdExport;
 import org.eol.globi.tool.CmdExportInteractionsTSV;
 import org.eol.globi.tool.CmdGenerateReport;
@@ -20,177 +7,55 @@ import org.eol.globi.tool.CmdImportDatasets;
 import org.eol.globi.tool.CmdIndexTaxa;
 import org.eol.globi.tool.CmdIndexTaxonStrings;
 import org.eol.globi.tool.CmdInterpretTaxa;
-import org.eol.globi.tool.CmdOptionConstants;
-import org.eol.globi.tool.CmdUtil;
-import org.eol.globi.tool.Factories;
-import org.eol.globi.tool.NodeFactoryFactory;
-import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j2;
-import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j3;
-import org.eol.globi.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static java.lang.System.exit;
 
-public class Elton4N {
+
+@CommandLine.Command(name = "elton4n",
+        versionProvider = Elton4N.class,
+        subcommands = {
+                CmdImportDatasets.class,
+                CmdExport.class,
+                CmdExportInteractionsTSV.class,
+                CmdIndexTaxa.class,
+                CmdIndexTaxonStrings.class,
+                CmdGenerateReport.class,
+                CmdInterpretTaxa.class,
+                CommandLine.HelpCommand.class
+        },
+        description = "compile, interpret, index, and repackage existing species interaction datasets using Neo4J",
+        mixinStandardHelpOptions = true,
+        subcommandsRepeatable = true
+)
+
+public class Elton4N implements CommandLine.IVersionProvider {
+
+    public String[] getVersion() {
+        return new String[]{getVersionString()};
+    }
+
+    public static String getVersionString() {
+        String version = Elton4N.class.getPackage().getImplementationVersion();
+        return org.apache.commons.lang.StringUtils.isBlank(version) ? "dev" : version;
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(Elton4N.class);
-    private static final String OPTION_HELP = "h";
 
-    private static final String ELTON_STEP_COMPILE = "compile";
-    private static final Object ELTON_STEP_LINK_NAMES = "link-names";
-    private static final String ELTON_STEP_LINK = "link";
-    private static final String ELTON_STEP_PACKAGE_INTERACTIONS_TSV = "package-interactions-tsv";
-    private static final String ELTON_STEP_PACKAGE = "package";
-
-    public static void main(final String[] args) throws StudyImporterException, ParseException {
-        String o = Version.getVersionInfo(Elton4N.class);
-        LOG.info(o);
-        CommandLine cmdLine = parseOptions(args);
-        if (cmdLine.hasOption(OPTION_HELP)) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java -jar elton4n-[VERSION].jar", getOptions());
-        } else {
-            try {
-                new Elton4N().run(cmdLine);
-            } catch (Throwable th) {
-                LOG.error("failed to run GloBI indexer with [" + StringUtils.join(args, " ") + "]", th);
-                throw th;
-            }
-        }
-    }
-
-
-    private static CommandLine parseOptions(String[] args) throws ParseException {
-        CommandLineParser parser = new BasicParser();
-        return parser.parse(getOptions(), args);
-    }
-
-    private static Options getOptions() {
-        Options options = new Options();
-        options.addOption(CmdOptionConstants.OPTION_DATASET_DIR, true, "specifies (input) datasets location");
-        options.addOption(CmdOptionConstants.OPTION_EXPORT_DIR, true, "specifies data export location");
-        options.addOption(CmdOptionConstants.OPTION_NEO4J_VERSION, true, "specifies version of Neo4j to use");
-        options.addOption(CmdOptionConstants.OPTION_GRAPHDB_DIR, true, "specifies location of neo4j graphdb");
-        options.addOption(CmdOptionConstants.OPTION_TAXON_CACHE_PATH, true, "specifies location of taxon cache to use");
-        options.addOption(CmdOptionConstants.OPTION_TAXON_MAP_PATH, true, "specifies location of taxon map to use");
-
-        Option helpOpt = new Option(OPTION_HELP, "help", false, "print this help information");
-        options.addOption(helpOpt);
-        return options;
-    }
-
-    private void run(CommandLine cmdLine) throws StudyImporterException {
-
-        final String neo4jVersion = cmdLine == null
-                ? "2"
-                : cmdLine.getOptionValue(CmdOptionConstants.OPTION_NEO4J_VERSION, "2");
-
-        importWithVersion(cmdLine, neo4jVersion);
-    }
-
-    private void importWithVersion(CommandLine cmdLine, String neo4jVersion) throws StudyImporterException {
-        final String graphDbDirPath = cmdLine.getOptionValue(
-                CmdOptionConstants.OPTION_GRAPHDB_DIR,
-                "graph.db"
-        );
-        Factories factoriesNeo4j = new Factories() {
-            final GraphServiceFactory factory =
-                    new GraphServiceFactoryImpl(
-                            new File(graphDbDirPath));
-
-            final NodeFactoryFactory nodeFactoryFactory = StringUtils.equals("2", neo4jVersion)
-                    ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(factory)
-                    : new NodeFactoryFactoryTransactingOnDatasetNeo4j3(factory);
-
-            @Override
-            public GraphServiceFactory getGraphServiceFactory() {
-                return factory;
-            }
-
-            @Override
-            public NodeFactoryFactory getNodeFactoryFactory() {
-                return nodeFactoryFactory;
-            }
-        };
-
-
+    public static void main(String[] args) {
         try {
-            String datasetDir = CmdUtil.getDatasetDir(cmdLine);
-            GraphServiceFactory graphServiceFactory = factoriesNeo4j.getGraphServiceFactory();
-
-            List<Cmd> steps = new ArrayList<>();
-
-            LOG.info("processing steps: [" + StringUtils.join(cmdLine.getArgList(), ", ") + "]");
-
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_COMPILE)) {
-                steps.add(new CmdImportDatasets(
-                        factoriesNeo4j.getNodeFactoryFactory(),
-                        graphServiceFactory,
-                        datasetDir
-                ));
-            }
-
-            String exportDir = cmdLine.getOptionValue(CmdOptionConstants.OPTION_EXPORT_DIR, ".");
-
-            CmdInterpretTaxa interpretTaxa = createInterpretTaxaCmd(cmdLine, graphServiceFactory, exportDir);
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_LINK_NAMES)) {
-                steps.add(interpretTaxa);
-            }
-
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_LINK)) {
-                if (!steps.contains(interpretTaxa)) {
-                    steps.add(interpretTaxa);
-                }
-
-                steps.addAll(Arrays.asList(
-                        new CmdIndexTaxa(graphServiceFactory),
-                        new CmdIndexTaxonStrings(graphServiceFactory),
-                        new CmdGenerateReport(graphServiceFactory.getGraphService())
-                ));
-            }
-
-            CmdExportInteractionsTSV interactionsTSVExporter = new CmdExportInteractionsTSV(graphServiceFactory, new File(exportDir));
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_PACKAGE_INTERACTIONS_TSV)) {
-                steps.add(interactionsTSVExporter);
-            }
-
-            if (cmdLine.getArgList().isEmpty() || cmdLine.getArgList().contains(ELTON_STEP_PACKAGE)) {
-                if (!steps.contains(interactionsTSVExporter)) {
-                    steps.add(interactionsTSVExporter);
-                }
-                steps.add(new CmdExport(graphServiceFactory, new File(exportDir)));
-            }
-
-            for (Cmd step : steps) {
-                step.run();
-            }
-
-        } finally {
-            HttpUtil.shutdown();
+            int exitCode = run(args);
+            System.exit(exitCode);
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
+            exit(1);
         }
     }
 
-    private CmdInterpretTaxa createInterpretTaxaCmd(CommandLine cmdLine,
-                                                    GraphServiceFactory graphServiceFactory,
-                                                    String exportDir) {
-        String taxonCachePath = cmdLine.getOptionValue(
-                CmdOptionConstants.OPTION_TAXON_CACHE_PATH,
-                "taxonCache.tsv.gz"
-        );
-        String taxonMapPath = cmdLine.getOptionValue(
-                CmdOptionConstants.OPTION_TAXON_MAP_PATH,
-                "taxonMap.tsv.gz"
-        );
-        return new CmdInterpretTaxa(
-                graphServiceFactory,
-                taxonCachePath,
-                taxonMapPath,
-                new File(exportDir)
-        );
+    public static int run(String[] args) {
+        return new CommandLine(new Elton4N()).execute(args);
     }
-
 
 }

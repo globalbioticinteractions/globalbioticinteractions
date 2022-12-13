@@ -9,21 +9,20 @@ import java.io.File;
 
 @CommandLine.Command(
         name = "interactions",
+        aliases = {"package-interactions-tsv"},
         description = "Exports indexed interactions into tsv."
 )
-public class CmdExportInteractionsTSV implements Cmd {
-
-    private final GraphServiceFactory factory;
-    private File baseDir;
-
-    public CmdExportInteractionsTSV(GraphServiceFactory factory, File baseDir) {
-        this.factory = factory;
-        this.baseDir = baseDir;
-    }
+public class CmdExportInteractionsTSV extends CmdExportNeo4J {
 
     @Override
-    public void run() throws StudyImporterException {
-        new GraphExporterInteractionsTSVImpl()
-                .export(factory.getGraphService(), baseDir);
+    public void run() {
+        try {
+            new GraphExporterInteractionsTSVImpl()
+                    .export(
+                            getGraphServiceFactory().getGraphService(), new File(getBaseDir())
+                    );
+        } catch (StudyImporterException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

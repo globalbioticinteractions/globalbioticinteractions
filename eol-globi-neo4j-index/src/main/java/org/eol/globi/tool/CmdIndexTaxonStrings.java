@@ -12,21 +12,18 @@ import java.util.List;
         name = "indexTaxonStrings",
         description = "Interprets taxonomic strings using provided translation tables (taxonCache/Map)."
 )
-public class CmdIndexTaxonStrings implements Cmd {
-
-    private final GraphServiceFactory graphServiceFactory;
-
-    public CmdIndexTaxonStrings(GraphServiceFactory graphServiceFactory) {
-        this.graphServiceFactory = graphServiceFactory;
-    }
+public class CmdIndexTaxonStrings extends CmdNeo4J {
 
     @Override
-    public void run() throws StudyImporterException {
+    public void run() {
         List<IndexerNeo4j> linkers = new ArrayList<>();
-        linkers.add(new LinkerTaxonIndex(graphServiceFactory));
+        linkers.add(new LinkerTaxonIndex(getGraphServiceFactory()));
         for (IndexerNeo4j linker : linkers) {
-            new IndexerTimed(linker)
-                    .index();
+            try {
+                new IndexerTimed(linker).index();
+            } catch (StudyImporterException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

@@ -64,7 +64,7 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new CmdGenerateReport(getGraphDb(), cacheService).generateReportForSourceIndividuals();
+        new CmdGenerateReport(cacheService).generateReportForSourceIndividuals();
 
         String escapedQuery = QueryParser.escape("globi:az/source");
         IndexHits<Node> reports = getGraphDb()
@@ -121,7 +121,7 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         createStudy(study3);
         resolveNames();
 
-        new CmdGenerateReport(getGraphDb(), cacheService).generateReportForSourceOrganizations();
+        new CmdGenerateReport(cacheService).generateReportForSourceOrganizations();
 
         IndexHits<Node> reports = getGraphDb()
                 .index()
@@ -166,7 +166,7 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         createStudy(study2);
         resolveNames();
 
-        new CmdGenerateReport(getGraphDb(), cacheService).generateReportForCollection();
+        new CmdGenerateReport(cacheService).generateReportForCollection();
 
         IndexHits<Node> reports = getGraphDb()
                 .index()

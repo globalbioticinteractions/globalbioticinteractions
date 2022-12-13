@@ -11,21 +11,17 @@ import java.io.File;
         name = "package",
         description = "Export and package GloBI data products."
 )
-
-
-public class CmdExport implements Cmd {
-
-    private final GraphServiceFactory factory;
-    private File baseDir;
-
-    public CmdExport(GraphServiceFactory factory, File baseDir) {
-        this.factory = factory;
-        this.baseDir = baseDir;
-    }
+public class CmdExport extends CmdExportNeo4J {
 
     @Override
-    public void run() throws StudyImporterException {
-        new GraphExporterImpl()
-                .export(factory.getGraphService(), baseDir);
+    public void run() {
+        try {
+            new GraphExporterImpl().export(
+                            getGraphServiceFactory().getGraphService(),
+                            new File(getBaseDir())
+                    );
+        } catch (StudyImporterException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

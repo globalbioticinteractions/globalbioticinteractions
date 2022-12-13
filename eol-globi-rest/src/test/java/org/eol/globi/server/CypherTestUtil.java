@@ -36,7 +36,7 @@ public class CypherTestUtil {
             CacheService cacheService = new CacheService();
             File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
             cacheService.setCacheDir(cacheDir);
-            CmdGenerateReport reportGenerator = new CmdGenerateReport(graphDatabaseService, cacheService);
+            CmdGenerateReport reportGenerator = new CmdGenerateReport(cacheService);
 
             reportGenerator.run(NOPLogger.NOP_LOGGER);
             Map<String, Object> params =
