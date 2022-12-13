@@ -3,10 +3,16 @@ package org.eol.globi.tool;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import picocli.CommandLine;
 
 import java.util.Arrays;
 import java.util.List;
 
+
+@CommandLine.Command(
+        name = "indexTaxa",
+        description = "Creates neo4j index for (interpreted) taxonomic names."
+)
 public class CmdIndexTaxa implements Cmd {
 
     private final GraphServiceFactory graphServiceFactory;

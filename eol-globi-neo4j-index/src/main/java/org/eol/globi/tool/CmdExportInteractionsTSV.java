@@ -3,9 +3,14 @@ package org.eol.globi.tool;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.export.GraphExporterInteractionsTSVImpl;
+import picocli.CommandLine;
 
 import java.io.File;
 
+@CommandLine.Command(
+        name = "interactions",
+        description = "Exports indexed interactions into tsv."
+)
 public class CmdExportInteractionsTSV implements Cmd {
 
     private final GraphServiceFactory factory;

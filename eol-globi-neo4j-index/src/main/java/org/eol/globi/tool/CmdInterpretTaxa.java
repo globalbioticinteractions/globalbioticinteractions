@@ -4,9 +4,15 @@ import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.ResourceServiceLocal;
+import picocli.CommandLine;
 
 import java.io.File;
 
+@CommandLine.Command(
+        name = "interpret",
+        aliases = {"link", "linkNames"},
+        description = "Interprets taxonomic names using provided translation tables (taxonCache/Map)."
+)
 public class CmdInterpretTaxa implements Cmd {
 
     private final GraphServiceFactory graphServiceFactory;

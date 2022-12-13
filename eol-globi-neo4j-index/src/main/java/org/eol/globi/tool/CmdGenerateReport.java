@@ -20,11 +20,16 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
+@CommandLine.Command(
+        name = "report",
+        description = "Generates reports/metadata of indexed datasets."
+)
 public class CmdGenerateReport implements Cmd {
     private static final Logger LOG = LoggerFactory.getLogger(CmdGenerateReport.class);
 
