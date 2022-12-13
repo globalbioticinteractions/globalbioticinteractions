@@ -3,45 +3,34 @@ package org.eol.globi.tool;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.data.GraphDBTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.service.CacheService;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
-import java.io.IOException;
 import java.net.URI;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class CmdGenerateReportTest extends GraphDBTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
-    private CacheService cacheService;
-
-    @Before
-    public void init() throws IOException {
-        final CacheService cacheService = new CacheService();
-        cacheService.setCacheDir(folder.newFolder());
-        this.cacheService = cacheService;
-    }
-
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException {
@@ -192,7 +181,17 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
     private CmdGenerateReport getCmdGenerateReport() {
         CmdGenerateReport cmdGenerateReport = new CmdGenerateReport();
         cmdGenerateReport.setNodeFactoryFactory(factory -> nodeFactory);
-        cmdGenerateReport.setGraphServiceFactory(getGraphFactory());
+        cmdGenerateReport.setGraphServiceFactory(new GraphServiceFactory() {
+            @Override
+            public GraphDatabaseService getGraphService() {
+                return getGraphDb();
+            }
+
+            @Override
+            public void close() throws Exception {
+
+            }
+        });
         return cmdGenerateReport;
     }
 
