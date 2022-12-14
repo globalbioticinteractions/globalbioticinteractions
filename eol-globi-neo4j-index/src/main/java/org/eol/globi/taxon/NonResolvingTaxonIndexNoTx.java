@@ -3,6 +3,7 @@ package org.eol.globi.taxon;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -135,8 +136,8 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
         return QueryUtil.query(taxonName, PropertyAndValueDictionary.NAME, getTaxonIndex());
     }
 
-    private void indexTaxonByProperty(TaxonNode taxonNode, String propertyName, String propertyValue) {
-        getTaxonIndex().add(taxonNode.getUnderlyingNode(), propertyName, propertyValue);
+    private void indexTaxonByProperty(TaxonNode taxonNode, String propertyName, String propertyValue) throws NodeFactoryException {
+        NodeFactoryNeo4j2.indexNonBlankKeyValue(getTaxonIndex(), taxonNode.getUnderlyingNode(), propertyName, propertyValue);
     }
 
     GraphDatabaseService getGraphDbService() {
@@ -180,14 +181,14 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
     }
 
 
-    private void addToIndeces(TaxonNode taxon, String indexedName) {
+    private void addToIndeces(TaxonNode taxon, String indexedName) throws NodeFactoryException {
         if (isNonEmptyTaxonNameOrId(indexedName)) {
-            getTaxonIndex().add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
+            NodeFactoryNeo4j2.indexNonBlankKeyValue(getTaxonIndex(), taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
         }
 
         String externalId = taxon.getExternalId();
         if (isNonEmptyTaxonNameOrId(externalId)) {
-            getTaxonIndex().add(taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+            NodeFactoryNeo4j2.indexNonBlankKeyValue(getTaxonIndex(), taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
         }
     }
 

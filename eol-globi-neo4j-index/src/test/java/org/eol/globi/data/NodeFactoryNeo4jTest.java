@@ -258,7 +258,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         assertDataset(PropertyAndValueDictionary.DCTERMS_BIBLIOGRAPHIC_CITATION);
     }
 
-    protected void assertDataset(String citationKey) {
+    protected void assertDataset(String citationKey) throws NodeFactoryException {
         DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);

@@ -34,7 +34,7 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     }
 
     @Override
-    public Season createSeason(String seasonNameLower) {
+    public Season createSeason(String seasonNameLower) throws NodeFactoryException {
         return factory.createSeason(seasonNameLower);
     }
 
@@ -54,7 +54,7 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     }
 
     @Override
-    public Study createStudy(Study study) {
+    public Study createStudy(Study study) throws NodeFactoryException {
         return factory.createStudy(studyForDataset(study));
     }
 
@@ -106,7 +106,7 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     }
 
     @Override
-    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) throws NodeFactoryException {
         return factory.addEnvironmentToLocation(location, terms);
     }
 
@@ -136,7 +136,7 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     }
 
     @Override
-    public Dataset getOrCreateDataset(Dataset dataset) {
+    public Dataset getOrCreateDataset(Dataset dataset) throws NodeFactoryException {
         return factory.getOrCreateDataset(dataset);
     }
 

@@ -169,7 +169,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    public StudyNode getOrCreateStudy(Study study) {
+    public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
         Node node = getGraphDb()
                 .findNode(NodeLabel.Reference,
                         StudyConstant.TITLE_IN_NAMESPACE,
@@ -234,7 +234,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) {
+    protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) throws NodeFactoryException {
         Dataset datasetCreated = null;
         if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
 
@@ -253,7 +253,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected Node getOrCreateExternalIdNoTx(String externalId) {
+    protected Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException {
         Node externalIdNode = null;
         if (StringUtils.isNotBlank(externalId)) {
             Node node = getGraphDb().findNode(NodeLabel.ExternalId, PropertyAndValueDictionary.EXTERNAL_ID, externalId);

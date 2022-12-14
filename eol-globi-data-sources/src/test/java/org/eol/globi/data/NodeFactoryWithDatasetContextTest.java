@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 public class NodeFactoryWithDatasetContextTest {
 
     @Test
-    public void createStudy() {
+    public void createStudy() throws NodeFactoryException {
         NodeFactory factory = Mockito.mock(NodeFactory.class);
         DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         NodeFactoryWithDatasetContext factoryWithDS = new NodeFactoryWithDatasetContext(factory, dataset);

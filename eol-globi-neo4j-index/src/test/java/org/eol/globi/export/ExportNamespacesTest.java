@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ExportNamespacesTest extends GraphDBTestCase {
 
     @Test
-    public void export() throws IOException {
+    public void export() throws IOException, NodeFactoryException {
         StringWriter writer = new StringWriter();
         createDataset("namespace1");
         createDataset("namespace2");
@@ -29,7 +29,7 @@ public class ExportNamespacesTest extends GraphDBTestCase {
         ));
     }
 
-    private void createDataset(String namespace2) {
+    private void createDataset(String namespace2) throws NodeFactoryException {
         getNodeFactory().getOrCreateDataset(new DatasetImpl(namespace2, resourceName -> {
             throw new IOException("boom!");
         }, URI.create("foo:bar")));

@@ -83,7 +83,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
         assertThat(actual, containsString("\nHomo sapiens3\tno:match\t\t\t\t\tcitation my study\t<some:archive>"));
     }
 
-    public NodeFactoryWithDatasetContext nodeFactoryWithDataset() {
+    public NodeFactoryWithDatasetContext nodeFactoryWithDataset() throws NodeFactoryException {
         Dataset dataset = nodeFactory.getOrCreateDataset(
                 new DatasetWithResourceMapping("some/namespace",
                         URI.create("some:archive"),

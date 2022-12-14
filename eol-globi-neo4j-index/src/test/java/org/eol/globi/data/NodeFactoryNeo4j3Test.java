@@ -18,7 +18,7 @@ public class NodeFactoryNeo4j3Test extends NodeFactoryNeo4jTest {
     }
 
     @Override
-    protected void assertDataset(String citationKey) {
+    protected void assertDataset(String citationKey) throws NodeFactoryException {
         assertFalse(getGraphDb()
                 .execute("MATCH (ds:Dataset { namespace: 'some/namespace' }) RETURN ds")
                 .hasNext());

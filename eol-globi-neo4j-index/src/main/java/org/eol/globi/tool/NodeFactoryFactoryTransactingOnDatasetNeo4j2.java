@@ -37,7 +37,7 @@ public class NodeFactoryFactoryTransactingOnDatasetNeo4j2 implements NodeFactory
                 final AtomicLong counter = new AtomicLong(0);
 
                 @Override
-                public Dataset getOrCreateDataset(Dataset dataset) {
+                public Dataset getOrCreateDataset(Dataset dataset) throws NodeFactoryException {
                     if (closing.get()) {
                         throw new IllegalStateException("cannot create a dataset on closing node factory");
                     } else {

@@ -237,7 +237,7 @@ public class DatasetImporterForWrast extends NodeBasedImporter {
         return createLocationId(habitat, region, site) + seasonString;
     }
 
-    private Season getOrCreateSeason(String seasonName) {
+    private Season getOrCreateSeason(String seasonName) throws NodeFactoryException {
         String seasonNameLower = seasonName.toLowerCase().trim();
         Season season = getNodeFactory().findSeason(seasonNameLower);
         if (null == season) {

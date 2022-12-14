@@ -95,14 +95,14 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     @Override
-    public SeasonNode createSeason(String seasonNameLower) {
+    public SeasonNode createSeason(String seasonNameLower) throws NodeFactoryException {
         Node node = createSeasonNode();
         SeasonNode season = new SeasonNode(node, seasonNameLower);
         indexSeasonNode(seasonNameLower, node);
         return season;
     }
 
-    protected abstract void indexSeasonNode(String seasonNameLower, Node node);
+    protected abstract void indexSeasonNode(String seasonNameLower, Node node) throws NodeFactoryException;
 
     protected abstract Node createSeasonNode();
 
@@ -209,17 +209,17 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     abstract Node createStudyNode();
 
-    abstract void indexStudyNode(StudyNode studyNode);
+    abstract void indexStudyNode(StudyNode studyNode) throws NodeFactoryException;
 
     @Override
-    public StudyNode createStudy(Study study) {
+    public StudyNode createStudy(Study study) throws NodeFactoryException {
         Node node = createStudyNode();
         StudyNode studyNode = createStudyNode(study, node);
         indexStudyNode(studyNode);
         return studyNode;
     }
 
-    private StudyNode createStudyNode(Study study, Node node) {
+    private StudyNode createStudyNode(Study study, Node node) throws NodeFactoryException {
         StudyNode studyNode;
         studyNode = new StudyNode(node, study.getTitle());
         studyNode.setCitation(study.getCitation());
@@ -243,7 +243,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return studyNode;
     }
 
-    private void createExternalIdRelationIfExists(Node node, String externalId, RelTypes hasExternalId) {
+    private void createExternalIdRelationIfExists(Node node, String externalId, RelTypes hasExternalId) throws NodeFactoryException {
         Node externalIdNode = getOrCreateExternalIdNoTx(externalId);
         if (node != null && externalIdNode != null) {
             node.createRelationshipTo(externalIdNode, NodeUtil.asNeo4j(hasExternalId));
@@ -260,9 +260,9 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract Node createDatasetNode();
 
-    protected abstract void indexDatasetNode(Dataset dataset, Node datasetNode);
+    protected abstract void indexDatasetNode(Dataset dataset, Node datasetNode) throws NodeFactoryException;
 
-    Node createDatasetNode(Dataset dataset) {
+    Node createDatasetNode(Dataset dataset) throws NodeFactoryException {
         Node datasetNode = createDatasetNode();
         datasetNode.setProperty(DatasetConstant.NAMESPACE, dataset.getNamespace());
         URI archiveURI = dataset.getArchiveURI();
@@ -297,7 +297,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return datasetNode;
     }
 
-    Node createExternalId(String externalId) {
+    Node createExternalId(String externalId) throws NodeFactoryException {
         Node externalIdNode = createExternalIdNode();
         externalIdNode.setProperty(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
         indexExternalIdNode(externalId, externalIdNode);
@@ -305,7 +305,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
 
-    protected abstract void indexExternalIdNode(String externalId, Node externalIdNode);
+    protected abstract void indexExternalIdNode(String externalId, Node externalIdNode) throws NodeFactoryException;
 
     protected abstract Node createExternalIdNode();
 
@@ -408,7 +408,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     @Override
-    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) {
+    public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) throws NodeFactoryException {
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
         for (Term term : terms) {
             Environment environment = findEnvironment(term.getName());
@@ -424,7 +424,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return normalizedEnvironments;
     }
 
-    abstract public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode);
+    abstract public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) throws NodeFactoryException;
 
     abstract public Node createEnvironmentNode();
 
@@ -474,7 +474,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     }
 
     @Override
-    public Dataset getOrCreateDataset(Dataset originatingDataset) {
+    public Dataset getOrCreateDataset(Dataset originatingDataset) throws NodeFactoryException {
         return getOrCreateDatasetNoTx(originatingDataset);
     }
 
@@ -492,9 +492,9 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         return interactionNode;
     }
 
-    protected abstract Node getOrCreateExternalIdNoTx(String externalId);
+    protected abstract Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException;
 
-    abstract protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset);
+    abstract protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) throws NodeFactoryException;
 
     protected void validate(Location location) throws NodeFactoryException {
         if (location.getLatitude() != null

@@ -18,7 +18,7 @@ import java.util.List;
 public interface NodeFactory extends AutoCloseable {
     Location findLocation(Location location) throws NodeFactoryException;
 
-    Season createSeason(String seasonNameLower);
+    Season createSeason(String seasonNameLower) throws NodeFactoryException;
 
     Specimen createSpecimen(Interaction interaction, Taxon taxon) throws NodeFactoryException;
 
@@ -26,7 +26,7 @@ public interface NodeFactory extends AutoCloseable {
 
     Specimen createSpecimen(Study study, Taxon taxon, RelTypes... types) throws NodeFactoryException;
 
-    Study createStudy(Study study);
+    Study createStudy(Study study) throws NodeFactoryException;
 
     Study getOrCreateStudy(Study study) throws NodeFactoryException;
 
@@ -42,7 +42,7 @@ public interface NodeFactory extends AutoCloseable {
 
     List<Environment> getOrCreateEnvironments(Location location, String externalId, String name) throws NodeFactoryException;
 
-    List<Environment> addEnvironmentToLocation(Location location, List<Term> terms);
+    List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) throws NodeFactoryException;
 
     Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException;
 
@@ -54,7 +54,7 @@ public interface NodeFactory extends AutoCloseable {
 
     Term getOrCreateBasisOfRecord(String externalId, String name) throws NodeFactoryException;
 
-    Dataset getOrCreateDataset(Dataset dataset);
+    Dataset getOrCreateDataset(Dataset dataset) throws NodeFactoryException;
 
     Interaction createInteraction(Study study) throws NodeFactoryException;
 }

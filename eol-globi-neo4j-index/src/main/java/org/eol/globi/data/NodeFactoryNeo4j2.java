@@ -49,9 +49,9 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    void indexStudyNode(StudyNode studyNode) {
-        studies.add(studyNode.getUnderlyingNode(), StudyConstant.TITLE, studyNode.getTitle());
-        studies.add(studyNode.getUnderlyingNode(), StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(studyNode));
+    void indexStudyNode(StudyNode studyNode) throws NodeFactoryException {
+        indexNonBlankKeyValue(studies, studyNode.getUnderlyingNode(), StudyConstant.TITLE, studyNode.getTitle());
+        indexNonBlankKeyValue(studies, studyNode.getUnderlyingNode(), StudyConstant.TITLE_IN_NAMESPACE, getIdInNamespace(studyNode));
 
     }
 
@@ -63,8 +63,8 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected void indexDatasetNode(Dataset dataset, Node datasetNode) {
-        datasets.add(datasetNode, DatasetConstant.NAMESPACE, dataset.getNamespace());
+    protected void indexDatasetNode(Dataset dataset, Node datasetNode) throws NodeFactoryException {
+        indexNonBlankKeyValue(datasets, datasetNode, DatasetConstant.NAMESPACE, dataset.getNamespace());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) {
+    protected Dataset getOrCreateDatasetNoTx(Dataset originatingDataset) throws NodeFactoryException {
         Dataset datasetCreated = null;
         if (originatingDataset != null && StringUtils.isNotBlank(originatingDataset.getNamespace())) {
             IndexHits<Node> datasetHits = datasets.get(DatasetConstant.NAMESPACE, originatingDataset.getNamespace());
@@ -88,8 +88,8 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected void indexExternalIdNode(String externalId, Node externalIdNode) {
-        externalIds.add(externalIdNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
+    protected void indexExternalIdNode(String externalId, Node externalIdNode) throws NodeFactoryException {
+        indexNonBlankKeyValue(externalIds, externalIdNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected Node getOrCreateExternalIdNoTx(String externalId) {
+    protected Node getOrCreateExternalIdNoTx(String externalId) throws NodeFactoryException {
         Node externalIdNode = null;
         if (StringUtils.isNotBlank(externalId)) {
             IndexHits<Node> datasetHits = externalIds.get(PropertyAndValueDictionary.EXTERNAL_ID, externalId);
@@ -120,8 +120,8 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected void indexSeasonNode(String seasonNameLower, Node node) {
-        seasons.add(node, SeasonNode.TITLE, seasonNameLower);
+    protected void indexSeasonNode(String seasonNameLower, Node node) throws NodeFactoryException {
+        indexNonBlankKeyValue(seasons, node, SeasonNode.TITLE, seasonNameLower);
     }
 
     @Override
@@ -145,16 +145,16 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         if (location.getAltitude() != null) {
             locations.add(node, LocationConstant.ALTITUDE, ValueContext.numeric(location.getAltitude()));
         }
-        indexNonBlankKeyValue(node, LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
-        indexNonBlankKeyValue(node, LocationConstant.LOCALITY, location.getLocality());
-        indexNonBlankKeyValue(node, LocationConstant.LOCALITY_ID, location.getLocalityId());
+        indexNonBlankKeyValue(locations, node, LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
+        indexNonBlankKeyValue(locations, node, LocationConstant.LOCALITY, location.getLocality());
+        indexNonBlankKeyValue(locations, node, LocationConstant.LOCALITY_ID, location.getLocalityId());
 
     }
 
-    private void indexNonBlankKeyValue(Node node, String key, String value) throws NodeFactoryException {
+    public static void indexNonBlankKeyValue(Index<Node> index, Node node, String key, String value) throws NodeFactoryException {
         if (StringUtils.isNotBlank(value)) {
             try {
-                locations.add(node, key, value);
+                index.add(node, key, value);
             } catch (IllegalArgumentException ex) {
                 throw new NodeFactoryException("failed to index (key,value): (" + key + "," + value + ")", ex);
             }
@@ -209,12 +209,11 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) {
-        environments.add(
+    public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) throws NodeFactoryException {
+        indexNonBlankKeyValue(environments,
                 environmentNode.getUnderlyingNode(),
                 PropertyAndValueDictionary.NAME,
-                term.getName()
-        );
+                term.getName());
     }
 
     @Override
