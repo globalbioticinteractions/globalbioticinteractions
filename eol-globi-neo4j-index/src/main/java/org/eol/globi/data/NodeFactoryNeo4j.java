@@ -106,14 +106,14 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
 
     protected abstract Node createSeasonNode();
 
-    private LocationNode createLocation(final Location location) {
+    private LocationNode createLocation(final Location location) throws NodeFactoryException {
         Node node = createLocationNode();
         LocationNode locationNode = new LocationNode(node, fromLocation(location));
         indexLocation(location, node);
         return locationNode;
     }
 
-    abstract protected void indexLocation(Location location, Node node);
+    abstract protected void indexLocation(Location location, Node node) throws NodeFactoryException;
 
     protected abstract Node createLocationNode();
 

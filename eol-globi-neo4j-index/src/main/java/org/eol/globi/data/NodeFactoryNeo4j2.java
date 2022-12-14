@@ -135,7 +135,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected void indexLocation(Location location, Node node) {
+    protected void indexLocation(Location location, Node node) throws NodeFactoryException {
         if (location.getLatitude() != null) {
             locations.add(node, LocationConstant.LATITUDE, ValueContext.numeric(location.getLatitude()));
         }
@@ -145,14 +145,19 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         if (location.getAltitude() != null) {
             locations.add(node, LocationConstant.ALTITUDE, ValueContext.numeric(location.getAltitude()));
         }
-        if (StringUtils.isNotBlank(location.getFootprintWKT())) {
-            locations.add(node, LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
-        }
-        if (StringUtils.isNotBlank(location.getLocality())) {
-            locations.add(node, LocationConstant.LOCALITY, location.getLocality());
-        }
-        if (StringUtils.isNotBlank(location.getLocalityId())) {
-            locations.add(node, LocationConstant.LOCALITY_ID, location.getLocalityId());
+        indexNonBlankKeyValue(node, LocationConstant.FOOTPRINT_WKT, location.getFootprintWKT());
+        indexNonBlankKeyValue(node, LocationConstant.LOCALITY, location.getLocality());
+        indexNonBlankKeyValue(node, LocationConstant.LOCALITY_ID, location.getLocalityId());
+
+    }
+
+    private void indexNonBlankKeyValue(Node node, String key, String value) throws NodeFactoryException {
+        if (StringUtils.isNotBlank(value)) {
+            try {
+                locations.add(node, key, value);
+            } catch (IllegalArgumentException ex) {
+                throw new NodeFactoryException("failed to index (key,value): (" + key + "," + value + ")", ex);
+            }
         }
     }
 

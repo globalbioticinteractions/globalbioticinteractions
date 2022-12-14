@@ -21,7 +21,7 @@ public class NodeFactoryNeo4j2Test extends NodeFactoryNeo4jTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NodeFactoryException.class)
     public void indexLongLocationValueString() throws NodeFactoryException {
         LocationImpl location2 = new LocationImpl(1.2d, 1.4d, -1.0d, null);
         StringBuilder builder = new StringBuilder();
@@ -34,7 +34,7 @@ public class NodeFactoryNeo4j2Test extends NodeFactoryNeo4jTest {
         assertThat(orCreateLocation, Is.is(nullValue()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NodeFactoryException.class)
     public void indexLongLocationIdString() throws NodeFactoryException {
         LocationImpl location2 = new LocationImpl(1.2d, 1.4d, -1.0d, null);
         StringBuilder builder = new StringBuilder();

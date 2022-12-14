@@ -85,7 +85,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     @Override
-    protected void indexLocation(Location location, Node node) {
+    protected void indexLocation(Location location, Node node) throws NodeFactoryException {
         // should already be taken care of by constraints: do nothing
     }
 
