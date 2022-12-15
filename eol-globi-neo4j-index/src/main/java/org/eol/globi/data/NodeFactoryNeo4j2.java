@@ -32,6 +32,11 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     private final Index<Node> locations;
     private final Index<Node> environments;
 
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/857
+    // neo4j explicit indexes has a maximum to the size of values to be indexed
+    public static final int MAX_NEO4J_INDEX_LENGTH = ((1 << 15) - 2) * 2;
+    public static final int MAX_NEO4J_INDEX_LENGTH_IN_UTF_CHARACTERS = MAX_NEO4J_INDEX_LENGTH / 4;
+
 
     public NodeFactoryNeo4j2(GraphDatabaseService graphDb) {
         super(graphDb);
@@ -154,11 +159,23 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     public static void indexNonBlankKeyValue(Index<Node> index, Node node, String key, String value) throws NodeFactoryException {
         if (StringUtils.isNotBlank(value)) {
             try {
-                index.add(node, key, value);
+                onlyIndexValuesThatFitIntoNeo4JIndex(index, node, key, value);
             } catch (IllegalArgumentException ex) {
                 throw new NodeFactoryException("failed to index (key,value): (" + key + "," + value + ")", ex);
             }
         }
+    }
+
+    private static void onlyIndexValuesThatFitIntoNeo4JIndex(Index<Node> index, Node node, String key, String value) {
+        if (value.length() < MAX_NEO4J_INDEX_LENGTH_IN_UTF_CHARACTERS) {
+            index.add(node, key, value);
+        }
+    }
+
+    public static String truncatedValueToBeIndexed(String value) {
+        return value.length() < MAX_NEO4J_INDEX_LENGTH_IN_UTF_CHARACTERS
+                ? value
+                : StringUtils.truncate(value, MAX_NEO4J_INDEX_LENGTH_IN_UTF_CHARACTERS - 1);
     }
 
     @Override
