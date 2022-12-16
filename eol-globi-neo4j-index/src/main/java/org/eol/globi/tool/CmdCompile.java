@@ -12,18 +12,11 @@ import picocli.CommandLine;
 )
 public class CmdCompile extends CmdNeo4J {
 
-    @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_DATASET_DIR},
-            defaultValue = "./datasets",
-            description = "location of Elton tracked datasets"
-    )
-    private String datasetDir;
-
 
     @Override
     public void run() {
         DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(
-                datasetDir,
+                getDatasetDir(),
                 new ResourceServiceLocal(inStream -> inStream)
         );
 

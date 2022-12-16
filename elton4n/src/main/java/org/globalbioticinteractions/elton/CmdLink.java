@@ -5,7 +5,6 @@ import org.eol.globi.tool.CmdIndexTaxa;
 import org.eol.globi.tool.CmdIndexTaxonStrings;
 import org.eol.globi.tool.CmdInterpretTaxa;
 import org.eol.globi.tool.CmdNeo4J;
-import org.eol.globi.tool.CmdOptionConstants;
 import picocli.CommandLine;
 
 @CommandLine.Command(

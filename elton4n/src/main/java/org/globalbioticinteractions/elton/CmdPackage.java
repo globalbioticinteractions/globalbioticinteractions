@@ -1,10 +1,8 @@
 package org.globalbioticinteractions.elton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.eol.globi.tool.CmdExport;
 import org.eol.globi.tool.CmdExportInteractionsTSV;
 import org.eol.globi.tool.CmdExportNeo4J;
-import org.eol.globi.tool.CmdNeo4J;
 import picocli.CommandLine;
 
 @CommandLine.Command(

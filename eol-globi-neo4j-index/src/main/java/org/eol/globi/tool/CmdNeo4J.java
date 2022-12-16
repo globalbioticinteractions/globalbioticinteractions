@@ -30,6 +30,14 @@ public abstract class CmdNeo4J implements Cmd {
     private String graphDbDir;
 
     @CommandLine.Option(
+            names = {CmdOptionConstants.OPTION_DATASET_DIR},
+            defaultValue = "./datasets",
+            description = "location of Elton tracked datasets"
+    )
+    private String datasetDir;
+
+
+    @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_NEO4J_VERSION},
             description = "version neo4j index to use",
             defaultValue = "2",
@@ -109,4 +117,7 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
 
+    public String getDatasetDir() {
+        return datasetDir;
+    }
 }
