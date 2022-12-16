@@ -13,18 +13,4 @@ import java.io.File;
 public abstract class CmdExportNeo4J extends CmdNeo4J {
 
 
-    @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_EXPORT_DIR},
-            defaultValue = ".",
-            description = "location of neo4j graph.db"
-    )
-    private String baseDir;
-
-    public String getBaseDir() {
-        return baseDir;
-    }
-
-    public void setBaseDir(String baseDir) {
-        this.baseDir = baseDir;
-    }
 }

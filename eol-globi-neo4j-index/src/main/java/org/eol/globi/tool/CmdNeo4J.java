@@ -57,6 +57,22 @@ public abstract class CmdNeo4J implements Cmd {
     )
     private String taxonMapPath = "./taxonMap.tsv.gz";
 
+    @CommandLine.Option(
+            names = {CmdOptionConstants.OPTION_EXPORT_DIR},
+            defaultValue = ".",
+            description = "location of neo4j graph.db"
+    )
+    private String baseDir;
+
+    public String getBaseDir() {
+        return baseDir;
+    }
+
+    public void setBaseDir(String baseDir) {
+        this.baseDir = baseDir;
+    }
+
+
 
     private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
         return StringUtils.equals("2", neo4jVersion)
