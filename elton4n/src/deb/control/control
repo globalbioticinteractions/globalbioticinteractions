@@ -5,4 +5,4 @@ Priority: low
 Architecture: all
 Description: [[description]]
 Maintainer: GloBI Community <info@globalbioticinteractions.org>
-Depends: default-jre | java8-runtime
+Depends: openjdk-8-jdk
