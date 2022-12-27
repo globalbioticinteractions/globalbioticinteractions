@@ -10,6 +10,7 @@ import org.eol.globi.tool.CmdInterpretTaxa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
+import picocli.codegen.docgen.manpage.ManPageGenerator;
 
 import static java.lang.System.exit;
 
@@ -19,6 +20,7 @@ import static java.lang.System.exit;
                 CmdCompile.class,
                 CmdLink.class,
                 CmdPackage.class,
+                ManPageGenerator.class,
                 CommandLine.HelpCommand.class
         },
         description = "compile, interpret, index, and repackage existing species interaction datasets using Neo4J",

@@ -5,4 +5,5 @@ Priority: low
 Architecture: all
 Description: [[description]]
 Maintainer: GloBI Community <info@globalbioticinteractions.org>
-Depends: openjdk-8-jdk
+Website: https://globalbioticinteractions.org
+Depends: openjdk-8-jdk-headless | openjdk-11-jdk-headless

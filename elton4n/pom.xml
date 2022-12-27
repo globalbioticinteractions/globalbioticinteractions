@@ -17,10 +17,20 @@
     <description>GloBI's Elton for Neo4j: import, index, and export, biotic interaction data using Neo4j</description>
 
     <properties>
+        <asciidoctor-maven-plugin.version>2.2.2</asciidoctor-maven-plugin.version>
+        <asciidoctorj.version>2.5.3</asciidoctorj.version>
         <app.main.class>org.globalbioticinteractions.elton.Elton4N</app.main.class>
+        <generated.docs.dir>${project.build.outputDirectory}/org/globalbioticinteractions/elton4n/docs
+        </generated.docs.dir>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli-codegen</artifactId>
+            <version>${picocli.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>eol-globi-neo4j-index</artifactId>
@@ -44,6 +54,55 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <includeScope>compile</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>org.globalbioticinteractions.elton.Elton4N</argument>
+                        <argument>gen-manpage</argument>
+                        <argument>--outdir</argument>
+                        <argument>${generated.docs.dir}/adoc</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${asciidoctor-maven-plugin.version}</version>
+                <configuration>
+                    <sourceDirectory>${generated.docs.dir}/adoc</sourceDirectory>
+                    <outputDirectory>${generated.docs.dir}/manpage</outputDirectory>
+                    <attributes>
+                        <sourcedir>${project.build.sourceDirectory}</sourcedir>
+                    </attributes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>asciidoc-to-manpage</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>manpage</backend>
+                            <sourceDocumentName>${project.artifactId}.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
                 </executions>
@@ -120,6 +179,18 @@
                                     <symlink>true</symlink>
                                     <linkName>/usr/local/bin/${project.artifactId}</linkName>
                                     <linkTarget>/usr/share/${project.artifactId}/bin/${project.artifactId}</linkTarget>
+                                </data>
+
+                                <data>
+                                    <src>${generated.docs.dir}/manpage</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/share/man/man1/</prefix>
+                                        <filemode>644</filemode>
+                                        <user>${project.artifactId}</user>
+                                        <group>${project.artifactId}</group>
+                                    </mapper>
                                 </data>
 
                             </dataSet>
