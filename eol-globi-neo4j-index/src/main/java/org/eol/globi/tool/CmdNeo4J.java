@@ -47,15 +47,17 @@ public abstract class CmdNeo4J implements Cmd {
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_TAXON_CACHE_PATH},
+            defaultValue = "./taxonCache.tsv.gz",
             description = "location of taxonCache.tsv.gz"
     )
-    private String taxonCachePath = "./taxonCache.tsv.gz";
+    private String taxonCachePath;
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_TAXON_MAP_PATH},
-            description = "location of taxonCache.tsv.gz"
+            defaultValue = "./taxonMap.tsv.gz",
+            description = "location of taxonMap.tsv.gz"
     )
-    private String taxonMapPath = "./taxonMap.tsv.gz";
+    private String taxonMapPath;
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_EXPORT_DIR},
