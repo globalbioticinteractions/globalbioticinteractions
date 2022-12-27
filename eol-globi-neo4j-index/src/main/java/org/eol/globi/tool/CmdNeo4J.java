@@ -1,11 +1,8 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryImpl;
-import org.eol.globi.util.ResourceServiceLocal;
-import org.globalbioticinteractions.dataset.DatasetRegistry;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -23,7 +20,7 @@ public abstract class CmdNeo4J implements Cmd {
     private static GraphServiceFactory graphServiceFactory = null;
 
     @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_GRAPHDB_DIR},
+            names = {"-graphDbDir"},
             defaultValue = "./graph.db",
             description = "location of neo4j graph.db"
     )
@@ -38,7 +35,7 @@ public abstract class CmdNeo4J implements Cmd {
 
 
     @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_NEO4J_VERSION},
+            names = {"-neo4jVersion"},
             description = "version neo4j index to use (NOTE: only v2 indexes are fully implemented currently, v2 indexes work with neo4j v3.5.x)",
             defaultValue = "2",
             hidden = true
@@ -46,16 +43,16 @@ public abstract class CmdNeo4J implements Cmd {
     private String neo4jVersion;
 
     @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_TAXON_CACHE_PATH},
-            defaultValue = "classpath:/taxonCache.tsv.gz",
-            description = "location of taxonCache.tsv.gz"
+            names = {"-taxonCache"},
+            defaultValue = "classpath:/org/eol/globi/tool/taxonCacheEmpty.tsv",
+            description = "location of taxonCache.tsv"
     )
     private String taxonCachePath;
 
     @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_TAXON_MAP_PATH},
-            defaultValue = "classpath:/taxonMap.tsv.gz",
-            description = "location of taxonMap.tsv.gz"
+            names = {"-taxonMap"},
+            defaultValue = "classpath:/org/eol/globi/tool/taxonMapEmpty.tsv",
+            description = "location of taxonMap.tsv"
     )
     private String taxonMapPath;
 
@@ -95,8 +92,8 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
     protected GraphServiceFactory getGraphServiceFactory() {
-        if (this.graphServiceFactory == null) {
-            this.graphServiceFactory =
+        if (graphServiceFactory == null) {
+            graphServiceFactory =
                     getGraphServiceFactory(graphDbDir);
         }
         return graphServiceFactory;
@@ -107,7 +104,7 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
     public void setGraphServiceFactory(GraphServiceFactory graphServiceFactory) {
-        this.graphServiceFactory = graphServiceFactory;
+        CmdNeo4J.graphServiceFactory = graphServiceFactory;
     }
 
     protected void configureAndRun(CmdNeo4J cmd) {

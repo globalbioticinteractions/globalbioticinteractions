@@ -22,8 +22,7 @@ public class CmdLink extends CmdNeo4J {
 
     @Override
     public void run() {
-        CmdInterpretTaxa cmd = new CmdInterpretTaxa();
-        configureAndRun(cmd);
+        configureAndRun(new CmdInterpretTaxa());
         configureAndRun(new CmdIndexTaxa());
         configureAndRun(new CmdIndexTaxonStrings());
         configureAndRun(new CmdGenerateReport());

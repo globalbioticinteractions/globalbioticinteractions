@@ -7,6 +7,10 @@ import org.eol.globi.util.ResourceServiceLocal;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Arrays;
 
 @CommandLine.Command(
         name = "interpret",
@@ -23,13 +27,17 @@ public class CmdInterpretTaxa extends CmdNeo4J {
 
     @Override
     public void run() {
+
         final TaxonCacheService taxonCacheService = new TaxonCacheService(
                 getTaxonCachePath(),
                 getTaxonMapPath(),
-                new ResourceServiceLocal()
+                new ResourceServiceLocal(is -> is, CmdInterpretTaxa.class)
         );
         taxonCacheService.setCacheDir(new File(cacheDir));
-        IndexerNeo4j taxonIndexer = new IndexerTaxa(taxonCacheService, getGraphServiceFactory());
+        IndexerNeo4j taxonIndexer = new IndexerTaxa(
+                taxonCacheService,
+                getGraphServiceFactory()
+        );
         try {
             taxonIndexer.index();
         } catch (StudyImporterException e) {
