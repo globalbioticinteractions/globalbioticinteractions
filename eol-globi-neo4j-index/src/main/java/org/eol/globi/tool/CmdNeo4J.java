@@ -39,7 +39,7 @@ public abstract class CmdNeo4J implements Cmd {
 
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_NEO4J_VERSION},
-            description = "version neo4j index to use",
+            description = "version neo4j index to use (NOTE: only v2 indexes are fully implemented currently, v2 indexes work with neo4j v3.5.x)",
             defaultValue = "2",
             hidden = true
     )
