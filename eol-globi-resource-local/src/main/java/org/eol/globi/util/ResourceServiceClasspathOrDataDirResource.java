@@ -7,18 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public class ResourceServiceClasspathResource implements ResourceService {
+public class ResourceServiceClasspathOrDataDirResource implements ResourceService {
 
     private final InputStreamFactory factory;
     private final Class clazz;
+    private final String dataDir;
 
-    public ResourceServiceClasspathResource(InputStreamFactory factory) {
-        this(factory, ResourceServiceClasspathResource.class);
-    }
-
-    public ResourceServiceClasspathResource(InputStreamFactory factory, Class clazz) {
+    public ResourceServiceClasspathOrDataDirResource(InputStreamFactory factory, Class clazz, String dataDir) {
         this.factory = factory;
         this.clazz = clazz;
+        this.dataDir = dataDir;
     }
 
     @Override
@@ -29,7 +27,7 @@ public class ResourceServiceClasspathResource implements ResourceService {
         }
         InputStream is = factory.create(clazz.getResourceAsStream(classpathResource));
         if (is == null) {
-            is = new ResourceServiceDataDir().retrieve(resourceName);
+            is = new ResourceServiceDataDir(dataDir).retrieve(URI.create(classpathResource));
         }
 
         if (is == null) {

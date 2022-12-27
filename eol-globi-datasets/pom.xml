@@ -18,7 +18,7 @@
         <elton4n.version>${project.parent.version}</elton4n.version>
         <globi.taxa.version>0.3.36</globi.taxa.version>
         <globi.tsv.version>1.1-SNAPSHOT</globi.tsv.version>
-        <shapefiles.dir>${project.build.directory}/shapefiles</shapefiles.dir>
+        <data.dir>${project.build.directory}/data</data.dir>
         <dataset.dir>change/me/in/pom.xml</dataset.dir>
         <data.dir>${project.build.directory}/data</data.dir>
         <neo4j.data.dir>${data.dir}/graph.db</neo4j.data.dir>
@@ -79,9 +79,9 @@
                         <argument>-neo4jVersion</argument>
                         <argument>2</argument>
                         <argument>-taxonCache</argument>
-                        <argument>file://${shapefiles.dir}/taxa/taxonCache.tsv.gz</argument>
+                        <argument>file://${data.dir}/taxa/taxonCache.tsv.gz</argument>
                         <argument>-taxonMap</argument>
-                        <argument>file://${shapefiles.dir}/taxa/taxonMap.tsv.gz</argument>
+                        <argument>file://${data.dir}/taxa/taxonMap.tsv.gz</argument>
                     </arguments>
                     <workingDirectory>${data.dir}</workingDirectory>
                 </configuration>
@@ -221,7 +221,7 @@
                                             <version>${globi.taxa.version}</version>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}/taxa</outputDirectory>
+                                            <outputDirectory>${data.dir}/taxa</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>${project.groupId}</groupId>
@@ -230,7 +230,7 @@
                                             <classifier>tsv</classifier>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
-                                            <outputDirectory>${shapefiles.dir}/tsv</outputDirectory>
+                                            <outputDirectory>${data.dir}/tsv</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>

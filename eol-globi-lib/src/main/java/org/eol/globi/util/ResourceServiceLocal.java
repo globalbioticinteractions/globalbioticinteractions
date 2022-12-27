@@ -8,11 +8,10 @@ import java.net.URI;
 
 public class ResourceServiceLocal implements ResourceService {
 
-    private final InputStreamFactory factory;
-    private final Class classContext;
+    private ResourceServiceFactoryLocal resourceServiceFactoryLocal;
 
     public ResourceServiceLocal() {
-        this(is -> is, ResourceServiceLocal.class);
+        this(is -> is);
     }
 
     public ResourceServiceLocal(InputStreamFactory factory) {
@@ -20,16 +19,17 @@ public class ResourceServiceLocal implements ResourceService {
     }
 
     public ResourceServiceLocal(InputStreamFactory factory, Class classContext) {
-        this.factory = factory;
-        this.classContext = classContext;
+        this(factory, classContext, "data");
+    }
+
+    public ResourceServiceLocal(InputStreamFactory factory, Class classContext, String dataDir) {
+        resourceServiceFactoryLocal = new ResourceServiceFactoryLocal(factory, classContext, dataDir);
     }
 
     @Override
     public InputStream retrieve(URI resourceName) throws IOException {
         return resourceName == null
                 ? null
-                : new ResourceServiceFactoryLocal(factory, classContext)
-                .serviceForResource(resourceName)
-                .retrieve(resourceName);
+                : resourceServiceFactoryLocal.serviceForResource(resourceName).retrieve(resourceName);
     }
 }

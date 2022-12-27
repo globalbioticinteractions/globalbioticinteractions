@@ -10,7 +10,6 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
-import org.eol.globi.util.ResourceServiceClasspathResource;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.junit.Test;

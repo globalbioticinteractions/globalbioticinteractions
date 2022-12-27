@@ -14,7 +14,7 @@
     <name>Global Biotic Interactions Geographic Library</name>
 
     <properties>
-        <shapefiles.dir>${project.build.testOutputDirectory}</shapefiles.dir>
+        <data.dir>${project.build.testOutputDirectory}</data.dir>
     </properties>
 
     <dependencies>
@@ -51,7 +51,7 @@
                                     <version>20140115</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/feow-tnc</outputDirectory>
+                                    <outputDirectory>${data.dir}/feow-tnc</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eol.globi.geo</groupId>
@@ -59,7 +59,7 @@
                                     <version>20140115</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/teow-tnc</outputDirectory>
+                                    <outputDirectory>${data.dir}/teow-tnc</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eol.globi.geo</groupId>
@@ -67,7 +67,7 @@
                                     <version>20140115</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/meow-tnc</outputDirectory>
+                                    <outputDirectory>${data.dir}/meow-tnc</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eol.globi.geo</groupId>
@@ -75,7 +75,7 @@
                                     <version>v4_2010</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${shapefiles.dir}/longhurst</outputDirectory>
+                                    <outputDirectory>${data.dir}/longhurst</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}</outputDirectory>

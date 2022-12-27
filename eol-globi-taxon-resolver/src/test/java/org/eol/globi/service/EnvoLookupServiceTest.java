@@ -1,16 +1,9 @@
 package org.eol.globi.service;
 
 import org.eol.globi.domain.Term;
-import org.eol.globi.util.ResourceServiceClasspathResource;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
-import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
