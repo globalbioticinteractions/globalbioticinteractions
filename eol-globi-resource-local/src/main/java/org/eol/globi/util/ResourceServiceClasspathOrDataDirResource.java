@@ -26,7 +26,7 @@ public class ResourceServiceClasspathOrDataDirResource implements ResourceServic
             classpathResource = StringUtils.replace(classpathResource, "classpath:", "");
         }
         InputStream is = factory.create(clazz.getResourceAsStream(classpathResource));
-        if (is == null) {
+        if (is == null && StringUtils.isNotBlank(dataDir)) {
             is = new ResourceServiceDataDir(dataDir).retrieve(URI.create(classpathResource));
         }
 

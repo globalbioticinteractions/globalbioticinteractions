@@ -16,7 +16,7 @@ public class ResourceServiceFactoryLocal implements ResourceServiceFactory {
     }
 
     public ResourceServiceFactoryLocal(InputStreamFactory factory, Class classContext) {
-        this(factory, classContext, "data");
+        this(factory, classContext, null);
     }
 
     public ResourceServiceFactoryLocal(InputStreamFactory factory, Class classContext, String dataDir) {

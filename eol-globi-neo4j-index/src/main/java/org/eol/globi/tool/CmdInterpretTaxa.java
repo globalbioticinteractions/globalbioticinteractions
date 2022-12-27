@@ -1,16 +1,12 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.ResourceServiceLocal;
 import picocli.CommandLine;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Arrays;
 
 @CommandLine.Command(
         name = "interpret",
@@ -20,7 +16,7 @@ import java.util.Arrays;
 public class CmdInterpretTaxa extends CmdNeo4J {
 
     @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_NAME_INDEX_DIR},
+            names = {"-nameIndexCache"},
             description = "location of cached taxon index"
     )
     private String cacheDir = "./taxonIndexCache";
@@ -28,10 +24,17 @@ public class CmdInterpretTaxa extends CmdNeo4J {
     @Override
     public void run() {
 
+        ResourceService resourceService
+                = new ResourceServiceLocal(
+                is -> is,
+                CmdInterpretTaxa.class,
+                System.getProperty("user.dir")
+        );
+
         final TaxonCacheService taxonCacheService = new TaxonCacheService(
                 getTaxonCachePath(),
                 getTaxonMapPath(),
-                new ResourceServiceLocal(is -> is, CmdInterpretTaxa.class)
+                resourceService
         );
         taxonCacheService.setCacheDir(new File(cacheDir));
         IndexerNeo4j taxonIndexer = new IndexerTaxa(
