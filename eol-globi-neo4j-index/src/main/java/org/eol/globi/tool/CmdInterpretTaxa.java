@@ -15,12 +15,6 @@ import java.io.File;
 )
 public class CmdInterpretTaxa extends CmdNeo4J {
 
-    @CommandLine.Option(
-            names = {"-nameIndexCache"},
-            defaultValue = "./taxonIndexCache",
-            description = "location of cached taxon index"
-    )
-    private String cacheDir;
 
     @Override
     public void run() {
@@ -35,7 +29,7 @@ public class CmdInterpretTaxa extends CmdNeo4J {
                 getTaxonMapPath(),
                 resourceService
         );
-        taxonCacheService.setCacheDir(new File(cacheDir));
+        taxonCacheService.setCacheDir(new File(getCacheDir()));
         IndexerNeo4j taxonIndexer = new IndexerTaxa(
                 taxonCacheService,
                 getGraphServiceFactory()

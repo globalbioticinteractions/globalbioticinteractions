@@ -57,6 +57,14 @@ public abstract class CmdNeo4J implements Cmd {
     private String taxonMapPath;
 
     @CommandLine.Option(
+            names = {"-nameIndexCache"},
+            defaultValue = "./taxonIndexCache",
+            description = "location of cached taxon index"
+    )
+    private String cacheDir;
+
+
+    @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_EXPORT_DIR},
             defaultValue = ".",
             description = "location of neo4j graph.db"
@@ -112,6 +120,7 @@ public abstract class CmdNeo4J implements Cmd {
         cmd.setTaxonMapPath(getTaxonMapPath());
         cmd.setGraphServiceFactory(getGraphServiceFactory());
         cmd.setNodeFactoryFactory(getNodeFactoryFactory());
+        cmd.setCacheDir(getCacheDir());
         cmd.run();
     }
 
@@ -134,5 +143,13 @@ public abstract class CmdNeo4J implements Cmd {
 
     public String getDatasetDir() {
         return datasetDir;
+    }
+
+    public String getCacheDir() {
+        return cacheDir;
+    }
+
+    public void setCacheDir(String cacheDir) {
+        this.cacheDir = cacheDir;
     }
 }
