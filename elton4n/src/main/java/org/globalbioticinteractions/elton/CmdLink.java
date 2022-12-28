@@ -9,7 +9,7 @@ import picocli.CommandLine;
 
 @CommandLine.Command(
         name = "link",
-        description = "links compiled interaction datasets",
+        description = "link compiled interaction datasets",
         subcommands = {
                 CmdInterpretTaxa.class,
                 CmdIndexTaxa.class,
