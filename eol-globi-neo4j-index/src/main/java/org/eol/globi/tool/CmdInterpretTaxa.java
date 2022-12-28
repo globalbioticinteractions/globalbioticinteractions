@@ -17,15 +17,14 @@ public class CmdInterpretTaxa extends CmdNeo4J {
 
     @CommandLine.Option(
             names = {"-nameIndexCache"},
+            defaultValue = "./taxonIndexCache",
             description = "location of cached taxon index"
     )
-    private String cacheDir = "./taxonIndexCache";
+    private String cacheDir;
 
     @Override
     public void run() {
-
-        ResourceService resourceService
-                = new ResourceServiceLocal(
+        ResourceService resourceService = new ResourceServiceLocal(
                 is -> is,
                 CmdInterpretTaxa.class,
                 System.getProperty("user.dir")
