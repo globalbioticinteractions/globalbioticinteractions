@@ -69,8 +69,7 @@ public class DatasetImporterForSimons extends NodeBasedImporter {
                 new StudyImpl("Simons 1997", null, ExternalIdUtil.toCitation("James D. Simons", "Food habits and trophic structure of the demersal fish assemblages on the Mississippi-Alabama continental shelf.", "1997")));
         try {
             LabeledCSVParser csvParser = parserFactory.createParser(studyResource, CharsetConstant.UTF8);
-            Map<String, String> columnMapper = COLUMN_MAPPER;
-            LengthParser parser = new LengthRangeParserImpl(columnMapper.get(LENGTH_RANGE_IN_MM));
+            LengthParser parser = new LengthRangeParserImpl(((Map<String, String>) COLUMN_MAPPER).get(LENGTH_RANGE_IN_MM));
             while (csvParser.getLine() != null) {
                 addNextRecordToStudy(csvParser, study, COLUMN_MAPPER, parser);
             }
@@ -115,11 +114,7 @@ public class DatasetImporterForSimons extends NodeBasedImporter {
 
     private Season getOrCreateSeason(String seasonName) throws NodeFactoryException {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        Season season = getNodeFactory().findSeason(seasonNameLower);
-        if (null == season) {
-            season = getNodeFactory().createSeason(seasonNameLower);
-        }
-        return season;
+        return getNodeFactory().createSeason(seasonNameLower);
     }
 
     private Location getOrCreateSampleLocation(LabeledCSVParser csvParser, Map<String, String> columnToNormalizedTermMapper) throws StudyImporterException {

@@ -51,7 +51,7 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
                 new TransactionPerBatch(graphDb));
     }
 
-    public void initIndexes(GraphDatabaseService graphDb) {
+    private void initIndexes(GraphDatabaseService graphDb) {
         try (Transaction tx = graphDb.beginTx()) {
             getTaxonPathsIndex(graphDb);
             getFuzzySearchIndex(graphDb);

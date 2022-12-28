@@ -117,19 +117,6 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
 
 
     @Override
-    public SeasonNode findSeason(String seasonName) {
-        IndexHits<Node> nodeIndexHits = seasons.get(SeasonNode.TITLE, seasonName);
-        Node seasonHit = nodeIndexHits.getSingle();
-        nodeIndexHits.close();
-        return seasonHit == null ? null : new SeasonNode(seasonHit);
-    }
-
-    @Override
-    protected void indexSeasonNode(String seasonNameLower, Node node) throws NodeFactoryException {
-        indexNonBlankKeyValue(seasons, node, SeasonNode.TITLE, seasonNameLower);
-    }
-
-    @Override
     protected Node createSeasonNode() {
         return getGraphDb().createNode();
     }

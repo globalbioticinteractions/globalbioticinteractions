@@ -1,9 +1,5 @@
 package org.eol.globi.data;
 
-import org.junit.Before;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Transaction;
-
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 

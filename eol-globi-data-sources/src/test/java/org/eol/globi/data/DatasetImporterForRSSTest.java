@@ -409,11 +409,6 @@ public class DatasetImporterForRSSTest {
         }
 
         @Override
-        public Season findSeason(String seasonName) {
-            return null;
-        }
-
-        @Override
         public Location getOrCreateLocation(Location location) throws NodeFactoryException {
             return null;
         }

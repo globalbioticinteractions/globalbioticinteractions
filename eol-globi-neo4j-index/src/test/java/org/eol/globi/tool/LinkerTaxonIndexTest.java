@@ -69,8 +69,8 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
                 , is("Bar:123 | FOO:444"));
 
-        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").size(), is(1));
-        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").size(), is(0));
+        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").stream().count(), is(1L));
+        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").stream().count(), is(0L));
 
     }
 

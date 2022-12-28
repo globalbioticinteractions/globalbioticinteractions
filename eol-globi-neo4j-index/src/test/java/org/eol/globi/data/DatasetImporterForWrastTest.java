@@ -82,9 +82,6 @@ public class DatasetImporterForWrastTest extends GraphDBTestCase {
 
         assertNotNull(taxonIndex.findTaxonByName("Aegathoa oculata"));
 
-        assertNotNull(nodeFactory.findSeason("spring"));
-        assertNotNull(nodeFactory.findSeason("fall"));
-
         AtomicReference<StudyNode> foundStudyRef = new AtomicReference<>();
         NodeUtil.findStudies(getGraphDb(), new NodeListener() {
             @Override

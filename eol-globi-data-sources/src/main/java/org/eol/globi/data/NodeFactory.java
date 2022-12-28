@@ -32,8 +32,6 @@ public interface NodeFactory extends AutoCloseable {
 
     Study findStudy(Study study);
 
-    Season findSeason(String seasonName);
-
     Location getOrCreateLocation(Location location) throws NodeFactoryException;
 
     void setUnixEpochProperty(Specimen specimen, Date date) throws NodeFactoryException;

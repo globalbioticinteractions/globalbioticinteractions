@@ -7,8 +7,6 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.Season;
-import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
@@ -35,13 +33,10 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     private static void initIndexes(GraphDatabaseService graphDb) {
         createIndexIfNeeded(graphDb,
-                NodeLabel.Location,
                 LocationConstant.LATITUDE);
         createIndexIfNeeded(graphDb,
-                NodeLabel.Location,
                 LocationConstant.LOCALITY);
         createIndexIfNeeded(graphDb,
-                NodeLabel.Location,
                 LocationConstant.LOCALITY_ID);
     }
 
@@ -61,22 +56,6 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
                 NodeLabel.ExternalId,
                 PropertyAndValueDictionary.EXTERNAL_ID
         );
-        createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.Season,
-                StudyConstant.TITLE
-        );
-
-        createConstraintIfNeeded(
-                graphDb,
-                NodeLabel.Environment,
-                PropertyAndValueDictionary.NAME
-        );
-    }
-
-    @Override
-    protected void indexSeasonNode(String seasonNameLower, Node node) {
-        // already indexed by constraint: do nothing
     }
 
     @Override
@@ -181,13 +160,6 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     }
 
-    @Override
-    public Season findSeason(String seasonName) {
-        Node node = getGraphDb().findNode(NodeLabel.Season, StudyConstant.TITLE, seasonName);
-        return node == null ? null : new SeasonNode(node);
-    }
-
-
     private static void createConstraintIfNeeded(GraphDatabaseService graphDb,
                                                  NodeLabel label,
                                                  String propertyName) {
@@ -206,12 +178,11 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     private static void createIndexIfNeeded(GraphDatabaseService graphDb,
-                                            NodeLabel label,
                                             String propertyName) {
 
         Iterable<IndexDefinition> indexes = graphDb
                 .schema()
-                .getIndexes(label);
+                .getIndexes(NodeLabel.Location);
 
         IndexDefinition indexMatching = null;
         for (IndexDefinition index : indexes) {
@@ -227,7 +198,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
         if (indexMatching == null) {
             graphDb
                     .schema()
-                    .indexFor(label)
+                    .indexFor(NodeLabel.Location)
                     .on(propertyName)
                     .create();
         }

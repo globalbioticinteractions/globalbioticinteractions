@@ -6,8 +6,11 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.TaxonNode;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+
+import java.util.stream.Stream;
 
 public class TaxonFuzzySearchIndex {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
@@ -17,7 +20,7 @@ public class TaxonFuzzySearchIndex {
         this.taxonNameSuggestions = graphDbService.index().forNodes(TAXON_NAME_SUGGESTIONS);
     }
 
-    public IndexHits<Node> query(String luceneQueryString) {
+    public ResourceIterator<Node> query(String luceneQueryString) {
         return taxonNameSuggestions.query(luceneQueryString);
     }
 

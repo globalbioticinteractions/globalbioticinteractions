@@ -98,11 +98,8 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public SeasonNode createSeason(String seasonNameLower) throws NodeFactoryException {
         Node node = createSeasonNode();
         SeasonNode season = new SeasonNode(node, seasonNameLower);
-        indexSeasonNode(seasonNameLower, node);
         return season;
     }
-
-    protected abstract void indexSeasonNode(String seasonNameLower, Node node) throws NodeFactoryException;
 
     protected abstract Node createSeasonNode();
 

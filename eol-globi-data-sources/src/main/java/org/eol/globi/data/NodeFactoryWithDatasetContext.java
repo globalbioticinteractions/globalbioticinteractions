@@ -81,11 +81,6 @@ public class NodeFactoryWithDatasetContext extends NodeFactoryAbstract {
     }
 
     @Override
-    public Season findSeason(String seasonName) {
-        return factory.findSeason(seasonName);
-    }
-
-    @Override
     public Location getOrCreateLocation(Location location) throws NodeFactoryException {
         return factory.getOrCreateLocation(location);
     }

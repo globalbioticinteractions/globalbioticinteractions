@@ -239,11 +239,7 @@ public class DatasetImporterForWrast extends NodeBasedImporter {
 
     private Season getOrCreateSeason(String seasonName) throws NodeFactoryException {
         String seasonNameLower = seasonName.toLowerCase().trim();
-        Season season = getNodeFactory().findSeason(seasonNameLower);
-        if (null == season) {
-            season = getNodeFactory().createSeason(seasonNameLower);
-        }
-        return season;
+        return getNodeFactory().createSeason(seasonNameLower);
     }
 
     private Map<String, LatLng> getLocationMap() throws StudyImporterException {
