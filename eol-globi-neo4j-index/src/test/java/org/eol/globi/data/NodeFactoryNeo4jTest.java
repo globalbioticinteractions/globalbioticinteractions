@@ -136,25 +136,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         Location foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));
         assertNotNull(foundLocationNoDepth);
     }
-
-    @Test
-    public void createFindLocationByLocality() throws NodeFactoryException {
-        LocationImpl providedLocation = new LocationImpl(null, null, null, null);
-        providedLocation.setLocality("some locale");
-        getNodeFactory().getOrCreateLocation(providedLocation);
-        Location foundLocation = getNodeFactory().findLocation(providedLocation);
-        assertNotNull(foundLocation);
-    }
-
-    @Test
-    public void createFindLocationByLocalityId() throws NodeFactoryException {
-        LocationImpl providedLocation = new LocationImpl(null, null, null, null);
-        providedLocation.setLocalityId("locality:id");
-        getNodeFactory().getOrCreateLocation(providedLocation);
-        Location foundLocation = getNodeFactory().findLocation(providedLocation);
-        assertNotNull(foundLocation);
-    }
-
+    
     @Test
     public void createFindLocationWith() throws NodeFactoryException {
         Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 1.4d, -1.0d, null));
@@ -212,15 +194,11 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         location = getNodeFactory().getOrCreateLocation(new LocationImpl(0.0, 1.0, 2.0, null));
         List<Environment> second = getNodeFactory().getOrCreateEnvironments(location, "BLA:123", "this and that");
         assertThat(first.size(), is(second.size()));
-        assertThat(((NodeBacked) first.get(0)).getNodeID(), is(((NodeBacked) second.get(0)).getNodeID()));
-        EnvironmentNode foundEnvironment = getNodeFactory().findEnvironment("this_and_that");
-        assertThat(foundEnvironment, is(notNullValue()));
+        assertThat(((NodeBacked) first.get(0)).getNodeID(), is(not(((NodeBacked) second.get(0)).getNodeID())));
 
         List<Environment> environments = location.getEnvironments();
-        assertThat(environments.size(), is(1));
+        assertThat(environments.size(), is(2));
         Environment environment = environments.get(0);
-        NodeBacked environmentNode = (NodeBacked) environment;
-        assertThat(environmentNode.getNodeID(), is(foundEnvironment.getNodeID()));
         assertThat(environment.getName(), is("this_and_that"));
         assertThat(environment.getExternalId(), is("NS:this and that"));
 

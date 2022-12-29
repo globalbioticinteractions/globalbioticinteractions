@@ -26,5 +26,4 @@ public class NodeFactoryNeo4j3Test extends NodeFactoryNeo4jTest {
 
     }
 
-
 }

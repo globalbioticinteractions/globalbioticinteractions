@@ -3,16 +3,13 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.domain.DatasetNode;
-import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.SeasonNode;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
-import org.eol.globi.domain.Term;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
@@ -28,9 +25,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     private final Index<Node> datasets;
     private final Index<Node> studies;
     private final Index<Node> externalIds;
-    private final Index<Node> seasons;
     private final Index<Node> locations;
-    private final Index<Node> environments;
 
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/857
     // neo4j explicit indexes has a maximum to the size of values to be indexed
@@ -43,9 +38,7 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         this.datasets = NodeUtil.forNodes(graphDb, "datasets");
         this.studies = NodeUtil.forNodes(graphDb, "studies");
         this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
-        this.seasons = NodeUtil.forNodes(graphDb, "seasons");
         this.locations = NodeUtil.forNodes(graphDb, "locations");
-        this.environments = NodeUtil.forNodes(graphDb, "environments");
     }
 
     @Override
@@ -159,35 +152,15 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         }
     }
 
-    public static String truncatedValueToBeIndexed(String value) {
-        return value.length() < MAX_NEO4J_INDEX_LENGTH_IN_UTF_CHARACTERS
-                ? value
-                : StringUtils.truncate(value, MAX_NEO4J_INDEX_LENGTH_IN_UTF_CHARACTERS - 1);
-    }
-
     @Override
     public LocationNode findLocation(Location location) throws NodeFactoryException {
         Node matchingLocation = null;
         if (org.eol.globi.domain.LocationUtil.hasLatLng(location)) {
             matchingLocation = findLocationByLatitude(location);
         }
-        if (matchingLocation == null) {
-            matchingLocation = findLocationByLocality(location);
-        }
-        if (matchingLocation == null) {
-            matchingLocation = findLocationByLocalityId(location);
-        }
         return matchingLocation == null ? null : new LocationNode(matchingLocation);
     }
 
-
-    private Node findLocationByLocality(Location location) throws NodeFactoryException {
-        return location.getLocality() == null ? null : findLocationBy(location, LocationConstant.LOCALITY, location.getLocality());
-    }
-
-    private Node findLocationByLocalityId(Location location) throws NodeFactoryException {
-        return location.getLocalityId() == null ? null : findLocationBy(location, LocationConstant.LOCALITY_ID, location.getLocalityId());
-    }
 
     private Node findLocationBy(Location location, String key, String value) {
         String query = key + ":\"" + QueryParser.escape(value) + "\"";
@@ -212,25 +185,6 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
         return getGraphDb().createNode();
     }
 
-    @Override
-    public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) throws NodeFactoryException {
-        indexNonBlankKeyValue(environments,
-                environmentNode.getUnderlyingNode(),
-                PropertyAndValueDictionary.NAME,
-                term.getName());
-    }
-
-    @Override
-    public EnvironmentNode findEnvironment(String name) {
-        EnvironmentNode firstMatchingEnvironment = null;
-        String query = "name:\"" + name + "\"";
-        IndexHits<Node> matches = environments.query(query);
-        if (matches.hasNext()) {
-            firstMatchingEnvironment = new EnvironmentNode(matches.next());
-        }
-        matches.close();
-        return firstMatchingEnvironment;
-    }
 
 
 }

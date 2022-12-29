@@ -85,15 +85,14 @@ public class NodeFactoryTest extends GraphDBTestCase {
 
         NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
         try (Transaction tx = getGraphDb().beginTx()) {
-            assertGraphDBImportNativeIndexes(factory);
+            assertGraphDBImportNativeIndexes(factory, getGraphDb());
         }
     }
 
-    public void assertGraphDBImportNativeIndexes(NodeFactoryNeo4j factory) throws StudyImporterException {
+    public static void assertGraphDBImportNativeIndexes(NodeFactoryNeo4j factory, GraphDatabaseService graphDb) throws StudyImporterException {
         importData(DatasetImporterForSimons.class, factory);
-        GraphDatabaseService graphService = getGraphDb();
 
-        ResourceIterator<Node> nodes = graphService.findNodes(NodeLabel.Reference);
+        ResourceIterator<Node> nodes = graphDb.findNodes(NodeLabel.Reference);
 
         assertTrue(nodes.hasNext());
 
@@ -101,8 +100,8 @@ public class NodeFactoryTest extends GraphDBTestCase {
         assertThat(study.getTitle(), is("Simons 1997"));
 
         assertFalse(nodes.hasNext());
-        assertNotNull(graphService.getNodeById(1));
-        assertNotNull(graphService.getNodeById(200));
+        assertNotNull(graphDb.getNodeById(1));
+        assertNotNull(graphDb.getNodeById(200));
     }
 
     @Test

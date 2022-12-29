@@ -2,7 +2,6 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.DatasetNode;
-import org.eol.globi.domain.EnvironmentNode;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.LocationNode;
@@ -10,7 +9,6 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
-import org.eol.globi.domain.Term;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -34,10 +32,6 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     private static void initIndexes(GraphDatabaseService graphDb) {
         createIndexIfNeeded(graphDb,
                 LocationConstant.LATITUDE);
-        createIndexIfNeeded(graphDb,
-                LocationConstant.LOCALITY);
-        createIndexIfNeeded(graphDb,
-                LocationConstant.LOCALITY_ID);
     }
 
     private static void initConstraints(GraphDatabaseService graphDb) {
@@ -105,20 +99,16 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public StudyNode findStudy(Study study) {
-        Node node = getGraphDb().findNode(NodeLabel.Reference,
+        Node node = getGraphDb().findNode(
+                NodeLabel.Reference,
                 StudyConstant.TITLE_IN_NAMESPACE,
-                getIdInNamespace(study));
+                getIdInNamespace(study)
+        );
 
         return node == null
                 ? null
                 : new StudyNode(node);
     }
-
-    @Override
-    public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) {
-        // environment nodes already automatically indexed: do nothing
-    }
-
 
     @Override
     public LocationNode findLocation(Location location) throws NodeFactoryException {
@@ -240,18 +230,6 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     public Node createEnvironmentNode() {
         return getGraphDb().createNode(NodeLabel.Environment);
     }
-
-    @Override
-    public EnvironmentNode findEnvironment(String name) {
-        Node node = getGraphDb().findNode(NodeLabel.Environment,
-                PropertyAndValueDictionary.NAME,
-                name
-        );
-        return node == null
-                ? null
-                : new EnvironmentNode(node);
-    }
-
 
 }
 

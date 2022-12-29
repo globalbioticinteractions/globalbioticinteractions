@@ -70,7 +70,9 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         this.graphDb = graphDb;
 
         InputStreamFactory inputStreamFactory = is -> is;
-        this.termLookupService = new UberonLookupService(new ResourceServiceLocal(inputStreamFactory));
+        this.termLookupService = new UberonLookupService(
+                new ResourceServiceLocal(inputStreamFactory)
+        );
 
         this.lifeStageLookupService
                 = new TermLookupServiceWithResource(
@@ -408,25 +410,15 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public List<Environment> addEnvironmentToLocation(Location location, List<Term> terms) throws NodeFactoryException {
         List<Environment> normalizedEnvironments = new ArrayList<Environment>();
         for (Term term : terms) {
-            Environment environment = findEnvironment(term.getName());
-            if (environment == null) {
-                Node node = createEnvironmentNode();
-                EnvironmentNode environmentNode = new EnvironmentNode(node, term.getId(), term.getName());
-                indexEnvironmentNode(term, environmentNode);
-                environment = environmentNode;
-            }
+            Node node = createEnvironmentNode();
+            Environment environment = new EnvironmentNode(node, term.getId(), term.getName());
             location.addEnvironment(environment);
             normalizedEnvironments.add(environment);
         }
         return normalizedEnvironments;
     }
 
-    abstract public void indexEnvironmentNode(Term term, EnvironmentNode environmentNode) throws NodeFactoryException;
-
     abstract public Node createEnvironmentNode();
-
-    abstract public EnvironmentNode findEnvironment(String name);
-
 
     @Override
     public Term getOrCreateBodyPart(String externalId, String name) throws NodeFactoryException {
