@@ -82,7 +82,7 @@ public class DatasetImporterForBroseTest extends GraphDBTestCase {
         assertThat("missing location", location, is(notNullValue()));
 
         List<Environment> environments = location.getEnvironments();
-        assertThat(environments.size(), is(1));
+        assertThat(environments.size(), is(10));
         assertThat(environments.get(0).getExternalId(), is("TEST:terrestrial abandoned field"));
         assertThat(environments.get(0).getName(), is("terrestrial abandoned field"));
 
