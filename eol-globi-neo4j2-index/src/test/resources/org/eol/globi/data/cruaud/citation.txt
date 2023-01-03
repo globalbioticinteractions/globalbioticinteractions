@@ -1,0 +1,5 @@
+When using this data, please cite the original publication:
+Cruaud A, Rønsted N, Chantarasuwan B, Chou LS, Clement WL, Couloux A, Cousins B, Genson G, Harrison RD, Hanson PE, Hossaert-McKey M, Jabbour-Zahab R, Jousselin E, Kerdelhué C, Kjellberg F, Lopez-Vaamonde C, Peebles J, Peng Y, Pereira RAS, Schramm T, Ubaidillah R, van Noort S, Weiblen GD, Yang D, Yodpinyanee A, Libeskind-Hadas R, Cook JM, Rasplus J, Savolainen V (2012) An extreme case of plant-insect co-diversification: figs and fig-pollinating wasps. Systematic Biology 61(6): 1029-1047. https://doi.org/10.1093/sysbio/sys068
+
+Additionally, please cite the Dryad data package:
+Cruaud A, Rønsted N, Chantarasuwan B, Chou LS, Clement WL, Couloux A, Cousins B, Genson G, Harrison RD, Hanson PE, Hossaert-McKey M, Jabbour-Zahab R, Jousselin E, Kerdelhué C, Kjellberg F, Lopez-Vaamonde C, Peebles J, Pereira RAS, Schramm T, Ubaidillah R, van Noort S, Weiblen GD, Yang D, Peng Y, Yodpinyanee A, Libeskind-Hadas R, Cook JM, Rasplus J, Savolainen V (2012) Data from: An extreme case of plant-insect co-diversification: figs and fig-pollinating wasps. Dryad Digital Repository. https://doi.org/10.5061/dryad.hr620

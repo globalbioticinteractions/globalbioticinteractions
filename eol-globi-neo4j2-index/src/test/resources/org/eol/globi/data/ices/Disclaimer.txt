@@ -1,0 +1,90 @@
+1. FEEDBACK 
+
+ Thank you for downloading data from the ICES Data Centre, if you experienced
+ any problems or would like to provide feedback that will help us to improve 
+ our service, please email us at: accessions@ices.dk
+
+2. IMPORTANT 
+
+ Please read this before using these data as this file contains specific information about the use of 
+ these data,limitations and known issues. This file contains contact information
+ regarding  the origins of these data (where supplied) as well as how to reference
+ these data in a publication or data product. 
+
+ By downloading data from the ICES website [www.ices.dk] you are agreeing to
+ the terms and conditions of use as described in this document and any documents
+ referred to in this text.
+
+3. ICES CONTACT
+
+ For queries about this data download:
+ Web  : http://www.ices.dk/stomachdata
+ Email:	stomachdata@ices.dk 
+ Tel  :	+45 3338 6700
+
+ Web  :	http://www.ices.dk/data
+ Email: accessions@ices.dk
+ Tel  :	+45 3338 6700
+ 
+4. PROJECT/DOWNLOAD SPECIFIC INFORMATION
+
+ The Stomachdata website provides the user with the ability to query the ICES stomach database 
+ and download the data. 
+ 
+ Note that additional data such as methods and QA may be available. To have access to the complete data set,
+ the user can request this by specifying the provided code plus the extra information required.
+
+
+5. DATA ACKNOWLEDGMENT
+
+ Please acknowledge the following data sources when using the data:
+ 
+ ICES Stomach Dataset 2010, ICES, Copenhagen
+ ICES Cooperative Research Report No. 164 (http://www.ices.dk/products/cooperative.asp)
+ ICES Cooperative Research Report No. 219 (http://www.ices.dk/products/cooperative.asp)
+ IMARES (Institute for Marine Resources & Ecosystem Studies)
+
+6. TERMS OF USE: DATA 
+
+ ICES makes data available in an open, timely and easy way to users, but ICES 
+ remains dependent on data contributions.
+ - Correct and appropriate data interpretation is solely the responsibility 
+   of data users.
+ - Data Users must not expressly or otherwise imply ICES’ substantiation of their 
+   work, results, conclusions and/or recommendations.
+ - Data sources must be duly acknowledged.
+ - Data Users must respect any and all restrictions on the use or reproduction 
+   of data such as restrictions on use for commercial purposes.
+ - Data Users are obliged to inform ICES of any suspected problems in the data.
+ - Data Users are encouraged to inform ICES of possible sources of other relevant
+   data.
+
+ The full ICES data policy and terms of use can be viewed at:
+ http://www.ices.dk/datacentre/datapolicy.asp. 
+
+ Data held at the ICES Data Centre are used for various assessments and working 
+ group purposes. The data guidelines and procedures for these can be viewed 
+ at: http://www.ices.dk/datacentre/guidelines.asp
+
+7. TERMS OF USE: SOFTWARE 
+
+ Software is available for use from the ICES website that is provided as an aid 
+ for data users to work with, analyse and convert data: http://www.ices.dk/datacentre/software.asp
+
+ The downloading and use of any software from http://www.ices.dk/ grants you only
+ a limited, nonexclusive license for use solely by you for your own personal use 
+ and not for republication, distribution, assignment, sublicense, sale or other 
+ use. No part of any content, coding or documentation may be reproduced in any 
+ form or incorporated into any information retrieval system without the express
+ permission of ICES or the third party that provided the software
+ on http://www.ices.dk/
+
+ The downloading and installation of software from http://www.ices.dk/ is at your
+ own risk. ICES undertakes every effort to ensure software is compatible with the
+ latest windows operating system, or other systems as defined in specific readme 
+ or a software documentation file. ICES accepts no responsibility for the correct
+ functioning and operation of software downloaded from http://www.ices.dk/, nor 
+ any incidental, special or consequential damages associated with downloading and 
+ installing software  provided by ICES.
+
+- END OF FILE -

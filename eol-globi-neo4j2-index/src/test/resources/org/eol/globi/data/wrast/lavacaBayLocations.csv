@@ -1,0 +1,21 @@
+"Location","Latitude","Longitude",,"Region","Habitat","Site"
+"LM1",28.595267,-96.477033,,"Lower","Marsh edge",1
+"LSG1",28.596233,-96.476483,,"Lower","Marsh edge",1
+"LM2",28.593150,-96.474633,,"Lower","Marsh edge",2
+"LSG2",28.594833,-96.473967,,"Lower","Marsh edge",2
+"LNV1A",28.608417,-96.475517,,"Lower","Non-Veg ",1
+"LNV1B",28.607217,-96.474500,,"Lower","Non-Veg ",1
+"LNV2A",28.592400,-96.483033,,"Lower","Non-Veg ",2
+"LNV2B",28.590883,-96.484133,,"Lower","Non-Veg ",2
+"LR1A",28.603633,-96.482383,,"Lower","Reef",1
+"LR1B",28.602950,-96.481933,,"Lower","Reef",1
+"LR2A",28.596800,-96.484067,,"Lower","Reef",2
+"LR2B",28.597383,-96.485567,,"Lower","Reef",2
+"UM1",28.641767,-96.613250,,"Upper","Marsh edge",1
+"UM2",28.635850,-96.612017,,"Upper","Marsh edge",2
+"UNV1",28.654600,-96.605300,,"Upper","Non-Veg ",1
+"UNV2",28.659067,-96.598300,,"Upper","Non-Veg ",2
+"UR1A",28.652067,-96.603967,,"Upper","Reef",1
+"UR1B",28.651500,-96.603583,,"Upper","Reef",1
+"UR2A",28.656117,-96.597967,,"Upper","Reef",2
+"UR2B",28.656483,-96.597217,,"Upper","Reef",2

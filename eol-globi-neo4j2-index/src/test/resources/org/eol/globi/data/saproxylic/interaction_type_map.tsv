@@ -1,0 +1,27 @@
+sourceInteractionId	sourceInteractionLabel	targetInteractionId	targetInteractionLabel
+{4945CCF6-CF7B-4907-8B9E-130626251CC5}	parasite	http://purl.obolibrary.org/obo/RO_0002444	parasiteOf
+{9ADC7A6C-296E-43FB-BD9D-132359C5B8C6}	occurs as scavenger	http://purl.obolibrary.org/obo/RO_0002470	eats
+{34250A09-C10C-4697-9BA9-1385DD71C096}	nutrition source	http://purl.obolibrary.org/obo/RO_0002470	eats
+{F67E5D97-887B-41D3-9758-257F33767101}	parasitized by	http://purl.obolibrary.org/obo/RO_0002445	hasParasite
+{69F47164-2DEF-49CB-90FE-271CEA4A288F}	occurs as omnivore	http://purl.obolibrary.org/obo/RO_0002470	eats
+{CFE2FACA-FA2A-43DB-AA92-2BD1332AEC60}	dispersed by	http://eol.org/schema/terms/HasDispersalVector	hasDispersalVector
+{06CA4730-BD9A-41BF-85A5-4D9768E116FB}	occurs as parasitoid	http://purl.obolibrary.org/obo/RO_0002208	parasitoidOf
+{5B480052-C8AA-47CD-9F44-5CE7D17250BF}	wood boring detrivore	http://purl.obolibrary.org/obo/RO_0002470	eats
+{2BE944E2-A87B-4A6D-8D17-71991DDDAF70}	occurs as ambrosia consumer	http://purl.obolibrary.org/obo/RO_0002470	eats
+{D70CFC29-9E7D-44EA-AAA6-7B2D6A81BC48}	prey	http://purl.obolibrary.org/obo/RO_0002458	preyedUponBy
+{7394CD3C-43FC-4028-87E5-7CDEB5D64BD9}	unknown association	http://purl.obolibrary.org/obo/RO_0002437	interactsWith
+{A7243B2C-76DB-4AED-89AF-81CC3F8DF51E}	detrivore	http://purl.obolibrary.org/obo/RO_0002470	eats
+{37926094-7540-47A6-916D-873B87590DA9}	occurs as predator	http://purl.obolibrary.org/obo/RO_0002439	preysOn
+{3FE606A4-A931-4B0D-BBE9-885E9FD32F04}	dispersal vector	http://eol.org/schema/terms/DispersalVector	dispersalVector
+{EC69560A-C33B-4D45-97D2-8D6AE8365B3C}	host fungus	http://purl.obolibrary.org/obo/RO_0002453	hostOf
+{8613FD4F-784D-4818-9E26-92B648B1C733}	host tree	http://purl.obolibrary.org/obo/RO_0002453	hostOf
+{8A0171EF-3972-482C-B79F-9857BED2AE65}	ambrosia consumer	http://purl.obolibrary.org/obo/RO_0002470	eats
+{9FA1D2E4-88E3-4487-913B-98741A49A907}	sugar fungus	http://purl.obolibrary.org/obo/RO_0002437	interactsWith
+{85176758-C9E8-404F-939C-BA0AE7E4E3C5}	host animal	http://purl.obolibrary.org/obo/RO_0002453	hostOf
+{4584928D-9046-4CF6-B347-BA19E8D93DCA}	occurs as fungivore	http://purl.obolibrary.org/obo/RO_0002470	eats
+{7A493127-82AB-4A3D-8B50-CA529B3A7EC8}	occurs as parasite	http://purl.obolibrary.org/obo/RO_0002444	parasiteOf
+{AD97AC31-D699-47C8-A83B-DC2BB98FB0B3}	predator	http://purl.obolibrary.org/obo/RO_0002439	preysOn
+{49ACF9A1-6214-4A98-9E09-E23B83D75102}	fungivore	http://purl.obolibrary.org/obo/RO_0002470	eats
+{1D55031A-407D-4B34-BD2C-E5D8D3165324}	occurs as facultative predator	http://purl.obolibrary.org/obo/RO_0002439	preysOn
+{7031C2E3-A212-4ABF-B016-E6E42EF3A8B4}	ambrosia fungus	http://purl.obolibrary.org/obo/RO_0002437	interactsWith
+{93D3102F-5CC8-48CF-88E7-FEE74F8E54AD}	associated species	http://purl.obolibrary.org/obo/RO_0002437	interactsWith

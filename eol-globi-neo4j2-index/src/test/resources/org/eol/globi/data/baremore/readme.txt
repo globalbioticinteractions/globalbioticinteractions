@@ -1,0 +1,1 @@
+04-Oct-2012 For sake of simplicity, I estimated the coordinates of center of centroid in figure 1 from google maps. The coordinates used are : lat, long: 29.219302,-87.06665.  These coordinates are used as an approximation and hopefully will include a range in the near future.

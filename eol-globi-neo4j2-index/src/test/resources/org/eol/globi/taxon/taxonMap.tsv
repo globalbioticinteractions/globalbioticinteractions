@@ -1,0 +1,13 @@
+providedTaxonId	providedTaxonName	resolvedTaxonId	resolvedTaxonName
+EOL:1276240	Green-winged teal	EOL:1276240	Anas crecca carolinensis
+EOL:1234	Gadus morhua	EOL:1234	Gadus morhua
+EOL:1276240	no name	EOL:1276240	Anas crecca carolinensis
+EOL:455065	Acteocina inculcata	EOL:455065	Acteocina inculta
+EOL:327955	Homo sapiens	EOL:327955	Homo sapiens
+EOL:327955	Homo sapiens	NCBI:9606	Homo sapiens
+foo	bar	EOL:327955	Homo sapiens
+	Felis catus	no:match	Felis catus
+	Felis catus	EOL:1037781	Felis catus
+	Felis catus	EOL:1037781	Felis catus
+EOL:541190	Zika virus (ZIKV)	EOL:541190	Zika virus (ZIKV)
+	Canis lupus dingo	no:match	Canis lupus dingo
