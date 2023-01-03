@@ -22,10 +22,8 @@
         <module>eol-globi-taxon-resolver</module>
         <module>eol-globi-neo4j</module>
         <module>eol-globi-neo4j-index-export</module>
-        <module>eol-globi-neo4j2-index-export</module>
         <module>eol-globi-neo4j-index-test</module>
         <module>eol-globi-neo4j-index</module>
-        <module>eol-globi-neo4j2-index</module>
         <module>eol-globi-rest</module>
         <module>elton4n</module>
     </modules>
