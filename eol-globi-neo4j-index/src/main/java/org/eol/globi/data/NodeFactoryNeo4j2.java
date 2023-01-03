@@ -10,7 +10,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyNode;
-import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.NodeUtilNeo4j2;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -35,10 +35,10 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
 
     public NodeFactoryNeo4j2(GraphDatabaseService graphDb) {
         super(graphDb);
-        this.datasets = NodeUtil.forNodes(graphDb, "datasets");
-        this.studies = NodeUtil.forNodes(graphDb, "studies");
-        this.externalIds = NodeUtil.forNodes(graphDb, "externalIds");
-        this.locations = NodeUtil.forNodes(graphDb, "locations");
+        this.datasets = NodeUtilNeo4j2.forNodes(graphDb, "datasets");
+        this.studies = NodeUtilNeo4j2.forNodes(graphDb, "studies");
+        this.externalIds = NodeUtilNeo4j2.forNodes(graphDb, "externalIds");
+        this.locations = NodeUtilNeo4j2.forNodes(graphDb, "locations");
     }
 
     @Override

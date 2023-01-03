@@ -70,7 +70,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
                     db.createTreeSet(UUID.randomUUID().toString());
 
             NavigableSet<Long> ids = treeSet.makeLongSet();
-            NodeUtil.collectIds(graphService, queryKey, queryOrQueryObject, indexName, ids);
+            NodeUtilNeo4j2.collectIds(graphService, queryKey, queryOrQueryObject, indexName, ids);
 
             logBatchFinishStats(stopWatch, ids.size(), "collected", this.indexName);
 

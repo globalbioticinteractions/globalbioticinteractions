@@ -104,22 +104,9 @@ public class NodeUtil {
         return types;
     }
 
-    public static Iterable<Relationship> getSpecimens(StudyNode study) {
-        return getSpecimens(study, RelTypes.COLLECTED);
-    }
-
     public static Iterable<Relationship> getSpecimensSupportedAndRefutedBy(Study study) {
         Node underlyingNode = ((NodeBacked) study).getUnderlyingNode();
         return underlyingNode.getRelationships(Direction.OUTGOING, NodeUtil.asNeo4j(new RelType[]{RelTypes.COLLECTED, RelTypes.SUPPORTS, RelTypes.REFUTES}));
-    }
-
-    public static Iterable<Relationship> getSpecimens(StudyNode study, RelTypes relType) {
-        Node underlyingNode = study.getUnderlyingNode();
-        return getOutgoingNodeRelationships(underlyingNode, relType);
-    }
-
-    public static Iterable<Relationship> getSpecimens(Node studyNode) {
-        return getOutgoingNodeRelationships(studyNode, RelTypes.COLLECTED);
     }
 
     public static Iterable<Relationship> getOutgoingNodeRelationships(Node node, RelType relType) {
@@ -149,10 +136,6 @@ public class NodeUtil {
         return iterator.hasNext() ? iterator.next().getEndNode() : null;
     }
 
-    public static Index<Node> forNodes(GraphDatabaseService graphDb, String indexName) {
-        return graphDb.index().forNodes(indexName);
-    }
-
     public static void handleCollectedRelationships(NodeTypeDirection ntd, final RelationshipListener listener) {
         handleCollectionRelationshipsNoTx(ntd, listener);
     }
@@ -170,17 +153,6 @@ public class NodeUtil {
             listener.on(rel);
         }
     }
-
-    static void collectIds(GraphDatabaseService graphService, String queryKey, String queryOrQueryObject, String indexName, NavigableSet<Long> ids) {
-        Index<Node> index = graphService.index().forNodes(indexName);
-        IndexHits<Node> studies = index.query(queryKey, queryOrQueryObject);
-        studies
-                .stream()
-                .map(Node::getId)
-                .forEach(ids::add);
-        studies.close();
-    }
-
 
     public static void processNodes(Long batchSize,
                                     GraphDatabaseService graphService,

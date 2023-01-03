@@ -27,7 +27,7 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class CmdGenerateReportTest extends GraphDBTestCase {
+public class CmdGenerateReportNeo4j2Test extends GraphDBTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -178,8 +178,8 @@ public class CmdGenerateReportTest extends GraphDBTestCase {
         }
     }
 
-    private CmdGenerateReport getCmdGenerateReport() {
-        CmdGenerateReport cmdGenerateReport = new CmdGenerateReport();
+    private CmdGenerateReportNeo4j2 getCmdGenerateReport() {
+        CmdGenerateReportNeo4j2 cmdGenerateReport = new CmdGenerateReportNeo4j2();
         cmdGenerateReport.setNodeFactoryFactory(factory -> nodeFactory);
         cmdGenerateReport.setGraphServiceFactory(new GraphServiceFactory() {
             @Override

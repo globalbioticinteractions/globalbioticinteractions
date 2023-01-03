@@ -6,7 +6,7 @@ import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.taxon.TaxonFuzzySearchIndex;
+import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j2;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -59,15 +59,15 @@ public class LinkerTaxonIndex implements IndexerNeo4j {
         }
     }
 
-    private TaxonFuzzySearchIndex getFuzzySearchIndex(GraphDatabaseService graphDb) {
-        return new TaxonFuzzySearchIndex(graphDb);
+    private TaxonFuzzySearchIndexNeo4j2 getFuzzySearchIndex(GraphDatabaseService graphDb) {
+        return new TaxonFuzzySearchIndexNeo4j2(graphDb);
     }
 
     private Index<Node> getTaxonPathsIndex(GraphDatabaseService graphDb) {
         return graphDb.index().forNodes(INDEX_TAXON_NAMES_AND_IDS, MapUtil.stringMap(IndexManager.PROVIDER, "lucene", "type", "fulltext"));
     }
 
-    private void onTaxonNode(Index<Node> ids, TaxonFuzzySearchIndex fuzzySearchIndex, Node hit) {
+    private void onTaxonNode(Index<Node> ids, TaxonFuzzySearchIndexNeo4j2 fuzzySearchIndex, Node hit) {
         List<String> taxonIds = new ArrayList<>();
         List<String> taxonPathIdsAndNames = new ArrayList<>();
         TaxonNode taxonNode = new TaxonNode(hit);

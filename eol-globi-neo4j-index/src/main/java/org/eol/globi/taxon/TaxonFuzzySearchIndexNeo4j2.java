@@ -12,11 +12,11 @@ import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.stream.Stream;
 
-public class TaxonFuzzySearchIndex {
+public class TaxonFuzzySearchIndexNeo4j2 {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
     private final Index<Node> taxonNameSuggestions;
 
-    public TaxonFuzzySearchIndex(GraphDatabaseService graphDbService) {
+    public TaxonFuzzySearchIndexNeo4j2(GraphDatabaseService graphDbService) {
         this.taxonNameSuggestions = graphDbService.index().forNodes(TAXON_NAME_SUGGESTIONS);
     }
 

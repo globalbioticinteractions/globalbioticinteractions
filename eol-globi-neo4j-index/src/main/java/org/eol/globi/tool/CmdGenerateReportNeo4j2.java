@@ -31,8 +31,8 @@ import java.util.UUID;
         name = "report",
         description = "Generates reports/metadata of indexed datasets."
 )
-public class CmdGenerateReport extends CmdNeo4J {
-    private static final Logger LOG = LoggerFactory.getLogger(CmdGenerateReport.class);
+public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
+    private static final Logger LOG = LoggerFactory.getLogger(CmdGenerateReportNeo4j2.class);
 
     private static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 

@@ -1,6 +1,6 @@
 package org.globalbioticinteractions.elton;
 
-import org.eol.globi.tool.CmdGenerateReport;
+import org.eol.globi.tool.CmdGenerateReportNeo4j2;
 import org.eol.globi.tool.CmdIndexTaxa;
 import org.eol.globi.tool.CmdIndexTaxonStrings;
 import org.eol.globi.tool.CmdInterpretTaxa;
@@ -14,7 +14,7 @@ import picocli.CommandLine;
                 CmdInterpretTaxa.class,
                 CmdIndexTaxa.class,
                 CmdIndexTaxonStrings.class,
-                CmdGenerateReport.class,
+                CmdGenerateReportNeo4j2.class,
         }
 )
 public class CmdLink extends CmdNeo4J {
@@ -25,7 +25,7 @@ public class CmdLink extends CmdNeo4J {
         configureAndRun(new CmdInterpretTaxa());
         configureAndRun(new CmdIndexTaxa());
         configureAndRun(new CmdIndexTaxonStrings());
-        configureAndRun(new CmdGenerateReport());
+        configureAndRun(new CmdGenerateReportNeo4j2());
     }
 
 

@@ -19,7 +19,7 @@ import java.util.Collection;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LinkerTermMatcherTest extends GraphDBTestCase {
+public class LinkerTermMatcherNeo4j2Test extends GraphDBTestCase {
 
     @Ignore
     @Test
@@ -53,7 +53,7 @@ public class LinkerTermMatcherTest extends GraphDBTestCase {
 
         TaxonCacheService taxonCacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheHolorchis.tsv", "/org/eol/globi/taxon/taxonMapHolorchis.tsv", new ResourceServiceLocal());
 
-        new LinkerTermMatcher(taxonCacheService, new GraphServiceFactoryProxy(getGraphDb()))
+        new LinkerTermMatcherNeo4j2(taxonCacheService, new GraphServiceFactoryProxy(getGraphDb()))
                 .index();
 
         Collection<String> externalIds = LinkerTestUtil.sameAsCountForNode(RelTypes.SAME_AS, (TaxonNode) createdTaxon);

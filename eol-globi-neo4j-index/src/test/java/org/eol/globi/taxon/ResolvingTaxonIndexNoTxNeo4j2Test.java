@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ResolvingTaxonIndexNeo4jTest extends GraphDBTestCase {
+public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBTestCase {
 
     private NonResolvingTaxonIndexNoTxNeo4j2 taxonService;
 

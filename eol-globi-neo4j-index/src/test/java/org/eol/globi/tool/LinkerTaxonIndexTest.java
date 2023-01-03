@@ -14,8 +14,8 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
-import org.eol.globi.taxon.ResolvingTaxonIndexNeo4jTest;
-import org.eol.globi.taxon.TaxonFuzzySearchIndex;
+import org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j2Test;
+import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j2;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -69,8 +69,8 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
                 , is("Bar:123 | FOO:444"));
 
-        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz~").stream().count(), is(1L));
-        assertThat(new TaxonFuzzySearchIndex(getGraphDb()).query("name:sapienz").stream().count(), is(0L));
+        assertThat(new TaxonFuzzySearchIndexNeo4j2(getGraphDb()).query("name:sapienz~").stream().count(), is(1L));
+        assertThat(new TaxonFuzzySearchIndexNeo4j2(getGraphDb()).query("name:sapienz").stream().count(), is(0L));
 
     }
 
@@ -158,12 +158,12 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         assertThat(getGraphDb()
                         .index()
-                        .existsForNodes(TaxonFuzzySearchIndex.TAXON_NAME_SUGGESTIONS),
+                        .existsForNodes(TaxonFuzzySearchIndexNeo4j2.TAXON_NAME_SUGGESTIONS),
                 is(true));
 
         Index<Node> index = getGraphDb()
                 .index()
-                .forNodes(TaxonFuzzySearchIndex.TAXON_NAME_SUGGESTIONS);
+                .forNodes(TaxonFuzzySearchIndexNeo4j2.TAXON_NAME_SUGGESTIONS);
 
         Query query = new TermQuery(new Term("name", "name"));
         IndexHits<Node> hits = index.query(query);
@@ -193,7 +193,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     private Taxon setTaxonProps(Taxon taxon) {
         taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
         taxon.setExternalId("anExternalId");
-        taxon.setCommonNames(ResolvingTaxonIndexNeo4jTest.EXPECTED_COMMON_NAMES);
+        taxon.setCommonNames(ResolvingTaxonIndexNoTxNeo4j2Test.EXPECTED_COMMON_NAMES);
         taxon.setName("this is the actual name");
         return taxon;
     }

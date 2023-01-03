@@ -1,12 +1,6 @@
 package org.globalbioticinteractions.elton;
 
-import org.eol.globi.tool.CmdExport;
-import org.eol.globi.tool.CmdExportInteractionsTSV;
-import org.eol.globi.tool.CmdGenerateReport;
 import org.eol.globi.tool.CmdCompile;
-import org.eol.globi.tool.CmdIndexTaxa;
-import org.eol.globi.tool.CmdIndexTaxonStrings;
-import org.eol.globi.tool.CmdInterpretTaxa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;

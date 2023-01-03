@@ -10,7 +10,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.QueryUtil;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.NodeUtilNeo4j2;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
@@ -86,7 +86,7 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
 
     private Index<Node> getTaxonIndex() {
         if (taxons == null) {
-            taxons = NodeUtil.forNodes(graphDbService, "taxons");
+            taxons = NodeUtilNeo4j2.forNodes(graphDbService, "taxons");
         }
         return taxons;
     }

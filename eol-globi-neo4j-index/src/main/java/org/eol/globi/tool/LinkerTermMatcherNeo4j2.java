@@ -22,15 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LinkerTermMatcher implements IndexerNeo4j {
+public class LinkerTermMatcherNeo4j2 implements IndexerNeo4j {
 
     private static final int BATCH_SIZE = 100;
 
-    private static final Logger LOG = LoggerFactory.getLogger(LinkerTermMatcher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LinkerTermMatcherNeo4j2.class);
     private final TermMatcher termMatcher;
     private final GraphServiceFactory factory;
 
-    public LinkerTermMatcher(TermMatcher termMatcher, GraphServiceFactory factory) {
+    public LinkerTermMatcherNeo4j2(TermMatcher termMatcher, GraphServiceFactory factory) {
         this.termMatcher = termMatcher;
         this.factory = factory;
     }
