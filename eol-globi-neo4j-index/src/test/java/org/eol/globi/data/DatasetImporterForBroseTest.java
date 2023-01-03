@@ -85,6 +85,8 @@ public class DatasetImporterForBroseTest extends GraphDBTestCase {
         assertThat(environments.size(), is(10));
         assertThat(environments.get(0).getExternalId(), is("TEST:terrestrial abandoned field"));
         assertThat(environments.get(0).getName(), is("terrestrial abandoned field"));
+        assertThat(environments.get(9).getExternalId(), is("TEST:terrestrial abandoned field"));
+        assertThat(environments.get(9).getName(), is("terrestrial abandoned field"));
 
     }
 
