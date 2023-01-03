@@ -20,8 +20,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
-    private NonResolvingTaxonIndex taxonService;
+public class NonResolvingTaxonIndexNeo4jTest extends GraphDBTestCase {
+    private NonResolvingTaxonIndexNeo4j2 taxonService;
 
     @Before
     public void init() {
@@ -195,7 +195,7 @@ public class NonResolvingTaxonIndexTest extends GraphDBTestCase {
     }
 
 
-    private static NonResolvingTaxonIndex createTaxonService(GraphDatabaseService graphDb) {
-        return new NonResolvingTaxonIndex(graphDb);
+    private static NonResolvingTaxonIndexNeo4j2 createTaxonService(GraphDatabaseService graphDb) {
+        return new NonResolvingTaxonIndexNeo4j2(graphDb);
     }
 }

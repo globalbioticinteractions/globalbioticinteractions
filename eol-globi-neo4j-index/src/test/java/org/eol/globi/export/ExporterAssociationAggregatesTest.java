@@ -12,7 +12,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.ExternalIdUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
 
     @Before
     public void setEnricher() {
-        taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
+        taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
     }
 
     @Test

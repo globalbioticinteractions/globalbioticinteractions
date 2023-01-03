@@ -13,8 +13,8 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
-import org.eol.globi.taxon.ResolvingTaxonIndexTest;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
+import org.eol.globi.taxon.ResolvingTaxonIndexNeo4jTest;
 import org.eol.globi.taxon.TaxonFuzzySearchIndex;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
@@ -150,7 +150,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
     @Test
     public void findByStringWithWhitespaces() throws NodeFactoryException {
-        NonResolvingTaxonIndex taxonService = new NonResolvingTaxonIndex(getGraphDb());
+        NonResolvingTaxonIndexNeo4j2 taxonService = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         resolveNames();
@@ -193,7 +193,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
     private Taxon setTaxonProps(Taxon taxon) {
         taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
         taxon.setExternalId("anExternalId");
-        taxon.setCommonNames(ResolvingTaxonIndexTest.EXPECTED_COMMON_NAMES);
+        taxon.setCommonNames(ResolvingTaxonIndexNeo4jTest.EXPECTED_COMMON_NAMES);
         taxon.setName("this is the actual name");
         return taxon;
     }

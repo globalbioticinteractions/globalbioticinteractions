@@ -25,7 +25,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.NodeUtil;
@@ -136,7 +136,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
         Location foundLocationNoDepth = getNodeFactory().findLocation(new LocationImpl(locationNoDepth.getLatitude(), locationNoDepth.getLongitude(), null, null));
         assertNotNull(foundLocationNoDepth);
     }
-    
+
     @Test
     public void createFindLocationWith() throws NodeFactoryException {
         Location location = getNodeFactory().getOrCreateLocation(new LocationImpl(1.2d, 1.4d, -1.0d, null));
@@ -514,7 +514,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBTestCase {
     }
 
     private void initTaxonService() {
-        this.taxonIndex = new NonResolvingTaxonIndex(
+        this.taxonIndex = new NonResolvingTaxonIndexNeo4j2(
                 getGraphDb()
         );
     }

@@ -19,7 +19,7 @@ import org.neo4j.graphdb.index.IndexHits;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
+public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
     private final GraphDatabaseService graphDbService;
     private Index<Node> taxons = null;
 
@@ -34,7 +34,7 @@ public class NonResolvingTaxonIndexNoTx implements TaxonIndex {
             "species"
     };
 
-    public NonResolvingTaxonIndexNoTx(GraphDatabaseService graphDbService) {
+    public NonResolvingTaxonIndexNoTxNeo4j2(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
     }
 

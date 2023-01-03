@@ -7,9 +7,9 @@ import org.eol.globi.service.PropertyEnricher;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
-public class ResolvingTaxonIndex extends ResolvingTaxonIndexNoTx {
+public class ResolvingTaxonIndexNeo4j2 extends ResolvingTaxonIndexNoTxNeo4j2 {
 
-    public ResolvingTaxonIndex(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
+    public ResolvingTaxonIndexNeo4j2(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
         super(enricher, graphDbService);
     }
 

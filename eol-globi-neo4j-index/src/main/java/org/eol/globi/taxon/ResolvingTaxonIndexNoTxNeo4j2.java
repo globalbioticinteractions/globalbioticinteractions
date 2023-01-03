@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class ResolvingTaxonIndexNoTx extends NonResolvingTaxonIndexNoTx {
+public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo4j2 {
 
     private PropertyEnricher enricher;
     private boolean indexResolvedOnly;
 
-    public ResolvingTaxonIndexNoTx(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
+    public ResolvingTaxonIndexNoTxNeo4j2(PropertyEnricher enricher, GraphDatabaseService graphDbService) {
         super(graphDbService);
         this.enricher = enricher;
     }

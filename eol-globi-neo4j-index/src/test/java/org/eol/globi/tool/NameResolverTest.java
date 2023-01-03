@@ -12,8 +12,8 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
-import org.eol.globi.taxon.ResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
+import org.eol.globi.taxon.ResolvingTaxonIndexNeo4j2;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -68,7 +68,7 @@ public class NameResolverTest extends GraphDBTestCase {
             }
         };
 
-        final NameResolver nameResolver = new NameResolver(factory, new NonResolvingTaxonIndex(graphDb));
+        final NameResolver nameResolver = new NameResolver(factory, new NonResolvingTaxonIndexNeo4j2(graphDb));
         nameResolver.setBatchSize(1L);
 
 
@@ -96,7 +96,7 @@ public class NameResolverTest extends GraphDBTestCase {
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
 
-        final NameResolver nameResolver = new NameResolver(graphServiceFactory, new NonResolvingTaxonIndex(getGraphDb()));
+        final NameResolver nameResolver = new NameResolver(graphServiceFactory, new NonResolvingTaxonIndexNeo4j2(getGraphDb()));
         nameResolver.setBatchSize(1L);
         nameResolver.index();
 
@@ -122,7 +122,7 @@ public class NameResolverTest extends GraphDBTestCase {
 
         someOtherOrganism.ate(someOtherOrganism2);
 
-        final NameResolver nameResolver = new NameResolver(new GraphServiceFactoryProxy(getGraphDb()), new ResolvingTaxonIndex(new PropertyEnricher() {
+        final NameResolver nameResolver = new NameResolver(new GraphServiceFactoryProxy(getGraphDb()), new ResolvingTaxonIndexNeo4j2(new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return enrichAllMatches(properties).get(0);

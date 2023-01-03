@@ -6,10 +6,10 @@ import org.eol.globi.domain.TaxonNode;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
-public class NonResolvingTaxonIndex extends NonResolvingTaxonIndexNoTx {
+public class NonResolvingTaxonIndexNeo4j2 extends NonResolvingTaxonIndexNoTxNeo4j2 {
 
 
-    public NonResolvingTaxonIndex(GraphDatabaseService graphDbService) {
+    public NonResolvingTaxonIndexNeo4j2(GraphDatabaseService graphDbService) {
         super(graphDbService);
     }
 

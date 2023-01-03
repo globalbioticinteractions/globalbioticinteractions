@@ -10,7 +10,7 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -41,7 +41,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         new NameResolver(new GraphServiceFactoryProxy(getGraphDb()),
-                new NonResolvingTaxonIndex(getGraphDb()))
+                new NonResolvingTaxonIndexNeo4j2(getGraphDb()))
                 .index();
 
         new TaxonInteractionIndexer(new GraphServiceFactoryProxy(getGraphDb())).index();
@@ -79,7 +79,7 @@ public class TaxonInteractionIndexerTest extends GraphDBTestCase {
         assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
 
         new NameResolver(new GraphServiceFactoryProxy(getGraphDb()),
-                new NonResolvingTaxonIndex(getGraphDb()))
+                new NonResolvingTaxonIndexNeo4j2(getGraphDb()))
                 .index();
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));

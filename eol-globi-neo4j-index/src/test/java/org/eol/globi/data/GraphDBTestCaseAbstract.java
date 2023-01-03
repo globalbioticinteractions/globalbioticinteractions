@@ -8,7 +8,7 @@ import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -117,7 +117,7 @@ public abstract class GraphDBTestCaseAbstract {
 
     protected TaxonIndex getOrCreateTaxonIndex() {
         if (taxonIndex == null) {
-            taxonIndex = new NonResolvingTaxonIndex(getGraphDb());
+            taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
         }
         return taxonIndex;
     }

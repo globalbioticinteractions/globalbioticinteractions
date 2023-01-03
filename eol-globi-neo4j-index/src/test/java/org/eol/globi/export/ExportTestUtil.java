@@ -11,7 +11,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricher;
-import org.eol.globi.taxon.NonResolvingTaxonIndex;
+import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.DateUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -66,7 +66,7 @@ public class ExportTestUtil {
     }
 
     public static TaxonIndex taxonIndexWithEnricher(PropertyEnricher taxonEnricher, GraphDatabaseService graphDb) {
-        return new NonResolvingTaxonIndex(graphDb);
+        return new NonResolvingTaxonIndexNeo4j2(graphDb);
     }
 
     public static void assertFileInMeta(ExporterBase exporter) throws IOException {
