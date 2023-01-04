@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForWebOfLifeTest extends GraphDBTestCase {
+public class DatasetImporterForWebOfLifeTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void generateArchiveURL() {

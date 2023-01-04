@@ -12,7 +12,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class DatasetImporterForStronaIT extends GraphDBTestCase {
+public class DatasetImporterForStronaIT extends GraphDBNeo4j2TestCase {
 
 
     @Test

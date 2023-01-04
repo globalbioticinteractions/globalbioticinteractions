@@ -1,6 +1,6 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
@@ -13,7 +13,7 @@ import org.neo4j.graphdb.Relationship;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class StudyTest extends GraphDBTestCase {
+public class StudyTest extends GraphDBNeo4j2TestCase {
 
     private static final String CARCHARODON = "Carcharodon";
     private static final String CARCHARODON_CARCHARIAS = CARCHARODON + " carcharias";

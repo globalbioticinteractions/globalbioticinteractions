@@ -7,9 +7,7 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForRobledoTest extends GraphDBTestCase {
+public class DatasetImporterForRobledoTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void createAndPopulateStudy() throws StudyImporterException {

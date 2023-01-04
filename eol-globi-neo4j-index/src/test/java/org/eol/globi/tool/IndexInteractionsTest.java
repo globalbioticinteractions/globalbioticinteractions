@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryNeo4j2;
@@ -19,7 +19,6 @@ import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
@@ -39,7 +38,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class IndexInteractionsTest extends GraphDBTestCase {
+public class IndexInteractionsTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void indexInteractions() throws NodeFactoryException {

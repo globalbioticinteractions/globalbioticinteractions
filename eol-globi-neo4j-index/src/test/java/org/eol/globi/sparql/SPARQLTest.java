@@ -9,9 +9,8 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.export.ExportTestUtil;
 import org.eol.globi.export.ExportUtil;
@@ -26,7 +25,7 @@ import java.text.ParseException;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class SPARQLTest extends GraphDBTestCase {
+public class SPARQLTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void executeQuerySampleGloBIData() throws NodeFactoryException, ParseException, IOException {

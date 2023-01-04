@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyImpl;
@@ -16,7 +16,7 @@ import java.io.StringWriter;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExportTaxonCacheTest extends GraphDBTestCase {
+public class ExportTaxonCacheTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {

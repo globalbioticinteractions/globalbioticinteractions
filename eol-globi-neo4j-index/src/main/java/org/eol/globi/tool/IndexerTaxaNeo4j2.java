@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndexerTaxa implements IndexerNeo4j {
-    private static final Logger LOG = LoggerFactory.getLogger(IndexerTaxa.class);
+public class IndexerTaxaNeo4j2 implements IndexerNeo4j {
+    private static final Logger LOG = LoggerFactory.getLogger(IndexerTaxaNeo4j2.class);
 
     private final TaxonCacheService taxonCacheService;
     private final GraphServiceFactory factory;
 
-    public IndexerTaxa(TaxonCacheService taxonCacheService, GraphServiceFactory factory) {
+    public IndexerTaxaNeo4j2(TaxonCacheService taxonCacheService, GraphServiceFactory factory) {
         this.taxonCacheService = taxonCacheService;
         this.factory = factory;
     }

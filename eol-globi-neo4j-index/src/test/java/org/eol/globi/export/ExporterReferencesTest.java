@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
@@ -13,7 +13,7 @@ import java.io.StringWriter;
 import java.text.ParseException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterReferencesTest extends GraphDBTestCase {
+public class ExporterReferencesTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void exportReference() throws IOException, NodeFactoryException, ParseException {

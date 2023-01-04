@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -25,7 +25,7 @@ import java.util.Date;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterAssociationAggregatesTest extends GraphDBTestCase {
+public class ExporterAssociationAggregatesTest extends GraphDBNeo4j2TestCase {
 
     private Taxon setPathAndId(TaxonImpl taxon) {
         taxon.setExternalId(taxon.getName() + "id");

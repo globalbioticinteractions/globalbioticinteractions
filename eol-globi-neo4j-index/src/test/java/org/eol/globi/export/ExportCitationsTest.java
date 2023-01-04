@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.StudyImpl;
 import org.globalbioticinteractions.doi.DOI;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExportCitationsTest extends GraphDBTestCase {
+public class ExportCitationsTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void exportCitations() throws IOException, NodeFactoryException {

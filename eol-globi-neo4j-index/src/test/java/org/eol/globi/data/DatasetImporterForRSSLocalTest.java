@@ -41,7 +41,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 
-public class DatasetImporterForRSSLocalTest extends GraphDBTestCase {
+public class DatasetImporterForRSSLocalTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void importLocalArctosArchive() throws StudyImporterException, IOException {

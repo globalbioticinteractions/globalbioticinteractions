@@ -4,7 +4,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.NodeBacked;
@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class LinkerTaxonIndexTest extends GraphDBTestCase {
+public class LinkerTaxonIndexNeo4j2Neo4J2Test extends GraphDBNeo4j2TestCase {
 
     @Test
     public void linking() throws NodeFactoryException {
@@ -45,11 +45,11 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
-        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
+        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         IndexHits<Node> hits = getGraphDb()
                 .index()
-                .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
                 .query("*:*");
         Node next = hits.next();
         assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
@@ -83,9 +83,9 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
         resolveNames();
 
-        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
+        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
 
-        IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+        IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
                 .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"");
         Node next = hits.next();
         assertThat(new TaxonNode(next).getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
@@ -100,11 +100,11 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonIndex.getOrCreateTaxon(taxonFound);
         resolveNames();
 
-        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
+        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         IndexHits<Node> hits = getGraphDb()
                 .index()
-                .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
                 .query("path:\"some id\"");
 
         assertThat(hits.hasNext(), is(true));
@@ -122,7 +122,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         IndexHits<Node> hits = getGraphDb()
                 .index()
-                .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
                 .query("path:\"doi:10.123/456\"");
 
         assertThat(hits.hasNext(), is(true));
@@ -145,7 +145,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
 
         resolveNames();
 
-        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
+        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
     }
 
     @Test
@@ -154,7 +154,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
         resolveNames();
         resolveNames();
-        new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb())).index();
+        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
 
         assertThat(getGraphDb()
                         .index()
@@ -203,7 +203,7 @@ public class LinkerTaxonIndexTest extends GraphDBTestCase {
         Node next;
         hits = getGraphDb()
                 .index()
-                .forNodes(LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS)
+                .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
                 .query(query);
         next = hits.next();
         assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));

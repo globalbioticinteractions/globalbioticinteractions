@@ -41,7 +41,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForBioInfoTest extends GraphDBTestCase {
+public class DatasetImporterForBioInfoTest extends GraphDBNeo4j2TestCase {
 
     public static final String RELATIONS_STRING = "my relation id,relationship,active relation,passive relation,my active taxon id,active NBN Code,active url,is identity of active taxon uncertain,state of active taxon,part of active taxon,stage of active taxon,where stage of active taxon is recorded,importance of stage of active taxon,state of passive taxon,part of passive taxon,stage of passive taxon,where part of passive taxon is recorded,importance of part of passive taxon,season (numeric),season (alpha),indoors etc,relation recorded in GB/Ireland,importance of relationship,is nature of relationship uncertain,constructed sentence for active,constructed sentence for passive,my passive taxon id,passive NBN Code,passive url,is identity of passive taxon uncertain,list of reference ids\n" +
             "\"1534\",\"Plant / associate\",\"is associated with\",\"is associate of\",\"34737\",\"NBNSYS0000024889\",\"www.bioinfo.org.uk/html/Abdera_biflexuosa.htm\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\" \",\"\",\"\",\"\",\"\",\"\",\"<active> is associated with <passive>\",\"<passive> is associate of <active>\",\"537\",\"NBNSYS0000003949\",\"www.bioinfo.org.uk/html/Fraxinus_excelsior.htm\",\"\",\"60527\"\n" +

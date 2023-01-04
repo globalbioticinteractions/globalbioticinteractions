@@ -3,7 +3,7 @@ package org.eol.globi.data;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
-public class GraphDBTestCase extends GraphDBTestCaseAbstract {
+public class GraphDBNeo4j2TestCase extends GraphDBTestCaseAbstract {
 
 
     @Override

@@ -5,8 +5,6 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Season;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
-import org.eol.globi.domain.Study;
-import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeListener;
@@ -32,7 +30,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForWrastTest extends GraphDBTestCase {
+public class DatasetImporterForWrastTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void createAndPopulateStudyFromLavacaBay() throws StudyImporterException {

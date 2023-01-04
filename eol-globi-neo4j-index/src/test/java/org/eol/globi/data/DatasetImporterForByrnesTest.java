@@ -19,7 +19,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForByrnesTest extends GraphDBTestCase {
+public class DatasetImporterForByrnesTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void importAll() throws StudyImporterException {

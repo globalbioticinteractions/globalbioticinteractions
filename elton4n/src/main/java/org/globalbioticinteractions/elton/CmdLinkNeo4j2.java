@@ -17,7 +17,7 @@ import picocli.CommandLine;
                 CmdGenerateReportNeo4j2.class,
         }
 )
-public class CmdLink extends CmdNeo4J {
+public class CmdLinkNeo4j2 extends CmdNeo4J {
 
 
     @Override

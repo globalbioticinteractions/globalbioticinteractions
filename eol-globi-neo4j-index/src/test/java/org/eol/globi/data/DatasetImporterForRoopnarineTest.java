@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForRoopnarineTest extends GraphDBTestCase {
+public class DatasetImporterForRoopnarineTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void importLine() throws StudyImporterException, NodeFactoryException {

@@ -25,7 +25,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-public class DatasetImporterForSzoboszlaiTest extends GraphDBTestCase {
+public class DatasetImporterForSzoboszlaiTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void importLines() throws IOException, StudyImporterException {

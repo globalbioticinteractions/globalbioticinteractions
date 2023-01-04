@@ -1,7 +1,6 @@
 package org.eol.globi.data;
 
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
@@ -9,7 +8,7 @@ import java.net.URI;
 
 import static org.junit.Assert.assertNotNull;
 
-public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBTestCase {
+public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void importAll() throws StudyImporterException {

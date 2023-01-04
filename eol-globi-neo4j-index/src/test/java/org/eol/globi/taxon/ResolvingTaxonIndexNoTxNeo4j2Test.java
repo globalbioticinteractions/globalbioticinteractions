@@ -1,7 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -12,7 +12,7 @@ import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.tool.LinkerTaxonIndex;
+import org.eol.globi.tool.LinkerTaxonIndexNeo4j2;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.eol.globi.tool.LinkerTaxonIndex.INDEX_TAXON_NAMES_AND_IDS;
+import static org.eol.globi.tool.LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBTestCase {
+public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4j2TestCase {
 
     private NonResolvingTaxonIndexNoTxNeo4j2 taxonService;
 
@@ -117,8 +117,8 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBTestCase {
             );
         }
 
-        LinkerTaxonIndex linkerTaxonIndex = new LinkerTaxonIndex(new GraphServiceFactoryProxy(getGraphDb()));
-        linkerTaxonIndex.index();
+        LinkerTaxonIndexNeo4j2 linkerTaxonIndexNeo4j2 = new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb()));
+        linkerTaxonIndexNeo4j2.index();
 
         {
             Index<Node> ids = getGraphDb().index().forNodes(INDEX_TAXON_NAMES_AND_IDS,

@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class NodeFactoryIT extends GraphDBTestCase {
+public class NodeFactoryIT extends GraphDBNeo4j2TestCase {
 
     @Test
     public void createStudy() throws NodeFactoryException {

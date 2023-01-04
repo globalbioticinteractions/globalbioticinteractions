@@ -4,8 +4,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.eol.globi.data.DatasetImporterForSPIRETest;
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.DatasetImporterForSPIRE;
 import org.eol.globi.domain.NodeBacked;
@@ -39,7 +38,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class ExporterRDFTest extends GraphDBTestCase {
+public class ExporterRDFTest extends GraphDBNeo4j2TestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {

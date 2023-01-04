@@ -15,14 +15,13 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-public class DatasetImporterForCookTest extends GraphDBTestCase {
+public class DatasetImporterForCookTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void importFirstFewLines() throws StudyImporterException {

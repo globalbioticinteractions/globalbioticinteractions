@@ -30,7 +30,7 @@ public class CmdInterpretTaxa extends CmdNeo4J {
                 resourceService
         );
         taxonCacheService.setCacheDir(new File(getCacheDir()));
-        IndexerNeo4j taxonIndexer = new IndexerTaxa(
+        IndexerNeo4j taxonIndexer = new IndexerTaxaNeo4j2(
                 taxonCacheService,
                 getGraphServiceFactory()
         );

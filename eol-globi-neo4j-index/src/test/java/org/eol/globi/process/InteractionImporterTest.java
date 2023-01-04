@@ -2,7 +2,7 @@ package org.eol.globi.process;
 
 import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.DatasetImporterForTSV;
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
@@ -87,7 +87,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class InteractionImporterTest extends GraphDBTestCase {
+public class InteractionImporterTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void malformedDOI() {

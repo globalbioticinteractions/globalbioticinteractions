@@ -1,22 +1,18 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
-import org.eol.globi.domain.StudyImpl;
-import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.dataset.DatasetImpl;
-import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ExportNamespacesTest extends GraphDBTestCase {
+public class ExportNamespacesTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void export() throws IOException, NodeFactoryException {

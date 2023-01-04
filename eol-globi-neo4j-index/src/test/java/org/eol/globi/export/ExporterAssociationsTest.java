@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-public class ExporterAssociationsTest extends GraphDBTestCase {
+public class ExporterAssociationsTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void exportWithoutHeader() throws IOException, NodeFactoryException {

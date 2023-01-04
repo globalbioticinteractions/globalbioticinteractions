@@ -11,14 +11,12 @@ import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
@@ -28,9 +26,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForBlewettTest extends GraphDBTestCase {
+public class DatasetImporterForBlewettTest extends GraphDBNeo4j2TestCase {
 
     static String dateToString(Date time) {
         DateTime dateTime = new DateTime(time);

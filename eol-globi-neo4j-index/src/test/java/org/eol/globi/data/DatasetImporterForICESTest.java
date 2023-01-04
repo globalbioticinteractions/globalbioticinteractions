@@ -5,7 +5,6 @@ import org.eol.globi.domain.LocationConstant;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.StudyNode;
-import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
@@ -21,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForICESTest extends GraphDBTestCase {
+public class DatasetImporterForICESTest extends GraphDBNeo4j2TestCase {
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
         DatasetImporterForICES studyImporterFor = new DatasetImporterForICES(new ParserFactoryLocal(getClass()), nodeFactory);

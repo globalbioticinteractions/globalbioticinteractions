@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.StudyImpl;
@@ -22,7 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.hasItem;
 
-public class ExportNCBIResourceFileTest extends GraphDBTestCase {
+public class ExportNCBIResourceFileTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void exportTwoLinksTwoFiles() throws StudyImporterException, IOException {

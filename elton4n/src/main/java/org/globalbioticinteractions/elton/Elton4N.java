@@ -12,7 +12,7 @@ import static java.lang.System.exit;
         versionProvider = Elton4N.class,
         subcommands = {
                 CmdCompile.class,
-                CmdLink.class,
+                CmdLinkNeo4j2.class,
                 CmdPackage.class,
                 ManPageGenerator.class,
                 CommandLine.HelpCommand.class

@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
@@ -28,7 +28,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class NameResolverTest extends GraphDBTestCase {
+public class NameResolverTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void doNameResolving() throws NodeFactoryException, PropertyEnricherException {

@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
@@ -18,7 +18,6 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -32,7 +31,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 
-public class ExportUnmatchedTaxonNamesTest extends GraphDBTestCase {
+public class ExportUnmatchedTaxonNamesTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void exportOnePredatorTwoPrey() throws NodeFactoryException, IOException {

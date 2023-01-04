@@ -5,7 +5,6 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
@@ -21,7 +20,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class DatasetImporterForHurlbertTest extends GraphDBTestCase {
+public class DatasetImporterForHurlbertTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void importSome() throws StudyImporterException, IOException {

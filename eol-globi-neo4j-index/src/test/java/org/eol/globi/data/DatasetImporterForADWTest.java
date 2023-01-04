@@ -4,7 +4,6 @@ import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
-import com.healthmarketscience.jackcess.impl.JetFormat;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 
@@ -29,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Note that Animal Diversity Web data tested below is currently assumed to be part of SPIRE.
  */
 
-public class DatasetImporterForADWTest extends GraphDBTestCase {
+public class DatasetImporterForADWTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void readMDB() throws URISyntaxException, IOException {

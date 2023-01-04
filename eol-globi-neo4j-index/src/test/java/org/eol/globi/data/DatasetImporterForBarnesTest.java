@@ -5,27 +5,22 @@ import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.TreeMap;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DatasetImporterForBarnesTest extends GraphDBTestCase {
+public class DatasetImporterForBarnesTest extends GraphDBNeo4j2TestCase {
 
     @Override
     protected TermLookupService getTermLookupService() {

@@ -1,6 +1,6 @@
 package org.eol.globi.util;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyImpl;
@@ -8,14 +8,13 @@ import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.hamcrest.core.Is;
 import org.junit.Test;
-import org.neo4j.graphdb.Node;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class NodeProcessorImplTest extends GraphDBTestCase {
+public class NodeProcessorImplTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void processEmpty() {

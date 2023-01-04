@@ -1,6 +1,6 @@
 package org.eol.globi.domain;
 
-import org.eol.globi.data.GraphDBTestCase;
+import org.eol.globi.data.GraphDBNeo4j2TestCase;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 
-public class NodeBackedTest extends GraphDBTestCase {
+public class NodeBackedTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void createRelationshipTo() {

@@ -22,12 +22,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LinkerTaxonIndex implements IndexerNeo4j {
+public class LinkerTaxonIndexNeo4j2 implements IndexerNeo4j {
 
     public static final String INDEX_TAXON_NAMES_AND_IDS = "taxonPaths";
     private final GraphServiceFactory factory;
 
-    public LinkerTaxonIndex(GraphServiceFactory factory) {
+    public LinkerTaxonIndexNeo4j2(GraphServiceFactory factory) {
         this.factory = factory;
     }
 

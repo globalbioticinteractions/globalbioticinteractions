@@ -9,9 +9,7 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.RelationshipListener;
 import org.junit.Test;
-import org.neo4j.graphdb.Relationship;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -25,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForRaymondTest extends GraphDBTestCase {
+public class DatasetImporterForRaymondTest extends GraphDBNeo4j2TestCase {
 
     @Test
     public void calculateCentroidOfPoint() {
