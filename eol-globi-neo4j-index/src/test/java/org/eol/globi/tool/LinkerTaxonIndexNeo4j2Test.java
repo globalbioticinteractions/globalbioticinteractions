@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class LinkerTaxonIndexNeo4j2Neo4J2Test extends GraphDBNeo4j2TestCase {
+public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4j2TestCase {
 
     @Test
     public void linking() throws NodeFactoryException {
