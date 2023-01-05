@@ -1,7 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -27,7 +27,7 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4j2TestCase {
+public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();

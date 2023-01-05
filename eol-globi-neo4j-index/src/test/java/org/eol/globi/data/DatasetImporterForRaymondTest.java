@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForRaymondTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForRaymondTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void calculateCentroidOfPoint() {

@@ -8,7 +8,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DatasetImporterForKelpForestTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForKelpForestTest extends GraphDBNeo4jTestCase {
 
     @Ignore("kelp forest not available on 1 Nov 2015: Caused by: org.apache.http.conn.HttpHostConnectException: Connect to kelpforest.ucsc.edu:80 [kelpforest.ucsc.edu/128.114.235.111] failed: Operation timed out")
     @Test

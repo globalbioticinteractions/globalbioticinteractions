@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 
-public class GraphExporterImplTest extends GraphDBNeo4j2TestCase {
+public class GraphExporterImplTest extends GraphDBNeo4jTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();

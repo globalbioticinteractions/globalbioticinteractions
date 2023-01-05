@@ -6,10 +6,13 @@ import org.eol.globi.db.GraphServiceUtil;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
+import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.tool.NameResolver;
+import org.eol.globi.util.NodeIdCollector;
+import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -45,6 +48,11 @@ public abstract class GraphDBTestCaseAbstract {
     protected NodeFactory nodeFactory;
 
     protected TaxonIndex taxonIndex;
+
+    protected Neo4jIndexType getSchemaType() {
+        return Neo4jIndexType.noSchema;
+    }
+
 
     public int getSpecimenCount(StudyNode study) {
         final AtomicInteger count = new AtomicInteger(0);
@@ -93,7 +101,7 @@ public abstract class GraphDBTestCaseAbstract {
     public void startGraphDb() throws IOException {
         nodeFactory = createNodeFactory();
         try (Transaction tx = getGraphDb().beginTx()) {
-            getOrCreateTaxonIndex();
+            getTaxonIndex();
             tx.success();
         }
     }
@@ -115,9 +123,13 @@ public abstract class GraphDBTestCaseAbstract {
     }
 
 
-    protected TaxonIndex getOrCreateTaxonIndex() {
+    protected TaxonIndex getTaxonIndex() {
         if (taxonIndex == null) {
-            taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
+            if (Neo4jIndexType.noSchema.equals(getSchemaType())) {
+                taxonIndex = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
+            } else {
+                taxonIndex = new NonResolvingTaxonIndexNeo4j3(getGraphDb());
+            }
         }
         return taxonIndex;
     }
@@ -165,12 +177,16 @@ public abstract class GraphDBTestCaseAbstract {
     protected void resolveNames() {
         new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
-                getOrCreateTaxonIndex()
+                new NodeIdCollectorNeo4j2(), getTaxonIndex()
         ).index();
     }
 
 
     abstract protected NodeFactory createNodeFactory();
+
+    abstract protected TaxonIndex createTaxonIndex(PropertyEnricher enricher);
+
+    abstract protected NodeIdCollector getNodeIdCollector();
 
     protected TermLookupService getTermLookupService() {
         return new TestTermLookupService();
@@ -179,6 +195,7 @@ public abstract class GraphDBTestCaseAbstract {
     protected TermLookupService getEnvoLookupService() {
         return new TestTermLookupService();
     }
+
 
     private static class TestTermLookupService implements TermLookupService {
         @Override

@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class DatasetImporterForGeminaTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForGeminaTest extends GraphDBNeo4jTestCase {
 
     private static final String firstFewLines = "ID\tPathogen\tPathogen Taxonomy\tSource\tTaxonomy ID\tTransmission Method\tHost/Reservoir\tTaxonomy ID\tDisease\tAnatomy\tSymptoms/Documentation/Attributes\n" +
             "TI:0001671\t71D1252 virus\t177895\tundocumented\t\tundocumented\tCulex\t7174\tno disease\tundocumented\tPMID:11581380,PMID:613619\n" +

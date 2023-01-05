@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.domain.Location;
@@ -29,7 +29,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 
-public class ExportFlatInteractionsTest extends GraphDBNeo4j2TestCase {
+public class ExportFlatInteractionsTest extends GraphDBNeo4jTestCase {
 
     private NodeFactoryWithDatasetContext factory;
 

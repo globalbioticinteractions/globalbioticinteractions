@@ -1,6 +1,7 @@
 package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.domain.DatasetNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.Location;
@@ -19,13 +20,10 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NavigableSet;
 
 public class NodeUtil {
 
@@ -48,7 +46,8 @@ public class NodeUtil {
     }
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {
-        TaxonNode sameAsTaxon = new TaxonNode(graphDb.createNode());
+        Node node = graphDb.createNode();
+        TaxonNode sameAsTaxon = new TaxonNode(node);
         TaxonUtil.copy(taxon, sameAsTaxon);
         taxonNode.getUnderlyingNode().createRelationshipTo(sameAsTaxon.getUnderlyingNode(), asNeo4j(relType));
     }
@@ -60,10 +59,14 @@ public class NodeUtil {
     }
 
     public static void findStudies(GraphDatabaseService graphService, NodeListener listener) {
-        findStudies(graphService, listener, "title", "*");
+        findStudies(graphService, listener, "title", "*", new NodeIdCollectorNeo4j2());
     }
 
-    public static void findStudies(GraphDatabaseService graphService, NodeListener listener, String queryKey, String queryValue) {
+    public static void findStudies(GraphDatabaseService graphService,
+                                   NodeListener listener,
+                                   String queryKey,
+                                   String queryValue,
+                                   NodeIdCollector nodeIdCollector) {
         processNodes(
                 1000L,
                 graphService,
@@ -71,21 +74,28 @@ public class NodeUtil {
                 queryKey,
                 queryValue,
                 "studies",
-                new TransactionPerBatch(graphService)
+                new TransactionPerBatch(graphService),
+                nodeIdCollector
         );
     }
 
-    public static void findDatasetsByQuery(GraphDatabaseService graphService, DatasetNodeListener listener, String queryKey, String queryValue) {
+    public static void findDatasetsByQuery(
+            GraphDatabaseService graphService,
+            DatasetNodeListener listener,
+            String queryKey,
+            String queryValue,
+            NodeIdCollector nodeIdCollector) {
         new NodeProcessorImpl(
                 graphService,
                 1000L,
                 queryKey,
                 queryValue,
-                "datasets")
-                .process(
-                        node -> listener.on(new DatasetNode(node)),
-                        new TransactionPerBatch(graphService)
-                );
+                "datasets",
+                nodeIdCollector
+        ).process(
+                node -> listener.on(new DatasetNode(node)),
+                new TransactionPerBatch(graphService)
+        );
     }
 
     public static RelationshipType asNeo4j(RelType type) {
@@ -160,9 +170,10 @@ public class NodeUtil {
                                     String queryKey,
                                     String queryOrQueryObject,
                                     String indexName,
-                                    BatchListener batchListener) {
+                                    BatchListener batchListener,
+                                    NodeIdCollector nodeIdCollector) {
 
-        new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject, indexName)
+        new NodeProcessorImpl(graphService, batchSize, queryKey, queryOrQueryObject, indexName, nodeIdCollector)
                 .process(listener, batchListener);
     }
 

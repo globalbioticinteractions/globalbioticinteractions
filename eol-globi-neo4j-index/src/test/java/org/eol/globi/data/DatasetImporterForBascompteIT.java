@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-public class DatasetImporterForBascompteIT extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForBascompteIT extends GraphDBNeo4jTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {

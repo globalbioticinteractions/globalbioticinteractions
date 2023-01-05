@@ -36,7 +36,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
  * Note that Animal Diversity Web data tested below is currently assumed to be part of SPIRE.
  */
 
-public class DatasetImporterForVertNetTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForVertNetTest extends GraphDBNeo4jTestCase {
 
     private static final Logger LOG = LoggerFactory.getLogger(DatasetImporterForVertNetTest.class);
 

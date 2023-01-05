@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryNeo4j2;
@@ -38,11 +38,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class IndexInteractionsTest extends GraphDBNeo4j2TestCase {
+public class IndexInteractionsTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void indexInteractions() throws NodeFactoryException {
-        TaxonIndex taxonIndex = getOrCreateTaxonIndex();
+        TaxonIndex taxonIndex = getTaxonIndex();
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", new DOI("123.23", "222"), "some study citation");
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, new DatasetWithResourceMapping("some/namespace", URI.create("https://some.uri"), new ResourceServiceLocalAndRemote(inStream -> inStream)));

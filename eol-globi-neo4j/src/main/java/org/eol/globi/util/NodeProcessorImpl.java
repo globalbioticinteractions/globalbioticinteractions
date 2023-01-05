@@ -20,17 +20,21 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     private final String queryKey;
     private final String queryOrQueryObject;
     private final String indexName;
+    private NodeIdCollector nodeIdCollector;
 
     public NodeProcessorImpl(GraphDatabaseService graphService,
                              Long batchSize,
                              String queryKey,
                              String queryOrQueryObject,
-                             String indexName) {
+                             String indexName,
+                             NodeIdCollector nodeIdCollector) {
         this.graphService = graphService;
         this.batchSize = batchSize;
         this.queryKey = queryKey;
         this.queryOrQueryObject = queryOrQueryObject;
         this.indexName = indexName;
+        this.nodeIdCollector = nodeIdCollector;
+
     }
 
     @Override
@@ -70,7 +74,14 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
                     db.createTreeSet(UUID.randomUUID().toString());
 
             NavigableSet<Long> ids = treeSet.makeLongSet();
-            NodeUtilNeo4j2.collectIds(graphService, queryKey, queryOrQueryObject, indexName, ids);
+
+            nodeIdCollector.collectIds(
+                    graphService,
+                    queryKey,
+                    queryOrQueryObject,
+                    indexName,
+                    ids
+            );
 
             logBatchFinishStats(stopWatch, ids.size(), "collected", this.indexName);
 
@@ -99,4 +110,5 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
     public void logBatchFinishStats(StopWatch stopWatch, long count, String verb, String indexName) {
         LOG.info(verb + " " + count + " " + "[" + indexName + "] nodes in " + stopWatch.getTime()/1000 + "s (@ " + count / (stopWatch.getTime()+1) + " nodes/ms)");
     }
+
 }

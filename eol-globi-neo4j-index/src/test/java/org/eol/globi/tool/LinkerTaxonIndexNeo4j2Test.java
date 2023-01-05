@@ -4,7 +4,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.NodeBacked;
@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4j2TestCase {
+public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public void linking() throws NodeFactoryException {

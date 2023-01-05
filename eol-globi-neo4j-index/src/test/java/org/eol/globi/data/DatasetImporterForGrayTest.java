@@ -27,7 +27,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-public class DatasetImporterForGrayTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForGrayTest extends GraphDBNeo4jTestCase {
 
     static DatasetImporterForGray createImporter(NodeFactory nodeFactory) throws IOException {
         DatasetImporterForGray gray = new DatasetImporterForGray(

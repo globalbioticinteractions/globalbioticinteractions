@@ -1,6 +1,6 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
@@ -12,8 +12,6 @@ import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
-import org.eol.globi.taxon.ResolvingTaxonIndexNeo4j2;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -26,34 +24,47 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-public class NameResolverTest extends GraphDBNeo4j2TestCase {
+public class NameResolverNeo4j2Test extends GraphDBNeo4jTestCase {
+
 
     @Test
-    public void doNameResolving() throws NodeFactoryException, PropertyEnricherException {
+    public void doNameResolving() throws NodeFactoryException {
         assertResolveNames(RelTypes.COLLECTED, getGraphDb());
     }
 
     @Test
-    public void doNameResolvingForRefuting() throws NodeFactoryException, PropertyEnricherException {
+    public void doNameResolvingForRefuting() throws NodeFactoryException {
         assertResolveNames(RelTypes.REFUTES, getGraphDb());
     }
 
     @Test
-    public void doNameResolvingForSupporting() throws NodeFactoryException, PropertyEnricherException {
+    public void doNameResolvingForSupporting() throws NodeFactoryException {
         assertResolveNames(RelTypes.SUPPORTS, getGraphDb());
     }
 
     private void assertResolveNames(RelTypes relTypes, final GraphDatabaseService graphDb) throws NodeFactoryException {
-        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"), relTypes);
-        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Animalia", "WORMS:2"), relTypes);
-        human.ate(animal);
-        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Arius felis", "WORMS:158711"), relTypes);
-        human.ate(fish);
+        Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(
+                new StudyImpl("bla", null, null)),
+                new TaxonImpl("Homo sapiens", "NCBI:9606"),
+                relTypes
+        );
 
-        assertNull(taxonIndex.findTaxonById("NCBI:9606"));
-        assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
+        Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(
+                new StudyImpl("bla", null, null)),
+                new TaxonImpl("Animalia", "WORMS:2"),
+                relTypes
+        );
+
+        human.ate(animal);
+
+        Specimen fish = nodeFactory.createSpecimen(nodeFactory.createStudy(
+                new StudyImpl("bla", null, null)),
+                new TaxonImpl("Arius felis", "WORMS:158711"),
+                relTypes
+        );
+
+        human.ate(fish);
 
         final GraphServiceFactory factory = new GraphServiceFactory() {
 
@@ -68,9 +79,8 @@ public class NameResolverTest extends GraphDBNeo4j2TestCase {
             }
         };
 
-        final NameResolver nameResolver = new NameResolver(factory, new NonResolvingTaxonIndexNeo4j2(graphDb));
+        final NameResolver nameResolver = new NameResolver(factory, getNodeIdCollector(), getTaxonIndex());
         nameResolver.setBatchSize(1L);
-
 
         nameResolver.index();
 
@@ -82,6 +92,7 @@ public class NameResolverTest extends GraphDBNeo4j2TestCase {
         assertNotNull(homoSapiens);
         assertThat(homoSapiens.getExternalId(), is("NCBI:9606"));
     }
+
 
     public void assertAnimalia(Taxon animalia) {
         assertNotNull(animalia);
@@ -96,7 +107,7 @@ public class NameResolverTest extends GraphDBNeo4j2TestCase {
 
         GraphServiceFactory graphServiceFactory = new GraphServiceFactoryProxy(getGraphDb());
 
-        final NameResolver nameResolver = new NameResolver(graphServiceFactory, new NonResolvingTaxonIndexNeo4j2(getGraphDb()));
+        final NameResolver nameResolver = new NameResolver(graphServiceFactory, getNodeIdCollector(), getTaxonIndex());
         nameResolver.setBatchSize(1L);
         nameResolver.index();
 
@@ -122,7 +133,7 @@ public class NameResolverTest extends GraphDBNeo4j2TestCase {
 
         someOtherOrganism.ate(someOtherOrganism2);
 
-        final NameResolver nameResolver = new NameResolver(new GraphServiceFactoryProxy(getGraphDb()), new ResolvingTaxonIndexNeo4j2(new PropertyEnricher() {
+        PropertyEnricher enricher = new PropertyEnricher() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
                 return enrichAllMatches(properties).get(0);
@@ -143,11 +154,20 @@ public class NameResolverTest extends GraphDBNeo4j2TestCase {
             public void shutdown() {
 
             }
-        }, getGraphDb()));
-
+        };
+        final NameResolver nameResolver = new NameResolver(
+                new GraphServiceFactoryProxy(getGraphDb()),
+                getNodeIdCollector(),
+                createTaxonIndex(enricher)
+        );
 
         nameResolver.setBatchSize(1L);
         nameResolver.index();
+
+        Taxon resolvedTaxon0 = taxonIndex.findTaxonById("foo:XXX");
+        assertThat(resolvedTaxon0, is(notNullValue()));
+        assertThat(resolvedTaxon0.getExternalId(), is("foo:XXX"));
+        assertThat(resolvedTaxon0.getName(), is("Donald duckus"));
 
         Taxon resolvedTaxon = taxonIndex.findTaxonById("foo:123");
         assertThat(resolvedTaxon, is(notNullValue()));

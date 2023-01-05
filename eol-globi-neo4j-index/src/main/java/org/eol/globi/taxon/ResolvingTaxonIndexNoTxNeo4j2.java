@@ -35,12 +35,12 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
         return taxonNode == null ? createTaxon(taxon) : taxonNode;
     }
 
-    private TaxonNode createTaxon(final Taxon origTaxon) throws NodeFactoryException {
-        Taxon taxon = TaxonUtil.copy(origTaxon);
-        return resolveAndIndex(origTaxon, taxon);
+    private TaxonNode createTaxon(final Taxon provided) throws NodeFactoryException {
+        Taxon taxon = TaxonUtil.copy(provided);
+        return resolveAndIndex(provided, taxon);
     }
 
-    private TaxonNode resolveAndIndex(Taxon origTaxon, Taxon taxon) throws NodeFactoryException {
+    private TaxonNode resolveAndIndex(Taxon provided, Taxon taxon) throws NodeFactoryException {
         TaxonNode indexedTaxon = findTaxon(taxon);
         List<Map<String, String>> taxonMatches;
         while (indexedTaxon == null) {
@@ -50,7 +50,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
                 throw new NodeFactoryException("failed to enrichFirstMatch taxon with name [" + taxon.getName() + "]", e);
             }
             if (taxonMatches != null && taxonMatches.size() > 0) {
-                indexedTaxon = indexFirstAndConnectRemaining(taxonMatches, origTaxon);
+                indexedTaxon = indexFirstAndConnectRemaining(taxonMatches, provided);
             }
 
             if (indexedTaxon == null) {
@@ -59,7 +59,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
                     if (isIndexResolvedOnly()) {
                         break;
                     } else {
-                        indexedTaxon = addNoMatchTaxon(origTaxon);
+                        indexedTaxon = addNoMatchTaxon(provided);
                     }
                 } else {
                     taxon = new TaxonImpl();

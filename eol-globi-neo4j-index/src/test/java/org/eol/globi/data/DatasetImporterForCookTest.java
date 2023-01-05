@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-public class DatasetImporterForCookTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForCookTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void importFirstFewLines() throws StudyImporterException {

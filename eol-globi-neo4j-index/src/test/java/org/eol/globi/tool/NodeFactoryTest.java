@@ -3,7 +3,7 @@ package org.eol.globi.tool;
 import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.DatasetImporterForSimons;
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryNeo4j2;
@@ -34,7 +34,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-public class NodeFactoryTest extends GraphDBNeo4j2TestCase {
+public class NodeFactoryTest extends GraphDBNeo4jTestCase {
 
     private final static Logger LOG = LoggerFactory.getLogger(NodeFactoryTest.class);
 

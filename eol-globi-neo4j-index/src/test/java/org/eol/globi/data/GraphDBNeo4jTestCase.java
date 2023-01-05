@@ -1,9 +1,15 @@
 package org.eol.globi.data;
 
 import org.eol.globi.db.GraphServiceFactory;
+import org.eol.globi.service.PropertyEnricher;
+import org.eol.globi.taxon.ResolvingTaxonIndexNeo4j2;
+import org.eol.globi.taxon.ResolvingTaxonIndexNeo4j3;
 import org.eol.globi.tool.NodeFactoryFactory;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j2;
 import org.eol.globi.tool.NodeFactoryFactoryTransactingOnDatasetNeo4j3;
+import org.eol.globi.util.NodeIdCollector;
+import org.eol.globi.util.NodeIdCollectorNeo4j2;
+import org.eol.globi.util.NodeIdCollectorNeo4j3;
 import org.hamcrest.core.Is;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -11,21 +17,24 @@ import org.neo4j.graphdb.Transaction;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
-public class GraphDBNeo4j2TestCase extends GraphDBTestCaseAbstract {
+public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
 
+    protected TaxonIndex createTaxonIndex(PropertyEnricher enricher) {
+        return Neo4jIndexType.noSchema.equals(getSchemaType())
+                ? new ResolvingTaxonIndexNeo4j2(enricher, getGraphDb())
+                : new ResolvingTaxonIndexNeo4j3(enricher, getGraphDb());
+    }
 
-    private Neo4jIndexType schemaType = Neo4jIndexType.noSchema;
-
-    protected void setNeo4jIndexType(Neo4jIndexType type) {
-        this.schemaType = type;
+    protected NodeIdCollector getNodeIdCollector() {
+        return Neo4jIndexType.noSchema.equals(getSchemaType())
+                ? new NodeIdCollectorNeo4j2()
+                : new NodeIdCollectorNeo4j3();
     }
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {
-
-
         NodeFactoryFactory factoryFactory;
-        if (Neo4jIndexType.noSchema.equals(schemaType)) {
+        if (Neo4jIndexType.noSchema.equals(getSchemaType())) {
             factoryFactory
                     = new NodeFactoryFactoryTransactingOnDatasetNeo4j2(new GraphServiceFactory() {
                 @Override

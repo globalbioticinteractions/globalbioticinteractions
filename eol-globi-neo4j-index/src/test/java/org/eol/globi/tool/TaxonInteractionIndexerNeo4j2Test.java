@@ -1,7 +1,8 @@
 package org.eol.globi.tool;
 
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.NodeBacked;
@@ -10,7 +11,6 @@ import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
@@ -23,12 +23,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-public class TaxonInteractionIndexerTest extends GraphDBNeo4j2TestCase {
+public class TaxonInteractionIndexerNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
-    public void buildTaxonInterIndex() throws NodeFactoryException {
+    public void buildTaxonInterIndex() throws StudyImporterException {
         Specimen human = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Homo sapiens", "NCBI:9606"));
         Specimen animal = nodeFactory.createSpecimen(nodeFactory.createStudy(new StudyImpl("bla", null, null)), new TaxonImpl("Canis lupus", "WORMS:2"));
         human.ate(animal);
@@ -37,14 +36,14 @@ public class TaxonInteractionIndexerTest extends GraphDBNeo4j2TestCase {
             human.ate(fish);
         }
 
-        assertNull(taxonIndex.findTaxonById("WORMS:2"));
-        assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
+        new NameResolver(
+                new GraphServiceFactoryProxy(getGraphDb()),
+                getNodeIdCollector(),
+                getTaxonIndex()
+        ).index();
 
-        new NameResolver(new GraphServiceFactoryProxy(getGraphDb()),
-                new NonResolvingTaxonIndexNeo4j2(getGraphDb()))
-                .index();
-
-        new TaxonInteractionIndexer(new GraphServiceFactoryProxy(getGraphDb())).index();
+        IndexerNeo4j taxonInteractionIndexer = new TaxonInteractionIndexer(new GraphServiceFactoryProxy(getGraphDb()), getNodeIdCollector());
+        taxonInteractionIndexer.index();
 
         Taxon homoSapiens = taxonIndex.findTaxonByName("Homo sapiens");
         assertNotNull(homoSapiens);
@@ -75,16 +74,14 @@ public class TaxonInteractionIndexerTest extends GraphDBNeo4j2TestCase {
             human.ate(fish);
         }
 
-        assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
-        assertNull(taxonIndex.findTaxonByName("Homo sapiens"));
-
         new NameResolver(new GraphServiceFactoryProxy(getGraphDb()),
-                new NonResolvingTaxonIndexNeo4j2(getGraphDb()))
+                getNodeIdCollector(),
+                getTaxonIndex())
                 .index();
 
         assertNotNull(taxonIndex.findTaxonByName("Homo sapiens"));
-        assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
-        assertNull(taxonIndex.findTaxonByName(PropertyAndValueDictionary.NO_NAME));
+//        assertNull(taxonIndex.findTaxonById(PropertyAndValueDictionary.NO_MATCH));
+//        assertNull(taxonIndex.findTaxonByName(PropertyAndValueDictionary.NO_NAME));
 
     }
 

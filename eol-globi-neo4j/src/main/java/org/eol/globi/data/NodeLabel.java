@@ -8,6 +8,8 @@ public enum NodeLabel implements Label {
     Season,
     Location,
     Environment,
-    Dataset
+    Dataset,
+    Specimen,
+    Taxon
 }
 

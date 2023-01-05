@@ -54,7 +54,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4j2TestCase {
+public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
 
     private static final DOI SOME_DOI = new DOI("some", "doi");
 

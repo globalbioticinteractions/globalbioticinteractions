@@ -1,13 +1,12 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.eol.globi.util.NodeProcessorImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.util.NodeIdCollector;
+import org.eol.globi.util.NodeProcessorImpl;
 import org.eol.globi.util.NodeUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -16,6 +15,8 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,9 +24,11 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TaxonInteractionIndexer implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(TaxonInteractionIndexer.class);
     private final GraphServiceFactory factory;
+    private NodeIdCollector nodeIdCollector;
 
-    TaxonInteractionIndexer(GraphServiceFactory factory) {
+    TaxonInteractionIndexer(GraphServiceFactory factory, NodeIdCollector nodeIdCollector) {
         this.factory = factory;
+        this.nodeIdCollector = nodeIdCollector;
     }
 
     @Override
@@ -46,7 +49,8 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
                 .createTreeMap("ottIdMap")
                 .make();
 
-        collectTaxonInteractions(taxonInteractions, graphService);
+        NodeIdCollector nodeIdCollector = this.nodeIdCollector;
+        collectTaxonInteractions(taxonInteractions, graphService, nodeIdCollector);
         createTaxonInteractions(taxonInteractions, graphService);
 
         db.close();
@@ -86,14 +90,16 @@ public class TaxonInteractionIndexer implements IndexerNeo4j {
 
     private void collectTaxonInteractions(
             Map<Fun.Tuple3<Long, String, Long>, Long> taxonInteractions,
-            GraphDatabaseService graphService) {
+            GraphDatabaseService graphService,
+            NodeIdCollector nodeIdCollector) {
 
         new NodeProcessorImpl(
                 graphService,
                 1000L,
                 "name",
                 "*",
-                "taxons")
+                "taxons",
+                nodeIdCollector)
                 .process(taxonNode -> onTaxonNode(taxonInteractions, taxonNode)
                 , new TransactionPerBatch(graphService));
 

@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForAkinTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForAkinTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void parseLifeStage() throws TermLookupServiceException {

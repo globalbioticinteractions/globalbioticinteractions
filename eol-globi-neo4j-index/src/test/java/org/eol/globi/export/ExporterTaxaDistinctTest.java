@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Specimen;
@@ -18,7 +18,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class ExporterTaxaDistinctTest extends GraphDBNeo4j2TestCase {
+public class ExporterTaxaDistinctTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void exportMissingLength() throws IOException, NodeFactoryException, ParseException {
@@ -50,7 +50,7 @@ public class ExporterTaxaDistinctTest extends GraphDBNeo4j2TestCase {
         Specimen predator = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:1234"));
         Specimen prey = nodeFactory.createSpecimen(study, new TaxonImpl(PropertyAndValueDictionary.NO_MATCH, "EOL:122"));
         predator.ate(prey);
-        getOrCreateTaxonIndex().findTaxonByName("bla");
+        getTaxonIndex().findTaxonByName("bla");
 
         assertThat(exportStudy(study), not(containsString(PropertyAndValueDictionary.NO_MATCH)));
     }

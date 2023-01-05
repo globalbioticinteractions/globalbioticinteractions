@@ -5,6 +5,7 @@ import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j2;
 import org.eol.globi.taxon.TaxonCacheService;
+import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class IndexerTaxaNeo4j2 implements IndexerNeo4j {
                 }
             };
 
-            new NameResolver(factory, index, taxonCacheFilter)
+            new NameResolver(factory, index, new NodeIdCollectorNeo4j2(), taxonCacheFilter)
                     .index();
 
             LOG.info("adding same and similar terms for resolved taxa...");

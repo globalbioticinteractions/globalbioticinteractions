@@ -22,7 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-public class DatasetImporterForWoodTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForWoodTest extends GraphDBNeo4jTestCase {
 
     static DatasetImporterForWood createImporter(NodeFactory nodeFactory) throws IOException {
 

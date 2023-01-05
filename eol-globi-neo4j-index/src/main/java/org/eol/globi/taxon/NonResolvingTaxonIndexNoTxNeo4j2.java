@@ -50,7 +50,9 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
                     ? createAndIndexTaxon(taxon, taxon)
                     : addNoMatchTaxon(taxon);
         }
-        return taxonNode == null ? createAndIndexTaxon(taxon, taxon) : taxonNode;
+        return taxonNode == null
+                ? createAndIndexTaxon(taxon, taxon)
+                : taxonNode;
     }
 
     @Override
@@ -107,8 +109,8 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
         return taxon1;
     }
 
-    private void indexOriginalNameForTaxon(String name, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
-        if (!StringUtils.equals(taxon.getName(), name)) {
+    private void indexOriginalNameForTaxon(String name, TaxonNode taxonNode) throws NodeFactoryException {
+        if (!StringUtils.equals(taxonNode.getName(), name)) {
             if (isNonEmptyTaxonNameOrId(name)) {
                 if (findTaxonByName(name) == null) {
                     indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.NAME, name);
@@ -124,8 +126,8 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
                 && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, name);
     }
 
-    private void indexOriginalExternalIdForTaxon(String externalId, Taxon taxon, TaxonNode taxonNode) throws NodeFactoryException {
-        if (!StringUtils.equals(taxon.getExternalId(), externalId)) {
+    private void indexOriginalExternalIdForTaxon(String externalId, TaxonNode taxonNode) throws NodeFactoryException {
+        if (!StringUtils.equals(taxonNode.getExternalId(), externalId)) {
             if (isNonEmptyTaxonNameOrId(externalId) && findTaxonById(externalId) == null) {
                 indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
             }
@@ -140,28 +142,30 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
         NodeFactoryNeo4j2.indexNonBlankKeyValue(getTaxonIndex(), taxonNode.getUnderlyingNode(), propertyName, propertyValue);
     }
 
-    GraphDatabaseService getGraphDbService() {
+    protected GraphDatabaseService getGraphDbService() {
         return graphDbService;
     }
 
-    TaxonNode createAndIndexTaxon(Taxon origTaxon, Taxon taxon) throws NodeFactoryException {
-        TaxonNode taxonNode;
+    protected TaxonNode createAndIndexTaxon(Taxon provided, Taxon resolved) throws NodeFactoryException {
+        TaxonNode resolvedNode;
         Node node = graphDbService.createNode();
-        taxonNode = new TaxonNode(node, taxon.getName());
+        resolvedNode = new TaxonNode(node, resolved.getName());
 
-        TaxonNode copiedTaxon = (TaxonNode) TaxonUtil.copy(taxon, taxonNode);
-        if (isNonEmptyTaxonNameOrId(taxonNode.getName())) {
+        TaxonUtil.copy(resolved, resolvedNode);
+        if (isNonEmptyTaxonNameOrId(resolvedNode.getName())) {
             for (String rank : RANKS) {
-                populateRankIds(taxon, node, rank);
-                populateRankNames(taxon, node, rank);
+                populateRankIds(resolved, node, rank);
+                populateRankNames(resolved, node, rank);
             }
         }
-        addToIndeces(copiedTaxon, taxon.getName());
+        indexTaxon(provided, resolvedNode);
+        return resolvedNode;
+    }
 
-        indexOriginalNameForTaxon(origTaxon.getName(), taxon, taxonNode);
-        indexOriginalExternalIdForTaxon(origTaxon.getExternalId(), taxon, taxonNode);
-
-        return taxonNode;
+    protected void indexTaxon(Taxon provided, TaxonNode resolved) throws NodeFactoryException {
+        addToIndeces(resolved, resolved.getName());
+        indexOriginalNameForTaxon(provided.getName(), resolved);
+        indexOriginalExternalIdForTaxon(provided.getExternalId(), resolved);
     }
 
     private void populateRankNames(Taxon taxon, Node node, String rank) {

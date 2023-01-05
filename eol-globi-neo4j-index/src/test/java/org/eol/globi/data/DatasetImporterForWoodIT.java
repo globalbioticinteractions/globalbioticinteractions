@@ -7,7 +7,7 @@ import java.io.IOException;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForWoodIT extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForWoodIT extends GraphDBNeo4jTestCase {
 
     @Test
     public void importFirst500() throws StudyImporterException, IOException {

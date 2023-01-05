@@ -2,7 +2,7 @@ package org.eol.globi.process;
 
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.DatasetImporterForTSV;
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.ResourceService;
@@ -26,7 +26,7 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
-public class InteractionListenerImplTest extends GraphDBNeo4j2TestCase {
+public class InteractionListenerImplTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void processIncompleteMessage() throws StudyImporterException {

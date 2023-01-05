@@ -1,6 +1,8 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.NodeLabel;
+import org.neo4j.consistency.checking.cache.CacheSlots;
 import org.neo4j.graphdb.Node;
 
 import static org.eol.globi.domain.PropertyAndValueDictionary.*;
@@ -9,6 +11,7 @@ public class TaxonNode extends NamedNode implements Taxon {
 
     public TaxonNode(Node node) {
         super(node);
+        node.addLabel(NodeLabel.Taxon);
     }
 
     public TaxonNode(Node node, String name) {

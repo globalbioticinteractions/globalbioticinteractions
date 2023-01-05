@@ -1,6 +1,7 @@
 package org.eol.globi.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.NodeLabel;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.doi.DOI;
@@ -15,6 +16,7 @@ public class StudyNode extends NodeBacked implements Study {
 
     public StudyNode(Node node, String title) {
         this(node);
+        node.addLabel(NodeLabel.Reference);
         setPropertyIfNotNull(StudyConstant.TITLE, title);
         setPropertyIfNotNull(PropertyAndValueDictionary.TYPE, StudyNode.class.getSimpleName());
     }

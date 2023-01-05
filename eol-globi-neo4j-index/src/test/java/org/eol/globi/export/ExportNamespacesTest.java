@@ -1,6 +1,6 @@
 package org.eol.globi.export;
 
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.hamcrest.core.Is;
@@ -12,7 +12,7 @@ import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ExportNamespacesTest extends GraphDBNeo4j2TestCase {
+public class ExportNamespacesTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void export() throws IOException, NodeFactoryException {

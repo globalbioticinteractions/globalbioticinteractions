@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatasetImporterForJRFerrerParisTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForJRFerrerParisTest extends GraphDBNeo4jTestCase {
 
     @Ignore(value = "too slow for regular use")
     @Test

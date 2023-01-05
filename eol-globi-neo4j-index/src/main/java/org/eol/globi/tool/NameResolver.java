@@ -12,6 +12,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.util.BatchListener;
+import org.eol.globi.util.NodeIdCollector;
 import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -29,6 +30,8 @@ public class NameResolver implements IndexerNeo4j {
     private final TaxonIndex taxonIndex;
     private final TaxonFilter taxonFilter;
     private final GraphServiceFactory factory;
+    private final NodeIdCollector nodeIdCollector;
+
 
     public void setBatchSize(Long batchSize) {
         this.batchSize = batchSize;
@@ -36,14 +39,19 @@ public class NameResolver implements IndexerNeo4j {
 
     private Long batchSize = 10000L;
 
-    public NameResolver(GraphServiceFactory factory, TaxonIndex index) {
-        this(factory, index, new KnownBadNameFilter());
+    public NameResolver(GraphServiceFactory factory, NodeIdCollector nodeIdCollector, TaxonIndex index) {
+        this(factory, index, nodeIdCollector, new KnownBadNameFilter());
     }
 
-    public NameResolver(GraphServiceFactory factory, TaxonIndex index, TaxonFilter taxonFilter) {
+    public NameResolver(
+            GraphServiceFactory factory,
+            TaxonIndex index,
+            NodeIdCollector nodeIdCollector,
+            TaxonFilter taxonFilter) {
         this.taxonIndex = index;
         this.taxonFilter = taxonFilter;
         this.factory = factory;
+        this.nodeIdCollector = nodeIdCollector;
     }
 
     public void resolveNames(Long batchSize, GraphDatabaseService graphService) {
@@ -67,10 +75,11 @@ public class NameResolver implements IndexerNeo4j {
                 batchSize,
                 graphService,
                 listener,
-                StudyConstant.TITLE,
+                StudyConstant.TITLE_IN_NAMESPACE,
                 "*",
                 "studies",
-                batchListener);
+                batchListener,
+                nodeIdCollector);
 
         watchForEntireRun.stop();
         LOG.info("resolved [" + nameCount + "] names in " + getProgressMsg(nameCount.get(), watchForEntireRun.getTime()));
@@ -106,7 +115,8 @@ public class NameResolver implements IndexerNeo4j {
                     } finally {
                         nameCount++;
                         if (nameCount % batchSize == 0) {
-                            batchListener.onFinish();;
+                            batchListener.onFinish();
+                            ;
                             watchForBatch.stop();
                             final long duration = watchForBatch.getTime();
                             if (duration > 0) {

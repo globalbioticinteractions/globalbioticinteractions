@@ -8,7 +8,7 @@ import java.net.URI;
 
 import static org.junit.Assert.assertNotNull;
 
-public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void importAll() throws StudyImporterException {

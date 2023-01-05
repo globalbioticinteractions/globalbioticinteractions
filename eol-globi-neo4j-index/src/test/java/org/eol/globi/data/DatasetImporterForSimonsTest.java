@@ -32,7 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.hasItem;
 
-public class DatasetImporterForSimonsTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForSimonsTest extends GraphDBNeo4jTestCase {
 
     public static final double LONG_1 = -88.56632567024258;
     public static final double LAT_1 = 29.43874564840787;

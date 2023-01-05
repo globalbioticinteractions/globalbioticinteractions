@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-public class DatasetImporterForICESTest extends GraphDBNeo4j2TestCase {
+public class DatasetImporterForICESTest extends GraphDBNeo4jTestCase {
     @Test
     public void importOneEveryThousandLines() throws StudyImporterException {
         DatasetImporterForICES studyImporterFor = new DatasetImporterForICES(new ParserFactoryLocal(getClass()), nodeFactory);

@@ -1,7 +1,7 @@
 package org.eol.globi.taxon;
 
 import org.eol.globi.data.CharsetConstant;
-import org.eol.globi.data.GraphDBNeo4j2TestCase;
+import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4j2TestCase {
+public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     private NonResolvingTaxonIndexNoTxNeo4j2 taxonService;
 

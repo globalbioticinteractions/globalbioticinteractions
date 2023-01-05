@@ -30,8 +30,16 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     private static void initIndexes(GraphDatabaseService graphDb) {
-        createIndexIfNeeded(graphDb,
-                LocationConstant.LATITUDE);
+        createIndexIfNeeded(
+                graphDb,
+                NodeLabel.Location,
+                LocationConstant.LATITUDE
+        );
+        createIndexIfNeeded(
+                graphDb,
+                NodeLabel.Reference,
+                StudyConstant.TITLE_IN_NAMESPACE
+        );
     }
 
     private static void initConstraints(GraphDatabaseService graphDb) {
@@ -69,7 +77,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     Node createStudyNode() {
-        return getGraphDb().createNode(NodeLabel.Reference);
+        return getGraphDb().createNode();
     }
 
     @Override
@@ -99,15 +107,19 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public StudyNode findStudy(Study study) {
-        Node node = getGraphDb().findNode(
-                NodeLabel.Reference,
-                StudyConstant.TITLE_IN_NAMESPACE,
-                getIdInNamespace(study)
-        );
+        Node node = findStudyNode(study);
 
         return node == null
                 ? null
                 : new StudyNode(node);
+    }
+
+    private Node findStudyNode(Study study) {
+        return getGraphDb().findNode(
+                NodeLabel.Reference,
+                StudyConstant.TITLE_IN_NAMESPACE,
+                getIdInNamespace(study)
+        );
     }
 
     @Override
@@ -139,10 +151,7 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
 
     @Override
     public StudyNode getOrCreateStudy(Study study) throws NodeFactoryException {
-        Node node = getGraphDb()
-                .findNode(NodeLabel.Reference,
-                        StudyConstant.TITLE_IN_NAMESPACE,
-                        getIdInNamespace(study));
+        Node node = findStudyNode(study);
 
         return node == null
                 ? createStudy(study)
@@ -168,11 +177,12 @@ public class NodeFactoryNeo4j3 extends NodeFactoryNeo4j {
     }
 
     private static void createIndexIfNeeded(GraphDatabaseService graphDb,
+                                            NodeLabel label,
                                             String propertyName) {
 
         Iterable<IndexDefinition> indexes = graphDb
                 .schema()
-                .getIndexes(NodeLabel.Location);
+                .getIndexes(label);
 
         IndexDefinition indexMatching = null;
         for (IndexDefinition index : indexes) {

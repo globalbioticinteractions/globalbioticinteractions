@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
@@ -136,7 +137,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
             if (StringUtils.isNotBlank(namespace)) {
                 namespaceGroups.add(namespaceHandler.parse(namespace));
             }
-        }, "namespace", "*");
+        }, "namespace", "*", new NodeIdCollectorNeo4j2());
 
         final Set<Long> distinctTaxonIds = reportCache
                 .createHashSet("distinctTaxonIds")
@@ -174,7 +175,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
                     distinctSources.add(namespace);
                     distinctDatasets.add(namespace);
                 }
-            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup));
+            }, "namespace", namespaceHandler.datasetQueryFor(namespaceGroup), new NodeIdCollectorNeo4j2());
 
             final Node node = getGraphDb().createNode();
             String sourceIdPrefix = "globi:" + namespaceGroup;
