@@ -34,9 +34,9 @@ public class GraphExporterImplTest extends GraphDBNeo4jTestCase {
         human.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", "BLA:444")));
         resolveNames();
 
-        new GraphExporterImpl().export(getGraphDb(), tmpDir);
+        new GraphExporterImpl().export(getGraphDb(), tmpDir, "2");
         new GraphExporterInteractionsTSVImpl("2")
-                .export(getGraphDb(), tmpDir);
+                .export(getGraphDb(), tmpDir, "2");
         assertThat(tmpDir.list().length, is(8));
 
     }

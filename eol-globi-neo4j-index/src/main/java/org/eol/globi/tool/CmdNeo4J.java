@@ -69,7 +69,7 @@ public abstract class CmdNeo4J implements Cmd {
 
 
     @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_EXPORT_DIR},
+            names = {"-exportDir"},
             defaultValue = ".",
             description = "location of neo4j graph.db"
     )
@@ -124,7 +124,7 @@ public abstract class CmdNeo4J implements Cmd {
         cmd.setGraphServiceFactory(getGraphServiceFactory());
         cmd.setNodeFactoryFactory(getNodeFactoryFactory());
         cmd.setCacheDir(getCacheDir());
-        cmd.setNeo4jVersion("2");
+        cmd.setNeo4jVersion(getNeo4jVersion());
         cmd.run();
     }
 

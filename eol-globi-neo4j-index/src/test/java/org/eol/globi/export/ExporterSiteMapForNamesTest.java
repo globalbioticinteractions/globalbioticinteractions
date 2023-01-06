@@ -39,7 +39,7 @@ public class ExporterSiteMapForNamesTest extends GraphDBNeo4jTestCase {
         final File baseDirNames = createBaseDir("target/sitemap/names");
 
         final GraphExporter siteMapForNames = new ExporterSiteMapForNames();
-        siteMapForNames.export(getGraphDb(), baseDirNames);
+        siteMapForNames.export(getGraphDb(), baseDirNames, "2");
         assertSiteMap(baseDirNames, "http://www.globalbioticinteractions.org/?interactionType=interactsWith&sourceTaxon=Homo%20sapiens", "https://depot.globalbioticinteractions.org/snapshot/target/data/sitemap/names/sitemap.xml.gz");
     }
 

@@ -1,7 +1,6 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.export.GraphExporterImpl;
 import picocli.CommandLine;
 
@@ -17,9 +16,10 @@ public class CmdExportNeo4j2 extends CmdExportNeo4J {
     public void run() {
         try {
             new GraphExporterImpl().export(
-                            getGraphServiceFactory().getGraphService(),
-                            new File(getBaseDir())
-                    );
+                    getGraphServiceFactory().getGraphService(),
+                    new File(getBaseDir()),
+                    getNeo4jVersion()
+            );
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);
         }

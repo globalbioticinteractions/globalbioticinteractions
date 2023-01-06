@@ -158,7 +158,7 @@ public class ExportFlatInteractions implements GraphExporter {
     }
 
     @Override
-    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
+    public void export(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
         String prefix = getPrefix();
         ExportUtil.export(
                 graphService,

@@ -14,7 +14,7 @@ import java.util.Set;
 class ExporterSiteMapForCitations implements GraphExporter {
 
     @Override
-    public void export(GraphDatabaseService graphDb, File baseDir) throws StudyImporterException {
+    public void export(GraphDatabaseService graphDb, File baseDir, String neo4jVersion) throws StudyImporterException {
         Set<String> accordingToHits = new HashSet<String>();
         accordingToHits.add("gomexsi");
 

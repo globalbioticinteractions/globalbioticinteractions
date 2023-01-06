@@ -24,8 +24,8 @@ public class ExportCitations implements GraphExporter {
             "RETURN study.doi as doi, study.citation as citation";
 
     @Override
-    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
-        String cypherQuery = "2".equals(neo4jVersion) ? CYPHER_QUERY : CYPHER_QUERY_V3;
+    public void export(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
+        String cypherQuery = "2".equals(this.neo4jVersion) ? CYPHER_QUERY : CYPHER_QUERY_V3;
         ExportUtil.export(graphService, new File(baseDir, filename), cypherQuery, joiner);
     }
 

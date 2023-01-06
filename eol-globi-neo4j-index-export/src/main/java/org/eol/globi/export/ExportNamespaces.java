@@ -26,8 +26,8 @@ public class ExportNamespaces implements GraphExporter {
             "ORDER BY namespace";
 
     @Override
-    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
-        String cypherQuery = "2".equalsIgnoreCase(neo4jVersion) ? CYPHER_QUERY : CYPHER_QUERY_V3;
+    public void export(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
+        String cypherQuery = "2".equalsIgnoreCase(this.neo4jVersion) ? CYPHER_QUERY : CYPHER_QUERY_V3;
         ExportUtil.export(graphService, new File(baseDir, filename), cypherQuery, joiner);
     }
 

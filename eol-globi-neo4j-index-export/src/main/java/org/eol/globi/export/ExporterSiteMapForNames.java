@@ -3,10 +3,8 @@ package org.eol.globi.export;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.export.SiteMapUtils;
 import org.eol.globi.domain.RelTypes;
-import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
@@ -16,13 +14,12 @@ import org.neo4j.graphdb.Relationship;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 class ExporterSiteMapForNames implements GraphExporter {
 
     @Override
-    public void export(GraphDatabaseService graphDatabase, File baseDir) throws StudyImporterException {
+    public void export(GraphDatabaseService graphDatabase, File baseDir, String neo4jVersion) throws StudyImporterException {
         Set<String> names = new HashSet<String>();
         names.add("Homo sapiens");
 

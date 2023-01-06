@@ -14,7 +14,7 @@ public class GraphExporterInteractionsTSVImpl extends GraphExporterBase {
     }
 
     @Override
-    public void doExport(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
+    public void doExport(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
         GraphExporterUtil.exportInteractionsAndCitations(
                 graphService,
                 baseDir,

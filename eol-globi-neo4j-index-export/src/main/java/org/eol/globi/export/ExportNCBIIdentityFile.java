@@ -15,7 +15,7 @@ public class ExportNCBIIdentityFile implements GraphExporter {
     public static final String PROVIDER_ID = "9426";
 
     @Override
-    public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
+    public void export(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
         try {
             streamTo(new FileOutputStream(new File(baseDir, "providerinfo.xml")));
         } catch (IOException e) {

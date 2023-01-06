@@ -1,6 +1,5 @@
 package org.eol.globi.export;
 
-import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.Neo4jIndexType;
 import org.eol.globi.data.StudyImporterException;
@@ -45,7 +44,8 @@ public class GraphExporterNeo4j3ImplTest extends GraphDBNeo4jTestCase {
         human.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", "BLA:444")));
         resolveNames();
 
-        new GraphExporterInteractionsTSVImpl("3").export(getGraphDb(), tmpDir);
+        String neo4jVersion = "3";
+        new GraphExporterInteractionsTSVImpl(neo4jVersion).export(getGraphDb(), tmpDir, neo4jVersion);
 
 
         File tsvDir = new File(tmpDir, "tsv");

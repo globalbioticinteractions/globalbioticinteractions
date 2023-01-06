@@ -142,7 +142,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
         FileUtils.deleteQuietly(baseDir);
         try (Transaction tx = getGraphDb().beginTx()) {
             new GraphExporterImpl()
-                    .export(getGraphDb(), baseDir);
+                    .export(getGraphDb(), baseDir, "2");
             tx.success();
         }
     }

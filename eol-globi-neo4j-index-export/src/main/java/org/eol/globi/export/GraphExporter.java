@@ -6,5 +6,5 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import java.io.File;
 
 public interface GraphExporter {
-    void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException;
+    void export(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException;
 }

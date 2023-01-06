@@ -33,8 +33,6 @@ public class Elton4N implements CommandLine.IVersionProvider {
         return org.apache.commons.lang.StringUtils.isBlank(version) ? "dev" : version;
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(Elton4N.class);
-
     public static void main(String[] args) {
         try {
             int exitCode = run(args);

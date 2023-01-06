@@ -80,7 +80,7 @@ public class GraphExporterUtil {
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
         new ExportFlatInteractions(joiner, filename, taxonRelation, neo4jVersion)
-                .export(graphService, baseDir);
+                .export(graphService, baseDir, neo4jVersion);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
@@ -93,7 +93,7 @@ public class GraphExporterUtil {
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
         new ExportCitations(joiner, filename, neo4jVersion)
-                .export(graphService, baseDir);
+                .export(graphService, baseDir, neo4jVersion);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
@@ -105,7 +105,7 @@ public class GraphExporterUtil {
         stopWatch.start();
         LOG.info("[" + filename + "] generating... ");
         new ExportNamespaces(joiner, filename, neo4jVersion)
-                .export(graphService, baseDir);
+                .export(graphService, baseDir, neo4jVersion);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }
@@ -122,7 +122,7 @@ public class GraphExporterUtil {
         new ExportFlatInteractions(joiner, filename, taxonRelation, neo4jVersion)
                 .setArgumentType(RelTypes.REFUTES)
                 .setArgumentTypeId(PropertyAndValueDictionary.REFUTES)
-                .export(graphService, baseDir);
+                .export(graphService, baseDir, neo4jVersion);
         stopWatch.stop();
         LOG.info("[" + filename + "] generated in " + stopWatch.getTime(TimeUnit.SECONDS) + "s.");
     }

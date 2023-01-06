@@ -27,25 +27,25 @@ public class GraphExporterImpl extends GraphExporterBase {
     private static final Logger LOG = LoggerFactory.getLogger(GraphExporterImpl.class);
 
     @Override
-    public void doExport(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
+    public void doExport(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
         LOG.info("site maps generating... ");
         File siteMapDir = new File(baseDir, "sitemap");
 
         final File citationsDir = new File(siteMapDir, "citations");
         LOG.info("site maps at [" + citationsDir.getAbsolutePath() + "] generating... ");
-        new ExporterSiteMapForCitations().export(graphService, citationsDir);
+        new ExporterSiteMapForCitations().export(graphService, citationsDir, neo4jVersion);
         LOG.info("site maps at [" + citationsDir.getAbsolutePath() + "] generated.");
 
         final File namesDir = new File(siteMapDir, "names");
         LOG.info("site maps at [" + namesDir.getAbsolutePath() + "] generating... ");
         final GraphExporter exporter = new ExporterSiteMapForNames();
-        exporter.export(graphService, namesDir);
+        exporter.export(graphService, namesDir, neo4jVersion);
         LOG.info("site maps at [" + namesDir.getAbsolutePath() + "] generated.");
 
         LOG.info("site maps generated... ");
 
         LOG.info("ncbi linkout files generating... ");
-        exportNCBILinkOut(graphService, baseDir);
+        exportNCBILinkOut(graphService, baseDir, neo4jVersion);
         LOG.info("ncbi linkout files generated. ");
 
         exportNames(graphService, baseDir);
@@ -62,10 +62,10 @@ public class GraphExporterImpl extends GraphExporterBase {
         exportDarwinCoreAll(graphService, baseDir);
     }
 
-    private void exportNCBILinkOut(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
+    private void exportNCBILinkOut(GraphDatabaseService graphService, File baseDir, String neo4jVersion) throws StudyImporterException {
         final File ncbiDir = new File(baseDir, "ncbi-link-out/");
         mkdir(ncbiDir);
-        new ExportNCBIIdentityFile().export(graphService, ncbiDir);
+        new ExportNCBIIdentityFile().export(graphService, ncbiDir, neo4jVersion);
 
         new ExportNCBIResourceFile().export(graphService, new ExportNCBIResourceFile.OutputStreamFactory() {
             @Override
