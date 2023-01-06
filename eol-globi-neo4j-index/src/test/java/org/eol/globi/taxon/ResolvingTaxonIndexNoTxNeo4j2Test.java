@@ -13,6 +13,7 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.PropertyEnricherSingle;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.LinkerTaxonIndexNeo4j2;
+import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -117,7 +118,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
             );
         }
 
-        LinkerTaxonIndexNeo4j2 linkerTaxonIndexNeo4j2 = new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb()));
+        LinkerTaxonIndexNeo4j2 linkerTaxonIndexNeo4j2 = new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb()), new NodeIdCollectorNeo4j2());
         linkerTaxonIndexNeo4j2.index();
 
         {

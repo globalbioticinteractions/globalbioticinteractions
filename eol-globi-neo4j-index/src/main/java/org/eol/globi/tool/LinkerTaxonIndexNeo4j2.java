@@ -7,7 +7,7 @@ import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j2;
-import org.eol.globi.util.NodeIdCollectorNeo4j2;
+import org.eol.globi.util.NodeIdCollector;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -27,9 +27,11 @@ public class LinkerTaxonIndexNeo4j2 implements IndexerNeo4j {
 
     public static final String INDEX_TAXON_NAMES_AND_IDS = "taxonPaths";
     private final GraphServiceFactory factory;
+    private NodeIdCollector nodeIdCollector;
 
-    public LinkerTaxonIndexNeo4j2(GraphServiceFactory factory) {
+    public LinkerTaxonIndexNeo4j2(GraphServiceFactory factory, NodeIdCollector nodeIdCollector) {
         this.factory = factory;
+        this.nodeIdCollector = nodeIdCollector;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class LinkerTaxonIndexNeo4j2 implements IndexerNeo4j {
                 "*",
                 "taxons",
                 new TransactionPerBatch(graphDb),
-                new NodeIdCollectorNeo4j2());
+                nodeIdCollector);
     }
 
     private void initIndexes(GraphDatabaseService graphDb) {

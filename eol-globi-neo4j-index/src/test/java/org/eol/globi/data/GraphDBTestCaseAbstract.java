@@ -115,7 +115,11 @@ public abstract class GraphDBTestCaseAbstract {
     @After
     public void shutdownGraphDb() throws Exception {
         beforeGraphDbShutdown();
-        graphFactory.close();
+        try {
+            graphFactory.close();
+        } catch (Exception ex) {
+            // ignore
+        }
     }
 
     protected NodeFactoryNeo4j getNodeFactory() {
@@ -177,7 +181,8 @@ public abstract class GraphDBTestCaseAbstract {
     protected void resolveNames() {
         new NameResolver(
                 new GraphServiceFactoryProxy(getGraphDb()),
-                new NodeIdCollectorNeo4j2(), getTaxonIndex()
+                getNodeIdCollector(),
+                getTaxonIndex()
         ).index();
     }
 

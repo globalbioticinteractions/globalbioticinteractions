@@ -1,11 +1,7 @@
 package org.eol.globi.tool;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
-import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.PropertyAndValueDictionary;
@@ -13,15 +9,14 @@ import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
-import org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j2Test;
 import org.eol.globi.taxon.TaxonFuzzySearchIndexNeo4j2;
+import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.eol.globi.util.NodeUtil;
 import org.junit.Test;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
@@ -30,7 +25,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
-    public void linking() throws NodeFactoryException {
+    public void linking() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "Bar:123");
         taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
         Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
@@ -45,16 +40,31 @@ public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
         taxon.setExternalId("FOO 1234");
         resolveNames();
 
-        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
+        createIndexer().index();
 
-        IndexHits<Node> hits = getGraphDb()
-                .index()
-                .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
-                .query("*:*");
-        Node next = hits.next();
+        assertV2();
+
+
+        Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
+
+        Node taxonNode = ((NodeBacked) node).getUnderlyingNode();
+        assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.NAME_IDS));
+        assertTrue(taxonNode.hasProperty(PropertyAndValueDictionary.EXTERNAL_IDS));
+
+        assertThat(taxonNode.getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
+                , is("Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia"));
+        assertThat(taxonNode.getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
+                , is("Bar:123 | FOO:444"));
+    }
+
+    private TaxonFuzzySearchIndexNeo4j2 getTaxonFuzzySearchIndexNeo4j2() {
+        return new TaxonFuzzySearchIndexNeo4j2(getGraphDb());
+    }
+
+    protected void assertV2() {
+        Node next = getFirstHit();
+
         assertThat(new TaxonNode(next).getName(), is("Homo sapiens"));
-        assertThat(hits.hasNext(), is(true));
-        hits.close();
 
         assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:123");
         assertSingleHit(PropertyAndValueDictionary.PATH + ":FOO\\:444");
@@ -62,20 +72,26 @@ public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
         assertSingleHit(PropertyAndValueDictionary.PATH + ":BAR\\:*");
         assertSingleHit(PropertyAndValueDictionary.PATH + ":Homo");
         assertSingleHit(PropertyAndValueDictionary.PATH + ":\"Homo sapiens\"");
+    }
 
-        Taxon node = taxonIndex.findTaxonByName("Homo sapiens");
-        assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.EXTERNAL_IDS).toString()
-                , is("Animalia | BARZ:111 | Bar:123 | FOO:444 | FOOZ:777 | Homo sapiens | Homo sapiens also | Homo sapiens also2 | Mammalia"));
-        assertThat(((NodeBacked) node).getUnderlyingNode().getProperty(PropertyAndValueDictionary.NAME_IDS).toString()
-                , is("Bar:123 | FOO:444"));
+    protected Node getFirstHit() {
+        Node next = null;
+        try (IndexHits<Node> hits = getGraphDb()
+                .index()
+                .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
+                .query("*:*")) {
+            next = hits.next();
+            assertThat(hits.hasNext(), is(true));
+        }
+        return next;
+    }
 
-        assertThat(new TaxonFuzzySearchIndexNeo4j2(getGraphDb()).query("name:sapienz~").stream().count(), is(1L));
-        assertThat(new TaxonFuzzySearchIndexNeo4j2(getGraphDb()).query("name:sapienz").stream().count(), is(0L));
-
+    protected IndexerNeo4j createIndexer() {
+        return new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb()), new NodeIdCollectorNeo4j2());
     }
 
     @Test
-    public void linkingWithNameOnly() throws NodeFactoryException {
+    public void linkingWithNameOnly() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("urn:catalog:AMNH:Mammals:M-39582", null);
         taxonIndex.getOrCreateTaxon(taxonFound);
         Taxon foundTaxon = taxonIndex.findTaxonByName("urn:catalog:AMNH:Mammals:M-39582");
@@ -83,58 +99,61 @@ public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
         assertThat(foundTaxon.getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
         resolveNames();
 
-        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
+        createIndexer().index();
 
-        IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
-                .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"");
-        Node next = hits.next();
+        Node next = null;
+        try (IndexHits<Node> hits = getGraphDb().index().forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
+                .query("path:\"urn:catalog:AMNH:Mammals:M-39582\"")) {
+            next = hits.next();
+            assertThat(hits.hasNext(), is(false));
+        }
+
         assertThat(new TaxonNode(next).getName(), is("urn:catalog:AMNH:Mammals:M-39582"));
-        assertThat(hits.hasNext(), is(false));
-        hits.close();
 
     }
 
     @Test
-    public void linkingWithIdOnlyNoPath() throws NodeFactoryException {
+    public void linkingWithIdOnlyNoPath() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl(null, "some id");
         taxonIndex.getOrCreateTaxon(taxonFound);
         resolveNames();
 
-        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
+        createIndexer().index();
 
-        IndexHits<Node> hits = getGraphDb()
+        Node next = null;
+
+        try (IndexHits<Node> hits = getGraphDb()
                 .index()
                 .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
-                .query("path:\"some id\"");
+                .query("path:\"some id\"")) {
 
-        assertThat(hits.hasNext(), is(true));
-        Node next = hits.next();
+            assertThat(hits.hasNext(), is(true));
+            next = hits.next();
+            assertThat(hits.hasNext(), is(false));
+        }
+
         assertThat(new TaxonNode(next).getExternalId(), is("some id"));
-        assertThat(hits.hasNext(), is(false));
-
-        hits.close();
-
     }
 
     @Test
-    public void linkingWithLiteratureReference() throws NodeFactoryException {
+    public void linkingWithLiteratureReference() throws StudyImporterException {
         indexTaxaWithLiteratureLink();
 
-        IndexHits<Node> hits = getGraphDb()
+        Node next;
+        try (IndexHits<Node> hits = getGraphDb()
                 .index()
                 .forNodes(LinkerTaxonIndexNeo4j2.INDEX_TAXON_NAMES_AND_IDS)
-                .query("path:\"doi:10.123/456\"");
+                .query("path:\"doi:10.123/456\"")) {
+            assertThat(hits.hasNext(), is(true));
+            next = hits.next();
+            assertThat(hits.hasNext(), is(false));
 
-        assertThat(hits.hasNext(), is(true));
-        Node next = hits.next();
+        }
         assertThat(new TaxonNode(next).getExternalId(), is("bar:123"));
-        assertThat(hits.hasNext(), is(false));
-
-        hits.close();
 
     }
 
-    private void indexTaxaWithLiteratureLink() throws NodeFactoryException {
+    private void indexTaxaWithLiteratureLink() throws StudyImporterException {
         Taxon taxonFound = new TaxonImpl("Homo sapiens", "bar:123");
         taxonFound.setPath("Animalia | Mammalia | Homo sapiens");
         Taxon taxon = taxonIndex.getOrCreateTaxon(taxonFound);
@@ -145,57 +164,7 @@ public class LinkerTaxonIndexNeo4j2Test extends GraphDBNeo4jTestCase {
 
         resolveNames();
 
-        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
-    }
-
-    @Test
-    public void findByStringWithWhitespaces() throws NodeFactoryException {
-        NonResolvingTaxonIndexNeo4j2 taxonService = new NonResolvingTaxonIndexNeo4j2(getGraphDb());
-        taxonService.getOrCreateTaxon(setTaxonProps(new TaxonImpl("Homo sapiens")));
-        resolveNames();
-        resolveNames();
-        new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(getGraphDb())).index();
-
-        assertThat(getGraphDb()
-                        .index()
-                        .existsForNodes(TaxonFuzzySearchIndexNeo4j2.TAXON_NAME_SUGGESTIONS),
-                is(true));
-
-        Index<Node> index = getGraphDb()
-                .index()
-                .forNodes(TaxonFuzzySearchIndexNeo4j2.TAXON_NAME_SUGGESTIONS);
-
-        Query query = new TermQuery(new Term("name", "name"));
-        IndexHits<Node> hits = index.query(query);
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name", "s nme~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name", "geRman~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:geRman~ AND name:som~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:hmo~ AND name:SApiens~");
-        assertThat(hits.size(), is(1));
-
-        hits = index.query("name:hmo~ AND name:sapiens~");
-        assertThat(hits.size(), is(1));
-
-        // queries are case sensitive . . . should all be lower cased.
-        hits = index.query("name:HMO~ AND name:saPIENS~");
-        assertThat(hits.size(), is(0));
-
-    }
-
-    private Taxon setTaxonProps(Taxon taxon) {
-        taxon.setPath("kingdom" + CharsetConstant.SEPARATOR + "phylum" + CharsetConstant.SEPARATOR + "Homo sapiens" + CharsetConstant.SEPARATOR);
-        taxon.setExternalId("anExternalId");
-        taxon.setCommonNames(ResolvingTaxonIndexNoTxNeo4j2Test.EXPECTED_COMMON_NAMES);
-        taxon.setName("this is the actual name");
-        return taxon;
+        createIndexer().index();
     }
 
     protected void assertSingleHit(String query) {

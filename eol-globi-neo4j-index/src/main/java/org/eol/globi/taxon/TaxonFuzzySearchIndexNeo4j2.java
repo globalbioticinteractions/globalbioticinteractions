@@ -12,7 +12,7 @@ import org.neo4j.graphdb.index.IndexHits;
 
 import java.util.stream.Stream;
 
-public class TaxonFuzzySearchIndexNeo4j2 {
+public class TaxonFuzzySearchIndexNeo4j2 implements TaxonFuzzySearchIndex {
     public static final String TAXON_NAME_SUGGESTIONS = "taxonNameSuggestions";
     private final Index<Node> taxonNameSuggestions;
 
@@ -20,11 +20,13 @@ public class TaxonFuzzySearchIndexNeo4j2 {
         this.taxonNameSuggestions = graphDbService.index().forNodes(TAXON_NAME_SUGGESTIONS);
     }
 
+    @Override
     public ResourceIterator<Node> query(String luceneQueryString) {
         return taxonNameSuggestions.query(luceneQueryString);
     }
 
-    private void indexTaxonByNames(Node indexNode, String names) {
+    @Override
+    public void indexTaxonByNames(Node indexNode, String names) {
         if (StringUtils.isNotBlank(names)) {
             String[] pathElementArray = names.split(CharsetConstant.SEPARATOR);
             for (String pathElement : pathElementArray) {
@@ -33,6 +35,7 @@ public class TaxonFuzzySearchIndexNeo4j2 {
         }
     }
 
+    @Override
     public void index(Node indexNode, TaxonNode taxonNode) {
         indexTaxonByNames(indexNode, taxonNode.getCommonNames());
         indexTaxonByNames(indexNode, taxonNode.getPath());
