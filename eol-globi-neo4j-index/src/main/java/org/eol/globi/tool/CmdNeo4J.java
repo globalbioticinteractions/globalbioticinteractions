@@ -34,6 +34,10 @@ public abstract class CmdNeo4J implements Cmd {
     private String datasetDir;
 
 
+    public void setNeo4jVersion(String neo4jVersion) {
+        this.neo4jVersion = neo4jVersion;
+    }
+
     @CommandLine.Option(
             names = {"-neo4jVersion"},
             description = "version neo4j index to use (NOTE: only v2 indexes are fully implemented currently, v2 indexes work with neo4j v3.5.x)",
@@ -120,6 +124,7 @@ public abstract class CmdNeo4J implements Cmd {
         cmd.setGraphServiceFactory(getGraphServiceFactory());
         cmd.setNodeFactoryFactory(getNodeFactoryFactory());
         cmd.setCacheDir(getCacheDir());
+        cmd.setNeo4jVersion("2");
         cmd.run();
     }
 

@@ -1,6 +1,8 @@
 package org.eol.globi.export;
 
+import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
+import org.eol.globi.data.Neo4jIndexType;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.Study;
@@ -13,15 +15,24 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 
-public class GraphExporterImplTest extends GraphDBNeo4jTestCase {
+public class GraphExporterNeo4j3ImplTest extends GraphDBNeo4jTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    @Override
+    protected Neo4jIndexType getSchemaType() {
+        return Neo4jIndexType.schema;
+    }
+
 
     @Test
     public void exportAll() throws StudyImporterException, IOException {
@@ -34,10 +45,24 @@ public class GraphExporterImplTest extends GraphDBNeo4jTestCase {
         human.ate(nodeFactory.createSpecimen(study, new TaxonImpl("Canis familiaris", "BLA:444")));
         resolveNames();
 
-        new GraphExporterImpl().export(getGraphDb(), tmpDir);
-        new GraphExporterInteractionsTSVImpl("2")
-                .export(getGraphDb(), tmpDir);
-        assertThat(tmpDir.list().length, is(8));
+        new GraphExporterInteractionsTSVImpl("3").export(getGraphDb(), tmpDir);
+
+
+        File tsvDir = new File(tmpDir, "tsv");
+        assertThat(tsvDir.exists(), is(true));
+
+        List<String> tsvExports = Arrays.asList(tsvDir.list());
+
+        assertThat(tsvExports.size(), is(6));
+
+        assertThat(tsvExports, hasItems(
+                "verbatim-interactions.tsv.gz",
+                "refuted-verbatim-interactions.tsv.gz",
+                "datasets.tsv.gz",
+                "interactions.tsv.gz",
+                "refuted-interactions.tsv.gz",
+                "citations.tsv.gz")
+        );
 
     }
 

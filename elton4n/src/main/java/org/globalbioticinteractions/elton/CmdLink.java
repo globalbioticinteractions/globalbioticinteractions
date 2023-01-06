@@ -17,7 +17,7 @@ import picocli.CommandLine;
                 CmdGenerateReportNeo4j2.class,
         }
 )
-public class CmdLinkNeo4j2 extends CmdNeo4J {
+public class CmdLink extends CmdNeo4J {
 
 
     @Override
@@ -25,7 +25,9 @@ public class CmdLinkNeo4j2 extends CmdNeo4J {
         configureAndRun(new CmdInterpretTaxa());
         configureAndRun(new CmdIndexTaxa());
         configureAndRun(new CmdIndexTaxonStrings());
-        configureAndRun(new CmdGenerateReportNeo4j2());
+        if ("2".equals(getNeo4jVersion())) {
+            configureAndRun(new CmdGenerateReportNeo4j2());
+        }
     }
 
 

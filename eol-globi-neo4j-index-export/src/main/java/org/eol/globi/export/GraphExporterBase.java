@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class GraphExporterBase implements GraphExporter {
-    private static final Logger LOG = LoggerFactory.getLogger(GraphExporterBase.class);
 
     @Override
     public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {

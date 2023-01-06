@@ -2,7 +2,6 @@ package org.eol.globi.export;
 
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.util.InteractUtil;
@@ -18,6 +17,7 @@ public class ExportFlatInteractions implements GraphExporter {
 
     private final ExportUtil.ValueJoiner joiner;
     private final String filename;
+    private final String neo4jVersion;
 
     public RelTypes getTaxonRelation() {
         return taxonRelation;
@@ -33,28 +33,35 @@ public class ExportFlatInteractions implements GraphExporter {
     }
 
     public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename, RelTypes taxonRelation) {
+        this(joiner, filename, taxonRelation, "2");
+    }
+
+    public ExportFlatInteractions(ExportUtil.ValueJoiner joiner, String filename, RelTypes taxonRelation, String neo4jVersion) {
         this.joiner = joiner;
         this.filename = filename;
         this.taxonRelation = taxonRelation;
+        this.neo4jVersion = neo4jVersion;
     }
 
-    private List<String> createExportQueries() {
+
+    private List<String> createExportQueries(String prefix) {
         return Collections.singletonList(
                 ExportFlatInteractions.createQuery(
                         getArgumentType(),
                         getArgumentTypeId(),
-                        getTaxonRelation())
+                        getTaxonRelation(),
+                        prefix)
         );
     }
 
-    private static String createQuery(RelTypes argumentTypeRel, String argumentTypeId, RelTypes taxonRelation) {
+    private static String createQuery(RelTypes argumentTypeRel, String argumentTypeId, RelTypes taxonRelation, String prefix) {
         String argumentType = argumentTypeRel.name();
-        return "CYPHER 2.3 START dataset = node:datasets('namespace:*') " +
-                "MATCH dataset<-[:IN_DATASET]-study-[c:" + argumentType + "]->sourceSpecimen-[:" + taxonRelation.name() + "]->sourceTaxon, " +
-                "sourceSpecimen-[r:" + InteractUtil.allInteractionsCypherClause() + "]->targetSpecimen-[:" + taxonRelation.name() + "]->targetTaxon " +
+        return prefix +
+                "MATCH (dataset)<-[:IN_DATASET]-(study)-[c:" + argumentType + "]->(sourceSpecimen)-[:" + taxonRelation.name() + "]->(sourceTaxon), " +
+                "(sourceSpecimen)-[r:" + InteractUtil.allInteractionsCypherClause() + "]->(targetSpecimen)-[:" + taxonRelation.name() + "]->(targetTaxon) " +
                 "WHERE NOT exists(r.inverted) " +
                 "WITH dataset, study, c, sourceSpecimen, sourceTaxon, targetSpecimen, targetTaxon, r " +
-                "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
+                "OPTIONAL MATCH (sourceSpecimen)-[:COLLECTED_AT]->(loc) " +
                 "RETURN " +
                 "sourceTaxon.externalId as sourceTaxonId" +
                 ", sourceTaxon.nameIds as sourceTaxonIds" +
@@ -152,11 +159,26 @@ public class ExportFlatInteractions implements GraphExporter {
 
     @Override
     public void export(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
-        ExportUtil.export(graphService, new File(baseDir, filename), createExportQueries(), joiner);
+        String prefix = getPrefix();
+        ExportUtil.export(
+                graphService,
+                new File(baseDir, filename),
+                createExportQueries(prefix),
+                joiner);
+    }
+
+    private String getPrefix() {
+        return "2".equals(neo4jVersion)
+                ? "CYPHER 2.3 START dataset = node:datasets('namespace:*') "
+                : "";
     }
 
     void export(GraphDatabaseService graphService, ExportUtil.Appender appender) throws IOException {
-        ExportUtil.export(appender, graphService, createExportQueries());
+        String prefix = getPrefix();
+        ExportUtil.export(
+                appender,
+                graphService,
+                createExportQueries(prefix));
     }
 
     public RelTypes getArgumentType() {

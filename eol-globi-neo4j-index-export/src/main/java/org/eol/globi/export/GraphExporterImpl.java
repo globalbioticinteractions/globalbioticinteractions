@@ -1,10 +1,7 @@
 package org.eol.globi.export;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.domain.PropertyAndValueDictionary;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
@@ -23,7 +20,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPOutputStream;
 
@@ -58,8 +54,8 @@ public class GraphExporterImpl extends GraphExporterBase {
                 graphService,
                 baseDir,
                 "csv",
-                new ExportUtil.CsvValueJoiner()
-        );
+                new ExportUtil.CsvValueJoiner(),
+                "2");
 
         exportDataOntology(graphService, baseDir);
         exportDarwinCoreAggregatedByStudy(graphService, baseDir);

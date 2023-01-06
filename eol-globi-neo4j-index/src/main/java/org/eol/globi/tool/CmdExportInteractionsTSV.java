@@ -17,7 +17,7 @@ public class CmdExportInteractionsTSV extends CmdExportNeo4J {
     @Override
     public void run() {
         try {
-            new GraphExporterInteractionsTSVImpl()
+            new GraphExporterInteractionsTSVImpl(getNeo4jVersion())
                     .export(
                             getGraphServiceFactory().getGraphService(), new File(getBaseDir())
                     );

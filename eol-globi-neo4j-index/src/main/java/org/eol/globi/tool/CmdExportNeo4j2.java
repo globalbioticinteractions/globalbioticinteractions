@@ -11,7 +11,7 @@ import java.io.File;
         name = "package",
         description = "Export and package GloBI data products."
 )
-public class CmdExport extends CmdExportNeo4J {
+public class CmdExportNeo4j2 extends CmdExportNeo4J {
 
     @Override
     public void run() {

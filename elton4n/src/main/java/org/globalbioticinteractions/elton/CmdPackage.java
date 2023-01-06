@@ -1,7 +1,7 @@
 package org.globalbioticinteractions.elton;
 
-import org.eol.globi.tool.CmdExport;
 import org.eol.globi.tool.CmdExportInteractionsTSV;
+import org.eol.globi.tool.CmdExportNeo4j2;
 import org.eol.globi.tool.CmdExportNeo4J;
 import picocli.CommandLine;
 
@@ -13,8 +13,12 @@ public class CmdPackage extends CmdExportNeo4J {
 
     @Override
     public void run() {
-        configAndRun(new CmdExportInteractionsTSV());
-        configAndRun(new CmdExport());
+        if ("2".equals(getNeo4jVersion())) {
+            configAndRun(new CmdExportInteractionsTSV());
+            configAndRun(new CmdExportNeo4j2());
+        } else {
+            configAndRun(new CmdExportInteractionsTSV());
+        }
     }
 
     private void configAndRun(CmdExportNeo4J cmdExportInteractionsTSV) {
