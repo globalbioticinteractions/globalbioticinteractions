@@ -1,26 +1,33 @@
 package org.eol.globi.tool;
 
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.domain.Taxon;
-import org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j2;
 import org.eol.globi.taxon.TaxonCacheService;
-import org.eol.globi.util.NodeIdCollectorNeo4j2;
+import org.eol.globi.util.NodeIdCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndexerTaxaNeo4j2 implements IndexerNeo4j {
-    private static final Logger LOG = LoggerFactory.getLogger(IndexerTaxaNeo4j2.class);
+public class IndexerTaxa implements IndexerNeo4j {
+    private static final Logger LOG = LoggerFactory.getLogger(IndexerTaxa.class);
 
     private final TaxonCacheService taxonCacheService;
     private final GraphServiceFactory factory;
+    private final ResolvingTaxonIndex index;
+    private final NodeIdCollector nodeIdCollector;
 
-    public IndexerTaxaNeo4j2(TaxonCacheService taxonCacheService, GraphServiceFactory factory) {
+    public IndexerTaxa(TaxonCacheService taxonCacheService,
+                       GraphServiceFactory factory,
+                       ResolvingTaxonIndex index,
+                       NodeIdCollector nodeIdCollector) {
         this.taxonCacheService = taxonCacheService;
         this.factory = factory;
+        this.index = index;
+        this.nodeIdCollector = nodeIdCollector;
     }
 
 
@@ -28,7 +35,6 @@ public class IndexerTaxaNeo4j2 implements IndexerNeo4j {
     public void index() throws StudyImporterException {
         LOG.info("resolving names with taxon cache ...");
         try {
-            ResolvingTaxonIndexNoTxNeo4j2 index = new ResolvingTaxonIndexNoTxNeo4j2(taxonCacheService, factory.getGraphService());
             index.setIndexResolvedTaxaOnly(true);
 
             TaxonFilter taxonCacheFilter = new TaxonFilter() {
@@ -42,7 +48,7 @@ public class IndexerTaxaNeo4j2 implements IndexerNeo4j {
                 }
             };
 
-            new NameResolver(factory, index, new NodeIdCollectorNeo4j2(), taxonCacheFilter)
+            new NameResolver(factory, index, nodeIdCollector, taxonCacheFilter)
                     .index();
 
             LOG.info("adding same and similar terms for resolved taxa...");

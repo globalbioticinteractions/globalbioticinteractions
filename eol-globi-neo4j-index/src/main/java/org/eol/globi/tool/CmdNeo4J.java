@@ -80,7 +80,6 @@ public abstract class CmdNeo4J implements Cmd {
     }
 
 
-
     private static NodeFactoryFactory getNodeFactoryFactory(String neo4jVersion, GraphServiceFactory graphServiceFactory) {
         return StringUtils.equals("2", neo4jVersion)
                 ? new NodeFactoryFactoryTransactingOnDatasetNeo4j2(graphServiceFactory)
@@ -152,4 +151,9 @@ public abstract class CmdNeo4J implements Cmd {
     public void setCacheDir(String cacheDir) {
         this.cacheDir = cacheDir;
     }
+
+    public String getNeo4jVersion() {
+        return neo4jVersion;
+    }
+
 }

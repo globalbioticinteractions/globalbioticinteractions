@@ -2,6 +2,7 @@ package org.eol.globi.taxon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.NodeFactoryException;
+import org.eol.globi.data.ResolvingTaxonIndex;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo4j2 {
+public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo4j2 implements ResolvingTaxonIndex {
 
     private PropertyEnricher enricher;
     private boolean indexResolvedOnly;
@@ -136,6 +137,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
         this.enricher = enricher;
     }
 
+    @Override
     public void setIndexResolvedTaxaOnly(boolean indexResolvedOnly) {
         this.indexResolvedOnly = indexResolvedOnly;
     }
