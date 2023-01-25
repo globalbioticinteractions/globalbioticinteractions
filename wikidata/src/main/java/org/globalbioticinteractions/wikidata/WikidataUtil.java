@@ -105,7 +105,6 @@ public final class WikidataUtil {
 
     public static List<Taxon> findRelatedTaxonIds(String externalId) throws IOException, URISyntaxException {
         List<Taxon> relatedIds = new ArrayList<>();
-        String sparql;
         final TaxonomyProvider taxonomyProvider = ExternalIdUtil.taxonomyProviderFor(externalId);
         if (taxonomyProvider != null) {
             final String taxonId = ExternalIdUtil.stripPrefix(taxonomyProvider, externalId);
@@ -114,7 +113,7 @@ public final class WikidataUtil {
                             ? wdTaxonWhereClause(taxonId)
                             : nonWdTaxonWhereClause(taxonomyProvider, taxonId);
 
-            sparql =
+            String sparql =
                     "SELECT ?wdTaxonId ?taxonScheme ?taxonId ?wdTaxonName WHERE {\n" + whereClause +
                             "  ?taxonSchemeEntity wikibase:directClaim ?taxonScheme .\n" +
                             "  ?taxonSchemeEntity wdt:P31 wd:Q42396390 .\n" +

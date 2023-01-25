@@ -25,6 +25,7 @@ import static org.eol.globi.domain.TaxonomyProvider.ENVO;
 import static org.eol.globi.domain.TaxonomyProvider.FISHBASE_CACHE;
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
 import static org.eol.globi.domain.TaxonomyProvider.GULFBASE;
+import static org.eol.globi.domain.TaxonomyProvider.HESPEROMYS;
 import static org.eol.globi.domain.TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE;
 import static org.eol.globi.domain.TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER;
 import static org.eol.globi.domain.TaxonomyProvider.OPEN_BIODIV;
@@ -60,7 +61,8 @@ public class WikidataUtilTest {
                 BOLD_BIN,
                 PLAZI_TAXON_CONCEPT,
                 TERRESTRIAL_PARASITE_TRACKER,
-                MAMMAL_DIVERSITY_DATABASE
+                MAMMAL_DIVERSITY_DATABASE,
+                HESPEROMYS
 
         );
         List<TaxonomyProvider> unsupported = new ArrayList<>();
