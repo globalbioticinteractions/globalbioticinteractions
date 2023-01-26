@@ -45,7 +45,8 @@ public enum TaxonomyProvider {
     WORLD_OF_FLORA_ONLINE("WFO:", "http://www.worldfloraonline.org/taxon/wfo-"),
     TERRESTRIAL_PARASITE_TRACKER("TPT:"),
     MAMMAL_DIVERSITY_DATABASE("MDD:", "https://www.mammaldiversity.org/explore.html#id="),
-    HESPEROMYS("HES:", "http://hesperomys.com/n/");
+    HESPEROMYS("HES:", "http://hesperomys.com/n/"),
+    PBDB("PBDB:", "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
 
     private final List<String> idPrefixes;
 

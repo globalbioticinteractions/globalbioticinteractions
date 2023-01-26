@@ -184,11 +184,25 @@ public class ExternalIdUtilTest {
                 is("https://www.irmng.org/aphia.php?p=taxdetails&id=123"));
     }
 
-        @Test
+    @Test
     public void mammalSpeciesOfTheWorldId() {
         String url = "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id=12100795";
         assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.MSW));
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.MSW, url), is("12100795"));
+    }
+
+    @Test
+    public void paleobioDatabase() {
+        String url = "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=83088";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.PBDB));
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.PBDB, url), is("83088"));
+    }
+
+    @Test
+    public void paleobioDatabaseExpand() {
+        String id = "PBDB:83088";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(id), is(TaxonomyProvider.PBDB));
+        assertThat(ExternalIdUtil.urlForExternalId(id), is("https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=83088"));
     }
 
 

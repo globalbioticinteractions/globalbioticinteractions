@@ -58,6 +58,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.CATALOGUE_OF_LIFE.getIdPrefix(), "https://www.catalogueoflife.org/data/taxon/");
         put(TaxonomyProvider.WORLD_OF_FLORA_ONLINE.getIdPrefix(), "http://www.worldfloraonline.org/taxon/wfo-");
         put(TaxonomyProvider.HESPEROMYS.getIdPrefix(), "http://hesperomys.com/n/");
+        put(TaxonomyProvider.PBDB.getIdPrefix(), "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
     }};
 
     private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{
