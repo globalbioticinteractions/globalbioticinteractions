@@ -435,7 +435,24 @@ public class TaxonUtilTest {
 
 
     @Test
-    public void mapToTaxon() {
+    public void toTaxonNameMap() {
+        Taxon donald = new TaxonImpl("Donald duckus");
+        donald.setPath("Chordata | Mammalia | Artiodactyla | Bovidae | Bovinae | Bos | Bos taurus");
+        donald.setPathNames("phylum | class | order | family | subfamily | genus | species");
+        Map<String, String> taxonMap = TaxonUtil.toPathNameMap(donald);
+
+        assertThat(taxonMap.get("phylum"), is("Chordata"));
+        assertThat(taxonMap.get("class"), is("Mammalia"));
+        assertThat(taxonMap.get("order"), is("Artiodactyla"));
+        assertThat(taxonMap.get("family"), is("Bovidae"));
+        assertThat(taxonMap.get("subfamily"), is("Bovinae"));
+        assertThat(taxonMap.get("genus"), is("Bos"));
+        assertThat(taxonMap.get("species"), is("Bos taurus"));
+        assertThat(taxonMap.size(), is(7));
+    }
+
+    @Test
+    public void maptoPathNameMapn() {
         Map<String, String> taxonMap = new TreeMap<String, String>() {{
             put("sourceTaxonClassName", "Mammalia");
             put("sourceTaxonFamilyName", "Bovidae");
