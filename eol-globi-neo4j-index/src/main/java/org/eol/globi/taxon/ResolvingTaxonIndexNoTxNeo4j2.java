@@ -73,15 +73,15 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
     }
 
     private TaxonNode indexFirstAndConnectRemaining(List<Map<String, String>> taxonMatches, Taxon origTaxon) throws NodeFactoryException {
-        Taxon primaryTaxon = selectPrimaryTaxon(taxonMatches, origTaxon);
+        Taxon primaryTaxon = selectPrimaryTaxon(taxonMatches, getMatchSelectorFor(origTaxon));
         return indexAndConnect(taxonMatches, origTaxon, primaryTaxon);
     }
 
-    private Taxon selectPrimaryTaxon(List<Map<String, String>> taxonMatches, Taxon origTaxon) {
+    private Taxon selectPrimaryTaxon(List<Map<String, String>> taxonMatches, Predicate<Taxon> matchSelectorFor) {
         Taxon primary = null;
         for (Map<String, String> taxonMatch : taxonMatches) {
             Taxon matchedTaxon = TaxonUtil.mapToTaxon(taxonMatch);
-            if (!TaxonUtil.likelyHomonym(origTaxon, matchedTaxon)) {
+            if (matchSelectorFor.test(matchedTaxon)) {
                 primary = matchedTaxon;
             }
             if (primary != null && !TaxonUtil.hasLiteratureReference(primary)) {
@@ -96,7 +96,6 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
         if (indexedTaxon == null) {
             if (TaxonUtil.isResolved(primaryTaxon)) {
                 indexedTaxon = indexAndConnect(taxonMatches, origTaxon, primaryTaxon, indexedTaxon);
-
             }
         }
         return indexedTaxon;
@@ -109,7 +108,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
             Taxon sameAsTaxon = TaxonUtil.mapToTaxon(taxonMatch);
             if (StringUtils.equals(sameAsTaxon.getExternalId(), origTaxon.getExternalId())) {
                 indexedTaxon = createAndIndexTaxon(origTaxon, sameAsTaxon);
-                selector = new ExcludeHomonyms(sameAsTaxon);
+                selector = getMatchSelectorFor(sameAsTaxon);
                 break;
             }
         }

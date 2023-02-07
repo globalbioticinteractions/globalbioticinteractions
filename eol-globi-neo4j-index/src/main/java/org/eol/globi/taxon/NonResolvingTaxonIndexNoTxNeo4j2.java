@@ -34,6 +34,9 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
             "species"
     };
 
+
+    private boolean skipHomonymMatches = false;
+
     public NonResolvingTaxonIndexNoTxNeo4j2(GraphDatabaseService graphDbService) {
         this.graphDbService = graphDbService;
     }
@@ -57,12 +60,12 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
 
     @Override
     public TaxonNode findTaxonById(String externalId) {
-        return findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, subj -> true);
+        return findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, alwaysMatch());
     }
 
     @Override
     public TaxonNode findTaxonByName(String name) throws NodeFactoryException {
-        return findTaxonByKey(PropertyAndValueDictionary.NAME, name, subj -> true);
+        return findTaxonByKey(PropertyAndValueDictionary.NAME, name, alwaysMatch());
     }
 
     private TaxonNode findTaxonByKey(String key, String value, Predicate<Taxon> selector) {
@@ -100,13 +103,31 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
             if (StringUtils.isBlank(externalId)) {
                 String name = taxon.getName();
                 if (StringUtils.length(name) > 1) {
-                    taxon1 = findTaxonByKey(PropertyAndValueDictionary.NAME, name, new ExcludeHomonyms(taxon));
+                    taxon1 = findTaxonByKey(PropertyAndValueDictionary.NAME, name, getMatchSelectorFor(taxon));
                 }
             } else {
-                taxon1 = findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, new ExcludeHomonyms(taxon));
+                taxon1 = findTaxonByKey(PropertyAndValueDictionary.EXTERNAL_ID, externalId, getMatchSelectorFor(taxon));
             }
         }
         return taxon1;
+    }
+
+    protected Predicate<Taxon> getMatchSelectorFor(Taxon taxon) {
+        return shouldSkipHomonymMatches()
+                ? new ExcludeHomonyms(taxon)
+                : alwaysMatch();
+    }
+
+    private static Predicate<Taxon> alwaysMatch() {
+        return t -> true;
+    }
+
+    private boolean shouldSkipHomonymMatches() {
+        return skipHomonymMatches;
+    }
+
+    public void skipHomonymMatches(boolean skipHomonymMatches) {
+        this.skipHomonymMatches = skipHomonymMatches;
     }
 
     private void indexOriginalNameForTaxon(String name, TaxonNode taxonNode) throws NodeFactoryException {

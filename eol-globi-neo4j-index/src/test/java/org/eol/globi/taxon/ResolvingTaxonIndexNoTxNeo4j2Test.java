@@ -359,7 +359,9 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public final void doNotMatchHomonyms() throws NodeFactoryException {
+
         ResolvingTaxonIndexNeo4j2 taxonService = createTaxonService(getGraphDb());
+        taxonService.skipHomonymMatches(true);
         taxonService.setEnricher(new PropertyEnricherSingle() {
             @Override
             public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
@@ -386,12 +388,14 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
         taxon1.setPath("four | five | six | some name");
         taxon1.setPathNames("kingdom | family | genus | species");
 
+
         TaxonNode second = this.taxonService.getOrCreateTaxon(taxon1);
         assertThat(second.getName(), is("some name"));
         assertThat(second.getPath(), is("four | five | six | some name"));
 
 
         assertThat(second.getNodeID(), is(not(first.getNodeID())));
+
 
     }
 
