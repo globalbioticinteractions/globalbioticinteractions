@@ -340,7 +340,7 @@ public class TaxonUtilTest {
         taxonA.setPathIds("1 | 2 | 3");
         taxonA.setPathNames("kingdom | family | genus");
         taxonA.setPath("Animalia | Hominidae | Homo");
-        final Map<String, String> nameMap = TaxonUtil.toPathNameMap(taxonA);
+        final Map<String, String> nameMap = TaxonUtil.toPathNameMap(taxonA, ((Taxon) taxonA).getPath());
         assertThat(nameMap, hasEntry("genus", "Homo"));
         assertThat(nameMap, hasEntry("family", "Hominidae"));
         assertThat(nameMap, hasEntry("kingdom", "Animalia"));
@@ -358,7 +358,7 @@ public class TaxonUtilTest {
         taxonA.setPathIds("1 | 2 | 3 | 4 | 5");
         taxonA.setPathNames("kingdom | family | genus | specificEpithet | subspecificEpithet");
         taxonA.setPath("Animalia | Hominidae | Homo | sapiens | ferus");
-        final Map<String, String> nameMap = TaxonUtil.toPathNameMap(taxonA);
+        final Map<String, String> nameMap = TaxonUtil.toPathNameMap(taxonA, ((Taxon) taxonA).getPath());
         assertThat(nameMap, hasEntry("genus", "Homo"));
         assertThat(nameMap, hasEntry("family", "Hominidae"));
         assertThat(nameMap, hasEntry("kingdom", "Animalia"));
@@ -439,7 +439,7 @@ public class TaxonUtilTest {
         Taxon donald = new TaxonImpl("Donald duckus");
         donald.setPath("Chordata | Mammalia | Artiodactyla | Bovidae | Bovinae | Bos | Bos taurus");
         donald.setPathNames("phylum | class | order | family | subfamily | genus | species");
-        Map<String, String> taxonMap = TaxonUtil.toPathNameMap(donald);
+        Map<String, String> taxonMap = TaxonUtil.toPathNameMap(donald, donald.getPath());
 
         assertThat(taxonMap.get("phylum"), is("Chordata"));
         assertThat(taxonMap.get("class"), is("Mammalia"));

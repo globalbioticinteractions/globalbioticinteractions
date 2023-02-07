@@ -174,9 +174,11 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
 
         TaxonUtil.copy(resolved, resolvedNode);
         if (isNonEmptyTaxonNameOrId(resolvedNode.getName())) {
+            final Map<String, String> pathIdMap1 = TaxonUtil.toPathNameMap(resolved, resolved.getPathIds());
+            final Map<String, String> pathNameMap1 = TaxonUtil.toPathNameMap(resolved, resolved.getPath());
             for (String rank : RANKS) {
-                populateRankIds(resolved, node, rank);
-                populateRankNames(resolved, node, rank);
+                populateRankIds(node, rank, pathIdMap1);
+                populateRankNames(node, rank, pathNameMap1);
             }
         }
         indexTaxon(provided, resolvedNode);
@@ -189,17 +191,15 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
         indexOriginalExternalIdForTaxon(provided.getExternalId(), resolved);
     }
 
-    private void populateRankNames(Taxon taxon, Node node, String rank) {
-        Map<String, String> pathNameMap = TaxonUtil.toPathNameMap(taxon);
-        String name = pathNameMap.get(rank);
+    private void populateRankNames(Node node, String rank, Map<String, String> pathNameMap1) {
+        String name = pathNameMap1.get(rank);
         if (StringUtils.isNotBlank(name)) {
             node.setProperty(rank + "Name", name);
         }
     }
 
-    private void populateRankIds(Taxon taxon, Node node, String rank) {
-        Map<String, String> pathIdMap = TaxonUtil.toPathIdMap(taxon);
-        String id = pathIdMap.get(rank);
+    private void populateRankIds(Node node, String rank, Map<String, String> pathIdMap1) {
+        String id = pathIdMap1.get(rank);
         if (StringUtils.isNotBlank(id)) {
             node.setProperty(rank + "Id", id);
         }
