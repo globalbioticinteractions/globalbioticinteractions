@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
@@ -67,6 +68,24 @@ public class OccurrenceIdIdEnricherGenBankTest {
         assertThat(properties.get(TARGET_TAXON_ID), is("NCBI:1980456"));
         assertThat(properties.get(SOURCE_TAXON_NAME), is("Oligoryzomys longicaudatus"));
         assertThat(properties.get("localityName"), is("Chile"));
+    }
+
+
+    @Test
+    public void lookupTargetOccurrenceId2() throws StudyImporterException {
+        Map<String, String> properties
+                = new OccurrenceIdIdEnricherGenBank(null, null, getResourceService())
+                .enrich(new TreeMap<String, String>() {{
+                    put("targetOccurrenceId", "https://www.ncbi.nlm.nih.gov/nuccore/MK216285");
+                }});
+
+        assertThat(properties.get(TARGET_TAXON_NAME), is("Plasmodium sp. SEIAUR01"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HOST_OF.getIRI()));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HOST_OF.getLabel()));
+        assertThat(properties.get(TARGET_TAXON_ID), is("NCBI:2163520"));
+        assertThat(properties.get(SOURCE_TAXON_NAME), is("Pipilo maculatus; voucher MSB:Bird:48255"));
+        assertThat(properties.get(SOURCE_BODY_PART_NAME), is("pectoral muscle"));
+        assertThat(properties.get("localityName"), is("USA: New Mexico"));
     }
 
 

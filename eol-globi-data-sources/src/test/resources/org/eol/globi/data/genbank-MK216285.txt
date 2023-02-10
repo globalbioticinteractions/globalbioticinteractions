@@ -1,0 +1,66 @@
+LOCUS       MK216285                 478 bp    DNA     linear   INV 28-AUG-2020
+DEFINITION  Plasmodium sp. SEIAUR01 isolate NK278282 cytochrome b (cytb) gene,
+            partial cds; mitochondrial.
+ACCESSION   MK216285
+VERSION     MK216285.1
+KEYWORDS    .
+SOURCE      mitochondrion Plasmodium sp. SEIAUR01
+  ORGANISM  Plasmodium sp. SEIAUR01
+            Eukaryota; Sar; Alveolata; Apicomplexa; Aconoidasida; Haemosporida;
+            Plasmodiidae; Plasmodium.
+REFERENCE   1  (bases 1 to 478)
+  AUTHORS   Barrow,L.N., Bauernfeind,S.M., Cruz,P.A., Williamson,J.L.,
+            Wiley,D.L., Ford,J.E., Baumann,M.J., Brady,S.S., Chavez,A.N.,
+            Gadek,C.R., Galen,S.C., Johnson,A.B., Mapel,X.M.,
+            Marroquin-Flores,R.A., Martinez,T.E., McCullough,J.M.,
+            McLaughlin,J.E. and Witt,C.C.
+  TITLE     Detecting turnover among complex communities using null models: A
+            case study with sky-island haemosporidian parasites
+  JOURNAL   bioRxiv 04, 17 (2020)
+  REMARK    Publication Status: Online-Only
+REFERENCE   2  (bases 1 to 478)
+  AUTHORS   Barrow,L.N., Bauernfeind,S.M., Cruz,P.A., Williamson,J.L.,
+            Wiley,D.L., Ford,J.E., Baumann,M.J., Brady,S.S., Chavez,A.N.,
+            Gadek,C.R., Galen,S.C., Johnson,A.B., Mapel,X.M.,
+            Marroquin-Flores,R.A., Martinez,T.E., McCullough,J.M.,
+            McGlaughlin,J. and Witt,C.C.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (24-NOV-2018) Department of Biology, University of New
+            Mexico, 219 Yale Blvd NE, Castetter Hall Room 1480, Albuquerque, NM
+            87131, USA
+COMMENT     ##Assembly-Data-START##
+            Sequencing Technology :: Sanger dideoxy sequencing
+            ##Assembly-Data-END##
+FEATURES             Location/Qualifiers
+     source          1..478
+                     /organism="Plasmodium sp. SEIAUR01"
+                     /organelle="mitochondrion"
+                     /mol_type="genomic DNA"
+                     /isolate="NK278282"
+                     /isolation_source="pectoral muscle"
+                     /host="Pipilo maculatus; voucher MSB:Bird:48255"
+                     /specimen_voucher="MSB:Para:31438"
+                     /db_xref="taxon:2163520"
+                     /haplotype="SEIAUR01"
+                     /country="USA: New Mexico"
+     gene            <1..>478
+                     /gene="cytb"
+     CDS             <1..>478
+                     /gene="cytb"
+                     /codon_start=3
+                     /transl_table=4
+                     /product="cytochrome b"
+                     /protein_id="QDB06290.1"
+                     /translation="TGASFVFILTYLHILRGLNYSYSYLPLSWISGLLIFLISIVTAF
+                     MGYVLPWGQMSFWGATVITNLLYFIPGLVSWICGGYLVSDPTLKRFFVLHFTFPFIAL
+                     CIVFIHIFFLHLQGSTNPLGYDTALKIPFYPNLLSLDIKGFNNVLVLFLAQSLFGI"
+ORIGIN
+        1 caacaggtgc ttcatttgta tttattttaa cttatttaca tattttaaga ggattaaatt
+       61 attcatattc atatttacct ttatcatgga tatctggatt acttatattt ttaatatcta
+      121 ttgtaacagc ttttatgggt tatgtattac cttggggtca aatgagtttc tggggtgcta
+      181 cagttattac taatttatta tattttatac ctggacttgt ttcatggata tgtggtggat
+      241 atcttgtaag tgacccaacc ttaaaaagat tctttgtatt acattttaca tttccattta
+      301 tagccttatg tattgtattt atacatatat tctttttaca tttacaaggt agcacaaatc
+      361 ctttagggta tgatacagct ttaaaaatac ccttctatcc aaatctttta agtcttgata
+      421 ttaaaggatt taataatgta ttagtattat tcttagcaca aagtttattt ggaatatt
+//
