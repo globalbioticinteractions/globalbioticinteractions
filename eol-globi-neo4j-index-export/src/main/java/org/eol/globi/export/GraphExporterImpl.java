@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPOutputStream;
 
 public class GraphExporterImpl extends GraphExporterBase {
@@ -147,12 +148,17 @@ public class GraphExporterImpl extends GraphExporterBase {
             OutputStreamWriter writer = openStream(exportFile);
             String msg = "writing nquads archive to [" + exportFile + "]";
             LOG.info(msg + "...");
+            AtomicInteger studyCounter = new AtomicInteger(0);
             NodeUtil.findStudies(graphService, node -> {
                 try {
-                    studyExporter.exportStudy(
-                            new StudyNode(node),
-                            ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()),
-                            true);
+                    int studyCount = studyCounter.getAndIncrement();
+                    // limit to number of nquads translated studies for now
+                    if (studyCount < 100) {
+                        studyExporter.exportStudy(
+                                new StudyNode(node),
+                                ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()),
+                                true);
+                    }
                 } catch (IOException e) {
                     throw new IllegalStateException("failed to export interactions to [" + exportFile.getAbsolutePath() + "]", e);
                 }
