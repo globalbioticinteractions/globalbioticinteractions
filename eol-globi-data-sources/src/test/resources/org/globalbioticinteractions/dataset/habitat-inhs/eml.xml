@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns:dc="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.1/eml-gbif-profile.xsd" packageId="99b6c2df-3659-47db-a8d7-632ee20e3be3" system="https://taxonworks.org" scope="system" xml:lang="en">
+  <dataset>
+    <alternateIdentifier>99b6c2df-3659-47db-a8d7-632ee20e3be3</alternateIdentifier>
+    <title xmlns:lang="en">Illinois Natural History Survey Insect Collection</title>
+    <creator>
+      <individualName>
+        <givenName>Thomas</givenName>
+        <surName>McElrath</surName>
+      </individualName>
+      <organizationName>University of Illinois at Urbana-Champaign, Illinois Natural History Survey</organizationName>
+      <electronicMailAddress>monotomidae@gmail.com</electronicMailAddress>
+      <onlineUrl>https://directory.illinois.edu/detail?userId=tcm@illinois.edu</onlineUrl>
+    </creator>
+    <metadataProvider>
+      <organizationName>University of Illinois at Urbana-Champaign, Illinois Natural History Survey</organizationName>
+      <onlineUrl>https://inhs.illinois.edu/</onlineUrl>
+    </metadataProvider>
+    <associatedParty>
+      <individualName>
+        <givenName>Christopher</givenName>
+        <surName>Dietrich</surName>
+      </individualName>
+     <electronicMailAddress>chdietri@illinois.edu</electronicMailAddress>
+      <onlineUrl>https://directory.illinois.edu/detail?userId=chdietri@illinois.edu</onlineUrl>
+      <role>Author</role>
+    </associatedParty>
+    <associatedParty>
+      <individualName>
+        <givenName>Dmitry</givenName>
+        <surName>Dmitriev</surName>
+      </individualName>
+      <electronicMailAddress>arboridia@gmail.com</electronicMailAddress>
+      <onlineUrl>http://dmitriev.speciesfile.org/</onlineUrl>
+      <role>Author</role>  
+    </associatedParty>
+    <associatedParty>
+      <individualName>
+        <givenName>Thomas</givenName>
+        <surName>McElrath</surName>
+      </individualName>
+      <electronicMailAddress>monotomidae@gmail.com</electronicMailAddress>
+      <onlineUrl>https://directory.illinois.edu/detail?userId=tcm@illinois.edu</onlineUrl>
+      <role>Author</role>
+    </associatedParty>
+    <associatedParty>
+      <individualName>
+        <givenName>R. Edward</givenName>
+        <surName>DeWalt</surName>
+      </individualName>
+      <organizationName>University of Illinois at Urbana-Champaign, Illinois Natural History Survey</organizationName>
+      <electronicMailAddress>dewalt@illinois.edu</electronicMailAddress>
+      <onlineUrl>https://directory.illinois.edu/detail?userId=tcm@illinois.edu</onlineUrl>
+      <role>Author</role>
+    </associatedParty>
+    <associatedParty>
+      <individualName>
+        <givenName>Matthew</givenName>
+        <surName>Yoder</surName>
+      </individualName>
+      <organizationName>University of Illinois at Urbana-Champaign, Illinois Natural History Survey</organizationName>
+      <electronicMailAddress>mjyoder@illinois.edu</electronicMailAddress>
+      <onlineUrl>https://directory.illinois.edu/detail?userId=mjyoder@illinois.edu</onlineUrl>
+      <role>Author</role>
+    </associatedParty> 
+    <pubDate>2022-12-07</pubDate>
+    <language>eng</language>
+    <abstract>
+      <para>The INHS Insect Collection, which comprises ca. 7 million prepared specimens as well as noninsect arthropods (e.g., arachnids and myriapods) and miscellaneous invertebrates (bryozoans), is one of the largest and oldest entomological collections in North America. The growth and wide-ranging scope of this collection can be credited to the diverse interests of the systematists who have spent all or part of their career at the Survey. Scientists such as Stephen A. Forbes, the first Director of the State Laboratory and Chief of the Natural History Survey; Theodore Frison, who succeeded Forbes; and H. H. Ross, who directed the intense systematics studies of the faunistic section for 40 years, placed considerable emphasis on enlarging the insect collection. These insects document the changing landscape and environmental conditions of the world.</para>
+      <para>The INHS Insect Collection is one of the largest in North America. The most recent comprehensive size estimate was done in 1992. The heavy concentration of specimens from the last third of the 1800s also makes this one of North America's oldest insect and related arthropod collections. </para>
+      <para>The INHS Insect Collection includes more than >3,932 primary and >21,124 secondary type specimens. Because of size, historical holdings, and wide breadth of coverage in certain groups, the collection is an important national and worldwide resource.</para>
+    </abstract>
+	<intellectualRights>
+		<para> This work is licensed under a
+		<ulink url="http://creativecommons.org/licenses/by/4.0/legalcode">
+		<citetitle>Creative Commons Attribution (CC-BY) 4.0 License.</citetitle>
+		</ulink>
+		</para>
+	</intellectualRights>
+    <contact>
+ 		<individualName>
+       		 <givenName>Thomas</givenName>
+       		 <surName>McElrath</surName>
+     	</individualName>
+     	<organizationName>University of Illinois at Urbana-Champaign, Illinois Natural History Survey</organizationName>
+      	<address>
+       		<deliveryPoint>1816 S. Oak St.</deliveryPoint>
+        	<city>Champaign</city>
+        	<administrativeArea>Illinois</administrativeArea>
+        	<postalCode>61820</postalCode>
+        	<country>United States of America</country>
+      	</address>
+     	<electronicMailAddress>monotomidae@gmail.com</electronicMailAddress>
+		<onlineUrl>https://directory.illinois.edu/detail?userId=tcm@illinois.edu</onlineUrl>
+    </contact>
+  </dataset>
+  <additionalMetadata>
+    <metadata>
+      <gbif>
+        <dateStamp>2022-12-07T19:45:01+00:00</dateStamp>
+        <hierarchyLevel>dataset</hierarchyLevel>
+        <citation identifier="Identifier STUB">STUB DATASET</citation>
+        <resourceLogoUrl>https://marketing.illinois.edu/app/uploads/2021/09/logo-internal-collaboration-1024x423.png</resourceLogoUrl>
+        <livingTimePeriod>Extant</livingTimePeriod>
+        <dc:replaces>https://doi.org/10.15468/eol0pe</dc:replaces>
+      </gbif>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>
