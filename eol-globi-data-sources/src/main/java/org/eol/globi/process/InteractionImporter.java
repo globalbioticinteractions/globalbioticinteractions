@@ -277,16 +277,19 @@ public class InteractionImporter implements InteractionListener {
         final String eventDate = link.get(DatasetImporterForMetaTable.EVENT_DATE);
         if (StringUtils.isNotBlank(eventDate)) {
             try {
-                final DateTime dateTime = DateUtil
-                        .parseDateUTC(applySymbiotaDateTimeFix(eventDate));
+                String eventDateFixed = applySymbiotaDateTimeFix(eventDate);
+                if (StringUtils.isNotBlank(eventDateFixed)) {
+                    final DateTime dateTime = DateUtil
+                            .parseDateUTC(eventDateFixed);
 
-                String msg = DateUtil.validateDate(eventDate, dateTime);
+                    String msg = DateUtil.validateDate(eventDate, dateTime);
 
-                if (StringUtils.isNoneBlank(msg)) {
-                    logWarningIfPossible(link, msg);
+                    if (StringUtils.isNoneBlank(msg)) {
+                        logWarningIfPossible(link, msg);
+                    }
+                    nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
                 }
 
-                nodeFactory.setUnixEpochProperty(target, dateTime.toDate());
             } catch (IllegalArgumentException ex) {
                 logWarningIfPossible(link, "invalid date string [" + eventDate + "]");
             } catch (NodeFactoryException e) {
