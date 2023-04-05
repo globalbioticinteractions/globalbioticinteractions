@@ -7,6 +7,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -134,6 +135,7 @@ public class NonResolvingTaxonIndexNeo4jTest extends GraphDBNeo4jTestCase {
         assertNull(taxonService.findTaxonByName(PropertyAndValueDictionary.NO_NAME));
     }
 
+    @Ignore("disable homonym detection methods for now; related to https://github.com/globalbioticinteractions/globalbioticinteractions/issues/871")
     @Test
     public final void indexTwoHomonymsSeparately() throws NodeFactoryException {
         Taxon taxon1 = new TaxonImpl("some name 4567", null);
@@ -155,6 +157,7 @@ public class NonResolvingTaxonIndexNeo4jTest extends GraphDBNeo4jTestCase {
         assertThat(taxonService.findTaxon(taxon2), is(nullValue()));
     }
 
+    @Ignore("disable homonym detection methods for now; related to https://github.com/globalbioticinteractions/globalbioticinteractions/issues/871")
     @Test
     public final void indexTwoHomonymsSeparately2() throws NodeFactoryException {
         Taxon taxon1 = new TaxonImpl("some name", "foo:123");
