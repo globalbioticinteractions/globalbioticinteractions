@@ -54,6 +54,15 @@ public class OccurrenceIdIdEnricherGenBankTest {
         };
     }
 
+    public ResourceService getResourceServiceMK216285() {
+        return new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return getClass().getResourceAsStream("genbank-MK216285.txt");
+            }
+        };
+    }
+
     @Test
     public void lookupTargetOccurrenceId() throws StudyImporterException {
         Map<String, String> properties
@@ -74,17 +83,17 @@ public class OccurrenceIdIdEnricherGenBankTest {
     @Test
     public void lookupTargetOccurrenceId2() throws StudyImporterException {
         Map<String, String> properties
-                = new OccurrenceIdIdEnricherGenBank(null, null, getResourceService())
+                = new OccurrenceIdIdEnricherGenBank(null, null, getResourceServiceMK216285())
                 .enrich(new TreeMap<String, String>() {{
                     put("targetOccurrenceId", "https://www.ncbi.nlm.nih.gov/nuccore/MK216285");
                 }});
 
-        assertThat(properties.get(TARGET_TAXON_NAME), is("Plasmodium sp. SEIAUR01"));
+        assertThat(properties.get(SOURCE_TAXON_NAME), is("Pipilo maculatus; voucher MSB:Bird:48255"));
+        assertThat(properties.get(SOURCE_BODY_PART_NAME), is("pectoral muscle"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(InteractType.HOST_OF.getIRI()));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is(InteractType.HOST_OF.getLabel()));
         assertThat(properties.get(TARGET_TAXON_ID), is("NCBI:2163520"));
-        assertThat(properties.get(SOURCE_TAXON_NAME), is("Pipilo maculatus; voucher MSB:Bird:48255"));
-        assertThat(properties.get(SOURCE_BODY_PART_NAME), is("pectoral muscle"));
+        assertThat(properties.get(TARGET_TAXON_NAME), is("Plasmodium sp. SEIAUR01"));
         assertThat(properties.get("localityName"), is("USA: New Mexico"));
     }
 
