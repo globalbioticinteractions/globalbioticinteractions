@@ -155,5 +155,20 @@ public class DateUtilTest {
 
     }
 
+    @Test
+    public void splitPossibleDateEmpty() {
+        DateUtil.splitPossibleRange("");
+    }
+
+    @Test
+    public void splitPossibleDateNull() {
+        DateUtil.splitPossibleRange(null);
+    }
+
+    @Test
+    public void splitPossibleDateSeparatorOnly() {
+        DateUtil.splitPossibleRange("/");
+    }
+
 
 }

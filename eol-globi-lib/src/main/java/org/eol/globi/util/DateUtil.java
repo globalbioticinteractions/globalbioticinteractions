@@ -93,9 +93,10 @@ public final class DateUtil {
     }
 
     public static String splitPossibleRange(String eventDate) {
-        return StringUtils.isBlank(eventDate)
+        String[] split = StringUtils.split(eventDate, "/");
+        return StringUtils.isBlank(eventDate) || split.length == 0
                 ? eventDate
-                : StringUtils.split(eventDate, "/")[0];
+                : split[0];
     }
 
     public static String nowDateString() {
