@@ -31,6 +31,12 @@ public class DateUtilTest {
         assertThat(DateUtil.parseYearMonthUTC(text).toString(), is("2018-12-01T00:00:00.000Z"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void parseUTCRangeEmpty() {
+        String text = "";
+        assertThat(DateUtil.parseDateUTC(text).toString(), is("2018-12-01T00:00:00.000Z"));
+    }
+
     @Test
     public void parseDateYearMonthRange2() {
         String text = "2006-07/08";
