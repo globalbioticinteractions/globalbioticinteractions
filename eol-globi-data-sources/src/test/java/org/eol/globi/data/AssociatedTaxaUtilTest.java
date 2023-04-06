@@ -464,6 +464,28 @@ public class AssociatedTaxaUtilTest {
     }
 
     @Test
+    public void associatedTaxaCaughtAfterVisiting() {
+        String associatedTaxa = "Caught after visiting Pogonia ophioglossoides; Calopgon tetrads on head and on two right rear legs";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Pogonia ophioglossoides"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Caught after visiting"));
+    }
+
+    @Test
+    public void associatedTaxaVisiting() {
+        String associatedTaxa = "Visiting Pogonia ophioglossoides; no orchid pollen";
+        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Pogonia ophioglossoides"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Visiting"));
+    }
+
+    @Test
     public void habitatParsing() {
         String associatedTaxa = "Exposed siliceous rocks";
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);

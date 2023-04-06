@@ -35,8 +35,10 @@ public final class AssociatedTaxaUtil {
             "^[Ff]rom",
             "^[cC]lutching",
             "^[rR]esting on",
+            "^[Vv]isiting",
+            "^[Cc]aught after [Vv]isiting",
             "[Ff]eeding on")
-            + ")([ ])(.*)");
+            + ")([ ])([^;]+)");
 
     public static List<Map<String, String>> expandIfNeeded(Map<String, String> properties) {
         try {
