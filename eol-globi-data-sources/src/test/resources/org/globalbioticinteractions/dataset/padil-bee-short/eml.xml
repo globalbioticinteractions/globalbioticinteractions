@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eml:eml xmlns:d="eml://ecoinformatics.org/dataset-2.1.0" xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/terms/" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.1/eml-gbif-profile.xsd" system="ALA-Registry" scope="system" xml:lang="en">
+  <dataset>
+    <alternateIdentifier>973e758a-67f7-3dce-8c3c-136131b91fdf</alternateIdentifier>
+    <alternateIdentifier>10.15468/mexodu</alternateIdentifier>
+    <alternateIdentifier>64823037-f86c-4bc9-9cc5-439cf0b448df</alternateIdentifier>
+    <alternateIdentifier>https://collections.ala.org.au/public/show/dr920</alternateIdentifier>
+    <title xmlns:lang="en">PaDIL Bee records</title>
+    <creator>
+      <organizationName>PaDIL Bee records</organizationName>
+    </creator>
+    <metadataProvider>
+      <organizationName>PaDIL Bee records</organizationName>
+    </metadataProvider>
+    <associatedParty>
+      <organizationName>Atlas of Living Australia</organizationName>
+      <address>
+        <deliveryPoint>CSIRO Ecosystems Services</deliveryPoint>
+        <city>Canberra</city>
+        <administrativeArea>ACT</administrativeArea>
+        <postalCode>2601</postalCode>
+        <country>Australia</country>
+      </address>
+      <electronicMailAddress>info@ala.org.au</electronicMailAddress>
+      <role>distributor</role>
+    </associatedParty>
+    <pubDate>2019-09-26</pubDate>
+    <language>English</language>
+    <abstract>
+      <para>Bee records from the Pests and Diseases Image Library, http://www.padil.gov.au</para>
+    </abstract>
+    <intellectualRights>
+      <para>PaDIL website at http://www.padil.gov.au</para>
+    </intellectualRights>
+    <distribution>
+      <online>
+        <url function="information">https://collections.ala.org.au/public/show/dr920</url>
+      </online>
+    </distribution>
+    <coverage />
+    <purpose>
+      <para></para>
+    </purpose>
+    <contact>
+      <organizationName>Atlas of Living Australia</organizationName>
+      <address>
+        <deliveryPoint>CSIRO Ecosystems Services</deliveryPoint>
+        <city>Canberra</city>
+        <administrativeArea>ACT</administrativeArea>
+        <postalCode>2601</postalCode>
+        <country>Australia</country>
+      </address>
+      <electronicMailAddress>info@ala.org.au</electronicMailAddress>
+    </contact>
+    <methods />
+  </dataset>
+  <additionalMetadata>
+    <metadata>
+      <gbif>
+        <dateStamp>2019-09-25T07:28:49</dateStamp>
+        <hierarchyLevel>dataset</hierarchyLevel>
+        <citation>PaDIL website at http://www.padil.gov.au</citation>
+        <rights></rights>
+      </gbif>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>

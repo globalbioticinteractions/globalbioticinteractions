@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.service.TaxonUtil;
 import org.junit.Test;
 
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.TreeMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class OccurrenceIdEnricherTest {
+public class OccurrenceIdEnricherFieldMuseumTest {
 
     @Test
     public void addFieldMuseumOccurrenceIdURL() {
@@ -17,7 +18,7 @@ public class OccurrenceIdEnricherTest {
             put(DatasetImporterForTSV.SOURCE_INSTITUTION_CODE, "F");
         }};
 
-        Map<String, String> enriched = OccurrenceIdEnricher.enrichOccurrenceIdIfPossible(interactions);
+        Map<String, String> enriched = OccurrenceIdEnricherFieldMuseum.enrichOccurrenceIdIfPossible(interactions);
 
         assertThat(enriched.get(DatasetImporterForTSV.REFERENCE_URL), is("https://db.fieldmuseum.org/123"));
     }
@@ -29,7 +30,7 @@ public class OccurrenceIdEnricherTest {
             put(DatasetImporterForTSV.TARGET_INSTITUTION_CODE, "F");
         }};
 
-        Map<String, String> enriched = OccurrenceIdEnricher.enrichOccurrenceIdIfPossible(interactions);
+        Map<String, String> enriched = OccurrenceIdEnricherFieldMuseum.enrichOccurrenceIdIfPossible(interactions);
 
         assertThat(enriched.get(DatasetImporterForTSV.REFERENCE_URL), is("https://db.fieldmuseum.org/123"));
     }
@@ -42,7 +43,7 @@ public class OccurrenceIdEnricherTest {
             put(DatasetImporterForTSV.REFERENCE_URL, "https://example.org");
         }};
 
-        Map<String, String> enriched = OccurrenceIdEnricher.enrichOccurrenceIdIfPossible(interactions);
+        Map<String, String> enriched = OccurrenceIdEnricherFieldMuseum.enrichOccurrenceIdIfPossible(interactions);
 
         assertThat(enriched.get(DatasetImporterForTSV.REFERENCE_URL), is("https://example.org"));
     }

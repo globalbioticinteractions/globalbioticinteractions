@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-public class OccurrenceIdEnricher extends InteractionProcessorAbstract {
+public class OccurrenceIdEnricherFieldMuseum extends InteractionProcessorAbstract {
 
 
     public static final List<String> FIELD_MUSEUM_INSTITUTION_CODES = Arrays.asList("F", "FMNH");
 
-    public OccurrenceIdEnricher(InteractionListener listener, ImportLogger logger) {
+    public OccurrenceIdEnricherFieldMuseum(InteractionListener listener, ImportLogger logger) {
         super(listener, logger);
     }
 

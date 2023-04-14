@@ -520,6 +520,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_COLLECTION_ID, DwcTerm.collectionID);
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_INSTITUTION_CODE, DwcTerm.institutionCode);
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_CATALOG_NUMBER, DwcTerm.catalogNumber);
+        mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_RECORD_NUMBER, DwcTerm.recordNumber);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_ID, DwcTerm.taxonConceptID);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_SPECIFIC_EPITHET, DwcTerm.specificEpithet);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_GENUS, DwcTerm.genus);

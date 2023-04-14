@@ -55,12 +55,14 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_RECORD_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.gbif.dwc.terms.DwcTerm.relatedResourceID;
@@ -77,6 +79,27 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForDwCATest {
+
+    @Test
+    public void importRecordsPadilBee() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/padil-bee-short/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        final Map<String, String> interactionFound = new TreeMap<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(inStream -> inStream)));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                interactionFound.putAll(interaction);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+
+        assertThat(interactionFound.size(), greaterThan(0));
+        assertThat(interactionFound.get(SOURCE_OCCURRENCE_ID),is("2c4b4cfb-8ed3-40a9-96b2-30a4df4cdfdc"));
+        assertThat(interactionFound.get(SOURCE_TAXON_ID),is("https://biodiversity.org.au/afd/taxa/babd29c2-5e10-447c-8cc0-e3a66e741f5e"));
+        assertThat(interactionFound.get(SOURCE_RECORD_NUMBER),is("HYM 20785"));
+    }
 
     @Test
     public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
