@@ -89,7 +89,7 @@ public class ExportFlatInteractions implements GraphExporter {
                 ", sourceSpecimen.externalId as sourceId" +
                 ", sourceSpecimen.occurrenceID as sourceOccurrenceId" +
                 ", sourceSpecimen.institutionCode as sourceInstitutionCode" +
-                ", sourceSpecimen.sollectionCode as sourceCollectionCode" +
+                ", sourceSpecimen.collectionCode as sourceCollectionCode" +
                 ", sourceSpecimen.catalogNumber as sourceCatalogNumber" +
                 ", sourceSpecimen.basisOfRecordId as sourceBasisOfRecordId" +
                 ", sourceSpecimen.basisOfRecordLabel as sourceBasisOfRecordName" +
