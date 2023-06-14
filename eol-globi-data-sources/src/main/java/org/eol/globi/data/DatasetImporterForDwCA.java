@@ -116,6 +116,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             Pattern.compile("^([(][a-zA-Z ]+[)])[ ](.*)(http[s]{0,1}://mczbase.mcz.harvard.edu/guid/)([a-zA-Z0-9:-]+)");
     private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
 
+    private static final Pattern NEON_ASSOCIATED_OCCURRENCES_PATTERN =
+            Pattern.compile("^(?<verb>[a-zA-Z ]+)[:](.*)(http[s]{0,1}://.*)(index.php[?]guid=)(?<occurrenceId>[a-zA-Z0-9:-]+)");
+
     private static final Pattern MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN =
             Pattern.compile("^(.*)" +
                     "<a href=\"(.*)/SpecimenDetail.*collection_object_id=[0-9]+\">[ ]+" +
@@ -573,6 +576,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             String relationshipTrimmed = StringUtils.trim(relationship);
             attemptToParseArctosAssocatedOccurrences(propertyList, relationshipTrimmed);
             attemptToParseMCZAssocatedOccurrences(propertyList, relationshipTrimmed);
+            attemptToParseNEONAssocatedOccurrences(propertyList, relationshipTrimmed);
         }
         return propertyList;
     }
@@ -642,6 +646,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             String dwcTriple = StringUtils.replace(StringUtils.trim(matcher.group(3)), " ", ":");
             properties.put(TARGET_OCCURRENCE_ID, dwcTriple);
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(1)));
+            appendAssociatedOccurrencesProperties(propertyList, properties);
+        }
+    }
+
+    private static void attemptToParseNEONAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
+        Matcher matcher = NEON_ASSOCIATED_OCCURRENCES_PATTERN.matcher(relationshipTrimmed);
+        if (matcher.find()) {
+            TreeMap<String, String> properties = new TreeMap<>();
+            properties.put(TARGET_OCCURRENCE_ID, matcher.group("occurrenceId"));
+            properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group("verb")));
             appendAssociatedOccurrencesProperties(propertyList, properties);
         }
     }

@@ -1,0 +1,8 @@
+This data package was downloaded from a NEON Biorepository Data Portal Portal on 2023-05-22 09:44:22.
+
+Please use the following format to cite this dataset:
+Biodiversity occurrence data published by: NEON (National Ecological Observatory Network) Biorepository, Arizona State University Biodiversity Knowledge Integration Center (accessed through the NEON Biorepository Data Portal, 
+https://biorepo.neonscience.org/, 2023-05-22).
+
+
+For more information on citation formats, please see the following page: https://biorepo.neonscience.org/portal/includes/usagepolicy.php

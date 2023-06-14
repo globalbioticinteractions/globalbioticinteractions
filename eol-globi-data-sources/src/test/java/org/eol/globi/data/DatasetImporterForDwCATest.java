@@ -9,6 +9,7 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.record.Record;
@@ -109,6 +110,43 @@ public class DatasetImporterForDwCATest {
                 , new AtomicInteger(0)
                 , "http://rs.tdwg.org/dwc/terms/dynamicProperties | http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/associatedTaxa");
     }
+
+    @Test
+    public void discoverRecordTypesInMEEP() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/neon/meep/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        assertImportsSomethingOfType(archiveRoot
+                , new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/habitat | http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/associatedOccurrences");
+    }
+
+    @Test
+    public void importTaxonDescriptionsFromMEEPDir() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/neon/meep/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        List<Map<String, String>> links = new ArrayList<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocal(inStream -> inStream)));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+
+        assertThat(links.size(), is(4));
+        Map<String, String> interaction = links.get(3);
+        assertThat(interaction.get(DATASET_CITATION), containsString("org/globalbioticinteractions/dataset/neon/"));
+        assertThat(interaction.get(REFERENCE_CITATION), is("https://biorepo.neonscience.org/portal/collections/individual/index.php?occid=850796"));
+        assertThat(interaction.get(SOURCE_TAXON_NAME), is("Oestridae"));
+        assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("7a5cbc85-a611-4fb1-a0c1-537dd8d215e1"));
+        assertThat(interaction.get(INTERACTION_TYPE_NAME), is("hasHost"));
+        assertThat(interaction.get(TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(interaction.get(TARGET_OCCURRENCE_ID), is("NEON01ILC"));
+        assertThat(interaction.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences | http://rs.tdwg.org/dwc/terms/Occurrence"));
+    }
+
 
     @Test
     public void importAssociatedTaxaFromDir() throws StudyImporterException, URISyntaxException {
@@ -995,7 +1033,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void associatedOccurrences2() {
+    public void associatedOccurrencesArctosEating() {
         String associateOccurrences = "(ate) DZTM: Denver Zoology Tissue Mammal 2822; (ate) DZTM: Denver Zoology Tissue Mammal 2823";
         List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
 
@@ -1011,6 +1049,36 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
         assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("Denver Zoology Tissue Mammal 2823"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(ate)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesSymbiotaNEONMeep() {
+        String associateOccurrences = "hasHost: https://biorepo.neonscience.org/portal/collections/individual/index.php?guid=NEON01ILC";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("NEON01ILC"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("hasHost"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesSymbiotaNEONMamm() {
+        String associateOccurrences = "hostOf: https://biorepo.neonscience.org/portal/collections/individual/index.php?guid=7a5cbc85-a611-4fb1-a0c1-537dd8d215e1";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("7a5cbc85-a611-4fb1-a0c1-537dd8d215e1"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("hostOf"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
     }

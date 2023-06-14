@@ -475,6 +475,17 @@ public class AssociatedTaxaUtilTest {
     }
 
     @Test
+    public void associatedOcurrencesSymbiotaStyle() {
+        String associatedTaxa = "hasHost: https://biorepo.neonscience.org/portal/collections/individual/index.php?guid=NEON01ILC";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("https://biorepo.neonscience.org/portal/collections/individual/index.php?guid=NEON01ILC"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("hasHost"));
+    }
+
+    @Test
     public void associatedTaxaVisiting() {
         String associatedTaxa = "Visiting Pogonia ophioglossoides; no orchid pollen";
         List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
