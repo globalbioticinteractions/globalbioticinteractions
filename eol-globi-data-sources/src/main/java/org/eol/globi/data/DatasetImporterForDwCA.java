@@ -265,7 +265,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                     importAssociatedTaxaExtension(archive, referencingListener);
 
-                    int i = importCore(archive, listenerWithContext);
+                    int i = importCore(archive, listenerWithContext, archiveURL);
                     getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
                 }
             } finally {
@@ -307,7 +307,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return deleteOnShutdownHook;
     }
 
-    private int importCore(Archive archive, InteractionListener interactionListener) throws StudyImporterException {
+    private int importCore(Archive archive,
+                           InteractionListener interactionListener,
+                           String archiveURL) throws StudyImporterException {
         AtomicInteger recordCounter = new AtomicInteger(0);
         ClosableIterator<Record> iterator = archive.getCore().iterator();
         while (true) {
@@ -319,7 +321,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 handleRecord(interactionListener, rec);
                 recordCounter.incrementAndGet();
             } catch (IllegalStateException ex) {
-                LogUtil.logError(getLogger(), "failed to handle dwc record", ex);
+                LogUtil.logError(getLogger(), "failed to handle dwc record in [" + archiveURL + "]", ex);
             }
         }
         return recordCounter.get();
