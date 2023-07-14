@@ -594,6 +594,54 @@ public class AssociatedTaxaUtilTest {
     }
 
     @Test
+    public void onBarkOf() {
+        String associatedTaxa = "On bark of Acer rubrum";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Acer rubrum"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("bark"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+    }
+
+    @Test
+    public void onGleditsiaAquaticaBark() {
+        String associatedTaxa = "On Gleditsia aquatica bark";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Gleditsia aquatica"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("bark"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+    }
+
+    @Test
+    public void dysoxylumBark() {
+        String associatedTaxa = "Dysoxylum bark";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Dysoxylum"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("bark"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+    }
+
+    @Test
+    public void overBarkOf() {
+        String associatedTaxa = "Over bark of Acer rubrum";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Acer rubrum"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("bark"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("over"));
+    }
+
+    @Test
     public void associatedTaxaCollectedVar() {
         String associatedTaxa = "Coll. Im. Red-Tailed Hawk";
         List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);

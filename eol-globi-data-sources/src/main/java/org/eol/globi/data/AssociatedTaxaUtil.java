@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -89,16 +90,13 @@ public final class AssociatedTaxaUtil {
         String lastVerb = null;
         for (String part : parts) {
             String trimmedPart = StringUtils.trim(part);
+            AtomicInteger matches = new AtomicInteger(0);
 
-            String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n)\\s+(?<" + TARGET_BODY_PART_NAME + ">trunk)\\s+(of)(?<" + TARGET_TAXON_NAME + ">.*)";
-            Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
-            if (m.matches()) {
-                properties.add(new TreeMap<String, String>() {{
-                    put(TARGET_BODY_PART_NAME, m.group(TARGET_BODY_PART_NAME));
-                    put(TARGET_TAXON_NAME, StringUtils.trim(m.group(TARGET_TAXON_NAME)));
-                    put(INTERACTION_TYPE_NAME, m.group(INTERACTION_TYPE_NAME));
-                }});
-            } else {
+            appendMatchIfApplicable(properties, trimmedPart, matches);
+            appendMatchIfApplicable2(properties, trimmedPart, matches);
+            appendMatchIfApplicable3(properties, trimmedPart, matches);
+
+            if (matches.get() == 0) {
                 int before = properties.size();
                 attemptParsingAssociationString(trimmedPart, properties);
                 int after = properties.size();
@@ -134,6 +132,63 @@ public final class AssociatedTaxaUtil {
 
         }
         return properties;
+    }
+
+    private static void appendMatchIfApplicable(List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
+        String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n)\\s+(?<" + TARGET_BODY_PART_NAME + ">trunk)\\s+(of)(?<" + TARGET_TAXON_NAME + ">.*)";
+        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        if (m.matches()) {
+            properties.add(new TreeMap<String, String>() {{
+                put(TARGET_BODY_PART_NAME, m.group(TARGET_BODY_PART_NAME));
+                put(TARGET_TAXON_NAME, StringUtils.trim(m.group(TARGET_TAXON_NAME)));
+                put(INTERACTION_TYPE_NAME, m.group(INTERACTION_TYPE_NAME));
+            }});
+            matches.getAndIncrement();
+        }
+    }
+
+    private static void appendMatchIfApplicable2(
+            List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
+        String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n|[Oo]ver)\\s+(?<" + TARGET_BODY_PART_NAME + ">bark)\\s+(of)(?<" + TARGET_TAXON_NAME + ">.*)";
+        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        if (m.matches()) {
+            properties.add(new TreeMap<String, String>() {{
+                put(TARGET_BODY_PART_NAME, StringUtils.lowerCase(m.group(TARGET_BODY_PART_NAME)));
+                put(TARGET_TAXON_NAME, StringUtils.trim(m.group(TARGET_TAXON_NAME)));
+                put(INTERACTION_TYPE_NAME, StringUtils.lowerCase(m.group(INTERACTION_TYPE_NAME)));
+            }});
+            matches.getAndIncrement();
+        }
+    }
+
+    private static void appendMatchIfApplicable3(
+            List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
+        String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n|[Oo]ver)\\s+(?<" + TARGET_TAXON_NAME + ">.*)\\s+(?<" + TARGET_BODY_PART_NAME + ">bark)$";
+        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        if (m.matches()) {
+            properties.add(new TreeMap<String, String>() {{
+                put(TARGET_BODY_PART_NAME, StringUtils.lowerCase(m.group(TARGET_BODY_PART_NAME)));
+                put(TARGET_TAXON_NAME, StringUtils.trim(m.group(TARGET_TAXON_NAME)));
+                put(INTERACTION_TYPE_NAME, StringUtils.lowerCase(m.group(INTERACTION_TYPE_NAME)));
+            }});
+            matches.getAndIncrement();
+        } else {
+            appendMatchIfApplicable4(properties, trimmedPart, matches);
+        }
+    }
+
+    private static void appendMatchIfApplicable4(
+            List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
+        String treeTrunkPattern = "(?<" + TARGET_TAXON_NAME + ">.*)\\s+(?<" + TARGET_BODY_PART_NAME + ">bark)$";
+        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        if (m.matches()) {
+            properties.add(new TreeMap<String, String>() {{
+                put(TARGET_BODY_PART_NAME, StringUtils.lowerCase(m.group(TARGET_BODY_PART_NAME)));
+                put(TARGET_TAXON_NAME, StringUtils.trim(m.group(TARGET_TAXON_NAME)));
+                put(INTERACTION_TYPE_NAME, "on");
+            }});
+            matches.getAndIncrement();
+        }
     }
 
     private static void addSpecificInteractionForAssociatedTaxon(List<Map<String, String>> properties, String[] verbTaxon) {
