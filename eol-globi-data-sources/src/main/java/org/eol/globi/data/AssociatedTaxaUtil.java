@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.eol.globi.data.DatasetImporterForTSV.ASSOCIATED_TAXA;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
 public final class AssociatedTaxaUtil {
@@ -89,32 +90,42 @@ public final class AssociatedTaxaUtil {
         for (String part : parts) {
             String trimmedPart = StringUtils.trim(part);
 
-            int before = properties.size();
-            attemptParsingAssociationString(trimmedPart, properties);
-            int after = properties.size();
-            if (before == after) {
-                Matcher matcher = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_IDEA.matcher(trimmedPart);
-                if (matcher.find()) {
-                    String genus = StringUtils.trim(matcher.group(1));
-                    String specificEpithet = StringUtils.trim(matcher.group(2));
-                    addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, interactionTypeNameDefault);
-                } else {
-                    Matcher matcher1 = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_EAE.matcher(trimmedPart);
-                    if (matcher1.find()) {
-                        String genus = StringUtils.trim(matcher1.group(2));
-                        String specificEpithet = StringUtils.trim(matcher1.group(3));
+            String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n)\\s+(?<" + TARGET_BODY_PART_NAME + ">trunk)\\s+(of)(?<" + TARGET_TAXON_NAME + ">.*)";
+            Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+            if (m.matches()) {
+                properties.add(new TreeMap<String, String>() {{
+                    put(TARGET_BODY_PART_NAME, m.group(TARGET_BODY_PART_NAME));
+                    put(TARGET_TAXON_NAME, StringUtils.trim(m.group(TARGET_TAXON_NAME)));
+                    put(INTERACTION_TYPE_NAME, m.group(INTERACTION_TYPE_NAME));
+                }});
+            } else {
+                int before = properties.size();
+                attemptParsingAssociationString(trimmedPart, properties);
+                int after = properties.size();
+                if (before == after) {
+                    Matcher matcher = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_IDEA.matcher(trimmedPart);
+                    if (matcher.find()) {
+                        String genus = StringUtils.trim(matcher.group(1));
+                        String specificEpithet = StringUtils.trim(matcher.group(2));
                         addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, interactionTypeNameDefault);
                     } else {
-                        String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
-                        if (verbTaxon.length == 2) {
-                            lastVerb = trimAndRemoveQuotes(verbTaxon[0]);
-                            addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
-                        } else if (StringUtils.isNotBlank(lastVerb)) {
-                            addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, trimAndRemoveQuotes(lastVerb));
+                        Matcher matcher1 = DatasetImporterForDwCA.PATTERN_ASSOCIATED_TAXA_EAE.matcher(trimmedPart);
+                        if (matcher1.find()) {
+                            String genus = StringUtils.trim(matcher1.group(2));
+                            String specificEpithet = StringUtils.trim(matcher1.group(3));
+                            addDefaultInteractionForAssociatedTaxon(properties, genus + " " + specificEpithet, interactionTypeNameDefault);
                         } else {
-                            addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, interactionTypeNameDefault);
-                        }
+                            String[] verbTaxon = StringUtils.splitByWholeSeparator(trimmedPart, ":", 2);
+                            if (verbTaxon.length == 2) {
+                                lastVerb = trimAndRemoveQuotes(verbTaxon[0]);
+                                addSpecificInteractionForAssociatedTaxon(properties, verbTaxon);
+                            } else if (StringUtils.isNotBlank(lastVerb)) {
+                                addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, trimAndRemoveQuotes(lastVerb));
+                            } else {
+                                addDefaultInteractionForAssociatedTaxon(properties, trimmedPart, interactionTypeNameDefault);
+                            }
 
+                        }
                     }
                 }
 

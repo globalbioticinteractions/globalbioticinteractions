@@ -10,6 +10,7 @@ import java.util.Map;
 import static org.eol.globi.data.AssociatedTaxaUtil.parseAssociatedTaxa;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -505,6 +506,91 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Exposed siliceous rocks"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
+    }
+
+    @Test
+    // from
+    /// preston cat 'line:zip:hash://sha256/d51882924638f84f351507aa68863ad2802666526f0474cf7193002d26db0052!/occurrence.txt!/L1,L128738'\ | mlr --itsvlite --oxtab cat
+//        id                            200f6783-1ec5-4170-8a50-e5772420a677
+//        type                          PhysicalObject
+//        modified                      2022-05-11T16:19-0600
+//        language                      en
+//        license                       https://creativecommons.org/publicdomain/zero/1.0/
+//        rightsHolder                  The Field Museum of Natural History
+//        accessRights                  http://fieldmuseum.org/about/copyright-information
+//        bibliographicCitation
+//        collectionID                  http://grbio.org/institution/field-museum-natural-history-botany-department
+//        datasetID                     bryophyte-20-dec-2022
+//        institutionCode               F
+//        collectionCode                Botany
+//        datasetName
+//        ownerInstitutionCode          F
+//        basisOfRecord                 PreservedSpecimen
+//        occurrenceID                  200f6783-1ec5-4170-8a50-e5772420a677
+//        catalogNumber                 C1028687F
+//        occurrenceRemarks
+//        recordNumber                  231
+//        recordedBy                    B. J. Crandall-Stotler
+//        sex
+//        lifeStage
+//        otherCatalogNumbers
+//        associatedReferences
+//        associatedSequences
+//        organismID                    4495696
+//        organismRemarks
+//        year                          1963
+//        month                         10
+//        day                           11
+//        verbatimEventDate             Oct. 11, 1963
+//        habitat                       In bog; on trunk of Acer rubrum
+//        fieldNumber
+//        continent                     North America
+//        waterBody
+//        islandGroup
+//        island
+//        country                       United States of America
+//        stateProvince                 New York
+//        county
+//        municipality                  Geneva
+//        locality                      Geneva
+//        minimumElevationInMeters
+//        maximumElevationInMeters
+//        decimalLatitude               42.8789
+//        decimalLongitude              -76.9931
+//        geodeticDatum
+//        coordinateUncertaintyInMeters
+//        georeferencedBy
+//        georeferencedDate
+//        georeferenceProtocol
+//        georeferenceSources           Wikipedia
+//        georeferenceRemarks
+//        identifiedBy
+//        dateIdentified
+//        identificationQualifier
+//        typeStatus
+//        scientificName                Ptilidium pulcherrimum (Weber) Hampe
+//        higherClassification          Plantae Marchantiophyta Jungermanniopsida Ptilidiales Ptilidiaceae
+//        kingdom                       Plantae
+//        phylum                        Marchantiophyta
+//        class                         Jungermanniopsida
+//        order                         Ptilidiales
+//        family                        Ptilidiaceae
+//        genus                         Ptilidium
+//        subgenus
+//        specificEpithet               pulcherrimum
+//        infraspecificEpithet
+//        taxonRank
+//        scientificNameAuthorship      (Weber) Hampe
+//        nomenclaturalCode             ICBN
+    public void onTrunkOfParsing() {
+        String associatedTaxa = "on trunk of Acer rubrum";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Acer rubrum"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("trunk"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
     }
 
     @Test
