@@ -72,6 +72,8 @@ public class TaxonUtil {
     public static final String SUPERFAMILY = "Superfamily";
     public static final String FAMILY = "Family";
     public static final String SUBFAMILY = "Subfamily";
+    public static final String TRIBE = "Tribe";
+    public static final String SUBTRIBE = "Subtribe";
     public static final String GENUS = "Genus";
     public static final String SUBGENUS = "Subgenus";
     public static final String SPECIES = "Species";
@@ -80,7 +82,7 @@ public class TaxonUtil {
 
     public static final List<String> RANKS_SUPPORTED = Arrays.asList(
             KINGDOM, PHYLUM, CLASS, SUBCLASS, SUPERORDER, ORDER, SUBORDER, INFRAORDER,
-            PARVORDER, SUPERFAMILY, FAMILY, SUBFAMILY, GENUS, SUBGENUS, SPECIES,
+            PARVORDER, SUPERFAMILY, FAMILY, SUBFAMILY, TRIBE, SUBTRIBE, GENUS, SUBGENUS, SPECIES,
             SPECIFIC_EPITHET, SUBSPECIFIC_EPITHET);
 
     public static final String SOURCE_TAXON = "sourceTaxon";
@@ -97,6 +99,8 @@ public class TaxonUtil {
     public static final String SOURCE_TAXON_SUPERFAMILY = SOURCE_TAXON + SUPERFAMILY + NAME_SUFFIX;
     public static final String SOURCE_TAXON_FAMILY = SOURCE_TAXON + FAMILY + NAME_SUFFIX;
     public static final String SOURCE_TAXON_SUBFAMILY = SOURCE_TAXON + SUBFAMILY + NAME_SUFFIX;
+    public static final String SOURCE_TAXON_TRIBE = SOURCE_TAXON + TRIBE + NAME_SUFFIX;
+    public static final String SOURCE_TAXON_SUBTRIBE = SOURCE_TAXON + SUBTRIBE + NAME_SUFFIX;
     public static final String SOURCE_TAXON_GENUS = SOURCE_TAXON + GENUS + NAME_SUFFIX;
     public static final String SOURCE_TAXON_SUBGENUS = SOURCE_TAXON + SUBGENUS + NAME_SUFFIX;
     public static final String SOURCE_TAXON_SPECIFIC_EPITHET = SOURCE_TAXON + SPECIFIC_EPITHET + NAME_SUFFIX;
@@ -105,6 +109,8 @@ public class TaxonUtil {
     public static final List<String> SOURCE_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
             SOURCE_TAXON_SUBGENUS,
             SOURCE_TAXON_GENUS,
+            SOURCE_TAXON_SUBTRIBE,
+            SOURCE_TAXON_TRIBE,
             SOURCE_TAXON_SUBFAMILY,
             SOURCE_TAXON_FAMILY,
             SOURCE_TAXON_SUPERFAMILY,
@@ -131,6 +137,8 @@ public class TaxonUtil {
     public static final String TARGET_TAXON_SUPERFAMILY = TARGET_TAXON + SUPERFAMILY + NAME_SUFFIX;
     public static final String TARGET_TAXON_FAMILY = TARGET_TAXON + FAMILY + NAME_SUFFIX;
     public static final String TARGET_TAXON_SUBFAMILY = TARGET_TAXON + SUBFAMILY + NAME_SUFFIX;
+    public static final String TARGET_TAXON_TRIBE = TARGET_TAXON + TRIBE + NAME_SUFFIX;
+    public static final String TARGET_TAXON_SUBTRIBE = TARGET_TAXON + SUBTRIBE + NAME_SUFFIX;
     public static final String TARGET_TAXON_GENUS = TARGET_TAXON + GENUS + NAME_SUFFIX;
     public static final String TARGET_TAXON_SUBGENUS = TARGET_TAXON + SUBGENUS + NAME_SUFFIX;
     public static final String TARGET_TAXON_SPECIFIC_EPITHET = TARGET_TAXON + SPECIFIC_EPITHET + NAME_SUFFIX;
@@ -139,6 +147,8 @@ public class TaxonUtil {
     public static final List<String> TARGET_TAXON_HIGHER_ORDER_RANK_KEYS = Arrays.asList(
             TARGET_TAXON_SUBGENUS,
             TARGET_TAXON_GENUS,
+            TARGET_TAXON_SUBTRIBE,
+            TARGET_TAXON_TRIBE,
             TARGET_TAXON_SUBFAMILY,
             TARGET_TAXON_FAMILY,
             TARGET_TAXON_SUPERFAMILY,

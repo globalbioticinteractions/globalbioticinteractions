@@ -452,7 +452,21 @@ public class TaxonUtilTest {
     }
 
     @Test
-    public void maptoPathNameMapn() {
+    public void toTaxonNameMapTribe() {
+        Taxon donald = new TaxonImpl("Donald duckus");
+        donald.setPath("Biota | Animalia | Arthropoda | Insecta | Coleoptera | Scarabaeoidea | Scarabaeidae | Aegialiinae | Aegialiini | Aegialia | Aegialia arenaria");
+        donald.setPathNames("unranked | kingdom | phylum | class | order | superfamily | family | subfamily | tribe | genus | species");
+        Map<String, String> taxonMap = TaxonUtil.toPathNameMap(donald, donald.getPath());
+
+        assertThat(taxonMap.get("subfamily"), is("Aegialiinae"));
+        assertThat(taxonMap.get("tribe"), is("Aegialiini"));
+        assertThat(taxonMap.get("genus"), is("Aegialia"));
+        assertThat(taxonMap.get("species"), is("Aegialia arenaria"));
+        assertThat(taxonMap.size(), is(11));
+    }
+
+    @Test
+    public void mapToPathNameMap() {
         Map<String, String> taxonMap = new TreeMap<String, String>() {{
             put("sourceTaxonClassName", "Mammalia");
             put("sourceTaxonFamilyName", "Bovidae");
