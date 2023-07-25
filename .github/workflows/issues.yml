@@ -1,15 +1,14 @@
 # This workflow will review a GloBI indexed dataset.
 # For more information see: https://globalbioticinteractions.org
 
-name: Package Issues
+name: Packaging of Issues
 
 
 on:
   issues:
-    types:
-      - opened
-      - edited
-      - closed
+    types: [opened, edited, closed]
+  issue_comment:
+    types: [created, edited]
 
 jobs:
   review:
