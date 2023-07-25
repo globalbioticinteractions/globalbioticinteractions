@@ -1,0 +1,35 @@
+# This workflow will review a GloBI indexed dataset.
+# For more information see: https://globalbioticinteractions.org
+
+name: Package Issues
+
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - closed
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin' 
+        java-version: '8'   
+    - name: Download Preston
+      run: curl -L https://github.com/bio-guoda/preston/releases/download/0.7.2/preston.deb > preston.deb
+    - name: Install Preston
+      run: sudo apt -y install ./preston.deb 
+    - name: Track Issues
+      run: preston track "https://github.com/${GITHUB_REPOSITORY}/issues"
+    - name: Package Tracked Issues
+      uses: actions/upload-artifact@v3
+      with:
+        name: packaged-issues
+        path: |
+          data/ 
