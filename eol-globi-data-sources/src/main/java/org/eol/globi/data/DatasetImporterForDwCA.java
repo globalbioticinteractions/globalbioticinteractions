@@ -83,6 +83,7 @@ import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ORDER;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_PHYLUM;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SPECIFIC_EPITHET;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBFAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBGENUS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_CLASS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_FAMILY;
@@ -95,6 +96,7 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PATH_NAMES;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_PHYLUM;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUBFAMILY;
 
 public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
@@ -1147,6 +1149,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_SPECIFIC_EPITHET : TARGET_TAXON_SPECIFIC_EPITHET, occurrenceProperties.get(DwcTerm.specificEpithet.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_GENUS : TARGET_TAXON_GENUS, occurrenceProperties.get(DwcTerm.genus.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_FAMILY : TARGET_TAXON_FAMILY, occurrenceProperties.get(DwcTerm.family.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_SUBFAMILY : TARGET_TAXON_SUBFAMILY, occurrenceProperties.get(DwcTerm.subfamily.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ORDER : TARGET_TAXON_ORDER, occurrenceProperties.get(DwcTerm.order.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_CLASS : TARGET_TAXON_CLASS, occurrenceProperties.get(DwcTerm.class_.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_PHYLUM : TARGET_TAXON_PHYLUM, occurrenceProperties.get(DwcTerm.phylum.qualifiedName()));

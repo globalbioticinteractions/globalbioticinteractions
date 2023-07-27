@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.process.InteractionListener;
-import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractUtil;
@@ -19,10 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 
-import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_ID;
-import static org.eol.globi.domain.PropertyAndValueDictionary.NETWORK_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_CLASS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_GENUS;
@@ -42,8 +38,10 @@ import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBFAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBGENUS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBORDER;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBSPECIFIC_EPITHET;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUBTRIBE;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUPERFAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_SUPERORDER;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_TRIBE;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_CLASS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_GENUS;
@@ -63,8 +61,10 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUBFAMILY;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUBGENUS;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUBORDER;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUBSPECIFIC_EPITHET;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUBTRIBE;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUPERFAMILY;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUPERORDER;
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_TRIBE;
 
 public class DatasetImporterForTSV extends DatasetImporterWithListener {
     public static final String INTERACTION_TYPE_ID = "interactionTypeId";
@@ -155,6 +155,8 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
             Pair.of(SOURCE_TAXON_SUPERFAMILY, TARGET_TAXON_SUPERFAMILY),
             Pair.of(SOURCE_TAXON_FAMILY, TARGET_TAXON_FAMILY),
             Pair.of(SOURCE_TAXON_SUBFAMILY, TARGET_TAXON_SUBFAMILY),
+            Pair.of(SOURCE_TAXON_TRIBE, TARGET_TAXON_TRIBE),
+            Pair.of(SOURCE_TAXON_SUBTRIBE, TARGET_TAXON_SUBTRIBE),
             Pair.of(SOURCE_TAXON_GENUS, TARGET_TAXON_GENUS),
             Pair.of(SOURCE_TAXON_SUBGENUS, TARGET_TAXON_SUBGENUS),
             Pair.of(SOURCE_TAXON_SPECIFIC_EPITHET, TARGET_TAXON_SPECIFIC_EPITHET),
