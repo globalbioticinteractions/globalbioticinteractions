@@ -16,9 +16,11 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo4j2 implements ResolvingTaxonIndex {
 
+    public static final Pattern POSSIBLE_SHORT_NAME_PATTERN = Pattern.compile("[A-Z][a-z]");
     private PropertyEnricher enricher;
     private boolean indexResolvedOnly;
 
@@ -30,7 +32,9 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
     @Override
     public TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
         if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
-            throw new NodeFactoryException("taxon name [" + taxon.getName() + "] too short and no externalId is provided");
+            if (!POSSIBLE_SHORT_NAME_PATTERN.matcher(taxon.getName()).matches()) {
+                throw new NodeFactoryException("taxon name [" + taxon.getName() + "] is a short and unlikely taxonomic name, and no externalId is provided");
+            }
         }
         TaxonNode taxonNode = findTaxon(taxon);
         return taxonNode == null ? createTaxon(taxon) : taxonNode;

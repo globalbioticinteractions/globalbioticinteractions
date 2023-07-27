@@ -437,6 +437,30 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
 
     }
 
+    @Test
+    public final void shortName() throws NodeFactoryException {
+        ResolvingTaxonIndexNeo4j2 taxonService = createTaxonService(getGraphDb());
+        configureIaHits(taxonService);
+        this.taxonService = taxonService;
+
+        TaxonImpl ia = new TaxonImpl("Ia", null);
+
+        TaxonNode first = this.taxonService.getOrCreateTaxon(ia);
+        assertThat(first.getName(), is("Ia"));
+    }
+
+    @Test(expected = NodeFactoryException.class)
+    public final void unlikelyAndShortName() throws NodeFactoryException {
+        this.taxonService = createTaxonService(getGraphDb());
+
+        try {
+            this.taxonService.getOrCreateTaxon(new TaxonImpl("I_", null));
+        } catch(NodeFactoryException ex) {
+            assertThat(ex.getMessage(), is("taxon name [I_] is a short and unlikely taxonomic name, and no externalId is provided"));
+            throw ex;
+        }
+    }
+
     public void configureAnuraHits(ResolvingTaxonIndexNeo4j2 taxonService) {
         taxonService.setEnricher(new PropertyEnricher() {
             @Override
@@ -454,6 +478,29 @@ public class ResolvingTaxonIndexNoTxNeo4j2Test extends GraphDBNeo4jTestCase {
                 taxon2.setPath("one | two | three | some name");
                 taxon2.setPathNames("kingdom | family | genus | species");
                 return Arrays.asList(TaxonUtil.taxonToMap(taxon1), TaxonUtil.taxonToMap(taxon2));
+            }
+
+            @Override
+            public void shutdown() {
+
+            }
+        });
+    }
+
+    public void configureIaHits(ResolvingTaxonIndexNeo4j2 taxonService) {
+        taxonService.setEnricher(new PropertyEnricher() {
+            @Override
+            public Map<String, String> enrichFirstMatch(Map<String, String> properties) throws PropertyEnricherException {
+                return enrichAllMatches(properties).get(0);
+            }
+
+            @Override
+            public List<Map<String, String>> enrichAllMatches(Map<String, String> properties) throws PropertyEnricherException {
+                Taxon taxon1 = new TaxonImpl("Ia", null);
+                taxon1.setPath("four | five | six | some name");
+                taxon1.setPathNames("kingdom | family | genus | species");
+
+                return Collections.singletonList(TaxonUtil.taxonToMap(taxon1));
             }
 
             @Override
