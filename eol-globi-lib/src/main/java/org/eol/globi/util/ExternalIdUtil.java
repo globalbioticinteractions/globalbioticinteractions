@@ -42,8 +42,8 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         put(TaxonomyProvider.ID_PREFIX_HTTPS, TaxonomyProvider.ID_PREFIX_HTTPS);
         put(TaxonomyProvider.ID_PREFIX_ITIS, "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=");
-        put(TaxonomyProvider.FISHBASE_SPECCODE.getIdPrefix(), "http://fishbase.org/summary/");
-        put(TaxonomyProvider.SEALIFEBASE_SPECCODE.getIdPrefix(), "http://sealifebase.org/Summary/SpeciesSummary.php?id=");
+        put(TaxonomyProvider.FISHBASE_SPECCODE.getIdPrefix(), "https://fishbase.org/summary/");
+        put(TaxonomyProvider.SEALIFEBASE_SPECCODE.getIdPrefix(), "https://sealifebase.org/summary/");
         put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
         put(TaxonomyProvider.WIKIDATA.getIdPrefix(), "https://www.wikidata.org/wiki/");
         put(TaxonomyProvider.GEONAMES.getIdPrefix(), "http://www.geonames.org/");
