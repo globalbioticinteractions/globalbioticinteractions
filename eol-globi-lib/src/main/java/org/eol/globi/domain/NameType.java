@@ -8,6 +8,8 @@ public enum NameType {
     HAS_ACCEPTED_NAME, // is a kind of "same as" or "equivalent" to
     HAS_UNCHECKED_NAME, // possibly an accepted name, but not yet verified/checked
     HOMONYM_OF,
+    PARSED_AS, // type associated with the outcome of a (taxonomic) parsing process
+    TRANSLATED_TO, // type assicated with a general purpose name/id translation process (aka name "cleaning", name "scrubbing", or name "mapping")
     OCCURS_IN, // name occurs in some text, publication, or dataset
     NONE
 }
