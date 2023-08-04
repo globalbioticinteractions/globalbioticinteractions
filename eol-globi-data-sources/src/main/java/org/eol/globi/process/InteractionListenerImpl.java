@@ -1,6 +1,7 @@
 package org.eol.globi.process;
 
 import org.eol.globi.data.OccurrenceIdEnricherAtlasOfLivingAustralia;
+import org.eol.globi.data.OccurrenceIdEnricherCaliforniaAcademyOfSciences;
 import org.eol.globi.data.OccurrenceIdIdEnricherGenBank;
 import org.eol.globi.data.OccurrenceIdIdEnricherINaturalist;
 import org.eol.globi.data.ImportLogger;
@@ -39,6 +40,7 @@ public class InteractionListenerImpl implements InteractionListener {
                         new OccurrenceIdIdEnricherINaturalist(queue, logger, dataset),
                         new OccurrenceIdIdEnricherGenBank(queue, logger, dataset),
                         new OccurrenceIdEnricherFieldMuseum(queue, logger),
+                        new OccurrenceIdEnricherCaliforniaAcademyOfSciences(queue, logger),
                         new OccurrenceIdEnricherAtlasOfLivingAustralia(queue, logger),
                         new TaxonNameEnricher(queue, logger),
                         new InteractionExpander(queue, logger),
