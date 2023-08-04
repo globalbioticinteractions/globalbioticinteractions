@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParse;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -359,6 +360,20 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                         } catch (IllegalArgumentException e) {
                             // ignore
                         }
+                    }
+                    if (parsedDate == null) {
+                        throw ex;
+                    }
+                } else if (StringUtils.equals(dataTypeFormat, "YYYYMMdd")) {
+                    String valueWithoutHyphens = RegExUtils.replaceAll(value, "[-]+$", "");
+                    String dateTypeFormatShortened = StringUtils.substring(dataTypeFormat, 0, valueWithoutHyphens.length());
+                    DateTimeFormatter dateTimeFormatterAltered = DateTimeFormat
+                            .forPattern(dateTypeFormatShortened)
+                            .withZoneUTC();
+                    try {
+                        parsedDate = dateTimeFormatterAltered.parseDateTime(valueWithoutHyphens);
+                    } catch (IllegalArgumentException e) {
+                        // ignore
                     }
                     if (parsedDate == null) {
                         throw ex;

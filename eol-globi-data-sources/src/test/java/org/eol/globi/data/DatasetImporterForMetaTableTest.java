@@ -254,6 +254,24 @@ public class DatasetImporterForMetaTableTest {
     }
 
     @Test
+    public void handleUSNMIxodesDateType() {
+        final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("YYYYMMdd");
+        String parsedString = DatasetImporterForMetaTable.handleDateType("1899----", column);
+        assertThat(parsedString, is("1899-01-01T00:00:00.000Z"));
+    }
+
+    @Test
+    public void handleUSNMIxodesDateType2() {
+        final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
+        column.setDataTypeBase("date");
+        column.setDataTypeFormat("YYYYMMdd");
+        String parsedString = DatasetImporterForMetaTable.handleDateType("197212--", column);
+        assertThat(parsedString, is("1972-12-01T00:00:00.000Z"));
+    }
+
+    @Test
     public void handleDateTypeTruncated() {
         final DatasetImporterForMetaTable.Column column = new DatasetImporterForMetaTable.Column("foo", "http://rs.tdwg.org/dwc/terms/eventDate");
         column.setDataTypeBase("date");
