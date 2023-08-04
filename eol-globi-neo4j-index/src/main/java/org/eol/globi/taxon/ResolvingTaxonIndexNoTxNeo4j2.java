@@ -10,6 +10,7 @@ import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.tool.UnlikelyTaxonNameException;
 import org.eol.globi.util.NodeUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -33,7 +34,7 @@ public class ResolvingTaxonIndexNoTxNeo4j2 extends NonResolvingTaxonIndexNoTxNeo
     public TaxonNode getOrCreateTaxon(Taxon taxon) throws NodeFactoryException {
         if (StringUtils.isBlank(taxon.getExternalId()) && StringUtils.length(taxon.getName()) < 3) {
             if (!POSSIBLE_SHORT_NAME_PATTERN.matcher(taxon.getName()).matches()) {
-                throw new NodeFactoryException("taxon name [" + taxon.getName() + "] is a short and unlikely taxonomic name, and no externalId is provided");
+                throw new UnlikelyTaxonNameException("taxon name [" + taxon.getName() + "] is a short and unlikely taxonomic name, and no externalId is provided");
             }
         }
         TaxonNode taxonNode = findTaxon(taxon);

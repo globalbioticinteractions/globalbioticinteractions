@@ -110,6 +110,8 @@ public class NameResolver implements IndexerNeo4j {
                                 specimen.classifyAs(resolvedTaxon);
                             }
                         }
+                    } catch (UnlikelyTaxonNameException e) {
+                        // ignore
                     } catch (NodeFactoryException e) {
                         LOG.warn("failed to create taxon with name [" + describedAsTaxon.getName() + "] and id [" + describedAsTaxon.getExternalId() + "]", e);
                     } finally {
