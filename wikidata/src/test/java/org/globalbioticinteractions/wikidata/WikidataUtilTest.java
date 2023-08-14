@@ -21,6 +21,7 @@ import static org.eol.globi.domain.TaxonomyProvider.BATBASE_INTERACTION;
 import static org.eol.globi.domain.TaxonomyProvider.BATPLANT;
 import static org.eol.globi.domain.TaxonomyProvider.BIODIVERSITY_AUSTRALIA;
 import static org.eol.globi.domain.TaxonomyProvider.BOLD_BIN;
+import static org.eol.globi.domain.TaxonomyProvider.CHECKLIST_BANK;
 import static org.eol.globi.domain.TaxonomyProvider.ENVO;
 import static org.eol.globi.domain.TaxonomyProvider.FISHBASE_CACHE;
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
@@ -64,6 +65,7 @@ public class WikidataUtilTest {
                 TERRESTRIAL_PARASITE_TRACKER,
                 MAMMAL_DIVERSITY_DATABASE,
                 HESPEROMYS,
+                CHECKLIST_BANK,
                 PBDB
 
         );
