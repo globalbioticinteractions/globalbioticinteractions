@@ -56,6 +56,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.BATBASE_INTERACTION.getIdPrefix(), "https://batbase.org/interaction/");
         put(TaxonomyProvider.BATBASE.getIdPrefix(), "https://batbase.org/taxon/");
         put(TaxonomyProvider.CATALOGUE_OF_LIFE.getIdPrefix(), "https://www.catalogueoflife.org/data/taxon/");
+        put(TaxonomyProvider.CHECKLIST_BANK.getIdPrefix(), "https://www.checklistbank.org/dataset/");
         put(TaxonomyProvider.WORLD_OF_FLORA_ONLINE.getIdPrefix(), "http://www.worldfloraonline.org/taxon/wfo-");
         put(TaxonomyProvider.HESPEROMYS.getIdPrefix(), "http://hesperomys.com/n/");
         put(TaxonomyProvider.PBDB.getIdPrefix(), "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
@@ -86,6 +87,13 @@ public class ExternalIdUtil {
                         } catch (MalformedDOIException e) {
                             LOG.warn("found malformed doi [" + externalId + "]", e);
                         }
+                    } else if (TaxonomyProvider.CATALOGUE_OF_LIFE.getIdPrefix().equals(idPrefix)) {
+                        url = attemptToConstructChecklistBankUrl(externalId, url);
+                        if (url == null) {
+                            url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
+                        }
+                    } else if (TaxonomyProvider.CHECKLIST_BANK.getIdPrefix().equals(idPrefix)) {
+                        url = attemptToConstructChecklistBankUrl(externalId, url);
                     } else {
                         url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
                     }
@@ -106,6 +114,15 @@ public class ExternalIdUtil {
             }
         }
         return uri == null ? null : uri.toString();
+    }
+
+    private static String attemptToConstructChecklistBankUrl(String externalId, String url) {
+        String[] split = StringUtils.split(externalId, ":");
+        if (split.length == 3) {
+            // see https://github.com/CatalogueOfLife/general/issues/98
+            url = "https://www.checklistbank.org/dataset/" + split[1] + "/taxon/" + split[2];
+        }
+        return url;
     }
 
     public static Map<String, String> getURLPrefixMap() {

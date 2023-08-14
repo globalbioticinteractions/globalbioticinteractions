@@ -61,6 +61,30 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void checklistBank() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("CLB:9913:2234"), is(TaxonomyProvider.CHECKLIST_BANK));
+    }
+
+    @Test
+    public void urlForChecklistBank() {
+        assertThat(
+                ExternalIdUtil.urlForExternalId("CLB:9913:2234"),
+                is("https://www.checklistbank.org/dataset/9913/taxon/2234")
+        );
+    }
+
+    @Test
+    public void catalogueOfLifeTaxonString() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("COL:9837:64SCW"), is(TaxonomyProvider.CATALOGUE_OF_LIFE));
+    }
+
+    @Test
+    public void guessCatalogueOfLifeNameLandingPage() {
+        assertThat(ExternalIdUtil.urlForExternalId("COL:9837:64SCW"),
+                is("https://www.checklistbank.org/dataset/9837/taxon/64SCW"));
+    }
+
+    @Test
     public void stripIdPrefix() {
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.GBIF, "https://www.gbif.org/species/5110848"), is("5110848"));
     }

@@ -42,6 +42,7 @@ public enum TaxonomyProvider {
     PLAZI_TAXON_CONCEPT("PLAZITaxon:", "http://taxon-concept.plazi.org/id/"),
     PLAZI("PLAZI:", "http://treatment.plazi.org/id/"),
     CATALOGUE_OF_LIFE("COL:", "https://www.catalogueoflife.org/data/taxon/"),
+    CHECKLIST_BANK("CLB:", "https://www.checklistbank.org/dataset/"),
     WORLD_OF_FLORA_ONLINE("WFO:", "http://www.worldfloraonline.org/taxon/wfo-"),
     TERRESTRIAL_PARASITE_TRACKER("TPT:"),
     MAMMAL_DIVERSITY_DATABASE("MDD:", "https://www.mammaldiversity.org/explore.html#id="),
