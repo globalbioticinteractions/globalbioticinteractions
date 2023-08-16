@@ -29,6 +29,7 @@ import org.eol.globi.data.DatasetImporterForHurlbert;
 import org.eol.globi.data.DatasetImporterForICES;
 import org.eol.globi.data.DatasetImporterForINaturalist;
 import org.eol.globi.data.DatasetImporterForJRFerrerParis;
+import org.eol.globi.data.DatasetImporterForJSON;
 import org.eol.globi.data.DatasetImporterForJSONLD;
 import org.eol.globi.data.DatasetImporterForKelpForest;
 import org.eol.globi.data.DatasetImporterForLifeWatchGreece;
@@ -162,6 +163,7 @@ public class StudyImporterFactoryImpl implements StudyImporterFactory {
                 put("pensoft", DatasetImporterForPensoft.class);
                 put("zenodo", DatasetImporterForZenodoMetadata.class);
                 put("zover", DatasetImporterForZOVER.class);
+                put("json", DatasetImporterForJSON.class);
             }
         };
         Class<? extends DatasetImporter> anImporter = supportedFormats.get(format);
