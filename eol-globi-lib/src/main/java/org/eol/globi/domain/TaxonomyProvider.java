@@ -6,6 +6,7 @@ import java.util.List;
 public enum TaxonomyProvider {
     ITIS("ITIS:",
             TaxonomyProviderConstants.ITIS_URL_PREFIX,
+            TaxonomyProviderConstants.ITIS_URL_PREFIX_HTTPS,
             TaxonomyProviderConstants.ID_PREFIX_TSN,
             TaxonomyProviderConstants.ID_PREFIX_TSN_LOWERCASE
     ),
