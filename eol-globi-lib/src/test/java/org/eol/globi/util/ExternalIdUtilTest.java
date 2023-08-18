@@ -66,6 +66,20 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void itisTSN() {
+        String externalId = "TSN:180547";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(externalId), is(TaxonomyProvider.ITIS));
+        assertThat(ExternalIdUtil.urlForExternalId(externalId), is("http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=180547"));
+    }
+
+    @Test
+    public void itisTSNLowerCase() {
+        String externalId = "tsn:180547";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(externalId), is(TaxonomyProvider.ITIS));
+        assertThat(ExternalIdUtil.urlForExternalId(externalId), is("http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=180547"));
+    }
+
+    @Test
     public void urlForChecklistBank() {
         assertThat(
                 ExternalIdUtil.urlForExternalId("CLB:9913:2234"),

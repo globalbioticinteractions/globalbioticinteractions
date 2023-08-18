@@ -4,7 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum TaxonomyProvider {
-    ITIS("ITIS:", "https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value="),
+    ITIS("ITIS:",
+            TaxonomyProviderConstants.ITIS_URL_PREFIX,
+            TaxonomyProviderConstants.ID_PREFIX_TSN,
+            TaxonomyProviderConstants.ID_PREFIX_TSN_LOWERCASE
+    ),
     NBN("NBN:", "https://data.nbn.org.uk/Taxa/"),
     WORMS("WORMS:", "https://www.marinespecies.org/aphia.php?p=taxdetails&id=", "urn:lsid:marinespecies.org:taxname:"),
     NCBI("NCBI:", "NCBITaxon:", "NCBI:txid", "http://purl.obolibrary.org/obo/NCBITaxon_"),

@@ -2,6 +2,7 @@ package org.eol.globi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.domain.TaxonomyProviderConstants;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.slf4j.Logger;
@@ -41,7 +42,9 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.OPEN_TREE_OF_LIFE.getIdPrefix(), "https://tree.opentreeoflife.org/opentree/ottol@");
         put(TaxonomyProvider.ID_PREFIX_HTTP, TaxonomyProvider.ID_PREFIX_HTTP);
         put(TaxonomyProvider.ID_PREFIX_HTTPS, TaxonomyProvider.ID_PREFIX_HTTPS);
-        put(TaxonomyProvider.ID_PREFIX_ITIS, "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=");
+        put(TaxonomyProvider.ID_PREFIX_ITIS, TaxonomyProviderConstants.ITIS_URL_PREFIX);
+        put(TaxonomyProviderConstants.ID_PREFIX_TSN, TaxonomyProviderConstants.ITIS_URL_PREFIX);
+        put(TaxonomyProviderConstants.ID_PREFIX_TSN_LOWERCASE, TaxonomyProviderConstants.ITIS_URL_PREFIX);
         put(TaxonomyProvider.FISHBASE_SPECCODE.getIdPrefix(), "https://fishbase.org/summary/");
         put(TaxonomyProvider.SEALIFEBASE_SPECCODE.getIdPrefix(), "https://sealifebase.org/summary/");
         put(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix(), "https://inaturalist.org/taxa/");
