@@ -28,8 +28,6 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         this.service = service;
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(GeoNamesServiceImpl.class);
-
     public static final TermImpl GEO_TERM_EARTH = new TermImpl(GEONAMES.getIdPrefix() + "6295630", "Earth");
 
     private static Set<String> IGNORED_LOCALES = new TreeSet<String>() {{
@@ -274,11 +272,7 @@ public class GeoNamesServiceImpl implements GeoNamesService {
         } else {
             point = getCentroidForLocale(geoNameTermOrLocale);
         }
-        if (point == null) {
-            if (!IGNORED_LOCALES.contains(geoNameTermOrLocale)) {
-                LOG.warn("failed find (lat,lng) for term/locale [" + geoNameTermOrLocale + "]");
-            }
-        } else {
+        if (point != null) {
             pointCache.put(geoNameTermOrLocale, point);
         }
 
