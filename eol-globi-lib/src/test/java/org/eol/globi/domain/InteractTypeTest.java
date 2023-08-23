@@ -118,4 +118,14 @@ public class InteractTypeTest {
         assertThat(InteractType.valueOf(ATE.name()), is(ATE));
     }
 
+    @Test
+    public void interactionTypeWithWhitespace() {
+        assertThat(InteractType.typeOf("http://purl.obolibrary.org/obo/RO_0002440 "), is(SYMBIONT_OF));
+    }
+
+    @Test
+    public void interactionTypeWithoutwhitespace() {
+        assertThat(InteractType.typeOf("http://purl.obolibrary.org/obo/RO_0002440"), is(SYMBIONT_OF));
+    }
+
 }

@@ -182,6 +182,7 @@ public enum InteractType implements RelType {
         if (StringUtils.startsWith(iri, "RO:")) {
             iri = StringUtils.replace(iri, "RO:", PropertyAndValueDictionary.RO_NAMESPACE);
         }
+
         InteractType[] values = values();
         for (InteractType interactType : values) {
             if (StringUtils.equalsIgnoreCase(iri, interactType.getIRI())) {
@@ -192,7 +193,16 @@ public enum InteractType implements RelType {
                 return interactType;
             }
         }
-        return SYNONYMS_OR_HYPONYMS.get(iri);
+        InteractType interactType = SYNONYMS_OR_HYPONYMS.get(iri);
+
+        if (interactType == null) {
+            String iriTrimmed = StringUtils.trim(iri);
+            if (!StringUtils.equals(iri, iriTrimmed)) {
+                return typeOf(iriTrimmed);
+            }
+        }
+
+        return interactType;
     }
 
     public static Collection<InteractType> hasTypes(InteractType type) {
