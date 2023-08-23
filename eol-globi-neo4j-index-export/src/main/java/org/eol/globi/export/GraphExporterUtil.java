@@ -28,51 +28,56 @@ public class GraphExporterUtil {
         } catch (IOException e) {
             throw new StudyImporterException("failed to create export dir [" + formatBaseDir.getAbsolutePath() + "]", e);
         }
-        exportSupportingInteractions(
-                graphService,
-                formatBaseDir,
-                "interactions." + extension + ".gz",
-                joiner,
-                RelTypes.CLASSIFIED_AS,
-                neo4jVersion);
+        try {
+            exportSupportingInteractions(
+                    graphService,
+                    formatBaseDir,
+                    "interactions." + extension + ".gz",
+                    joiner,
+                    RelTypes.CLASSIFIED_AS,
+                    neo4jVersion);
 
-        exportSupportingInteractions(
-                graphService,
-                formatBaseDir,
-                "verbatim-interactions." + extension + ".gz",
-                joiner,
-                RelTypes.ORIGINALLY_DESCRIBED_AS,
-                neo4jVersion);
+            exportSupportingInteractions(
+                    graphService,
+                    formatBaseDir,
+                    "verbatim-interactions." + extension + ".gz",
+                    joiner,
+                    RelTypes.ORIGINALLY_DESCRIBED_AS,
+                    neo4jVersion);
 
-        exportRefutedInteractions(
-                graphService,
-                formatBaseDir,
-                "refuted-interactions." + extension + ".gz",
-                joiner,
-                RelTypes.CLASSIFIED_AS,
-                neo4jVersion);
+            exportRefutedInteractions(
+                    graphService,
+                    formatBaseDir,
+                    "refuted-interactions." + extension + ".gz",
+                    joiner,
+                    RelTypes.CLASSIFIED_AS,
+                    neo4jVersion);
 
-        exportRefutedInteractions(
-                graphService,
-                formatBaseDir,
-                "refuted-verbatim-interactions." + extension + ".gz",
-                joiner,
-                RelTypes.ORIGINALLY_DESCRIBED_AS,
-                neo4jVersion);
+            exportRefutedInteractions(
+                    graphService,
+                    formatBaseDir,
+                    "refuted-verbatim-interactions." + extension + ".gz",
+                    joiner,
+                    RelTypes.ORIGINALLY_DESCRIBED_AS,
+                    neo4jVersion);
 
-        exportCitations(
-                graphService,
-                formatBaseDir,
-                "citations." + extension + ".gz",
-                joiner,
-                neo4jVersion);
+            exportCitations(
+                    graphService,
+                    formatBaseDir,
+                    "citations." + extension + ".gz",
+                    joiner,
+                    neo4jVersion);
 
-        exportDatasetNamespaces(
-                graphService,
-                formatBaseDir,
-                "datasets." + extension + ".gz",
-                joiner,
-                neo4jVersion);
+            exportDatasetNamespaces(
+                    graphService,
+                    formatBaseDir,
+                    "datasets." + extension + ".gz",
+                    joiner,
+                    neo4jVersion);
+        } catch (StudyImporterException ex) {
+            LOG.error("issues while exporting", ex);
+            throw ex;
+        }
     }
 
     private static void exportSupportingInteractions(GraphDatabaseService graphService, File baseDir, String filename, ExportUtil.ValueJoiner joiner, RelTypes taxonRelation, String neo4jVersion) throws StudyImporterException {
