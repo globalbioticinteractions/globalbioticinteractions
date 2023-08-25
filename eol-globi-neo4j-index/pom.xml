@@ -5,7 +5,7 @@
     <parent>
         <artifactId>eol-globi-parent</artifactId>
         <groupId>org.eol</groupId>
-        <version>0.25.7-SNAPSHOT</version>
+        <version>0.25.7</version>
         <relativePath>../eol-globi-parent/pom.xml</relativePath>
     </parent>
 
