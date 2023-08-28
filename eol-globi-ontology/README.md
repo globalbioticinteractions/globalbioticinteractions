@@ -15,7 +15,7 @@ interactions to allow:
  * Relations from the OBO Relations Ontology (RO)
  * Life cycle stages from UBERON
  * Body parts from UBERON
- * Observations and speciments from IAO, OBO and OBOE
+ * Observations and specimens from IAO, OBO and OBOE
  * Behaviors from NBO
 
 ### Interactions
