@@ -1,0 +1,28 @@
+taxonID,scientificName,parentNameUsageID,taxonRank,vernacularName,wikipedia_url
+68766,Tylobolus,371771,genus,,http://en.wikipedia.org/wiki/Tylobolus
+68766,Tylobolus,371771,genus,,http://en.wikipedia.org/wiki/Tylobolus
+371771,Tylobolinae,56605,subfamily,,http://en.wikipedia.org/wiki/Spirobolidae
+56605,Spirobolidae,997639,family,Spirobolid Millipedes,http://en.wikipedia.org/wiki/Spirobolidae
+997639,Spirobolidea,51603,suborder,,
+51603,Spirobolida,372724,order,,http://en.wikipedia.org/wiki/Spirobolida
+372724,Juliformia,997267,superorder,Round-backed Millipedes,http://en.wikipedia.org/wiki/Juliformia
+997267,Eugnatha,372763,subterclass,,
+372763,Helminthomorpha,551278,infraclass,Worm-like Millipedes,http://en.wikipedia.org/wiki/Millipede
+551278,Chilognatha,47735,subclass,Chilognathan Millipedes,http://en.wikipedia.org/wiki/Millipede
+47735,Diplopoda,144128,class,Millipedes,http://en.wikipedia.org/wiki/Millipede
+144128,Myriapoda,47120,subphylum,Myriapods,http://en.wikipedia.org/wiki/Myriapoda
+47120,Arthropoda,1,phylum,Arthropods,http://en.wikipedia.org/wiki/Arthropod
+1,Animalia,48460,kingdom,Animals,http://en.wikipedia.org/wiki/Animal
+48460,Life,,stateofmatter,,http://en.wikipedia.org/wiki/Life
+53756,Zarhipis integripennis,53761,species,Western Banded Glowworm,
+53761,Zarhipis,1251187,genus,,
+1251187,Phengodinae,47206,subfamily,,https://en.wikipedia.org/wiki/Phengodinae
+47206,Phengodidae,47207,family,Glowworm Beetles,http://en.wikipedia.org/wiki/Phengodidae
+47207,Elateroidea,372854,superfamily,"Click, Firefly, and Soldier Beetles",http://en.wikipedia.org/wiki/Elateroidea
+372854,Elateriformia,71130,infraorder,Elateriform Beetles,http://en.wikipedia.org/wiki/Elateriformia
+71130,Polyphaga,47208,suborder,"Water, Rove, Scarab, Long-horned, Leaf, and Snout Beetles",http://en.wikipedia.org/wiki/Polyphaga
+47208,Coleoptera,184884,order,Beetles,http://en.wikipedia.org/wiki/Beetle
+184884,Pterygota,47158,subclass,Winged and Once-winged Insects,http://en.wikipedia.org/wiki/Pterygota
+47158,Insecta,372739,class,Insects,http://en.wikipedia.org/wiki/Insect
+372739,Hexapoda,47120,subphylum,Hexapods,http://en.wikipedia.org/wiki/Hexapoda
+47120,Arthropoda,1,phylum,Arthropods,http://en.wikipedia.org/wiki/Arthropod

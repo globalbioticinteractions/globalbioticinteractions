@@ -1404,4 +1404,25 @@ public class DatasetImporterForDwCATest {
             return null;
         }
     }
+
+    @Test
+    public void importInaturalistResourceRelation() throws StudyImporterException, URISyntaxException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/inaturalist-resource-relationships/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        final Map<String, String> interactionFound = new TreeMap<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(inStream -> inStream)));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                interactionFound.putAll(interaction);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+
+        assertThat(interactionFound.size(), greaterThan(0));
+        assertThat(interactionFound.get("resourceTypes"), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship"));
+
+    }
+
 }

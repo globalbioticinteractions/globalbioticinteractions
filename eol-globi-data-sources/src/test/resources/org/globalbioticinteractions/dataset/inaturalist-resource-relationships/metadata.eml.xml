@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eml:eml
+    xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml-gbif-profile.xsd"
+    xml:lang="en"
+    packageId="iNaturalist.observations.eml.1693331047"
+    system="http://gbif.org"
+    scope="system">
+  <dataset>
+    <alternateIdentifier><![CDATA[https://www.inaturalist.org/observations?created_d2=2023-08-29+10%3A44%3A06+-0700&license=any&ofv_datatype=taxon&quality_grade=research]]></alternateIdentifier>
+    <title xml:lang="en">
+        iNaturalist Research-grade Observations
+    </title>
+
+    <creator>
+  <individualName>
+    <givenName></givenName>
+    <surName>iNaturalist contributors</surName>
+  </individualName>
+  <organizationName>iNaturalist</organizationName>
+  <positionName></positionName>
+  <address>
+    
+    <city></city>
+    <administrativeArea></administrativeArea>
+    <postalCode></postalCode>
+    <country></country>
+  </address>
+  
+  <electronicMailAddress></electronicMailAddress>
+  <onlineUrl></onlineUrl>
+</creator>
+    <metadataProvider>
+  <individualName>
+    <givenName></givenName>
+    <surName>iNaturalist</surName>
+  </individualName>
+  <organizationName>iNaturalist</organizationName>
+  <positionName></positionName>
+  <address>
+    <deliveryPoint>PO Box 150357</deliveryPoint>
+    <city>San Rafael</city>
+    <administrativeArea>CA</administrativeArea>
+    <postalCode>94915</postalCode>
+    <country>US</country>
+  </address>
+  
+  <electronicMailAddress>help@inaturalist.org</electronicMailAddress>
+  <onlineUrl></onlineUrl>
+</metadataProvider>
+
+    <pubDate>2023-08-29</pubDate>
+
+    <!-- This is the RESOURCE language and not the metadata language which is at the bottom -->
+    <language>en_US</language>
+    <abstract>
+      <para>
+        Observations from iNaturalist.org, an online social network of people sharing biodiversity information to help each other learn about nature.
+      </para>
+      <para>
+        Observations included in this archive met the following requirements:
+      </para>
+      <para>
+        * Achieved one of following iNaturalist quality grades: Research
+      </para>
+      <para>
+        * Created on or before 2023-08-29 10:44:06 -0700
+      </para>
+      <para>
+        * Has an observation field value of type taxon
+      </para>
+      <para>
+        You can view observations meeting these requirements at <![CDATA[https://www.inaturalist.org/observations?created_d2=2023-08-29+10%3A44%3A06+-0700&license=any&ofv_datatype=taxon&quality_grade=research]]>
+      </para>
+    </abstract>
+    <intellectualRights>
+      <para>
+        These data are licensed under a variety of Creative Commons licenses and waivers. Please see individual records for their usage requirements.
+      </para>
+    </intellectualRights>
+    <!-- The distributionType URL is generally meant for informational purposes, and the "function" attribute should be set to "information". -->
+    <distribution scope="document">
+      <online>
+        <url function="information">https://www.inaturalist.org/observations</url>
+      </online>
+    </distribution>
+    <coverage>
+      <geographicCoverage>
+        <geographicDescription>Bounding Box</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-179.9780566804111</westBoundingCoordinate>
+          <eastBoundingCoordinate>179.2453119624406</eastBoundingCoordinate>
+          <northBoundingCoordinate>82.5007757730782</northBoundingCoordinate>
+          <southBoundingCoordinate>-71.29956343676895</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <temporalCoverage>
+        <rangeOfDates>
+          <beginDate>
+            <calendarDate>1881-11-23</calendarDate>
+          </beginDate>
+          <endDate>
+            <calendarDate>2023-08-29</calendarDate>
+          </endDate>
+        </rangeOfDates>
+      </temporalCoverage>
+
+    </coverage>
+
+    <purpose>
+      <para>
+        iNaturalist.org is a website where anyone can record their observations from nature. Members record observations for numerous reasons, including participation in citizen science projects, school projects, and personal fulfillment.
+      </para>
+    </purpose>
+
+      <maintenance>
+        <description>
+          New observations are constantly being added to iNaturalist. Observations are dynamic, so identifications and other aspects of data quality can change at any time due to crowdsourced curation. Observations belong to the people who added them, so those people may remove them at any time, or change their licensing.
+        </description>
+        <maintenanceUpdateFrequency>monthly</maintenanceUpdateFrequency>
+      </maintenance>
+
+    <contact>
+  <individualName>
+    <givenName></givenName>
+    <surName>iNaturalist</surName>
+  </individualName>
+  <organizationName>iNaturalist</organizationName>
+  <positionName></positionName>
+  <address>
+    <deliveryPoint>PO Box 150357</deliveryPoint>
+    <city>San Rafael</city>
+    <administrativeArea>CA</administrativeArea>
+    <postalCode>94915</postalCode>
+    <country>US</country>
+  </address>
+  
+  <electronicMailAddress>help@inaturalist.org</electronicMailAddress>
+  <onlineUrl></onlineUrl>
+</contact>
+
+    <methods>
+      <methodStep>
+        <description>
+          <para>Observation recorded and verified by the community</para>
+        </description>
+      </methodStep>
+      <qualityControl>
+        <description>
+          <para>iNaturalist observations become candidates for Research Grade when they have a photo, date, and coordinates. They become "Research Grade" when the community agrees on an identification. If the community has multiple opinions on what taxon has been observed, iNaturalist chooses a taxon from all the proposed taxa (a higher-level taxon containing the proposed taxa) that more than 2/3 of the voters agree with. The full algorithm is as follows: for all identified taxa and the taxa that contain them (e.g. genus Homo contains Homo sapiens), score each as the ratio between the number of cumulative IDs for that taxon over the sum of the cumulative IDs, the number of more conservative IDs added after the first ID of that taxon, and the number of IDs that are completely different (i.e. IDs of taxa that do not contain the taxon being scored). For the identified taxa that have a score over 2/3 and at least 2 identifications, iNaturalist chooses the lowest ranked taxon as the community taxon. An observation can lose Research Grade status if the community has voted it down on several metrics, including whether the organism is wild / naturalized (i.e. not captive / cultivated), whether the location and date seem accurate, and whether the content of the observation is appropriate for the context (e.g. violation of iNaturalist's Terms of Service, copyright violation, plagiarism, etc.). To learn more about data quality on iNaturalist, see http://www.inaturalist.org/pages/help#quality. Most attributes of each occurrence are the work of the observer (date, coordinates), or crowdsourced by several people (taxonomic identification) and have not been reviewed by the maintainers of this archive and thus cannot be presented with absolute confidence in their accuracy. For example, georeferencing interfaces employed in iNaturalist software all generate coordinates on the WGS84 datum so almost all records in this archive employ that datum as claimed in the geodeticDatum attribute, but coordinates are ultimately editable by the observer, so it's possible an observer could mistakenly add coordinates using a different datum by entering them manually and not using one of those georeferencing interfaces.</para>
+        </description>
+      </qualityControl>
+    </methods>
+  </dataset>
+  <additionalMetadata>
+    <metadata>
+      <gbif>
+        <!-- eml file creation date -->
+        <dateStamp>2023-08-29T10:44:07-07:00</dateStamp>
+        <!-- level to which the metadata document applies; default for GBIF is "dataset";  "series" is the other common level -->
+        <hierarchyLevel> dataset </hierarchyLevel>
+        <!-- URL of the logo associated with a resource -->
+        <resourceLogoUrl>https://static.inaturalist.org/sites/1-logo.svg?1573071870</resourceLogoUrl>
+      </gbif>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>

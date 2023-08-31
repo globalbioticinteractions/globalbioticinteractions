@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archive xmlns="http://rs.tdwg.org/dwc/text/" metadata="metadata.eml.xml">
+  <core encoding="UTF-8" linesTerminatedBy="\n" fieldsTerminatedBy="," fieldsEnclosedBy="&quot;" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Occurrence">
+    <files>
+      <location>observations.csv</location>
+    </files>
+    <id index="0"/>
+    <field index="1" term="http://rs.tdwg.org/dwc/terms/occurrenceID"/>
+    <field index="2" term="http://rs.tdwg.org/dwc/terms/basisOfRecord" default="HumanObservation"/>
+    <field index="3" term="http://purl.org/dc/terms/modified"/>
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/institutionCode" default="iNaturalist"/>
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/collectionCode" default="Observations"/>
+    <field index="6" term="http://rs.tdwg.org/dwc/terms/datasetName"/>
+    <field index="7" term="http://rs.tdwg.org/dwc/terms/informationWithheld"/>
+    <field index="8" term="http://rs.tdwg.org/dwc/terms/catalogNumber"/>
+    <field index="9" term="http://purl.org/dc/terms/references"/>
+    <field index="10" term="http://rs.tdwg.org/dwc/terms/occurrenceRemarks"/>
+    <field index="11" term="http://rs.tdwg.org/dwc/terms/recordedBy"/>
+    <field index="12" term="http://rs.tdwg.org/dwc/terms/recordedByID"/>
+    <field index="13" term="http://rs.tdwg.org/dwc/terms/identifiedBy"/>
+    <field index="14" term="http://rs.tdwg.org/dwc/terms/identifiedByID"/>
+    <field index="15" term="https://www.inaturalist.org/schema/terms/captive"/>
+    <field index="16" term="http://rs.tdwg.org/dwc/terms/eventDate"/>
+    <field index="17" term="http://rs.tdwg.org/dwc/terms/eventTime"/>
+    <field index="18" term="http://rs.tdwg.org/dwc/terms/verbatimEventDate"/>
+    <field index="19" term="http://rs.tdwg.org/dwc/terms/verbatimLocality"/>
+    <field index="20" term="http://rs.tdwg.org/dwc/terms/decimalLatitude"/>
+    <field index="21" term="http://rs.tdwg.org/dwc/terms/decimalLongitude"/>
+    <field index="22" term="http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters"/>
+    <field index="23" term="http://rs.tdwg.org/dwc/terms/geodeticDatum" default="EPSG:4326"/>
+    <field index="24" term="http://rs.tdwg.org/dwc/terms/countryCode"/>
+    <field index="25" term="http://rs.tdwg.org/dwc/terms/stateProvince"/>
+    <field index="26" term="http://rs.tdwg.org/dwc/terms/identificationID"/>
+    <field index="27" term="http://rs.tdwg.org/dwc/terms/dateIdentified"/>
+    <field index="28" term="http://rs.tdwg.org/dwc/terms/identificationRemarks"/>
+    <field index="29" term="http://rs.tdwg.org/dwc/terms/taxonID"/>
+    <field index="30" term="http://rs.tdwg.org/dwc/terms/scientificName"/>
+    <field index="31" term="http://rs.tdwg.org/dwc/terms/taxonRank"/>
+    <field index="32" term="http://rs.tdwg.org/dwc/terms/kingdom"/>
+    <field index="33" term="http://rs.tdwg.org/dwc/terms/phylum"/>
+    <field index="34" term="http://rs.tdwg.org/dwc/terms/class"/>
+    <field index="35" term="http://rs.tdwg.org/dwc/terms/order"/>
+    <field index="36" term="http://rs.tdwg.org/dwc/terms/family"/>
+    <field index="37" term="http://rs.tdwg.org/dwc/terms/genus"/>
+    <field index="38" term="http://purl.org/dc/terms/license"/>
+    <field index="39" term="http://purl.org/dc/terms/rightsHolder"/>
+    <field index="40" term="http://xmlns.com/foaf/0.1/nick"/>
+    <field index="41" term="http://rs.gbif.org/terms/1.0/publishingCountry"/>
+    <field index="42" term="http://rs.tdwg.org/dwc/terms/sex" vocabulary="http://rs.gbif.org/vocabulary/gbif/sex"/>
+    <field index="43" term="http://rs.tdwg.org/dwc/terms/lifeStage" vocabulary="http://rs.gbif.org/vocabulary/gbif/life_stage"/>
+    <field index="44" term="http://rs.tdwg.org/dwc/terms/reproductiveCondition"/>
+  </core>
+  <extension encoding="UTF-8" linesTerminatedBy="\n" fieldsTerminatedBy="," fieldsEnclosedBy="&quot;" ignoreHeaderLines="1" rowType="http://www.inaturalist.org/observation_fields">
+    <files>
+      <location>observation_fields.csv</location>
+    </files>
+    <coreid index="0"/>
+    <field index="0" term="id"/>
+    <field index="1" term="http://purl.org/dc/terms/identifier"/>
+    <field index="2" term="fieldName"/>
+    <field index="3" term="fieldID"/>
+    <field index="4" term="value"/>
+    <field index="5" term="dataType"/>
+    <field index="6" term="http://purl.org/dc/terms/created"/>
+    <field index="7" term="http://purl.org/dc/terms/modified"/>
+  </extension>
+  <extension encoding="UTF-8" linesTerminatedBy="\n" fieldsTerminatedBy="," fieldsEnclosedBy="&quot;" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/ResourceRelationship">
+    <files>
+      <location>resource_relationships.csv</location>
+    </files>
+    <coreid index="0"/>
+    <field index="0" term="id"/>
+    <field index="1" term="http://purl.org/dc/terms/identifier"/>
+    <field index="2" term="http://rs.tdwg.org/dwc/terms/resourceID"/>
+    <field index="3" term="http://rs.tdwg.org/dwc/terms/relationshipOfResourceID"/>
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/relationshipOfResource"/>
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/relatedResourceID"/>
+    <field index="6" term="http://rs.tdwg.org/dwc/terms/relationshipAccordingTo"/>
+    <field index="7" term="http://rs.tdwg.org/dwc/terms/relationshipEstablishedDate"/>
+  </extension>
+</archive>
