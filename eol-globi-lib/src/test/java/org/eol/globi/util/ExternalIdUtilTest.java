@@ -104,6 +104,11 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void stripIdPrefixIITS() {
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.ITIS, "tsn:5110848"), is("5110848"));
+    }
+
+    @Test
     public void itisTaxon() {
         assertThat(
                 ExternalIdUtil.taxonomyProviderFor("https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=535920"),
