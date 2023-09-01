@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
@@ -1029,7 +1030,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (StringUtils.isNotBlank(candidateTargetTaxonId)) {
             Matcher matcher = INATURALIST_TAXON.matcher(candidateTargetTaxonId);
             if (matcher.matches()) {
-                props.put(SOURCE_TAXON_ID, StringUtils.prependIfMissing(props.get(SOURCE_TAXON_ID), "https://www.inaturalist.org/taxa/"));
+                String str = props.get(SOURCE_TAXON_ID);
+                if (NumberUtils.isDigits(str)) {
+                    props.put(SOURCE_TAXON_ID, "https://www.inaturalist.org/taxa/" + str);
+                }
                 props.put(TARGET_TAXON_ID, candidateTargetTaxonId);
                 String citation = props.get(REFERENCE_CITATION);
                 if (StringUtils.startsWith(citation, "https://www.inaturalist.org/people")) {
@@ -1140,19 +1144,21 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                              Record coreRecord,
                                              DwcTerm term) {
         String id = coreRecord.value(term);
-        Set<String> idCandidates = new TreeSet<>();
-        idCandidates.add(id);
-        idCandidates.add(RegExUtils.replacePattern(id, "^http://", "https://"));
-        if (DwcTerm.taxonID.equals(term)) {
-            idCandidates.add(StringUtils.prependIfMissing(id, "https://www.inaturalist.org/taxa/"));
-        }
-
-        for (String idCandidate : idCandidates) {
-            if (isReferenced(referencedSourceIds, referencedTargetIds, idCandidate)) {
-                linkTerm(termIdPropertyMap, coreRecord, term, idCandidate);
-                break;
+        if (StringUtils.isNotBlank(id)) {
+            Set<String> idCandidates = new TreeSet<>();
+            idCandidates.add(id);
+            idCandidates.add(RegExUtils.replacePattern(id, "^http://", "https://"));
+            if (DwcTerm.taxonID.equals(term)) {
+                idCandidates.add(StringUtils.prependIfMissing(id, "https://www.inaturalist.org/taxa/"));
             }
 
+            for (String idCandidate : idCandidates) {
+                if (isReferenced(referencedSourceIds, referencedTargetIds, idCandidate)) {
+                    linkTerm(termIdPropertyMap, coreRecord, term, idCandidate);
+                    break;
+                }
+
+            }
         }
 
 
