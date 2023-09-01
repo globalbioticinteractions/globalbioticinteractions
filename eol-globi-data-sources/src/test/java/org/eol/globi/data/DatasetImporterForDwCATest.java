@@ -1424,7 +1424,21 @@ public class DatasetImporterForDwCATest {
 
         assertThat(interactionFound.size(), greaterThan(0));
         assertThat(interactionFound.get("resourceTypes"),
-                is("http://rs.tdwg.org/dwc/terms/ResourceRelationship"));
+                is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
+        assertThat(interactionFound.get("referenceCitation"),
+                is("https://www.inaturalist.org/observations/131"));
+        assertThat(interactionFound.get("referenceUrl"),
+                is("https://www.inaturalist.org/observations/131"));
+        assertThat(interactionFound.get("sourceTaxonId"),
+                is("https://www.inaturalist.org/taxa/53756"));
+        assertThat(interactionFound.get("sourceTaxonName"),
+                is("Zarhipis integripennis"));
+        assertThat(interactionFound.get("interactionTypeName"),
+                is("Eating"));
+        assertThat(interactionFound.get("interactionTypeId"),
+                is("https://www.inaturalist.org/observation_fields/13"));
+        assertThat(interactionFound.get("targetTaxonId"),
+                is("https://www.inaturalist.org/taxa/68766"));
 
     }
 

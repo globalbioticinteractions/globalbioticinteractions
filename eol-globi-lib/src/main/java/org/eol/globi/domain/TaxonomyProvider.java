@@ -31,7 +31,7 @@ public enum TaxonomyProvider {
     INDEX_FUNGORUM("IF:"),
     OPEN_TREE_OF_LIFE("OTT:"),
     NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:"),
-    INATURALIST_TAXON("INAT_TAXON:", "https://inaturalist.org/taxa/"),
+    INATURALIST_TAXON("INAT_TAXON:", "https://inaturalist.org/taxa/", "https://www.inaturalist.org/taxa/"),
     WIKIDATA("WD:", "http://www.wikidata.org/entity/"),
     FISHBASE_CACHE("FBC:"),
     FISHBASE_SPECCODE("FBC:FB:SpecCode:", "http://fishbase.org/summary/"),

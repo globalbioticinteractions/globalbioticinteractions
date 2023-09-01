@@ -1,6 +1,5 @@
 taxonID,scientificName,parentNameUsageID,taxonRank,vernacularName,wikipedia_url
 68766,Tylobolus,371771,genus,,http://en.wikipedia.org/wiki/Tylobolus
-68766,Tylobolus,371771,genus,,http://en.wikipedia.org/wiki/Tylobolus
 371771,Tylobolinae,56605,subfamily,,http://en.wikipedia.org/wiki/Spirobolidae
 56605,Spirobolidae,997639,family,Spirobolid Millipedes,http://en.wikipedia.org/wiki/Spirobolidae
 997639,Spirobolidea,51603,suborder,,

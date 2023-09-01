@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -144,6 +145,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
 
     }};
+    private static Pattern INATURALIST_TAXON =
+            Pattern.compile("http[s]{0,1}://(www.){0,1}inaturalist.org/taxa/(?<taxonId>[0-9]+)");
+    ;
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -929,7 +933,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         collectRelatedResourceIds(resourceExtension, referencedSourceIds, referencedTargetIds);
 
         final List<DwcTerm> termTypes = Arrays.asList(
-                DwcTerm.occurrenceID, DwcTerm.taxonID);
+                DwcTerm.occurrenceID,
+                DwcTerm.taxonID
+        );
 
         resolveLocalResourceIds(
                 archive,
@@ -1009,12 +1015,30 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 }
 
                 try {
+                    patchINaturalistProperties(props);
                     interactionListener.on(props);
                 } catch (StudyImporterException e) {
                     //
                 }
             }
         }
+    }
+
+    private static void patchINaturalistProperties(Map<String, String> props) {
+        String candidateTargetTaxonId = props.get(DwcTerm.relatedResourceID.qualifiedName());
+        if (StringUtils.isNotBlank(candidateTargetTaxonId)) {
+            Matcher matcher = INATURALIST_TAXON.matcher(candidateTargetTaxonId);
+            if (matcher.matches()) {
+                props.put(SOURCE_TAXON_ID, StringUtils.prependIfMissing(props.get(SOURCE_TAXON_ID), "https://www.inaturalist.org/taxa/"));
+                props.put(TARGET_TAXON_ID, candidateTargetTaxonId);
+                String citation = props.get(REFERENCE_CITATION);
+                if (StringUtils.startsWith(citation, "https://www.inaturalist.org/people")) {
+                    props.put(REFERENCE_URL, props.get(DwcTerm.resourceID.qualifiedName()));
+                    props.put(REFERENCE_CITATION, props.get(DwcTerm.resourceID.qualifiedName()));
+                }
+            }
+        }
+
     }
 
     private static void appendResourceType(Map<String, String> props, Term rowType) {
@@ -1116,20 +1140,41 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                              Record coreRecord,
                                              DwcTerm term) {
         String id = coreRecord.value(term);
-        if (StringUtils.isNotBlank(id) &&
-                (referencedTargetIds.contains(id) || referencedSourceIds.contains(id))) {
-            TreeMap<String, String> occProps = new TreeMap<>();
-            termsToMap(coreRecord, occProps);
-            appendResourceType(occProps, coreRecord.rowType());
-            Map<String, Map<String, String>> propMap = termIdPropertyMap.get(term.qualifiedName());
-            if (propMap == null) {
-                propMap = new HashMap<>();
-                propMap.put(id, occProps);
-                termIdPropertyMap.put(term.qualifiedName(), propMap);
-            } else {
-                propMap.put(id, occProps);
-            }
+        Set<String> idCandidates = new TreeSet<>();
+        idCandidates.add(id);
+        idCandidates.add(RegExUtils.replacePattern(id, "^http://", "https://"));
+        if (DwcTerm.taxonID.equals(term)) {
+            idCandidates.add(StringUtils.prependIfMissing(id, "https://www.inaturalist.org/taxa/"));
         }
+
+        for (String idCandidate : idCandidates) {
+            if (isReferenced(referencedSourceIds, referencedTargetIds, idCandidate)) {
+                linkTerm(termIdPropertyMap, coreRecord, term, idCandidate);
+                break;
+            }
+
+        }
+
+
+    }
+
+    private static void linkTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap, Record coreRecord, DwcTerm term, String id) {
+        TreeMap<String, String> occProps = new TreeMap<>();
+        termsToMap(coreRecord, occProps);
+        appendResourceType(occProps, coreRecord.rowType());
+        Map<String, Map<String, String>> propMap = termIdPropertyMap.get(term.qualifiedName());
+        if (propMap == null) {
+            propMap = new HashMap<>();
+            propMap.put(id, occProps);
+            termIdPropertyMap.put(term.qualifiedName(), propMap);
+        } else {
+            propMap.put(id, occProps);
+        }
+    }
+
+    private static boolean isReferenced(Set<String> referencedSourceIds, Set<String> referencedTargetIds, String id) {
+        return StringUtils.isNotBlank(id) &&
+                (referencedTargetIds.contains(id) || referencedSourceIds.contains(id));
     }
 
     private static void populatePropertiesAssociatedWithId(Map<String, String> props,
