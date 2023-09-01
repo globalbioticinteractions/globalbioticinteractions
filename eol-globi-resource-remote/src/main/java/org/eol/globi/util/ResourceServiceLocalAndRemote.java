@@ -1,12 +1,10 @@
 package org.eol.globi.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.zip.GZIPInputStream;
 
 public class ResourceServiceLocalAndRemote implements ResourceService {
 
