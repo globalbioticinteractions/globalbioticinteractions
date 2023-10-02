@@ -1,5 +1,6 @@
 package org.eol.globi.process;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.OccurrenceIdEnricherAtlasOfLivingAustralia;
 import org.eol.globi.data.OccurrenceIdEnricherCaliforniaAcademyOfSciences;
 import org.eol.globi.data.OccurrenceIdIdEnricherGenBank;
@@ -10,12 +11,15 @@ import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.OccurrenceIdEnricherFieldMuseum;
 import org.eol.globi.data.SpecimenCitationEnricher;
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.Dataset;
+import org.globalbioticinteractions.dataset.DatasetConstant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +39,22 @@ public class InteractionListenerImpl implements InteractionListener {
             }
         };
 
-        this.processors =
+        String shouldResolveReferences = dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "false");
+
+
+        List<InteractionListener> resolvingEnrichers = Arrays.asList(
+                new OccurrenceIdIdEnricherINaturalist(queue, logger, dataset),
+                new OccurrenceIdIdEnricherGenBank(queue, logger, dataset)
+        );
+
+        List<InteractionListener> listeners = new ArrayList<>();
+
+        if (StringUtils.equalsIgnoreCase(shouldResolveReferences, "true")) {
+            listeners.addAll(resolvingEnrichers);
+        }
+
+        listeners.addAll(
                 Arrays.asList(
-                        new OccurrenceIdIdEnricherINaturalist(queue, logger, dataset),
-                        new OccurrenceIdIdEnricherGenBank(queue, logger, dataset),
                         new OccurrenceIdEnricherFieldMuseum(queue, logger),
                         new OccurrenceIdEnricherCaliforniaAcademyOfSciences(queue, logger),
                         new OccurrenceIdEnricherAtlasOfLivingAustralia(queue, logger),
@@ -49,7 +65,9 @@ public class InteractionListenerImpl implements InteractionListener {
                         new InteractionValidator(queue, logger),
                         new DOIReferenceExtractor(queue, logger),
                         new InteractionImporter(nodeFactory, logger, geoNamesService)
-                );
+                ));
+
+        this.processors = Collections.unmodifiableList(listeners);
     }
 
     public InteractionListener createMappingListener(ImportLogger logger, Dataset dataset, InteractionListener queue) {

@@ -22,7 +22,9 @@ public class InteractionListenerCollectUnresolvedOccurrenceIds implements Intera
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         addUnresolvedSourceOccurrenceId(interaction);
+        addUnresolvedSourceTaxonId(interaction);
         addUnresolvedTargetOccurrenceId(interaction);
+        addUnresolvedTargetTaxonId(interaction);
     }
 
     public void addUnresolvedTargetOccurrenceId(Map<String, String> interaction) {
@@ -30,6 +32,15 @@ public class InteractionListenerCollectUnresolvedOccurrenceIds implements Intera
             interactionsWithUnresolvedOccurrenceIds.put(
                     Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID,
                             InteractionListenerIndexing.getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID)),
+                    Collections.emptyMap());
+        }
+    }
+
+    public void addUnresolvedTargetTaxonId(Map<String, String> interaction) {
+        if (hasUnresolvedTargetTaxonId(interaction)) {
+            interactionsWithUnresolvedOccurrenceIds.put(
+                    Pair.of(TaxonUtil.TARGET_TAXON_ID,
+                            InteractionListenerIndexing.getOccurrenceId(interaction, TaxonUtil.TARGET_TAXON_ID)),
                     Collections.emptyMap());
         }
     }
@@ -43,16 +54,37 @@ public class InteractionListenerCollectUnresolvedOccurrenceIds implements Intera
         }
     }
 
+    public void addUnresolvedSourceTaxonId(Map<String, String> interaction) {
+        if (hasUnresolvedSourceTaxonId(interaction)) {
+            interactionsWithUnresolvedOccurrenceIds.put(
+                    Pair.of(TaxonUtil.SOURCE_TAXON_ID,
+                            InteractionListenerIndexing.getOccurrenceId(interaction, TaxonUtil.SOURCE_TAXON_ID)),
+                    new HashMap<>(interaction));
+        }
+    }
+
     public static boolean hasUnresolvedSourceOccurrenceId(Map<String, String> interaction) {
         return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.SOURCE_TAXON_NAME),
                 TaxonUtil.generateSourceTaxonName(interaction)))
                 && interaction.containsKey(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
     }
 
+    public static boolean hasUnresolvedSourceTaxonId(Map<String, String> interaction) {
+        return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.SOURCE_TAXON_NAME),
+                TaxonUtil.generateSourceTaxonName(interaction)))
+                && interaction.containsKey(TaxonUtil.SOURCE_TAXON_ID);
+    }
+
     public static boolean hasUnresolvedTargetOccurrenceId(Map<String, String> interaction) {
         return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.TARGET_TAXON_NAME),
                 TaxonUtil.generateTargetTaxonName(interaction)))
                 && interaction.containsKey(DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
+    }
+
+    public static boolean hasUnresolvedTargetTaxonId(Map<String, String> interaction) {
+        return StringUtils.isBlank(StringUtils.defaultString(interaction.get(TaxonUtil.TARGET_TAXON_NAME),
+                TaxonUtil.generateTargetTaxonName(interaction)))
+                && interaction.containsKey(TaxonUtil.TARGET_TAXON_ID);
     }
 
 }

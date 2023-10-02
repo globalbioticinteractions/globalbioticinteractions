@@ -118,16 +118,25 @@ public class OccurrenceIdIdEnricherINaturalist extends InteractionProcessorAbstr
     private void enrichFields(Map<String, String> enrichedProperties, String taxonNameField, String taxonIdField, String taxonRankField, String occurrenceIdField) throws StudyImporterException {
         String occurrenceId = enrichedProperties.get(occurrenceIdField);
         if (isINaturalistObservation(occurrenceId)) {
-            try (InputStream is = getResponse(createObservationUrl(occurrenceId))) {
-                enrichWithINaturalistObservation(is,
-                        taxonNameField,
-                        taxonIdField,
-                        taxonRankField,
-                        enrichedProperties);
-            } catch (IOException e) {
-                throw new StudyImporterException("failed to resolve [" + occurrenceId + "]");
+            if (isBlank(enrichedProperties, taxonNameField)
+                    || isBlank(enrichedProperties, taxonIdField)
+                    || isBlank(enrichedProperties, taxonRankField)) {
+                try (InputStream is = getResponse(createObservationUrl(occurrenceId))) {
+                    enrichWithINaturalistObservation(is,
+                            taxonNameField,
+                            taxonIdField,
+                            taxonRankField,
+                            enrichedProperties);
+                } catch (IOException e) {
+                    throw new StudyImporterException("failed to resolve [" + occurrenceId + "]");
+                }
             }
         }
+    }
+
+    private boolean isBlank(Map<String, String> enrichedProperties, String taxonNameField) {
+        String s = enrichedProperties.get(taxonNameField);
+        return StringUtils.isBlank(s);
     }
 
     public String createObservationUrl(String sourceOccurrenceId) {

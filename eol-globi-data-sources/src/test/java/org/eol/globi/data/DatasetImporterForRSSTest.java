@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
@@ -151,6 +152,20 @@ public class DatasetImporterForRSSTest {
     }
 
     @Test
+    public void iNaturalistRSSWithoutConfig() throws StudyImporterException, IOException {
+        String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_inaturalist.xml\" }";
+        final Dataset dataset = datasetFor(configJson);
+        List<Dataset> datasets = DatasetImporterForRSS.getDatasetsForFeed(dataset);
+        assertThat(datasets.size(), is(2));
+        assertThat(datasets.get(0).getOrDefault("hasDependencies", null), is("false"));
+        assertThat(datasets.get(0).getOrDefault("url", null), is("https://www.inaturalist.org/observations/globi-observations-resource-relationships-dwca.zip"));
+        assertThat(datasets.get(0).getArchiveURI(), is(URI.create("https://www.inaturalist.org/observations/globi-observations-resource-relationships-dwca.zip")));
+        assertThat(datasets.get(1).getOrDefault("hasDependencies", null), is("false"));
+        assertThat(datasets.get(1).getOrDefault("url", null), is("https://www.inaturalist.org/taxa/inaturalist-taxonomy.dwca.zip"));
+        assertThat(datasets.get(1).getArchiveURI(), is(URI.create("https://www.inaturalist.org/taxa/inaturalist-taxonomy.dwca.zip")));
+    }
+
+    @Test
     public void readFieldMuseum() throws StudyImporterException, IOException {
         String configJson = "{ \"url\": \"classpath:/org/eol/globi/data/rss_fieldmuseum.xml\" }";
         final Dataset dataset = datasetFor(configJson);
@@ -245,7 +260,7 @@ public class DatasetImporterForRSSTest {
                     put(DatasetImporterForTSV.TARGET_BODY_PART_NAME, "bodyPartName");
                     put(DatasetImporterForTSV.TARGET_BODY_PART_ID, "bodyPartId");
                     put(TaxonUtil.TARGET_TAXON_NAME, "taxonName");
-                    put(TaxonUtil.TARGET_TAXON_ID, "taxonId");
+                    put(TARGET_TAXON_ID, "taxonId");
                 }
             });
         }};
@@ -258,7 +273,7 @@ public class DatasetImporterForRSSTest {
         assertThat(receivedLinks.size(), is(1));
         Map<String, String> received = receivedLinks.get(0);
         assertThat(received.get(TaxonUtil.TARGET_TAXON_NAME), is("taxonName"));
-        assertThat(received.get(TaxonUtil.TARGET_TAXON_ID), is("taxonId"));
+        assertThat(received.get(TARGET_TAXON_ID), is("taxonId"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_NAME), is("bodyPartName"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_ID), is("bodyPartId"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME), is("lifeStageName"));
@@ -267,7 +282,7 @@ public class DatasetImporterForRSSTest {
 
     }
 
-    @Test()
+    @Test
     public void enrichingInteractionListenerSourceOccurrence() throws StudyImporterException {
         DatasetImporterWithListener studyImporter = new DatasetImporterWithListener(new ParserFactory() {
             @Override
@@ -299,7 +314,7 @@ public class DatasetImporterForRSSTest {
                     put(DatasetImporterForTSV.TARGET_BODY_PART_NAME, "bodyPartName");
                     put(DatasetImporterForTSV.TARGET_BODY_PART_ID, "bodyPartId");
                     put(TaxonUtil.TARGET_TAXON_NAME, "taxonName");
-                    put(TaxonUtil.TARGET_TAXON_ID, "taxonId");
+                    put(TARGET_TAXON_ID, "taxonId");
                 }
             });
         }};
@@ -315,12 +330,60 @@ public class DatasetImporterForRSSTest {
         Map<String, String> received = receivedLinks.get(0);
         assertThat(received.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("4567"));
         assertThat(received.get(TaxonUtil.TARGET_TAXON_NAME), is("taxonName"));
-        assertThat(received.get(TaxonUtil.TARGET_TAXON_ID), is("taxonId"));
+        assertThat(received.get(TARGET_TAXON_ID), is("taxonId"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("1234"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_NAME), is("bodyPartName"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_BODY_PART_ID), is("bodyPartId"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME), is("lifeStageName"));
         assertThat(received.get(DatasetImporterForTSV.TARGET_LIFE_STAGE_ID), is("lifeStageId"));
+
+
+    }
+    @Test
+    public void enrichingInteractionListenerSourceOccurrenceTargetTaxon() throws StudyImporterException {
+        DatasetImporterWithListener studyImporter = new DatasetImporterWithListener(new ParserFactory() {
+            @Override
+            public LabeledCSVParser createParser(URI studyResource, String characterEncoding) throws IOException {
+                return null;
+            }
+        }, new NodeFactoryNull()) {
+            @Override
+            public void importStudy() throws StudyImporterException {
+                //
+            }
+        };
+
+
+        final List<Map<String, String>> receivedLinks = new ArrayList<>();
+        studyImporter.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                receivedLinks.add(interaction);
+            }
+        });
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<Pair<String, String>, Map<String, String>>() {{
+            put(Pair.of(TARGET_TAXON_ID, "1234"), new TreeMap<String, String>() {
+                {
+                    put(TaxonUtil.TARGET_TAXON_NAME, "taxonName");
+                    put(TARGET_TAXON_ID, "1234");
+                }
+            });
+        }};
+        InteractionListenerResolving listener = new InteractionListenerResolving(
+                interactionsWithUnresolvedOccurrenceIds,
+                studyImporter.getInteractionListener());
+
+        listener.on(new TreeMap<String, String>() {{
+            put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "4567");
+            put(TARGET_TAXON_ID, "1234");
+
+        }});
+
+        assertThat(receivedLinks.size(), is(1));
+        Map<String, String> received = receivedLinks.get(0);
+        assertThat(received.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("4567"));
+        assertThat(received.get(TaxonUtil.TARGET_TAXON_NAME), is("taxonName"));
+        assertThat(received.get(TARGET_TAXON_ID), is("1234"));
 
 
     }

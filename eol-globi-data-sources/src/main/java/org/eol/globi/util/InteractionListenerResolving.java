@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.service.TaxonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +15,11 @@ import java.util.TreeMap;
 import static org.eol.globi.util.InteractionListenerIndexing.getOccurrenceId;
 
 public class InteractionListenerResolving implements InteractionListener {
-    private final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
+    private final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceOrTaxonIds;
     private final InteractionListener interactionListener;
 
-    public InteractionListenerResolving(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, InteractionListener interactionListener) {
-        this.interactionsWithUnresolvedOccurrenceIds = interactionsWithUnresolvedOccurrenceIds;
+    public InteractionListenerResolving(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceOrTaxonIds, InteractionListener interactionListener) {
+        this.interactionsWithUnresolvedOccurrenceOrTaxonIds = interactionsWithUnresolvedOccurrenceOrTaxonIds;
         this.interactionListener = interactionListener;
     }
 
@@ -40,7 +41,16 @@ public class InteractionListenerResolving implements InteractionListener {
 
         if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedTargetOccurrenceId(interaction)) {
             String targetOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
-            Map<String, String> resolved = interactionsWithUnresolvedOccurrenceIds.get(Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId));
+            Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId));
+            if (resolved != null && !resolved.isEmpty()) {
+                enrichedProperties = new ArrayList<>();
+                enrichedProperties.add(resolved);
+            }
+        }
+
+        if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedTargetTaxonId(interaction)) {
+            String targetTaxonId = getOccurrenceId(interaction, TaxonUtil.TARGET_TAXON_ID);
+            Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(TaxonUtil.TARGET_TAXON_ID, targetTaxonId));
             if (resolved != null && !resolved.isEmpty()) {
                 enrichedProperties = new ArrayList<>();
                 enrichedProperties.add(resolved);
@@ -49,7 +59,7 @@ public class InteractionListenerResolving implements InteractionListener {
 
         if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedSourceOccurrenceId(interaction)) {
             String sourceOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
-            Map<String, String> resolved = interactionsWithUnresolvedOccurrenceIds.get(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId));
+            Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId));
             if (resolved != null && !resolved.isEmpty()) {
                 if (enrichedProperties == null) {
                     enrichedProperties = new ArrayList<>();
@@ -57,6 +67,18 @@ public class InteractionListenerResolving implements InteractionListener {
                 enrichedProperties.add(resolved);
             }
         }
+
+        if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedSourceTaxonId(interaction)) {
+            String sourceTaxonId = getOccurrenceId(interaction, TaxonUtil.SOURCE_TAXON_ID);
+            Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(TaxonUtil.SOURCE_TAXON_ID, sourceTaxonId));
+            if (resolved != null && !resolved.isEmpty()) {
+                if (enrichedProperties == null) {
+                    enrichedProperties = new ArrayList<>();
+                }
+                enrichedProperties.add(resolved);
+            }
+        }
+
         return enrichedProperties;
     }
 

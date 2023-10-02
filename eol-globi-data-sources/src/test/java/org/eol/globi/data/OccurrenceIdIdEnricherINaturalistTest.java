@@ -35,6 +35,29 @@ public class OccurrenceIdIdEnricherINaturalistTest {
         assertThat(properties.get(SOURCE_TAXON_ID), is(TaxonomyProvider.INATURALIST_TAXON.getIdPrefix() + "41860"));
     }
 
+    @Test
+    public void noNeedTolookupSourceOccurrenceId() throws StudyImporterException {
+
+        Map<String, String> properties
+                = new OccurrenceIdIdEnricherINaturalist(null, null, new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                throw new IOException("kaboom!");
+            }
+        })
+                .enrich(new TreeMap<String, String>() {{
+                    put("sourceOccurrenceId", "https://www.inaturalist.org/observations/2900976");
+                    put(SOURCE_TAXON_NAME, "Donald duck");
+                    put(SOURCE_TAXON_ID, "example123");
+                    put(SOURCE_TAXON_RANK, "species");
+                }});
+
+        assertThat(properties.get(SOURCE_TAXON_NAME), is("Donald duck"));
+        assertThat(properties.get(SOURCE_TAXON_ID), is("example123"));
+        assertThat(properties.get(SOURCE_TAXON_RANK), is("species"));
+
+    }
+
     public ResourceService getResourceService() {
         return new ResourceService() {
             @Override

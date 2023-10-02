@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<rss version="2.0"
+     xmlns:ipt="http://ipt.gbif.org/"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+    <channel>
+        <title>iNaturalist Occurrences and Taxa</title>
+        <link>http://ipt.vertnet.org:8080/ipt</link>
+        <atom:link href="http://ipt.vertnet.org:8080/ipt/rss.do" rel="self" type="application/rss+xml"/>
+        <description>iNaturalist observations, reported interactions and associated taxa. For context and more information, please see https://github.com/globalbioticinteractions/inaturalist</description>
+        <language>en-us</language>
+        <!-- RFC-822 date-time / Wed, 02 Oct 2010 13:00:00 GMT -->
+        <pubDate>Mon, 2 Oct 2023 17:45:13 +0000</pubDate>
+        <lastBuildDate>Mon, 2 Oct 2023 17:45:13 +0000</lastBuildDate>
+        <docs>http://cyber.law.harvard.edu/rss/rss.html</docs>
+        <item>
+            <!-- this is the main dataset to be indexed -->
+            <title>iNaturalist Occurrences</title>
+            <link>http://ipt.vertnet.org:8080/ipt/resourc</link>
+            <!-- shows what changed in this version, or shows the resource description if change summary was empty -->
+            <author>pleary@inaturalist (Patrick Leary)</author>
+            <ipt:dwca>https://www.inaturalist.org/observations/globi-observations-resource-relationships-dwca.zip</ipt:dwca>
+        </item>
+        <item>
+            <!-- this is a dependency of the main dataset -->
+            <title>iNaturalist Taxa</title>
+            <author>pleary@inaturalist (Patrick Leary)</author>
+            <ipt:dwca>https://www.inaturalist.org/taxa/inaturalist-taxonomy.dwca.zip</ipt:dwca>
+            <pubDate>Mon, 17 Feb 2020 17:39:49 +0000</pubDate>
+            <!-- category used to indicate that an item is a dependency and should used to resolve linked content, and not as a source of interaction data -->
+            <category domain="http://www.w3.org/ns/prov">http://www.w3.org/ns/prov#wasUsedBy</category>
+        </item>
+    </channel>
+</rss>
+
