@@ -39,7 +39,8 @@ public class InteractionListenerImpl implements InteractionListener {
             }
         };
 
-        String shouldResolveReferences = dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "false");
+        String shouldResolveReferences
+                = dataset == null ? "false" : dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "false");
 
 
         List<InteractionListener> resolvingEnrichers = Arrays.asList(
