@@ -115,6 +115,7 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
 
     public static final String RESOURCE_TYPES = "resourceTypes";
     public static final String SOURCE_RECORD_NUMBER = "sourceRecordNumber";
+    public static final String TARGET_RECORD_NUMBER = "targetRecordNumber";
 
     private static final String RESOURCE_LINE_NUMBER = "resourceLineNumber";
     private static final String RESOURCE_URI = "resourceURI";

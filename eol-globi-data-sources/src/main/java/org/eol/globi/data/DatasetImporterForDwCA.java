@@ -1202,6 +1202,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_COLLECTION_ID : DatasetImporterForTSV.TARGET_COLLECTION_ID, occurrenceProperties.get(DwcTerm.collectionID.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_COLLECTION_CODE : DatasetImporterForTSV.TARGET_COLLECTION_CODE, occurrenceProperties.get(DwcTerm.collectionCode.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_CATALOG_NUMBER : DatasetImporterForTSV.TARGET_CATALOG_NUMBER, occurrenceProperties.get(DwcTerm.catalogNumber.qualifiedName()));
+            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_RECORD_NUMBER : DatasetImporterForTSV.TARGET_RECORD_NUMBER, occurrenceProperties.get(DwcTerm.recordNumber.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ID : TARGET_TAXON_ID, occurrenceProperties.get(DwcTerm.taxonID.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_NAME : TARGET_TAXON_NAME, occurrenceProperties.get(DwcTerm.scientificName.qualifiedName()));
             putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_RANK : TARGET_TAXON_RANK, occurrenceProperties.get(DwcTerm.taxonRank.qualifiedName()));
