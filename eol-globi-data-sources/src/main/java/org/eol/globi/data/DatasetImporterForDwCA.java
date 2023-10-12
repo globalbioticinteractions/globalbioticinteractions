@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
@@ -1037,8 +1038,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 props.put(TARGET_TAXON_ID, candidateTargetTaxonId);
                 String citation = props.get(REFERENCE_CITATION);
                 if (StringUtils.startsWith(citation, "https://www.inaturalist.org/people")) {
-                    props.put(REFERENCE_URL, props.get(DwcTerm.resourceID.qualifiedName()));
-                    props.put(REFERENCE_CITATION, props.get(DwcTerm.resourceID.qualifiedName()));
+                    String sourceCatalogNumber = props.get(DatasetImporterForTSV.SOURCE_CATALOG_NUMBER);
+                    if (NumberUtils.isDigits(sourceCatalogNumber)) {
+                        String reference = "https://www.inaturalist.org/observations/" + sourceCatalogNumber;
+                        props.put(REFERENCE_URL, reference);
+                        props.put(REFERENCE_CITATION, reference);
+                    }
                 }
             }
         }

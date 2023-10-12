@@ -1289,6 +1289,36 @@ public class DatasetImporterForDwCATest {
         assertThat(numberOfFoundLinks.get(), is(1));
     }
 
+    @Test
+    public void hasResourceRelationshipsOccurrenceToTaxaWithReferencesAsReferenceCitation() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("inaturalist-dwca-rr-2.zip").toURI();
+
+        Archive archive = DwCAUtil.archiveFor(sampleArchive, "target/tmp");
+
+        AtomicInteger numberOfFoundLinks = new AtomicInteger(0);
+        importResourceRelationshipExtension(archive, new InteractionListener() {
+
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                numberOfFoundLinks.incrementAndGet();
+                if (1 == numberOfFoundLinks.get()) {
+                    assertThat(interaction.get(SOURCE_TAXON_NAME), is("Hemiphaga novaeseelandiae"));
+                    assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("http://naturewatch.org.nz/observations/403286"));
+                    assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Associated species with names lookup"));
+                    assertThat(interaction.get(INTERACTION_TYPE_ID), is("https://www.inaturalist.org/observation_fields/1711"));
+                    assertThat(interaction.get(DatasetImporterForTSV.BASIS_OF_RECORD_NAME), is("HumanObservation"));
+                    assertThat(interaction.get(TaxonUtil.TARGET_TAXON_ID), is("https://www.inaturalist.org/taxa/50192"));
+                    assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("https://www.inaturalist.org/observations/1000067"));
+                    assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
+
+                }
+
+            }
+        });
+
+        assertThat(numberOfFoundLinks.get(), is(1));
+    }
+
 
     @Test
     public void mapReferencesInfo() {
