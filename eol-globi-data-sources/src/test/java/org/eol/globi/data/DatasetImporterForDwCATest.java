@@ -65,6 +65,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_RANK;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 import static org.gbif.dwc.terms.DwcTerm.relatedResourceID;
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -1303,6 +1304,7 @@ public class DatasetImporterForDwCATest {
                 numberOfFoundLinks.incrementAndGet();
                 if (1 == numberOfFoundLinks.get()) {
                     assertThat(interaction.get(SOURCE_TAXON_NAME), is("Hemiphaga novaeseelandiae"));
+                    assertThat(interaction.get(SOURCE_TAXON_RANK), is("species"));
                     assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("http://naturewatch.org.nz/observations/403286"));
                     assertThat(interaction.get(INTERACTION_TYPE_NAME), is("Associated species with names lookup"));
                     assertThat(interaction.get(INTERACTION_TYPE_ID), is("https://www.inaturalist.org/observation_fields/1711"));
