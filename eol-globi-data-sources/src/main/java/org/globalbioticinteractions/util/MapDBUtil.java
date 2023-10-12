@@ -52,7 +52,6 @@ public class MapDBUtil {
     private static DB tmpDB(DBMaker maker) {
         return maker
                 .deleteFilesAfterClose()
-                .cacheDisable()
                 .closeOnJvmShutdown()
                 .transactionDisable()
                 .make();
