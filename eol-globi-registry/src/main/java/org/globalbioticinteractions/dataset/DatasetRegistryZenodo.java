@@ -187,7 +187,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
                     Long id = NumberUtils.createLong(idString);
                     if (split.length > 3) {
                         String githubRepo = split[0] + "/" + split[1];
-                        URI archiveURI = URI.create("https://zenodo.org/record/" + idString + "/files/" + githubRepo + "-" + split[3] + ".zip");
+                        URI archiveURI = URI.create("https://zenodo.org/records/" + idString + "/files/" + githubRepo + "-" + split[3] + ".zip");
                         List<Pair<Long, URI>> versions = namespace2ZenodoPubs
                                 .getOrDefault(githubRepo, new TreeList<>());
                         namespace2ZenodoPubs.put(githubRepo, new TreeList<Pair<Long, URI>>(versions) {{

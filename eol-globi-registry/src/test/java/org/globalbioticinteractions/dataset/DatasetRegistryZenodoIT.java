@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.util.ResourceServiceHTTP;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URI;
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertNull;
 
 public class DatasetRegistryZenodoIT {
 
+    @Ignore("datacite3 no longer supported")
     @Test
     public void zenodoDataFeedDatacite3() throws DatasetRegistryException {
         String metadataPrefix = "oai_datacite3";
@@ -53,7 +55,7 @@ public class DatasetRegistryZenodoIT {
                 .getArchiveURI();
         assertThat(uri, is(notNullValue()));
         assertThat(uri.toString(),
-                is("https://zenodo.org/record/1436853/files/globalbioticinteractions/template-dataset-0.0.3.zip"));
+                is("https://zenodo.org/records/1436853/files/globalbioticinteractions/template-dataset-0.0.3.zip"));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class DatasetRegistryZenodoIT {
         URI uri = dataset
                 .getArchiveURI();
         assertThat(uri, is(notNullValue()));
-        assertThat(uri.toString(), is("https://zenodo.org/record/258208/files/millerse/Lara-C.-2006-v1.0.zip"));
+        assertThat(uri.toString(), is("https://zenodo.org/records/258208/files/millerse/Lara-C.-2006-v1.0.zip"));
     }
 
     @Test
@@ -79,7 +81,7 @@ public class DatasetRegistryZenodoIT {
                 .getArchiveURI();
 
         assertThat(uri, is(notNullValue()));
-        assertThat(uri.toString(), is("https://zenodo.org/record/545807/files/millerse/Lichenous-v2.0.0.zip"));
+        assertThat(uri.toString(), is("https://zenodo.org/records/545807/files/millerse/Lichenous-v2.0.0.zip"));
     }
 
 }
