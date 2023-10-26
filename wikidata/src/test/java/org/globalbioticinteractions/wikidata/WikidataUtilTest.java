@@ -3,6 +3,7 @@ package org.globalbioticinteractions.wikidata;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -96,6 +97,7 @@ public class WikidataUtilTest {
         assertThat(properties, everyItem(isIn(providers)));
     }
 
+    @Ignore("see https://github.com/CatalogueOfLife/general/issues/100")
     @Test
     public void lookupTaxonLinks() throws IOException, URISyntaxException {
         List<Taxon> relatedTaxonIds =
@@ -162,6 +164,7 @@ public class WikidataUtilTest {
         assertThat(names, is("Alternaria"));
     }
 
+    @Ignore("see https://github.com/CatalogueOfLife/general/issues/100")
     @Test
     public void lookupTaxonLinksByWDEntry() throws IOException, URISyntaxException {
         List<Taxon> relatedTaxonIds =
