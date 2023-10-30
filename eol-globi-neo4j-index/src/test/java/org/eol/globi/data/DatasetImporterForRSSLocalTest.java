@@ -324,20 +324,39 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), greaterThan(0));
-        StudyNode study = allStudies.get(0);
         AtomicInteger counter = new AtomicInteger(0);
 
+
+        assertStudyRelation(counter,
+                "Bombus barbutellus",
+                "https://www.inaturalist.org/taxa/78260",
+                "no name",
+                InteractType.VISITS_FLOWERS_OF,
+                allStudies.get(0));
+
+        assertStudyRelation(counter,
+                "Apis mellifera",
+                "https://www.inaturalist.org/taxa/50333",
+                "no name",
+                InteractType.POLLINATES,
+                allStudies.get(1));
+
+
+    }
+
+    private void assertStudyRelation(AtomicInteger counter, String expectedSourceName, String expectedTargetTaxonId, String expectedTargetTaxonName, InteractType interactType, StudyNode study) {
         NodeUtil.handleCollectedRelationships(
                 new NodeTypeDirection(study.getUnderlyingNode()),
                 relationship -> {
                     assertThat(relationship.getType().name(), is("COLLECTED"));
+
 
                     SpecimenNode source = new SpecimenNode(relationship.getEndNode());
                     Relationship singleRelationship
                             = source
                             .getUnderlyingNode()
                             .getSingleRelationship(
-                                    NodeUtil.asNeo4j(InteractType.ECTOPARASITE_OF),
+                                    NodeUtil.asNeo4j(interactType),
                                     Direction.OUTGOING);
 
                     if (singleRelationship != null) {
@@ -355,16 +374,14 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
                                 .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
                                 .getEndNode();
 
-                        assertThat(new TaxonNode(sourceOrigTaxon).getName(), is("Orchopeas fulleri Traub, 1950"));
-                        assertThat(new TaxonNode(targetOrigTaxon).getName(), is("Glaucomys volans"));
+                        assertThat(new TaxonNode(sourceOrigTaxon).getName(), is(expectedSourceName));
+                        assertThat(new TaxonNode(targetOrigTaxon).getId(), is(expectedTargetTaxonId));
+                        assertThat(new TaxonNode(targetOrigTaxon).getName(), is(expectedTargetTaxonName));
 
                         counter.getAndIncrement();
                     }
 
                 });
-
-
-
     }
 
 
