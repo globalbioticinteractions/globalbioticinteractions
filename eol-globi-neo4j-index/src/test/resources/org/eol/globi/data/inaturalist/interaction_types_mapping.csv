@@ -1,0 +1,176 @@
+provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id
+2nd associated organism with names lookup,https://www.inaturalist.org/observation_fields/2019,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Associated parasitic / pathogenic organism with names lookup,https://www.inaturalist.org/observation_fields/2049,has parasite,http://purl.obolibrary.org/obo/RO_0002445
+associated species alien to NZ,https://www.inaturalist.org/observation_fields/2345,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Associated species with names lookup,https://www.inaturalist.org/observation_fields/1711,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Associated With,https://www.inaturalist.org/observation_fields/2682,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Being parasitized by,https://www.inaturalist.org/observation_fields/3041,has parasite,http://purl.obolibrary.org/obo/RO_0002445
+Depredando,https://www.inaturalist.org/observation_fields/2976,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Drinking nectar from,https://www.inaturalist.org/observation_fields/876,has host,http://purl.obolibrary.org/obo/RO_0002454
+Eaten by,https://www.inaturalist.org/observation_fields/879,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+Eating,https://www.inaturalist.org/observation_fields/13,eats,http://purl.obolibrary.org/obo/RO_0002470
+Especie visitada,https://www.inaturalist.org/observation_fields/3465,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622
+Feeding on,https://www.inaturalist.org/observation_fields/1685,eats,http://purl.obolibrary.org/obo/RO_0002470
+first nectar or pollen feeding insect,https://www.inaturalist.org/observation_fields/2054,pollinated by,http://purl.obolibrary.org/obo/RO_0002456
+Food Source,https://www.inaturalist.org/observation_fields/2294,eats,http://purl.obolibrary.org/obo/RO_0002470
+Forms gall on,https://www.inaturalist.org/observation_fields/877,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Gall Inducer,https://www.inaturalist.org/observation_fields/682,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+honey bee food plant,https://www.inaturalist.org/observation_fields/1965,has host,http://purl.obolibrary.org/obo/RO_0002454
+Hospedero,https://www.inaturalist.org/observation_fields/834,parasite of,http://purl.obolibrary.org/obo/RO_0002444
+Host animal,https://www.inaturalist.org/observation_fields/1717,has host,http://purl.obolibrary.org/obo/RO_0002454
+Host plant NZ,https://www.inaturalist.org/observation_fields/1712,has host,http://purl.obolibrary.org/obo/RO_0002454
+host species with names lookup,https://www.inaturalist.org/observation_fields/2028,has host,http://purl.obolibrary.org/obo/RO_0002454
+host to parasitic fungus,https://www.inaturalist.org/observation_fields/2297,parasite of,http://purl.obolibrary.org/obo/RO_0002444
+Host,https://www.inaturalist.org/observation_fields/47,has host,http://purl.obolibrary.org/obo/RO_0002454
+Hunted by,https://www.inaturalist.org/observation_fields/1542,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+Hunting,https://www.inaturalist.org/observation_fields/1543,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Insect Host Plant,https://www.inaturalist.org/observation_fields/499,has host,http://purl.obolibrary.org/obo/RO_0002454
+Insect Nectar Plant,https://www.inaturalist.org/observation_fields/498,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622
+Interaction: Ate fruit of,https://www.inaturalist.org/observation_fields/3128,eats,http://purl.obolibrary.org/obo/RO_0002470
+Interaction: Ate seed of,https://www.inaturalist.org/observation_fields/3131,eats,http://purl.obolibrary.org/obo/RO_0002470
+Interaction: Carcass scavenged by,https://www.inaturalist.org/observation_fields/3145,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+Interaction: Decomposer of,https://www.inaturalist.org/observation_fields/3143,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Interaction: Egg(s) laid on/in,https://www.inaturalist.org/observation_fields/3314,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Interaction: Flower visited by,https://www.inaturalist.org/observation_fields/3125,flowers visited by,http://purl.obolibrary.org/obo/RO_0002623
+Interaction: Fruit eaten by,https://www.inaturalist.org/observation_fields/3127,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+Interaction: Herbivore of,https://www.inaturalist.org/observation_fields/3136,eats,http://purl.obolibrary.org/obo/RO_0002470
+Interaction: Herbivory by,https://www.inaturalist.org/observation_fields/3135,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+Interaction: Infected by,https://www.inaturalist.org/observation_fields/3139,has pathogen,http://purl.obolibrary.org/obo/RO_0002557
+Interaction: Nested in,https://www.inaturalist.org/observation_fields/3141,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Interaction: Parasite/parasitoid of,https://www.inaturalist.org/observation_fields/3137,parasite of,http://purl.obolibrary.org/obo/RO_0002444
+Interaction: Parasitised by,https://www.inaturalist.org/observation_fields/3138,has parasite,http://purl.obolibrary.org/obo/RO_0002445
+Interaction: Pathogen of,https://www.inaturalist.org/observation_fields/3140,pathogen of,http://purl.obolibrary.org/obo/RO_0002556
+Interaction: Preyed upon by,https://www.inaturalist.org/observation_fields/3133,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+Interaction: Preyed upon,https://www.inaturalist.org/observation_fields/3134,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Interaction: Visited flower of,https://www.inaturalist.org/observation_fields/3126,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622
+Is Host For,https://www.inaturalist.org/observation_fields/2660,host of,http://purl.obolibrary.org/obo/RO_0002453
+Kleptoparasite Forage,https://www.inaturalist.org/observation_fields/3319,eats,http://purl.obolibrary.org/obo/RO_0002470
+Kleptoparasite Host,https://www.inaturalist.org/observation_fields/3318,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Mariposas que alimenta,https://www.inaturalist.org/observation_fields/343,eats,http://purl.obolibrary.org/obo/RO_0002470
+Observado sobre,https://www.inaturalist.org/observation_fields/3496,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Other other species in group,https://www.inaturalist.org/observation_fields/947,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Other Species in Group,https://www.inaturalist.org/observation_fields/107,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Parasitado por,https://www.inaturalist.org/observation_fields/3550,has parasite,http://purl.obolibrary.org/obo/RO_0002445
+Parasitando a,https://www.inaturalist.org/observation_fields/3010,parasite of,http://purl.obolibrary.org/obo/RO_0002444
+parasitic fungus on hoast with names lookup,https://www.inaturalist.org/observation_fields/2296,has parasite,http://purl.obolibrary.org/obo/RO_0002445
+Perching on,https://www.inaturalist.org/observation_fields/115,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Polinizando,https://www.inaturalist.org/observation_fields/3426,pollinates,http://purl.obolibrary.org/obo/RO_0002455
+pollinates,https://www.inaturalist.org/observation_fields/33,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622
+Pollinating,https://www.inaturalist.org/observation_fields/246,pollinates,http://purl.obolibrary.org/obo/RO_0002455
+Predated by,https://www.inaturalist.org/observation_fields/2254,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+Predating,https://www.inaturalist.org/observation_fields/3011,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Prey ID,https://www.inaturalist.org/observation_fields/3525,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Prey Speicies,https://www.inaturalist.org/observation_fields/3245,preys on,http://purl.obolibrary.org/obo/RO_0002439
+second associated species,https://www.inaturalist.org/observation_fields/1894,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+second nectar or pollen feeding insect,https://www.inaturalist.org/observation_fields/2055,pollinated by,http://purl.obolibrary.org/obo/RO_0002456
+specified substrate of fungus,https://www.inaturalist.org/observation_fields/2403,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+With the prey,https://www.inaturalist.org/observation_fields/839,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Related Taxa,https://www.inaturalist.org/observation_fields/3799,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Interaction: Scavenged carcass of,https://www.inaturalist.org/observation_fields/3146,eats,http://purl.obolibrary.org/obo/RO_0002470
+In Tree,https://www.inaturalist.org/observation_fields/3848,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Birds Nesting in,https://www.inaturalist.org/observation_fields/3845,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Parasite Host,https://www.inaturalist.org/observation_fields/3829,parasite of,http://purl.obolibrary.org/obo/RO_0002444
+Interacciones,https://www.inaturalist.org/observation_fields/2901,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Interaction: Hemiparasite of,https://www.inaturalist.org/observation_fields/4145,parasite of,http://purl.obolibrary.org/obo/RO_0002444
+Interaction: Parasitoid of,https://www.inaturalist.org/observation_fields/4146,parasitoid of,http://purl.obolibrary.org/obo/RO_0002208
+Interaction: Used as nest by,https://www.inaturalist.org/observation_fields/3142,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Name of predator species,https://www.inaturalist.org/observation_fields/2924,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+Depredado por:,https://www.inaturalist.org/observation_fields/3456,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+Growing On Organism,https://www.inaturalist.org/observation_fields/3844,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Ant attending,https://www.inaturalist.org/observation_fields/4850,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Food 2:,https://www.inaturalist.org/observation_fields/4995,eats,http://purl.obolibrary.org/obo/RO_0002470
+Food:,https://www.inaturalist.org/observation_fields/4952,eats,http://purl.obolibrary.org/obo/RO_0002470
+Observed Species Association:Pollination,https://www.inaturalist.org/observation_fields/4980,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species Association:Pollination 2,https://www.inaturalist.org/observation_fields/4981,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Plant species observed,https://www.inaturalist.org/observation_fields/2544,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species Association: Cohabitation,https://www.inaturalist.org/observation_fields/4955,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species Association: Cohabitation 2,https://www.inaturalist.org/observation_fields/6027,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Food 1:,https://www.inaturalist.org/observation_fields/4994,eats,http://purl.obolibrary.org/obo/RO_0002470
+Observed Species Association: Found upon,https://www.inaturalist.org/observation_fields/4961,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species Association: Found upon 2,https://www.inaturalist.org/observation_fields/5106,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species Association: Found upon 3,https://www.inaturalist.org/observation_fields/5107,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Nectar / Pollen delivering plant,https://www.inaturalist.org/observation_fields/4935,eats,http://purl.obolibrary.org/obo/RO_0002470
+Fungivore of,https://www.inaturalist.org/observation_fields/3956,eats,http://purl.obolibrary.org/obo/RO_0002470
+Interaction: Dispersed seed of,https://www.inaturalist.org/observation_fields/3129,vector of,http://purl.obolibrary.org/obo/RO_0002459
+predated by,https://www.inaturalist.org/observation_fields/5226,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+aggressor,https://www.inaturalist.org/observation_fields/5222,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Attacking,https://www.inaturalist.org/observation_fields/3549,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+on,https://www.inaturalist.org/observation_fields/5267,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Phoresis,https://www.inaturalist.org/observation_fields/4953,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+guest in the shell,https://www.inaturalist.org/observation_fields/5370,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Shell used,https://www.inaturalist.org/observation_fields/5371,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species Association: Parasitism,https://www.inaturalist.org/observation_fields/5286,parasite of,http://purl.obolibrary.org/obo/RO_0002444
+Observed Species Association: Predating,https://www.inaturalist.org/observation_fields/5396,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Interaction: Visited plant of,https://www.inaturalist.org/observation_fields/5432,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Interaction: Seed eaten by,https://www.inaturalist.org/observation_fields/3132,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+Putative Mycorrhizal Partner,https://www.inaturalist.org/observation_fields/4963,symbiont of,http://purl.obolibrary.org/obo/RO_0002440
+Observed Species Association: Roosting (Tree),https://www.inaturalist.org/observation_fields/5285,visits,http://purl.obolibrary.org/obo/RO_0002618
+Mobbed by,https://www.inaturalist.org/observation_fields/5879,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Planta de alimentación del Adulto,https://www.inaturalist.org/observation_fields/5977,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622
+Flowers visited by,https://www.inaturalist.org/observation_fields/5530,flowers visited by,http://purl.obolibrary.org/obo/RO_0002623
+Pollinator,https://www.inaturalist.org/observation_fields/5923,flowers visited by,http://purl.obolibrary.org/obo/RO_0002623
+Host plant,https://www.inaturalist.org/observation_fields/254,eats,http://purl.obolibrary.org/obo/RO_0002470
+Es planta anfitriona de,https://www.inaturalist.org/observation_fields/6230,eats,http://purl.obolibrary.org/obo/RO_0002470
+Se encuentra sobre,https://www.inaturalist.org/observation_fields/6399,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Hermit Crab Shell,https://www.inaturalist.org/observation_fields/6523,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Epiphytic on,https://www.inaturalist.org/observation_fields/2793,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+With epiphyte,https://www.inaturalist.org/observation_fields/6477,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species association: Parasitized by,https://www.inaturalist.org/observation_fields/5956,has parasite,http://purl.obolibrary.org/obo/RO_0002445
+interaction->mutualism with,https://www.inaturalist.org/observation_fields/5206,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Preying on,https://www.inaturalist.org/observation_fields/7026,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Observed Species Association: Scavenging,https://www.inaturalist.org/observation_fields/7205,eats,http://purl.obolibrary.org/obo/RO_0002470
+Plant used for nectar,https://www.inaturalist.org/observation_fields/7392,eats,http://purl.obolibrary.org/obo/RO_0002470
+Observed Species Association: Predated by,https://www.inaturalist.org/observation_fields/7478,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+Interaction->Riding On,https://www.inaturalist.org/observation_fields/5029,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Plant that the organism was found on,https://www.inaturalist.org/observation_fields/7623,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Epibionts / Epiphytes / Parasites,https://www.inaturalist.org/observation_fields/8450,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Basibiont,https://www.inaturalist.org/observation_fields/8451,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Other Organism,https://www.inaturalist.org/observation_fields/8581,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Prey taxon,https://www.inaturalist.org/observation_fields/8586,preys on,http://purl.obolibrary.org/obo/RO_0002439
+食草,https://www.inaturalist.org/observation_fields/8567,eats,http://purl.obolibrary.org/obo/RO_0002470
+互動關係->被什麼生物訪花？,https://www.inaturalist.org/observation_fields/8547,flowers visited by,http://purl.obolibrary.org/obo/RO_0002623
+互動關係->吃什麼植物的果實/種子,https://www.inaturalist.org/observation_fields/8644,eats,http://purl.obolibrary.org/obo/RO_0002470
+互動關係->正在吃什麼生物,https://www.inaturalist.org/observation_fields/8746,eats,http://purl.obolibrary.org/obo/RO_0002470
+Observed Species Association: Pollination 6,https://www.inaturalist.org/observation_fields/5105,pollinates,http://purl.obolibrary.org/obo/RO_0002455
+Observed Species Association: Pollination 5,https://www.inaturalist.org/observation_fields/5104,pollinates,http://purl.obolibrary.org/obo/RO_0002455
+Observed Species Association: Pollination 4,https://www.inaturalist.org/observation_fields/5103,pollinates,http://purl.obolibrary.org/obo/RO_0002455
+Observed Species Association: Pollination 3,https://www.inaturalist.org/observation_fields/5102,pollinates,http://purl.obolibrary.org/obo/RO_0002455
+Name of Associated Plant,https://www.inaturalist.org/observation_fields/7807,visits,http://purl.obolibrary.org/obo/RO_0002618
+互動關係->什麼生物吃這植物的果實/種子？,https://www.inaturalist.org/observation_fields/8548,eats,http://purl.obolibrary.org/obo/RO_0002470
+互動關係->訪什麼生物的花,https://www.inaturalist.org/observation_fields/9098,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622
+eats,https://www.inaturalist.org/observation_fields/5410,eats,http://purl.obolibrary.org/obo/RO_0002470
+Interaction->Decomposed by,https://www.inaturalist.org/observation_fields/3144,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+Host plant/substrate/nearby tree ID,https://www.inaturalist.org/observation_fields/9249,has host,http://purl.obolibrary.org/obo/RO_0002454
+Predator taxon,https://www.inaturalist.org/observation_fields/8587,preyed on by,http://purl.obolibrary.org/obo/RO_0002458
+Maggot Food Source,https://www.inaturalist.org/observation_fields/5241,eats,http://purl.obolibrary.org/obo/RO_0002470
+Interaction->fungivore of,https://www.inaturalist.org/observation_fields/8409,eats,http://purl.obolibrary.org/obo/RO_0002470
+found in gut of,https://www.inaturalist.org/observation_fields/9674,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+Interaction->fungivory by,https://www.inaturalist.org/observation_fields/8410,eaten by,http://purl.obolibrary.org/obo/RO_0002471
+幼蟲寄主,https://www.inaturalist.org/observation_fields/8950,has host,http://purl.obolibrary.org/obo/RO_0002454
+Host Plant ID,https://www.inaturalist.org/observation_fields/6586,has host,http://purl.obolibrary.org/obo/RO_0002454
+Interaction->Seed dispersed by,https://www.inaturalist.org/observation_fields/3130,vector of,http://purl.obolibrary.org/obo/RO_0002459
+Associated Larder Species,https://www.inaturalist.org/observation_fields/10110,is killed by,http://purl.obolibrary.org/obo/RO_0002626
+Host plant you observed,https://www.inaturalist.org/observation_fields/10120,has host,http://purl.obolibrary.org/obo/RO_0002454
+Second Interaction Species,https://www.inaturalist.org/observation_fields/8458,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Observed Species Association: Symbiosis,https://www.inaturalist.org/observation_fields/6695,symbiont of,http://purl.obolibrary.org/obo/RO_0002440
+Molluscan Mycophagy Associated Species,https://www.inaturalist.org/observation_fields/10360,eats,http://purl.obolibrary.org/obo/RO_0002470
+Plant association,https://www.inaturalist.org/observation_fields/10524,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+laying egg on,https://www.inaturalist.org/observation_fields/10555,lays eggs on,http://purl.obolibrary.org/obo/RO_0008507
+Beaten from,https://www.inaturalist.org/observation_fields/10585,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+PLANTAS DEL HUERTO,https://www.inaturalist.org/observation_fields/4234,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Interacting Animal,https://www.inaturalist.org/observation_fields/10854,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Other Prey Species,https://www.inaturalist.org/observation_fields/3935,preys on,http://purl.obolibrary.org/obo/RO_0002439
+Is damaged by,https://www.inaturalist.org/observation_fields/11078,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Name of Associated Animal,https://www.inaturalist.org/observation_fields/11363,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+on Ulmus davidiana japonica,https://www.inaturalist.org/observation_fields/11243,visits,http://purl.obolibrary.org/obo/RO_0002618
+on Portulaca oleracea,https://www.inaturalist.org/observation_fields/11250,visits,http://purl.obolibrary.org/obo/RO_0002618
+on Quercus acutissima,https://www.inaturalist.org/observation_fields/11197,visits,http://purl.obolibrary.org/obo/RO_0002618
+on Oenothera biennis,https://www.inaturalist.org/observation_fields/11207,visits,http://purl.obolibrary.org/obo/RO_0002618
+Gall Species,https://www.inaturalist.org/observation_fields/9627,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+Associated Pollinator,https://www.inaturalist.org/observation_fields/11364,interacts with,http://purl.obolibrary.org/obo/RO_0002437
+on Eriocapitella japonica,https://www.inaturalist.org/observation_fields/11295,visits,http://purl.obolibrary.org/obo/RO_0002618
+on Dicranopteris linearis,https://www.inaturalist.org/observation_fields/11255,visits,http://purl.obolibrary.org/obo/RO_0002618
+polinização,https://www.inaturalist.org/observation_fields/11438,pollinated by,http://purl.obolibrary.org/obo/RO_0002456
+Vu sur,https://www.inaturalist.org/observation_fields/11463,visits,http://purl.obolibrary.org/obo/RO_0002618
+Nectar  Plant,https://www.inaturalist.org/observation_fields/11442,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622
+Associated Mammal,https://www.inaturalist.org/observation_fields/16151,interacts with,http://purl.obolibrary.org/obo/RO_0002437

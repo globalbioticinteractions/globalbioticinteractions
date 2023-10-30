@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jdk.internal.util.xml.impl.Input;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import org.eol.globi.domain.SpecimenNode;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -28,6 +30,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +88,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
 
     }
 
-    public void importDwCViaRSS(URL resource) throws StudyImporterException, IOException {
+    private void importDwCViaRSS(URL resource) throws StudyImporterException, IOException {
         assertNotNull(resource);
 
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
@@ -186,15 +189,24 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
     }
 
     public void importDwCAViaRSS(DatasetImporter importer, DatasetLocal dataset, URL resource) throws IOException, StudyImporterException {
-        ObjectNode configNode = new ObjectMapper().createObjectNode();
         String rssContent = rssContent(resource.toString());
+        importRSS(importer, dataset, rssContent);
+    }
+
+    private void importRSS(DatasetImporter importer, DatasetLocal dataset, String rssContent) throws IOException, StudyImporterException {
         File directory = new File("target/tmp");
         FileUtils.forceMkdir(directory);
         File rss = File.createTempFile("rss", ".xml", directory);
         FileUtils.writeStringToFile(rss, rssContent, StandardCharsets.UTF_8);
+        ObjectNode configNode = new ObjectMapper().createObjectNode();
+        configNode.put("format", "rss");
         configNode.put("url", rss.toURI().toString());
         configNode.put("hasDependencies", true);
 
+        importRSS(importer, dataset, configNode);
+    }
+
+    private void importRSS(DatasetImporter importer, DatasetLocal dataset, ObjectNode configNode) throws StudyImporterException {
         dataset.setConfig(configNode);
         importer.setDataset(dataset);
         importStudy(importer);
@@ -266,5 +278,94 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
                 "    </channel>\n" +
                 "</rss>";
     }
+
+    @Test
+    public void testOccurrenceTaxonRelations() throws IOException, StudyImporterException {
+        Set<URI> requestedResources = new HashSet<>();
+        DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
+                .instantiateImporter(DatasetImporterForRSS.class);
+
+        ResourceService service = new ResourceService() {
+            private ResourceService resourceService = new ResourceServiceLocal();
+
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                requestedResources.add(resourceName);
+                InputStream is = null;
+                if (URI.create("https://www.inaturalist.org/taxa/inaturalist-taxonomy.dwca.zip").equals(resourceName)) {
+                    is = getClass().getResourceAsStream("/org/eol/globi/data/inaturalist/inaturalist-taxa-light.zip");
+                } else if (URI.create("https://www.inaturalist.org/observations/globi-observations-resource-relationships-dwca.zip").equals(resourceName)) {
+                    is = getClass().getResourceAsStream("/org/eol/globi/data/inaturalist/inaturalist-observations-light.zip");
+                } else if (URI.create("interaction_types_mapping.csv").equals(resourceName)) {
+                    is = getClass().getResourceAsStream("/org/eol/globi/data/inaturalist/interaction_types_mapping.csv");
+
+                }
+                return is == null
+                        ? resourceService.retrieve(resourceName)
+                        : is;
+            }
+        };
+        DatasetLocal dataset = new DatasetLocal(service);
+
+        ObjectNode configNode = new ObjectMapper().createObjectNode();
+        configNode.put("format", "rss");
+        configNode.put("citation", "test citation");
+        configNode.put("url", getClass().getResource("/org/eol/globi/data/inaturalist/rss.xml").toExternalForm());
+        configNode.put("hasDependencies", true);
+
+        importRSS(importer,
+                dataset,
+                configNode
+        );
+
+        requestedResources.forEach(System.out::println);
+
+        assertThat(requestedResources.size(), is(5));
+
+        List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
+        assertThat(allStudies.size(), greaterThan(0));
+        StudyNode study = allStudies.get(0);
+        AtomicInteger counter = new AtomicInteger(0);
+
+        NodeUtil.handleCollectedRelationships(
+                new NodeTypeDirection(study.getUnderlyingNode()),
+                relationship -> {
+                    assertThat(relationship.getType().name(), is("COLLECTED"));
+
+                    SpecimenNode source = new SpecimenNode(relationship.getEndNode());
+                    Relationship singleRelationship
+                            = source
+                            .getUnderlyingNode()
+                            .getSingleRelationship(
+                                    NodeUtil.asNeo4j(InteractType.ECTOPARASITE_OF),
+                                    Direction.OUTGOING);
+
+                    if (singleRelationship != null) {
+
+                        SpecimenNode target = new SpecimenNode(singleRelationship.getEndNode());
+                        assertNotNull(target);
+                        assertNotNull(source);
+                        Node sourceOrigTaxon = source
+                                .getUnderlyingNode()
+                                .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
+                                .getEndNode();
+
+                        Node targetOrigTaxon = target
+                                .getUnderlyingNode()
+                                .getSingleRelationship(NodeUtil.asNeo4j(RelTypes.ORIGINALLY_DESCRIBED_AS), Direction.OUTGOING)
+                                .getEndNode();
+
+                        assertThat(new TaxonNode(sourceOrigTaxon).getName(), is("Orchopeas fulleri Traub, 1950"));
+                        assertThat(new TaxonNode(targetOrigTaxon).getName(), is("Glaucomys volans"));
+
+                        counter.getAndIncrement();
+                    }
+
+                });
+
+
+
+    }
+
 
 }
