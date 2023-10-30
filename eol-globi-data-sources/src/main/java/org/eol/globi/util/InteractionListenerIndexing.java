@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.service.TaxonUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,10 +26,12 @@ public class InteractionListenerIndexing implements InteractionListener {
     public void on(Map<String, String> interaction) throws StudyImporterException {
 
         attemptToResolveSourceOccurrenceId(interaction, getOccurrenceId(interaction, DatasetImporterForTSV.SOURCE_OCCURRENCE_ID));
+        attemptToResolveSourceTaxonId(interaction, getOccurrenceId(interaction, TaxonUtil.SOURCE_TAXON_ID));
         inferOccurrenceId(interaction.get(DatasetImporterForTSV.SOURCE_CATALOG_NUMBER))
                 .forEach(occurrenceId -> attemptToResolveSourceOccurrenceId(interaction, occurrenceId));
 
         attemptToResolveTargetOccurrenceId(interaction, getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID));
+        attemptToResolveTargetTaxonId(interaction, getOccurrenceId(interaction, TaxonUtil.TARGET_TAXON_ID));
         inferOccurrenceId(interaction.get(DatasetImporterForTSV.TARGET_CATALOG_NUMBER))
                 .forEach(occurrenceId -> attemptToResolveTargetOccurrenceId(interaction, occurrenceId));
 
@@ -54,6 +57,27 @@ public class InteractionListenerIndexing implements InteractionListener {
         }
     }
 
+
+    public void attemptToResolveTargetTaxonId(Map<String, String> interaction, String targetOccurrenceId) {
+        if (interactionsWithUnresolvedOccurrenceIds.containsKey(
+                Pair.of(TaxonUtil.TARGET_TAXON_ID, targetOccurrenceId))) {
+            Map<String, String> enriched = InteractionListenerResolving.mapTargetToTarget(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(TaxonUtil.TARGET_TAXON_ID, targetOccurrenceId),
+                        enriched);
+            }
+        } else if (interactionsWithUnresolvedOccurrenceIds.containsKey(
+                Pair.of(TaxonUtil.SOURCE_TAXON_ID, targetOccurrenceId))) {
+            Map<String, String> enriched = InteractionListenerResolving.mapTargetToSource(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(TaxonUtil.SOURCE_TAXON_ID, targetOccurrenceId),
+                        enriched);
+            }
+        }
+    }
+
     public void attemptToResolveSourceOccurrenceId(Map<String, String> interaction, String sourceOccurrenceId) {
         if (interactionsWithUnresolvedOccurrenceIds.containsKey(
                 Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId))) {
@@ -69,6 +93,26 @@ public class InteractionListenerIndexing implements InteractionListener {
             if (enriched.size() > 1) {
                 interactionsWithUnresolvedOccurrenceIds.put(
                         Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, sourceOccurrenceId),
+                        enriched);
+            }
+        }
+    }
+
+   public void attemptToResolveSourceTaxonId(Map<String, String> interaction, String sourceOccurrenceId) {
+        if (interactionsWithUnresolvedOccurrenceIds.containsKey(
+                Pair.of(TaxonUtil.SOURCE_TAXON_ID, sourceOccurrenceId))) {
+            Map<String, String> enriched = InteractionListenerResolving.mapSourceToSource(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(TaxonUtil.SOURCE_TAXON_ID, sourceOccurrenceId),
+                        enriched);
+            }
+        } else if (interactionsWithUnresolvedOccurrenceIds.containsKey(
+                Pair.of(TaxonUtil.TARGET_TAXON_ID, sourceOccurrenceId))) {
+            Map<String, String> enriched = InteractionListenerResolving.mapSourceToTarget(interaction);
+            if (enriched.size() > 1) {
+                interactionsWithUnresolvedOccurrenceIds.put(
+                        Pair.of(TaxonUtil.TARGET_TAXON_ID, sourceOccurrenceId),
                         enriched);
             }
         }

@@ -38,6 +38,7 @@ public class DatasetImportUtil {
                                      ImportLogger logger) throws StudyImporterException {
         importDataset(studyImporterConfigurator, dataset, nodeFactory, logger, null);
     }
+
     public static void importDataset(StudyImporterConfigurator studyImporterConfigurator,
                                      Dataset dataset,
                                      NodeFactory nodeFactory,
@@ -73,22 +74,43 @@ public class DatasetImportUtil {
 
         final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
 
+        indexUnresolvedDependencies(datasetsWithDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds);
 
-        final String msgPrefix0 = "indexing unresolved occurrence references of [" + archiveLocation + "]";
-        LOG.info(msgPrefix0 + "...");
-        indexDatasets(datasetsWithDependencies, logger, nodeFactory, new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds));
-        LOG.info(msgPrefix0 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] unresolved occurrences");
+        resolveDependencies(datasetDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds);
 
-        final String msgPrefix1 = "indexing dependencies of [" + archiveLocation + "]";
-        LOG.info(msgPrefix1 + "...");
-        indexDatasets(datasetDependencies, logger, nodeFactory, new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds));
-        pruneKeysWithEmptyValues(interactionsWithUnresolvedOccurrenceIds, logger);
-        LOG.info(msgPrefix1 + " done: resolved [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrence references");
+        indexDatasetWithResolvedDependencies(datasetsWithDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds);
+    }
 
+    private static void indexDatasetWithResolvedDependencies(List<Dataset> datasetsWithDependencies, ImportLogger logger, NodeFactory nodeFactory, String archiveLocation, Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) throws StudyImporterException {
         final String msgPrefix = "importing datasets for [" + archiveLocation + "]";
         LOG.info(msgPrefix + "...");
         importDatasets(interactionsWithUnresolvedOccurrenceIds, datasetsWithDependencies, logger, nodeFactory);
         LOG.info(msgPrefix + " done.");
+    }
+
+    private static void resolveDependencies(List<Dataset> datasetDependencies, ImportLogger logger, NodeFactory nodeFactory, String archiveLocation, Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
+        final String msgPrefix1 = "indexing dependencies of [" + archiveLocation + "]";
+        LOG.info(msgPrefix1 + "...");
+        indexDatasets(
+                datasetDependencies,
+                logger,
+                nodeFactory,
+                new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds)
+        );
+        pruneKeysWithEmptyValues(interactionsWithUnresolvedOccurrenceIds, logger);
+        LOG.info(msgPrefix1 + " done: resolved [" + interactionsWithUnresolvedOccurrenceIds.size() + "] occurrence references");
+    }
+
+    private static void indexUnresolvedDependencies(List<Dataset> datasetsWithDependencies, ImportLogger logger, NodeFactory nodeFactory, String archiveLocation, Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
+        final String msgPrefix0 = "indexing unresolved occurrence references of [" + archiveLocation + "]";
+        LOG.info(msgPrefix0 + "...");
+        indexDatasets(
+                datasetsWithDependencies,
+                logger,
+                nodeFactory,
+                new InteractionListenerCollectUnresolvedIds(interactionsWithUnresolvedOccurrenceIds)
+        );
+        LOG.info(msgPrefix0 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] unresolved occurrences");
     }
 
     private static void pruneKeysWithEmptyValues(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, ImportLogger logger) {

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertNotNull;
 
@@ -66,7 +65,8 @@ public class InteractionListenerIndexingTest {
     public void indexOnTargetOcccurenceIdSourceCatalogNumberIdPairs() throws StudyImporterException {
         TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
         String targetOccurrenceId = "United States National Parasite Collection 81321";
-        interactionsWithUnresolvedOccurrenceIds.put(Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId), Collections.emptyMap());
+        interactionsWithUnresolvedOccurrenceIds.put(
+                Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId), Collections.emptyMap());
 
         InteractionListener listener = new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds);
 
@@ -85,6 +85,60 @@ public class InteractionListenerIndexingTest {
         assertThat(props.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), Is.is("http://n2t.net/ark:/65665/3326e7c2d-d8fa-4e5d-b01f-20d6f4150356"));
         assertThat(props.get(DatasetImporterForTSV.TARGET_CATALOG_NUMBER), Is.is("USNPC # 081321"));
         assertThat(props.get(TaxonUtil.TARGET_TAXON_NAME), Is.is("sourceName123"));
+    }
+
+    @Test
+    public void indexOnTargetTaxonIdSourceTaxonIdPairs() throws StudyImporterException {
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
+        String targetTaxonId = "taxon:123";
+        interactionsWithUnresolvedOccurrenceIds.put(
+                Pair.of(TaxonUtil.TARGET_TAXON_ID, targetTaxonId),
+                Collections.emptyMap()
+        );
+
+        InteractionListener listener = new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds);
+
+        listener.on(new TreeMap<String, String>() {{
+            put(TaxonUtil.SOURCE_TAXON_ID, "taxon:123");
+            put(DatasetImporterForTSV.SOURCE_CATALOG_NUMBER, "USNPC # 081321");
+            put(TaxonUtil.SOURCE_TAXON_NAME, "sourceName123");
+        }});
+
+        assertThat(interactionsWithUnresolvedOccurrenceIds.size(), Is.is(1));
+
+        Map<String, String> props = interactionsWithUnresolvedOccurrenceIds.get(
+                Pair.of(TaxonUtil.TARGET_TAXON_ID, targetTaxonId));
+
+        assertNotNull(props);
+        assertThat(props.get(TaxonUtil.TARGET_TAXON_ID), Is.is("taxon:123"));
+        assertThat(props.get(TaxonUtil.TARGET_TAXON_NAME), Is.is("sourceName123"));
+    }
+
+    @Test
+    public void indexOnSourceTaxonIdTargetTaxonIdPairs() throws StudyImporterException {
+        TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
+        String targetTaxonId = "taxon:123";
+        interactionsWithUnresolvedOccurrenceIds.put(
+                Pair.of(TaxonUtil.SOURCE_TAXON_ID, targetTaxonId),
+                Collections.emptyMap()
+        );
+
+        InteractionListener listener = new InteractionListenerIndexing(interactionsWithUnresolvedOccurrenceIds);
+
+        listener.on(new TreeMap<String, String>() {{
+            put(TaxonUtil.TARGET_TAXON_ID, "taxon:123");
+            put(DatasetImporterForTSV.TARGET_CATALOG_NUMBER, "USNPC # 081321");
+            put(TaxonUtil.TARGET_TAXON_NAME, "sourceName123");
+        }});
+
+        assertThat(interactionsWithUnresolvedOccurrenceIds.size(), Is.is(1));
+
+        Map<String, String> props = interactionsWithUnresolvedOccurrenceIds.get(
+                Pair.of(TaxonUtil.SOURCE_TAXON_ID, targetTaxonId));
+
+        assertNotNull(props);
+        assertThat(props.get(TaxonUtil.SOURCE_TAXON_ID), Is.is("taxon:123"));
+        assertThat(props.get(TaxonUtil.SOURCE_TAXON_NAME), Is.is("sourceName123"));
     }
 
     @Test

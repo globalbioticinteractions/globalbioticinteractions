@@ -12,10 +12,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InteractionListenerCollectUnresolvedOccurrenceIds implements InteractionListener {
+public class InteractionListenerCollectUnresolvedIds implements InteractionListener {
     private final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds;
 
-    public InteractionListenerCollectUnresolvedOccurrenceIds(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
+    public InteractionListenerCollectUnresolvedIds(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds) {
         this.interactionsWithUnresolvedOccurrenceIds = interactionsWithUnresolvedOccurrenceIds;
     }
 

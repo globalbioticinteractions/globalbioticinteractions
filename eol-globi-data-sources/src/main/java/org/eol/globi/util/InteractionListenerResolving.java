@@ -39,7 +39,7 @@ public class InteractionListenerResolving implements InteractionListener {
     public List<Map<String, String>> resolveOccurrenceIdsIfPossible(Map<String, String> interaction) {
         List<Map<String, String>> enrichedProperties = null;
 
-        if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedTargetOccurrenceId(interaction)) {
+        if (InteractionListenerCollectUnresolvedIds.hasUnresolvedTargetOccurrenceId(interaction)) {
             String targetOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.TARGET_OCCURRENCE_ID);
             Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, targetOccurrenceId));
             if (resolved != null && !resolved.isEmpty()) {
@@ -48,7 +48,7 @@ public class InteractionListenerResolving implements InteractionListener {
             }
         }
 
-        if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedTargetTaxonId(interaction)) {
+        if (InteractionListenerCollectUnresolvedIds.hasUnresolvedTargetTaxonId(interaction)) {
             String targetTaxonId = getOccurrenceId(interaction, TaxonUtil.TARGET_TAXON_ID);
             Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(TaxonUtil.TARGET_TAXON_ID, targetTaxonId));
             if (resolved != null && !resolved.isEmpty()) {
@@ -57,7 +57,7 @@ public class InteractionListenerResolving implements InteractionListener {
             }
         }
 
-        if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedSourceOccurrenceId(interaction)) {
+        if (InteractionListenerCollectUnresolvedIds.hasUnresolvedSourceOccurrenceId(interaction)) {
             String sourceOccurrenceId = getOccurrenceId(interaction, DatasetImporterForTSV.SOURCE_OCCURRENCE_ID);
             Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, sourceOccurrenceId));
             if (resolved != null && !resolved.isEmpty()) {
@@ -68,7 +68,7 @@ public class InteractionListenerResolving implements InteractionListener {
             }
         }
 
-        if (InteractionListenerCollectUnresolvedOccurrenceIds.hasUnresolvedSourceTaxonId(interaction)) {
+        if (InteractionListenerCollectUnresolvedIds.hasUnresolvedSourceTaxonId(interaction)) {
             String sourceTaxonId = getOccurrenceId(interaction, TaxonUtil.SOURCE_TAXON_ID);
             Map<String, String> resolved = interactionsWithUnresolvedOccurrenceOrTaxonIds.get(Pair.of(TaxonUtil.SOURCE_TAXON_ID, sourceTaxonId));
             if (resolved != null && !resolved.isEmpty()) {

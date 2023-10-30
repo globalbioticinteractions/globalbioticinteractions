@@ -13,14 +13,14 @@ import java.util.TreeMap;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class InteractionListenerCollectUnresolvedOccurrenceIdsTest {
+public class InteractionListenerCollectUnresolvedIdsTest {
 
     @Test
     public void unresolvedTargetOccurrenceId() throws StudyImporterException {
 
         TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
 
-        new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds)
+        new InteractionListenerCollectUnresolvedIds(interactionsWithUnresolvedOccurrenceIds)
         .on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "source123");
             put(TaxonUtil.SOURCE_TAXON_NAME, "sourceName123");
@@ -37,7 +37,7 @@ public class InteractionListenerCollectUnresolvedOccurrenceIdsTest {
 
         TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
 
-        new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds)
+        new InteractionListenerCollectUnresolvedIds(interactionsWithUnresolvedOccurrenceIds)
         .on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "source123");
             put(TaxonUtil.SOURCE_TAXON_NAME, "sourceName123");
@@ -54,7 +54,7 @@ public class InteractionListenerCollectUnresolvedOccurrenceIdsTest {
 
         TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = new TreeMap<>();
 
-        new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds)
+        new InteractionListenerCollectUnresolvedIds(interactionsWithUnresolvedOccurrenceIds)
         .on(new TreeMap<String, String>() {{
             put(TaxonUtil.SOURCE_TAXON_ID, "sourceName123");
             put(TaxonUtil.TARGET_TAXON_ID, "targetName123");
@@ -72,7 +72,7 @@ public class InteractionListenerCollectUnresolvedOccurrenceIdsTest {
         TreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds
                 = new TreeMap<>();
 
-        new InteractionListenerCollectUnresolvedOccurrenceIds(interactionsWithUnresolvedOccurrenceIds)
+        new InteractionListenerCollectUnresolvedIds(interactionsWithUnresolvedOccurrenceIds)
         .on(new TreeMap<String, String>() {{
             put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "source123");
             put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "target123");

@@ -279,7 +279,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
     }
 
     @Test
-    public void testOccurrenceTaxonRelations() throws IOException, StudyImporterException {
+    public void testOccurrenceTaxonRelations() throws StudyImporterException {
         Set<URI> requestedResources = new HashSet<>();
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
@@ -297,7 +297,6 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
                     is = getClass().getResourceAsStream("/org/eol/globi/data/inaturalist/inaturalist-observations-light.zip");
                 } else if (URI.create("interaction_types_mapping.csv").equals(resourceName)) {
                     is = getClass().getResourceAsStream("/org/eol/globi/data/inaturalist/interaction_types_mapping.csv");
-
                 }
                 return is == null
                         ? resourceService.retrieve(resourceName)
@@ -329,14 +328,14 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
         assertStudyRelation(counter,
                 "Bombus barbutellus",
                 "https://www.inaturalist.org/taxa/78260",
-                "no name",
+                "Onopordum illyricum",
                 InteractType.VISITS_FLOWERS_OF,
                 allStudies.get(0));
 
         assertStudyRelation(counter,
                 "Apis mellifera",
                 "https://www.inaturalist.org/taxa/50333",
-                "no name",
+                "Lantana camara",
                 InteractType.POLLINATES,
                 allStudies.get(1));
 
