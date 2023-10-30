@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.wikidata;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
@@ -21,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.replace;
 
@@ -65,6 +68,7 @@ public final class WikidataUtil {
         put("P7715", TaxonomyProvider.WORLD_OF_FLORA_ONLINE);
         put("P10585", TaxonomyProvider.CATALOGUE_OF_LIFE);
     }};
+    public static final Pattern PATTERN_WD_PROPERTY_ID = Pattern.compile("http://www.wikidata.org/prop/(direct/){0,1}(?<propertyId>P[0-9]+)", Pattern.DOTALL);
 
     public static String executeQuery(String sparql) throws URISyntaxException, IOException {
         URI url = new URI("https", "query.wikidata.org", "/sparql", "query=" + sparql, null);
@@ -107,29 +111,39 @@ public final class WikidataUtil {
         List<Taxon> relatedIds = new ArrayList<>();
         final TaxonomyProvider taxonomyProvider = ExternalIdUtil.taxonomyProviderFor(externalId);
         if (taxonomyProvider != null) {
-            final String taxonId = ExternalIdUtil.stripPrefix(taxonomyProvider, externalId);
-            String whereClause =
-                    TaxonomyProvider.WIKIDATA.equals(taxonomyProvider)
-                            ? wdTaxonWhereClause(taxonId)
-                            : nonWdTaxonWhereClause(taxonomyProvider, taxonId);
-
-            String sparql =
-                    "SELECT ?wdTaxonId ?taxonScheme ?taxonId ?wdTaxonName WHERE {\n" + whereClause +
-                            "  ?taxonSchemeEntity wikibase:directClaim ?taxonScheme .\n" +
-                            "  ?taxonSchemeEntity wdt:P31 wd:Q42396390 .\n" +
-                            "  OPTIONAL { ?wdTaxonId wdt:P225 ?wdTaxonName . }\n" +
-                            "}";
-
+            String sparql = createRelatedTaxonIdSparql(externalId, taxonomyProvider);
             final String jsonString = executeQuery(sparql);
-            JsonNode jsonNode = new ObjectMapper().readTree(jsonString);
-            if (jsonNode.has("results")) {
-                JsonNode results = jsonNode.get("results");
-                if (results.has("bindings")) {
-                    JsonNode bindings = results.get("bindings");
-                    addWikidataTaxon(relatedIds, bindings);
-                    addLinkedTaxa(relatedIds, bindings);
+            relatedIds = parseRelatedTaxonIds(jsonString);
+        }
+        return relatedIds;
+    }
 
-                }
+    public static String createRelatedTaxonIdSparql(String externalId, TaxonomyProvider taxonomyProvider) {
+        final String taxonId = ExternalIdUtil.stripPrefix(taxonomyProvider, externalId);
+        String whereClause =
+                TaxonomyProvider.WIKIDATA.equals(taxonomyProvider)
+                        ? wdTaxonWhereClause(taxonId)
+                        : nonWdTaxonWhereClause(taxonomyProvider, taxonId);
+
+        return "SELECT ?wdTaxonId ?taxonScheme ?taxonId ?wdTaxonName WHERE {\n" + whereClause +
+                "  ?taxonIdStatement ?relation ?taxonId .\n" +
+                "  ?taxonSchemeEntity wikibase:claim ?taxonScheme .\n" +
+                "  ?taxonSchemeEntity wikibase:statementProperty ?relation .\n" +
+                "  ?taxonSchemeEntity wikibase:claim ?taxonScheme .\n" +
+                "  ?taxonSchemeEntity wdt:P31 wd:Q42396390 .\n" +
+                "  OPTIONAL { ?wdTaxonId wdt:P225 ?wdTaxonName . }\n" +
+                "}";
+    }
+
+    public static List<Taxon> parseRelatedTaxonIds(String jsonString) throws JsonProcessingException {
+        List<Taxon> relatedIds = new ArrayList<>();
+        JsonNode jsonNode = new ObjectMapper().readTree(jsonString);
+        if (jsonNode.has("results")) {
+            JsonNode results = jsonNode.get("results");
+            if (results.has("bindings")) {
+                JsonNode bindings = results.get("bindings");
+                addWikidataTaxon(relatedIds, bindings);
+                addLinkedTaxa(relatedIds, bindings);
             }
         }
         return relatedIds;
@@ -140,14 +154,17 @@ public final class WikidataUtil {
             JsonNode scheme = binding.get("taxonScheme");
             if (valueExists(scheme)) {
                 String taxonProvider = scheme.get("value").asText();
-                final String wdProviderPropertyId = replace(taxonProvider, "http://www.wikidata.org/prop/direct/", "");
-                final TaxonomyProvider taxonomyProvider1 = WIKIDATA_TO_PROVIDER.get(wdProviderPropertyId);
-                if (taxonomyProvider1 != null) {
-                    TaxonImpl taxon = new TaxonImpl();
-                    String linkedTaxonId = binding.get("taxonId").get("value").asText();
-                    taxon.setExternalId(taxonomyProvider1.getIdPrefix() + linkedTaxonId);
-                    populateNameAndRank(binding, taxon);
-                    relatedIds.add(taxon);
+                Matcher matcher = PATTERN_WD_PROPERTY_ID.matcher(taxonProvider);
+                if (matcher.matches()) {
+                    String wdProviderPropertyId = matcher.group("propertyId");
+                    final TaxonomyProvider taxonomyProvider1 = WIKIDATA_TO_PROVIDER.get(wdProviderPropertyId);
+                    if (taxonomyProvider1 != null) {
+                        TaxonImpl taxon = new TaxonImpl();
+                        String linkedTaxonId = binding.get("taxonId").get("value").asText();
+                        taxon.setExternalId(taxonomyProvider1.getIdPrefix() + linkedTaxonId);
+                        populateNameAndRank(binding, taxon);
+                        relatedIds.add(taxon);
+                    }
                 }
             }
         }
@@ -179,12 +196,12 @@ public final class WikidataUtil {
 
     public static String nonWdTaxonWhereClause(TaxonomyProvider taxonomyProvider, String taxonId) {
         return "?wdTaxonId wdt:" + PROVIDER_TO_WIKIDATA.get(taxonomyProvider) + " \"" + taxonId + "\" .\n" +
-                "?wdTaxonId ?taxonScheme ?taxonId .\n";
+                "?wdTaxonId ?taxonScheme ?taxonIdStatement .\n";
     }
 
     public static String wdTaxonWhereClause(String taxonId) {
         return "bind ( wd:" + taxonId + " as ?wdTaxonId )\n" +
-                "wd:" + taxonId + " ?taxonScheme ?taxonId .\n";
+                "wd:" + taxonId + " ?taxonScheme ?taxonIdStatement .\n";
     }
 
     public static String createSparqlQuery(String externalId, String preferredLanguage) {
