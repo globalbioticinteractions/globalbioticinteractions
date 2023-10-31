@@ -132,6 +132,12 @@ public class DatasetImporterForZenodoMetadata extends DatasetImporterWithListene
             String citation = StringUtils.join(citationElements.collect(Collectors.toList()), ". ");
 
             final JsonNode custom = metadata.get("custom");
+            if (custom != null) {
+                indexInteractions(doi, doi1, citation, custom);
+            }
+        }
+
+        private void indexInteractions(String doi, DOI doi1, String citation, JsonNode custom) throws StudyImporterException {
             final Iterator<String> fieldNames = custom.fieldNames();
             final Spliterator<String> stringSpliterator = Spliterators
                     .spliteratorUnknownSize(fieldNames, Spliterator.ORDERED);
