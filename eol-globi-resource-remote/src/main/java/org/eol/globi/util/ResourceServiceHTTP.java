@@ -1,9 +1,12 @@
 package org.eol.globi.util;
 
+import org.apache.http.Header;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.eol.globi.service.ResourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +34,7 @@ public class ResourceServiceHTTP extends ResourceServiceCaching {
     }
 
     private static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
-        HttpGet request = new HttpGet(resourceURI);
+        HttpGet request = HttpUtil.addAcceptHeader(new HttpGet(resourceURI));
         try {
             HttpResponse response = HttpUtil.getHttpClient().execute(request);
             StatusLine statusLine = response.getStatusLine();

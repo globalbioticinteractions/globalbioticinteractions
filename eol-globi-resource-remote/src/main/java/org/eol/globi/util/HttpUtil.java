@@ -107,19 +107,24 @@ public class HttpUtil {
         httpGet.setHeader("X-Stream", "true");
     }
 
+    public static HttpGet addAcceptHeader(HttpGet httpGet) {
+        httpGet.setHeader("Accept", "*/*");
+        return httpGet;
+    }
+
     public static String getRemoteJson(String uri) throws IOException {
         return executeAndRelease(httpGetJson(URI.create(uri)));
     }
 
     public static String getContent(URI uri) throws IOException {
-        return executeAndRelease(new HttpGet(uri));
+        return executeAndRelease(addAcceptHeader(new HttpGet(uri)));
     }
 
     public static String getContent(String uri) throws IOException {
         return getContent(URI.create(uri));
     }
 
-    public static String executeAndRelease(HttpGet get) throws IOException {
+    private static String executeAndRelease(HttpGet get) throws IOException {
         return executeAndRelease(get, HttpUtil.getHttpClient());
     }
 
@@ -127,7 +132,7 @@ public class HttpUtil {
         return executeAndRelease(get, client, new BasicResponseHandler());
     }
 
-    public static String executeAndRelease(HttpGet get, HttpClient client, ResponseHandler<String> responseHandler) throws IOException {
+    private static String executeAndRelease(HttpGet get, HttpClient client, ResponseHandler<String> responseHandler) throws IOException {
         try {
             return client.execute(get, responseHandler);
         } catch (IOException ex) {
