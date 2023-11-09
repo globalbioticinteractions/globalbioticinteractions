@@ -8,6 +8,7 @@ import org.eol.globi.util.HttpUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -68,9 +69,7 @@ public class InteractionControllerIT extends ITBase {
     @Test
     public void listPreyForPredatorLocation() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?lat=12.4&lng=54.4";
-        HttpGet httpGet = new HttpGet(uri);
-        HttpUtil.addJsonHeaders(httpGet);
-        HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
+        HttpResponse execute = HttpUtil.getHttpClient().execute(HttpUtil.httpGetJson(URI.create(uri)));
         assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json;charset=utf-8"));
         String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         assertThat(response, is(not(nullValue())));
@@ -79,9 +78,7 @@ public class InteractionControllerIT extends ITBase {
     @Test
     public void listPreyForPredatorDOT() throws IOException {
         String uri = getURLPrefix() + "taxon/Homo%20sapiens/preysOn?type=dot";
-        HttpGet httpGet = new HttpGet(uri);
-        HttpUtil.addJsonHeaders(httpGet);
-        HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
+        HttpResponse execute = HttpUtil.getHttpClient().execute(HttpUtil.httpGetJson(URI.create(uri)));
         assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/vnd.graphviz;charset=UTF-8"));
         String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
         assertThat(response, is(not(nullValue())));
@@ -103,8 +100,7 @@ public class InteractionControllerIT extends ITBase {
     }
 
     private void assertCSV(String uri) throws IOException {
-        HttpGet httpGet = new HttpGet(uri);
-        HttpUtil.addJsonHeaders(httpGet);
+        HttpGet httpGet = HttpUtil.httpGetJson(URI.create(uri));
         HttpResponse execute = HttpUtil.getHttpClient().execute(httpGet);
         assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("text/csv;charset=UTF-8"));
         String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
