@@ -93,7 +93,7 @@ public class WikiDataImageSearchTest {
         Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
-        assertThat(taxonImage.getCommonName(), is("ライオン (raion) @ja"));
+        assertThat(taxonImage.getCommonName(), is("ライオン @ja"));
     }
 
     @Test
