@@ -14,11 +14,16 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
     }
 
     private InteractionListener initListener(NodeFactory nodeFactory) {
+        Dataset dataset = getDataset();
+        return initListener(nodeFactory, dataset);
+    }
+
+    private InteractionListener initListener(NodeFactory nodeFactory, Dataset dataset) {
         return new InteractionListenerImpl(
                 nodeFactory,
                 getGeoNamesService(),
                 getLogger(),
-                getDataset());
+                dataset);
     }
 
     public InteractionListener getInteractionListener() {
@@ -26,6 +31,10 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
             interactionListener = initListener(getNodeFactory());
         }
         return interactionListener;
+    }
+
+    public InteractionListener getInteractionListenerWithContext(Dataset dataset) {
+        return initListener(getNodeFactory(), dataset);
     }
 
     public void setInteractionListener(InteractionListener interactionListener) {
