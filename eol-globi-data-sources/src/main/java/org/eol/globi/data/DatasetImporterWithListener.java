@@ -32,11 +32,7 @@ public abstract class DatasetImporterWithListener extends NodeBasedImporter {
         }
         return interactionListener;
     }
-
-    public InteractionListener getInteractionListenerWithContext(Dataset dataset) {
-        return initListener(getNodeFactory(), dataset);
-    }
-
+    
     public void setInteractionListener(InteractionListener interactionListener) {
         this.interactionListener = interactionListener;
     }

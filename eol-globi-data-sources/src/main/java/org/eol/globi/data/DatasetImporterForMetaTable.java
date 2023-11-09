@@ -62,7 +62,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 Dataset datasetProxy = new DatasetProxy(dataset);
                 datasetProxy.setConfig(tableConfig);
 
-                InteractionListener interactionListener = getInteractionListenerWithContext(datasetProxy);
+                InteractionListener interactionListener = getInteractionListener();
 
                 final InteractionListener listener =
                         new TableInteractionListenerProxy(datasetProxy, interactionListener);
