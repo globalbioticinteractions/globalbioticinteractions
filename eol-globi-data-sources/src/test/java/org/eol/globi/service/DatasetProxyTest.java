@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
+import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetProxy;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
@@ -11,6 +12,7 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -90,6 +92,22 @@ public class DatasetProxyTest {
         TestHashUtil.assertContentHash(testDataset.retrieve(URI.create("archive")), hashOfOriginal);
 
     }
+
+    @Test
+    public void getMetaTableProxy() throws IOException, URISyntaxException {
+        JsonNode tables = new ObjectMapper().readTree(getClass().getResourceAsStream("globi-meta.json"));
+        JsonNode table = new ObjectMapper().readTree(getClass().getResourceAsStream("globi-metatable.json"));
+
+
+        Dataset dataset = new DatasetImpl("foo/bar", null, URI.create("foo:bar"));
+        dataset.setConfig(tables);
+
+        DatasetProxy datasetProxy = new DatasetProxy(dataset);
+        dataset.setConfig(table);
+
+        assertThat(datasetProxy.getOrDefault("shouldResolveReferences", "false"), is("true"));
+    }
+
 
     public DatasetProxy getTestDataset() {
         return getTestDataset(null, null);
