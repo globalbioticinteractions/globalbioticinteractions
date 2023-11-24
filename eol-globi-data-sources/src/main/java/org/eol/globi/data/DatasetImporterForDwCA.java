@@ -686,6 +686,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
 
         mapManterDynamicProperties(properties);
+        mapMSBBirdDynamicProperties(properties);
 
         if (hasInteractionTypeOrName(properties)) {
             appendResourceType(properties, DwcTerm.dynamicProperties.qualifiedName());
@@ -709,6 +710,15 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (StringUtils.isNoneBlank(properties.get("verbatim host ID"))) {
             properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
             properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
+        }
+    }
+
+    private static void mapMSBBirdDynamicProperties(Map<String, String> properties) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/63
+        putIfAbsentAndNotBlank(properties, TARGET_TAXON_NAME, properties.get("stomach contents"));
+        if (StringUtils.isNoneBlank(properties.get("stomach contents"))) {
+            properties.put(INTERACTION_TYPE_NAME, InteractType.ATE.getLabel());
+            properties.put(INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
         }
     }
 

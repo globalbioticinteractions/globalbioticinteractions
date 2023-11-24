@@ -858,6 +858,21 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void dynamicPropertiesMSBBird() throws IOException {
+        JsonNode jsonNode = new ObjectMapper().readTree(getClass().getResourceAsStream("MSB_Bird_36890.json"));
+
+        String dynamicProperties = jsonNode.get("http://rs.tdwg.org/dwc/terms/dynamicProperties").asText();
+
+        assertThat(dynamicProperties, is("bursa=no bursa;fat deposition=light;molt condition=no wings/tail; no molt;reproductive data=TE: 2.62 X 1.83 mm;sex=male;skull ossification=0% ossified;stomach contents=arthropods;weight=7.51 g"));
+        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(dynamicProperties);
+
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("arthropods"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
     public void dynamicPropertiesManterLab() {
         // see https://github.com/globalbioticinteractions/unl-nsm/issues/4
         String s = "age class=adult;location in host=gallbladder;verbatim host ID=Ictalurus punctatus";
