@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -387,8 +388,8 @@ public class DatasetImporterForDwCATest {
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), new ResourceServiceLocalAndRemote(inStream -> inStream)));
 
-        List<String> families = new ArrayList<>();
-        AtomicBoolean someRecords = new AtomicBoolean(false);
+        TreeSet<String> resourceTypes = new TreeSet<>();
+        AtomicInteger someRecords = new AtomicInteger(0);
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -409,13 +410,19 @@ public class DatasetImporterForDwCATest {
                         is("Accipitridae"),
                         is("Strigidae")
                 ));
-                assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences | http://rs.tdwg.org/dwc/terms/Occurrence"));
 
-                someRecords.set(true);
+                resourceTypes.add(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES));
+
+                someRecords.incrementAndGet();
             }
         });
         studyImporterForDwCA.importStudy();
-        assertThat(someRecords.get(), is(true));
+        assertThat(someRecords.get(), is(5));
+
+        assertThat(resourceTypes.size(), is(2));
+        Iterator<String> iterator = resourceTypes.iterator();
+        assertThat(iterator.next(), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences | http://rs.tdwg.org/dwc/terms/Occurrence"));
+        assertThat(iterator.next(), is("http://rs.tdwg.org/dwc/terms/dynamicProperties | http://rs.tdwg.org/dwc/terms/Occurrence"));
     }
 
     @Test
