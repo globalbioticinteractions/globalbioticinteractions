@@ -41,10 +41,15 @@ public class EMLUtilTest {
         assertThat(proxy.getCitation(), is("WorldFAIR pilot data from: VisitationData_Luisa_Carvalheiro."));
         assertThat(proxy.getFormat(), not(is(MIME_TYPE_DWCA)));
         assertThat(proxy.getFormat(), is("globi"));
+
+        JsonNode context = proxy.getConfig().get("@context");
+        assertThat(context, is(notNullValue()));
+        assertThat(context.toString(), is("[\"http://www.w3.org/ns/csvw\",{\"@language\":\"en\"}]"));
+
         JsonNode tablesNode = proxy.getConfig().get("tables");
         assertThat(tablesNode.size(), is(1));
         JsonNode tableNode = tablesNode.get(0);
-        assertThat(tableNode.get("delimiter").textValue(), is("\\t"));
+        assertThat(tableNode.get("delimiter").textValue(), is("\t"));
         assertThat(tableNode.get("headerRowCount").textValue(), is("6"));
         assertThat(tableNode.get("url").textValue(), is("https://docs.google.com/spreadsheets/u/1/d/1cJ0qX9ppqHoSyqFykwYJef-DFOzoutthBXjwKRY81T8/export?format=tsv&id=1cJ0qX9ppqHoSyqFykwYJef-DFOzoutthBXjwKRY81T8&gid=776329546"));
         JsonNode jsonNode = tableNode.get("tableSchema").get("columns");

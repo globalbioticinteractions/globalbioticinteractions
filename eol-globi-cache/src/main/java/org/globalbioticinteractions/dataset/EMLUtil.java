@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.eol.globi.service.ResourceService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -57,11 +58,17 @@ public class EMLUtil {
 
             Node table = getFirstNodeIfPresent(doc, xpath, "//dataTable");
             if (table != null) {
+                JsonNode contextNode = new ObjectMapper().readTree("[ \"http://www.w3.org/ns/csvw\", {\n" +
+                        "    \"@language\" : \"en\"\n" +
+                        "  }]");
+                objectNode.set("@context", contextNode);
+
                 ObjectNode tableNode = new ObjectMapper().createObjectNode();
                 ArrayNode arrayNode = new ObjectMapper().createArrayNode();
                 arrayNode.add(tableNode);
                 objectNode.set("tables", arrayNode);
-                tableNode.put("delimiter", StringUtils.trim(getFirstIfPresent(table, xpath, "//fieldDelimiter")));
+                Node delimiter = getFirstNodeIfPresent(table, xpath, "//fieldDelimiter");
+                tableNode.put("delimiter", StringEscapeUtils.unescapeJava(delimiter.getTextContent()));
                 tableNode.put("headerRowCount", StringUtils.trim(getFirstIfPresent(table, xpath, "//numHeaderLines")));
                 tableNode.put("url", StringUtils.trim(getFirstIfPresent(table, xpath, "//distribution/online/url")));
                 ObjectNode schema = new ObjectMapper().createObjectNode();

@@ -15,8 +15,8 @@
         </abstract>
         <creator id="https://orcid.org/0000-0001-7655-979X">
             <individualName>
-                <givenName>Carvalheiro</givenName>
-                <surName>Luisa</surName>
+                <givenName>Luisa</givenName>
+                <surName>Carvalheiro</surName>
             </individualName>
             <organizationName xml:lang="en">University of Goias</organizationName>
             <electronicMailAddress>lgcarvalheiro@gmail.com</electronicMailAddress>
@@ -24,9 +24,9 @@
         </creator>
         <creator id="https://orcid.org/0000-0002-8675-7068">
           <individualName>
-            <givenName>Salim</givenName>
+            <givenName>José</givenName>
             <givenName>A.</givenName>
-            <surName>José</surName>
+            <surName>Salim</surName>
           </individualName>
           <organizationName xml:lang="en">University of Sao Paulo</organizationName>
           <electronicMailAddress>joseasalim@usp.br</electronicMailAddress>

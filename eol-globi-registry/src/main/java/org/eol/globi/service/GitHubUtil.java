@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.tuple.Pair;
-import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.util.GitClient;
@@ -38,7 +37,7 @@ public class GitHubUtil {
                 path,
                 query,
                 null
-        );  
+        );
     }
 
     private static boolean hasInteractionData(URI gloBIConfigURI, ResourceService resourceService) throws IOException {
@@ -101,14 +100,9 @@ public class GitHubUtil {
     }
 
     static boolean isGloBIRepository(String globiRepo, String commitSHA, ResourceService resourceService) throws IOException {
-        return hasInteractionData(getGloBIConfigURI(
-                globiRepo,
-                "globi.json",
-                commitSHA),
-                resourceService)
-                || hasInteractionData(
-                getGloBIConfigURI(globiRepo, "globi-dataset.jsonld", commitSHA),
-                resourceService);
+        return hasInteractionData(getGloBIConfigURI(globiRepo, "globi.json", commitSHA), resourceService)
+                || hasInteractionData(getGloBIConfigURI(globiRepo, "globi-dataset.jsonld", commitSHA), resourceService)
+                || hasInteractionData(getGloBIConfigURI(globiRepo, "eml.xml", commitSHA), resourceService);
     }
 
     public static String lastCommitSHA(String repository, ResourceService resourceService) throws IOException {

@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -25,6 +26,18 @@ public class GitHubUtilIT {
         List<String> reposWithData = GitHubUtil.find(new ResourceServiceHTTP(is -> is));
         assertThat(reposWithData, CoreMatchers.hasItem(TEMPLATE_DATA_REPOSITORY_TSV));
         assertThat(reposWithData, CoreMatchers.hasItem(TEMPLATE_DATA_REPOSITORY_JSONLD));
+    }
+
+   @Test
+    public void isGloBIRepo() throws IOException {
+       ResourceServiceHTTP resourceService = new ResourceServiceHTTP(is -> is);
+
+       String repoName = "globalbioticinteractions/carvalheiro2023";
+       String sha = GitHubUtil.lastCommitSHA(
+               repoName,
+               resourceService
+       );
+       assertTrue(GitHubUtil.isGloBIRepository(repoName, sha, resourceService));
     }
 
     @Test
