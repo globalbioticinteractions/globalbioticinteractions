@@ -13,6 +13,7 @@ import org.eol.globi.data.SpecimenCitationEnricher;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.GeoNamesService;
+import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
@@ -79,8 +80,8 @@ public class InteractionListenerImpl implements InteractionListener {
                     dataset == null
                             ? queue
                             : new InteractionListenerWithInteractionTypeMapping(queue, InteractUtil.createInteractionTypeMapperForImporter(dataset), logger);
-        } catch (StudyImporterException ex) {
-            LogUtil.logError(logger, "custom translation mapper not enabled, because the mapper for [" + dataset.getNamespace() + "] failed to initialize", ex);
+        } catch (TermLookupServiceException ex) {
+            LogUtil.logError(logger, "type mapper for [" + dataset.getNamespace() + "] disabled:  [" + ex.getMessage() + "]", ex);
         }
         return mappingListener;
     }
