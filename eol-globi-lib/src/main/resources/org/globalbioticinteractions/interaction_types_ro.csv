@@ -3,6 +3,7 @@ preysOn,http://purl.obolibrary.org/obo/RO_0002439
 parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
 hasHost,http://purl.obolibrary.org/obo/RO_0002454
 interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+trophicallyInteractsWith,http://purl.obolibrary.org/obo/RO_0002438
 hostOf,http://purl.obolibrary.org/obo/RO_0002453
 pollinates,http://purl.obolibrary.org/obo/RO_0002455
 eats,http://purl.obolibrary.org/obo/RO_0002470
