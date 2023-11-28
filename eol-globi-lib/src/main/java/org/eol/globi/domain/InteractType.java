@@ -14,6 +14,7 @@ public enum InteractType implements RelType {
     PARASITE_OF("http://purl.obolibrary.org/obo/RO_0002444", "parasiteOf", SUBJECT, OBJECT),
     HAS_HOST("http://purl.obolibrary.org/obo/RO_0002454", "hasHost", SUBJECT, OBJECT),
     INTERACTS_WITH("http://purl.obolibrary.org/obo/RO_0002437", "interactsWith"),
+    TROPHICALLY_INTERACTS_WITH("http://purl.obolibrary.org/obo/RO_0002438", "trophicallyInteractsWith"),
     HOST_OF("http://purl.obolibrary.org/obo/RO_0002453", "hostOf", OBJECT, SUBJECT),
     POLLINATES("http://purl.obolibrary.org/obo/RO_0002455", "pollinates", SUBJECT, OBJECT),
     PERCHING_ON(PropertyAndValueDictionary.NO_MATCH, "perchingOn", SUBJECT, OBJECT),
