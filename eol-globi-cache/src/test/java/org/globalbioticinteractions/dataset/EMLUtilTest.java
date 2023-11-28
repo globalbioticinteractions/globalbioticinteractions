@@ -12,6 +12,8 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNot.not;
+
 public class EMLUtilTest {
 
     @Test
@@ -23,8 +25,33 @@ public class EMLUtilTest {
 
         DatasetProxy proxy = new DatasetProxy(origDataset);
         proxy.setConfig(config);
-        assertThat(proxy.getCitation(), is ("Occurrence Records for vampire-moths-and-their-fruit-piercing-relatives. 2018-09-27. South Central California Network - 2ba077c1-aa41-455e-9a84-bccb61a91230."));
-        assertThat(proxy.getFormat(), is (MIME_TYPE_DWCA));
+        assertThat(proxy.getCitation(), is("Occurrence Records for vampire-moths-and-their-fruit-piercing-relatives. 2018-09-27. South Central California Network - 2ba077c1-aa41-455e-9a84-bccb61a91230."));
+        assertThat(proxy.getFormat(), is(MIME_TYPE_DWCA));
+    }
+
+    @Test
+    public void emlToMetaTables() throws URISyntaxException, IOException {
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        URI uriString = getClass().getResource("eml-table.xml").toURI();
+
+        JsonNode config = EMLUtil.datasetWithEML(origDataset, uriString);
+
+        DatasetProxy proxy = new DatasetProxy(origDataset);
+        proxy.setConfig(config);
+        assertThat(proxy.getCitation(), is("WorldFAIR pilot data from: VisitationData_Luisa_Carvalheiro."));
+        assertThat(proxy.getFormat(), not(is(MIME_TYPE_DWCA)));
+        assertThat(proxy.getFormat(), is("globi"));
+        JsonNode tablesNode = proxy.getConfig().get("tables");
+        assertThat(tablesNode.size(), is(1));
+        JsonNode tableNode = tablesNode.get(0);
+        assertThat(tableNode.get("delimiter").textValue(), is("\\t"));
+        assertThat(tableNode.get("headerRowCount").textValue(), is("6"));
+        assertThat(tableNode.get("url").textValue(), is("https://docs.google.com/spreadsheets/u/1/d/1cJ0qX9ppqHoSyqFykwYJef-DFOzoutthBXjwKRY81T8/export?format=tsv&id=1cJ0qX9ppqHoSyqFykwYJef-DFOzoutthBXjwKRY81T8&gid=776329546"));
+        JsonNode jsonNode = tableNode.get("tableSchema").get("columns");
+        assertThat(jsonNode.size(), is(198));
+        assertThat(jsonNode.get(0).get("name").textValue(), is("sourceCatalogNumber"));
+        assertThat(jsonNode.get(jsonNode.size() - 1).get("name").textValue(), is("Caste"));
+
     }
 
     @Test
@@ -37,8 +64,8 @@ public class EMLUtilTest {
 
         DatasetProxy proxy = new DatasetProxy(origDataset);
         proxy.setConfig(config);
-        assertThat(proxy.getFormat(), is (MIME_TYPE_DWCA));
-        assertThat(proxy.getCitation(), is ("Illinois Natural History Survey Insect Collection. 2018-02-28."));
+        assertThat(proxy.getCitation(), is("Illinois Natural History Survey Insect Collection. 2018-02-28."));
+        assertThat(proxy.getFormat(), is(MIME_TYPE_DWCA));
     }
 
 }

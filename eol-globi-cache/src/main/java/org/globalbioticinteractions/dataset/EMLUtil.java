@@ -2,10 +2,12 @@ package org.globalbioticinteractions.dataset;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -41,14 +43,49 @@ public class EMLUtil {
 
             String pubDate = StringUtils.trim(getFirstIfPresent(doc, xpath, "//pubDate"));
             String citation = StringUtils.trim(getFirstIfPresent(doc, xpath, "//citation"));
+            String gbifElementValue = StringUtils.trim(getFirstIfPresent(doc, xpath, "//gbif"));
 
             ObjectNode objectNode = new ObjectMapper().createObjectNode();
-            String datasetCitation = Stream.of(name, pubDate,citation)
+            String datasetCitation = Stream.of(name, pubDate, citation)
                     .filter(StringUtils::isNotBlank)
                     .collect(Collectors.joining(". "));
 
             objectNode.put("citation", datasetCitation + ".");
-            objectNode.put("format", MIME_TYPE_DWCA);
+            if (StringUtils.isNotBlank(collectionName) || StringUtils.isNotBlank(gbifElementValue)) {
+                objectNode.put("format", MIME_TYPE_DWCA);
+            }
+
+            Node table = getFirstNodeIfPresent(doc, xpath, "//dataTable");
+            if (table != null) {
+                ObjectNode tableNode = new ObjectMapper().createObjectNode();
+                ArrayNode arrayNode = new ObjectMapper().createArrayNode();
+                arrayNode.add(tableNode);
+                objectNode.set("tables", arrayNode);
+                tableNode.put("delimiter", StringUtils.trim(getFirstIfPresent(table, xpath, "//fieldDelimiter")));
+                tableNode.put("headerRowCount", StringUtils.trim(getFirstIfPresent(table, xpath, "//numHeaderLines")));
+                tableNode.put("url", StringUtils.trim(getFirstIfPresent(table, xpath, "//distribution/online/url")));
+                ObjectNode schema = new ObjectMapper().createObjectNode();
+                tableNode.set("tableSchema", schema);
+                ArrayNode columns = new ObjectMapper().createArrayNode();
+                schema.set("columns", columns);
+                Node attributeList = getFirstNodeIfPresent(table, xpath, "//attributeList");
+                if (attributeList != null) {
+                    NodeList childNodes = attributeList.getChildNodes();
+                    for (int i=0; i<childNodes.getLength(); i++) {
+                        Node attribute = childNodes.item(i);
+                        if (StringUtils.equalsAny("attribute", attribute.getNodeName())) {
+                            Node id = attribute.getAttributes().getNamedItem("id");
+                            ObjectNode column = new ObjectMapper().createObjectNode();
+                            columns.add(column);
+                            column.put("name", id.getTextContent());
+                            column.put("titles", getFirstIfPresent(attribute, xpath, "attributeName"));
+                            column.put("datatype", getFirstIfPresent(attribute, xpath, "storageType"));
+                            id.getTextContent();
+                        }
+
+                    }
+                }
+            }
 
 
             String string = new ObjectMapper().writeValueAsString(objectNode);
@@ -58,14 +95,20 @@ public class EMLUtil {
         }
     }
 
-    private static String getFirstIfPresent(Document doc, XPath xpath, String expression) throws XPathExpressionException {
+    private static String getFirstIfPresent(Node doc, XPath xpath, String expression) throws XPathExpressionException {
+        Node first = getFirstNodeIfPresent(doc, xpath, expression);
+        return first == null ? null : first.getTextContent();
+    }
+
+    private static Node getFirstNodeIfPresent(Node doc, XPath xpath, String expression) throws XPathExpressionException {
         XPathExpression expr = xpath.compile(expression);
         NodeList list = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 
-        String collectionName = null;
+        Node first = null;
         if (list.getLength() > 0) {
-            collectionName = list.item(0).getTextContent();
+            first = list.item(0);
+
         }
-        return collectionName;
+        return first;
     }
 }
