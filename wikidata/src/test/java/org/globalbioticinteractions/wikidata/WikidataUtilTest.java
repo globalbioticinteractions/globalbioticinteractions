@@ -110,7 +110,7 @@ public class WikidataUtilTest {
                 .sorted()
                 .collect(Collectors.joining("|"));
 
-        assertThat(ids, is("BOLDTaxon:12439|COL:6MB3T|COL:f2c748f9-2a4e-40fb-bce0-b82b88165cef|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
+        assertThat(ids, is("BOLDTaxon:12439|COL:6MB3T|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
 
         final String names = relatedTaxonIds
                 .stream()
@@ -176,7 +176,7 @@ public class WikidataUtilTest {
                 .sorted()
                 .collect(Collectors.joining("|"));
 
-        assertThat(ids, is("BOLDTaxon:12439|COL:6MB3T|COL:f2c748f9-2a4e-40fb-bce0-b82b88165cef|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
+        assertThat(ids, is("BOLDTaxon:12439|COL:6MB3T|EOL:327955|GBIF:2436436|INAT_TAXON:43584|IRMNG:10857762|ITIS:180092|MSW:12100795|NBN:NHMSYS0000376773|NCBI:9606|OTT:770315|WD:Q15978631|WORMS:1455977"));
 
         final String names = relatedTaxonIds
                 .stream()
