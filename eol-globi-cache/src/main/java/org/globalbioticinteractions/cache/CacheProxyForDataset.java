@@ -24,6 +24,18 @@ public class CacheProxyForDataset extends CacheProxy {
 
     @Override
     public InputStream retrieve(URI resourceName) throws IOException {
+        URI resourceLocation = getResourceLocation(resourceName);
+        if (null == resourceLocation) {
+            throw new IOException("resource [" + resourceName + "] not found");
+        }
+        InputStream inputStream = super.retrieve(resourceLocation);
+        if (null == inputStream) {
+            throw new IOException("resource [" + resourceName + "] not found at [" + resourceLocation +"]");
+        }
+        return inputStream;
+    }
+
+    private URI getResourceLocation(URI resourceName) throws IOException {
         URI mappedResourceName = DatasetUtil.getNamedResourceURI(dataset, resourceName);
 
         URI uri;
@@ -48,15 +60,7 @@ public class CacheProxyForDataset extends CacheProxy {
                 uri = ResourceUtil.getAbsoluteResourceURI(localArchiveRoot, mappedResourceName);
             }
         }
-        URI resourceLocation = uri;
-        if (null == resourceLocation) {
-            throw new IOException("resource [" + resourceName + "] not found");
-        }
-        InputStream inputStream = super.retrieve(resourceLocation);
-        if (null == inputStream) {
-            throw new IOException("resource [" + resourceName + "] not found at [" + resourceLocation +"]");
-        }
-        return inputStream;
+        return uri;
     }
 
 
