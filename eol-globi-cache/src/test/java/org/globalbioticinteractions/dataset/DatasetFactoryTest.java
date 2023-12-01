@@ -53,4 +53,12 @@ public class DatasetFactoryTest {
 
     }
 
+    @Test
+    public void createDatasetDWCA2() throws DatasetRegistryException, URISyntaxException {
+        String meta = "jar:" + getClass().getResource("/org/globalbioticinteractions/dataset/dwca-seltmann.zip").toURI().toString() + "!/taxonomy-darwin-core-1ac8b1c8b7728b13a6dba9fd5b64a3aeb036f5fb";
+        Dataset dataset = datasetFor(meta);
+        assertThat(dataset.getCitation(), is("University of California Santa Barbara Invertebrate Zoology Collection. 2021-07-16."));
+
+    }
+
 }
