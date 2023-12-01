@@ -30,6 +30,19 @@ public class EMLUtilTest {
     }
 
     @Test
+    public void customEML() throws URISyntaxException, IOException {
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        String uriString = "jar:" + getClass().getResource("dwca-seltmann.zip").toURI().toString() + "!/taxonomy-darwin-core-1ac8b1c8b7728b13a6dba9fd5b64a3aeb036f5fb/eml.xml";
+
+        JsonNode config = EMLUtil.datasetWithEML(origDataset, URI.create(uriString));
+
+        DatasetProxy proxy = new DatasetProxy(origDataset);
+        proxy.setConfig(config);
+        assertThat(proxy.getCitation(), is("University of California Santa Barbara Invertebrate Zoology Collection. 2021-07-16."));
+        assertThat(proxy.getFormat(), is(MIME_TYPE_DWCA));
+    }
+
+    @Test
     public void emlToMetaTables() throws URISyntaxException, IOException {
         Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         URI uriString = getClass().getResource("eml-table.xml").toURI();

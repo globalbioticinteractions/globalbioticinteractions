@@ -52,12 +52,11 @@ public class EMLUtil {
                     .collect(Collectors.joining(". "));
 
             objectNode.put("citation", datasetCitation + ".");
-            if (StringUtils.isNotBlank(collectionName) || StringUtils.isNotBlank(gbifElementValue)) {
-                objectNode.put("format", MIME_TYPE_DWCA);
-            }
+            objectNode.put("format", MIME_TYPE_DWCA);
 
             Node table = getFirstNodeIfPresent(doc, xpath, "//dataTable");
             if (table != null) {
+                objectNode.put("format", "globi");
                 JsonNode contextNode = new ObjectMapper().readTree("[ \"http://www.w3.org/ns/csvw\", {\n" +
                         "    \"@language\" : \"en\"\n" +
                         "  }]");
