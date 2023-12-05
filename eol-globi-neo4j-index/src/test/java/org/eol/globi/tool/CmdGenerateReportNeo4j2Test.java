@@ -22,6 +22,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.IndexHits;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +34,7 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void generateIndividualStudySourceReports() throws NodeFactoryException {
+    public void generateIndividualStudySourceReports() throws NodeFactoryException, IOException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetWithResourceMapping("az/source", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
@@ -88,7 +89,7 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
     }
 
     @Test
-    public void generateStudySourceOrganizationReports() throws NodeFactoryException {
+    public void generateStudySourceOrganizationReports() throws NodeFactoryException, IOException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
                 new DatasetWithResourceMapping("az/source1", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
 
@@ -144,7 +145,7 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
     }
 
     @Test
-    public void generateCollectionReport() throws NodeFactoryException {
+    public void generateCollectionReport() throws NodeFactoryException, IOException {
         DatasetImpl originatingDataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         Dataset originatingDatasetNode = nodeFactory.getOrCreateDataset(originatingDataset);
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
@@ -178,8 +179,9 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
         }
     }
 
-    private CmdGenerateReportNeo4j2 getCmdGenerateReport() {
+    private CmdGenerateReportNeo4j2 getCmdGenerateReport() throws IOException {
         CmdGenerateReportNeo4j2 cmdGenerateReport = new CmdGenerateReportNeo4j2();
+        cmdGenerateReport.setCacheDir(folder.newFolder().getAbsolutePath());
         cmdGenerateReport.setNodeFactoryFactory(factory -> nodeFactory);
         cmdGenerateReport.setGraphServiceFactory(new GraphServiceFactory() {
             @Override
