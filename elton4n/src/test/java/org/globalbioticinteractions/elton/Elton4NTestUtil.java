@@ -27,31 +27,33 @@ public class Elton4NTestUtil {
 
     public static void assertCompileLinkExport(String neo4jVersion, File folder, String expectedOutput) throws URISyntaxException, IOException {
         String nameIndexCache = new File(folder, "nameIndexCache").getAbsolutePath();
+        String graphDb = new File(folder, "graph.db").getAbsolutePath();
+        String export = new File(folder, "export").getAbsolutePath();
         assertThat(
                 Elton4N.run(new String[]{
                         "compile",
                         "-datasetDir", getTestDatasetDir(),
-                        "-graphDbDir", folder.getAbsolutePath(),
-                        "-exportDir", folder.getAbsolutePath(),
+                        "-graphDbDir", graphDb,
+                        "-exportDir", export,
                         "-nameIndexCache", nameIndexCache,
                         "-neo4jVersion", neo4jVersion,
                         "link",
-                        "-datasetDir", folder.getAbsolutePath(),
-                        "-graphDbDir", folder.getAbsolutePath(),
-                        "-exportDir", folder.getAbsolutePath(),
+                        "-datasetDir", getTestDatasetDir(),
+                        "-graphDbDir", graphDb,
+                        "-exportDir", export,
                         "-nameIndexCache", nameIndexCache,
                         "-neo4jVersion", neo4jVersion,
                         "package",
-                        "-datasetDir", folder.getAbsolutePath(),
-                        "-graphDbDir", folder.getAbsolutePath(),
-                        "-exportDir", folder.getAbsolutePath(),
+                        "-datasetDir", getTestDatasetDir(),
+                        "-graphDbDir", graphDb,
+                        "-exportDir", export,
                         "-nameIndexCache", nameIndexCache,
                         "-neo4jVersion", neo4jVersion
                 }),
                 Is.is(0)
         );
 
-        File csvDir = new File(folder, "tsv");
+        File csvDir = new File(export, "tsv");
         File interactions = new File(csvDir, "interactions.tsv.gz");
         FileInputStream is = new FileInputStream(interactions);
         String actualContent = IOUtils.toString(new GZIPInputStream(is), StandardCharsets.UTF_8);
