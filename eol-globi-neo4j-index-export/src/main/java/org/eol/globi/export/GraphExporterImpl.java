@@ -56,7 +56,7 @@ public class GraphExporterImpl extends GraphExporterBase {
                 baseDir,
                 "csv",
                 new ExportUtil.CsvValueJoiner(),
-                "2");
+                neo4jVersion);
 
         exportDataOntology(graphService, baseDir);
         exportDarwinCoreAggregatedByStudy(graphService, baseDir);
