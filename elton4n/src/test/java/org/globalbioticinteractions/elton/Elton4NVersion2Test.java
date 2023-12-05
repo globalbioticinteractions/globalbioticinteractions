@@ -10,10 +10,6 @@ import java.net.URISyntaxException;
 
 public class Elton4NVersion2Test {
 
-    {{
-
-    }}
-
     @Rule
     public TemporaryFolder folder = new TemporaryFolder(new File("target"));
 

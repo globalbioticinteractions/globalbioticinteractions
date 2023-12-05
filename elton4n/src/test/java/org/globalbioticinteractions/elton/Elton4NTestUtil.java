@@ -26,17 +26,20 @@ public class Elton4NTestUtil {
 
 
     public static void assertCompileLinkExport(String neo4jVersion, File folder, String expectedOutput) throws URISyntaxException, IOException {
+        String nameIndexCache = new File(folder, "nameIndexCache").getAbsolutePath();
         assertThat(
                 Elton4N.run(new String[]{
                         "compile",
                         "-datasetDir", getTestDatasetDir(),
                         "-graphDbDir", folder.getAbsolutePath(),
                         "-exportDir", folder.getAbsolutePath(),
+                        "-nameIndexCache", nameIndexCache,
                         "-neo4jVersion", neo4jVersion,
                         "link",
                         "-datasetDir", folder.getAbsolutePath(),
                         "-graphDbDir", folder.getAbsolutePath(),
                         "-exportDir", folder.getAbsolutePath(),
+                        "-nameIndexCache", nameIndexCache,
                         "-neo4jVersion", neo4jVersion,
                 }),
                 Is.is(0)
@@ -48,6 +51,7 @@ public class Elton4NTestUtil {
                         "-datasetDir", folder.getAbsolutePath(),
                         "-graphDbDir", folder.getAbsolutePath(),
                         "-exportDir", folder.getAbsolutePath(),
+                        "-nameIndexCache", nameIndexCache,
                         "-neo4jVersion", neo4jVersion
                 }),
                 Is.is(0)
