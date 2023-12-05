@@ -132,7 +132,7 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
 
     private void indexOriginalNameForTaxon(String name, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxonNode.getName(), name)) {
-            if (isNonEmptyTaxonNameOrId(name)) {
+            if (TaxonUtil.isNonEmptyTaxonNameOrId(name)) {
                 if (findTaxonByName(name) == null) {
                     indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.NAME, name);
                 }
@@ -140,16 +140,9 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
         }
     }
 
-    private boolean isNonEmptyTaxonNameOrId(String name) {
-        return StringUtils.isNotBlank(name)
-                && !StringUtils.equals(PropertyAndValueDictionary.NO_MATCH, name)
-                && !StringUtils.equals(PropertyAndValueDictionary.AMBIGUOUS_MATCH, name)
-                && !StringUtils.equals(PropertyAndValueDictionary.NO_NAME, name);
-    }
-
     private void indexOriginalExternalIdForTaxon(String externalId, TaxonNode taxonNode) throws NodeFactoryException {
         if (!StringUtils.equals(taxonNode.getExternalId(), externalId)) {
-            if (isNonEmptyTaxonNameOrId(externalId) && findTaxonById(externalId) == null) {
+            if (TaxonUtil.isNonEmptyTaxonNameOrId(externalId) && findTaxonById(externalId) == null) {
                 indexTaxonByProperty(taxonNode, PropertyAndValueDictionary.EXTERNAL_ID, externalId);
             }
         }
@@ -173,7 +166,7 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
         resolvedNode = new TaxonNode(node, resolved.getName());
 
         TaxonUtil.copy(resolved, resolvedNode);
-        if (isNonEmptyTaxonNameOrId(resolvedNode.getName())) {
+        if (TaxonUtil.isNonEmptyTaxonNameOrId(resolvedNode.getName())) {
             final Map<String, String> pathIdMap1 = TaxonUtil.toPathNameMap(resolved, resolved.getPathIds());
             final Map<String, String> pathNameMap1 = TaxonUtil.toPathNameMap(resolved, resolved.getPath());
             for (String rank : RANKS) {
@@ -207,27 +200,18 @@ public class NonResolvingTaxonIndexNoTxNeo4j2 implements TaxonIndex {
 
 
     private void addToIndeces(TaxonNode taxon, String indexedName) throws NodeFactoryException {
-        if (isNonEmptyTaxonNameOrId(indexedName)) {
+        if (TaxonUtil.isNonEmptyTaxonNameOrId(indexedName)) {
             NodeFactoryNeo4j2.indexNonBlankKeyValue(getTaxonIndex(), taxon.getUnderlyingNode(), PropertyAndValueDictionary.NAME, indexedName);
         }
 
         String externalId = taxon.getExternalId();
-        if (isNonEmptyTaxonNameOrId(externalId)) {
+        if (TaxonUtil.isNonEmptyTaxonNameOrId(externalId)) {
             NodeFactoryNeo4j2.indexNonBlankKeyValue(getTaxonIndex(), taxon.getUnderlyingNode(), PropertyAndValueDictionary.EXTERNAL_ID, externalId);
         }
     }
 
     protected TaxonNode addNoMatchTaxon(Taxon origTaxon) throws NodeFactoryException {
-        Taxon noMatchTaxon = TaxonUtil.copy(origTaxon);
-
-        noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName())
-                ? origTaxon.getName()
-                : PropertyAndValueDictionary.NO_NAME);
-
-        noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId())
-                ? origTaxon.getExternalId()
-                : PropertyAndValueDictionary.NO_MATCH);
-        return createAndIndexTaxon(origTaxon, noMatchTaxon);
+        return createAndIndexTaxon(origTaxon, TaxonUtil.copyNoMatchTaxon(origTaxon));
     }
 
 

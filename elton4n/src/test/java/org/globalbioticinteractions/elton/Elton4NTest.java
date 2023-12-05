@@ -7,7 +7,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.UUID;
 
 public class Elton4NTest {
 
@@ -15,23 +14,22 @@ public class Elton4NTest {
     public TemporaryFolder folder = new TemporaryFolder(new File("target"));
 
     @Test
-    public void compositeCommandV3() throws IOException, URISyntaxException {
-        File newFolder = folder.newFolder();
+    public void compositeCommandV2() throws IOException, URISyntaxException {
         Elton4NTestUtil.assertCompileLinkExport(
-                "3",
-                newFolder,
+                "2",
+                folder.newFolder(),
                 "/exported/interactions.tsv"
         );
     }
 
     @Test
-    public void compositeCommandV2() throws IOException, URISyntaxException {
-        File newFolder = folder.newFolder();
+    public void compositeCommandV3() throws IOException, URISyntaxException {
         Elton4NTestUtil.assertCompileLinkExport(
-                "2",
-                newFolder,
-                "/exported/interactions2.tsv"
+                "3",
+                folder.newFolder(),
+                "/exported/interactions.tsv"
         );
     }
+
 
 }

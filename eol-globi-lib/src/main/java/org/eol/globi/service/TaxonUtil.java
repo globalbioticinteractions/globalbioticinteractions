@@ -823,4 +823,24 @@ public class TaxonUtil {
         }
         return normalizedLabel;
     }
+
+    public static boolean isNonEmptyTaxonNameOrId(String name) {
+        return isNotBlank(name)
+                && !StringUtils.equals(NO_MATCH, name)
+                && !StringUtils.equals(PropertyAndValueDictionary.AMBIGUOUS_MATCH, name)
+                && !StringUtils.equals(NO_NAME, name);
+    }
+
+    public static Taxon copyNoMatchTaxon(Taxon origTaxon) {
+        Taxon noMatchTaxon = copy(origTaxon);
+
+        noMatchTaxon.setName(isNonEmptyTaxonNameOrId(origTaxon.getName())
+                ? origTaxon.getName()
+                : NO_NAME);
+
+        noMatchTaxon.setExternalId(isNonEmptyTaxonNameOrId(origTaxon.getExternalId())
+                ? origTaxon.getExternalId()
+                : NO_MATCH);
+        return noMatchTaxon;
+    }
 }
