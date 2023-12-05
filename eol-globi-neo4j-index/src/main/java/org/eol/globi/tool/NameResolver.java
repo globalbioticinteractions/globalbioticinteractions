@@ -100,6 +100,9 @@ public class NameResolver implements IndexerNeo4j {
         if (originatingDataset != null) {
             namespace = originatingDataset.getNamespace();
         }
+        LOG.info("[" + namespace + "]: resolving names...");
+        final StopWatch watchForNamespace = new StopWatch();
+        watchForNamespace.start();
         final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
         for (Relationship specimenNode : specimenNodes) {
             SpecimenNode specimen = new SpecimenNode(specimenNode.getEndNode());
@@ -139,6 +142,7 @@ public class NameResolver implements IndexerNeo4j {
                 }
             }
         }
+        LOG.info("[" + namespace + "]: resolved [" + nameCount + "] names in [" + watchForNamespace.getTime()/1000 + "]s");
         return nameCount;
     }
 
