@@ -1,8 +1,6 @@
 package org.globalbioticinteractions.elton;
 
 import org.eol.globi.tool.CmdCompile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.codegen.docgen.manpage.ManPageGenerator;
 
