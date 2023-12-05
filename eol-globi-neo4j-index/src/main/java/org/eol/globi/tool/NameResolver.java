@@ -16,7 +16,6 @@ import org.eol.globi.util.NodeIdCollector;
 import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -25,9 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NameResolver implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(NameResolver.class);
+    public static final String NO_NAMESPACE = "no/namespace";
 
     private final TaxonIndex taxonIndex;
     private final TaxonFilter taxonFilter;
@@ -95,12 +96,11 @@ public class NameResolver implements IndexerNeo4j {
                                      BatchListener batchListener) {
         batchListener.onStart();
         final Study study1 = new StudyNode(studyNode);
-        String namespace = "no/namespace";
+        String namespace = NO_NAMESPACE;
         Dataset originatingDataset = study1.getOriginatingDataset();
         if (originatingDataset != null) {
             namespace = originatingDataset.getNamespace();
         }
-        LOG.info("[" + namespace + "]: resolving names...");
         final StopWatch watchForNamespace = new StopWatch();
         watchForNamespace.start();
         final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
@@ -142,7 +142,6 @@ public class NameResolver implements IndexerNeo4j {
                 }
             }
         }
-        LOG.info("[" + namespace + "]: resolved [" + nameCount + "] names in [" + watchForNamespace.getTime()/1000 + "]s");
         return nameCount;
     }
 
