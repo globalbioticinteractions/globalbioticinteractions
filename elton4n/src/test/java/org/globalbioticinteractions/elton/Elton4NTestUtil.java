@@ -41,12 +41,6 @@ public class Elton4NTestUtil {
                         "-exportDir", folder.getAbsolutePath(),
                         "-nameIndexCache", nameIndexCache,
                         "-neo4jVersion", neo4jVersion,
-                }),
-                Is.is(0)
-        );
-
-        assertThat(
-                Elton4N.run(new String[]{
                         "package",
                         "-datasetDir", folder.getAbsolutePath(),
                         "-graphDbDir", folder.getAbsolutePath(),
