@@ -1,11 +1,11 @@
 package org.eol.globi.taxon;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.ext.com.google.common.collect.Streams;
 import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeLabel;
 import org.eol.globi.data.ResolvingTaxonIndex;
-import org.eol.globi.data.TaxonIndex;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.domain.RelType;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonNode;
@@ -18,7 +18,12 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo4j3 implements ResolvingTaxonIndex {
 
@@ -78,19 +83,41 @@ public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo
 
         if (taxonFound == null) {
             try {
-                Map<String, String> taxonResolved = enricher.enrichFirstMatch(TaxonUtil.taxonToMap(taxon));
-                Taxon resolvedOrNoMatch = TaxonUtil.isResolved(taxonResolved)
-                        ? TaxonUtil.mapToTaxon(taxonResolved)
-                        : TaxonUtil.copyNoMatchTaxon(taxon);
+                List<Map<String, String>> taxonResolved = enricher.enrichAllMatches(TaxonUtil.taxonToMap(taxon));
 
-                taxonFound = new TaxonNode(getGraphDbService().createNode());
-                TaxonUtil.copy(resolvedOrNoMatch, taxonFound);
+                List<TaxonNode> matchCandidates = taxonResolved
+                        .stream()
+                        .filter(TaxonUtil::isResolved)
+                        .map(TaxonUtil::mapToTaxon)
+                        .filter(t -> !TaxonUtil.hasLiteratureReference(t))
+                        .map(this::taxonNodeFor)
+                        .collect(Collectors.toList());
+
+                TaxonNode primary = matchCandidates.size() == 0
+                        ? createNoMatch(taxon)
+                        : matchCandidates.get(0);
+                taxonFound = primary;
+
+                Streams.concat(matchCandidates.stream().skip(1), Stream.of(taxonNodeFor(taxon)))
+                .forEach(n -> {
+                    n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
+                });
             } catch (PropertyEnricherException e) {
                 // ignore
             }
 
         }
         return taxonFound;
+    }
+
+    private TaxonNode taxonNodeFor(Taxon r) {
+        TaxonNode t = new TaxonNode(getGraphDbService().createNode());
+        TaxonUtil.copy(r, t);
+        return t;
+    }
+
+    private TaxonNode createNoMatch(Taxon taxon) {
+        return taxonNodeFor(TaxonUtil.copyNoMatchTaxon(taxon));
     }
 
 
