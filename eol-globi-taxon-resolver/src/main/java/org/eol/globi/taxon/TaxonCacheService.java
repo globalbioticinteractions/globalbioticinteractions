@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,10 +70,30 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     public TaxonCacheService(final String termResource,
                              final String taxonMapResource,
+                             ResourceService resourceService,
+                             File cacheDir) {
+        this(TermResources.defaultTaxonCacheResource(termResource),
+                TermResources.defaultTaxonMapResource(taxonMapResource),
+                resourceService,
+                cacheDir
+        );
+    }
+
+    public TaxonCacheService(final String termResource,
+                             final String taxonMapResource,
                              ResourceService resourceService) {
         this(TermResources.defaultTaxonCacheResource(termResource),
                 TermResources.defaultTaxonMapResource(taxonMapResource),
                 resourceService);
+    }
+
+    public TaxonCacheService(final TermResource<Taxon> taxonCache,
+                             final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap,
+                             final ResourceService resourceService, File cacheDir) {
+        super(cacheDir);
+        this.taxonCache = taxonCache;
+        this.taxonMap = taxonMap;
+        this.resourceService = resourceService;
     }
 
     @Override

@@ -4,4 +4,6 @@ public interface Cmd extends Runnable  {
 
     void run();
 
+    void destroy();
+
 }

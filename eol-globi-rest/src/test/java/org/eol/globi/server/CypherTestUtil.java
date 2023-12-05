@@ -35,10 +35,9 @@ public class CypherTestUtil {
             new NodeFactoryNeo4j2(graphDatabaseService);
             new NonResolvingTaxonIndexNeo4j2(graphDatabaseService);
             new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(graphDatabaseService), new NodeIdCollectorNeo4j2()).index();
-            CacheService cacheService = new CacheService();
-            File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
-            cacheService.setCacheDir(cacheDir);
             CmdGenerateReportNeo4j2 reportGenerator = new CmdGenerateReportNeo4j2();
+            File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
+            reportGenerator.setCacheDir(cacheDir.getAbsolutePath());
             reportGenerator.setGraphServiceFactory(new GraphServiceFactory() {
                 @Override
                 public GraphDatabaseService getGraphService() {
@@ -68,8 +67,6 @@ public class CypherTestUtil {
                 if (!ex.getMessage().contains("Encountered \" \":\" \": \"\"")) {
                     throw ex;
                 }
-            } finally {
-                FileUtils.deleteQuietly(cacheDir);
             }
         }
     }

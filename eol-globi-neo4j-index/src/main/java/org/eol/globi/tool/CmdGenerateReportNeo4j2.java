@@ -24,6 +24,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import picocli.CommandLine;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
 
     private static final String GLOBI_COLLECTION_NAME = "Global Biotic Interactions";
 
-    private final CacheService cacheService = new CacheService();
+    private CacheService cacheService = null;
 
     public void run() {
         run(LOG);
@@ -117,7 +118,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
 
     private void generateReportForStudySources(NamespaceHandler namespaceHandler) {
         try {
-            DB reportCache = cacheService.initDb("sourceReports" + UUID.randomUUID());
+            DB reportCache = getCacheService().initDb("sourceReports" + UUID.randomUUID());
             reportForHandler(namespaceHandler, reportCache);
             reportCache.close();
         } catch (IOException e) {
@@ -198,12 +199,19 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
 
     void generateReportForCollection() {
         try {
-            DB reportCache = cacheService.initDb("collectionReport");
+            DB reportCache = getCacheService().initDb("collectionReport");
             generateCollectionReport(reportCache);
             reportCache.close();
         } catch (IOException e) {
             LOG.warn("failed to generate collection report", e);
         }
+    }
+
+    private CacheService getCacheService() {
+        if (cacheService == null) {
+            cacheService = new CacheService(new File(getCacheDir()));
+        }
+        return cacheService;
     }
 
     private void generateCollectionReport(DB reportCache) {

@@ -1,6 +1,5 @@
 package org.eol.globi.db;
 
-import org.globalbioticinteractions.dataset.DatasetRegistryLocal;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;

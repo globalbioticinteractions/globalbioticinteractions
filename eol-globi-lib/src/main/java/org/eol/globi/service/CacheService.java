@@ -10,7 +10,15 @@ import static org.eol.globi.service.CacheServiceUtil.createCacheDir;
 
 public class CacheService {
 
-    private File cacheDir = new File("target/term-cache");
+    private final File cacheDir;
+
+    public CacheService() {
+        this(new File("target/term-cache"));
+    }
+
+    public CacheService(File cacheDir) {
+        this.cacheDir = cacheDir;
+    }
 
     public DB initDb(String cacheName) throws IOException {
         File mapdbCacheDir = getMapDBDir();
@@ -37,9 +45,6 @@ public class CacheService {
         return new File(getCacheDir(), "mapdb");
     }
 
-    public void setCacheDir(File cacheFilename) {
-        this.cacheDir = cacheFilename;
-    }
 
     public File getCacheDir() {
         return this.cacheDir;

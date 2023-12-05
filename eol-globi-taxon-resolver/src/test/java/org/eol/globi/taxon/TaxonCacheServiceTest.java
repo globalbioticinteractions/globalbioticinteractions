@@ -143,8 +143,11 @@ public class TaxonCacheServiceTest {
     }
 
     public List<Map<String, String>> enrichHolorchis(Map<String, String> properties) throws PropertyEnricherException {
-        final TaxonCacheService cacheService1 = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheHolorchis.tsv", "/org/eol/globi/taxon/taxonMapHolorchis.tsv", new ResourceServiceLocal());
-        cacheService1.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService1 = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
+                "/org/eol/globi/taxon/taxonMapHolorchis.tsv",
+                new ResourceServiceLocal(),
+                mapdbDir);
         return cacheService1.enrichAllMatches(properties);
     }
 
@@ -184,8 +187,11 @@ public class TaxonCacheServiceTest {
 
     @Test
     public void matchTermByNameFirstLine() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheNoHeader.tsv", TAXON_MAP_TEST_RESOURCE, new ResourceServiceLocal());
-        cacheService.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheNoHeader.tsv",
+                TAXON_MAP_TEST_RESOURCE,
+                new ResourceServiceLocal(),
+                mapdbDir);
 
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList("EOL:1276240")), new TermMatchListener() {
@@ -215,8 +221,7 @@ public class TaxonCacheServiceTest {
         // see https://github.com/seltmann/vampire-moth-globi/issues/3
         String termCache = "/org/eol/globi/taxon/taxonCacheCalyptra.tsv";
         String termMap = "/org/eol/globi/taxon/taxonMapCalyptra.tsv";
-        final TaxonCacheService cacheService = new TaxonCacheService(termCache, termMap, new ResourceServiceLocal());
-        cacheService.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService = new TaxonCacheService(termCache, termMap, new ResourceServiceLocal(), mapdbDir);
 
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList(name)), new TermMatchListener() {
@@ -234,8 +239,11 @@ public class TaxonCacheServiceTest {
 
     @Test
     public void noMatchExplicit() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheNoHeader.tsv", TAXON_MAP_TEST_RESOURCE, new ResourceServiceLocal());
-        cacheService.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheNoHeader.tsv",
+                TAXON_MAP_TEST_RESOURCE,
+                new ResourceServiceLocal(),
+                mapdbDir);
 
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(TermUtil.toNamesToTerms(Collections.singletonList("foo:bar")), new TermMatchListener() {
@@ -250,8 +258,11 @@ public class TaxonCacheServiceTest {
 
     @Test
     public void noMatchByTermExplicit() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheNoHeader.tsv", TAXON_MAP_TEST_RESOURCE, new ResourceServiceLocal());
-        cacheService.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheNoHeader.tsv",
+                TAXON_MAP_TEST_RESOURCE,
+                new ResourceServiceLocal(),
+                mapdbDir);
 
         AtomicBoolean matched = new AtomicBoolean(false);
         cacheService.match(Collections.singletonList(new TermImpl("foo:bar", null)), new TermMatchListener() {
@@ -297,8 +308,11 @@ public class TaxonCacheServiceTest {
     }
 
     private TaxonCacheService getTaxonCacheService() {
-        final TaxonCacheService cacheService = new TaxonCacheService(TAXON_CACHE_TEST_RESOURCE, TAXON_MAP_TEST_RESOURCE, new ResourceServiceLocal());
-        cacheService.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                TAXON_CACHE_TEST_RESOURCE,
+                TAXON_MAP_TEST_RESOURCE,
+                new ResourceServiceLocal(),
+                mapdbDir);
         return cacheService;
     }
 
@@ -567,9 +581,12 @@ public class TaxonCacheServiceTest {
 
     @Test
     public void resolveWithSameIdDifferentName() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheRhusSylvestris.tsv", "/org/eol/globi/taxon/taxonMapRhusSylvestris.tsv", new ResourceServiceLocal());
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheRhusSylvestris.tsv",
+                "/org/eol/globi/taxon/taxonMapRhusSylvestris.tsv",
+                new ResourceServiceLocal(),
+                mapdbDir);
         cacheService.setMaxTaxonLinks(125);
-        cacheService.setCacheDir(mapdbDir);
         assertRhus(cacheService, new TermImpl("", "Rhus sylvestris"));
         assertRhus(cacheService, new TermImpl("EOL:2888778", ""));
         assertRhus(cacheService, new TermImpl("EOL:2888778", "Rhus sylvestris"));
@@ -595,9 +612,12 @@ public class TaxonCacheServiceTest {
 
     @Test
     public void resolveWithMultipleSchemes() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheHomoSapiens.tsv", "/org/eol/globi/taxon/taxonMapHomoSapiens.tsv", new ResourceServiceLocal());
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheHomoSapiens.tsv",
+                "/org/eol/globi/taxon/taxonMapHomoSapiens.tsv",
+                new ResourceServiceLocal(),
+                mapdbDir);
         cacheService.setMaxTaxonLinks(125);
-        cacheService.setCacheDir(mapdbDir);
         Set<String> listIds = new TreeSet<>();
         Set<String> listNames = new HashSet<>();
         cacheService.match(Collections.singletonList(new TermImpl("", "Homo sapiens")), new TermMatchListener() {
@@ -656,8 +676,11 @@ public class TaxonCacheServiceTest {
                 return s -> false;
             }
         };
-        final TaxonCacheService cacheService = new TaxonCacheService(termCache, termMap, new ResourceServiceLocal());
-        cacheService.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                termCache,
+                termMap,
+                new ResourceServiceLocal(),
+                mapdbDir);
 
         cacheService.match(Collections.singletonList(new TermImpl("EOL:1276240", null)),
                 (nodeId, name, nameType, taxon) -> assertThat(nameType, is(NameType.NONE)));

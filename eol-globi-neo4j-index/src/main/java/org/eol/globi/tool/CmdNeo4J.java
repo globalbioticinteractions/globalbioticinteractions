@@ -118,14 +118,28 @@ public abstract class CmdNeo4J implements Cmd {
         CmdNeo4J.graphServiceFactory = graphServiceFactory;
     }
 
+    @Override
+    public void destroy() {
+        try {
+            CmdNeo4J.graphServiceFactory.close();
+            CmdNeo4J.graphServiceFactory = null;
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
     protected void configureAndRun(CmdNeo4J cmd) {
-        cmd.setTaxonCachePath(getTaxonCachePath());
-        cmd.setTaxonMapPath(getTaxonMapPath());
-        cmd.setGraphServiceFactory(getGraphServiceFactory());
-        cmd.setNodeFactoryFactory(getNodeFactoryFactory());
-        cmd.setCacheDir(getCacheDir());
-        cmd.setNeo4jVersion(getNeo4jVersion());
-        cmd.run();
+        try {
+            cmd.setTaxonCachePath(getTaxonCachePath());
+            cmd.setTaxonMapPath(getTaxonMapPath());
+            cmd.setGraphServiceFactory(getGraphServiceFactory());
+            cmd.setNodeFactoryFactory(getNodeFactoryFactory());
+            cmd.setCacheDir(getCacheDir());
+            cmd.setNeo4jVersion(getNeo4jVersion());
+            cmd.run();
+        } finally {
+            cmd.destroy();
+        }
     }
 
     public String getTaxonCachePath() {

@@ -31,9 +31,9 @@ public class CmdInterpretTaxa extends CmdNeo4J {
         final TaxonCacheService taxonCacheService = new TaxonCacheService(
                 getTaxonCachePath(),
                 getTaxonMapPath(),
-                resourceService
+                resourceService,
+                new File(getCacheDir())
         );
-        taxonCacheService.setCacheDir(new File(getCacheDir()));
 
         IndexerNeo4j taxonIndexer = null;
         if ("2".equals(getNeo4jVersion())) {

@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.elton;
 
+import org.eol.globi.db.GraphServiceFactoryImpl;
 import org.eol.globi.tool.CmdCompile;
 import picocli.CommandLine;
 import picocli.codegen.docgen.manpage.ManPageGenerator;

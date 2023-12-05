@@ -36,8 +36,7 @@ public class TaxonCacheServiceIT {
 
     @Test
     public void init10k() throws PropertyEnricherException {
-        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCache10k.tsv.gz", "/org/eol/globi/taxon/taxonMap10k.tsv.gz", new ResourceServiceLocal());
-        cacheService.setCacheDir(mapdbDir);
+        final TaxonCacheService cacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCache10k.tsv.gz", "/org/eol/globi/taxon/taxonMap10k.tsv.gz", new ResourceServiceLocal(), mapdbDir);
         StopWatch watch = new StopWatch();
         final TaxonImpl taxon = new TaxonImpl();
         taxon.setExternalId("EOL:1049789");
