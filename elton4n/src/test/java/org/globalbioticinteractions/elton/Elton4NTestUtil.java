@@ -57,7 +57,6 @@ public class Elton4NTestUtil {
         File interactions = new File(csvDir, "interactions.tsv.gz");
         FileInputStream is = new FileInputStream(interactions);
         String actualContent = IOUtils.toString(new GZIPInputStream(is), StandardCharsets.UTF_8);
-        System.out.println(actualContent);
         assertThat(actualContent, Is.is(IOUtils.toString(Elton4NTestUtil.class.getResourceAsStream(expectedOutput), StandardCharsets.UTF_8)));
     }
 
