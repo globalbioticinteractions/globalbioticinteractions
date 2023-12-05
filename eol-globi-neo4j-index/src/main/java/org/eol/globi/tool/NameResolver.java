@@ -15,6 +15,8 @@ import org.eol.globi.util.BatchListener;
 import org.eol.globi.util.NodeIdCollector;
 import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
+import org.globalbioticinteractions.dataset.Dataset;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -93,6 +95,11 @@ public class NameResolver implements IndexerNeo4j {
                                      BatchListener batchListener) {
         batchListener.onStart();
         final Study study1 = new StudyNode(studyNode);
+        String namespace = "no/namespace";
+        Dataset originatingDataset = study1.getOriginatingDataset();
+        if (originatingDataset != null) {
+            namespace = originatingDataset.getNamespace();
+        }
         final Iterable<Relationship> specimenNodes = NodeUtil.getSpecimensSupportedAndRefutedBy(study1);
         for (Relationship specimenNode : specimenNodes) {
             SpecimenNode specimen = new SpecimenNode(specimenNode.getEndNode());
@@ -118,11 +125,10 @@ public class NameResolver implements IndexerNeo4j {
                         nameCount++;
                         if (nameCount % batchSize == 0) {
                             batchListener.onFinish();
-                            ;
                             watchForBatch.stop();
                             final long duration = watchForBatch.getTime();
                             if (duration > 0) {
-                                String msg = "[" + study1.getTitle() + "] resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration) + " (" + nameCount + " names resolved so far)";
+                                String msg = "[" + namespace + "] resolved batch of [" + batchSize + "] names in " + getProgressMsg(batchSize, duration) + " (" + nameCount + " names resolved so far)";
                                 LOG.info(msg);
                             }
                             watchForBatch.reset();
