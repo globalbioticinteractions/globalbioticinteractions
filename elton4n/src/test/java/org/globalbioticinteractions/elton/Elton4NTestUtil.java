@@ -1,14 +1,15 @@
 package org.globalbioticinteractions.elton;
 
+import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.Is;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -24,7 +25,7 @@ public class Elton4NTestUtil {
 
 
 
-    public static void assertCompileLinkExport(String neo4jVersion, File folder) throws URISyntaxException, IOException {
+    public static void assertCompileLinkExport(String neo4jVersion, File folder, String expectedOutput) throws URISyntaxException, IOException {
         assertThat(
                 Elton4N.run(new String[]{
                         "compile",
@@ -51,6 +52,12 @@ public class Elton4NTestUtil {
                 }),
                 Is.is(0)
         );
+
+        File csvDir = new File(folder, "tsv");
+        File interactions = new File(csvDir, "interactions.tsv.gz");
+        FileInputStream is = new FileInputStream(interactions);
+        String actualContent = IOUtils.toString(new GZIPInputStream(is), StandardCharsets.UTF_8);
+        assertThat(actualContent, Is.is(IOUtils.toString(Elton4NTestUtil.class.getResourceAsStream(expectedOutput), StandardCharsets.UTF_8)));
     }
 
 }
