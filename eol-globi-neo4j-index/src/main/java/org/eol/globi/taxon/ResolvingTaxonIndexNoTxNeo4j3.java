@@ -19,6 +19,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -85,23 +86,23 @@ public class ResolvingTaxonIndexNoTxNeo4j3 extends NonResolvingTaxonIndexNoTxNeo
             try {
                 List<Map<String, String>> taxonResolved = enricher.enrichAllMatches(TaxonUtil.taxonToMap(taxon));
 
-                List<TaxonNode> matchCandidates = taxonResolved
-                        .stream()
-                        .filter(TaxonUtil::isResolved)
-                        .map(TaxonUtil::mapToTaxon)
-                        .filter(t -> !TaxonUtil.hasLiteratureReference(t))
-                        .map(this::taxonNodeFor)
-                        .collect(Collectors.toList());
+                    List<TaxonNode> matchCandidates = (taxonResolved == null ? new ArrayList<Map<String, String>>() : taxonResolved)
+                            .stream()
+                            .filter(TaxonUtil::isResolved)
+                            .map(TaxonUtil::mapToTaxon)
+                            .filter(t -> !TaxonUtil.hasLiteratureReference(t))
+                            .map(this::taxonNodeFor)
+                            .collect(Collectors.toList());
 
-                TaxonNode primary = matchCandidates.size() == 0
-                        ? createNoMatch(taxon)
-                        : matchCandidates.get(0);
-                taxonFound = primary;
+                    TaxonNode primary = matchCandidates.size() == 0
+                            ? createNoMatch(taxon)
+                            : matchCandidates.get(0);
+                    taxonFound = primary;
 
-                Streams.concat(matchCandidates.stream().skip(1), Stream.of(taxonNodeFor(taxon)))
-                .forEach(n -> {
-                    n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
-                });
+                    Streams.concat(matchCandidates.stream().skip(1), Stream.of(taxonNodeFor(taxon)))
+                            .forEach(n -> {
+                                n.getUnderlyingNode().createRelationshipTo(primary.getUnderlyingNode(), NodeUtil.asNeo4j(RelTypes.SAME_AS));
+                            });
             } catch (PropertyEnricherException e) {
                 // ignore
             }
