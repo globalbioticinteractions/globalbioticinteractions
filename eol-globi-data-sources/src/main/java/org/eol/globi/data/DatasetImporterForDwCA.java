@@ -17,8 +17,10 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
 import org.gbif.dwc.record.Record;
+import org.gbif.dwc.terms.AcTerm;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.ClosableIterator;
 import org.globalbioticinteractions.cache.CacheUtil;
@@ -153,7 +155,63 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }};
     private static Pattern INATURALIST_TAXON =
             Pattern.compile("http[s]{0,1}://(www.){0,1}inaturalist.org/taxa/(?<taxonId>[0-9]+)");
-    ;
+    private static final Map<Pair<URI, String>, String> QUALIFIED_NAME_CACHE
+            = Collections.synchronizedMap(new TreeMap<Pair<URI, String>, String>() {
+        {
+            putAll(DwcTerm.values());
+            putAll(GbifTerm.values());
+            putAll(AcTerm.values());
+            putAll(DcTerm.values());
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "Multimedia"), "http://rs.tdwg.org/Multimedia");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "occurrenceDetails"), "http://rs.tdwg.org/occurrenceDetails");
+            put(Pair.of(URI.create("http://xmlns.com"), "nick"), "http://xmlns.com/foaf/0.1/nick");
+            put(Pair.of(URI.create("http://www.inaturalist.org"), "observation_fields"), "http://www.inaturalist.org/observation_fields");
+            put(Pair.of(URI.create("https://www.inaturalist.org"), "captive"), "https://www.inaturalist.org/schema/terms/captive");
+            put(Pair.of(URI.create("http://symbiota.org"), "recordEnteredBy"), "http://symbiota.org/terms/recordEnteredBy");
+            put(Pair.of(URI.create("http://portal.idigbio.org"), "recordId"), "http://portal.idigbio.org/terms/recordId");
+            put(Pair.of(URI.create("http://purl.org/dc/elements/1.1/"), "rights"), "http://purl.org/dc/elements/1.1/rights");
+            put(Pair.of(URI.create("http://purl.org"), "associatedTaxa"), "http://purl.org/NET/aec/associatedTaxa");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "eventAttributes"), "http://rs.tdwg.org/dwc/terms/eventAttributes");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "photographer"), "http://rs.ala.org.au/terms/1.0/photographer");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "abcdIdentificationQualifier"), "http://rs.tdwg.org/abcd/terms/abcdIdentificationQualifier");
+            put(Pair.of(URI.create("http://unknown.org"), "taxonRankID"), "http://unknown.org/taxonRankID");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "superfamily"), "http://rs.ala.org.au/terms/1.0/superfamily");
+            put(Pair.of(URI.create("http://data.ggbn.org"), "loanIdentifier"), "http://data.ggbn.org/schemas/ggbn/terms/loanIdentifier");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "subspecies"), "http://rs.ala.org.au/terms/1.0/subspecies");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "abcdTypeStatus"), "http://rs.tdwg.org/abcd/terms/abcdTypeStatus");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "locationAttributes"), "http://rs.tdwg.org/dwc/terms/locationAttributes");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "typifiedName"), "http://rs.tdwg.org/abcd/terms/typifiedName");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "subfamily"), "http://rs.ala.org.au/terms/1.0/subfamily");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "northing"), "http://rs.ala.org.au/terms/1.0/northing");
+            put(Pair.of(URI.create("http://hiscom.chah.org.au"), "identifierRole"), "http://hiscom.chah.org.au/hispid/terms/identifierRole");
+            put(Pair.of(URI.create("http://hiscom.chah.org.au"), "secondaryCollectors"), "http://hiscom.chah.org.au/hispid/terms/secondaryCollectors");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "occurrenceAttributes"), "http://rs.tdwg.org/dwc/terms/occurrenceAttributes");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "zone"), "http://rs.ala.org.au/terms/1.0/zone");
+            put(Pair.of(URI.create("http://data.ggbn.org"), "loanDestination"), "http://data.ggbn.org/schemas/ggbn/terms/loanDestination");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "species"), "http://rs.ala.org.au/terms/1.0/species");
+            put(Pair.of(URI.create("http://rs.ala.org.au"), "easting"), "http://rs.ala.org.au/terms/1.0/easting");
+            put(Pair.of(URI.create("http://rs.tdwg.org"), "abcdIdentificationQualifierInsertionPoint"), "http://rs.tdwg.org/abcd/terms/abcdIdentificationQualifierInsertionPoint");
+            put(Pair.of(URI.create("http://data.ggbn.org"), "loanDate"), "http://data.ggbn.org/schemas/ggbn/terms/loanDate");
+            put(Pair.of(URI.create("http://purl.org"), "associatedCondition"), "http://purl.org/NET/aec/associatedCondition");
+            put(Pair.of(URI.create("http://purl.org"), "associatedFamily"), "http://purl.org/NET/aec/associatedFamily");
+            put(Pair.of(URI.create("http://purl.org"), "associatedRelationshipURI"), "http://purl.org/NET/aec/associatedRelationshipURI");
+            put(Pair.of(URI.create("http://purl.org"), "associatedSpecificEpithet"), "http://purl.org/NET/aec/associatedSpecificEpithet");
+            put(Pair.of(URI.create("http://purl.org"), "associatedScientificName"), "http://purl.org/NET/aec/associatedScientificName");
+            put(Pair.of(URI.create("http://purl.org"), "associatedRelationshipTerm"), "http://purl.org/NET/aec/associatedRelationshipTerm");
+            put(Pair.of(URI.create("http://purl.org"), "associatedGenus"), "http://purl.org/NET/aec/associatedGenus");
+            put(Pair.of(URI.create("http://purl.org"), "isCultivar"), "http://purl.org/NET/aec/isCultivar");
+            put(Pair.of(URI.create("http://purl.org"), "associatedAuthor"), "http://purl.org/NET/aec/associatedAuthor");
+            put(Pair.of(URI.create("http://data.ggbn.org"), "MaterialSample"), "http://data.ggbn.org/schemas/ggbn/terms/MaterialSample");
+            put(Pair.of(URI.create("https://symbiota.org"), "recordID"), "https://symbiota.org/terms/recordID");
+            put(Pair.of(URI.create("https://symbiota.org"), "recordEnteredBy"), "https://symbiota.org/terms/recordEnteredBy");
+        }
+
+        private void putAll(Term[] values) {
+            for (Term value : values) {
+                put(Pair.of(value.namespace(), value.simpleName()), value.qualifiedName());
+            }
+        }
+    });
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -323,7 +381,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                            InteractionListener interactionListener,
                            String archiveURL) throws StudyImporterException {
         AtomicInteger recordCounter = new AtomicInteger(0);
-        ClosableIterator<Record> iterator = archive.getCore().iterator();
+        ClosableIterator<Record> iterator = archive.getCore().iterator(false, false);
         while (true) {
             try {
                 if (!iterator.hasNext()) {
@@ -358,7 +416,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         } catch (IOException e) {
             if (getLogger() != null) {
                 Map<String, String> interactionProperties = new HashMap<>();
-                mapCoreProperties(rec, interactionProperties);
+                mapCoreProperties(rec, interactionProperties, new ResourceTypeConsumer(interactionProperties));
                 getLogger().warn(LogUtil.contextFor(interactionProperties), e.getMessage());
             }
         }
@@ -373,7 +431,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         Map<String, String> interaction = new HashMap<>(rec.terms().size());
         for (Term term : rec.terms()) {
-            interaction.put(term.qualifiedName(), rec.value(term));
+            interaction.put(getQualifiedName(term), rec.value(term));
         }
 
         if (interactionCandidates.isEmpty() && isDependency()) {
@@ -386,8 +444,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interactionProperties.putAll(interaction);
             interactionProperties.put(DWC_COREID, rec.id());
             mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
-            mapCoreProperties(rec, interactionProperties);
-            new ResourceTypeConsumer(interactionProperties).accept(rec.rowType());
+
+            ResourceTypeConsumer resourceTypeConsumer = new ResourceTypeConsumer(interactionProperties);
+            mapCoreProperties(rec, interactionProperties, resourceTypeConsumer);
+            resourceTypeConsumer.accept(rec.rowType());
             interactionListener.on(interactionProperties);
         }
 
@@ -413,7 +473,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             List<Map<String, String>> associatedTaxonProperties = AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa, interactionTypeNameDefault);
 
             for (Map<String, String> associatedTaxonProperty : associatedTaxonProperties) {
-                appendResourceType(associatedTaxonProperty, term.qualifiedName());
+                new ResourceTypeConsumer(associatedTaxonProperty).accept(term);
                 interactionCandidates.add(associatedTaxonProperty);
             }
         }
@@ -512,23 +572,23 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void addUSNMStyleHostOccurrenceRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
         Map<String, String> properties = parseUSNMStyleHostOccurrenceRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks.qualifiedName());
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
     }
 
-    private static void mapCoreProperties(Record rec, Map<String, String> interactionProperties) {
+    private static void mapCoreProperties(Record rec, Map<String, String> interactionProperties, ResourceTypeConsumer resourceTypeConsumer) {
         mapSourceProperties(rec, interactionProperties);
-        mapLocationAndReferenceInfo(rec, interactionProperties);
+        mapLocationAndReferenceInfo(rec, interactionProperties, resourceTypeConsumer);
     }
 
-    private static void mapLocationAndReferenceInfo(Record rec, Map<String, String> interactionProperties) {
+    private static void mapLocationAndReferenceInfo(Record rec, Map<String, String> interactionProperties, ResourceTypeConsumer resourceTypeConsumer) {
         mapIfAvailable(rec, interactionProperties, LOCALITY_NAME, DwcTerm.locality);
         mapIfAvailable(rec, interactionProperties, LOCALITY_ID, DwcTerm.locationID);
         mapIfAvailable(rec, interactionProperties, DECIMAL_LONGITUDE, DwcTerm.decimalLongitude);
         mapIfAvailable(rec, interactionProperties, DECIMAL_LATITUDE, DwcTerm.decimalLatitude);
         mapIfAvailable(rec, interactionProperties, DatasetImporterForMetaTable.EVENT_DATE, DwcTerm.eventDate);
-        mapReferenceInfo(rec, interactionProperties);
+        mapReferenceInfo(rec, interactionProperties, resourceTypeConsumer);
     }
 
     private static void mapSourceProperties(Record rec, Map<String, String> interactionProperties) {
@@ -555,13 +615,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         mapIfAvailable(rec, interactionProperties, SOURCE_SEX_NAME, DwcTerm.sex);
     }
 
-    static void mapReferenceInfo(Record rec, Map<String, String> interactionProperties) {
+    static void mapReferenceInfo(Record rec, Map<String, String> interactionProperties, ResourceTypeConsumer resourceTypeConsumer) {
         String value = StringUtils.trim(rec.value(DcTerm.references));
         if (StringUtils.isBlank(value)) {
             value = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
         }
         if (StringUtils.isNotBlank(value)) {
-            new ResourceTypeConsumer(interactionProperties).accept(rec.rowType());
+            resourceTypeConsumer.accept(rec.rowType());
             interactionProperties.put(REFERENCE_CITATION, value);
             interactionProperties.put(REFERENCE_ID, value);
             try {
@@ -691,7 +751,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         mapMSBBirdDynamicProperties(properties);
 
         if (hasInteractionTypeOrName(properties)) {
-            appendResourceType(properties, DwcTerm.dynamicProperties.qualifiedName());
+            new ResourceTypeConsumer(properties).accept(DwcTerm.dynamicProperties);
         }
         // only consider dynamic properties if interaction types are defined in it.
         return hasInteractionTypeOrName(properties)
@@ -737,8 +797,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 ArchiveFile core = archive.getCore();
                 importTaxaExtension(
                         interactionListener,
-                        extension,
-                        core,
+                        wrapRecordIterable(extension),
+                        wrapRecordIterable(core),
                         associationsMap,
                         joinResourceTypes(core, extension));
             } finally {
@@ -749,10 +809,19 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
+    private static Iterable<Record> wrapRecordIterable(final ArchiveFile core) {
+        return new Iterable<Record>() {
+            @Override
+            public Iterator<Record> iterator() {
+                return core.iterator(false, false);
+            }
+        };
+    }
+
     private static String joinResourceTypes(ArchiveFile... archiveFiles) {
         return Stream
                 .of(archiveFiles)
-                .map(f -> f.getRowType().qualifiedName())
+                .map(f -> getQualifiedName(f.getRowType()))
                 .collect(Collectors.joining(CharsetConstant.SEPARATOR));
     }
 
@@ -772,13 +841,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             if (contains(associationsMap, id)) {
                 try {
                     Map<String, String> targetProperties = associationsMap.get(id);
-                    TreeMap<String, String> interaction = new TreeMap<>();
 
-                    mapAssociationProperties(targetProperties, interaction);
-
-                    mapCoreProperties(coreRecord, interaction);
-
+                    TreeMap<String, String> interaction = mapAssociationProperties(targetProperties);
                     interaction.put(RESOURCE_TYPES, resourceTypesJoined);
+                    mapCoreProperties(coreRecord, interaction, new ResourceTypeConsumer(interaction));
+
 
                     interactionListener.on(interaction);
                 } catch (StudyImporterException e) {
@@ -788,7 +855,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static boolean contains(BTreeMap<String, Map<String, String>> associationsMap, String id) {
+    private static boolean contains(Map<String, Map<String, String>> associationsMap, String id) {
         return StringUtils.isNoneBlank(id) && associationsMap.containsKey(id);
     }
 
@@ -800,7 +867,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap();
             try {
                 ArchiveFile core = archive.getCore();
-                importDescriptionExtension(interactionListener, logger, extension, core, associationsMap);
+                importDescriptionExtension(
+                        interactionListener,
+                        logger,
+                        wrapRecordIterable(extension),
+                        wrapRecordIterable(core),
+                        associationsMap
+                );
             } finally {
                 if (associationsMap != null) {
                     associationsMap.close();
@@ -809,7 +882,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static void importDescriptionExtension(InteractionListener interactionListener, ImportLogger logger, ArchiveFile extension, ArchiveFile core, BTreeMap<String, Map<String, String>> associationsMap) {
+    private static void importDescriptionExtension(InteractionListener interactionListener,
+                                                   ImportLogger logger,
+                                                   Iterable<Record> extension,
+                                                   Iterable<Record> core,
+                                                   Map<String, Map<String, String>> associationsMap) {
         for (Record record : extension) {
             Map<String, String> props = new TreeMap<>();
             termsToMap(record, props);
@@ -839,7 +916,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         for (Map<String, String> map : maps) {
                             TreeMap<String, String> interaction = new TreeMap<>(map);
                             interaction.put(DWC_COREID, id);
-                            mapCoreProperties(coreRecord, interaction);
+                            mapCoreProperties(coreRecord, interaction, new ResourceTypeConsumer(interaction));
                             if (StringUtils.isNotBlank(referenceCitation)) {
                                 interaction.put(REFERENCE_CITATION, referenceCitation);
                                 String urlString = ExternalIdUtil.urlForExternalId(referenceCitation);
@@ -1023,16 +1100,19 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
 
                 for (DwcTerm termType : termTypes) {
-                    String key = termType.qualifiedName();
+                    String key = getQualifiedName(termType);
                     if (StringUtils.isNoneBlank(key) && termTypeIdPropMap.containsKey(key)) {
-                        Map<String, Map<String, String>> propMap = termTypeIdPropMap.get(termType.qualifiedName());
+                        Map<String, Map<String, String>> propMap = termTypeIdPropMap.get(getQualifiedName(termType));
+
+                        ResourceTypeConsumerString resourceTypeConsumerString = new ResourceTypeConsumerString(props);
 
                         populatePropertiesAssociatedWithId(
                                 props,
                                 sourceId,
                                 true,
                                 propMap.get(sourceId),
-                                labelPairFor(termType));
+                                labelPairFor(termType),
+                                resourceTypeConsumerString);
 
                         extractNameFromRelationshipRemarks(record)
                                 .ifPresent(name -> props.put(TARGET_TAXON_NAME, name));
@@ -1042,8 +1122,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                 targetId,
                                 false,
                                 propMap.get(targetId),
-                                labelPairFor(termType));
-
+                                labelPairFor(termType),
+                                resourceTypeConsumerString);
                     }
 
                 }
@@ -1058,8 +1138,17 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
+    private static String getQualifiedName(Term termType) {
+        String qualifiedName = QUALIFIED_NAME_CACHE.get(Pair.of(termType.namespace(), termType.simpleName()));
+        if (StringUtils.isBlank(qualifiedName)) {
+            qualifiedName = termType.qualifiedName();
+            QUALIFIED_NAME_CACHE.put(Pair.of(termType.namespace(), termType.simpleName()), qualifiedName);
+        }
+        return qualifiedName;
+    }
+
     private static void patchINaturalistProperties(Map<String, String> props) {
-        String candidateTargetTaxonId = props.get(DwcTerm.relatedResourceID.qualifiedName());
+        String candidateTargetTaxonId = props.get(getQualifiedName(DwcTerm.relatedResourceID));
         if (StringUtils.isNotBlank(candidateTargetTaxonId)) {
             Matcher matcher = INATURALIST_TAXON.matcher(candidateTargetTaxonId);
             if (matcher.matches()) {
@@ -1082,17 +1171,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }
 
-    private static void appendResourceType(Map<String, String> props, String qualifiedName) {
-        if (StringUtils.isNotBlank(qualifiedName)) {
-            String prefix = StringUtils.isBlank(props.get(RESOURCE_TYPES))
-                    ? ""
-                    : props.get(RESOURCE_TYPES) + CharsetConstant.SEPARATOR;
-
-            if (!StringUtils.contains(prefix, qualifiedName)) {
-                props.put(RESOURCE_TYPES, prefix + qualifiedName);
-            }
-        }
-    }
 
     private static Pair<String, String> labelPairFor(DwcTerm termType) {
         Pair<String, String> idLabelPair = Pair.of(
@@ -1164,7 +1242,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void appendVerbatimResourceRelationsValues(Record record, Map<String, String> props) {
         Set<Term> terms = record.terms();
         for (Term term : terms) {
-            props.putIfAbsent(term.qualifiedName(), record.value(term));
+            props.putIfAbsent(getQualifiedName(term), record.value(term));
         }
     }
 
@@ -1198,11 +1276,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         TreeMap<String, String> occProps = new TreeMap<>();
         termsToMap(coreRecord, occProps);
         new ResourceTypeConsumer(occProps).accept(coreRecord.rowType());
-        Map<String, Map<String, String>> propMap = termIdPropertyMap.get(term.qualifiedName());
+        Map<String, Map<String, String>> propMap = termIdPropertyMap.get(getQualifiedName(term));
         if (propMap == null) {
             propMap = new HashMap<>();
             propMap.put(id, occProps);
-            termIdPropertyMap.put(term.qualifiedName(), propMap);
+            termIdPropertyMap.put(getQualifiedName(term), propMap);
         } else {
             propMap.put(id, occProps);
         }
@@ -1217,34 +1295,34 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                            String id,
                                                            boolean isSource,
                                                            Map<String, String> occurrenceProperties,
-                                                           Pair<String, String> idLabelPairs) {
+                                                           Pair<String, String> idLabelPairs, ResourceTypeConsumerString resourceTypeConsumerString) {
         putIfAbsentAndNotBlank(props, isSource ? idLabelPairs.getLeft() : idLabelPairs.getRight(), id);
 
         if (occurrenceProperties != null) {
-            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_INSTITUTION_CODE : DatasetImporterForTSV.TARGET_INSTITUTION_CODE, occurrenceProperties.get(DwcTerm.institutionCode.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_COLLECTION_ID : DatasetImporterForTSV.TARGET_COLLECTION_ID, occurrenceProperties.get(DwcTerm.collectionID.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_COLLECTION_CODE : DatasetImporterForTSV.TARGET_COLLECTION_CODE, occurrenceProperties.get(DwcTerm.collectionCode.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_CATALOG_NUMBER : DatasetImporterForTSV.TARGET_CATALOG_NUMBER, occurrenceProperties.get(DwcTerm.catalogNumber.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_RECORD_NUMBER : DatasetImporterForTSV.TARGET_RECORD_NUMBER, occurrenceProperties.get(DwcTerm.recordNumber.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ID : TARGET_TAXON_ID, occurrenceProperties.get(DwcTerm.taxonID.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_NAME : TARGET_TAXON_NAME, occurrenceProperties.get(DwcTerm.scientificName.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_RANK : TARGET_TAXON_RANK, occurrenceProperties.get(DwcTerm.taxonRank.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_SPECIFIC_EPITHET : TARGET_TAXON_SPECIFIC_EPITHET, occurrenceProperties.get(DwcTerm.specificEpithet.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_GENUS : TARGET_TAXON_GENUS, occurrenceProperties.get(DwcTerm.genus.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_FAMILY : TARGET_TAXON_FAMILY, occurrenceProperties.get(DwcTerm.family.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_SUBFAMILY : TARGET_TAXON_SUBFAMILY, occurrenceProperties.get(DwcTerm.subfamily.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ORDER : TARGET_TAXON_ORDER, occurrenceProperties.get(DwcTerm.order.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_CLASS : TARGET_TAXON_CLASS, occurrenceProperties.get(DwcTerm.class_.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_PHYLUM : TARGET_TAXON_PHYLUM, occurrenceProperties.get(DwcTerm.phylum.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_KINGDOM : TARGET_TAXON_KINGDOM, occurrenceProperties.get(DwcTerm.kingdom.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_SEX_NAME : TARGET_SEX_NAME, occurrenceProperties.get(DwcTerm.sex.qualifiedName()));
-            putIfAbsentAndNotBlank(props, isSource ? SOURCE_LIFE_STAGE_NAME : TARGET_LIFE_STAGE_NAME, occurrenceProperties.get(DwcTerm.lifeStage.qualifiedName()));
-            putIfAbsentAndNotBlank(props, LOCALITY_NAME, occurrenceProperties.get(DwcTerm.locality.qualifiedName()));
-            putIfAbsentAndNotBlank(props, DECIMAL_LATITUDE, occurrenceProperties.get(DwcTerm.decimalLatitude.qualifiedName()));
-            putIfAbsentAndNotBlank(props, DECIMAL_LONGITUDE, occurrenceProperties.get(DwcTerm.decimalLongitude.qualifiedName()));
-            putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, occurrenceProperties.get(DwcTerm.eventDate.qualifiedName()));
-            putIfAbsentAndNotBlank(props, BASIS_OF_RECORD_NAME, occurrenceProperties.get(DwcTerm.basisOfRecord.qualifiedName()));
-            appendResourceType(props, occurrenceProperties.get(RESOURCE_TYPES));
+            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_INSTITUTION_CODE : DatasetImporterForTSV.TARGET_INSTITUTION_CODE, occurrenceProperties.get(getQualifiedName(DwcTerm.institutionCode)));
+            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_COLLECTION_ID : DatasetImporterForTSV.TARGET_COLLECTION_ID, occurrenceProperties.get(getQualifiedName(DwcTerm.collectionID)));
+            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_COLLECTION_CODE : DatasetImporterForTSV.TARGET_COLLECTION_CODE, occurrenceProperties.get(getQualifiedName(DwcTerm.collectionCode)));
+            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_CATALOG_NUMBER : DatasetImporterForTSV.TARGET_CATALOG_NUMBER, occurrenceProperties.get(getQualifiedName(DwcTerm.catalogNumber)));
+            putIfAbsentAndNotBlank(props, isSource ? DatasetImporterForTSV.SOURCE_RECORD_NUMBER : DatasetImporterForTSV.TARGET_RECORD_NUMBER, occurrenceProperties.get(getQualifiedName(DwcTerm.recordNumber)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ID : TARGET_TAXON_ID, occurrenceProperties.get(getQualifiedName(DwcTerm.taxonID)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_NAME : TARGET_TAXON_NAME, occurrenceProperties.get(getQualifiedName(DwcTerm.scientificName)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_RANK : TARGET_TAXON_RANK, occurrenceProperties.get(getQualifiedName(DwcTerm.taxonRank)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_SPECIFIC_EPITHET : TARGET_TAXON_SPECIFIC_EPITHET, occurrenceProperties.get(getQualifiedName(DwcTerm.specificEpithet)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_GENUS : TARGET_TAXON_GENUS, occurrenceProperties.get(getQualifiedName(DwcTerm.genus)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_FAMILY : TARGET_TAXON_FAMILY, occurrenceProperties.get(getQualifiedName(DwcTerm.family)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_SUBFAMILY : TARGET_TAXON_SUBFAMILY, occurrenceProperties.get(getQualifiedName(DwcTerm.subfamily)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_ORDER : TARGET_TAXON_ORDER, occurrenceProperties.get(getQualifiedName(DwcTerm.order)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_CLASS : TARGET_TAXON_CLASS, occurrenceProperties.get(getQualifiedName(DwcTerm.class_)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_PHYLUM : TARGET_TAXON_PHYLUM, occurrenceProperties.get(getQualifiedName(DwcTerm.phylum)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_TAXON_KINGDOM : TARGET_TAXON_KINGDOM, occurrenceProperties.get(getQualifiedName(DwcTerm.kingdom)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_SEX_NAME : TARGET_SEX_NAME, occurrenceProperties.get(getQualifiedName(DwcTerm.sex)));
+            putIfAbsentAndNotBlank(props, isSource ? SOURCE_LIFE_STAGE_NAME : TARGET_LIFE_STAGE_NAME, occurrenceProperties.get(getQualifiedName(DwcTerm.lifeStage)));
+            putIfAbsentAndNotBlank(props, LOCALITY_NAME, occurrenceProperties.get(getQualifiedName(DwcTerm.locality)));
+            putIfAbsentAndNotBlank(props, DECIMAL_LATITUDE, occurrenceProperties.get(getQualifiedName(DwcTerm.decimalLatitude)));
+            putIfAbsentAndNotBlank(props, DECIMAL_LONGITUDE, occurrenceProperties.get(getQualifiedName(DwcTerm.decimalLongitude)));
+            putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, occurrenceProperties.get(getQualifiedName(DwcTerm.eventDate)));
+            putIfAbsentAndNotBlank(props, BASIS_OF_RECORD_NAME, occurrenceProperties.get(getQualifiedName(DwcTerm.basisOfRecord)));
+            resourceTypeConsumerString.accept(occurrenceProperties.get(RESOURCE_TYPES));
         }
     }
 
@@ -1262,7 +1340,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         ArchiveFile resourceRelationExtension = null;
         Set<ArchiveFile> extensions = archive.getExtensions();
         for (ArchiveFile extension : extensions) {
-            if (StringUtils.equals(extension.getRowType().qualifiedName(),
+            if (StringUtils.equals(getQualifiedName(extension.getRowType()),
                     extensionType)) {
                 resourceRelationExtension = extension;
                 break;
@@ -1275,13 +1353,21 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         for (Term term : record.terms()) {
             String value = record.value(term);
             if (StringUtils.isNotBlank(value)) {
-                props.put(term.qualifiedName(), value);
+                props.put(getQualifiedName(term), value);
             }
             new ResourceTypeConsumer(props).accept(record.rowType());
         }
     }
 
-    private static void mapAssociationProperties(Map<String, String> targetProperties, TreeMap<String, String> interaction) {
+    private static TreeMap<String, String> mapAssociationProperties(Map<String, String> targetProperties) {
+        TreeMap<String, String> interaction = new TreeMap<>();
+
+        DatasetImporterForDwCA.mapIfAvailable(
+                interaction,
+                RESOURCE_TYPES,
+                targetProperties.get(RESOURCE_TYPES)
+        );
+
         DatasetImporterForDwCA.mapIfAvailable(
                 interaction,
                 DatasetImporterForTSV.BASIS_OF_RECORD_NAME,
@@ -1319,10 +1405,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 DatasetImporterForTSV.INTERACTION_TYPE_NAME,
                 targetProperties.get("http://purl.org/NET/aec/associatedRelationshipTerm")
         );
-
-        appendResourceType(interaction, targetProperties.get(RESOURCE_TYPES));
-
-
+        return interaction;
     }
 
     private static class CarRemarksParser implements RemarksParser {
@@ -1420,8 +1503,30 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static class ResourceTypeConsumer implements Consumer<Term> {
+    public static class ResourceTypeConsumer implements Consumer<Term> {
         private final Map<String, String> props;
+        private final static Map<Pair<URI, String>, String> lookup = Collections.unmodifiableMap(new TreeMap<Pair<URI, String>, String>() {
+            {
+                URI dwc = URI.create("http://rs.tdwg.org/dwc/terms/");
+                put(Pair.of(dwc, "Occurrence"), "http://rs.tdwg.org/dwc/terms/Occurrence");
+                put(Pair.of(dwc, "ResourceRelationship"), "http://rs.tdwg.org/dwc/terms/ResourceRelationship");
+                put(Pair.of(dwc, "Taxon"), "http://rs.tdwg.org/dwc/terms/Taxon");
+                add(DwcTerm.habitat);
+                add(DwcTerm.dynamicProperties);
+                add(DwcTerm.associatedTaxa);
+                add(DwcTerm.associatedSequences);
+                add(DwcTerm.associatedOccurrences);
+                add(DwcTerm.occurrenceRemarks);
+                put(Pair.of(GbifTerm.Description.namespace(), GbifTerm.Description.simpleName()), "http://rs.gbif.org/terms/1.0/Description");
+                put(Pair.of(GbifTerm.Reference.namespace(), GbifTerm.Reference.simpleName()), "http://rs.gbif.org/terms/1.0/Reference");
+                put(Pair.of(URI.create("http://purl.org"), "associatedTaxa"), "https://purl.org/associatedTaxa");
+            }
+
+            private void add(DwcTerm term) {
+                put(Pair.of(term.namespace(), term.simpleName()), getQualifiedName(term));
+            }
+        });
+        private ArrayList<Object> types = new ArrayList<>();
 
         public ResourceTypeConsumer(Map<String, String> props) {
             this.props = props;
@@ -1430,10 +1535,44 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         @Override
         public void accept(Term term) {
             if (term != null) {
-                String qualifiedName = term.qualifiedName();
-                appendResourceType(props, qualifiedName);
+                String s = lookup.get(Pair.of(term.namespace(), term.simpleName()));
+                if (s == null) {
+                    s = getQualifiedName(term);
+                }
+                appendResourceType(props, s);
             }
         }
+
+        static void appendResourceType(Map<String, String> props, String qualifiedName) {
+            if (StringUtils.isNotBlank(qualifiedName)) {
+                String prefix = StringUtils.isBlank(props.get(RESOURCE_TYPES))
+                        ? ""
+                        : props.get(RESOURCE_TYPES) + CharsetConstant.SEPARATOR;
+
+                if (!StringUtils.contains(prefix, qualifiedName)) {
+                    props.put(RESOURCE_TYPES, prefix + qualifiedName);
+                }
+            }
+        }
+
+    }
+
+    public static class ResourceTypeConsumerString implements Consumer<String> {
+        private final Map<String, String> props;
+
+
+        public ResourceTypeConsumerString(Map<String, String> props) {
+            this.props = props;
+        }
+
+        @Override
+        public void accept(String term) {
+            if (term != null) {
+                ResourceTypeConsumer.appendResourceType(props, term);
+            }
+        }
+
+
     }
 
     private class InteractionListenerWithContext implements InteractionListener {

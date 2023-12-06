@@ -1352,7 +1352,7 @@ public class DatasetImporterForDwCATest {
         }});
 
         TreeMap<String, String> properties = new TreeMap<>();
-        mapReferenceInfo(dummyRecord, properties);
+        mapReferenceInfo(dummyRecord, properties, new DatasetImporterForDwCA.ResourceTypeConsumer(properties));
         assertThat(properties.get(REFERENCE_CITATION), is("some reference"));
         assertThat(properties.get(REFERENCE_ID), is("some reference"));
         assertThat(properties.get(REFERENCE_URL), is(nullValue()));
@@ -1368,7 +1368,7 @@ public class DatasetImporterForDwCATest {
         }});
 
         TreeMap<String, String> properties = new TreeMap<>();
-        mapReferenceInfo(dummyRecord, properties);
+        mapReferenceInfo(dummyRecord, properties, new DatasetImporterForDwCA.ResourceTypeConsumer(properties));
         assertThat(properties.get(REFERENCE_CITATION), is("something"));
         assertThat(properties.get(REFERENCE_ID), is("something"));
         assertThat(properties.get(REFERENCE_URL), is(nullValue()));
@@ -1384,7 +1384,7 @@ public class DatasetImporterForDwCATest {
                     "https://example.org");
         }});
         TreeMap<String, String> properties = new TreeMap<>();
-        mapReferenceInfo(dummyRecord, properties);
+        mapReferenceInfo(dummyRecord, properties, new DatasetImporterForDwCA.ResourceTypeConsumer(properties));
         assertThat(properties.get(REFERENCE_CITATION), is("https://example.org"));
         assertThat(properties.get(REFERENCE_ID), is("https://example.org"));
         assertThat(properties.get(REFERENCE_URL), is("https://example.org"));
@@ -1398,7 +1398,7 @@ public class DatasetImporterForDwCATest {
                     "https://example.org");
         }});
         TreeMap<String, String> properties = new TreeMap<>();
-        mapReferenceInfo(dummyRecord, properties);
+        mapReferenceInfo(dummyRecord, properties, new DatasetImporterForDwCA.ResourceTypeConsumer(properties));
         assertThat(properties.get(REFERENCE_CITATION), is("https://example.org"));
         assertThat(properties.get(REFERENCE_ID), is("https://example.org"));
         assertThat(properties.get(REFERENCE_URL), is("https://example.org"));
