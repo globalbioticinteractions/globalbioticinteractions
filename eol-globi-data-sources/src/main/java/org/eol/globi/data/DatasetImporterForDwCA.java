@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
@@ -54,6 +53,8 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.eol.globi.data.DatasetImporterForTSV.BASIS_OF_RECORD_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
@@ -733,7 +734,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap();
             try {
                 ArchiveFile core = archive.getCore();
-                importTaxaExtension(interactionListener, extension, core, associationsMap);
+                importTaxaExtension(
+                        interactionListener,
+                        extension,
+                        core,
+                        associationsMap,
+                        joinResourceTypes(core, extension));
             } finally {
                 if (associationsMap != null) {
                     associationsMap.close();
@@ -742,7 +748,18 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static void importTaxaExtension(InteractionListener interactionListener, ArchiveFile extension, ArchiveFile core, BTreeMap<String, Map<String, String>> associationsMap) {
+    private static String joinResourceTypes(ArchiveFile... archiveFiles) {
+        return Stream
+                .of(archiveFiles)
+                .map(f -> f.getRowType().qualifiedName())
+                .collect(Collectors.joining(CharsetConstant.SEPARATOR));
+    }
+
+    private static void importTaxaExtension(InteractionListener interactionListener,
+                                            ArchiveFile extension,
+                                            ArchiveFile core,
+                                            BTreeMap<String, Map<String, String>> associationsMap,
+                                            String resourceTypesJoined) {
         for (Record record : extension) {
             Map<String, String> props = new TreeMap<>();
             termsToMap(record, props);
@@ -760,8 +777,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                     mapCoreProperties(coreRecord, interaction);
 
-                    interaction.put(RESOURCE_TYPES,
-                            StringUtils.join(Arrays.asList(core.getRowType().qualifiedName(), extension.getRowType().qualifiedName()), CharsetConstant.SEPARATOR));
+                    interaction.put(RESOURCE_TYPES, resourceTypesJoined);
 
                     interactionListener.on(interaction);
                 } catch (StudyImporterException e) {
