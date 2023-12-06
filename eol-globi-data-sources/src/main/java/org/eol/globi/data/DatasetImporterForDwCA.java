@@ -9,6 +9,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.jena.atlas.iterator.Iter;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
@@ -810,12 +811,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static Iterable<Record> wrapRecordIterable(final ArchiveFile core) {
-        return new Iterable<Record>() {
-            @Override
-            public Iterator<Record> iterator() {
-                return core.iterator(false, false);
-            }
-        };
+        return () -> core.iterator(false, false);
     }
 
     private static String joinResourceTypes(ArchiveFile... archiveFiles) {
@@ -973,11 +969,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                     ArchiveFile extension = findResourceExtension(archive, EXTENSION_REFERENCE);
                     if (extension != null) {
-                        for (Record record : extension) {
+                        Term rowType = extension.getRowType();
+                        for (Record record : wrapRecordIterable(extension)) {
                             Map<String, String> props = new TreeMap<>();
                             termsToMap(record, props);
                             props.put(REFERENCE_CITATION, CitationUtil.citationFor(props));
-                            new ResourceTypeConsumer(props).accept(extension.getRowType());
+                            new ResourceTypeConsumer(props).accept(rowType);
                             referenceMap.put(record.id(), props);
                         }
                     }
@@ -1041,7 +1038,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         final Set<String> referencedSourceIds = MapDBUtil.createBigSet(sourceIdDb);
         final Set<String> referencedTargetIds = MapDBUtil.createBigSet(targetIdDb);
 
-        collectRelatedResourceIds(resourceExtension, referencedSourceIds, referencedTargetIds);
+        collectRelatedResourceIds(
+                wrapRecordIterable(resourceExtension),
+                referencedSourceIds,
+                referencedTargetIds
+        );
 
         final List<DwcTerm> termTypes = Arrays.asList(
                 DwcTerm.occurrenceID,
@@ -1201,15 +1202,15 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                 Set<String> referencedSourceIds,
                                                 Set<String> referencedTargetIds,
                                                 List<DwcTerm> termTypes) {
-        List<ArchiveFile> archiveFiles = new ArrayList<>();
-        archiveFiles.add(archive.getCore());
+        List<Iterable<Record>> archiveFiles = new ArrayList<>();
+        archiveFiles.add(wrapRecordIterable(archive.getCore()));
 
         ArchiveFile taxon = findResourceExtension(archive, EXTENSION_TAXON);
         if (taxon != null) {
-            archiveFiles.add(taxon);
+            archiveFiles.add(wrapRecordIterable(taxon));
         }
 
-        for (ArchiveFile archiveFile : archiveFiles) {
+        for (Iterable<Record> archiveFile : archiveFiles) {
             for (Record record : archiveFile) {
                 for (DwcTerm termType : termTypes) {
                     attemptLinkUsingTerm(termIdPropMap,
@@ -1222,7 +1223,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static void collectRelatedResourceIds(ArchiveFile resourceExtension, Set<String> referencedSourceIds, Set<String> referencedTargetIds) {
+    private static void collectRelatedResourceIds(Iterable<Record> resourceExtension, Set<String> referencedSourceIds, Set<String> referencedTargetIds) {
         for (Record record : resourceExtension) {
             String targetId = record.value(DwcTerm.relatedResourceID);
             String sourceId = record.value(DwcTerm.resourceID);
