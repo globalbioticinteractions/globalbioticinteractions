@@ -1068,7 +1068,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                                     ArchiveFile resourceExtension,
                                                                     Map<String, Map<String, Map<String, String>>> termTypeIdPropMap,
                                                                     List<DwcTerm> termTypes) {
-        for (Record record : resourceExtension) {
+        for (Record record : wrapRecordIterable(resourceExtension)) {
             Map<String, String> props = new TreeMap<>();
 
             new ResourceTypeConsumer(props).accept(resourceExtension.getRowType());
@@ -1201,16 +1201,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                 Set<String> referencedSourceIds,
                                                 Set<String> referencedTargetIds,
                                                 List<DwcTerm> termTypes) {
-        List<Iterable<Record>> archiveFiles = new ArrayList<>();
-        archiveFiles.add(wrapRecordIterable(archive.getCore()));
+        List<Iterable<Record>> recordIterators = new ArrayList<>();
+        recordIterators.add(wrapRecordIterable(archive.getCore()));
 
         ArchiveFile taxon = findResourceExtension(archive, EXTENSION_TAXON);
         if (taxon != null) {
-            archiveFiles.add(wrapRecordIterable(taxon));
+            recordIterators.add(wrapRecordIterable(taxon));
         }
 
-        for (Iterable<Record> archiveFile : archiveFiles) {
-            for (Record record : archiveFile) {
+        for (Iterable<Record> recordIterator : recordIterators) {
+            for (Record record : recordIterator) {
                 for (DwcTerm termType : termTypes) {
                     attemptLinkUsingTerm(termIdPropMap,
                             referencedSourceIds,
