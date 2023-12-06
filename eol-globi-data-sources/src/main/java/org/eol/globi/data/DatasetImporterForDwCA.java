@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -386,7 +387,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interactionProperties.put(DWC_COREID, rec.id());
             mapIfAvailable(rec, interactionProperties, BASIS_OF_RECORD_NAME, DwcTerm.basisOfRecord);
             mapCoreProperties(rec, interactionProperties);
-            appendResourceType(interactionProperties, rec.rowType());
+            new ResourceTypeConsumer(interactionProperties).accept(rec.rowType());
             interactionListener.on(interactionProperties);
         }
 
@@ -434,27 +435,27 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void addKilledByHumansRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
         Map<String, String> properties = parseKilledByWindow(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
         properties = parseHitByCarRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
         properties = parseHitByVehicleRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
         properties = parseEuthanizedRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
         properties = parseHighVoltageRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
 
@@ -464,17 +465,17 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void addKilledByPetsRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
         Map<String, String> properties = parseKilledByCat(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
         properties = parseKilledByDog(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
         properties = new AttackRemarksParser().parse(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
 
@@ -487,7 +488,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
         Map<String, String> properties = parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(occurrenceRemarks);
         if (MapUtils.isNotEmpty(properties)) {
-            appendResourceType(properties, DwcTerm.occurrenceRemarks);
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
             interactionCandidates.add(properties);
         }
     }
@@ -560,7 +561,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             value = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
         }
         if (StringUtils.isNotBlank(value)) {
-            appendResourceType(interactionProperties, rec.rowType());
+            new ResourceTypeConsumer(interactionProperties).accept(rec.rowType());
             interactionProperties.put(REFERENCE_CITATION, value);
             interactionProperties.put(REFERENCE_ID, value);
             try {
@@ -610,7 +611,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         put(TARGET_OCCURRENCE_ID, matcher.group(TARGET_OCCURRENCE_ID));
                     }
                 };
-                appendResourceType(e, DwcTerm.associatedSequences);
+                new ResourceTypeConsumer(e).accept(DwcTerm.associatedSequences);
                 propertyList.add(e);
             }
         }
@@ -651,7 +652,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static void appendAssociatedOccurrencesProperties(List<Map<String, String>> propertyList, TreeMap<String, String> e) {
-        appendResourceType(e, DwcTerm.associatedOccurrences);
+        new ResourceTypeConsumer(e).accept(DwcTerm.associatedOccurrences);
         propertyList.add(e);
     }
 
@@ -756,8 +757,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static void importTaxaExtension(InteractionListener interactionListener,
-                                            ArchiveFile extension,
-                                            ArchiveFile core,
+                                            Iterable<Record> extension,
+                                            Iterable<Record> core,
                                             BTreeMap<String, Map<String, String>> associationsMap,
                                             String resourceTypesJoined) {
         for (Record record : extension) {
@@ -899,7 +900,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                             Map<String, String> props = new TreeMap<>();
                             termsToMap(record, props);
                             props.put(REFERENCE_CITATION, CitationUtil.citationFor(props));
-                            appendResourceType(props, extension.getRowType());
+                            new ResourceTypeConsumer(props).accept(extension.getRowType());
                             referenceMap.put(record.id(), props);
                         }
                     }
@@ -993,7 +994,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         for (Record record : resourceExtension) {
             Map<String, String> props = new TreeMap<>();
 
-            appendResourceType(props, resourceExtension.getRowType());
+            new ResourceTypeConsumer(props).accept(resourceExtension.getRowType());
             String sourceId = record.value(DwcTerm.resourceID);
             String relationship = record.value(DwcTerm.relationshipOfResource);
 
@@ -1079,13 +1080,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
         }
 
-    }
-
-    private static void appendResourceType(Map<String, String> props, Term rowType) {
-        if (rowType != null) {
-            String qualifiedName = rowType.qualifiedName();
-            appendResourceType(props, qualifiedName);
-        }
     }
 
     private static void appendResourceType(Map<String, String> props, String qualifiedName) {
@@ -1203,7 +1197,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void linkTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap, Record coreRecord, DwcTerm term, String id) {
         TreeMap<String, String> occProps = new TreeMap<>();
         termsToMap(coreRecord, occProps);
-        appendResourceType(occProps, coreRecord.rowType());
+        new ResourceTypeConsumer(occProps).accept(coreRecord.rowType());
         Map<String, Map<String, String>> propMap = termIdPropertyMap.get(term.qualifiedName());
         if (propMap == null) {
             propMap = new HashMap<>();
@@ -1283,7 +1277,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             if (StringUtils.isNotBlank(value)) {
                 props.put(term.qualifiedName(), value);
             }
-            appendResourceType(props, record.rowType());
+            new ResourceTypeConsumer(props).accept(record.rowType());
         }
     }
 
@@ -1423,6 +1417,22 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
             }
             return properties;
+        }
+    }
+
+    private static class ResourceTypeConsumer implements Consumer<Term> {
+        private final Map<String, String> props;
+
+        public ResourceTypeConsumer(Map<String, String> props) {
+            this.props = props;
+        }
+
+        @Override
+        public void accept(Term term) {
+            if (term != null) {
+                String qualifiedName = term.qualifiedName();
+                appendResourceType(props, qualifiedName);
+            }
         }
     }
 
