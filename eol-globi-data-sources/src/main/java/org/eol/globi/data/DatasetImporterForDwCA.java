@@ -973,7 +973,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                             Map<String, String> props = new TreeMap<>();
                             termsToMap(record, props);
                             props.put(REFERENCE_CITATION, CitationUtil.citationFor(props));
-                            new ResourceTypeConsumer(props).accept(rowType);
                             referenceMap.put(record.id(), props);
                         }
                     }
@@ -1275,12 +1274,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void linkTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap, Record coreRecord, DwcTerm term, String id) {
         TreeMap<String, String> occProps = new TreeMap<>();
         termsToMap(coreRecord, occProps);
-        new ResourceTypeConsumer(occProps).accept(coreRecord.rowType());
-        Map<String, Map<String, String>> propMap = termIdPropertyMap.get(getQualifiedName(term));
+
+        String qualifiedName = getQualifiedName(term);
+        Map<String, Map<String, String>> propMap = termIdPropertyMap.get(qualifiedName);
         if (propMap == null) {
             propMap = new HashMap<>();
             propMap.put(id, occProps);
-            termIdPropertyMap.put(getQualifiedName(term), propMap);
+            termIdPropertyMap.put(qualifiedName, propMap);
         } else {
             propMap.put(id, occProps);
         }
@@ -1355,8 +1355,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             if (StringUtils.isNotBlank(value)) {
                 props.put(getQualifiedName(term), value);
             }
-            new ResourceTypeConsumer(props).accept(record.rowType());
         }
+        new ResourceTypeConsumer(props).accept(record.rowType());
     }
 
     private static TreeMap<String, String> mapAssociationProperties(Map<String, String> targetProperties) {
