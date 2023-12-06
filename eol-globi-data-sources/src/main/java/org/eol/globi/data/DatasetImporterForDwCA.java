@@ -9,7 +9,6 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.jena.atlas.iterator.Iter;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
