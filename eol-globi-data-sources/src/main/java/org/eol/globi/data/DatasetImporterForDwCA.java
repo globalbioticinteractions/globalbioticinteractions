@@ -319,7 +319,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     archive = DwCAUtil.archiveFor(dwcaURI, tmpDwA.toString());
                 } else {
                     dwcaFile = File.createTempFile("dwca", "tmp.zip");
-                    FileUtils.copyToFile(getDataset().retrieve(dwcaURI), dwcaFile);
+                    try (InputStream retrieve = getDataset().retrieve(dwcaURI)) {
+                        FileUtils.copyToFile(retrieve, dwcaFile);
+                    }
                     dwcaFile.deleteOnExit();
                     archive = DwCAUtil.archiveFor(dwcaFile.toURI(), tmpDwA.toString());
                 }
