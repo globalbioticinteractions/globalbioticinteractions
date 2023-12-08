@@ -240,8 +240,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (KILLED_BY_WINDOW.matcher(occurrenceRemarks).matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, "dog");
 
-            properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
-            properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+            addInteractionType(properties, InteractType.KILLED_BY);
 
         }
         return properties;
@@ -267,8 +266,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, "high voltage");
 
-            properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
-            properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+            addInteractionType(properties, InteractType.KILLED_BY);
 
         }
         return properties;
@@ -286,8 +284,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (HIT_BY_VEHICLE_NOTATION.matcher(occurrenceRemarks).matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, "vehicle");
 
-            properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
-            properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+            addInteractionType(properties, InteractType.KILLED_BY);
 
         }
         return properties;
@@ -763,7 +760,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     private static void mapManterDynamicProperties(Map<String, String> properties) {
         // see https://github.com/globalbioticinteractions/unl-nsm/issues/4
-        putIfAbsentAndNotBlank(properties, TARGET_TAXON_NAME, properties.get("verbatim host ID"));
+        final String verbatimHostId = "verbatim host ID";
+        putIfAbsentAndNotBlank(properties, TARGET_TAXON_NAME, properties.get(verbatimHostId));
         putIfAbsentAndNotBlank(properties, TARGET_BODY_PART_NAME, properties.get("location in host"));
         putIfAbsentAndNotBlank(properties, TARGET_SEX_NAME, properties.get("verbatim host sex"));
         putIfAbsentAndNotBlank(properties, TARGET_LIFE_STAGE_NAME, properties.get("verbatim host age"));
@@ -771,9 +769,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         putIfAbsentAndNotBlank(properties, SOURCE_LIFE_STAGE_NAME, properties.get("age class"));
         putIfAbsentAndNotBlank(properties, SOURCE_SEX_NAME, properties.get("sex"));
 
-        if (StringUtils.isNoneBlank(properties.get("verbatim host ID"))) {
-            properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
-            properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
+        if (StringUtils.isNoneBlank(properties.get(verbatimHostId))) {
+            addInteractionType(properties, InteractType.HAS_HOST);
         }
     }
 
@@ -781,9 +778,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/63
         putIfAbsentAndNotBlank(properties, TARGET_TAXON_NAME, properties.get("stomach contents"));
         if (StringUtils.isNoneBlank(properties.get("stomach contents"))) {
-            properties.put(INTERACTION_TYPE_NAME, InteractType.ATE.getLabel());
-            properties.put(INTERACTION_TYPE_ID, InteractType.ATE.getIRI());
+            addInteractionType(properties, InteractType.ATE);
         }
+    }
+
+    private static void addInteractionType(Map<String, String> properties, InteractType interactType) {
+        properties.put(INTERACTION_TYPE_NAME, interactType.getLabel());
+        properties.put(INTERACTION_TYPE_ID, interactType.getIRI());
     }
 
     private static boolean hasInteractionTypeOrName(Map<String, String> properties) {
@@ -1423,8 +1424,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
             if (HIT_BY_CAR_NOTATION.matcher(occurrenceRemarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "car");
-                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+                addInteractionType(properties, InteractType.KILLED_BY);
             }
             return properties;
         }
@@ -1444,8 +1444,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             if (KILLED_BY_WINDOW.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "window");
 
-                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+                addInteractionType(properties, InteractType.KILLED_BY);
 
             }
             return properties;
@@ -1468,8 +1467,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             if (KILLED_BY_CAT.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "cat");
 
-                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+                addInteractionType(properties, InteractType.KILLED_BY);
 
             }
             return properties;
@@ -1497,8 +1495,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "euthanasia");
 
-                properties.put(INTERACTION_TYPE_NAME, InteractType.KILLED_BY.getLabel());
-                properties.put(INTERACTION_TYPE_ID, InteractType.KILLED_BY.getIRI());
+                addInteractionType(properties, InteractType.KILLED_BY);
 
             }
             return properties;
@@ -1666,8 +1663,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
 
         if (MapUtils.isNotEmpty(properties)) {
-            properties.put(INTERACTION_TYPE_NAME, InteractType.HAS_HOST.getLabel());
-            properties.put(INTERACTION_TYPE_ID, InteractType.HAS_HOST.getIRI());
+            addInteractionType(properties, InteractType.HAS_HOST);
             properties = TaxonUtil.enrichTaxonNames(properties);
         }
         return properties;

@@ -38,16 +38,16 @@ public class TaxonLookupServiceImpl implements TaxonLookupService, AutoCloseable
         return findTaxon(TaxonLookupServiceConstants.FIELD_ID, taxonId);
     }
 
-    private Taxon[] findTaxon(String fieldName1, String fieldValue) throws IOException {
+    private Taxon[] findTaxon(String fieldName, String fieldValue) throws IOException {
         if (indexSearcher == null) {
             indexSearcher = new IndexSearcher(DirectoryReader.open(indexDir));
         }
 
         Taxon[] terms = new TaxonImpl[0];
         if (StringUtils.isNotBlank(fieldValue) && indexSearcher != null) {
-            PhraseQuery query = new PhraseQuery();
-            query.add(new Term(fieldName1, fieldValue));
-            TopDocs docs = indexSearcher.search(query, getMaxHits());
+            PhraseQuery.Builder query = new PhraseQuery.Builder();
+            query.add(new Term(fieldName, fieldValue));
+            TopDocs docs = indexSearcher.search(query.build(), getMaxHits());
 
             if (docs.totalHits > 0) {
                 int maxResults = Math.min(docs.totalHits, getMaxHits());
@@ -76,13 +76,13 @@ public class TaxonLookupServiceImpl implements TaxonLookupService, AutoCloseable
                     if (commonNamesFields != null) {
                         term.setCommonNames(commonNamesFields.stringValue());
                     }
-                    IndexableField fieldName = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RECOMMENDED_NAME);
-                    if (fieldName != null) {
-                        term.setName(fieldName.stringValue());
+                    IndexableField name = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RECOMMENDED_NAME);
+                    if (name != null) {
+                        term.setName(name.stringValue());
                     }
-                    IndexableField fieldRank = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RANK);
-                    if (fieldRank != null) {
-                        term.setRank(fieldRank.stringValue());
+                    IndexableField rank = foundDoc.getField(TaxonLookupServiceConstants.FIELD_RANK);
+                    if (rank != null) {
+                        term.setRank(rank.stringValue());
                     }
                     terms[i] = term;
                 }
