@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
@@ -38,6 +39,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertNull;
 import static org.eol.globi.data.DatasetImporterForDwCA.EXTENSION_ASSOCIATED_TAXA;
@@ -75,10 +78,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForDwCATest {
@@ -1310,6 +1316,57 @@ public class DatasetImporterForDwCATest {
         });
 
         assertThat(numberOfFoundLinks.get(), is(1));
+    }
+
+    @Test
+    public void hasErrorMessageForSuspiciousCSVLineWithDataCoordinate() throws IOException, URISyntaxException, StudyImporterException {
+        URL resource = getClass().getResource("/org/eol/globi/data/umich/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+
+        final Map<String, String> interactionFound = new TreeMap<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(inStream -> inStream)));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                interactionFound.putAll(interaction);
+            }
+        });
+
+        List<String> logMsgs = new ArrayList<>();
+        studyImporterForDwCA.setLogger(new ImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void info(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+                logMsgs.add(message);
+            }
+        });
+        studyImporterForDwCA.importStudy();
+
+        assertTrue(interactionFound.isEmpty());
+
+        assertThat(logMsgs.size(), is(1));
+
+        String msg = logMsgs.get(0).replace("\n", " ");
+
+        Pattern compile = Pattern.compile("(.*)(line:)(.*)(occurrences.csv!/2)(.*)");
+        Matcher matcher = compile.matcher(msg);
+
+        assertThat(matcher.matches(), is(true));
+        assertThat(matcher.group(2), is("line:"));
+        assertThat(matcher.group(3), is(archiveRoot.toString()));
+        assertThat(matcher.group(4), is("occurrences.csv!/2"));
+
+
     }
 
     @Test

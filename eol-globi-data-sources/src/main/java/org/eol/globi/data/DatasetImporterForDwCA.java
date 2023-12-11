@@ -14,6 +14,7 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.ResourceUtil;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveFile;
 import org.gbif.dwc.record.Record;
@@ -41,6 +42,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -390,7 +392,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 handleRecord(interactionListener, rec);
                 recordCounter.incrementAndGet();
             } catch (IllegalStateException ex) {
-                LogUtil.logError(getLogger(), "failed to handle dwc record in [" + archiveURL + "]", ex);
+                URI dataCoordinates = ResourceUtil.getAbsoluteResourceURI(getDataset().getArchiveURI(), URI.create(archive.getCore().getLocation()));
+                if (ex.getCause() != null && ex.getCause() instanceof ParseException) {
+                    ParseException e = (ParseException) ex.getCause();
+                    int lineNumber = e.getErrorOffset();
+                    dataCoordinates = URI.create("line:" + dataCoordinates + "!/" + lineNumber);
+                }
+                LogUtil.logError(getLogger(), "failed to handle dwc record at [" + dataCoordinates + "]", ex);
             }
         }
         return recordCounter.get();
