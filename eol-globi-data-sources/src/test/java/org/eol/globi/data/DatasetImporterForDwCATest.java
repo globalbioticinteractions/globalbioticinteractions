@@ -275,7 +275,7 @@ public class DatasetImporterForDwCATest {
         });
         studyImporterForDwCA.importStudy();
         assertThat(recordCounter.get(), is(0));
-        assertThat(actualMessage.toString(), startsWith("[failed to handle dwc record in"));
+        assertThat(actualMessage.toString(), startsWith("[failed to handle dwc record at "));
     }
 
     @Test
