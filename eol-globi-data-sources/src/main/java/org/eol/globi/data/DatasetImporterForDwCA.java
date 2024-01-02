@@ -75,6 +75,8 @@ import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_TYPE_STATUS_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_TYPE_STATUS_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
@@ -82,6 +84,8 @@ import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_TYPE_STATUS_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_TYPE_STATUS_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_CLASS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
@@ -605,6 +609,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_INSTITUTION_CODE, DwcTerm.institutionCode);
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_CATALOG_NUMBER, DwcTerm.catalogNumber);
         mapIfAvailable(rec, interactionProperties, DatasetImporterForTSV.SOURCE_RECORD_NUMBER, DwcTerm.recordNumber);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TYPE_STATUS_NAME, DwcTerm.typeStatus);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_ID, DwcTerm.taxonConceptID);
         if (StringUtils.isBlank(interactionProperties.get(SOURCE_TAXON_ID))) {
             mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_ID, DwcTerm.taxonID);
