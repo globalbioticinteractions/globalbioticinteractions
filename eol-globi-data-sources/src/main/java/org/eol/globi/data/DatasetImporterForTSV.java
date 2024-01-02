@@ -93,12 +93,6 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
     public static final String SOURCE_OCCURRENCE_ID = "sourceOccurrenceId";
     public static final String TARGET_OCCURRENCE_ID = "targetOccurrenceId";
 
-    public static final String SOURCE_TYPE_STATUS_ID = "sourceTypeStatusId";
-    public static final String SOURCE_TYPE_STATUS_NAME = "sourceTypeStatusName";
-
-    public static final String TARGET_TYPE_STATUS_ID = "targetTypeStatusId";
-    public static final String TARGET_TYPE_STATUS_NAME = "targetTypeStatusName";
-
     public static final String SOURCE_BODY_PART_ID = "sourceBodyPartId";
     public static final String SOURCE_BODY_PART_NAME = "sourceBodyPartName";
 
@@ -179,9 +173,7 @@ public class DatasetImporterForTSV extends DatasetImporterWithListener {
             Pair.of(SOURCE_INSTITUTION_CODE, TARGET_INSTITUTION_CODE),
             Pair.of(SOURCE_COLLECTION_CODE, TARGET_COLLECTION_CODE),
             Pair.of(SOURCE_COLLECTION_ID, TARGET_COLLECTION_ID),
-            Pair.of(SOURCE_OCCURRENCE_ID, TARGET_OCCURRENCE_ID),
-            Pair.of(SOURCE_TYPE_STATUS_NAME, TARGET_TYPE_STATUS_NAME),
-            Pair.of(SOURCE_TYPE_STATUS_ID, TARGET_TYPE_STATUS_ID)
+            Pair.of(SOURCE_OCCURRENCE_ID, TARGET_OCCURRENCE_ID)
     );
 
     public String getBaseUrl() {
