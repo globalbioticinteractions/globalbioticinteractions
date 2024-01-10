@@ -491,6 +491,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (StringUtils.isNotBlank(occurrenceRemarks)) {
             addUSNMStyleHostOccurrenceRemarks(interactionCandidates, occurrenceRemarks);
             addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(interactionCandidates, occurrenceRemarks);
+            addArtsprosjektetGyrodactylusStyleRemarks(interactionCandidates, occurrenceRemarks);
             String[] remarks = StringUtils.split(occurrenceRemarks, ";,.\":\'");
             for (String remark : remarks) {
                 addKilledByPetsRemarks(interactionCandidates, remark);
@@ -560,6 +561,14 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
+    private static void addArtsprosjektetGyrodactylusStyleRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) {
+        Map<String, String> properties = parseArtsprosjektetGyrodactylusStyleRemarks(occurrenceRemarks);
+        if (MapUtils.isNotEmpty(properties)) {
+            new ResourceTypeConsumer(properties).accept(DwcTerm.occurrenceRemarks);
+            interactionCandidates.add(properties);
+        }
+    }
+
     static Map<String, String> parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(String occurrenceRemarks) {
         Map<String, String> properties = Collections.emptyMap();
 
@@ -570,6 +579,19 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 put(INTERACTION_TYPE_NAME, "found in");
                 put(TARGET_BODY_PART_NAME, "pellet");
                 put(TARGET_BODY_PART_ID, "http://purl.obolibrary.org/obo/UBERON_0036018");
+            }};
+        }
+        return properties;
+    }
+
+  static Map<String, String> parseArtsprosjektetGyrodactylusStyleRemarks(String occurrenceRemarks) {
+        Map<String, String> properties = Collections.emptyMap();
+
+        Matcher matcher = Pattern.compile("^(Collected from)[ ]([A-Z].*)", Pattern.CASE_INSENSITIVE).matcher(StringUtils.trim(occurrenceRemarks));
+        if (matcher.matches()) {
+            properties = new TreeMap<String, String>() {{
+                put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group(2)));
+                put(INTERACTION_TYPE_NAME, "Collected from");
             }};
         }
         return properties;

@@ -604,6 +604,18 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/956
+    public void occurrenceRemarksNorway() throws IOException {
+
+        ArrayList<Map<String, String>> candidates = new ArrayList<>();
+        DatasetImporterForDwCA.addCandidatesFromRemarks(candidates, "Collected from Gasterosteus aculeatus");
+
+        assertThat(candidates.size(), is(1));
+        assertThat(candidates.get(0).get(INTERACTION_TYPE_NAME), is("Collected from"));
+        assertThat(candidates.get(0).get(TARGET_TAXON_NAME), is("Gasterosteus aculeatus"));
+    }
+
+    @Test
     // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/504
     public void occurrenceRemarks5() throws IOException {
         String occurrenceRemarks = "{\"hostGen\":\"Acanthocybium\",\"hostSpec\":\"solandri\",\"hostBodyLoc\":\"\"arm pits\" of wahoo\",\"hostFldNo\":\"030913-15-4 & 5\"}";
