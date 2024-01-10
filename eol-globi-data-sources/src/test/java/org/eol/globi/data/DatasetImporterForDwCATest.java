@@ -3,7 +3,6 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
@@ -78,13 +77,10 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForDwCATest {
