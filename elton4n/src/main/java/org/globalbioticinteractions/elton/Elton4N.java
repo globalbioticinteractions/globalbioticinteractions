@@ -11,11 +11,12 @@ import static java.lang.System.exit;
         subcommands = {
                 CmdCompile.class,
                 CmdLink.class,
+                CmdSummarize.class,
                 CmdPackage.class,
                 ManPageGenerator.class,
                 CommandLine.HelpCommand.class
         },
-        description = "compile, interpret, index, and repackage existing species interaction datasets using Neo4J",
+        description = "compile, link, summarize, and (re-)package existing species interaction datasets using Neo4J",
         mixinStandardHelpOptions = true,
         subcommandsRepeatable = true
 )

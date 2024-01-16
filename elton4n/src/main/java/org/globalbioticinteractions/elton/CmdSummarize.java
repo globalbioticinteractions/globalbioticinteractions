@@ -8,22 +8,20 @@ import org.eol.globi.tool.CmdNeo4J;
 import picocli.CommandLine;
 
 @CommandLine.Command(
-        name = "link",
-        description = "link compiled interaction datasets",
+        name = "summarize",
+        description = "generates summary reports for ",
         subcommands = {
-                CmdInterpretTaxa.class,
-                CmdIndexTaxa.class,
-                CmdIndexTaxonStrings.class,
+                CmdGenerateReportNeo4j2.class,
         }
 )
-public class CmdLink extends CmdNeo4J {
+public class CmdSummarize extends CmdNeo4J {
 
 
     @Override
     public void run() {
-        configureAndRun(new CmdInterpretTaxa());
-        configureAndRun(new CmdIndexTaxa());
-        configureAndRun(new CmdIndexTaxonStrings());
+        if ("2".equals(getNeo4jVersion())) {
+            configureAndRun(new CmdGenerateReportNeo4j2());
+        }
     }
 
 
