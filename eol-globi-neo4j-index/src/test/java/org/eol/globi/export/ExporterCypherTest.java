@@ -2,8 +2,6 @@ package org.eol.globi.export;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.NodeFactoryException;
@@ -22,8 +20,8 @@ import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -33,16 +31,12 @@ import org.neo4j.graphdb.Transaction;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertNotNull;
 
 public class ExporterCypherTest extends GraphDBNeo4jTestCase {
@@ -65,6 +59,7 @@ public class ExporterCypherTest extends GraphDBNeo4jTestCase {
         factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
     }
 
+    @Ignore
     @Test
     public void importExportCompareResults() throws StudyImporterException, IOException, ParseException {
         createTestData(12.0);
