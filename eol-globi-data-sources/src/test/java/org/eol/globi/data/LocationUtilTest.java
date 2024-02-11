@@ -4,6 +4,7 @@ import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.InvalidLocationException;
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class LocationUtilTest {
@@ -27,6 +28,38 @@ public class LocationUtilTest {
     @Test(expected = InvalidLocationException.class)
     public void parseLngLatInvalid2() throws InvalidLocationException {
         LocationUtil.parseLatLng("", "123.0");
+    }
+
+    @Test
+    public void parseLngLatBergamo() throws InvalidLocationException {
+        LatLng latLng = LocationUtil.parseLatLng("-24.535833", " -54.019722");
+        assertThat(latLng.getLat(), is(-24.535833));
+        assertThat(latLng.getLng(), is(-54.019722));
+        assertThat(latLng, is(notNullValue()));
+    }
+
+    @Test
+    public void parseLngLatBergamoNonBreakingSpace1() throws InvalidLocationException {
+        LatLng latLng = LocationUtil.parseLatLng("-24.535833", " \u00A0-54.019722");
+        assertThat(latLng.getLat(), is(-24.535833));
+        assertThat(latLng.getLng(), is(-54.019722));
+        assertThat(latLng, is(notNullValue()));
+    }
+
+    @Test
+    public void parseLngLatBergamoNonBreakingSpace2() throws InvalidLocationException {
+        LatLng latLng = LocationUtil.parseLatLng("-24.535833", " \u2007-54.019722");
+        assertThat(latLng.getLat(), is(-24.535833));
+        assertThat(latLng.getLng(), is(-54.019722));
+        assertThat(latLng, is(notNullValue()));
+    }
+
+    @Test
+    public void parseLngLatBergamoNonBreakingSpace3() throws InvalidLocationException {
+        LatLng latLng = LocationUtil.parseLatLng("-24.535833", " \u202F-54.019722");
+        assertThat(latLng.getLat(), is(-24.535833));
+        assertThat(latLng.getLng(), is(-54.019722));
+        assertThat(latLng, is(notNullValue()));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.util.InvalidLocationException;
 
@@ -44,8 +45,8 @@ public class LocationUtil {
     public static LatLng parseLatLng(String latitude, String longitude) throws InvalidLocationException {
         LatLng point = null;
         try {
-            double lat = Double.parseDouble(latitude);
-            double lng = Double.parseDouble(longitude);
+            double lat = Double.parseDouble(trimSpaces(latitude));
+            double lng = Double.parseDouble(trimSpaces(longitude));
             if (!isValidLatitude(lat)) {
                 throw new InvalidLocationException("range of latitude [" + latitude + "] not valid");
             } else if (!isValidLongitude(lng)) {
@@ -58,5 +59,11 @@ public class LocationUtil {
             throw new InvalidLocationException("invalid (latitude, longitude) = (" + latitude + "," + longitude + ")", ex);
         }
         return point;
+    }
+
+
+    private static String trimSpaces(String str) {
+        final String SPACE_CHARACTERS = " \t\u00A0\u1680\u180e\u2000\u2007\u200a\u202f\u205f\u3000";
+        return StringUtils.strip(str, SPACE_CHARACTERS);
     }
 }
