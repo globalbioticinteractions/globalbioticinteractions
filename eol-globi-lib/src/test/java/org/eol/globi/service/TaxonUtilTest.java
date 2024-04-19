@@ -435,10 +435,27 @@ public class TaxonUtilTest {
 
 
     @Test
+    public void pathAuthorshipFromTaxon() {
+        Taxon donald = new TaxonImpl("Donald duckus");
+        donald.setPath("Chordata | Mammalia | Artiodactyla | Bovidae | Bovinae | Bos | Bos taurus");
+        donald.setPathNames("phylum | class | order | family | subfamily | genus | species");
+        donald.setPathAuthorships("Haeckel, 1974 | Linnaeus, 1758 | Owen, 1848 | Gray, 1821 | Gray, 1821 | Linnaeus, 1758 | Linnaeus, 1758");
+        Map<String, String> taxonMap = TaxonUtil.taxonToMap(donald);
+
+        assertThat(taxonMap.get(PropertyAndValueDictionary.PATH_NAMES), is("phylum | class | order | family | subfamily | genus | species"));
+        assertThat(taxonMap.get(PropertyAndValueDictionary.PATH_AUTHORSHIPS), is("Haeckel, 1974 | Linnaeus, 1758 | Owen, 1848 | Gray, 1821 | Gray, 1821 | Linnaeus, 1758 | Linnaeus, 1758"));
+
+        assertThat(TaxonUtil.mapToTaxon(taxonMap).getPathAuthorships(), is("Haeckel, 1974 | Linnaeus, 1758 | Owen, 1848 | Gray, 1821 | Gray, 1821 | Linnaeus, 1758 | Linnaeus, 1758"));
+
+    }
+
+
+    @Test
     public void toTaxonNameMap() {
         Taxon donald = new TaxonImpl("Donald duckus");
         donald.setPath("Chordata | Mammalia | Artiodactyla | Bovidae | Bovinae | Bos | Bos taurus");
         donald.setPathNames("phylum | class | order | family | subfamily | genus | species");
+        donald.setPathAuthorships("Haeckel, 1974 | Linnaeus, 1758 | Owen, 1848 | Gray, 1821 | Gray, 1821 | Linnaeus, 1758 | Linnaeus, 1758");
         Map<String, String> taxonMap = TaxonUtil.toPathNameMap(donald, donald.getPath());
 
         assertThat(taxonMap.get("phylum"), is("Chordata"));

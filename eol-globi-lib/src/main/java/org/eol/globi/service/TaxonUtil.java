@@ -47,6 +47,7 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.NAME_SOURCE_URL;
 import static org.eol.globi.domain.PropertyAndValueDictionary.NO_MATCH;
 import static org.eol.globi.domain.PropertyAndValueDictionary.NO_NAME;
 import static org.eol.globi.domain.PropertyAndValueDictionary.PATH;
+import static org.eol.globi.domain.PropertyAndValueDictionary.PATH_AUTHORSHIPS;
 import static org.eol.globi.domain.PropertyAndValueDictionary.PATH_IDS;
 import static org.eol.globi.domain.PropertyAndValueDictionary.PATH_NAMES;
 import static org.eol.globi.domain.PropertyAndValueDictionary.RANK;
@@ -212,6 +213,7 @@ public class TaxonUtil {
         properties.put(PATH, taxon.getPath());
         properties.put(PATH_IDS, taxon.getPathIds());
         properties.put(PATH_NAMES, taxon.getPathNames());
+        properties.put(PATH_AUTHORSHIPS, taxon.getPathAuthorships());
         properties.put(COMMON_NAMES, taxon.getCommonNames());
         if (isBlank(taxon.getExternalUrl()) && isNotBlank(taxon.getExternalId())) {
             properties.put(EXTERNAL_URL, urlForExternalId(taxon.getExternalId()));
@@ -243,6 +245,7 @@ public class TaxonUtil {
         taxon.setPath(properties.get(PATH));
         taxon.setPathIds(properties.get(PATH_IDS));
         taxon.setPathNames(properties.get(PATH_NAMES));
+        taxon.setPathAuthorships(properties.get(PATH_AUTHORSHIPS));
         taxon.setCommonNames(properties.get(COMMON_NAMES));
 
         final String externalUrl = properties.get(EXTERNAL_URL);

@@ -29,6 +29,10 @@ public interface Taxon extends Term {
 
     String getPathIds();
 
+    void setPathAuthorships(String pathAuthorships);
+
+    String getPathAuthorships();
+
     void setStatus(Term status);
 
     Term getStatus();

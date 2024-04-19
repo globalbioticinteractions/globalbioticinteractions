@@ -10,6 +10,7 @@ public class PropertyAndValueDictionary {
     public static final String PATH = "path";
     public static final String PATH_NAMES = "pathNames";
     public static final String PATH_IDS = "pathIds";
+    public static final String PATH_AUTHORSHIPS = "pathAuthorships";
     public static final String COMMON_NAMES = "commonNames";
     public static final String THUMBNAIL_URL = "thumbnailUrl";
     public static final String EXTERNAL_URL = "externalUrl";

@@ -8,6 +8,7 @@ public class TaxonImpl implements Taxon {
     private String commonNames;
     private String rank;
     private String pathIds;
+    private String pathAuthorships;
     private Term status;
     private String thumbnailUrl;
     private String externalUrl;
@@ -172,5 +173,15 @@ public class TaxonImpl implements Taxon {
     @Override
     public void setStatus(Term status) {
         this.status = status;
+    }
+
+    @Override
+    public String getPathAuthorships() {
+        return pathAuthorships;
+    }
+
+    @Override
+    public void setPathAuthorships(String pathAuthorships) {
+        this.pathAuthorships = pathAuthorships;
     }
 }

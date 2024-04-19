@@ -71,6 +71,16 @@ public class TaxonNode extends NamedNode implements Taxon {
     }
 
     @Override
+    public String getPathAuthorships() {
+        return getPropertyStringValueOrNull(PATH_AUTHORSHIPS);
+    }
+
+    @Override
+    public void setPathAuthorships(String pathAuthorships) {
+        setProperty(PATH_AUTHORSHIPS, pathAuthorships);
+    }
+
+    @Override
     public void setStatus(Term status) {
         if (status != null
                 && StringUtils.isNotBlank(status.getId())
