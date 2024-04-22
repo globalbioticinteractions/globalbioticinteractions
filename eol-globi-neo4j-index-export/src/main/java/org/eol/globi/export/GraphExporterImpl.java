@@ -118,7 +118,7 @@ public class GraphExporterImpl extends GraphExporterBase {
 
     private void exportDarwinCoreAggregatedByStudy(GraphDatabaseService graphService, File baseDir) throws StudyImporterException {
         exportDarwinCoreArchive(graphService,
-                new File(baseDir,"aggregatedByStudy"), new HashMap<String, DarwinCoreExporter>() {
+                new File(baseDir, "aggregatedByStudy"), new HashMap<String, DarwinCoreExporter>() {
                     {
                         put("association.tsv", new ExporterAssociationAggregates());
                         put("occurrence.tsv", new ExporterOccurrenceAggregates());
@@ -148,17 +148,12 @@ public class GraphExporterImpl extends GraphExporterBase {
             OutputStreamWriter writer = openStream(exportFile);
             String msg = "writing nquads archive to [" + exportFile + "]";
             LOG.info(msg + "...");
-            AtomicInteger studyCounter = new AtomicInteger(0);
             NodeUtil.findStudies(graphService, node -> {
                 try {
-                    int studyCount = studyCounter.getAndIncrement();
-                    // limit to number of nquads translated studies for now
-                    if (studyCount < 100) {
-                        studyExporter.exportStudy(
-                                new StudyNode(node),
-                                ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()),
-                                true);
-                    }
+                    studyExporter.exportStudy(
+                            new StudyNode(node),
+                            ExportUtil.AppenderWriter.of(writer, new ExportUtil.NQuadValueJoiner()),
+                            true);
                 } catch (IOException e) {
                     throw new IllegalStateException("failed to export interactions to [" + exportFile.getAbsolutePath() + "]", e);
                 }
