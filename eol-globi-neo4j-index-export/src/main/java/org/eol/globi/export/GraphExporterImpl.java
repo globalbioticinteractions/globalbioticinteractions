@@ -109,7 +109,7 @@ public class GraphExporterImpl extends GraphExporterBase {
                     }
 
                 }
-            });
+            }); 
             closeStream(filePath, writer);
         } catch (IOException e) {
             throw new StudyImporterException("failed to export unmatched source taxa", e);
