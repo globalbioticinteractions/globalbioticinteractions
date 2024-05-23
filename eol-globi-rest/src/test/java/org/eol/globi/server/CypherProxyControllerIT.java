@@ -62,4 +62,24 @@ public class CypherProxyControllerIT extends ITBase {
         assertThat(externalLink, is("{\"url\":\"http://bioinfo.org.uk/html/b147884.htm\"}"));
     }
 
+    @Test
+    public void findExternalLinkForTaxonWithName() throws IOException {
+        String externalLink = new CypherProxyController().findExternalLinkForTaxonWithName(null, "Homo sapiens");
+        assertThat(externalLink, is("{\"url\":\"http://eol.org/pages/327955\"}"));
+    }
+
+    @Test
+    public void findExternalLinkForTaxonWithNonExistingName() throws IOException {
+        String externalLink = new CypherProxyController().findExternalLinkForTaxonWithName(null, "This aint exist yet");
+        assertThat(externalLink, is("{}"));
+    }
+
+
+    @Test
+    public void findExternalLinkForNonExistingStudyWithTitle() throws IOException {
+        String externalLink = new CypherProxyController().findExternalLinkForStudyWithTitle(null, "None existing study");
+        assertThat(externalLink, is("{}"));
+    }
+
+
 }
