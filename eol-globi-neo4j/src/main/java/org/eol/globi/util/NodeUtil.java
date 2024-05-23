@@ -24,8 +24,11 @@ import org.neo4j.graphdb.RelationshipType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class NodeUtil {
+
+    public static final Pattern CANDIDATUS_MATCHER = Pattern.compile("^Candidatus[ ].*");
 
     public static String getPropertyStringValueOrDefault(Node node, String propertyName, String defaultValue) {
         return node.hasProperty(propertyName) ? (String) node.getProperty(propertyName) : defaultValue;
@@ -33,16 +36,26 @@ public class NodeUtil {
 
     public static String truncateTaxonName(String taxonName) {
         String truncatedName = taxonName;
-        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/672
-        if (!StringUtils.containsIgnoreCase(taxonName, "virus")
-                && !StringUtils.endsWith(taxonName, "V")
-                && StringUtils.isNotBlank(taxonName)) {
+        if (StringUtils.isNotBlank(taxonName)
+                && isUnlikelyVirusName(taxonName)
+                && isUnlikelyCandidatusName(taxonName)) {
             String[] nameParts = StringUtils.split(taxonName);
             if (nameParts.length > 2) {
                 truncatedName = nameParts[0].trim() + " " + nameParts[1].trim();
             }
         }
         return truncatedName;
+    }
+
+    private static boolean isUnlikelyCandidatusName(String taxonName) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/968
+        return !CANDIDATUS_MATCHER.matcher(taxonName).matches();
+    }
+
+    private static boolean isUnlikelyVirusName(String taxonName) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/672
+        return !StringUtils.containsIgnoreCase(taxonName, "virus")
+                && !StringUtils.endsWith(taxonName, "V");
     }
 
     public static void connectTaxa(Taxon taxon, TaxonNode taxonNode, GraphDatabaseService graphDb, RelTypes relType) {

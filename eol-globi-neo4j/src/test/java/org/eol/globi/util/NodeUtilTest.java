@@ -20,6 +20,12 @@ public class NodeUtilTest {
         assertThat(NodeUtil.truncateTaxonName("whatever something virus"), is("whatever something virus"));
     }
 
+
+    @Test
+    public void doNotTruncateCandidatus() {
+        assertThat(NodeUtil.truncateTaxonName("Candidatus whatever something"), is("Candidatus whatever something"));
+    }
+
     @Test
     public void doNotTruncateLikelyVirusName() {
         assertThat(NodeUtil.truncateTaxonName("whatever something V"), is("whatever something V"));
