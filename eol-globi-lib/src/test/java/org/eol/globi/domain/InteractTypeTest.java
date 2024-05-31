@@ -79,11 +79,11 @@ public class InteractTypeTest {
     @Test
     public void hasTypes() {
         for (InteractType type : values()) {
-            String reason = "found missing path for interaction [" + type + "]";
-            if (InteractType.hasTypes(type) == null) {
-                System.out.println(reason);
-            }
-            assertThat(reason, InteractType.hasTypes(type), is(notNullValue()));
+            assertThat(
+                    "found missing path for interaction [" + type + "]",
+                    InteractType.hasTypes(type),
+                    is(notNullValue())
+            );
         }
 
         assertThat(InteractType.hasTypes(PREYS_UPON), hasItems(KILLS, ATE, INTERACTS_WITH, RELATED_TO));

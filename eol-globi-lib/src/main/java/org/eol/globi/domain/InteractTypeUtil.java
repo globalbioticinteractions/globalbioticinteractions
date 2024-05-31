@@ -63,7 +63,7 @@ public class InteractTypeUtil  {
                put(InteractType.TROPHICALLY_INTERACTS_WITH, InteractType.TROPHICALLY_INTERACTS_WITH);
                put(InteractType.CO_OCCURS_WITH, InteractType.CO_OCCURS_WITH);
                put(InteractType.CO_ROOSTS_WITH, InteractType.CO_ROOSTS_WITH);
-               put(InteractType.HAS_ROOST, InteractType.CO_OCCURS_WITH);
+               put(InteractType.HAS_ROOST, InteractType.ROOST_OF);
                put(InteractType.ADJACENT_TO, InteractType.ADJACENT_TO);
                put(InteractType.PARASITE_OF, InteractType.HAS_PARASITE);
                put(InteractType.HYPERPARASITE_OF, InteractType.HAS_HYPERPARASITE);
