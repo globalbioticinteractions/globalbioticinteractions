@@ -110,6 +110,7 @@ public enum InteractType implements RelType {
 
     CO_OCCURS_WITH("http://purl.obolibrary.org/obo/RO_0008506", "coOccursWith"),
     CO_ROOSTS_WITH("http://purl.obolibrary.org/obo/RO_0002801", "coRoostsWith"),
+    HAS_ROOST("http://purl.obolibrary.org/obo/RO_0008509", "hasRoost", SUBJECT, OBJECT),
 
     COMMENSALIST_OF("http://purl.obolibrary.org/obo/RO_0002441", "commensalistOf"),
     MUTUALIST_OF("http://purl.obolibrary.org/obo/RO_0002442", "mutualistOf"),

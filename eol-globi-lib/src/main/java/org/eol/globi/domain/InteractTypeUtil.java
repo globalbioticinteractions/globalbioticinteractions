@@ -63,6 +63,7 @@ public class InteractTypeUtil  {
                put(InteractType.TROPHICALLY_INTERACTS_WITH, InteractType.TROPHICALLY_INTERACTS_WITH);
                put(InteractType.CO_OCCURS_WITH, InteractType.CO_OCCURS_WITH);
                put(InteractType.CO_ROOSTS_WITH, InteractType.CO_ROOSTS_WITH);
+               put(InteractType.HAS_ROOST, InteractType.CO_OCCURS_WITH);
                put(InteractType.ADJACENT_TO, InteractType.ADJACENT_TO);
                put(InteractType.PARASITE_OF, InteractType.HAS_PARASITE);
                put(InteractType.HYPERPARASITE_OF, InteractType.HAS_HYPERPARASITE);
@@ -97,6 +98,7 @@ public class InteractTypeUtil  {
                put(InteractType.TROPHICALLY_INTERACTS_WITH, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH, InteractType.INTERACTS_WITH));
                put(InteractType.CO_OCCURS_WITH, Collections.singletonList(InteractType.RELATED_TO));
                put(InteractType.CO_ROOSTS_WITH, Arrays.asList(InteractType.CO_OCCURS_WITH, InteractType.RELATED_TO));
+               put(InteractType.HAS_ROOST, Arrays.asList(InteractType.CO_OCCURS_WITH, InteractType.RELATED_TO, InteractType.INTERACTS_WITH));
                put(InteractType.ADJACENT_TO, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.PERCHING_ON, Arrays.asList(InteractType.LIVES_ON, InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.ATE, Arrays.asList(InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
