@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
@@ -41,6 +43,45 @@ public class DatasetImporterForMetaTableTest {
         assertThat(columnNames.get(0).getDefaultValue(), is("some default interaction name"));
         assertThat(columnNames.get(1).getDefaultValue(), is(nullValue()));
     }
+
+    @Test
+    public void parsePrimaryKey() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return null;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+        List<JsonNode> tables = DatasetImporterForMetaTable.collectTables(dataset);
+
+        assertThat(tables.size(), is(3));
+
+        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnNamesForMetaTable(tables.get(0));
+        assertThat(columnNames.size(), is(2));
+        assertThat(columnNames.get(0).getKeyReference(), is("referenceId"));
+        assertThat(columnNames.get(0).getKeyType(), is("primary"));
+
+        columnNames = DatasetImporterForMetaTable.columnNamesForMetaTable(tables.get(1));
+        assertThat(columnNames.size(), is(3));
+        assertThat(columnNames.get(0).getKeyReference(), is("taxonId"));
+        assertThat(columnNames.get(0).getKeyType(), is("foreign"));
+        assertThat(columnNames.get(1).getKeyReference(), is("taxonId"));
+        assertThat(columnNames.get(1).getKeyType(), is("foreign"));
+        assertThat(columnNames.get(2).getKeyReference(), is("referenceId"));
+        assertThat(columnNames.get(2).getKeyType(), is("foreign"));
+        assertThat(columnNames.get(2).getSeparator(), is(","));
+
+        columnNames = DatasetImporterForMetaTable.columnNamesForMetaTable(tables.get(2));
+        assertThat(columnNames.size(), is(7));
+        assertThat(columnNames.get(0).getKeyReference(), is("taxonId"));
+        assertThat(columnNames.get(0).getKeyType(), is("primary"));
+    }
+
 
     @Test
     public void parseColumnValues() {

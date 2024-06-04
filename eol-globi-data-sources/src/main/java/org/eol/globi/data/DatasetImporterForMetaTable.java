@@ -442,6 +442,25 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
     public static List<Column> columnNamesForSchema(JsonNode tableSchema) {
         List<Column> columnNames = new ArrayList<Column>();
+        String primaryKeyId = null;
+        final JsonNode primaryKey = tableSchema.at("/primaryKey");
+        if (!primaryKey.isMissingNode()) {
+            primaryKeyId = StringUtils.trim(primaryKey.asText());
+        }
+
+        final JsonNode foreignKeys = tableSchema.at("/foreignKeys");
+        Map<String, String> foreignKeyMap = new TreeMap<>();
+        if (!foreignKeys.isMissingNode()) {
+            for (JsonNode foreignKey : foreignKeys) {
+                JsonNode from = foreignKey.at("/columnReference");
+                JsonNode to = foreignKey.at("/reference/columnReference");
+                if (!from.isMissingNode() && !to.isMissingNode()) {
+                    foreignKeyMap.put(StringUtils.trim(from.asText()), StringUtils.trim(to.asText()));
+                }
+            }
+        }
+
+
         final JsonNode columns = tableSchema.get("columns");
         if (columns != null) {
             for (JsonNode column : columns) {
@@ -451,11 +470,25 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                             ? createTypedColumn(column, columnName)
                             : createStringColumn(columnName);
 
+                    String columnNameString = StringUtils.trim(columnName.asText());
                     if (column.has("titles")) {
                         String titlesText = column.get("titles").asText();
-                        if (StringUtils.isNotBlank(titlesText) && !StringUtils.equals(columnName.asText(), titlesText)) {
+                        if (StringUtils.isNotBlank(titlesText) && !StringUtils.equals(columnNameString, titlesText)) {
                             col.setOriginalName(StringUtils.trim(titlesText));
                         }
+                    }
+
+                    JsonNode separatorNode = column.at("/separator");
+                    if (!separatorNode.isMissingNode()) {
+                        col.setSeparator(StringUtils.trim(separatorNode.asText()));
+                    }
+
+                    if (StringUtils.equals(columnNameString, primaryKeyId)) {
+                        col.setKeyReference(columnNameString);
+                        col.setKeyType("primary");
+                    } else if (foreignKeyMap.containsKey(columnNameString)) {
+                        col.setKeyReference(foreignKeyMap.get(columnNameString));
+                        col.setKeyType("foreign");
                     }
                     columnNames.add(col);
                 }
@@ -496,6 +529,9 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         private String defaultValue;
         private String valueUrl;
         private String originalName;
+        private String keyReference;
+        private String keyType;
+        private String separator;
 
         Column(String name, String dataTypeId) {
             this.name = name;
@@ -549,6 +585,29 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
         public String getOriginalName() {
             return originalName;
+        }
+
+        public void setKeyReference(String keyReference) {
+            this.keyReference = keyReference;
+        }
+
+        public String getKeyReference() {
+            return keyReference;
+        }
+        public void setKeyType(String keyType) {
+            this.keyType = keyType;
+        }
+
+        public String getKeyType() {
+            return keyType;
+        }
+
+        public String getSeparator() {
+            return separator;
+        }
+
+        public void setSeparator(String separator) {
+            this.separator = separator;
         }
     }
 
