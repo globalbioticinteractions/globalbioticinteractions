@@ -1,11 +1,11 @@
 package org.eol.globi.data;
 
 import com.Ostermiller.util.CSVParse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -25,11 +25,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
@@ -47,6 +48,8 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     public static final String LONGITUDE = "http://rs.tdwg.org/dwc/terms/decimalLongitude";
     public static final String LATITUDE = "http://rs.tdwg.org/dwc/terms/decimalLatitude";
     public static final String EVENT_DATE = "http://rs.tdwg.org/dwc/terms/eventDate";
+    public static final String KEY_TYPE_PRIMARY = "primary";
+    public static final String KEY_TYPE_FOREIGN = "foreign";
 
     private Dataset dataset;
 
@@ -58,6 +61,8 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     @Override
     public void importStudy() throws StudyImporterException {
         try {
+            Map<String, Map<String, Map<String, String>>> indexedDependencies = indexDependencies(this.dataset, getLogger());
+
             for (JsonNode tableConfig : collectTables(dataset)) {
                 Dataset datasetProxy = new DatasetProxy(dataset);
                 datasetProxy.setConfig(tableConfig);
@@ -65,9 +70,15 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 InteractionListener interactionListener = getInteractionListener();
 
                 final InteractionListener listener =
-                        new TableInteractionListenerProxy(datasetProxy, interactionListener);
+                        new InjectRelatedRecords(
+                                new TableInteractionListenerProxy(datasetProxy, interactionListener),
+                                datasetProxy,
+                                indexedDependencies,
+                                getLogger()
+                        );
 
-                importTable(listener, new TableParserFactoryImpl(), tableConfig, datasetProxy, getLogger());
+
+                importTable(listener, new TableParserFactoryImpl(), datasetProxy, getLogger());
             }
         } catch (IOException | NodeFactoryException e) {
             String msg = "problem importing from [" + getBaseUrl() + "]";
@@ -76,10 +87,60 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         }
     }
 
+    static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger) throws StudyImporterException, IOException {
+        Map<String, JsonNode> primaryKeyTables = new HashMap<>();
+        Map<JsonNode, List<String>> primaryKeyDependencies = new HashMap<>();
+        for (JsonNode tableConfig : collectTables(dataset)) {
+            Dataset datasetProxy = new DatasetProxy(dataset);
+            datasetProxy.setConfig(tableConfig);
+
+            List<Column> columns = columnsForDataset(datasetProxy);
+            for (Column column : columns) {
+                if (StringUtils.equals(KEY_TYPE_FOREIGN, column.getKeyType())) {
+                    String primaryKeyName = column.getKeyReference();
+                    List<String> deps = primaryKeyDependencies.getOrDefault(tableConfig, new ArrayList<>());
+                    deps.add(primaryKeyName);
+                    primaryKeyDependencies.put(tableConfig, deps);
+                } else if (StringUtils.equals(KEY_TYPE_PRIMARY, column.getKeyType())) {
+                    primaryKeyTables.put(column.getKeyReference(), tableConfig);
+                }
+            }
+        }
+
+        Map<String, Map<String, Map<String, String>>> indexedTables = new HashMap<>();
+
+        for (Map.Entry<JsonNode, List<String>> jsonNode : primaryKeyDependencies.entrySet()) {
+            List<String> primaryKeys = jsonNode.getValue();
+            for (String primaryKey : primaryKeys) {
+                JsonNode associatedPrimaryKeyTable = primaryKeyTables.get(primaryKey);
+                if (associatedPrimaryKeyTable == null) {
+                    throw new StudyImporterException("failed to resolve table with primary key [" + primaryKey + "]");
+                }
+
+                if (!indexedTables.containsKey(primaryKey)) {
+                    Map<String, Map<String, String>> cachedTable = new TreeMap<>();
+                    DatasetProxy datasetDependency = new DatasetProxy(dataset);
+                    dataset.setConfig(associatedPrimaryKeyTable);
+                    importTable(new InteractionListener() {
+                        @Override
+                        public void on(Map<String, String> interaction) throws StudyImporterException {
+                            String keyValue = interaction.get(primaryKey);
+                            if (StringUtils.isNotBlank(keyValue)) {
+                                cachedTable.putIfAbsent(keyValue, interaction);
+                            }
+                        }
+                    }, new TableParserFactoryImpl(), datasetDependency, logger);
+                    indexedTables.put(primaryKey, cachedTable);
+                }
+            }
+        }
+        return indexedTables;
+    }
+
 
     static List<JsonNode> collectTables(Dataset dataset) throws StudyImporterException {
         JsonNode config = dataset.getConfig();
-        List<JsonNode> tableList = new ArrayList<JsonNode>();
+        List<JsonNode> tableList = new ArrayList<>();
         if (config.has("tables")) {
             JsonNode tables = config.get("tables");
             for (JsonNode table : tables) {
@@ -125,12 +186,27 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         return config.has("url") && StringUtils.contains(config.get("url").asText(), "//data.nhm.ac.uk/api");
     }
 
-    static void importTable(InteractionListener interactionListener, TableParserFactory tableFactory, JsonNode tableConfig, Dataset dataset, ImportLogger importLogger) throws IOException, StudyImporterException {
-        if (tableConfig.has("tableSchema")) {
-            List<Column> columns = columnsForSchema(tableConfig, tableConfig.get("tableSchema"), dataset);
-            final CSVParse csvParse = tableFactory.createParser(tableConfig, dataset);
-            importAll(interactionListener, columns, csvParse, tableConfig, importLogger);
+    static void importTable(InteractionListener interactionListener,
+                            TableParserFactory tableFactory,
+                            Dataset dataset,
+                            ImportLogger importLogger) throws IOException, StudyImporterException {
+        List<Column> columns = columnsForDataset(dataset);
+
+        if (columns != null) {
+            JsonNode config = dataset.getConfig();
+            final CSVParse csvParse = tableFactory.createParser(config, dataset);
+            importAll(interactionListener, columns, csvParse, config, importLogger);
         }
+    }
+
+    static List<Column> columnsForDataset(Dataset dataset) throws IOException {
+        List<Column> columns = null;
+        JsonNode tableConfig = dataset.getConfig();
+        if (tableConfig.has("tableSchema")) {
+            columns = columnsForSchema(tableConfig, tableConfig.get("tableSchema"), dataset);
+        }
+        return columns;
+
     }
 
     private static List<Column> columnsForSchema(JsonNode table, JsonNode tableSchema, Dataset dataset) throws IOException {
@@ -422,6 +498,9 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
             int headerCount = headerRowCount == null ? 0 : headerRowCount.asInt();
 
             InputStream resource = dataset.retrieve(URI.create(dataUrl.asText()));
+            if (resource == null) {
+                throw new IOException("failed to access [" + dataUrl.asText() + "]");
+            }
             final CSVParse csvParse = CSVTSVUtil.createExcelCSVParse(resource);
             csvParse.changeDelimiter(delimiterChar);
             for (int i = 0; i < headerCount; i++) {
@@ -485,10 +564,10 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
                     if (StringUtils.equals(columnNameString, primaryKeyId)) {
                         col.setKeyReference(columnNameString);
-                        col.setKeyType("primary");
+                        col.setKeyType(KEY_TYPE_PRIMARY);
                     } else if (foreignKeyMap.containsKey(columnNameString)) {
                         col.setKeyReference(foreignKeyMap.get(columnNameString));
-                        col.setKeyType("foreign");
+                        col.setKeyType(KEY_TYPE_FOREIGN);
                     }
                     columnNames.add(col);
                 }
@@ -594,6 +673,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         public String getKeyReference() {
             return keyReference;
         }
+
         public void setKeyType(String keyType) {
             this.keyType = keyType;
         }

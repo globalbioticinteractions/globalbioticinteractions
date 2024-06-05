@@ -45,7 +45,7 @@ public class DatasetImporterForMetaTableTest {
     }
 
     @Test
-    public void parsePrimaryKey() throws IOException, StudyImporterException {
+    public void parseSchemaWithPrimaryAndForeignKeys() throws IOException, StudyImporterException {
         final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
@@ -80,6 +80,47 @@ public class DatasetImporterForMetaTableTest {
         assertThat(columnNames.size(), is(7));
         assertThat(columnNames.get(0).getKeyReference(), is("taxonId"));
         assertThat(columnNames.get(0).getKeyType(), is("primary"));
+    }
+
+    @Test
+    public void indexTablesWithReferencedPrimaryKeys() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        ResourceServiceLocal service = new ResourceServiceLocal(inStream -> inStream, DatasetImporterForMetaTableTest.class);
+        DatasetLocal dataset = new DatasetLocal(
+                service) {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                Map<URI, String> resourceMap = new HashMap<URI, String>() {{
+
+                    put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Reference"), "test-meta-globi-primary-key-reference.tsv");
+                    put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Metaweb"), "test-meta-globi-primary-key-metaweb.tsv");
+                    put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Node%20Taxonomy"), "test-meta-globi-primary-key-taxonomy.tsv");
+                }};
+
+                String testResource = resourceMap.get(resourceName);
+                InputStream resourceAsStream = DatasetImporterForMetaTableTest.this.getClass().getResourceAsStream(testResource);
+                assertNotNull("failed to find test resource [" + testResource + "]", resourceAsStream);
+                return resourceAsStream;
+            }
+
+        };
+
+        dataset.setConfig(config);
+
+
+        Map<String, Map<String, Map<String, String>>> indexedDependencies = DatasetImporterForMetaTable.indexDependencies(dataset, null);
+
+        assertThat(indexedDependencies.size(), is(2));
+
+        Map<String, Map<String, String>> taxonomy = indexedDependencies.get("taxonId");
+        assertThat(taxonomy.size(), is(9));
+        assertThat(taxonomy.get("Detritus").get("taxonId"), is("Detritus"));
+        Map<String, Map<String, String>> references = indexedDependencies.get("referenceId");
+        assertThat(references.size(), is(9));
+        assertThat(references.get("R001").get("referenceId"), is("R001"));
+        assertThat(references.get("R001").get("referenceCitation"), is("Elliott, J.M. (1973) The diel activity pattern, drifting and food of the leech Erpobdella octoculata (L.) (Hirudinea: Erpobdellidae) in a Lake District stream. The Journal of Animal Ecology, 42, 449"));
     }
 
 

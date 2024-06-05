@@ -13,6 +13,7 @@
       "dcterms:bibliographicCitation": "Adhurya, Sagar; Lee, Da-Yeong; Park, Young-Seuk (2024). KF-metaweb: A trophic metaweb of freshwater ecosystems of South Korea (Version 1.0) [Dataset]. Dryad. https://doi.org/10.5061/dryad.cz8w9gjbc",
       "url": "xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Reference",
       "headerRowCount": 1,
+      "delimiter": "\t",
       "null": [
         "NULL",
         ""
@@ -25,7 +26,7 @@
             "datatype": "string"
           },
           {
-            "name": "Reference",
+            "name": "referenceCitation",
             "titles": "Reference",
             "datatype": "string"
           }
@@ -37,6 +38,7 @@
       "dcterms:bibliographicCitation": "Adhurya, Sagar; Lee, Da-Yeong; Park, Young-Seuk (2024). KF-metaweb: A trophic metaweb of freshwater ecosystems of South Korea (Version 1.0) [Dataset]. Dryad. https://doi.org/10.5061/dryad.cz8w9gjbc",
       "url": "xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Metaweb",
       "headerRowCount": 1,
+      "delimiter": "\t",
       "null": [
         "NULL",
         ""
@@ -86,6 +88,7 @@
       "dcterms:bibliographicCitation": "Adhurya, Sagar; Lee, Da-Yeong; Park, Young-Seuk (2024). KF-metaweb: A trophic metaweb of freshwater ecosystems of South Korea (Version 1.0) [Dataset]. Dryad. https://doi.org/10.5061/dryad.cz8w9gjbc",
       "url": "xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Node%20Taxonomy",
       "headerRowCount": 1,
+      "delimiter": "\t",
       "null": [
         "NULL",
         ""
