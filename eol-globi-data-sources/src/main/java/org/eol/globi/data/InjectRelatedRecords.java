@@ -19,6 +19,7 @@ public class InjectRelatedRecords implements InteractionListener {
     private final InteractionListener listener;
     private final ImportLogger logger;
     private final Dataset dataset;
+    private final Map<String, String> injectionMap;
 
     public InjectRelatedRecords(InteractionListener listener,
                                 Dataset dataset,
@@ -26,6 +27,13 @@ public class InjectRelatedRecords implements InteractionListener {
                                 ImportLogger logger) {
         this.listener = listener;
         this.indexedDependencies = indexedDependencies;
+        Set<String> a = indexedDependencies.keySet();
+        Stream<Pair<String, String>> expandedKeys = Stream.concat(Stream.concat(indexedDependencies.keySet().stream().map(n -> Pair.of(n, n)),
+                a.stream().map(name -> Pair.of(name, prefixWithSource(name)))),
+                a.stream().map(name -> Pair.of(name, prefixWithTarget(name))));
+
+        this.injectionMap = expandedKeys.collect(Collectors.toMap(Pair::getValue, Pair::getKey));
+
         this.logger = logger;
         this.dataset = dataset;
     }
@@ -34,12 +42,6 @@ public class InjectRelatedRecords implements InteractionListener {
     public void on(Map<String, String> interaction) throws StudyImporterException {
         Map<String, String> handledInteraction = interaction;
         if (indexedDependencies != null && indexedDependencies.size() > 0) {
-            Set<String> a = indexedDependencies.keySet();
-            Stream<Pair<String, String>> expandedKeys = Stream.concat(Stream.concat(indexedDependencies.keySet().stream().map(n -> Pair.of(n, n)),
-                    a.stream().map(name -> Pair.of(name, prefixWithSource(name)))),
-                    a.stream().map(name -> Pair.of(name, prefixWithTarget(name))));
-
-            Map<String, String> injectionMap = expandedKeys.collect(Collectors.toMap(Pair::getValue, Pair::getKey));
 
 
             Collection<String> propertiesToInjected
