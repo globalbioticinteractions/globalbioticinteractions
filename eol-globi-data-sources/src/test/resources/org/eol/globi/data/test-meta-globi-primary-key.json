@@ -39,6 +39,8 @@
       "url": "xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Metaweb",
       "headerRowCount": 1,
       "delimiter": "\t",
+      "interactionTypeName": "eats",
+      "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002470",
       "null": [
         "NULL",
         ""
@@ -123,6 +125,11 @@
           {
             "name": "taxonPhylumName",
             "titles": "Phylum",
+            "datatype": "string"
+          },
+          {
+            "name": "taxonKingdomName",
+            "titles": "Kingdom",
             "datatype": "string"
           },
           {

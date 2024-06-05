@@ -77,9 +77,55 @@ public class DatasetImporterForMetaTableTest {
         assertThat(columnNames.get(2).getSeparator(), is(","));
 
         columnNames = DatasetImporterForMetaTable.columnNamesForMetaTable(tables.get(2));
-        assertThat(columnNames.size(), is(7));
+        assertThat(columnNames.size(), is(8));
         assertThat(columnNames.get(0).getKeyReference(), is("taxonId"));
         assertThat(columnNames.get(0).getKeyType(), is("primary"));
+    }
+
+    @Test
+    public void importRecordsWithPrimaryAndForeignKeys() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                Map<URI, String> resourceMap = new HashMap<URI, String>() {{
+                    put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Reference"), "test-meta-globi-primary-key-reference.tsv");
+                    put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Metaweb"), "test-meta-globi-primary-key-metaweb.tsv");
+                    put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Node%20Taxonomy"), "test-meta-globi-primary-key-taxonomy.tsv");
+                }};
+
+                String testResource = resourceMap.get(resourceName);
+                InputStream resourceAsStream = DatasetImporterForMetaTableTest.this.getClass().getResourceAsStream(testResource);
+                assertNotNull("failed to find test resource [" + testResource + "]", resourceAsStream);
+                return resourceAsStream;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.importStudy();
+
+        assertThat(links.size(), is(39));
+
+        Map<String, String> first = links.get(10);
+
+        assertThat(first.get("sourceTaxonId"), is("Abbottina"));
+        assertThat(first.get("sourceTaxonFamilyName"), is("Cyprinidae"));
+        assertThat(first.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(first.get("interactionTypeName"), is("eats"));
+        assertThat(first.get("targetTaxonId"), is("Aethaloptera"));
+        assertThat(first.get("targetTaxonFamilyName"), is("Hydropsychidae"));
+        assertThat(first.get("referenceId"), is("R332"));
+        assertThat(first.get("referenceCitation"), is("Son, Y.-M. (2000) Population ecology of Abbottina springeri (Cyprinidae) in the Musimchon stream, Korea. Korean Journal of Ichthyology, 12, 186–191."));
+
+
     }
 
     @Test
@@ -93,7 +139,6 @@ public class DatasetImporterForMetaTableTest {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 Map<URI, String> resourceMap = new HashMap<URI, String>() {{
-
                     put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Reference"), "test-meta-globi-primary-key-reference.tsv");
                     put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Metaweb"), "test-meta-globi-primary-key-metaweb.tsv");
                     put(URI.create("xlsx:https://datadryad.org/stash/downloads/file_stream/3078242!/Node%20Taxonomy"), "test-meta-globi-primary-key-taxonomy.tsv");

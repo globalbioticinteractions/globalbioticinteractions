@@ -15,6 +15,7 @@ import org.eol.globi.util.ExternalIdUtil;
 import org.eol.globi.util.InteractTypeMapper;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetProxy;
+import org.globalbioticinteractions.util.MapDBUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,6 +26,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
@@ -63,8 +65,9 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         try {
             Map<String, Map<String, Map<String, String>>> indexedDependencies = indexDependencies(this.dataset, getLogger());
 
-            for (JsonNode tableConfig : collectTables(dataset)) {
-                Dataset datasetProxy = new DatasetProxy(dataset);
+            List<JsonNode> tableList = collectTables(this.dataset);
+            for (JsonNode tableConfig : tableList) {
+                Dataset datasetProxy = new DatasetProxy(this.dataset);
                 datasetProxy.setConfig(tableConfig);
 
                 InteractionListener interactionListener = getInteractionListener();
@@ -90,6 +93,50 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger) throws StudyImporterException, IOException {
         Map<String, JsonNode> primaryKeyTables = new HashMap<>();
         Map<JsonNode, List<String>> primaryKeyDependencies = new HashMap<>();
+
+        gatherDepedencies(dataset, primaryKeyTables, primaryKeyDependencies);
+
+        Map<String, Map<String, Map<String, String>>> indexedTables
+                = indexDependencies(dataset, logger, primaryKeyTables, primaryKeyDependencies);
+
+        return Collections.unmodifiableMap(indexedTables);
+    }
+
+    private static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies) throws StudyImporterException, IOException {
+        Map<String, Map<String, Map<String, String>>> indexedTables
+                = primaryKeyDependencies.size() == 0
+                ? Collections.emptyMap()
+                : MapDBUtil.createBigMap();
+
+        for (Map.Entry<JsonNode, List<String>> jsonNode : primaryKeyDependencies.entrySet()) {
+            List<String> primaryKeys = jsonNode.getValue();
+            for (String primaryKey : primaryKeys) {
+                JsonNode associatedPrimaryKeyTable = primaryKeyTables.get(primaryKey);
+                if (associatedPrimaryKeyTable == null) {
+                    throw new StudyImporterException("failed to resolve table with primary key [" + primaryKey + "]");
+                }
+
+                if (!indexedTables.containsKey(primaryKey)) {
+                    Map<String, Map<String, String>> cachedTable = new TreeMap<>();
+                    DatasetProxy datasetDependency = new DatasetProxy(dataset);
+                    datasetDependency.setConfig(associatedPrimaryKeyTable);
+                    importTable(new InteractionListener() {
+                        @Override
+                        public void on(Map<String, String> interaction) throws StudyImporterException {
+                            String keyValue = interaction.get(primaryKey);
+                            if (StringUtils.isNotBlank(keyValue)) {
+                                cachedTable.putIfAbsent(keyValue, interaction);
+                            }
+                        }
+                    }, new TableParserFactoryImpl(), datasetDependency, logger);
+                    indexedTables.put(primaryKey, cachedTable);
+                }
+            }
+        }
+        return indexedTables;
+    }
+
+    private static void gatherDepedencies(Dataset dataset, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies) throws StudyImporterException, IOException {
         for (JsonNode tableConfig : collectTables(dataset)) {
             Dataset datasetProxy = new DatasetProxy(dataset);
             datasetProxy.setConfig(tableConfig);
@@ -106,35 +153,6 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 }
             }
         }
-
-        Map<String, Map<String, Map<String, String>>> indexedTables = new HashMap<>();
-
-        for (Map.Entry<JsonNode, List<String>> jsonNode : primaryKeyDependencies.entrySet()) {
-            List<String> primaryKeys = jsonNode.getValue();
-            for (String primaryKey : primaryKeys) {
-                JsonNode associatedPrimaryKeyTable = primaryKeyTables.get(primaryKey);
-                if (associatedPrimaryKeyTable == null) {
-                    throw new StudyImporterException("failed to resolve table with primary key [" + primaryKey + "]");
-                }
-
-                if (!indexedTables.containsKey(primaryKey)) {
-                    Map<String, Map<String, String>> cachedTable = new TreeMap<>();
-                    DatasetProxy datasetDependency = new DatasetProxy(dataset);
-                    dataset.setConfig(associatedPrimaryKeyTable);
-                    importTable(new InteractionListener() {
-                        @Override
-                        public void on(Map<String, String> interaction) throws StudyImporterException {
-                            String keyValue = interaction.get(primaryKey);
-                            if (StringUtils.isNotBlank(keyValue)) {
-                                cachedTable.putIfAbsent(keyValue, interaction);
-                            }
-                        }
-                    }, new TableParserFactoryImpl(), datasetDependency, logger);
-                    indexedTables.put(primaryKey, cachedTable);
-                }
-            }
-        }
-        return indexedTables;
     }
 
 
