@@ -173,7 +173,9 @@ public class DatasetImporterForMetaTableIT {
         final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);
         for (JsonNode table : DatasetImporterForMetaTable.collectTables(dataset)) {
-            DatasetImporterForMetaTable.importTable(interactionListener, tableFactory, new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(inStream -> inStream)), null);
+            DatasetWithResourceMapping dataset1 = new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(inStream -> inStream));
+            dataset1.setConfig(table);
+            DatasetImporterForMetaTable.importTable(interactionListener, tableFactory, dataset1, null);
         }
 
     }
