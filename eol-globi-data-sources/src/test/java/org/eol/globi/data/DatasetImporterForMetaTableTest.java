@@ -160,10 +160,10 @@ public class DatasetImporterForMetaTableTest {
         assertThat(indexedDependencies.size(), is(2));
 
         Map<String, Map<String, String>> taxonomy = indexedDependencies.get("taxonId");
-        assertThat(taxonomy.size(), is(9));
+        assertThat(taxonomy.size(), is(19));
         assertThat(taxonomy.get("Detritus").get("taxonId"), is("Detritus"));
         Map<String, Map<String, String>> references = indexedDependencies.get("referenceId");
-        assertThat(references.size(), is(9));
+        assertThat(references.size(), is(10));
         assertThat(references.get("R001").get("referenceId"), is("R001"));
         assertThat(references.get("R001").get("referenceCitation"), is("Elliott, J.M. (1973) The diel activity pattern, drifting and food of the leech Erpobdella octoculata (L.) (Hirudinea: Erpobdellidae) in a Lake District stream. The Journal of Animal Ecology, 42, 449"));
     }
