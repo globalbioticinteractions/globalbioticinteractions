@@ -1,0 +1,81 @@
+{
+  "@context": [
+    "http://www.w3.org/ns/csvw",
+    {
+      "@language": "en"
+    }
+  ],
+  "rdfs:comment": [
+    "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"
+  ],
+  "tables": [
+    {
+      "@context": [
+        "http://www.w3.org/ns/csvw",
+        {
+          "@language": "en"
+        }
+      ],
+      "rdfs:comment": [
+        "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"
+      ],
+      "url": "https://figshare.com/ndownloader/files/2196534",
+      "dcterms:bibliographicCitation": "Wardeh, M., Risley, C., McIntyre, M. et al. Database of host-pathogen and related species interactions, and their global distribution. Sci Data 2, 150049 (2015). https://doi.org/10.1038/sdata.2015.49",
+      "delimiter": ",",
+      "headerRowCount": 1,
+      "interactionTypeName": "hasHost",
+      "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002454",
+      "null": [
+        ""
+      ],
+      "tableSchema": {
+        "columns": [
+          {
+            "name": "sourceTaxonName",
+            "titles": "Cargo",
+            "datatype": "string"
+          },
+          {
+            "name": "Cargo classification",
+            "titles": "Cargo classification",
+            "datatype": "string"
+          },
+          {
+            "name": "targetTaxonName",
+            "titles": "Carrier",
+            "datatype": "string"
+          },
+          {
+            "name": "Carrier classification",
+            "titles": "Carrier classification",
+            "datatype": "string"
+          },
+          {
+            "name": "Sequences count",
+            "titles": "Sequences count",
+            "datatype": "string"
+          },
+          {
+            "name": "Publications count",
+            "titles": "Publications count",
+            "datatype": "string"
+          },
+          {
+            "name": "sourceOccurrenceId",
+            "titles": "Sequences",
+            "separator": ";",
+            "datatype": {
+              "base": "string",
+              "valueUrl": "https://www.ncbi.nlm.nih.gov/nuccore/{sourceOccurrenceId}"
+            }
+          },
+          {
+            "name": "Publications",
+            "titles": "Publications",
+            "datatype": "string"
+          }
+        ]
+      }
+    }
+  ]
+}

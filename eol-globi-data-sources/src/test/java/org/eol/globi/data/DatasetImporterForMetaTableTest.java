@@ -168,6 +168,54 @@ public class DatasetImporterForMetaTableTest {
         assertThat(references.get("R001").get("referenceCitation"), is("Elliott, J.M. (1973) The diel activity pattern, drifting and food of the leech Erpobdella octoculata (L.) (Hirudinea: Erpobdellidae) in a Lake District stream. The Journal of Animal Ecology, 42, 449"));
     }
 
+    @Test
+    public void importRecordsWithListValues() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-separator.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                Map<URI, String> resourceMap = new HashMap<URI, String>() {{
+                    put(URI.create("https://figshare.com/ndownloader/files/2196534"), "test-meta-globi-separator.csv");
+                }};
+
+                String testResource = resourceMap.get(resourceName);
+                InputStream resourceAsStream = DatasetImporterForMetaTableTest.this.getClass().getResourceAsStream(testResource);
+                assertNotNull("failed to find test resource [" + testResource + "]", resourceAsStream);
+                return resourceAsStream;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.importStudy();
+
+        assertThat(links.size(), is(142));
+
+        Map<String, String> sample1 = links.get(5);
+
+        assertThat(sample1.get("sourceTaxonName"), is("abaca bunchy top virus"));
+        assertThat(sample1.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(sample1.get("interactionTypeName"), is("hasHost"));
+        assertThat(sample1.get("targetTaxonName"), is("musa textilis"));
+        assertThat(sample1.get("sourceOccurrenceId"), is("https://www.ncbi.nlm.nih.gov/nuccore/145845923"));
+
+        Map<String, String> sample2 = links.get(141);
+
+        assertThat(sample2.get("sourceTaxonName"), is("abothrium gadi"));
+        assertThat(sample2.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(sample2.get("interactionTypeName"), is("hasHost"));
+        assertThat(sample2.get("targetTaxonName"), is("gadus morhua"));
+        assertThat(sample2.get("sourceOccurrenceId"), is("https://www.ncbi.nlm.nih.gov/nuccore/14388868"));
+    }
+
+
 
     @Test
     public void parseColumnValues() {

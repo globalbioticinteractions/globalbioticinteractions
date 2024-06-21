@@ -328,19 +328,44 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                     }
                 };
 
+                //columnNames.stream().filter(col -> StringUtils.isNotBlank(col.getSeparator()));
+
                 for (int i = 0; i < columnNames.size() && i < line.length; i++) {
                     final String value = nullValueArray.contains(line[i]) ? null : line[i];
                     final Column column = columnNames.get(i);
-                    parseColumnValue(importLogProxy, mappedLine, value, column);
+                    if (StringUtils.isBlank(column.getSeparator())) {
+                        parseColumnValue(importLogProxy, mappedLine, value, column);
+                    }
                 }
 
                 if (importLogger != null) {
                     msgs.forEach(x -> importLogger.warn(LogUtil.contextFor(mappedLine), x));
                 }
 
-                List<Map<String, String>> links = AssociatedTaxaUtil.expandIfNeeded(mappedLine);
-                for (Map<String, String> link : links) {
-                    interactionListener.on(link);
+                List<Map<String, String>> lineWithListExpansion = new ArrayList<>();
+                for (int i = 0; i < columnNames.size() && i < line.length; i++) {
+                    final String value = nullValueArray.contains(line[i]) ? null : line[i];
+                    final Column column = columnNames.get(i);
+                    if (StringUtils.isNotBlank(column.getSeparator())) {
+                        String[] values = StringUtils.splitByWholeSeparator(value, column.getSeparator());
+                        for (String listItemValue : values) {
+                            HashMap<String, String> lineCopy = new HashMap<>(mappedLine);
+                            parseColumnValue(importLogProxy, lineCopy, listItemValue, column);
+                            lineWithListExpansion.add(lineCopy);
+                        }
+                    }
+                }
+
+                if (lineWithListExpansion.size() == 0) {
+                    lineWithListExpansion.add(mappedLine);
+                }
+                for (Map<String, String> lineExpanded : lineWithListExpansion) {
+                    List<Map<String, String>> links = AssociatedTaxaUtil.expandIfNeeded(lineExpanded);
+
+                    for (Map<String, String> link : links) {
+                        interactionListener.on(link);
+                    }
+
                 }
             }
         } catch (IOException e) {
