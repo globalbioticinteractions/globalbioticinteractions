@@ -61,18 +61,22 @@
             "datatype": "string"
           },
           {
-            "name": "sourceOccurrenceId",
+            "name": "referenceUrl",
             "titles": "Sequences",
             "separator": ";",
             "datatype": {
               "base": "string",
-              "valueUrl": "https://www.ncbi.nlm.nih.gov/nuccore/{sourceOccurrenceId}"
+              "valueUrl": "https://www.ncbi.nlm.nih.gov/nuccore/{referenceUrl}"
             }
           },
           {
-            "name": "Publications",
+            "name": "referenceUrl",
             "titles": "Publications",
-            "datatype": "string"
+            "separator": ";",
+            "datatype": {
+              "base": "string",
+              "valueUrl": "https://pubmed.ncbi.nlm.nih.gov/{referenceUrl}"
+            }
           }
         ]
       }

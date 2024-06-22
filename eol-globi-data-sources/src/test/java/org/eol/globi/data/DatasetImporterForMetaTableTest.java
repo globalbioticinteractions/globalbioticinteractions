@@ -196,7 +196,7 @@ public class DatasetImporterForMetaTableTest {
         importer.setInteractionListener(links::add);
         importer.importStudy();
 
-        assertThat(links.size(), is(142));
+        assertThat(links.size(), is(152));
 
         Map<String, String> sample1 = links.get(5);
 
@@ -204,15 +204,23 @@ public class DatasetImporterForMetaTableTest {
         assertThat(sample1.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002454"));
         assertThat(sample1.get("interactionTypeName"), is("hasHost"));
         assertThat(sample1.get("targetTaxonName"), is("musa textilis"));
-        assertThat(sample1.get("sourceOccurrenceId"), is("https://www.ncbi.nlm.nih.gov/nuccore/145845923"));
+        assertThat(sample1.get("referenceUrl"), is("https://www.ncbi.nlm.nih.gov/nuccore/145845923"));
 
         Map<String, String> sample2 = links.get(141);
 
-        assertThat(sample2.get("sourceTaxonName"), is("abothrium gadi"));
+        assertThat(sample2.get("sourceTaxonName"), is("abiotrophia defectiva"));
         assertThat(sample2.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002454"));
         assertThat(sample2.get("interactionTypeName"), is("hasHost"));
-        assertThat(sample2.get("targetTaxonName"), is("gadus morhua"));
-        assertThat(sample2.get("sourceOccurrenceId"), is("https://www.ncbi.nlm.nih.gov/nuccore/14388868"));
+        assertThat(sample2.get("targetTaxonName"), is("homo sapiens"));
+        assertThat(sample2.get("referenceUrl"), is("https://pubmed.ncbi.nlm.nih.gov/11095068"));
+
+        Map<String, String> sample3 = links.get(151);
+
+        assertThat(sample3.get("sourceTaxonName"), is("acanthamoeba astronyxis"));
+        assertThat(sample3.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(sample3.get("interactionTypeName"), is("hasHost"));
+        assertThat(sample3.get("targetTaxonName"), is("homo sapiens"));
+        assertThat(sample3.get("referenceUrl"), is("https://pubmed.ncbi.nlm.nih.gov/507100"));
     }
 
 

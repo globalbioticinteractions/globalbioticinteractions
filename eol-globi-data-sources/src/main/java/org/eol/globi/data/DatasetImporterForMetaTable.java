@@ -348,10 +348,12 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                     final Column column = columnNames.get(i);
                     if (StringUtils.isNotBlank(column.getSeparator())) {
                         String[] values = StringUtils.splitByWholeSeparator(value, column.getSeparator());
-                        for (String listItemValue : values) {
-                            HashMap<String, String> lineCopy = new HashMap<>(mappedLine);
-                            parseColumnValue(importLogProxy, lineCopy, listItemValue, column);
-                            lineWithListExpansion.add(lineCopy);
+                        if (values != null) {
+                            for (String listItemValue : values) {
+                                HashMap<String, String> lineCopy = new HashMap<>(mappedLine);
+                                parseColumnValue(importLogProxy, lineCopy, listItemValue, column);
+                                lineWithListExpansion.add(lineCopy);
+                            }
                         }
                     }
                 }
