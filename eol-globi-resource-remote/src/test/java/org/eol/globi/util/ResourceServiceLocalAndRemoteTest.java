@@ -19,14 +19,14 @@ public class ResourceServiceLocalAndRemoteTest {
     @Test
     public void remoteFTPResource() throws IOException {
         URI uri = URI.create("ftp://ftp.genome.jp/pub/db/virushostdb/README");
-        InputStream inputStream = new ResourceServiceLocalAndRemote(is -> is).retrieve(uri);
+        InputStream inputStream = new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()).retrieve(uri);
         assertTrue(StringUtils.isNotBlank(IOUtils.toString(inputStream, StandardCharsets.UTF_8)));
     }
 
     @Test
     public void localFileResource() throws IOException, URISyntaxException {
         URI uri = getClass().getResource("foo.txt").toURI();
-        InputStream inputStream = new ResourceServiceLocalAndRemote(is -> is).retrieve(uri);
+        InputStream inputStream = new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()).retrieve(uri);
         assertThat(IOUtils.toString(inputStream, StandardCharsets.UTF_8), Is.is("bar"));
     }
 

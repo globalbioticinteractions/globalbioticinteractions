@@ -17,25 +17,25 @@ public class ResourceServiceLocalTest {
     public void accessExistingAbsoluteURI() throws IOException, URISyntaxException {
         URL resource = getClass().getResource("some.resource");
         assertNotNull(resource);
-        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(is -> is);
+        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(new InputStreamFactoryNoop());
         assertNotNull(resourceServiceLocal.retrieve(resource.toURI()));
     }
 
     @Test
     public void accessClasspathResource() throws IOException {
-        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(is -> is);
+        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(new InputStreamFactoryNoop());
         assertNotNull(resourceServiceLocal.retrieve(URI.create("classpath:some.resource")));
     }
 
     @Test(expected = IOException.class)
     public void accessNonExistingClasspathResource() throws IOException {
-        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(is -> is);
+        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(new InputStreamFactoryNoop());
         assertNotNull(resourceServiceLocal.retrieve(URI.create("classpath:/some.resource")));
     }
 
     @Test(expected = IOException.class)
     public void accessNonExistingClasspathResourceMisalignedClassContext() throws IOException {
-        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(is -> is, CharsetConstant.class);
+        ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(new InputStreamFactoryNoop(), CharsetConstant.class);
         assertNotNull(resourceServiceLocal.retrieve(URI.create("classpath:some.resource")));
     }
 
@@ -46,7 +46,7 @@ public class ResourceServiceLocalTest {
         assertNotNull(resource);
 
         ResourceServiceLocal resourceServiceLocal = new ResourceServiceLocal(
-                is -> is,
+                new InputStreamFactoryNoop(),
                 CharsetConstant.class,
                 new File(resource.toURI()).getParent());
 

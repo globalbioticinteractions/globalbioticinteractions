@@ -1,6 +1,7 @@
 package org.eol.globi.service;
 
 import org.eol.globi.domain.Term;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ public class EnvoLookupServiceTest {
 
     @Test
     public void lookupTerm() throws TermLookupServiceException {
-        TermLookupService service = new EnvoLookupService(new ResourceServiceHTTP(is -> is));
+        TermLookupService service = new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
         List<Term> terms = service.lookupTermByName("Dung");
         assertThat(terms.size(), is(1));
         Term term = terms.get(0);
@@ -41,7 +42,7 @@ public class EnvoLookupServiceTest {
 
     @Test
     public void CMECShabitats() throws TermLookupServiceException {
-        TermLookupService service = new EnvoLookupService(new ResourceServiceHTTP(is -> is));
+        TermLookupService service = new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
         List<Term> terms = service.lookupTermByName("Marine Nearshore Subtidal");
         assertThat(terms.size(), is(1));
 

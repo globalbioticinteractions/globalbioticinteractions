@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
 import org.eol.globi.util.InputStreamFactory;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class DatasetRegistryProxyIT {
 
     @Test
     public void zenodoGitHubTest() throws DatasetRegistryException {
-        ResourceServiceHTTP resourceService = new ResourceServiceHTTP(is -> is);
+        ResourceServiceHTTP resourceService = new ResourceServiceHTTP(new InputStreamFactoryNoop());
         DatasetRegistryProxy proxy = new DatasetRegistryProxy(Arrays.asList(
                 new DatasetRegistryZenodo(resourceService),
                 new DatasetRegistryGitHubArchive(resourceService))

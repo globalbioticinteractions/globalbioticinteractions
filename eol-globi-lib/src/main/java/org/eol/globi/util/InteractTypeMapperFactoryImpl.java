@@ -29,7 +29,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     private final ResourceService resourceService;
 
     public InteractTypeMapperFactoryImpl() {
-        this(getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(is -> is)));
+        this(getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop())));
     }
 
     public InteractTypeMapperFactoryImpl(ResourceService resourceService) {
@@ -72,7 +72,7 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     @Override
     public InteractTypeMapper create() throws TermLookupServiceException {
         final InteractTypeMapper mapperCustom = mapperForResourceService(resourceService);
-        final InteractTypeMapper mapperDefault = mapperForResourceService(getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(is -> is)));
+        final InteractTypeMapper mapperDefault = mapperForResourceService(getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop())));
         final InteractTypeMapper mapperRO = new InteractTypeMapperFactoryForRO().create();
         return new InteractTypeMapperWithFallbackImpl(
                 mapperCustom,

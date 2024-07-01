@@ -5,6 +5,7 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j2;
 import org.eol.globi.taxon.ResolvingTaxonIndexNoTxNeo4j3;
 import org.eol.globi.taxon.TaxonCacheService;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.eol.globi.util.NodeIdCollectorNeo4j3;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -23,7 +24,7 @@ public class CmdInterpretTaxa extends CmdNeo4J {
     @Override
     public void run() {
         ResourceService resourceService = new ResourceServiceLocal(
-                is -> is,
+                new InputStreamFactoryNoop(),
                 CmdInterpretTaxa.class,
                 System.getProperty("user.dir")
         );

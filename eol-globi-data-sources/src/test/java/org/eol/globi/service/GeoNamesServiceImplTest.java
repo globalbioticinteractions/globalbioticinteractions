@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.eol.globi.domain.TaxonomyProvider;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.junit.Test;
 import org.eol.globi.geo.LatLng;
@@ -20,7 +21,7 @@ public class GeoNamesServiceImplTest {
     @Test
     public void retrievePointForSpireLocalityAndCache() throws IOException {
         GeoNamesService geoNamesServiceImpl = new GeoNamesServiceImpl(
-                new ResourceServiceHTTP(is -> is)
+                new ResourceServiceHTTP(new InputStreamFactoryNoop())
         );
         StopWatch watch = new StopWatch();
         watch.start();
@@ -40,7 +41,7 @@ public class GeoNamesServiceImplTest {
     @Test
     public void retrievePointForGEONAMEIdAndCache() throws IOException {
         GeoNamesService geoNamesServiceImpl = new GeoNamesServiceImpl(
-                new ResourceServiceHTTP(is -> is)
+                new ResourceServiceHTTP(new InputStreamFactoryNoop())
         );
         StopWatch watch = new StopWatch();
         watch.start();
@@ -69,14 +70,14 @@ public class GeoNamesServiceImplTest {
 
     @Test
     public void assertPacific() throws IOException {
-        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)).findLatLng("Country: Pacific");
+        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())).findLatLng("Country: Pacific");
         assertThat(point.getLat(), is(3.51342));
         assertThat(point.getLng(), is(-132.1875));
     }
 
     @Test
     public void assertTransPecos() throws IOException {
-        LatLng point = lookupByGeoNameTerm(new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)));
+        LatLng point = lookupByGeoNameTerm(new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())));
         assertThat(point, is(notNullValue()));
         assertThat(point.getLat(), is(30.70016));
         assertThat(point.getLng(), is(-103.40045));
@@ -84,40 +85,40 @@ public class GeoNamesServiceImplTest {
 
     @Test
     public void assertEarth() throws IOException {
-        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)).findLatLng("Country: General;   Locality: General");
+        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())).findLatLng("Country: General;   Locality: General");
         assertNull(point);
     }
 
     @Test
     public void retrievePointForNonExistingSpireLocality() throws IOException {
-        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)).findLatLng("Blabla: mickey mouse");
+        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())).findLatLng("Blabla: mickey mouse");
         assertThat(point, is(nullValue()));
     }
 
     @Test
     public void retrievePointForIgnoredLocality() throws IOException {
-        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)).findLatLng("Country: General;   Locality: General");
+        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())).findLatLng("Country: General;   Locality: General");
         assertThat(point, is(nullValue()));
     }
 
     @Test
     public void retrieveAnyGeoNamesId() throws IOException {
         // Half Moon Bay, http://www.geonames.org/2164089/half-moon-bay.html
-        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)).getCentroid(2164089L);
+        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())).getCentroid(2164089L);
         assertThat(point, is(notNullValue()));
     }
 
     @Test
     public void retrieveAnyGeoNamesIdYugoslavia() throws IOException {
         // http://www.geonames.org/7500737
-        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)).getCentroid(7500737L);
+        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())).getCentroid(7500737L);
         assertThat(point.getLat(), is(44.0d));
         assertThat(point.getLng(), is(19.75));
     }
 
     @Test
     public void findPointForLocalitys() throws IOException {
-        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)).findLatLng("Kerguelen Island");
+        LatLng point = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())).findLatLng("Kerguelen Island");
         assertThat(point, is(notNullValue()));
     }
 

@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.eol.globi.data.DatasetImporter;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.data.DatasetImporterForTSV;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
@@ -27,7 +28,7 @@ public class DatasetImporterFactoryImplTest {
     @Test
     public void createImporter() throws StudyImporterException {
         DatasetImporter someImporter = new StudyImporterFactoryImpl(null)
-                .createImporter(new DatasetWithResourceMapping("namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(is -> is)));
+                .createImporter(new DatasetWithResourceMapping("namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
 
         assertThat(someImporter, instanceOf(DatasetImporterForTSV.class));
     }

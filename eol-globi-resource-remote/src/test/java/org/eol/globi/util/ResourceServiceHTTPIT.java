@@ -10,7 +10,7 @@ public class ResourceServiceHTTPIT {
 
     @Test
     public void retrieve() throws IOException {
-        ResourceServiceHTTP service = new ResourceServiceHTTP(is -> is);
+        ResourceServiceHTTP service = new ResourceServiceHTTP(new InputStreamFactoryNoop());
         service.retrieve(URI.create("https://grlc.knowledgepixels.com/api-git/knowledgepixels/bdj-nanopub-api/get-taxontaxon-nanopubs.csv"));
     }
 

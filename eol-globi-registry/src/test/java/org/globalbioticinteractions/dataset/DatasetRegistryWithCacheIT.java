@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
@@ -31,7 +32,7 @@ public class DatasetRegistryWithCacheIT {
     @Test
     public void zenodoTest() throws DatasetRegistryException, IOException {
         assertTemplateDataset("zenodo.org",
-                new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is)),
+                new DatasetRegistryZenodo(new ResourceServiceHTTP(new InputStreamFactoryNoop())),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 

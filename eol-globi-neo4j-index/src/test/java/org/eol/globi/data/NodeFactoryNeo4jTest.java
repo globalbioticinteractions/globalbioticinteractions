@@ -28,6 +28,7 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.ExternalIdUtil;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -374,12 +375,12 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void createStudyWithDifferentExternalIdInSameNamespace() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         study1.setExternalId("foo:bar");
         StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
 
         StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
+        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         study2.setExternalId("foo:baz");
 
         StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
@@ -391,12 +392,12 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void createStudyWithSameExternalIdInDifferentNamespace() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         study1.setExternalId("foo:bar");
         StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
 
         StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/spacz", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
+        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/spacz", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         study2.setExternalId("foo:bar");
 
         StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);
@@ -410,12 +411,12 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void createStudyWithDifferentExternalIdInDifferentNamespace() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("name/space", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         study1.setExternalId("foo:bar");
         StudyNode study1Created = getNodeFactory().getOrCreateStudy(study1);
 
         StudyImpl study2 = new StudyImpl("myTitle", new DOI("myDoi", "123"), null);
-        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/spacz", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(is -> is)));
+        study2.setOriginatingDataset(new DatasetWithResourceMapping("name/spacz", URI.create("foo:bar"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         study2.setExternalId("foo:baz");
 
         StudyNode study2Created = getNodeFactory().getOrCreateStudy(study2);

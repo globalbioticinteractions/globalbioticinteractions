@@ -17,6 +17,7 @@ import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.EnvoLookupService;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.TermLookupService;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -42,7 +43,7 @@ public class ExporterRDFTest extends GraphDBNeo4jTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
-        return new EnvoLookupService(new ResourceServiceHTTP(is -> is));
+        return new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
     }
 
     @Test

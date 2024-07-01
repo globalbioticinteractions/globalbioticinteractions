@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
 import org.eol.globi.tool.NullImportLogger;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -19,7 +20,7 @@ public abstract class BaseDatasetImporter implements DatasetImporter {
 
     private Dataset dataset;
 
-    private GeoNamesService geoNamesService = new GeoNamesServiceImpl(new ResourceServiceLocal(is -> is));
+    private GeoNamesService geoNamesService = new GeoNamesServiceImpl(new ResourceServiceLocal(new InputStreamFactoryNoop()));
 
     private ImportLogger importLogger = new NullImportLogger();
     private String sourceCitationLastAccessed;

@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
@@ -168,7 +169,7 @@ public class DatasetImporterForMetaTableIT {
 
     static public void importAll(InteractionListener interactionListener, DatasetImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
         final InputStream inputStream
-                = new ResourceServiceHTTP(is -> is).retrieve(URI.create(resource));
+                = new ResourceServiceHTTP(new InputStreamFactoryNoop()).retrieve(URI.create(resource));
         final JsonNode config = new ObjectMapper().readTree(inputStream);
         final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
         dataset.setConfig(config);

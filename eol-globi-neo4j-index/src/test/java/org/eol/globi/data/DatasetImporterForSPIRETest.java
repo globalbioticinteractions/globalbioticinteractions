@@ -14,6 +14,7 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -170,7 +171,7 @@ public class DatasetImporterForSPIRETest extends GraphDBNeo4jTestCase {
 
         assertGAZMapping(listener);
 
-        GeoNamesServiceImpl geoNamesServiceImpl = new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is));
+        GeoNamesServiceImpl geoNamesServiceImpl = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
         for (String locality : listener.localities) {
             assertThat(geoNamesServiceImpl.hasTermForLocale(locality), is(true));
         }

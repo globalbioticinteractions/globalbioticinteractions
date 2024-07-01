@@ -11,7 +11,7 @@ public class ResourceServiceLocal implements ResourceService {
     private ResourceServiceFactoryLocal resourceServiceFactoryLocal;
 
     public ResourceServiceLocal() {
-        this(is -> is);
+        this(new InputStreamFactoryNoop());
     }
 
     public ResourceServiceLocal(InputStreamFactory factory) {

@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class DatasetRegistryZenodoIT {
         String metadataPrefix = "oai_datacite3";
         String feed = DatasetRegistryZenodo.getNextPage(
                 null,
-                new ResourceServiceHTTP(is -> is),
+                new ResourceServiceHTTP(new InputStreamFactoryNoop()),
                 metadataPrefix);
         assertThat(feed, containsString("<?xml version"));
         assertThat(feed, containsString("metadataPrefix=\"" + metadataPrefix + "\""));
@@ -32,7 +33,7 @@ public class DatasetRegistryZenodoIT {
         String metadataPrefix = "oai_datacite";
         String feed = DatasetRegistryZenodo.getNextPage(
                 null,
-                new ResourceServiceHTTP(is -> is),
+                new ResourceServiceHTTP(new InputStreamFactoryNoop()),
                 metadataPrefix);
         assertThat(feed, containsString("<?xml version"));
         assertThat(feed, containsString("metadataPrefix=\"" + metadataPrefix + "\""));
@@ -40,14 +41,14 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void unlikelyMatch() throws DatasetRegistryException {
-        DatasetRegistryZenodo datasetRegistryZenodo = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is));
+        DatasetRegistryZenodo datasetRegistryZenodo = new DatasetRegistryZenodo(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
         Dataset thisshouldnotexist = datasetRegistryZenodo.datasetFor("thisshouldnotexist");
         assertNull(thisshouldnotexist);
     }
 
     @Test
     public void extractGitHubReposArchives() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is))
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(new InputStreamFactoryNoop()))
                 .datasetFor("globalbioticinteractions/template-dataset");
 
         assertNotNull(dataset);
@@ -60,7 +61,7 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void extractGitHubReposArchives2() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is))
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(new InputStreamFactoryNoop()))
                 .datasetFor("millerse/Lara-C.-2006");
 
         assertThat(dataset, is(notNullValue()));
@@ -72,7 +73,7 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void extractGitHubReposArchives3() throws DatasetRegistryException {
-        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(is -> is))
+        Dataset dataset = new DatasetRegistryZenodo(new ResourceServiceHTTP(new InputStreamFactoryNoop()))
                 .datasetFor("millerse/Lichenous");
 
         assertThat(dataset, is(notNullValue()));

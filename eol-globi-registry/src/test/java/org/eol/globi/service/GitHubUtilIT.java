@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceUtil;
 import org.hamcrest.CoreMatchers;
@@ -23,14 +24,14 @@ public class GitHubUtilIT {
 
     @Test
     public void discoverRepos() throws IOException, URISyntaxException {
-        List<String> reposWithData = GitHubUtil.find(new ResourceServiceHTTP(is -> is));
+        List<String> reposWithData = GitHubUtil.find(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
         assertThat(reposWithData, CoreMatchers.hasItem(TEMPLATE_DATA_REPOSITORY_TSV));
         assertThat(reposWithData, CoreMatchers.hasItem(TEMPLATE_DATA_REPOSITORY_JSONLD));
     }
 
    @Test
     public void isGloBIRepo() throws IOException {
-       ResourceServiceHTTP resourceService = new ResourceServiceHTTP(is -> is);
+       ResourceServiceHTTP resourceService = new ResourceServiceHTTP(new InputStreamFactoryNoop());
 
        String repoName = "globalbioticinteractions/carvalheiro2023";
        String sha = GitHubUtil.lastCommitSHA(
@@ -44,7 +45,7 @@ public class GitHubUtilIT {
     public void findMostRecentCommit() throws IOException {
         String sha = GitHubUtil.lastCommitSHA(
                 GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV,
-                new ResourceServiceHTTP(is -> is)
+                new ResourceServiceHTTP(new InputStreamFactoryNoop())
         );
         assertThat(sha, is(notNullValue()));
     }

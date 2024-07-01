@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.GeoNamesServiceImpl;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class DatasetImporterForRaymondIT extends GraphDBNeo4jTestCase {
         importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
         importStudy(importer);
 
-        importer.setGeoNamesService(new GeoNamesServiceImpl(new ResourceServiceHTTP(is -> is)));
+        importer.setGeoNamesService(new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())));
 
         Collection<String> unmappedLocations = new HashSet<String>();
         for (String location : importer.getLocations()) {

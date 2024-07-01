@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceUtil;
@@ -20,7 +21,7 @@ public class GitHubUtilTest {
     @Test
     public void isGloBIRepo() throws IOException {
         String repo = GitHubUtilIT.TEMPLATE_DATA_REPOSITORY_TSV;
-        ResourceService resourceService = new ResourceServiceHTTP(is -> is);
+        ResourceService resourceService = new ResourceServiceHTTP(new InputStreamFactoryNoop());
         String lastCommitSHA = GitHubUtil.lastCommitSHA(
                 repo,
                 resourceService
@@ -35,7 +36,7 @@ public class GitHubUtilTest {
     @Test
     public void nonGloBIRepo() throws IOException {
         String repo = "ropensci/rgbif";
-        ResourceService resourceService = new ResourceServiceHTTP(is -> is);
+        ResourceService resourceService = new ResourceServiceHTTP(new InputStreamFactoryNoop());
 
         String lastCommitSHA = GitHubUtil.lastCommitSHA(
                 repo,

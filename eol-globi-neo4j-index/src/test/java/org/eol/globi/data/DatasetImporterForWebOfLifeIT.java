@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -44,7 +45,7 @@ public class DatasetImporterForWebOfLifeIT extends GraphDBNeo4jTestCase {
         String resource = DatasetImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All";
         final List<URI> networkNames =
                 DatasetImporterForWebOfLife
-                        .getNetworkNames(new ResourceServiceHTTP(is -> is)
+                        .getNetworkNames(new ResourceServiceHTTP(new InputStreamFactoryNoop())
                                 .retrieve(URI.create(resource))
                         );
 

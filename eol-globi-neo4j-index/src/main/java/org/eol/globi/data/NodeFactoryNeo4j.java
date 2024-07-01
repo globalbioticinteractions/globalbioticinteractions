@@ -31,6 +31,7 @@ import org.eol.globi.taxon.TermLookupServiceWithResource;
 import org.eol.globi.taxon.UberonLookupService;
 import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InputStreamFactory;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -69,7 +70,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
         this.graphDb = graphDb;
 
-        InputStreamFactory inputStreamFactory = is -> is;
+        InputStreamFactory inputStreamFactory = new InputStreamFactoryNoop();
         this.termLookupService = new UberonLookupService(
                 new ResourceServiceLocal(inputStreamFactory)
         );
