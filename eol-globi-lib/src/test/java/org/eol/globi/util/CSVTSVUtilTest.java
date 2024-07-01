@@ -47,6 +47,12 @@ public class CSVTSVUtilTest {
     }
 
     @Test
+    public void readWithBOM() throws IOException {
+        CSVParse csvParser = CSVTSVUtil.createExcelCSVParse(getClass().getResourceAsStream("dataWithBOM.csv"));
+        assertThat(csvParser.nextValue(), is("Prey Highest"));
+    }
+
+    @Test
     public void parseSomeMore() throws IOException {
         String csvString
                 = "\"Obs\",\"spcode\", \"sizecl\", \"cruise\", \"stcode\", \"numstom\", \"numfood\", \"pctfull\", \"predator famcode\", \"prey\", \"number\", \"season\", \"depth\", \"transect\", \"alphcode\", \"taxord\", \"station\", \"long\", \"lat\", \"time\", \"sizeclass\", \"predator\"\n";

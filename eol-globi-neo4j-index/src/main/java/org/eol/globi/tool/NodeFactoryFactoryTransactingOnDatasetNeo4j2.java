@@ -39,7 +39,7 @@ public class NodeFactoryFactoryTransactingOnDatasetNeo4j2 implements NodeFactory
                 @Override
                 public Dataset getOrCreateDataset(Dataset dataset) throws NodeFactoryException {
                     if (closing.get()) {
-                        throw new IllegalStateException("cannot create a dataset on closing node factory");
+                        throw new IllegalStateException("cannot create a dataset on closing node factorySkipBOM");
                     } else {
                         startBatchTransactionIfNeeded();
                     }

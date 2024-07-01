@@ -5,13 +5,14 @@ import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.CSVPrint;
 import com.Ostermiller.util.ExcelCSVPrinter;
 import com.Ostermiller.util.LabeledCSVParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,8 +29,10 @@ import java.util.zip.ZipInputStream;
 
 public class CSVTSVUtil {
 
+    private static InputStreamFactory factory = BOMUtil.factorySkipBOM;
+
     public static LabeledCSVParser createLabeledCSVParser(InputStream inputStream) throws IOException {
-        return new LabeledCSVParser(new AutoCloseCSVParser(inputStream));
+        return new LabeledCSVParser(new AutoCloseCSVParser(factory.create(inputStream)));
     }
 
     public static LabeledCSVParser createLabeledCSVParser(Reader reader) throws IOException {
@@ -37,7 +40,7 @@ public class CSVTSVUtil {
     }
 
     public static LabeledCSVParser createLabeledTSVParser(InputStream is) throws IOException {
-        return new LabeledCSVParser(new AutoCloseCSVParser(is, '\t'));
+        return new LabeledCSVParser(new AutoCloseCSVParser(factory.create(is), '\t'));
     }
 
     public static LabeledCSVParser createLabeledCSVParser(CSVParse parser) throws IOException {
@@ -46,7 +49,7 @@ public class CSVTSVUtil {
 
     public static LabeledCSVParser createParser(File tmpFile, ZipInputStream zis) throws IOException {
         streamToFile(tmpFile, zis);
-        Reader reader = FileUtils.getUncompressedBufferedReader(new FileInputStream(tmpFile), "UTF-8");
+        Reader reader = FileUtils.getUncompressedBufferedReader(factory.create(new FileInputStream(tmpFile)), "UTF-8");
         return createLabeledCSVParser(reader);
     }
 
@@ -99,16 +102,16 @@ public class CSVTSVUtil {
         return parser;
     }
 
-    public static CSVParse createCSVParser(InputStream inputStream) {
-        return new AutoCloseCSVParser(inputStream);
+    public static CSVParse createCSVParser(InputStream inputStream) throws IOException {
+        return new AutoCloseCSVParser(factory.create(inputStream));
     }
 
-    public static CSVParse createCSVParse(InputStream inputStream, char delimiter) {
-        return new AutoCloseCSVParser(inputStream, delimiter);
+    public static CSVParse createCSVParse(InputStream inputStream, char delimiter) throws IOException {
+        return new AutoCloseCSVParser(factory.create(inputStream), delimiter);
     }
 
-    public static CSVParse createExcelCSVParse(InputStream inputStream) {
-        return new AutoCloseCSVExcelParser(inputStream);
+    public static CSVParse createExcelCSVParse(InputStream inputStream) throws IOException {
+        return new AutoCloseCSVExcelParser(factory.create(inputStream));
     }
 
     public static CSVParse createExcelCSVParse(Reader reader) {
@@ -146,4 +149,8 @@ public class CSVTSVUtil {
         return StringUtils.splitByWholeSeparatorPreserveAllTokens(aline, CharsetConstant.SEPARATOR_CHAR);
     }
 
+    public static LabeledCSVParser getLabeledCSVParser(FileInputStream is) throws IOException {
+        BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8);
+        return createLabeledCSVParser(assocReader);
+    }
 }

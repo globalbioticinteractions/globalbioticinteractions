@@ -17,9 +17,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.util.CSVTSVUtil;
-import org.globalbioticinteractions.dataset.CitationUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -92,8 +90,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
             }
 
             try (FileInputStream is = new FileInputStream(referencesTempFile)) {
-                BufferedReader assocReader = FileUtils.getUncompressedBufferedReader(is, CharsetConstant.UTF8);
-                LabeledCSVParser parser = CSVTSVUtil.createLabeledCSVParser(assocReader);
+                LabeledCSVParser parser = CSVTSVUtil.getLabeledCSVParser(is);
                 while (parser.getLine() != null) {
                     final String citation = parser.getValueByLabel("Reference");
                     if (StringUtils.isBlank(citation)) {

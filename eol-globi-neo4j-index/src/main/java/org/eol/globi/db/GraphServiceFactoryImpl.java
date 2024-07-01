@@ -18,7 +18,7 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
 
     public GraphServiceFactoryImpl(File graphDbDir) {
         if (graphDb != null) {
-            throw new IllegalStateException("only one graph service factory allowed, but another is already instantiated");
+            throw new IllegalStateException("only one graph service factorySkipBOM allowed, but another is already instantiated");
         }
         this.graphDbDir = graphDbDir;
     }
