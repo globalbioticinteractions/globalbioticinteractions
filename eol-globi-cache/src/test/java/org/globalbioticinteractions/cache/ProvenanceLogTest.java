@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +47,7 @@ public class ProvenanceLogTest {
 
     @Test
     public void appendToProvenanceLog() throws IOException {
-        CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath(), new ResourceServiceLocal(inStream -> inStream));
+        CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         assertNull(cache.provenanceOf(URI.create("http://example.com")));
 
         ContentProvenance meta = new ContentProvenance("some/namespace",

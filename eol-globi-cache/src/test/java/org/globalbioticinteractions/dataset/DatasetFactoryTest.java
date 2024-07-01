@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class DatasetFactoryTest {
 
             @Override
             public Dataset datasetFor(String namespace) throws DatasetRegistryException {
-                return new DatasetWithResourceMapping(namespace, URI.create(meta), new ResourceServiceLocalAndRemote(inStream -> inStream));
+                return new DatasetWithResourceMapping(namespace, URI.create(meta), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
             }
         };
         return new DatasetFactory(finder).datasetFor("some/repo");

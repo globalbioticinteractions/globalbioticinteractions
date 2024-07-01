@@ -11,6 +11,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.tool.NameResolver;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeIdCollector;
 import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.eol.globi.util.NodeTypeDirection;
@@ -93,7 +94,7 @@ public abstract class GraphDBTestCaseAbstract {
                 },
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
                         "target/datasets",
-                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
         return finder.datasetFor(namespace);
     }
 

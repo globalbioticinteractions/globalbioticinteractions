@@ -6,6 +6,7 @@ import org.eol.globi.domain.Location;
 import org.eol.globi.domain.LocationImpl;
 import org.eol.globi.domain.Specimen;
 import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.util.NodeTypeDirection;
@@ -33,7 +34,7 @@ public class DatasetImporterForSzoboszlaiIT extends GraphDBNeo4jTestCase {
                 "  }\n" +
                 "}");
 
-        DatasetImpl dataset = new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         DatasetImporterForSzoboszlai importer = new DatasetImporterForSzoboszlai(parserFactory, nodeFactory);

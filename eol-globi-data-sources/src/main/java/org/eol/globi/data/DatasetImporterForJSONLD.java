@@ -19,6 +19,7 @@ import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonomyProvider;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class DatasetImporterForJSONLD extends NodeBasedImporter {
         }
 
         Query query;
-        try (InputStream resource = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, this.getClass())).retrieve(URI.create("find-jsonld-interactions.rq"))) {
+        try (InputStream resource = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop(), this.getClass())).retrieve(URI.create("find-jsonld-interactions.rq"))) {
             query = QueryFactory.create(IOUtils.toString(resource, CharsetConstant.UTF8));
         } catch (Throwable e) {
             throw new StudyImporterException("failed to find sparql query", e);

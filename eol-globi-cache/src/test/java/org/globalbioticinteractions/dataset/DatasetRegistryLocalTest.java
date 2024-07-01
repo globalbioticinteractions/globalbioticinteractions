@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullOutputStream;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
@@ -38,7 +39,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)), new ResourceServiceLocal(inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())), new ResourceServiceLocal(new InputStreamFactoryNoop()));
     }
 
     @Test
@@ -67,7 +68,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)), new ResourceServiceLocal(inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())), new ResourceServiceLocal(new InputStreamFactoryNoop()));
 
 
         Dataset actual = registry.datasetFor("local");
@@ -76,7 +77,7 @@ public class DatasetRegistryLocalTest {
         assertThat(actual.getArchiveURI().toString(), is(localDatasetDir.toURI().toString()));
         assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
 
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), new ResourceServiceLocal(inStream -> inStream));
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
         String actualHash = CacheUtil.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
@@ -97,7 +98,7 @@ public class DatasetRegistryLocalTest {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)), new ResourceServiceLocal(inStream -> inStream));
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())), new ResourceServiceLocal(new InputStreamFactoryNoop()));
 
         Iterable<String> availableNamespaces = registry.findNamespaces();
         for (String availableNamespace : availableNamespaces) {

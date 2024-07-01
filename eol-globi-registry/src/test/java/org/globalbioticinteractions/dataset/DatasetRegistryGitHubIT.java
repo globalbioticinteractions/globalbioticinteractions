@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class DatasetRegistryGitHubIT {
 
     @Test
     public void datasetFor() throws DatasetRegistryException {
-        URI uri = new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)).datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
+        URI uri = new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop())).datasetFor("globalbioticinteractions/template-dataset").getArchiveURI();
         assertThat(uri.toString(), startsWith("https://github.com/globalbioticinteractions/template-dataset/archive/"));
         assertThat(uri.toString(), endsWith(".zip"));
     }

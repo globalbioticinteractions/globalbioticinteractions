@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -22,7 +23,7 @@ public class ReferenceUtilTest {
 
     @Test
     public void sourceCitation() {
-        String s = CitationUtil.sourceCitationLastAccessed(new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(inStream -> inStream)), "some source citation.");
+        String s = CitationUtil.sourceCitationLastAccessed(new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())), "some source citation.");
         assertThat(s, startsWith("some source citation. Accessed at <http://example> on "));
         assertThat(s, endsWith("."));
     }
@@ -30,13 +31,13 @@ public class ReferenceUtilTest {
     @Test
     public void sourceCitationDatasetNoConfig() {
         String citation = CitationUtil.sourceCitationLastAccessed(
-                new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
+                new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         assertThat(citation, startsWith("<http://example>. Accessed at <http://example> on"));
     }
 
     @Test
     public void sourceCitationDataset() throws IOException {
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"archive.zip\" } }");
         dataset.setConfig(config);
         String citation = CitationUtil.sourceCitationLastAccessed(dataset);
@@ -45,7 +46,7 @@ public class ReferenceUtilTest {
 
     @Test
     public void sourceCitationDatasetLocalResource() throws IOException {
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         JsonNode config = new ObjectMapper().readTree("{ \"url\": \"interactions.tsv\" }");
         dataset.setConfig(config);
         String citation = CitationUtil.sourceCitationLastAccessed(dataset);
@@ -54,7 +55,7 @@ public class ReferenceUtilTest {
 
     @Test
     public void sourceCitationDatasetLocalResourceNonURI() throws IOException {
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         JsonNode config = new ObjectMapper().readTree("{ \"url\": \"foo bar\" }");
         dataset.setConfig(config);
         String citation = CitationUtil.sourceCitationLastAccessed(dataset);
@@ -63,7 +64,7 @@ public class ReferenceUtilTest {
 
     @Test
     public void sourceCitationDatasetLocalResourceURI() throws IOException {
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         JsonNode config = new ObjectMapper().readTree("{ \"url\": \"https://example.org/foo.tsv\" }");
         dataset.setConfig(config);
         String citation = CitationUtil.sourceCitationLastAccessed(dataset);
@@ -74,7 +75,7 @@ public class ReferenceUtilTest {
     public void generateSourceCitation() throws IOException, StudyImporterException {
         final InputStream inputStream = getClass().getResourceAsStream("/org/eol/globi/data/test-meta-globi.json");
 
-        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://base"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://base"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfig(new ObjectMapper().readTree(inputStream));
 
         String citation = CitationUtil.sourceCitationLastAccessed(dataset);
@@ -83,7 +84,7 @@ public class ReferenceUtilTest {
 
     @Test
     public void citationFor() throws IOException, StudyImporterException {
-        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://base"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://base"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfig(new ObjectMapper().readTree("{ \"citation\": \"http://gomexsi.tamucc.edu\" }"));
 
         String citation = CitationUtil.citationFor(dataset);

@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.io.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
@@ -41,7 +42,7 @@ public class DatasetImporterForWoodTest extends GraphDBNeo4jTestCase {
                 "    \"longitude\": -162.70889\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
 
         DatasetImporterForWood wood = new DatasetImporterForWood(new ParserFactoryForDataset(dataset), nodeFactory);
@@ -54,7 +55,7 @@ public class DatasetImporterForWoodTest extends GraphDBNeo4jTestCase {
         DatasetImporterForWood wood = createImporter(nodeFactory);
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
-        wood.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), properties -> maps.add(properties), null);
+        wood.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), maps::add, null);
         resolveNames();
         assertThat(maps.size(), is(5));
         Map<String, String> firstLink = maps.get(0);

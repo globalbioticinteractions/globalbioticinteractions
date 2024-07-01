@@ -39,12 +39,12 @@ public class DatasetRegistryWithCacheIT {
     @Test
     public void templateDatasetGithub() throws DatasetRegistryException, IOException {
         assertTemplateDataset("github.com",
-                new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)),
+                new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop())),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 
     private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
@@ -56,7 +56,7 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void afrotropicalBees() throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop())), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
@@ -68,8 +68,8 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void hafnerTest() throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream)),
-                dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream)));
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop())),
+                dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
 

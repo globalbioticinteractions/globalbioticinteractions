@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -81,7 +82,7 @@ public class DatasetRegistryProxyTest {
             if (!namespaces.contains(namespace)) {
                 throw new DatasetRegistryException("no dataset for [" + namespace +"]");
             }
-            return new DatasetWithResourceMapping(StringUtils.join(findNamespaces(), "|"), URI.create("http://example.com/" + namespaces.size()), new ResourceServiceLocalAndRemote(inStream -> inStream));
+            return new DatasetWithResourceMapping(StringUtils.join(findNamespaces(), "|"), URI.create("http://example.com/" + namespaces.size()), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         }
     }
 }

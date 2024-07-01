@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.geo.LatLng;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.service.DatasetLocal;
@@ -90,7 +91,7 @@ public class DatasetImporterForSzoboszlaiTest extends GraphDBNeo4jTestCase {
                 "    \"shapes\": \"szoboszlai/CCPDDlocationdata_test.zip\"\n" +
                 "  }\n" +
                 "}");
-        Dataset dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
+        Dataset dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         return dataset;
     }

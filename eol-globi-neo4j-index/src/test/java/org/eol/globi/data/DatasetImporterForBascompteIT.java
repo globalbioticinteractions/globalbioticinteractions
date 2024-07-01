@@ -26,7 +26,7 @@ public class DatasetImporterForBascompteIT extends GraphDBNeo4jTestCase {
     @Test
     public void importAll() throws StudyImporterException {
         DatasetImporterForWebOfLife importer = new DatasetImporterForWebOfLife(null, nodeFactory);
-        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())));
         importStudy(importer);
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());

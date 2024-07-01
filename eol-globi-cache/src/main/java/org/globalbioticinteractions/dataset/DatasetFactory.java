@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactory;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceUtil;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class DatasetFactory implements DatasetFactoryInterface {
     private final InputStreamFactory inputStreamFactory;
 
     public DatasetFactory(DatasetRegistry registry) {
-        this(registry, inStream -> inStream);
+        this(registry, new InputStreamFactoryNoop());
     }
 
     public DatasetFactory(DatasetRegistry registry, InputStreamFactory factory) {

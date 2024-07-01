@@ -33,7 +33,7 @@ public class DatasetRegistryProxyIT {
     public void gitHubOnlyTest() throws DatasetRegistryException {
         DatasetRegistryProxy proxy = new DatasetRegistryProxy(
                 Collections.singletonList(
-                        new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(inStream -> inStream))
+                        new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop()))
                 )
         );
 

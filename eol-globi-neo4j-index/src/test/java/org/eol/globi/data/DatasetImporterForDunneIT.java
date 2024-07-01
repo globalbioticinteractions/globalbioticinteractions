@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
@@ -35,7 +36,7 @@ public class DatasetImporterForDunneIT extends GraphDBNeo4jTestCase {
                 "  }\n" +
                 "}";
         JsonNode jsonNode = new ObjectMapper().readTree(configJson);
-        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dunne2016.setConfig(jsonNode);
         ParserFactory parserFactory = new ParserFactoryForDataset(dunne2016);
         DatasetImporterForDunne importer = new DatasetImporterForDunne(parserFactory, nodeFactory);
@@ -69,7 +70,7 @@ public class DatasetImporterForDunneIT extends GraphDBNeo4jTestCase {
                 "    \"longitude\": 60\n" +
                 "  }\n" +
                 "}";
-        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dunne2016.setConfig(new ObjectMapper().readTree(configJson));
         ParserFactory parserFactory = new ParserFactoryForDataset(dunne2016);
         DatasetImporterForDunne importer = new DatasetImporterForDunne(parserFactory, nodeFactory);

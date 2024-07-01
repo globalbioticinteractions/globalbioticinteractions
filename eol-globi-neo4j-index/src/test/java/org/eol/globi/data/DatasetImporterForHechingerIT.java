@@ -1,5 +1,6 @@
 package org.eol.globi.data;
 
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class DatasetImporterForHechingerIT extends GraphDBNeo4jTestCase {
                 "    \"links\": \"hechinger/Metaweb_Links.txt\"\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
+        DatasetImpl dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         DatasetImporterForHechinger importer = new DatasetImporterForHechinger(parserFactory, nodeFactory);

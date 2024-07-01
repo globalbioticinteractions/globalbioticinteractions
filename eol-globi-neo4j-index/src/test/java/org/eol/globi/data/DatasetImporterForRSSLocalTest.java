@@ -13,6 +13,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -92,7 +93,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
 
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop()));
 
 
         importDwCAViaRSS(importer, dataset, resource);
@@ -102,7 +103,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
     public void importLocalMCZArchive() throws StudyImporterException, IOException {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)) {
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())) {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 if (resourceName.toString().endsWith("mapping.csv")) {

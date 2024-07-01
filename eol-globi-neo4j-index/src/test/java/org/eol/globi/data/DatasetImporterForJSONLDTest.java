@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -25,7 +26,7 @@ public class DatasetImporterForJSONLDTest extends GraphDBNeo4jTestCase {
         DatasetImpl dataset = new DatasetWithResourceMapping(
                 "some/namespace",
                 URI.create("http://example.com"),
-                new ResourceServiceLocal(inStream -> inStream, this.getClass())
+                new ResourceServiceLocal(new InputStreamFactoryNoop(), this.getClass())
         );
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld"));
         importer.setDataset(dataset);
@@ -42,7 +43,7 @@ public class DatasetImporterForJSONLDTest extends GraphDBNeo4jTestCase {
     @Test(expected = StudyImporterException.class)
     public void importStaticInvalid() throws StudyImporterException, URISyntaxException {
         DatasetImporter importer = new DatasetImporterForJSONLD(null, nodeFactory);
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld.invalid"));
         importer.setDataset(dataset);
 

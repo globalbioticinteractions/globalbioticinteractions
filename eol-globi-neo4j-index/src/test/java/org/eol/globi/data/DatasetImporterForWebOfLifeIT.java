@@ -24,7 +24,7 @@ public class DatasetImporterForWebOfLifeIT extends GraphDBNeo4jTestCase {
     @Test
     public void importSome() throws StudyImporterException {
         DatasetImporterForWebOfLife importer = new DatasetImporterForWebOfLife(null, nodeFactory);
-        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())));
         importer.importNetworks(URI.create("weboflife/web-of-life_2016-01-15_192434.zip"));
         resolveNames();
 

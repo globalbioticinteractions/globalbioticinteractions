@@ -3,6 +3,7 @@ package org.globalbioticinteractions.dataset;
 import org.apache.commons.io.FileUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.Cache;
@@ -59,7 +60,7 @@ public class DatasetRegistryWithCacheTest {
         Dataset dataset = Mockito.mock(Dataset.class);
         when(dataset.getNamespace()).thenReturn("some/namespace");
         when(dataset.getArchiveURI()).thenReturn(getClass().getResource("archive.zip").toURI());
-        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath, new ResourceServiceLocalAndRemote(inStream -> inStream), new ResourceServiceLocal(inStream -> inStream));
+        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         return new DatasetWithCache(dataset, cache);
     }
 }

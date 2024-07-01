@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.eol.globi.util.NodeUtil;
@@ -59,7 +60,7 @@ public class DatasetImporterForHurlbertTest extends GraphDBNeo4jTestCase {
 
     public DatasetImporter doImport(final String namespace) throws StudyImporterException {
         DatasetImporter importer = new DatasetImporterForHurlbert(null, nodeFactory);
-        Dataset dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream)) {
+        Dataset dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())) {
             @Override
             public InputStream retrieve(URI name){
                 return DatasetImporterForHurlbertTest.getResource();

@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CachePullThrough;
@@ -25,9 +26,9 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
                 .instantiateImporter(DatasetImporterForRSS.class);
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(
-                new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)),
+                new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())),
                 new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream))
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()))
         );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
@@ -47,13 +48,13 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
 
-        final DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
+        final DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop()));
         DatasetWithCache datasetWithCache = new DatasetWithCache(
                 dataset,
                 new CachePullThrough(
                         "testing",
                         tempFile.getParentFile().getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream)
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())
                 )
         );
 
@@ -76,7 +77,7 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
     public void importEasyArthoprodCapture() throws StudyImporterException {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
-        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream));
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop()));
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
 
         rssUrl.put("rss", "http://amnh.begoniasociety.org/dwc/rss.xml");

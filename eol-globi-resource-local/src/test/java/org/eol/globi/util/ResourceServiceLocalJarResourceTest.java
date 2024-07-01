@@ -29,7 +29,7 @@ public class ResourceServiceLocalJarResourceTest {
         InputStream result;
         URI resource1 = URI.create(resource);
         try {
-            result = new ResourceServiceLocalJarResource(inStream -> inStream).retrieve(resource1);
+            result = new ResourceServiceLocalJarResource(new InputStreamFactoryNoop()).retrieve(resource1);
         } catch (IOException ex) {
             throw new IOException("issue accessing [" + resource1 + "]", ex);
         }

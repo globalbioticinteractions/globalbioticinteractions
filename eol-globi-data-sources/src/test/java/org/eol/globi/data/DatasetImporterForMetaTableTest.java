@@ -9,6 +9,7 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
@@ -133,7 +134,7 @@ public class DatasetImporterForMetaTableTest {
         final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
-        ResourceServiceLocal service = new ResourceServiceLocal(inStream -> inStream, DatasetImporterForMetaTableTest.class);
+        ResourceServiceLocal service = new ResourceServiceLocal(new InputStreamFactoryNoop(), DatasetImporterForMetaTableTest.class);
         DatasetLocal dataset = new DatasetLocal(
                 service) {
             @Override
@@ -301,7 +302,7 @@ public class DatasetImporterForMetaTableTest {
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         String baseUrl = resource.toExternalForm().replaceFirst(metaTableDef + "$", "");
-        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(inStream -> inStream)));
+        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         assertThat(columnNames.size(), is(40));
     }
 
@@ -517,7 +518,7 @@ public class DatasetImporterForMetaTableTest {
 
         DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
 
-        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, DatasetImporterForMetaTableTest.class));
+        DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop(), DatasetImporterForMetaTableTest.class));
 
         JsonNode phibaseConfig = new ObjectMapper().readTree("{\n" +
                 "  \"@context\": [\"http://www.w3.org/ns/csvw\", {\"@language\": \"en\"}],\n" +
@@ -551,7 +552,7 @@ public class DatasetImporterForMetaTableTest {
     public void explicitNullValueForCatalogNumberUMMZI() throws IOException, StudyImporterException {
         DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
         DatasetLocal dataset = new DatasetLocal(
-                new ResourceServiceLocal(inStream -> inStream, DatasetImporterForMetaTableTest.class)) {
+                new ResourceServiceLocal(new InputStreamFactoryNoop(), DatasetImporterForMetaTableTest.class)) {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
                 Map<URI, String> resourceMap = new HashMap<URI, String>() {{
@@ -596,7 +597,7 @@ public class DatasetImporterForMetaTableTest {
 
         DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
         DatasetLocal dataset = new DatasetLocal(
-                new ResourceServiceLocal(inStream -> inStream, this.getClass())
+                new ResourceServiceLocal(new InputStreamFactoryNoop(), this.getClass())
         );
 
         dataset.setConfig(config);

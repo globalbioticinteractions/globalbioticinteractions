@@ -34,7 +34,7 @@ public class DatasetImporterForRaymondIT extends GraphDBNeo4jTestCase {
             }
 
         });
-        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())));
         importStudy(importer);
 
         importer.setGeoNamesService(new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop())));

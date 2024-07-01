@@ -7,6 +7,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
@@ -35,7 +36,7 @@ public class DatasetImporterForLifeWatchGreeceTest extends GraphDBNeo4jTestCase 
                 "429,\"Simpson, M. (1962) Reproduction of the Polychaete Glycera Dibranchiata at Solomons, Maryland. <i>The Biological Bulletin</i>, 123:396-411.\",\"Glycera rouxi\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n" +
                 "778,\"Hartmann-Schröder, G. (1996) Annelida, Borstenwürmer, Polychaeta. Gustav Fischer Verlag, Jena. 648pp.\",\"Glycera rouxi\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n" +
                 "429,\"Simpson, M. (1962) Reproduction of the Polychaete Glycera Dibranchiata at Solomons, Maryland. <i>The Biological Bulletin</i>, 123:396-411.\",\"Glycera tesselata\",\"http://polytraits.lifewatchgreece.eu/terms/SM_YES\",\"Organisms that undergo sexual metamorphosis\",\"http://polytraits.lifewatchgreece.eu/terms/SM\",\"Conspicuous change in the organism's body structure prior to reproduction.\",2,1\n"), nodeFactory);
-        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, DatasetImporterForLifeWatchGreece.class)));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop(), DatasetImporterForLifeWatchGreece.class)));
         importStudy(importer);
     }
 
@@ -45,7 +46,7 @@ public class DatasetImporterForLifeWatchGreeceTest extends GraphDBNeo4jTestCase 
         List<StudyNode> studies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(studies.size(), is(0));
 
-        ResourceService resourceService = new ResourceServiceLocal(inStream -> inStream, DatasetImporterForLifeWatchGreece.class);
+        ResourceService resourceService = new ResourceServiceLocal(new InputStreamFactoryNoop(), DatasetImporterForLifeWatchGreece.class);
         Dataset dataset = new DatasetLocal(resourceService);
         ParserFactoryLocal parserFactory = new ParserFactoryLocal(dataset);
         DatasetImporterForLifeWatchGreece importer = new DatasetImporterForLifeWatchGreece(parserFactory, nodeFactory);

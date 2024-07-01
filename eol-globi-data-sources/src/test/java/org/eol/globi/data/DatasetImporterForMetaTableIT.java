@@ -40,7 +40,7 @@ public class DatasetImporterForMetaTableIT {
         org.junit.Assert.assertNotNull(resource);
 
         final JsonNode config = new ObjectMapper().readTree(clazz.getResourceAsStream(name));
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         final List<JsonNode> tables = DatasetImporterForMetaTable.collectTables(dataset);
         assertThat(tables.size(), is(1));
@@ -171,10 +171,10 @@ public class DatasetImporterForMetaTableIT {
         final InputStream inputStream
                 = new ResourceServiceHTTP(new InputStreamFactoryNoop()).retrieve(URI.create(resource));
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-        final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         for (JsonNode table : DatasetImporterForMetaTable.collectTables(dataset)) {
-            DatasetWithResourceMapping dataset1 = new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(inStream -> inStream));
+            DatasetWithResourceMapping dataset1 = new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
             dataset1.setConfig(table);
             DatasetImporterForMetaTable.importTable(interactionListener, tableFactory, dataset1, null);
         }

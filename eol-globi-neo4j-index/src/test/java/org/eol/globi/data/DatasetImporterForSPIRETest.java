@@ -126,7 +126,7 @@ public class DatasetImporterForSPIRETest extends GraphDBNeo4jTestCase {
 
     private DatasetImporterForSPIRE createImporter() {
         DatasetImporterForSPIRE studyImporterForSPIRE = new DatasetImporterForSPIRE(null, nodeFactory);
-        studyImporterForSPIRE.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, getClass())));
+        studyImporterForSPIRE.setDataset(new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop(), getClass())));
         studyImporterForSPIRE.setGeoNamesService(new GeoNamesService() {
 
             @Override

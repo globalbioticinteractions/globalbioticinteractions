@@ -51,7 +51,7 @@ public class ExporterRDFTest extends GraphDBNeo4jTestCase {
         DatasetImporterForSPIRE importer = new DatasetImporterForSPIRE(null, nodeFactory);
         importer.setFilter(recordNumber -> recordNumber < 5);
         DatasetLocal dataset =
-                new DatasetLocal(new ResourceServiceLocal(inStream -> inStream, DatasetImporterForSPIRE.class));
+                new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop(), DatasetImporterForSPIRE.class));
         importer.setDataset(dataset);
         importer.setGeoNamesService(new GeoNamesService() {
             @Override

@@ -238,7 +238,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     }
 
     protected void assertDataset(String citationKey) throws NodeFactoryException {
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         objectNode.put(citationKey, "some citation");
@@ -261,7 +261,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void addDatasetToStudy() throws NodeFactoryException, IOException {
         StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         dataset.setConfig(objectNode);
@@ -319,7 +319,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     }
 
     private DatasetImpl datasetWithNamespace(String namespace) {
-        DatasetImpl dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put(DatasetConstant.SHOULD_RESOLVE_REFERENCES, false);
         dataset.setConfig(objectNode);
@@ -329,7 +329,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void addDatasetToStudyNulls() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetWithResourceMapping(null, null, new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, null, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 
@@ -339,7 +339,7 @@ public abstract class NodeFactoryNeo4jTest extends GraphDBNeo4jTestCase {
     @Test
     public void addDatasetToStudyNulls2() throws NodeFactoryException {
         StudyImpl study1 = new StudyImpl("my title", SOME_DOI, "some citation");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", null, new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", null, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         study1.setOriginatingDataset(dataset);
         StudyNode study = getNodeFactory().getOrCreateStudy(study1);
 

@@ -5,6 +5,7 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionValidator;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.tool.NullImportLogger;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class DatasetImporterForMangalIT {
     public void importAll() throws StudyImporterException {
         AtomicInteger counter = new AtomicInteger(0);
         DatasetImporterForMangal importer = new DatasetImporterForMangal(null, null);
-        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(inStream -> inStream)));
+        importer.setDataset(new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())));
         importer.setInteractionListener(new InteractionValidator(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {

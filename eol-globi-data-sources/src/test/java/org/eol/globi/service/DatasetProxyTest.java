@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -69,7 +70,7 @@ public class DatasetProxyTest {
         URL original = getClass().getResource("/org/globalbioticinteractions/content/original.txt");
         URL proxied = getClass().getResource("/org/globalbioticinteractions/content/proxied.txt");
         JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"" + proxied.toURI() + "\" } }");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         dataset.setConfig(null);
 
 
@@ -117,7 +118,7 @@ public class DatasetProxyTest {
         DatasetImpl dataset = new DatasetWithResourceMapping(
                 "some/namespace",
                 URI.create("http://example.com"),
-                new ResourceServiceLocalAndRemote(inStream -> inStream));
+                new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
 
         dataset.setConfig(config);
 

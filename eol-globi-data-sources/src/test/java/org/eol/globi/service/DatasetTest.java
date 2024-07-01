@@ -1,5 +1,6 @@
 package org.eol.globi.service;
 
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -29,7 +30,7 @@ public class DatasetTest {
 
         URI parentDir = archive.getParentFile().toURI();
 
-        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocalAndRemote(inStream -> inStream));
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         InputStream retrieve = dataset.retrieve(resource.toURI());
         assertArchiveHash(retrieve);
         assertArchiveHash(dataset.retrieve(URI.create("archive.zip")));
@@ -48,7 +49,7 @@ public class DatasetTest {
 
         URI parentDir = archive.getParentFile().toURI();
 
-        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocalAndRemote(inStream -> inStream));
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         assertThat(dataset.retrieve(URI.create("archivezz.zip")), is(notNullValue()));
     }
 

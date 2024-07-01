@@ -15,6 +15,7 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
@@ -46,7 +47,7 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", new DOI("123.23", "222"), "some study citation");
         DatasetWithResourceMapping dataset = new DatasetWithResourceMapping("some/namespace", URI.create("https://some.uri"),
-                new ResourceServiceLocalAndRemote(inStream -> inStream));
+                new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
         Study interaction = factory.getOrCreateStudy(study);
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
@@ -64,7 +65,7 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
 
         NodeFactoryNeo4j nodeFactoryNeo4j = getNodeFactory();
         StudyImpl study1 = new StudyImpl("some study", new DOI("123.23", "222"), "come citation");
-        study1.setOriginatingDataset(new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
 
         assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));

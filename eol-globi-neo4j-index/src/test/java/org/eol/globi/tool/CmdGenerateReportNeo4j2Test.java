@@ -10,6 +10,7 @@ import org.eol.globi.domain.Study;
 import org.eol.globi.domain.StudyConstant;
 import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.TaxonImpl;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -36,7 +37,7 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException, IOException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
-                new DatasetWithResourceMapping("az/source", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
+                new DatasetWithResourceMapping("az/source", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
@@ -48,7 +49,7 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
                 new DatasetWithResourceMapping("zother/source",
                         URI.create("http://example.com"),
-                        new ResourceServiceLocalAndRemote(inStream -> inStream)));
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
 
         StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
@@ -91,21 +92,21 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
     @Test
     public void generateStudySourceOrganizationReports() throws NodeFactoryException, IOException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
-                new DatasetWithResourceMapping("az/source1", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
+                new DatasetWithResourceMapping("az/source1", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
 
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
 
         Dataset originatingDataset2 = nodeFactory.getOrCreateDataset(
-                new DatasetWithResourceMapping("az/source2", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
+                new DatasetWithResourceMapping("az/source2", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
 
         StudyImpl study2 = new StudyImpl("another title", null, "citation");
         study2.setOriginatingDataset(originatingDataset2);
         createStudy(study2);
 
         Dataset originatingDataset3 = nodeFactory.getOrCreateDataset(
-                new DatasetWithResourceMapping("zother/source", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream)));
+                new DatasetWithResourceMapping("zother/source", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
 
         StudyImpl study3 = new StudyImpl("yet another title", null, null);
         study3.setOriginatingDataset(originatingDataset3);
@@ -146,7 +147,7 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public void generateCollectionReport() throws NodeFactoryException, IOException {
-        DatasetImpl originatingDataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(inStream -> inStream));
+        DatasetImpl originatingDataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
         Dataset originatingDatasetNode = nodeFactory.getOrCreateDataset(originatingDataset);
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDatasetNode);
