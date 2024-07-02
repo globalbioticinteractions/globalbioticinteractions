@@ -277,19 +277,11 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                                  ImportLogger importLogger) throws StudyImporterException {
         String[] line;
         Map<String, String> defaults = new TreeMap<>();
-        final Map<String, String> sameAs = new TreeMap<String, String>() {{
-            put("doi", REFERENCE_DOI);
-            put("url", REFERENCE_URL);
-        }};
         Iterator<Map.Entry<String, JsonNode>> fields = config.fields();
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> field = fields.next();
             if (field.getValue().isValueNode()) {
                 defaults.put(field.getKey(), field.getValue().asText());
-                String sameKey = sameAs.get(field.getKey());
-                if (sameKey != null) {
-                    defaults.put(sameKey, field.getValue().asText());
-                }
             }
         }
 
@@ -327,8 +319,6 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                         msgs.add(message);
                     }
                 };
-
-                //columnNames.stream().filter(col -> StringUtils.isNotBlank(col.getSeparator()));
 
                 for (int i = 0; i < columnNames.size() && i < line.length; i++) {
                     final String value = nullValueArray.contains(line[i]) ? null : line[i];

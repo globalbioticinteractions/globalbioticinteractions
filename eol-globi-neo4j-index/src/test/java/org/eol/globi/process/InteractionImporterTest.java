@@ -1,5 +1,7 @@
 package org.eol.globi.process;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
@@ -11,6 +13,7 @@ import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.SpecimenConstant;
 import org.eol.globi.domain.SpecimenNode;
+import org.eol.globi.domain.StudyImpl;
 import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.TaxonNode;
 import org.eol.globi.geo.LatLng;
@@ -20,6 +23,8 @@ import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
+import org.globalbioticinteractions.doi.DOI;
+import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -29,7 +34,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -465,6 +472,26 @@ public class InteractionImporterTest extends GraphDBNeo4jTestCase {
         handleRelations(someListener, RelTypes.COLLECTED);
 
         assertThat(foundSpecimen.get(), is(1));
+    }
+
+    @Test
+    public void extractStudy() throws IOException, MalformedDOIException {
+
+        JsonNode jsonNode = new ObjectMapper().readTree(getClass().getResourceAsStream("interaction.json"));
+
+
+        Iterator<String> stringIterator = jsonNode.fieldNames();
+
+        Map<String, String> interaction = new TreeMap<>();
+        stringIterator.forEachRemaining(x -> interaction.put(x, jsonNode.get(x).asText()));
+
+
+        StudyImpl study = InteractionImporter.studyOf(interaction, null);
+
+        assertThat(study.getCitation(), is("Willson, J. D., Royal, E. J., Guzy, J. C., Swartwout, M. C., & Kross, C. S. (2024). Ecology of an Insular Snake Assemblage in Coastal Maine. Northeastern Naturalist, 31(1). doi: 10.1656/045.031.0102"));
+        assertThat(study.getDOI(), is(DOI.create("10.1656/045.031.0102")));
+        assertThat(study.getExternalId(), is("https://doi.org/10.1656/045.031.0102"));
+        assertThat(study.getTitle(), is("Heptinstall, T. C., R. A. Rosales-Garcia, R. M. Rautsaw, E. P. Hofmann, A. de Queiroz, L. Canseco- Márquez, and C. L. Parkinson. 2023. Size Doesn’t Matter: Body size is not linked to diet specialization in garter snakes (Squamata: Natricidae: Thamnophis). Journal of Herpetology. In Press. Accessed at <https://github.com/theptin/Thamnophis-GloBI/archive/fbd53ce1edf2c97a6ee71b8e3663768aee74a490.zip> on 01 Jul 2024.Willson, J. D., Royal, E. J., Guzy, J. C., Swartwout, M. C., & Kross, C. S. (2024). Ecology of an Insular Snake Assemblage in Coastal Maine. Northeastern Naturalist, 31(1). doi: 10.1656/045.031.0102"));
     }
 
     @Test

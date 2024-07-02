@@ -139,6 +139,27 @@ public class DatasetImporterForMetaTableIT {
     }
 
     @Test
+    public void importSnakes() throws IOException, StudyImporterException {
+        final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
+        final InteractionListener interactionListener = links::add;
+
+        final String baseUrl = "https://raw.githubusercontent.com/theptin/Thamnophis-GloBI/main";
+        final String resource = baseUrl + "/globi.json";
+        importAll(interactionListener, new DatasetImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource);
+
+        assertThat(links.size()> 0, is(true));
+        final Map<String, String> firstLine = links.get(0);
+        assertThat(firstLine.get(DatasetImporterForTSV.INTERACTION_TYPE_ID), startsWith("http://purl.obolibrary.org/obo/RO_"));
+        assertNotNull(firstLine.get(DatasetImporterForTSV.INTERACTION_TYPE_NAME));
+        assertThat(firstLine.get(DatasetImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
+        assertThat(firstLine.get(DatasetImporterForTSV.REFERENCE_CITATION), is(not(nullValue())));
+        assertThat(firstLine.get(DatasetImporterForTSV.REFERENCE_DOI), is(not(nullValue())));
+        assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
+        assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_NAME), is(not(nullValue())));
+
+    }
+
+    @Test
     public void importNHMStatic() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         final InteractionListener interactionListener = links::add;

@@ -27,7 +27,6 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 
 import static org.eol.globi.data.DatasetImporterForTSV.ARGUMENT_TYPE_ID;
@@ -110,7 +109,7 @@ public class InteractionImporter implements InteractionListener {
 
 
     private void importInteraction(Map<String, String> interaction) throws StudyImporterException {
-        Study study = nodeFactory.getOrCreateStudy(studyOf(interaction));
+        Study study = nodeFactory.getOrCreateStudy(studyOf(interaction, logger));
 
         Specimen source = createSpecimen(
                 interaction,
@@ -207,7 +206,6 @@ public class InteractionImporter implements InteractionListener {
             taxon.setRank(taxonRank);
         }
 
-
         String taxonPath = link.get(taxonPathLabel);
         if (StringUtils.isNotBlank(taxonPath)) {
             taxon.setPath(taxonPath);
@@ -252,7 +250,7 @@ public class InteractionImporter implements InteractionListener {
         }
     }
 
-    private StudyImpl studyOf(Map<String, String> l) {
+    static StudyImpl studyOf(Map<String, String> l, ImportLogger logger) {
         String referenceCitation = l.get(REFERENCE_CITATION);
         DOI doi = null;
         String doiString = l.get(REFERENCE_DOI);
@@ -268,6 +266,10 @@ public class InteractionImporter implements InteractionListener {
         final String referenceUrl = l.get(REFERENCE_URL);
         if (StringUtils.isBlank(study1.getExternalId()) && StringUtils.isNotBlank(referenceUrl)) {
             study1.setExternalId(referenceUrl);
+        }
+
+        if (StringUtils.isBlank(study1.getExternalId()) && study1.getDOI() != null) {
+            study1.setExternalId(study1.getDOI().toURI().toString());
         }
 
         return study1;
