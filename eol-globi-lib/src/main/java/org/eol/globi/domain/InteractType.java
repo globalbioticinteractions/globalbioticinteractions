@@ -120,6 +120,8 @@ public enum InteractType implements RelType {
     AGGRESSOR_OF(PropertyAndValueDictionary.NO_MATCH, "aggressorOf"),
     HAS_AGGRESSOR(PropertyAndValueDictionary.NO_MATCH, "hasAggressor"),
 
+    ALLELOPATH_OF("http://purl.obolibrary.org/obo/RO_0002555", "allelopathOf", SUBJECT, OBJECT),
+
     HEMIPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002237", "hemiparasiteOf", SUBJECT, OBJECT),
 
     RELATED_TO("http://purl.obolibrary.org/obo/RO_0002321", "ecologicallyRelatedTo");
