@@ -50,3 +50,4 @@ hasRoost,http://purl.obolibrary.org/obo/RO_0008509
 acquiresNutrientsFrom,http://purl.obolibrary.org/obo/RO_0002457
 providesNutrientsFor,http://purl.obolibrary.org/obo/RO_0002469
 hemiparasiteOf,http://purl.obolibrary.org/obo/RO_0002237
+allelopathOf,http://purl.obolibrary.org/obo/RO_0002555
