@@ -16,7 +16,7 @@
 
     <properties>
         <elton4n.version>${project.parent.version}</elton4n.version>
-        <globi.taxa.version>0.4.6</globi.taxa.version>
+        <globi.taxa.version>0.5.1</globi.taxa.version>
         <globi.tsv.version>1.1-SNAPSHOT</globi.tsv.version>
         <data.dir>${project.build.directory}/data</data.dir>
         <dataset.dir>change/me/in/pom.xml</dataset.dir>
