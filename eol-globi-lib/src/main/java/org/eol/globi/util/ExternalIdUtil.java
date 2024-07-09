@@ -62,6 +62,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.CHECKLIST_BANK.getIdPrefix(), "https://www.checklistbank.org/dataset/");
         put(TaxonomyProvider.WORLD_OF_FLORA_ONLINE.getIdPrefix(), "http://www.worldfloraonline.org/taxon/wfo-");
         put(TaxonomyProvider.HESPEROMYS.getIdPrefix(), "http://hesperomys.com/n/");
+        put(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE.getIdPrefix(), "https://www.mammaldiversity.org/taxon/");
         put(TaxonomyProvider.PBDB.getIdPrefix(), "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
     }};
 

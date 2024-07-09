@@ -43,6 +43,7 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("BOLDTaxon:762659"), is("http://www.boldsystems.org/index.php/Taxbrowser_Taxonpage?taxid=762659"));
         assertThat(ExternalIdUtil.urlForExternalId("BOLD:ACM3285"), is("http://bins.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:ACM3285"));
         assertThat(ExternalIdUtil.urlForExternalId("WFO:0000000003"), is("http://www.worldfloraonline.org/taxon/wfo-0000000003"));
+        assertThat(ExternalIdUtil.urlForExternalId("MDD:123"), is("https://www.mammaldiversity.org/taxon/123"));
     }
 
     @Test

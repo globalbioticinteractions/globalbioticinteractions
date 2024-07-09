@@ -50,7 +50,7 @@ public enum TaxonomyProvider {
     CHECKLIST_BANK("CLB:", "https://www.checklistbank.org/dataset/"),
     WORLD_OF_FLORA_ONLINE("WFO:", "http://www.worldfloraonline.org/taxon/wfo-"),
     TERRESTRIAL_PARASITE_TRACKER("TPT:"),
-    MAMMAL_DIVERSITY_DATABASE("MDD:", "https://www.mammaldiversity.org/explore.html#id="),
+    MAMMAL_DIVERSITY_DATABASE("MDD:", "https://www.mammaldiversity.org/taxon/"),
     HESPEROMYS("HES:", "http://hesperomys.com/n/"),
     PBDB("PBDB:", "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
 
