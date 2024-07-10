@@ -107,7 +107,7 @@ public class InteractTypeUtil  {
                put(InteractType.PROVIDES_NUTRIENTS_FOR, Arrays.asList(InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.SYMBIONT_OF, Arrays.asList(InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.PREYS_UPON, Arrays.asList(InteractType.ATE, InteractType.KILLS, InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
-               put(InteractType.PATHOGEN_OF, Arrays.asList(InteractType.PARASITE_OF, InteractType.HAS_HOST, InteractType.SYMBIONT_OF, InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
+               put(InteractType.PATHOGEN_OF, Arrays.asList(InteractType.HAS_HOST, InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.VECTOR_OF, Arrays.asList(InteractType.HOST_OF, InteractType.SYMBIONT_OF, InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.DISPERSAL_VECTOR_OF, Arrays.asList(InteractType.HOST_OF, InteractType.SYMBIONT_OF, InteractType.INTERACTS_WITH, InteractType.VECTOR_OF, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
                put(InteractType.PARASITOID_OF, Arrays.asList(InteractType.PARASITE_OF, InteractType.HAS_HOST, InteractType.ATE, InteractType.KILLS, InteractType.LIVES_WITH, InteractType.SYMBIONT_OF, InteractType.INTERACTS_WITH, InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH));
