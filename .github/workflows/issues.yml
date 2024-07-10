@@ -1,4 +1,4 @@
-# This workflow will review a GloBI indexed dataset.
+# This workflow will track github issues
 # For more information see: https://globalbioticinteractions.org
 
 name: Packaging of Issues
@@ -10,25 +10,28 @@ on:
   issue_comment:
     types: [created, edited]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 1.8
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
-        distribution: 'zulu' 
+        distribution: 'temurin' 
         java-version: '8'   
     - name: Download Preston
-      run: curl -L https://github.com/bio-guoda/preston/releases/download/0.7.2/preston.deb > preston.deb
+      run: curl -L https://github.com/bio-guoda/preston/releases/download/0.8.6/preston.deb > preston.deb
     - name: Install Preston
       run: sudo apt -y install ./preston.deb 
     - name: Track Issues
-#      run: export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" && export GITHUB_ISSUE="${{ github.event.issue.number }}" && preston track "https://github.com/${GITHUB_REPOSITORY}/issues/${GITHUB_ISSUE}"
-      run: export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" && export GITHUB_ISSUE="${{ github.event.issue.number }}" && preston track "https://github.com/${GITHUB_REPOSITORY}/issues"
+      run: export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" && preston track "https://github.com/${GITHUB_REPOSITORY}/issues"
     - name: Package Tracked Issues
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: tracked-issues
         path: |
