@@ -68,7 +68,7 @@ public class NodeProcessorImpl implements NodeProcessor<NodeListener> {
 
         try {
             db = DBMaker
-                    .newMemoryDirectDB()
+                    .newTempFileDB()
                     .make();
             DB.BTreeSetMaker treeSet =
                     db.createTreeSet(UUID.randomUUID().toString());
