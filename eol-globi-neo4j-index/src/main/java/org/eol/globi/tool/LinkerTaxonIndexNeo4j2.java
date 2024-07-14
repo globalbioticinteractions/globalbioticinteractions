@@ -40,7 +40,7 @@ public class LinkerTaxonIndexNeo4j2 implements IndexerNeo4j {
         initIndexes(graphDb);
 
         NodeUtil.processNodes(
-                1000L,
+                100L,
                 graphDb,
                 node -> onTaxonNode(
                         getTaxonPathsIndex(graphDb),
