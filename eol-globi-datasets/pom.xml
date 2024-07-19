@@ -67,7 +67,10 @@
                     <skip>${skipTests}</skip>
                     <executable>java</executable>
                     <arguments>
-                        <argument>-Xmx6G</argument>
+                        <!-- settings configured for system with 32GB of memory allocated to neo4j indexing -->
+                        <!-- also see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/995 -->
+                        <argument>-Xms12G</argument>
+                        <argument>-Xmx12G</argument>
                         <argument>-classpath</argument>
                         <classpath/>
                         <argument>org.globalbioticinteractions.elton.Elton4N</argument>

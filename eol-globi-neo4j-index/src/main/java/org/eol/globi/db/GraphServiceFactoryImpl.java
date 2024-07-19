@@ -54,6 +54,9 @@ public class GraphServiceFactoryImpl implements GraphServiceFactory {
                 //.setConfig(GraphDatabaseSettings.check_point_policy, "volumetric")
                 .setConfig(GraphDatabaseSettings.check_point_interval_time, "60s")
 //                .setConfig(GraphDatabaseSettings.check_point_interval_tx, "100000")
+                // peg pagecache size to the provided jvm max memory
+                // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/995
+                .setConfig(GraphDatabaseSettings.pagecache_memory, Long.toString(Runtime.getRuntime().maxMemory()))
                 .newGraphDatabase();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
