@@ -82,6 +82,7 @@ public class HttpUtil {
         RequestConfig config = RequestConfig.custom()
                 .setSocketTimeout(soTimeoutMs)
                 .setConnectTimeout(soTimeoutMs)
+                .setNormalizeUri(false)
                 .build();
 
         return HttpClientBuilder
