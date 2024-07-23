@@ -132,4 +132,14 @@ public class InteractTypeTest {
         assertThat(InteractType.typeOf("http://purl.obolibrary.org/obo/RO_0002440"), is(SYMBIONT_OF));
     }
 
+    @Test
+    public void interactionTypeUnderscore() {
+        assertThat(InteractType.typeOf("RO_0002627"), is(KILLED_BY));
+    }
+
+    @Test
+    public void interactionTypeColon() {
+        assertThat(InteractType.typeOf("RO:0002627"), is(KILLED_BY));
+    }
+
 }

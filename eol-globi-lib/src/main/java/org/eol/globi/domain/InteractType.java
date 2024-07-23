@@ -185,9 +185,8 @@ public enum InteractType implements RelType {
     }
 
     public static InteractType typeOf(String iri) {
-        if (StringUtils.startsWith(iri, "RO:")) {
-            iri = StringUtils.replace(iri, "RO:", PropertyAndValueDictionary.RO_NAMESPACE);
-        }
+        iri = replaceWithRONamespace(iri, "RO:");
+        iri = replaceWithRONamespace(iri, "RO_");
 
         InteractType[] values = values();
         for (InteractType interactType : values) {
@@ -209,6 +208,13 @@ public enum InteractType implements RelType {
         }
 
         return interactType;
+    }
+
+    private static String replaceWithRONamespace(String iri, String prefix) {
+        if (StringUtils.startsWith(iri, prefix)) {
+            iri = StringUtils.replace(iri, prefix, PropertyAndValueDictionary.RO_NAMESPACE);
+        }
+        return iri;
     }
 
     public static Collection<InteractType> hasTypes(InteractType type) {
