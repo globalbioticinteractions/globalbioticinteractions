@@ -123,6 +123,7 @@ public enum InteractType implements RelType {
     ALLELOPATH_OF("http://purl.obolibrary.org/obo/RO_0002555", "allelopathOf", SUBJECT, OBJECT),
 
     HEMIPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002237", "hemiparasiteOf", SUBJECT, OBJECT),
+    ROOTPARASITE_OF("http://purl.obolibrary.org/obo/RO_0002236", "rootparasiteOf", SUBJECT, OBJECT),
 
     RELATED_TO("http://purl.obolibrary.org/obo/RO_0002321", "ecologicallyRelatedTo");
 
