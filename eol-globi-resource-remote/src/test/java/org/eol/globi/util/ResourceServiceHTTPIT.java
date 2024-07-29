@@ -32,5 +32,11 @@ public class ResourceServiceHTTPIT {
         service.retrieve(URI.create(doubleSlashInPath));
     }
 
+    @Test
+    public void cachedRemote() throws IOException {
+        String doubleSlashInPath = "https://linker.bio/hash://sha256/69c839dc05a1b22d2e1aac1c84dec1cfd7af8425479053c74122e54998a1ddc2";
+        ResourceServiceHTTP.getCachedRemoteInputStream(URI.create(doubleSlashInPath), is -> is);
+    }
+
 
 }

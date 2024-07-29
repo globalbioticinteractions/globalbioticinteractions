@@ -33,14 +33,14 @@ public class ResourceServiceHTTP extends ResourceServiceCaching {
         return cachedRemoteInputStream;
     }
 
-    private static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
+    static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
         HttpGet request = HttpUtil.addAcceptHeader(new HttpGet(resourceURI));
         try {
             HttpResponse response = HttpUtil.getHttpClient().execute(request);
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() >= 300) {
                 throw new HttpResponseException(statusLine.getStatusCode(),
-                        statusLine.getReasonPhrase());
+                        statusLine.getReasonPhrase() + " for [" + resourceURI + "]");
             }
             try (InputStream content = response.getEntity().getContent()) {
                 return cacheAndOpenStream(content, factory);
