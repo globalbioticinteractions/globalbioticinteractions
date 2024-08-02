@@ -214,6 +214,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
         }
     });
+    private String workDir;
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -309,8 +310,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             File dwcaFile = null;
             try {
                 URI dwcaURI = URI.create(archiveURL);
-
-                tmpDwA = Files.createTempDirectory("dwca");
+                tmpDwA = Files.createTempDirectory(getWorkDir().toPath(), "dwca");
                 final File tmpDir = tmpDwA.toFile();
                 deleteOnShutdownHook = addDeleteOnShutdownHook(tmpDir);
                 Archive archive;

@@ -10,7 +10,9 @@ import org.globalbioticinteractions.dataset.CitationUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.doi.DOI;
 
+import java.io.File;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BaseDatasetImporter implements DatasetImporter {
@@ -24,6 +26,7 @@ public abstract class BaseDatasetImporter implements DatasetImporter {
 
     private ImportLogger importLogger = new NullImportLogger();
     private String sourceCitationLastAccessed;
+    private File workDir;
 
     @Override
     public void setFilter(ImportFilter importFilter) {
@@ -75,6 +78,19 @@ public abstract class BaseDatasetImporter implements DatasetImporter {
         return sourceCitationLastAccessed;
     }
 
+    @Override
+    public void setWorkDir(File workDir) {
+        this.workDir = workDir;
+    }
+
+    @Override
+    public File getWorkDir() {
+        return workDir == null
+                ? Paths.get("").toFile()
+                : workDir;
+    }
+
+
     protected void setCurrentResource(URI currentResource) {
         this.currentResource = currentResource;
     }
@@ -98,7 +114,7 @@ public abstract class BaseDatasetImporter implements DatasetImporter {
         StringBuilder builder = new StringBuilder();
         if (currentLine != null) {
             builder.append("[");
-            if (getCurrentResource() != null){
+            if (getCurrentResource() != null) {
                 builder.append(getCurrentResource());
             }
             builder.append(":");
