@@ -214,7 +214,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
         }
     });
-    private String workDir;
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
