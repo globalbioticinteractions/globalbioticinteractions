@@ -115,7 +115,7 @@ public class DatasetImporterForTSVTest extends GraphDBNeo4jTestCase {
     }
 
     public DatasetImpl getDataset(TreeMap<URI, String> treeMap) {
-        return new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())) {
+        return new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), getResourceService()) {
                 @Override
                 public InputStream retrieve(URI resource) throws IOException {
                     String input = treeMap.get(resource);

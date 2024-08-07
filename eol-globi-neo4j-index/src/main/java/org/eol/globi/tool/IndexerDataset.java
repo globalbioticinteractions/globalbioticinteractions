@@ -1,24 +1,24 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.NodeFactory;
-import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocal;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.data.DatasetImporterForRegistry;
+import org.eol.globi.data.NodeFactory;
 import org.eol.globi.data.ParserFactoryLocal;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.service.DatasetLocal;
+import org.eol.globi.util.InputStreamFactoryNoop;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.globalbioticinteractions.dataset.DatasetUtil;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
+import java.io.File;
 
 public class IndexerDataset implements IndexerNeo4j {
     private static final Logger LOG = LoggerFactory.getLogger(IndexerDataset.class);
@@ -26,13 +26,16 @@ public class IndexerDataset implements IndexerNeo4j {
     private final DatasetRegistry registry;
     private final NodeFactoryFactory nodeFactoryFactory;
     private final GraphServiceFactory graphServiceFactory;
+    private final File cacheDir;
 
     public IndexerDataset(DatasetRegistry registry,
                           NodeFactoryFactory nodeFactoryFactory,
-                          GraphServiceFactory graphServiceFactory) {
+                          GraphServiceFactory graphServiceFactory,
+                          File cacheDir) {
         this.registry = registry;
         this.nodeFactoryFactory = nodeFactoryFactory;
         this.graphServiceFactory = graphServiceFactory;
+        this.cacheDir = cacheDir;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class IndexerDataset implements IndexerNeo4j {
         GraphDatabaseService graphService = graphServiceFactory.getGraphService();
         NodeFactory nodeFactory;
         try (Transaction tx = graphService.beginTx();) {
-            nodeFactory = nodeFactoryFactory.create(graphService);
+            nodeFactory = nodeFactoryFactory.create(graphService, cacheDir);
             tx.success();
         }
 

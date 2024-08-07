@@ -34,7 +34,7 @@ public class DatasetImporterForSzoboszlaiIT extends GraphDBNeo4jTestCase {
                 "  }\n" +
                 "}");
 
-        DatasetImpl dataset = new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), getResourceService());
         dataset.setConfig(config);
         ParserFactory parserFactory = new ParserFactoryForDataset(dataset);
         DatasetImporterForSzoboszlai importer = new DatasetImporterForSzoboszlai(parserFactory, nodeFactory);

@@ -58,7 +58,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
     private NodeFactory createNeo4j2(GraphDatabaseService graphDb) {
         NodeFactory factory;
         try (Transaction tx = getGraphDb().beginTx()) {
-            factory = new NodeFactoryNeo4j2(graphDb);
+            factory = new NodeFactoryNeo4j2(graphDb, getCacheDir());
             tx.success();
         }
         return factory;
@@ -84,7 +84,7 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
             tx.success();
         }
 
-        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb());
+        NodeFactoryNeo4j factory = new NodeFactoryNeo4j3(getGraphDb(), getCacheDir());
         try (Transaction tx = getGraphDb().beginTx()) {
             assertGraphDBImportNativeIndexes(factory, getGraphDb());
         }
@@ -124,7 +124,8 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
         final IndexerDataset indexerDataset = new IndexerDataset(
                 DatasetRegistryUtil.getDatasetRegistry(datasetDirTest, new ResourceServiceLocal(new InputStreamFactoryNoop())),
                 nodeFactoryFactory,
-                getGraphFactory()
+                getGraphFactory(),
+                getCacheDir()
         );
 
         try (Transaction tx = getGraphDb().beginTx()) {

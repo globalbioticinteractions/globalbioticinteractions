@@ -8,6 +8,7 @@ import org.eol.globi.domain.Taxon;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeListener;
 import org.eol.globi.util.NodeUtil;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -84,7 +85,8 @@ public class DatasetImporterForJSONTest extends GraphDBNeo4jTestCase {
     }
 
     public DatasetImpl getDataset(TreeMap<URI, String> treeMap) {
-        return new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())) {
+        return new DatasetWithResourceMapping("someRepo", URI.create("http://example.com"),
+                new ResourceServiceLocal(new InputStreamFactoryNoop())) {
             @Override
             public InputStream retrieve(URI resource) throws IOException {
                 String input = treeMap.get(resource);

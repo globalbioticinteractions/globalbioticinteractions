@@ -7,7 +7,7 @@ public class NodeFactoryNeo4j3Test extends NodeFactoryNeo4jTest {
 
     @Override
     protected NodeFactoryNeo4j createNodeFactory() {
-        NodeFactoryNeo4j3 nodeFactoryNeo4j = new NodeFactoryNeo4j3(getGraphDb());
+        NodeFactoryNeo4j3 nodeFactoryNeo4j = new NodeFactoryNeo4j3(getGraphDb(), getCacheDir());
         nodeFactoryNeo4j.setEnvoLookupService(getEnvoLookupService());
         nodeFactoryNeo4j.setTermLookupService(getTermLookupService());
         return nodeFactoryNeo4j;

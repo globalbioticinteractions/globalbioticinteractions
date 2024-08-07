@@ -3,17 +3,24 @@ package org.eol.globi.service;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class EnvoLookupServiceTest {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+
     @Test
-    public void lookupTerm() throws TermLookupServiceException {
-        TermLookupService service = new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
+    public void lookupTerm() throws TermLookupServiceException, IOException {
+        TermLookupService service = getService();
         List<Term> terms = service.lookupTermByName("Dung");
         assertThat(terms.size(), is(1));
         Term term = terms.get(0);
@@ -41,14 +48,18 @@ public class EnvoLookupServiceTest {
     }
 
     @Test
-    public void CMECShabitats() throws TermLookupServiceException {
-        TermLookupService service = new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
+    public void CMECShabitats() throws TermLookupServiceException, IOException {
+        TermLookupService service = getService();
         List<Term> terms = service.lookupTermByName("Marine Nearshore Subtidal");
         assertThat(terms.size(), is(1));
 
         Term term = terms.get(0);
         assertThat(term.getName(), is("Marine Nearshore Subtidal"));
         assertThat(term.getId(), is("no:match"));
+    }
+
+    private EnvoLookupService getService() throws IOException {
+        return new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop(), folder.newFolder()));
     }
 
 }

@@ -60,7 +60,7 @@ public class DatasetImporterForHurlbertTest extends GraphDBNeo4jTestCase {
 
     public DatasetImporter doImport(final String namespace) throws StudyImporterException {
         DatasetImporter importer = new DatasetImporterForHurlbert(null, nodeFactory);
-        Dataset dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())) {
+        Dataset dataset = new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), getCacheDir())) {
             @Override
             public InputStream retrieve(URI name){
                 return DatasetImporterForHurlbertTest.getResource();

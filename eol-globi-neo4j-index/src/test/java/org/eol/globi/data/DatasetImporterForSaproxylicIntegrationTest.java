@@ -15,7 +15,11 @@ public class DatasetImporterForSaproxylicIntegrationTest extends GraphDBNeo4jTes
     public void importAll() throws StudyImporterException {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForSaproxylic.class);
-        importer.setDataset(new DatasetWithResourceMapping("some/test", URI.create("classpath:/org/eol/globi/data/saproxylic"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        importer.setDataset(new DatasetWithResourceMapping(
+                "some/test",
+                URI.create("classpath:/org/eol/globi/data/saproxylic"),
+                getResourceService())
+        );
         importStudy(importer);
 
         assertNotNull(taxonIndex.findTaxonByName("Fagus sylvatica"));

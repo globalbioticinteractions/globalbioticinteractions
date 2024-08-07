@@ -7,7 +7,9 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,17 +31,33 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
+
 public class DatasetRegistryLocalTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
 
     private DatasetRegistry createDatasetRegistry() throws URISyntaxException {
         URL accessFile = getClass().getResource("/test-cache/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(accessFile);
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile();
         return new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
-                dataset -> CacheUtil.cacheFor(
-                        dataset.getNamespace(),
-                        cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+                dataset -> {
+                    try {
+                        return CacheUtil.cacheFor(
+                                dataset.getNamespace(),
+                                cacheDir.getAbsolutePath(),
+                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, new ResourceServiceLocal(new InputStreamFactoryNoop()));
+    }
+
+    private ResourceServiceLocalAndRemote getService() throws IOException {
+        return new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder());
     }
 
     @Test
@@ -65,10 +83,16 @@ public class DatasetRegistryLocalTest {
 
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile();
         DatasetRegistry registry = new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
-                dataset -> CacheUtil.cacheFor(
-                        dataset.getNamespace(),
-                        cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+                dataset -> {
+                    try {
+                        return CacheUtil.cacheFor(
+                                dataset.getNamespace(),
+                                cacheDir.getAbsolutePath(),
+                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, new ResourceServiceLocal(new InputStreamFactoryNoop()));
 
 
         Dataset actual = registry.datasetFor("local");
@@ -95,10 +119,16 @@ public class DatasetRegistryLocalTest {
 
         File cacheDir = new File(accessFile1.toURI()).getParentFile().getParentFile();
         DatasetRegistry registry = new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
-                dataset -> CacheUtil.cacheFor(
-                        dataset.getNamespace(),
-                        cacheDir.getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+                dataset -> {
+                    try {
+                        return CacheUtil.cacheFor(
+                                dataset.getNamespace(),
+                                cacheDir.getAbsolutePath(),
+                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, new ResourceServiceLocal(new InputStreamFactoryNoop()));
 
         Iterable<String> availableNamespaces = registry.findNamespaces();
         for (String availableNamespace : availableNamespaces) {

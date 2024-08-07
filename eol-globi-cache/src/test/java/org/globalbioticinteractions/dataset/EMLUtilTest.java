@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eol.globi.util.InputStreamFactoryNoop;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class EMLUtilTest {
 
     @Test
     public void metaToMetaTables() throws URISyntaxException, IOException {
-        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         String uriString = "jar:" + getClass().getResource("dwca.zip").toURI().toString() + "!/vampire-moth-dwca-c4549a1690b84595c88946f477057b9ab76e5360/eml.xml";
 
         JsonNode config = EMLUtil.datasetWithEML(origDataset, URI.create(uriString));
@@ -32,7 +33,7 @@ public class EMLUtilTest {
 
     @Test
     public void customEML() throws URISyntaxException, IOException {
-        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         String uriString = "jar:" + getClass().getResource("dwca-seltmann.zip").toURI().toString() + "!/taxonomy-darwin-core-1ac8b1c8b7728b13a6dba9fd5b64a3aeb036f5fb/eml.xml";
 
         JsonNode config = EMLUtil.datasetWithEML(origDataset, URI.create(uriString));
@@ -45,7 +46,7 @@ public class EMLUtilTest {
 
     @Test
     public void emlToMetaTables() throws URISyntaxException, IOException {
-        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         URI uriString = getClass().getResource("eml-table.xml").toURI();
 
         JsonNode config = EMLUtil.datasetWithEML(origDataset, uriString);
@@ -75,7 +76,7 @@ public class EMLUtilTest {
 
     @Test
     public void withEMLofINHS() throws URISyntaxException, IOException {
-        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
 
 
         URI emlURI = getClass().getResource("inhs-eml.xml").toURI();

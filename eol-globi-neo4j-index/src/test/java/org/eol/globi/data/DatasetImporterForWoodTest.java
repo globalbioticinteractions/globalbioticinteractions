@@ -1,12 +1,11 @@
 package org.eol.globi.data;
 
-import org.apache.commons.io.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
-import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.apache.commons.io.IOUtils;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
@@ -17,15 +16,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.eol.globi.data.DatasetImporterForTSV.*;
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LATITUDE;
+import static org.eol.globi.data.DatasetImporterForTSV.DECIMAL_LONGITUDE;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_ID;
+import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
+import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.Is.is;
 
 public class DatasetImporterForWoodTest extends GraphDBNeo4jTestCase {
 
-    static DatasetImporterForWood createImporter(NodeFactory nodeFactory) throws IOException {
+    static DatasetImporterForWood createImporter(NodeFactory nodeFactory, ResourceService resourceService) throws IOException {
 
         JsonNode config = new ObjectMapper().readTree("{ \"citation\": \"Wood SA, Russell R, Hanson D, Williams RJ, Dunne JA (2015) Data from: Effects of spatial scale of sampling on food web structure. Dryad Digital Repository. https://doi.org/10.5061/dryad.g1qr6\",\n" +
                 "  \"doi\": \"https://doi.org/10.5061/dryad.g1qr6\",\n" +
@@ -42,7 +50,11 @@ public class DatasetImporterForWoodTest extends GraphDBNeo4jTestCase {
                 "    \"longitude\": -162.70889\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping(
+                "some/namespace",
+                URI.create("http://example.com"),
+                resourceService
+        );
         dataset.setConfig(config);
 
         DatasetImporterForWood wood = new DatasetImporterForWood(new ParserFactoryForDataset(dataset), nodeFactory);
@@ -52,7 +64,7 @@ public class DatasetImporterForWoodTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        DatasetImporterForWood wood = createImporter(nodeFactory);
+        DatasetImporterForWood wood = createImporter(nodeFactory, getResourceService());
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
         wood.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), maps::add, null);

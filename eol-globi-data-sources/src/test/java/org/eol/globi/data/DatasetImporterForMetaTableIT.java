@@ -6,13 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.CSVTSVUtil;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +34,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForMetaTableIT {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
     public void parseNaturalHistoryMuseum() throws IOException, StudyImporterException {
         final Class<DatasetImporterForMetaTable> clazz = DatasetImporterForMetaTable.class;
@@ -40,7 +45,7 @@ public class DatasetImporterForMetaTableIT {
         org.junit.Assert.assertNotNull(resource);
 
         final JsonNode config = new ObjectMapper().readTree(clazz.getResourceAsStream(name));
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         final List<JsonNode> tables = DatasetImporterForMetaTable.collectTables(dataset);
         assertThat(tables.size(), is(1));
@@ -81,7 +86,7 @@ public class DatasetImporterForMetaTableIT {
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/AfricaTreeDatabase/main";
         final String resource = baseUrl + "/globi.json";
 
-        importAll(interactionListener, tableFactory, baseUrl, resource);
+        importAll(interactionListener, tableFactory, baseUrl, resource, getResourceServiceHTTP());
         assertThat(links.size(), is(9));
     }
 
@@ -102,7 +107,7 @@ public class DatasetImporterForMetaTableIT {
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/noaa-reem/main";
         final String resource = baseUrl + "/globi.json";
-        importAll(interactionListener, tableFactory, baseUrl, resource);
+        importAll(interactionListener, tableFactory, baseUrl, resource, getResourceServiceHTTP());
 
         assertThat(links.size(), is(12));
 
@@ -125,7 +130,7 @@ public class DatasetImporterForMetaTableIT {
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/gandhi2009/main";
         final String resource = baseUrl + "/globi.json";
-        importAll(interactionListener, new DatasetImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource);
+        importAll(interactionListener, new DatasetImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource, getResourceServiceHTTP());
 
         assertThat(links.size()> 0, is(true));
         final Map<String, String> firstLine = links.get(0);
@@ -145,7 +150,7 @@ public class DatasetImporterForMetaTableIT {
 
         final String baseUrl = "https://raw.githubusercontent.com/theptin/Thamnophis-GloBI/main";
         final String resource = baseUrl + "/globi.json";
-        importAll(interactionListener, new DatasetImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource);
+        importAll(interactionListener, new DatasetImporterForMetaTable.TableParserFactoryImpl(), baseUrl, resource, getResourceServiceHTTP());
 
         assertThat(links.size()> 0, is(true));
         final Map<String, String> firstLine = links.get(0);
@@ -157,6 +162,10 @@ public class DatasetImporterForMetaTableIT {
         assertThat(firstLine.get(TaxonUtil.TARGET_TAXON_NAME), is(not(nullValue())));
         assertThat(firstLine.get(TaxonUtil.SOURCE_TAXON_NAME), is(not(nullValue())));
 
+    }
+
+    private ResourceServiceHTTP getResourceServiceHTTP() throws IOException {
+        return new ResourceServiceHTTP(new InputStreamFactoryNoop(), folder.newFolder());
     }
 
     @Test
@@ -175,7 +184,7 @@ public class DatasetImporterForMetaTableIT {
 
         final String baseUrl = "https://raw.githubusercontent.com/globalbioticinteractions/natural-history-museum-london-interactions-bank/main";
         final String resource = baseUrl + "/globi.json";
-        importAll(interactionListener, tableFactory, baseUrl, resource);
+        importAll(interactionListener, tableFactory, baseUrl, resource, getResourceServiceHTTP());
 
         assertThat(links.size(), is(4));
 
@@ -188,14 +197,14 @@ public class DatasetImporterForMetaTableIT {
         }
     }
 
-    static public void importAll(InteractionListener interactionListener, DatasetImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource) throws IOException, StudyImporterException {
+    static public void importAll(InteractionListener interactionListener, DatasetImporterForMetaTable.TableParserFactory tableFactory, String baseUrl, String resource, ResourceServiceHTTP resourceServiceHTTP) throws IOException, StudyImporterException {
         final InputStream inputStream
-                = new ResourceServiceHTTP(new InputStreamFactoryNoop()).retrieve(URI.create(resource));
+                = resourceServiceHTTP.retrieve(URI.create(resource));
         final JsonNode config = new ObjectMapper().readTree(inputStream);
-        final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         for (JsonNode table : DatasetImporterForMetaTable.collectTables(dataset)) {
-            DatasetWithResourceMapping dataset1 = new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+            DatasetWithResourceMapping dataset1 = new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocal(new InputStreamFactoryNoop()));
             dataset1.setConfig(table);
             DatasetImporterForMetaTable.importTable(interactionListener, tableFactory, dataset1, null);
         }

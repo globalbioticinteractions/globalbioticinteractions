@@ -9,8 +9,11 @@ import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,11 +23,15 @@ import static org.junit.Assert.fail;
 
 public class DatasetImporterForBatBaseIT {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
-    public void importAll() throws StudyImporterException {
+    public void importAll() throws StudyImporterException, IOException {
         AtomicInteger counter = new AtomicInteger(0);
         DatasetImporterForBatBase importer = new DatasetImporterForBatBase(null, null);
-        DatasetImpl dataset = new DatasetWithResourceMapping("test/batplant", URI.create("classpath:/org/eol/globi/data/batplant/"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        ResourceServiceLocalAndRemote resourceService = new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder());
+        DatasetImpl dataset = new DatasetWithResourceMapping("test/batplant", URI.create("classpath:/org/eol/globi/data/batplant/"), resourceService);
         importer.setDataset(dataset);
         importer.setInteractionListener(new InteractionValidator(new InteractionListener() {
             @Override

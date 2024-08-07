@@ -47,8 +47,9 @@ public class DatasetImporterForBascompteIT extends GraphDBNeo4jTestCase {
         String resource = DatasetImporterForWebOfLife.WEB_OF_LIFE_BASE_URL + "/networkslist.php?type=All&data=All";
         final List<URI> networkNames = DatasetImporterForWebOfLife
                 .getNetworkNames(
-                        new ResourceServiceHTTP(new InputStreamFactoryNoop()).retrieve(URI.create(resource))
+                        getResourceServiceHTTP().retrieve(URI.create(resource))
                 );
         assertThat(networkNames, hasItem(URI.create("A_HP_001")));
     }
+
 }

@@ -1,7 +1,6 @@
 package org.eol.globi.tool;
 
 import org.eol.globi.data.GraphDBNeo4jTestCase;
-import org.eol.globi.data.NodeFactoryException;
 import org.eol.globi.data.NodeFactoryNeo4j;
 import org.eol.globi.data.NodeFactoryWithDatasetContext;
 import org.eol.globi.data.StudyImporterException;
@@ -15,11 +14,9 @@ import org.eol.globi.domain.StudyNode;
 import org.eol.globi.domain.Taxon;
 import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.TaxonNode;
-import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.RelationshipListener;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.doi.DOI;
 import org.hamcrest.core.Is;
@@ -47,7 +44,7 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/wiki/Nanopubs
         StudyImpl study = new StudyImpl("some study", new DOI("123.23", "222"), "some study citation");
         DatasetWithResourceMapping dataset = new DatasetWithResourceMapping("some/namespace", URI.create("https://some.uri"),
-                new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+                getResourceService());
         NodeFactoryWithDatasetContext factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
         Study interaction = factory.getOrCreateStudy(study);
         TaxonImpl donaldTaxon = new TaxonImpl("donald duck", "NCBI:1234");
@@ -65,7 +62,7 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
 
         NodeFactoryNeo4j nodeFactoryNeo4j = getNodeFactory();
         StudyImpl study1 = new StudyImpl("some study", new DOI("123.23", "222"), "come citation");
-        study1.setOriginatingDataset(new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        study1.setOriginatingDataset(new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), getResourceService()));
         StudyNode someStudy = nodeFactoryNeo4j.getOrCreateStudy(study1);
 
         assertThat(interaction.getOriginatingDataset().getNamespace(), is(someStudy.getOriginatingDataset().getNamespace()));
@@ -97,6 +94,7 @@ public class IndexInteractionsNeo4j2Test extends GraphDBNeo4jTestCase {
         assertTrue(interactionNode.hasRelationship(Direction.OUTGOING, NodeUtil.asNeo4j(RelTypes.ACCESSED_AT)));
 
     }
+
 
     protected IndexerNeo4j getInteractionIndexer() {
         return new IndexInteractionsNeo4j2(new GraphServiceFactoryProxy(getGraphDb()));

@@ -2,7 +2,7 @@ package org.eol.globi.data;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
@@ -40,7 +40,7 @@ public class DatasetImporterForRegistryTest {
 
             @Override
             public Dataset datasetFor(String namespace) throws DatasetRegistryException {
-                return new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in));
+                return new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(in -> in));
             }
         });
 
@@ -72,7 +72,7 @@ public class DatasetImporterForRegistryTest {
 
                     @Override
                     public Dataset datasetFor(String namespace) throws DatasetRegistryException {
-                        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in)) {
+                        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(in -> in)) {
                             @Override
                             public InputStream retrieve(URI resource) throws IOException {
                                 if (!StringUtils.endsWith(resource.toString(), "globi.json")) {

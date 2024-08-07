@@ -37,7 +37,7 @@ public class ExportFlatInteractionsTest extends GraphDBNeo4jTestCase {
     @Before
     public void init() throws IOException {
         super.startGraphDb();
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), getResourceService());
         factory = new NodeFactoryWithDatasetContext(nodeFactory, dataset);
     }
 

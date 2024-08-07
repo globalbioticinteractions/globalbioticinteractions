@@ -302,7 +302,7 @@ public class DatasetImporterForMetaTableTest {
         final JsonNode config = new ObjectMapper().readTree(inputStream);
 
         String baseUrl = resource.toExternalForm().replaceFirst(metaTableDef + "$", "");
-        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnsFromExternalSchema(config.get("tableSchema"), new DatasetWithResourceMapping(null, URI.create(baseUrl), new ResourceServiceLocal(new InputStreamFactoryNoop())));
         assertThat(columnNames.size(), is(40));
     }
 

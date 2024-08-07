@@ -6,6 +6,8 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import picocli.CommandLine;
 
+import java.io.File;
+
 @CommandLine.Command(
         name = "compile",
         aliases = {"import"},
@@ -22,7 +24,11 @@ public class CmdCompile extends CmdNeo4J {
         );
 
         try {
-            new IndexerDataset(registry, getNodeFactoryFactory(), getGraphServiceFactory())
+            new IndexerDataset(registry,
+                    getNodeFactoryFactory(),
+                    getGraphServiceFactory(),
+                    new File(getDatasetDir())
+            )
                     .index();
         } catch (StudyImporterException e) {
             throw new RuntimeException(e);

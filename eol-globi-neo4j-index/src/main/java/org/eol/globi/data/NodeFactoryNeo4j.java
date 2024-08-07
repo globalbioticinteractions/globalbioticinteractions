@@ -47,6 +47,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
     private final TermLookupService lifeStageLookupService;
     private final TermLookupService bodyPartLookupService;
 
-    public NodeFactoryNeo4j(GraphDatabaseService graphDb) {
+    public NodeFactoryNeo4j(GraphDatabaseService graphDb, File cacheDir) {
         this.graphDb = graphDb;
 
         InputStreamFactory inputStreamFactory = new InputStreamFactoryNoop();
@@ -88,7 +89,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         );
 
         this.envoLookupService = new EnvoLookupService(
-                new ResourceServiceHTTP(inputStreamFactory)
+                new ResourceServiceHTTP(inputStreamFactory, cacheDir)
         );
 
     }

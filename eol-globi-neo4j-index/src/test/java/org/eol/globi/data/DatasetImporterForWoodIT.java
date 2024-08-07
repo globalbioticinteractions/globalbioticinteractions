@@ -11,7 +11,7 @@ public class DatasetImporterForWoodIT extends GraphDBNeo4jTestCase {
 
     @Test
     public void importFirst500() throws StudyImporterException, IOException {
-        DatasetImporterForWood wood = DatasetImporterForWoodTest.createImporter(nodeFactory);
+        DatasetImporterForWood wood = DatasetImporterForWoodTest.createImporter(nodeFactory, getResourceService());
 
         wood.setFilter(recordNumber -> recordNumber < 500);
         importStudy(wood);

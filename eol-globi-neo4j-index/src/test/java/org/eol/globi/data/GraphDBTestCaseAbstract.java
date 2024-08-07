@@ -89,12 +89,13 @@ public abstract class GraphDBTestCaseAbstract {
 
                     @Override
                     public Dataset datasetFor(String namespace) throws DatasetRegistryException {
-                        return new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in));
+                        return new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocal(in -> in));
                     }
                 },
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
                         "target/datasets",
-                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                        new ResourceServiceLocal(new InputStreamFactoryNoop())));
         return finder.datasetFor(namespace);
     }
 

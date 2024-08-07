@@ -43,7 +43,7 @@ public class DatasetImporterForJSONLDTest extends GraphDBNeo4jTestCase {
     @Test(expected = StudyImporterException.class)
     public void importStaticInvalid() throws StudyImporterException, URISyntaxException {
         DatasetImporter importer = new DatasetImporterForJSONLD(null, nodeFactory);
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), getCacheDir()));
         dataset.setConfigURI(URI.create("classpath:/org/eol/globi/data/globi-jsonld/globi-dataset.jsonld.invalid"));
         importer.setDataset(dataset);
 

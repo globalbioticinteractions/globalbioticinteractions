@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import org.globalbioticinteractions.cache.CacheFactory;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 public class DatasetRegistryWithCache implements DatasetRegistry {
@@ -27,7 +28,11 @@ public class DatasetRegistryWithCache implements DatasetRegistry {
 
     public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         Dataset dataset = getRegistry().datasetFor(namespace);
-        return new DatasetWithCache(dataset, getCacheFactory().cacheFor(dataset));
+        try {
+            return new DatasetWithCache(dataset, getCacheFactory().cacheFor(dataset));
+        } catch (IOException e) {
+            throw new DatasetRegistryException(e);
+        }
     }
 
     private DatasetRegistry getRegistry() {

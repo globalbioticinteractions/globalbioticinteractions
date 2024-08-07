@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DatasetImportUtilTest {
 
     public static List<Dataset> getReferences(Dataset dataset) {
@@ -52,7 +53,11 @@ public class DatasetImportUtilTest {
                 "    }]" +
                 "}";
 
-        final DatasetImpl datasetOrig = new DatasetWithResourceMapping("name/space", URI.create("some:uri"), new ResourceServiceLocalAndRemote(in -> in));
+        final DatasetImpl datasetOrig = new DatasetWithResourceMapping(
+                "name/space",
+                URI.create("some:uri"),
+                new ResourceServiceLocal(in -> in)
+        );
         JsonNode objectNode = new ObjectMapper().readTree(jsonConfig);
 
         datasetOrig.setConfig(objectNode);

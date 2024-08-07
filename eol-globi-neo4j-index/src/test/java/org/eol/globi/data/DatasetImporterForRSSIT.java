@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CachePullThrough;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetWithCache;
@@ -28,7 +27,7 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
         DatasetWithCache datasetWithCache = new DatasetWithCache(
                 new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())),
                 new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()))
+                        getResourceService())
         );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
@@ -54,7 +53,7 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
                 new CachePullThrough(
                         "testing",
                         tempFile.getParentFile().getAbsolutePath(),
-                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())
+                        getResourceService()
                 )
         );
 

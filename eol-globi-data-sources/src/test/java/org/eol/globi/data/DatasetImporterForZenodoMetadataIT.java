@@ -2,6 +2,7 @@ package org.eol.globi.data;
 
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.ResourceService;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetImpl;
@@ -40,7 +41,7 @@ public class DatasetImporterForZenodoMetadataIT {
                 links.add(interaction);
             }
         });
-        final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:archive"), new ResourceServiceLocalAndRemote(in -> in)) {
+        final Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:archive"), new ResourceServiceLocal(in -> in)) {
             @Override
             public String getOrDefault(String key, String defaultValue) {
                 return "https://sandbox.zenodo.org/api/records/?custom=%5Bobo%3ARO_0002453%5D%3A%5B%3A%5D";

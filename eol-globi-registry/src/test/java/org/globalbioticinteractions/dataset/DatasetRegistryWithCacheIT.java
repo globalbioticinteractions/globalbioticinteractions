@@ -1,50 +1,55 @@
 package org.globalbioticinteractions.dataset;
 
-import org.apache.commons.io.FileUtils;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.hamcrest.core.Is;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 public class DatasetRegistryWithCacheIT {
 
-    private String cachePath = "target/cache/datasets";
-
-    @Before
-    public void deleteCacheDir() {
-        FileUtils.deleteQuietly(new File(cachePath));
-    }
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void zenodoTest() throws DatasetRegistryException, IOException {
         assertTemplateDataset("zenodo.org",
-                new DatasetRegistryZenodo(new ResourceServiceHTTP(new InputStreamFactoryNoop())),
+                new DatasetRegistryZenodo(getResourceService()),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
+    }
+
+    private ResourceService getResourceService() throws IOException {
+        return new ResourceServiceHTTP(new InputStreamFactoryNoop(), folder.newFolder());
     }
 
     @Test
     public void templateDatasetGithub() throws DatasetRegistryException, IOException {
         assertTemplateDataset("github.com",
-                new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop())),
+                new DatasetRegistryGitHubArchive(getResourceService()),
                 "Jorrit H. Poelen. 2014. Species associations manually extracted from literature.");
     }
 
     private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
+        final File cacheDir = folder.newFolder();
+        DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> {
+            return CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath(), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        });
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
 
@@ -56,7 +61,13 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void afrotropicalBees() throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop())), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
+        final File cacheDir = folder.newFolder();
+        DatasetRegistry finder = new DatasetRegistryWithCache(
+                new DatasetRegistryGitHubArchive(getResourceService()),
+                dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath(),
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir),
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()))
+        );
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
 
@@ -68,8 +79,13 @@ public class DatasetRegistryWithCacheIT {
 
     @Test
     public void hafnerTest() throws DatasetRegistryException, IOException {
-        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(new ResourceServiceHTTP(new InputStreamFactoryNoop())),
-                dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cachePath, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop())));
+        final File cacheDir = folder.newFolder();
+
+        DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(getResourceService()),
+                dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath(),
+                        new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir),
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()))
+        );
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");
 

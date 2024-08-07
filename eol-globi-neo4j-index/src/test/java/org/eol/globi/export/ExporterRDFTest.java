@@ -1,12 +1,12 @@
 package org.eol.globi.export;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.eol.globi.data.DatasetImporterForSPIRE;
 import org.eol.globi.data.GraphDBNeo4jTestCase;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.data.DatasetImporterForSPIRE;
 import org.eol.globi.domain.NodeBacked;
 import org.eol.globi.domain.RelTypes;
 import org.eol.globi.domain.StudyNode;
@@ -31,19 +31,19 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class ExporterRDFTest extends GraphDBNeo4jTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
-        return new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
+        return new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop(), getCacheDir()));
     }
 
     @Test

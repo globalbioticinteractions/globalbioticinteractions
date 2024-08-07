@@ -4,15 +4,14 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 public class DatasetImporterForGrayIT extends GraphDBNeo4jTestCase {
 
     @Test
     public void importFirst500() throws StudyImporterException, IOException {
-        DatasetImporterForGray gray = DatasetImporterForGrayTest.createImporter(nodeFactory);
+        DatasetImporterForGray gray = DatasetImporterForGrayTest.createImporter(nodeFactory, getResourceService());
         gray.setFilter(recordNumber -> recordNumber < 500);
         importStudy(gray);
 

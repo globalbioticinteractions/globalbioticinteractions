@@ -11,9 +11,8 @@ import org.eol.globi.domain.Taxon;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,10 +27,10 @@ public class NodeFactoryFactoryTransactingOnDatasetNeo4j2 implements NodeFactory
     }
 
     @Override
-    public NodeFactory create(GraphDatabaseService service) {
+    public NodeFactory create(GraphDatabaseService service, final File cacheDir) {
         GraphDatabaseService graphService = graphServiceFactory.getGraphService();
         try (Transaction tx = graphService.beginTx()) {
-            NodeFactory nodeFactory = new NodeFactoryNeo4j2(graphService) {
+            NodeFactory nodeFactory = new NodeFactoryNeo4j2(graphService, cacheDir) {
                 final AtomicReference<Transaction> tx = new AtomicReference<>();
                 final AtomicBoolean closing = new AtomicBoolean(false);
                 final AtomicLong counter = new AtomicLong(0);

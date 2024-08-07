@@ -4,6 +4,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.eol.globi.service.ResourceService;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -11,7 +12,8 @@ import java.net.URI;
 public class ResourceServiceFTP extends ResourceServiceCaching {
     private final InputStreamFactory factory;
 
-    public ResourceServiceFTP(InputStreamFactory factory) {
+    public ResourceServiceFTP(InputStreamFactory factory, File cacheDir) {
+        super(cacheDir);
         this.factory = factory;
     }
 

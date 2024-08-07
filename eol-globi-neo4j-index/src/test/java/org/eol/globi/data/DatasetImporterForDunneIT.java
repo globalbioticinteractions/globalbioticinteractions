@@ -36,7 +36,7 @@ public class DatasetImporterForDunneIT extends GraphDBNeo4jTestCase {
                 "  }\n" +
                 "}";
         JsonNode jsonNode = new ObjectMapper().readTree(configJson);
-        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), getCacheDir()));
         dunne2016.setConfig(jsonNode);
         ParserFactory parserFactory = new ParserFactoryForDataset(dunne2016);
         DatasetImporterForDunne importer = new DatasetImporterForDunne(parserFactory, nodeFactory);
@@ -70,7 +70,7 @@ public class DatasetImporterForDunneIT extends GraphDBNeo4jTestCase {
                 "    \"longitude\": 60\n" +
                 "  }\n" +
                 "}";
-        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dunne2016 = new DatasetWithResourceMapping("dunne2016", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), getCacheDir()));
         dunne2016.setConfig(new ObjectMapper().readTree(configJson));
         ParserFactory parserFactory = new ParserFactoryForDataset(dunne2016);
         DatasetImporterForDunne importer = new DatasetImporterForDunne(parserFactory, nodeFactory);

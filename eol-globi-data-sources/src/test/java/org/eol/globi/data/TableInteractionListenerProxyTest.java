@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.util.InputStreamFactoryNoop;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
@@ -26,7 +27,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListenerTest() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"https://example.org/someResource\" }");
-        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://someurl"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://someurl"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override
@@ -45,7 +46,7 @@ public class TableInteractionListenerProxyTest {
     public void interactionListener2Test() throws IOException, StudyImporterException {
         final List<Map<String, String>> links = new ArrayList<Map<String, String>>();
         JsonNode config = new ObjectMapper().readTree("{ \"dcterms:bibliographicCitation\":\"some citation\", \"url\":\"https://example.org/someResource\" }");
-        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://someurl"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping(null, URI.create("http://someurl"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         final TableInteractionListenerProxy listener = new TableInteractionListenerProxy(dataset, new InteractionListener() {
             @Override

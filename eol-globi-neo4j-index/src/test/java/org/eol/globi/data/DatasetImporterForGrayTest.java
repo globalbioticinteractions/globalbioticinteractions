@@ -1,13 +1,12 @@
 package org.eol.globi.data;
 
-import org.apache.commons.io.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.eol.globi.process.InteractionListener;
-import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
-import org.globalbioticinteractions.dataset.DatasetImpl;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
+import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
@@ -18,19 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_CITATION;
-import static org.eol.globi.data.DatasetImporterForTSV.DATASET_CITATION;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.Is.is;
 
 public class DatasetImporterForGrayTest extends GraphDBNeo4jTestCase {
 
-    static DatasetImporterForGray createImporter(NodeFactory nodeFactory) throws IOException {
+    static DatasetImporterForGray createImporter(NodeFactory nodeFactory, ResourceService resourceService) throws IOException {
         DatasetImporterForGray gray = new DatasetImporterForGray(
                 new ParserFactoryLocal(DatasetImporterForGrayTest.class), nodeFactory
         );
@@ -42,7 +40,7 @@ public class DatasetImporterForGrayTest extends GraphDBNeo4jTestCase {
                 "    \"links\": \"https://zenodo.org/record/13751/files/trophic.links.2014-11-10.csv\"  \n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), resourceService);
         dataset.setConfig(config);
         gray.setDataset(dataset);
         return gray;
@@ -50,7 +48,7 @@ public class DatasetImporterForGrayTest extends GraphDBNeo4jTestCase {
 
     @Test
     public void importLines() throws IOException, StudyImporterException {
-        DatasetImporterForGray gray = createImporter(nodeFactory);
+        DatasetImporterForGray gray = createImporter(nodeFactory, getResourceService());
         final List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
 
         gray.importLinks(IOUtils.toInputStream(firstFewLines(), StandardCharsets.UTF_8), new InteractionListener() {

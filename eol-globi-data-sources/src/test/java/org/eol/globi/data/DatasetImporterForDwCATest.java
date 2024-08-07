@@ -7,11 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.process.InteractionListener;
+import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
@@ -92,7 +92,7 @@ public class DatasetImporterForDwCATest {
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         final Map<String, String> interactionFound = new TreeMap<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -179,7 +179,7 @@ public class DatasetImporterForDwCATest {
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         List<Map<String, String>> links = new ArrayList<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -197,13 +197,17 @@ public class DatasetImporterForDwCATest {
         assertThat(links.get(0).get(RESOURCE_TYPES), is("http://rs.gbif.org/terms/1.0/Reference"));
     }
 
+    private ResourceService getResourceService() {
+        return new ResourceServiceLocal(new InputStreamFactoryNoop());
+    }
+
     @Test
     public void importTaxonDescriptionsFromDirNoInteractionType() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer-no-interaction-type/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         List<Map<String, String>> links = new ArrayList<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -222,7 +226,7 @@ public class DatasetImporterForDwCATest {
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         List<Map<String, String>> links = new ArrayList<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -257,7 +261,7 @@ public class DatasetImporterForDwCATest {
                 actualMessage.append(message);
             }
         });
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -288,7 +292,7 @@ public class DatasetImporterForDwCATest {
                 msgs.add(message);
             }
         });
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -341,7 +345,7 @@ public class DatasetImporterForDwCATest {
 
         AtomicInteger recordCounter = new AtomicInteger(0);
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), getResourceService()));
         studyImporterForDwCA.setInteractionListener(interaction -> {
             if (interaction.get(TARGET_OCCURRENCE_ID) != null) {
                 assertNull(interaction.get(TARGET_TAXON_NAME));
@@ -361,7 +365,7 @@ public class DatasetImporterForDwCATest {
 
         AtomicInteger recordCounter = new AtomicInteger(0);
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), getResourceService()));
         studyImporterForDwCA.setInteractionListener(interaction -> {
             assertThat(interaction.get(TARGET_TAXON_NAME), is("Glaucomys volans"));
             assertThat(interaction.get(TARGET_OCCURRENCE_ID), is(nullValue()));
@@ -389,7 +393,7 @@ public class DatasetImporterForDwCATest {
     public void importRecordsFromArctosArchive() throws StudyImporterException, URISyntaxException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/arctos_mvz_bird_small.zip");
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), getResourceService()));
 
         TreeSet<String> resourceTypes = new TreeSet<>();
         AtomicInteger someRecords = new AtomicInteger(0);
@@ -432,7 +436,7 @@ public class DatasetImporterForDwCATest {
     public void importRecords() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", resource.toURI(), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", resource.toURI(), getResourceService());
         dataset.setConfig(new ObjectMapper().readTree("{ \"citation\": \"some citation\" }"));
         studyImporterForDwCA.setDataset(dataset);
 
@@ -518,7 +522,7 @@ public class DatasetImporterForDwCATest {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
 
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("file:///some/path/data.zip"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("file:///some/path/data.zip"), getResourceService());
         JsonNode jsonNode = new ObjectMapper().readTree("{ " +
                 "\"interactionTypeId\": \"http://purl.obolibrary.org/obo/RO_0002437\"," +
                 "\"url\": \"" + resource.toExternalForm() + "\"" +
@@ -559,7 +563,7 @@ public class DatasetImporterForDwCATest {
     private void assertImportsSomethingOfType(URI archiveRoot, AtomicInteger recordCounter, String defaultResourceType, String... expectedProperties) throws StudyImporterException {
         final Set<String> resourceTypes = new TreeSet<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {
@@ -1334,7 +1338,7 @@ public class DatasetImporterForDwCATest {
 
         final Map<String, String> interactionFound = new TreeMap<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
-        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
         studyImporterForDwCA.setInteractionListener(new InteractionListener() {
             @Override
             public void on(Map<String, String> interaction) throws StudyImporterException {

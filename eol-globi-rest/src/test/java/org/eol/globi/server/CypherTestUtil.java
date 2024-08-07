@@ -1,11 +1,9 @@
 package org.eol.globi.server;
 
-import org.apache.commons.io.FileUtils;
 import org.eol.globi.data.NodeFactoryNeo4j2;
 import org.eol.globi.db.GraphServiceFactory;
 import org.eol.globi.db.GraphServiceFactoryProxy;
 import org.eol.globi.server.util.ResultField;
-import org.eol.globi.service.CacheService;
 import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.tool.LinkerTaxonIndexNeo4j2;
 import org.eol.globi.tool.CmdGenerateReportNeo4j2;
@@ -32,11 +30,11 @@ public class CypherTestUtil {
 
     public static void validate(CypherQuery cypherQuery, GraphDatabaseService graphDatabaseService) {
         try(Transaction tx = graphDatabaseService.beginTx()) {
-            new NodeFactoryNeo4j2(graphDatabaseService);
+            File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
+            new NodeFactoryNeo4j2(graphDatabaseService, cacheDir);
             new NonResolvingTaxonIndexNeo4j2(graphDatabaseService);
             new LinkerTaxonIndexNeo4j2(new GraphServiceFactoryProxy(graphDatabaseService), new NodeIdCollectorNeo4j2()).index();
             CmdGenerateReportNeo4j2 reportGenerator = new CmdGenerateReportNeo4j2();
-            File cacheDir = new File("target/reportGeneration" + UUID.randomUUID());
             reportGenerator.setCacheDir(cacheDir.getAbsolutePath());
             reportGenerator.setGraphServiceFactory(new GraphServiceFactory() {
                 @Override

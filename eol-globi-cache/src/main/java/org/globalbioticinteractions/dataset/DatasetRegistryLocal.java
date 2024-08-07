@@ -176,8 +176,12 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             @Override
             public Dataset datasetFor(String s) throws DatasetRegistryException {
                 Dataset dataset = new DatasetWithResourceMapping(namespace, sourceURI, resourceService);
-                return new DatasetWithCache(dataset,
-                        cacheFactory.cacheFor(dataset));
+                try {
+                    return new DatasetWithCache(dataset,
+                            cacheFactory.cacheFor(dataset));
+                } catch (IOException e) {
+                    throw new DatasetRegistryException(e);
+                }
             }
         }).datasetFor(namespace);
 

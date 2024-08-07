@@ -171,7 +171,7 @@ public class DatasetImporterForSPIRETest extends GraphDBNeo4jTestCase {
 
         assertGAZMapping(listener);
 
-        GeoNamesServiceImpl geoNamesServiceImpl = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop()));
+        GeoNamesServiceImpl geoNamesServiceImpl = new GeoNamesServiceImpl(new ResourceServiceHTTP(new InputStreamFactoryNoop(), getCacheDir()));
         for (String locality : listener.localities) {
             assertThat(geoNamesServiceImpl.hasTermForLocale(locality), is(true));
         }

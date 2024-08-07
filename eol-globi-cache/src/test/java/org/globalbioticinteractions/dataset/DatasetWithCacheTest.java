@@ -8,7 +8,9 @@ import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentProvenance;
 import org.hamcrest.core.Is;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -25,6 +27,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 public class DatasetWithCacheTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
 
     @Test
     public void citationWithCitationWithLastAccessed() throws IOException {
@@ -44,13 +50,13 @@ public class DatasetWithCacheTest {
     }
 
     @Test
-    public void citationWithLastAccessed() {
+    public void citationWithLastAccessed() throws IOException {
         DatasetWithCache dataset = datasetLastAccessedAt("1970-01-01");
         assertThat(dataset.getCitation(), Is.is("Accessed on 1970-01-01 via <some:bla>."));
     }
 
     @Test
-    public void citationWithoutLastAccessed() {
+    public void citationWithoutLastAccessed() throws IOException {
         DatasetWithCache dataset = datasetLastAccessedAt(null);
         assertThat(dataset.getCitation(), Is.is("Accessed via <some:bla>."));
     }
@@ -59,7 +65,7 @@ public class DatasetWithCacheTest {
     public void getURIRelativeWithFailedArchiveRetrieval() throws IOException {
         Cache cache = Mockito.mock(Cache.class);
         when(cache.retrieve(URI.create("some:bla/foo"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
-        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), getService());
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
         try {
@@ -70,13 +76,17 @@ public class DatasetWithCacheTest {
         }
     }
 
+    private ResourceServiceLocalAndRemote getService() throws IOException {
+        return new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder());
+    }
+
     @Test(expected = IOException.class)
     public void getURIRelativeInNonZipArchive() throws IOException {
         Cache cache = Mockito.mock(Cache.class);
         when(cache.retrieve(URI.create("some:bla"))).thenReturn(IOUtils.toInputStream("this ain't no zipfile", StandardCharsets.UTF_8));
         when(cache.retrieve(URI.create("jar:uri:cached!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
         when(cache.provenanceOf(URI.create("some:bla"))).thenReturn(new ContentProvenance("foo/bar", URI.create("uri:source"), URI.create("uri:cached"), "1234", "1970-01-01"));
-        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), getService());
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
         try {
@@ -93,7 +103,7 @@ public class DatasetWithCacheTest {
         when(cache.retrieve(URI.create("some:bla"))).thenReturn(getClass().getResourceAsStream("archive.zip"));
         when(cache.retrieve(URI.create("jar:uri:cached!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/foo"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
         when(cache.provenanceOf(URI.create("some:bla"))).thenReturn(new ContentProvenance("foo/bar", URI.create("uri:source"), URI.create("uri:cached"), "1234", "1970-01-01"));
-        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), getService());
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
         InputStream is = datasetWithCache.retrieve(URI.create("foo"));
@@ -107,7 +117,7 @@ public class DatasetWithCacheTest {
         URI cachedLocalURI = new File(localFileURI).getParentFile().toURI();
         assertTrue(CacheUtil.isLocalDir(cachedLocalURI));
         when(cache.retrieve(URI.create(cachedLocalURI.toString() + "foo.txt"))).thenReturn(IOUtils.toInputStream("relative", StandardCharsets.UTF_8));
-        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", cachedLocalURI, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", cachedLocalURI, getService());
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
         InputStream is = datasetWithCache.retrieve(URI.create("foo.txt"));
@@ -122,7 +132,7 @@ public class DatasetWithCacheTest {
         assertTrue(CacheUtil.isLocalDir(cachedLocalURI));
         when(cache.retrieve(any(URI.class))).thenThrow(new IOException("kaboom!"));
 
-        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", cachedLocalURI, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", cachedLocalURI, getService());
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
         try {
@@ -140,7 +150,7 @@ public class DatasetWithCacheTest {
         URI resourceURI = URI.create(resourceName);
         Cache cache = Mockito.mock(Cache.class);
         when(cache.retrieve(resourceURI)).thenReturn(IOUtils.toInputStream("cached", StandardCharsets.UTF_8));
-        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), getService());
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cache);
         InputStream is = datasetWithCache.retrieve(URI.create(resourceName));
@@ -148,12 +158,12 @@ public class DatasetWithCacheTest {
         assertThat(IOUtils.toString(is, StandardCharsets.UTF_8), is("cached"));
     }
 
-    private DatasetWithCache datasetLastAccessedAt(String lastAccessed) {
+    private DatasetWithCache datasetLastAccessedAt(String lastAccessed) throws IOException {
         Cache cache = Mockito.mock(Cache.class);
         ContentProvenance cacheURI = Mockito.mock(ContentProvenance.class);
         when(cacheURI.getAccessedAt()).thenReturn(lastAccessed);
         when(cache.provenanceOf(any(URI.class))).thenReturn(cacheURI);
-        Dataset datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        Dataset datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), getService());
         return new DatasetWithCache(datasetUncached, cache);
     }
 
@@ -167,8 +177,8 @@ public class DatasetWithCacheTest {
         assertInvokedOnce(DatasetConstant.CONTENT_HASH, createCacheMockContentHash());
     }
 
-    private void assertInvokedOnce(String propertyName, Cache cacheMock) {
-        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+    private void assertInvokedOnce(String propertyName, Cache cacheMock) throws IOException {
+        DatasetImpl datasetUncached = new DatasetWithResourceMapping("some/namespace", URI.create("some:bla"), getService());
 
         DatasetWithCache datasetWithCache = new DatasetWithCache(datasetUncached, cacheMock);
         String firstLastSeen = datasetWithCache.getOrDefault(propertyName, "");

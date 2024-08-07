@@ -19,6 +19,7 @@ import org.eol.globi.service.TermLookupService;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractionListenerIndexing;
 import org.eol.globi.util.InteractionListenerResolving;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
@@ -412,7 +413,7 @@ public class DatasetImporterForRSSTest {
         DatasetImpl dataset = new DatasetWithResourceMapping(
                 "some/namespace",
                 URI.create("http://example.com"),
-                new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+                new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(config);
         return dataset;
     }

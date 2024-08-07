@@ -1,27 +1,23 @@
 package org.eol.globi.util;
 
-import org.apache.http.Header;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.eol.globi.service.ResourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-
-import static org.eol.globi.util.ResourceServiceCaching.cacheAndOpenStream;
 
 public class ResourceServiceHTTP extends ResourceServiceCaching {
     private final static Logger LOG = LoggerFactory.getLogger(ResourceServiceHTTP.class);
     private final InputStreamFactory factory;
 
-    public ResourceServiceHTTP(InputStreamFactory factory) {
+    public ResourceServiceHTTP(InputStreamFactory factory, File cacheDir) {
+        super(cacheDir);
         this.factory = factory;
     }
 

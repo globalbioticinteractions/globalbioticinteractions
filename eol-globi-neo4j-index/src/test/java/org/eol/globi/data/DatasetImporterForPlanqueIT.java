@@ -38,7 +38,8 @@ public class DatasetImporterForPlanqueIT extends GraphDBNeo4jTestCase {
                 "    \"referencesForLinks\": \"http://www.esapubs.org/archive/ecol/E095/124/revised/PairWise2References.txt\"\n" +
                 "  }\n" +
                 "}");
-        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"),
+                new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), getCacheDir()));
         dataset.setConfig(config);
         importer.setDataset(dataset);
 

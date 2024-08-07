@@ -86,7 +86,7 @@ public class ExportUnmatchedTaxonNamesTest extends GraphDBNeo4jTestCase {
         Dataset dataset = nodeFactory.getOrCreateDataset(
                 new DatasetWithResourceMapping("some/namespace",
                         URI.create("some:archive"),
-                        new ResourceServiceLocalAndRemote(in -> in)));
+                        new ResourceServiceLocalAndRemote(in -> in, getCacheDir())));
 
         return new NodeFactoryWithDatasetContext(nodeFactory, dataset);
     }

@@ -20,6 +20,8 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.index.lucene.QueryContext;
 import org.neo4j.index.lucene.ValueContext;
 
+import java.io.File;
+
 public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
 
     private final Index<Node> datasets;
@@ -33,8 +35,8 @@ public class NodeFactoryNeo4j2 extends NodeFactoryNeo4j {
     public static final int MAX_NEO4J_INDEX_LENGTH_IN_UTF_CHARACTERS = MAX_NEO4J_INDEX_LENGTH / 4;
 
 
-    public NodeFactoryNeo4j2(GraphDatabaseService graphDb) {
-        super(graphDb);
+    public NodeFactoryNeo4j2(GraphDatabaseService graphDb, File cacheDir) {
+        super(graphDb, cacheDir);
         this.datasets = NodeUtilNeo4j2.forNodes(graphDb, "datasets");
         this.studies = NodeUtilNeo4j2.forNodes(graphDb, "studies");
         this.externalIds = NodeUtilNeo4j2.forNodes(graphDb, "externalIds");

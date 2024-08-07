@@ -11,6 +11,12 @@ import java.io.InputStream;
 
 public abstract class ResourceServiceCaching implements ResourceService {
 
+    private final File cacheDir;
+
+    public ResourceServiceCaching(File cacheDir) {
+        this.cacheDir = cacheDir;
+    }
+
     protected static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory) throws IOException {
         File tempFile = File.createTempFile("globiRemote", "tmp");
         tempFile.deleteOnExit();
@@ -19,5 +25,9 @@ public abstract class ResourceServiceCaching implements ResourceService {
             fos.flush();
         }
         return new FileInputStream(tempFile);
+    }
+
+    public File getCacheDir() {
+        return cacheDir;
     }
 }

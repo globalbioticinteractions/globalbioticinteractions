@@ -1,9 +1,8 @@
 package org.eol.globi.service;
 
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Test;
 
@@ -14,7 +13,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,7 +28,7 @@ public class DatasetTest {
 
         URI parentDir = archive.getParentFile().toURI();
 
-        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocal(new InputStreamFactoryNoop()));
         InputStream retrieve = dataset.retrieve(resource.toURI());
         assertArchiveHash(retrieve);
         assertArchiveHash(dataset.retrieve(URI.create("archive.zip")));
@@ -49,7 +47,7 @@ public class DatasetTest {
 
         URI parentDir = archive.getParentFile().toURI();
 
-        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop()));
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", parentDir, new ResourceServiceLocal(new InputStreamFactoryNoop()));
         assertThat(dataset.retrieve(URI.create("archivezz.zip")), is(notNullValue()));
     }
 
