@@ -2,7 +2,6 @@ package org.eol.globi.util;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.eol.globi.service.ResourceService;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class ResourceServiceFTP extends ResourceServiceCaching {
             ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 
             return ftpClient.isConnected()
-                    ? cacheAndOpenStream(ftpClient.retrieveFileStream(resource.getPath()), factory)
+                    ? cacheAndOpenStream(ftpClient.retrieveFileStream(resource.getPath()), factory, getCacheDir())
                     : null;
         } finally {
             if (ftpClient.isConnected()) {

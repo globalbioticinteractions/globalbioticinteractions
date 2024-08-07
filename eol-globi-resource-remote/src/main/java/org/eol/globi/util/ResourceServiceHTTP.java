@@ -24,12 +24,12 @@ public class ResourceServiceHTTP extends ResourceServiceCaching {
     @Override
     public InputStream retrieve(URI resource) throws IOException {
         LOG.info("caching of [" + resource + "] started...");
-        InputStream cachedRemoteInputStream = getCachedRemoteInputStream(resource, factory);
+        InputStream cachedRemoteInputStream = getCachedRemoteInputStream(resource, factory, getCacheDir());
         LOG.info("caching of [" + resource + "] complete.");
         return cachedRemoteInputStream;
     }
 
-    static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory) throws IOException {
+    static InputStream getCachedRemoteInputStream(URI resourceURI, InputStreamFactory factory, File cacheDir) throws IOException {
         HttpGet request = HttpUtil.addAcceptHeader(new HttpGet(resourceURI));
         try {
             HttpResponse response = HttpUtil.getHttpClient().execute(request);
@@ -39,7 +39,7 @@ public class ResourceServiceHTTP extends ResourceServiceCaching {
                         statusLine.getReasonPhrase() + " for [" + resourceURI + "]");
             }
             try (InputStream content = response.getEntity().getContent()) {
-                return cacheAndOpenStream(content, factory);
+                return cacheAndOpenStream(content, factory, cacheDir);
             }
         } finally {
             request.releaseConnection();

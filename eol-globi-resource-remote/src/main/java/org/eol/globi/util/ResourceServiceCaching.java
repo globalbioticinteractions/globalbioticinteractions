@@ -17,8 +17,8 @@ public abstract class ResourceServiceCaching implements ResourceService {
         this.cacheDir = cacheDir;
     }
 
-    protected static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory) throws IOException {
-        File tempFile = File.createTempFile("globiRemote", "tmp");
+    protected static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory, File cacheDir) throws IOException {
+        File tempFile = File.createTempFile("globiRemote", "tmp", cacheDir);
         tempFile.deleteOnExit();
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
             IOUtils.copy(factory.create(is), fos);
