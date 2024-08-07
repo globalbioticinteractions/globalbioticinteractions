@@ -32,15 +32,18 @@ public class GraphDBNeo4jTestCase extends GraphDBTestCaseAbstract {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+
+    private File cacheDir = null;
+
     public File getCacheDir() {
+        if (cacheDir == null) {
+            try {
+                cacheDir = folder.newFolder();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return cacheDir;
-    }
-
-    private File cacheDir;
-
-    @Before
-    public void createCacheDir() throws IOException {
-        cacheDir = folder.newFolder();
     }
 
     protected TaxonIndex createTaxonIndex(PropertyEnricher enricher) {

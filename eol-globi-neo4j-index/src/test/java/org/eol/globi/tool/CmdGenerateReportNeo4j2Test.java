@@ -33,9 +33,6 @@ import static org.hamcrest.core.Is.is;
 
 public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException, IOException {
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
