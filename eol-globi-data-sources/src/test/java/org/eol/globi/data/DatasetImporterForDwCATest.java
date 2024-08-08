@@ -1541,7 +1541,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importInaturalistResourceRelation() throws StudyImporterException, URISyntaxException {
+    public void importInaturalistResourceRelation() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/inaturalist-resource-relationships/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         final Map<String, String> interactionFound = new TreeMap<>();
@@ -1555,7 +1555,7 @@ public class DatasetImporterForDwCATest {
                 )
         );
         importer.setInteractionListener(interactionFound::putAll);
-        importer.importStudy();
+        importStudy(importer);
 
         assertThat(interactionFound.size(), greaterThan(0));
         assertThat(interactionFound.get("resourceTypes"),
