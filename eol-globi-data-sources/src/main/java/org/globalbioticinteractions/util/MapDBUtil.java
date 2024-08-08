@@ -17,9 +17,10 @@ public class MapDBUtil {
 
     private static DBMaker newTmpFileDB(File tmpDir) {
         try {
-            return DBMaker.newFileDB(File.createTempFile("mapdb-temp", "db", tmpDir));
+            File  db = File.createTempFile("mapdb-temp", "db", tmpDir);
+            return DBMaker.newFileDB(db);
         } catch (IOException e) {
-            throw new IOError(e);
+            throw new IOError(new IOException("failed to create tmpFile in [" + tmpDir.getAbsolutePath() + "]", e));
         }
 
     }
@@ -27,10 +28,6 @@ public class MapDBUtil {
     private static <K, V> BTreeMap<K, V> getBigMap(DBMaker dbMaker) {
         return tmpDB(dbMaker)
                 .getTreeMap("temp");
-    }
-
-    public static <K, V> BTreeMap<K, V> createBigMap() {
-        return getBigMap(DBMaker.newTempFileDB());
     }
 
     public static <T> Set<T> createBigSet(DB db) {
@@ -43,10 +40,6 @@ public class MapDBUtil {
 
     public static DB tmpDB(File tmpDir) {
         return tmpDB(newTmpFileDB(tmpDir));
-    }
-
-    public static DB tmpDB() {
-        return tmpDB(DBMaker.newTempFileDB());
     }
 
     private static DB tmpDB(DBMaker maker) {

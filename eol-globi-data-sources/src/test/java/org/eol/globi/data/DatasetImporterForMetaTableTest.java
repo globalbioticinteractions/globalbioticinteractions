@@ -1,9 +1,9 @@
 package org.eol.globi.data;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.service.DatasetLocal;
@@ -12,10 +12,11 @@ import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,11 +29,14 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatasetImporterForMetaTableTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void parseColumnNames() throws IOException {
@@ -156,7 +160,8 @@ public class DatasetImporterForMetaTableTest {
         dataset.setConfig(config);
 
 
-        Map<String, Map<String, Map<String, String>>> indexedDependencies = DatasetImporterForMetaTable.indexDependencies(dataset, null);
+        Map<String, Map<String, Map<String, String>>> indexedDependencies
+                = DatasetImporterForMetaTable.indexDependencies(dataset, null, folder.newFolder());
 
         assertThat(indexedDependencies.size(), is(2));
 

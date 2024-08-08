@@ -21,6 +21,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -33,9 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_DOI;
-import static org.eol.globi.data.DatasetImporterForTSV.REFERENCE_URL;
 
 public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
@@ -63,7 +61,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     @Override
     public void importStudy() throws StudyImporterException {
         try {
-            Map<String, Map<String, Map<String, String>>> indexedDependencies = indexDependencies(this.dataset, getLogger());
+            Map<String, Map<String, Map<String, String>>> indexedDependencies = indexDependencies(this.dataset, getLogger(), getWorkDir());
 
             List<JsonNode> tableList = collectTables(this.dataset);
             for (JsonNode tableConfig : tableList) {
@@ -90,23 +88,23 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         }
     }
 
-    static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger) throws StudyImporterException, IOException {
+    static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger, File tmpDir) throws StudyImporterException, IOException {
         Map<String, JsonNode> primaryKeyTables = new HashMap<>();
         Map<JsonNode, List<String>> primaryKeyDependencies = new HashMap<>();
 
         gatherDepedencies(dataset, primaryKeyTables, primaryKeyDependencies);
 
         Map<String, Map<String, Map<String, String>>> indexedTables
-                = indexDependencies(dataset, logger, primaryKeyTables, primaryKeyDependencies);
+                = indexDependencies(dataset, logger, primaryKeyTables, primaryKeyDependencies, tmpDir);
 
         return Collections.unmodifiableMap(indexedTables);
     }
 
-    private static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies) throws StudyImporterException, IOException {
+    private static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies, File tmpDir) throws StudyImporterException, IOException {
         Map<String, Map<String, Map<String, String>>> indexedTables
                 = primaryKeyDependencies.size() == 0
                 ? Collections.emptyMap()
-                : MapDBUtil.createBigMap();
+                : MapDBUtil.createBigMap(tmpDir);
 
         for (Map.Entry<JsonNode, List<String>> jsonNode : primaryKeyDependencies.entrySet()) {
             List<String> primaryKeys = jsonNode.getValue();

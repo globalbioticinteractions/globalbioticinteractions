@@ -327,13 +327,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                 InteractionListenerWithContext listenerWithContext = new InteractionListenerWithContext();
 
-                try (InteractionListenerClosable referencingListener = createReferenceEnricher(archive, listenerWithContext)) {
+                try (InteractionListenerClosable referencingListener = createReferenceEnricher(archive, listenerWithContext, getWorkDir())) {
 
-                    importDescriptionExtension(archive, referencingListener, getLogger());
+                    importDescriptionExtension(archive, referencingListener, getLogger(), tmpDir);
 
-                    importResourceRelationshipExtension(archive, referencingListener);
+                    importResourceRelationshipExtension(archive, referencingListener, getWorkDir());
 
-                    importAssociatedTaxaExtension(archive, referencingListener);
+                    importAssociatedTaxaExtension(archive, referencingListener, tmpDir);
 
                     int i = importCore(archive, listenerWithContext, archiveURL);
                     getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
@@ -821,10 +821,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 || properties.containsKey(INTERACTION_TYPE_NAME);
     }
 
-    static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener) {
+    static void importAssociatedTaxaExtension(Archive archive, InteractionListener interactionListener, File tmpDir) {
         ArchiveFile extension = findResourceExtension(archive, EXTENSION_ASSOCIATED_TAXA);
         if (extension != null) {
-            final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap();
+            final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap(tmpDir);
             try {
                 ArchiveFile core = archive.getCore();
                 importTaxaExtension(
@@ -888,10 +888,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     private static void importDescriptionExtension(Archive archive,
                                                    InteractionListener interactionListener,
-                                                   ImportLogger logger) {
+                                                   ImportLogger logger, File tmpDir) {
         ArchiveFile extension = findResourceExtension(archive, EXTENSION_DESCRIPTION);
         if (extension != null) {
-            final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap();
+            final BTreeMap<String, Map<String, String>> associationsMap = MapDBUtil.createBigMap(tmpDir);
             try {
                 ArchiveFile core = archive.getCore();
                 importDescriptionExtension(
@@ -981,7 +981,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return StringUtils.equalsIgnoreCase(descriptionType, "ecology");
     }
 
-    private static InteractionListenerClosable createReferenceEnricher(Archive archive, final InteractionListener interactionListener) {
+    private static InteractionListenerClosable createReferenceEnricher(Archive archive, final InteractionListener interactionListener, final File tmpDir) {
         return new InteractionListenerClosable() {
 
             private BTreeMap<String, Map<String, String>> referenceMap = null;
@@ -996,7 +996,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
             private void initIfNeeded() {
                 if (referenceMap == null) {
-                    referenceMap = MapDBUtil.createBigMap();
+                    referenceMap = MapDBUtil.createBigMap(tmpDir);
 
                     ArchiveFile extension = findResourceExtension(archive, EXTENSION_REFERENCE);
                     if (extension != null) {
@@ -1029,16 +1029,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }
 
-    static void importResourceRelationshipExtension(Archive archive, InteractionListener interactionListener) {
+    static void importResourceRelationshipExtension(Archive archive, InteractionListener interactionListener, File cacheDir) {
 
         ArchiveFile resourceExtension = findResourceRelationshipExtension(archive);
 
         if (resourceExtension != null) {
 
             final BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap
-                    = MapDBUtil.createBigMap();
-            final DB sourceIdDb = MapDBUtil.tmpDB();
-            final DB targetIdDb = MapDBUtil.tmpDB();
+                    = MapDBUtil.createBigMap(cacheDir);
+            final DB sourceIdDb = MapDBUtil.tmpDB(cacheDir);
+            final DB targetIdDb = MapDBUtil.tmpDB(cacheDir);
 
             try {
                 importResourceRelationshipExtension(

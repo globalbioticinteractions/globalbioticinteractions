@@ -21,7 +21,9 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.dataset.DwCAUtil;
 import org.hamcrest.core.Is;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,8 +88,12 @@ import static org.junit.Assert.assertTrue;
 
 public class DatasetImporterForDwCATest {
 
+    @Rule
+
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
-    public void importRecordsPadilBee() throws StudyImporterException, URISyntaxException {
+    public void importRecordsPadilBee() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/padil-bee-short/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         final Map<String, String> interactionFound = new TreeMap<>();
@@ -99,7 +105,7 @@ public class DatasetImporterForDwCATest {
                 interactionFound.putAll(interaction);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
 
         assertThat(interactionFound.size(), greaterThan(0));
         assertThat(interactionFound.get(SOURCE_OCCURRENCE_ID),is("2c4b4cfb-8ed3-40a9-96b2-30a4df4cdfdc"));
@@ -108,7 +114,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromDir() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromDir() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/vampire-moth-dwca-main/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomethingOfType(archiveRoot
@@ -117,7 +123,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void discoverRecordTypesInMEEP() throws StudyImporterException, URISyntaxException {
+    public void discoverRecordTypesInMEEP() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/neon/meep/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomethingOfType(archiveRoot
@@ -126,7 +132,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importTaxonDescriptionsFromMEEPDir() throws StudyImporterException, URISyntaxException {
+    public void importTaxonDescriptionsFromMEEPDir() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/neon/meep/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         List<Map<String, String>> links = new ArrayList<>();
@@ -138,7 +144,7 @@ public class DatasetImporterForDwCATest {
                 links.add(interaction);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
 
         assertThat(links.size(), is(4));
         Map<String, String> interaction = links.get(3);
@@ -154,7 +160,7 @@ public class DatasetImporterForDwCATest {
 
 
     @Test
-    public void importAssociatedTaxaFromDir() throws StudyImporterException, URISyntaxException {
+    public void importAssociatedTaxaFromDir() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomethingOfType(archiveRoot
@@ -164,7 +170,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importHabitatFromDir() throws StudyImporterException, URISyntaxException {
+    public void importHabitatFromDir() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/habitat-test/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomethingOfType(archiveRoot
@@ -174,7 +180,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importTaxonDescriptionsFromDir() throws StudyImporterException, URISyntaxException {
+    public void importTaxonDescriptionsFromDir() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         List<Map<String, String>> links = new ArrayList<>();
@@ -186,7 +192,7 @@ public class DatasetImporterForDwCATest {
                 links.add(interaction);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
 
         assertThat(links.size() > 0, is(true));
         assertThat(links.get(0).get(DATASET_CITATION), containsString("org/globalbioticinteractions/dataset/coetzer/"));
@@ -202,7 +208,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importTaxonDescriptionsFromDirNoInteractionType() throws StudyImporterException, URISyntaxException {
+    public void importTaxonDescriptionsFromDirNoInteractionType() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer-no-interaction-type/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         List<Map<String, String>> links = new ArrayList<>();
@@ -215,13 +221,13 @@ public class DatasetImporterForDwCATest {
                 links.add(interaction);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
 
         assertThat(links.size(), is(0));
     }
 
     @Test
-    public void importTaxonDescriptionsFromDirUnsupportedDescriptionType() throws StudyImporterException, URISyntaxException {
+    public void importTaxonDescriptionsFromDirUnsupportedDescriptionType() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/coetzer-unsupported-description-type/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         List<Map<String, String>> links = new ArrayList<>();
@@ -234,13 +240,13 @@ public class DatasetImporterForDwCATest {
                 links.add(interaction);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
 
         assertThat(links.size(), is(0));
     }
 
     @Test
-    public void importAssociatedTaxaFromDirIgnoredInteractionType() throws StudyImporterException, URISyntaxException {
+    public void importAssociatedTaxaFromDirIgnoredInteractionType() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/associated-taxa-test/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
         assertImportsSomethingOfType(archiveRoot
@@ -249,7 +255,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromMCZ() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromMCZ() throws StudyImporterException, URISyntaxException, IOException {
         StringBuilder actualMessage = new StringBuilder();
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mcz/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
@@ -274,13 +280,13 @@ public class DatasetImporterForDwCATest {
                 recordCounter.incrementAndGet();
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
         assertThat(recordCounter.get(), is(0));
         assertThat(actualMessage.toString(), startsWith("[failed to handle dwc record at "));
     }
 
     @Test
-    public void nonInteractionRecordMessage() throws StudyImporterException, URISyntaxException {
+    public void nonInteractionRecordMessage() throws StudyImporterException, URISyntaxException, IOException {
         List<String> msgs = new ArrayList<>();
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mcz-adjusted/meta.xml");
         URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
@@ -301,7 +307,7 @@ public class DatasetImporterForDwCATest {
 
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
         assertThat(recordCounter.get(), is(0));
         String joinedMsgs = StringUtils.join(msgs, "\n");
         assertThat(joinedMsgs, containsString("]: indexing interaction records"));
@@ -309,7 +315,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromArchive() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomethingOfType(resource.toURI(), new AtomicInteger(0)
                 , "http://rs.tdwg.org/dwc/terms/dynamicProperties" +
@@ -318,7 +324,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromArchiveWithResourceRelations() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromArchiveWithResourceRelations() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-resource-relation.zip");
         AtomicInteger recordCounter = new AtomicInteger(0);
         assertImportsSomethingOfType(resource.toURI()
@@ -329,7 +335,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromUArchive() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromUArchive() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomethingOfType(resource.toURI()
                 , new AtomicInteger(0)
@@ -340,7 +346,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromUnresolvedResourceRelationshipArchive() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromUnresolvedResourceRelationshipArchive() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("fmnh-rr-unresolved-targetid-test.zip");
 
         AtomicInteger recordCounter = new AtomicInteger(0);
@@ -355,12 +361,12 @@ public class DatasetImporterForDwCATest {
             assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
 
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);
         assertThat(recordCounter.get(), greaterThan(0));
     }
 
     @Test
-    public void importRecordsFromResourceRelationshipArchiveRemarksOnly() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromResourceRelationshipArchiveRemarksOnly() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("fmnh-rr-8278596f-4d3f-4f82-8cd1-b5070fe1bc7c.zip");
 
         AtomicInteger recordCounter = new AtomicInteger(0);
@@ -375,12 +381,17 @@ public class DatasetImporterForDwCATest {
             assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
 
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);
         assertThat(recordCounter.get(), greaterThan(0));
     }
 
+    private void importStudy(DatasetImporterForDwCA studyImporterForDwCA) throws IOException, StudyImporterException {
+        studyImporterForDwCA.setWorkDir(folder.newFolder());
+        studyImporterForDwCA.importStudy();
+    }
+
     @Test
-    public void importRecordsFromArchiveWithAssociatedTaxa() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromArchiveWithAssociatedTaxa() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/eol/globi/data/AEC-DBCNet_DwC-A20160308-sample.zip");
         assertImportsSomethingOfType(resource.toURI()
                 , new AtomicInteger(0)
@@ -390,7 +401,7 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
-    public void importRecordsFromArctosArchive() throws StudyImporterException, URISyntaxException {
+    public void importRecordsFromArctosArchive() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/arctos_mvz_bird_small.zip");
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", resource.toURI(), getResourceService()));
@@ -423,7 +434,7 @@ public class DatasetImporterForDwCATest {
                 someRecords.incrementAndGet();
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);
         assertThat(someRecords.get(), is(5));
 
         assertThat(resourceTypes.size(), is(2));
@@ -462,7 +473,7 @@ public class DatasetImporterForDwCATest {
                 someRecords.set(true);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);
         assertThat(someRecords.get(), is(true));
         assertThat(resourceTypes, containsInAnyOrder(
                 "http://rs.tdwg.org/dwc/terms/dynamicProperties"
@@ -551,7 +562,7 @@ public class DatasetImporterForDwCATest {
                 someRecords.set(true);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);
         assertThat(someRecords.get(), is(true));
         assertThat(resourceTypes, containsInAnyOrder(
                 "http://rs.tdwg.org/dwc/terms/dynamicProperties"
@@ -560,7 +571,7 @@ public class DatasetImporterForDwCATest {
         ));
     }
 
-    private void assertImportsSomethingOfType(URI archiveRoot, AtomicInteger recordCounter, String defaultResourceType, String... expectedProperties) throws StudyImporterException {
+    private void assertImportsSomethingOfType(URI archiveRoot, AtomicInteger recordCounter, String defaultResourceType, String... expectedProperties) throws StudyImporterException, IOException {
         final Set<String> resourceTypes = new TreeSet<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
@@ -578,7 +589,7 @@ public class DatasetImporterForDwCATest {
                 recordCounter.incrementAndGet();
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
         assertThat(recordCounter.get(), greaterThan(0));
         String[] items = splitByPipes(defaultResourceType);
         assertThat(resourceTypes, containsInAnyOrder(items));
@@ -1177,7 +1188,7 @@ public class DatasetImporterForDwCATest {
                 foundLink.set(true);
 
             }
-        });
+        }, folder.newFolder());
 
         assertTrue(foundLink.get());
     }
@@ -1232,7 +1243,7 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is(notNullValue()));
                 assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
             }
-        });
+        }, folder.newFolder());
 
         assertThat(numberOfFoundLinks.get(), is(8));
     }
@@ -1264,7 +1275,7 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
 
             }
-        });
+        }, folder.newFolder());
 
         assertThat(numberOfFoundLinks.get(), is(1));
     }
@@ -1294,7 +1305,7 @@ public class DatasetImporterForDwCATest {
                 assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence"));
 
             }
-        });
+        }, folder.newFolder());
 
         assertThat(numberOfFoundLinks.get(), is(1));
     }
@@ -1326,7 +1337,7 @@ public class DatasetImporterForDwCATest {
                 }
 
             }
-        });
+        }, folder.newFolder());
 
         assertThat(numberOfFoundLinks.get(), is(1));
     }
@@ -1363,7 +1374,7 @@ public class DatasetImporterForDwCATest {
                 logMsgs.add(message);
             }
         });
-        studyImporterForDwCA.importStudy();
+        importStudy(studyImporterForDwCA);;
 
         assertTrue(interactionFound.isEmpty());
 
@@ -1408,7 +1419,7 @@ public class DatasetImporterForDwCATest {
                 }
 
             }
-        });
+        }, folder.newFolder());
 
         assertThat(numberOfFoundLinks.get(), is(1));
     }
