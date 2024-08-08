@@ -12,7 +12,8 @@ import java.util.Set;
 public class MapDBUtil {
 
     public static <K, V> BTreeMap<K, V> createBigMap(File tmpDir) {
-        return getBigMap(newTmpFileDB(tmpDir));
+        return tmpDB(newTmpFileDB(tmpDir))
+                .getTreeMap("temp");
     }
 
     private static DBMaker newTmpFileDB(File tmpDir) {
@@ -23,11 +24,6 @@ public class MapDBUtil {
             throw new IOError(new IOException("failed to create tmpFile in [" + tmpDir.getAbsolutePath() + "]", e));
         }
 
-    }
-
-    private static <K, V> BTreeMap<K, V> getBigMap(DBMaker dbMaker) {
-        return tmpDB(dbMaker)
-                .getTreeMap("temp");
     }
 
     public static <T> Set<T> createBigSet(DB db) {

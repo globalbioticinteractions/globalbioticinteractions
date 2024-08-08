@@ -1029,7 +1029,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }
 
-    static void importResourceRelationshipExtension(Archive archive, InteractionListener interactionListener, File cacheDir) {
+    static void importResourceRelationshipExtension(
+            Archive archive,
+            InteractionListener interactionListener,
+            File cacheDir) {
 
         ArchiveFile resourceExtension = findResourceRelationshipExtension(archive);
 
