@@ -115,6 +115,7 @@ public class DatasetImporterForMetaTableTest {
         List<Map<String, String>> links = new ArrayList<>();
 
         importer.setInteractionListener(links::add);
+        importer.setWorkDir(folder.newFolder());
         importer.importStudy();
 
         assertThat(links.size(), is(39));
