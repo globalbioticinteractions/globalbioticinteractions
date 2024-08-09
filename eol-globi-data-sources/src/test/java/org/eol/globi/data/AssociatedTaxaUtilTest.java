@@ -106,6 +106,23 @@ public class AssociatedTaxaUtilTest {
     }
 
     @Test
+    public void associatedCoyoteParasite() {
+        String associatedTaxa = "Canis latrans (Canidae), female";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(2));
+        Map<String, String> firstStatement = properties.get(0);
+        assertThat(firstStatement.get(TaxonUtil.TARGET_TAXON_NAME), is("Canis latrans (Canidae)"));
+        assertThat(firstStatement.get(INTERACTION_TYPE_NAME), is(""));
+        assertThat(firstStatement.get(INTERACTION_TYPE_ID), is(nullValue()));
+
+        Map<String, String> secondStatement = properties.get(1);
+        assertThat(secondStatement.get(TaxonUtil.TARGET_TAXON_NAME), is("female"));
+        assertThat(secondStatement.get(INTERACTION_TYPE_NAME), is(""));
+        assertThat(secondStatement.get(INTERACTION_TYPE_ID), is(nullValue()));
+    }
+
+    @Test
     public void associatedTaxaRearedEx() {
         String associatedTaxa = "ReAred ex Homo sapiens";
         List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
