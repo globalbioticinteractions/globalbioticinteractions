@@ -83,7 +83,7 @@ public class HttpUtil {
                 .setSocketTimeout(soTimeoutMs)
                 .setConnectTimeout(soTimeoutMs)
                 // see https://stackoverflow.com/questions/54591140/apache-http-client-stop-removing-double-slashes-from-url
-                //.setNormalizeUri(false)
+                .setNormalizeUri(false)
                 .build();
 
         return HttpClientBuilder
