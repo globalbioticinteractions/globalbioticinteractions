@@ -19,7 +19,9 @@ import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -45,6 +47,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 
 public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void importLocalArctosArchive() throws StudyImporterException, IOException {
@@ -209,6 +214,11 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
     private void importRSS(DatasetImporter importer, DatasetLocal dataset, ObjectNode configNode) throws StudyImporterException {
         dataset.setConfig(configNode);
         importer.setDataset(dataset);
+        try {
+            importer.setWorkDir(folder.newFolder());
+        } catch (IOException e) {
+            throw new StudyImporterException(e);
+        }
         importStudy(importer);
     }
 
