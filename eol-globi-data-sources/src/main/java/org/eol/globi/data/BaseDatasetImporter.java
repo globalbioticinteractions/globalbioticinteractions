@@ -86,7 +86,7 @@ public abstract class BaseDatasetImporter implements DatasetImporter {
     @Override
     public File getWorkDir() {
         return createParentDirsIfNeeded(workDir == null
-                ? Paths.get("").toFile()
+                ? Paths.get(".").toFile()
                 : workDir);
     }
 
