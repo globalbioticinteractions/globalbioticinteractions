@@ -43,7 +43,7 @@ public class ExporterRDFTest extends GraphDBNeo4jTestCase {
 
     @Override
     protected TermLookupService getEnvoLookupService() {
-        return new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop(), getCacheDir()));
+        return new EnvoLookupService(new ResourceServiceLocal(new InputStreamFactoryNoop()));
     }
 
     @Test

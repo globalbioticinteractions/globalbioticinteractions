@@ -3,6 +3,7 @@ package org.eol.globi.service;
 import org.eol.globi.domain.Term;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
+import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -13,10 +14,6 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class EnvoLookupServiceTest {
-
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
 
     @Test
     public void lookupTerm() throws TermLookupServiceException, IOException {
@@ -59,7 +56,7 @@ public class EnvoLookupServiceTest {
     }
 
     private EnvoLookupService getService() throws IOException {
-        return new EnvoLookupService(new ResourceServiceHTTP(new InputStreamFactoryNoop(), folder.newFolder()));
+        return new EnvoLookupService(new ResourceServiceLocal(new InputStreamFactoryNoop()));
     }
 
 }

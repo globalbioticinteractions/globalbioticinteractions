@@ -89,7 +89,7 @@ public abstract class NodeFactoryNeo4j extends NodeFactoryAbstract {
         );
 
         this.envoLookupService = new EnvoLookupService(
-                new ResourceServiceHTTP(inputStreamFactory, cacheDir)
+                new ResourceServiceLocal(inputStreamFactory)
         );
 
     }

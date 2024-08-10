@@ -16,7 +16,7 @@ public class EnvoLookupService extends TermLookupServiceImpl {
     protected List<URI> getMappingURIList() {
         return new ArrayList<URI>() {{
             try {
-                add(new URI("http://purl.obolibrary.org/obo/envo/mappings/spire-mapping.tsv"));
+                add(getClass().getResource("spire-mapping.tsv").toURI());
             } catch (URISyntaxException e) {
                 // ignore
             }
