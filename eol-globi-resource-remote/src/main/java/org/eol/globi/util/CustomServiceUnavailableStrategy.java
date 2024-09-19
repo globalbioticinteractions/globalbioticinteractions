@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CustomServiceUnavailableStrategy implements ServiceUnavailableRetryStrategy {
-
     private static final int MAX_RETRIES = 10;
     private static final int RETRY_INTERVAL_MS = 5 * 1000;
     private static final int TOO_MANY_REQUESTS = 429;
