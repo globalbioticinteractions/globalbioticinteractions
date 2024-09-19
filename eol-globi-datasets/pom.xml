@@ -156,6 +156,7 @@
                             <descriptors>
                                 <descriptor>src/assembly/neo4j-compiled.xml</descriptor>
                             </descriptors>
+                            <tarLongFileMode>posix</tarLongFileMode>
                         </configuration>
                         <executions>
                             <execution>
@@ -246,6 +247,7 @@
                             <descriptors>
                                 <descriptor>src/assembly/neo4j-linked.xml</descriptor>
                             </descriptors>
+                            <tarLongFileMode>posix</tarLongFileMode>
                         </configuration>
                         <executions>
                             <execution>
@@ -336,6 +338,7 @@
                             <descriptors>
                                 <descriptor>src/assembly/neo4j-graph-db.xml</descriptor>
                             </descriptors>
+                            <tarLongFileMode>posix</tarLongFileMode>
                         </configuration>
                         <executions>
                             <execution>
@@ -417,6 +420,7 @@
                                 <descriptor>src/assembly/darwin-core-aggregated.xml</descriptor>
                                 <descriptor>src/assembly/nq.xml</descriptor>
                             </descriptors>
+                            <tarLongFileMode>posix</tarLongFileMode>
                         </configuration>
                         <executions>
                             <execution>
