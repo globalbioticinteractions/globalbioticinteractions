@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.list.TreeList;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +42,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     private final ResourceService resourceService;
 
     private String metadataPrefix = "oai_datacite";
+    private Map<String, List<Pair<Long, URI>>> zenodoGitHubArchives = null;
 
 
     public DatasetRegistryZenodo(ResourceService resourceService) {
@@ -62,7 +62,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     @Override
     public Iterable<String> findNamespaces() throws DatasetRegistryException {
         try {
-            Map<String, List<Pair<Long, URI>>> zenodoArchives = findZenodoArchives(getFeedStreams());
+            Map<String, List<Pair<Long, URI>>> zenodoArchives = getZenodoGithubArchives();
             return zenodoArchives == null
                     ? Collections.emptyList()
                     : new TreeList<>(zenodoArchives.keySet());
@@ -82,16 +82,21 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     @Override
     public Dataset datasetFor(String namespace) throws DatasetRegistryException {
         try {
-            Map<String, List<Pair<Long, URI>>> zenodoGitHubArchives = findZenodoArchives(getFeedStreams());
-
             URI latestArchive
-                    = getMostRecentArchiveInNamespace(namespace, zenodoGitHubArchives);
+                    = getMostRecentArchiveInNamespace(namespace, getZenodoGithubArchives());
             return latestArchive == null
                     ? null
                     : new DatasetZenodo(namespace, resourceService, latestArchive);
         } catch (XPathExpressionException | IOException e) {
             throw new DatasetRegistryException("failed to query archive url for [" + namespace + "]", e);
         }
+    }
+
+    private Map<String, List<Pair<Long, URI>>> getZenodoGithubArchives() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+        if (zenodoGitHubArchives == null) {
+            zenodoGitHubArchives = findZenodoArchives(getFeedStreams());
+        }
+        return zenodoGitHubArchives;
     }
 
     static Map<String, List<Pair<Long, URI>>> findZenodoArchives(List<InputStream> feedStreams) throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
@@ -108,7 +113,6 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
                 zenodoGitHubArchives.put(namespace, existingPairs);
 
             }
-
         }
         return zenodoGitHubArchives;
     }
@@ -185,7 +189,6 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
 
     static Map<String, List<Pair<Long, URI>>> findZenodoGitHubArchives(NodeList records) throws XPathExpressionException {
         Map<String, List<Pair<Long, URI>>> namespace2ZenodoPubs = new TreeMap<>();
-        Long idMax = null;
         for (int i = 0; i < records.getLength(); i++) {
             Node item = records.item(i);
             String fullId = (String) XmlUtil.applyXPath(item, "header/identifier", XPathConstants.STRING);
