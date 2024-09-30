@@ -94,7 +94,7 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
         }
     }
 
-    static  Map<String, List<Pair<Long, URI>>> findZenodoArchives(List<InputStream> feedStreams) throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+    static Map<String, List<Pair<Long, URI>>> findZenodoArchives(List<InputStream> feedStreams) throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
 
         Map<String, List<Pair<Long, URI>>> zenodoGitHubArchives = new TreeMap<>();
         for (InputStream feedStream : feedStreams) {
@@ -159,7 +159,6 @@ public class DatasetRegistryZenodo implements DatasetRegistry {
     public void setMetadataPrefix(String metadataPrefix) {
         this.metadataPrefix = metadataPrefix;
     }
-
 
 
     static URI findLatestZenodoGitHubArchiveForNamespace(NodeList records, String namespace) throws XPathExpressionException, MalformedURLException {

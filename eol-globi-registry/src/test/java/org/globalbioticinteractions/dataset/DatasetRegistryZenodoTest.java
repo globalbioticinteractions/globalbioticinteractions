@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.w3c.dom.NodeList;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -71,7 +69,7 @@ public class DatasetRegistryZenodoTest {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
         NodeList records = getRecordNodeList(resourceAsStream);
         URI uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "jhammock/Layman-and-Allgeier-Lionfish");
-            assertThat(uri.toString(), is("https://zenodo.org/records/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
+        assertThat(uri.toString(), is("https://zenodo.org/records/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
         uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "globalbioticinteractions/template-dataset");
         assertThat(uri.toString(), is("https://zenodo.org/records/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
     }
@@ -111,17 +109,9 @@ public class DatasetRegistryZenodoTest {
 
     @Test
     public void newerVersion() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
-        List<InputStream> inputStreams = new ArrayList<>();
-        for (int pageNumber = 1; pageNumber < 7; pageNumber++) {
-            inputStreams.add(getClass().getResourceAsStream("request/page" + pageNumber + ".xml"));
+        Map<String, List<Pair<Long, URI>>> zenodoArchives = getZenodoArchives();
 
-        }
-
-        Map<String, List<Pair<Long, URI>>> zenodoArchives = DatasetRegistryZenodo.findZenodoArchives(inputStreams);
-
-        assertThat(zenodoArchives, hasKey("mdrishti/pushPullIntxn"));
-
-        List<Pair<Long, URI>> pairs = zenodoArchives.get("mdrishti/pushPullIntxn");
+        List<Pair<Long, URI>> pairs = getZenodoArchives().get("mdrishti/pushPullIntxn");
 
         List<Long> ids = pairs
                 .stream()
@@ -132,7 +122,36 @@ public class DatasetRegistryZenodoTest {
         assertThat(ids, hasItem(13123981L));
         assertThat(ids, hasItem(13121135L));
 
+        URI mostRecentArchiveInNamespace = DatasetRegistryZenodo.getMostRecentArchiveInNamespace("mdrishti/pushPullIntxn", zenodoArchives);
 
+        assertThat(mostRecentArchiveInNamespace, is(URI.create("https://zenodo.org/records/13286377/files/mdrishti/pushPullIntxn-v0.1.1.zip")));
+
+
+    }
+
+    @Test
+    public void newerVersionURI() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+        Map<String, List<Pair<Long, URI>>> zenodoArchives = getZenodoArchives();
+
+        URI mostRecentArchiveInNamespace = DatasetRegistryZenodo.getMostRecentArchiveInNamespace(
+                "mdrishti/pushPullIntxn",
+                zenodoArchives
+        );
+
+        assertThat(mostRecentArchiveInNamespace,
+                is(URI.create("https://zenodo.org/records/13286377/files/mdrishti/pushPullIntxn-v0.1.1.zip"))
+        );
+
+
+    }
+
+    private Map<String, List<Pair<Long, URI>>> getZenodoArchives() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+        List<InputStream> inputStreams = new ArrayList<>();
+        for (int pageNumber = 1; pageNumber < 7; pageNumber++) {
+            inputStreams.add(getClass().getResourceAsStream("request/page" + pageNumber + ".xml"));
+        }
+
+        return DatasetRegistryZenodo.findZenodoArchives(inputStreams);
     }
 
     @Test
@@ -149,9 +168,6 @@ public class DatasetRegistryZenodoTest {
                 .collect(Collectors.toList());
 
         assertThat(ids, hasItem(13286377L));
-
-
-
     }
 
 }
