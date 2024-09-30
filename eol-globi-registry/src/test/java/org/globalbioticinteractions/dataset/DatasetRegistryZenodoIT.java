@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceHTTP;
@@ -8,11 +10,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import javax.xml.xpath.XPathExpressionException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
@@ -45,13 +59,30 @@ public class DatasetRegistryZenodoIT {
 
     @Test
     public void zenodoDataFeedDatacite4() throws DatasetRegistryException {
-        String metadataPrefix = "oai_datacite";
         String feed = DatasetRegistryZenodo.getNextPage(
                 null,
                 getResourceService(),
-                metadataPrefix);
+                "oai_datacite");
         assertThat(feed, containsString("<?xml version"));
-        assertThat(feed, containsString("metadataPrefix=\"" + metadataPrefix + "\""));
+        assertThat(feed, containsString("metadataPrefix=\"" + "oai_datacite" + "\""));
+    }
+
+    @Test
+    public void zenodoDataFeedListDatacite4() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+        List<String> feed = DatasetRegistryZenodo.getCachedPages(
+                null,
+                getResourceService(),
+                "oai_datacite");
+
+        Map<String, List<Pair<Long, URI>>> zenodoArchives = DatasetRegistryZenodo.findZenodoArchives(feed.stream().map(str -> IOUtils.toInputStream(str, StandardCharsets.UTF_8)).collect(Collectors.toList()));
+
+        assertThat(zenodoArchives, hasKey("mdrishti/pushPullIntxn"));
+
+        List<Pair<Long, URI>> pairs = zenodoArchives.get("mdrishti/pushPullIntxn");
+
+        for (Pair<Long, URI> pair : pairs) {
+            System.out.println(pair);
+        }
     }
 
     @Test

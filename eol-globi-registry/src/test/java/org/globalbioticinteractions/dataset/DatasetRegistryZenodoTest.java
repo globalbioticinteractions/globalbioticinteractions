@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -8,11 +10,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static org.globalbioticinteractions.dataset.DatasetRegistryZenodo.findZenodoGitHubArchives;
+import static org.globalbioticinteractions.dataset.DatasetRegistryZenodo.getRecordNodeList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -58,7 +69,7 @@ public class DatasetRegistryZenodoTest {
     @Test
     public void findMatchingGithub() throws IOException, XPathExpressionException, DatasetRegistryException {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
-        NodeList records = DatasetRegistryZenodo.getRecordNodeList(resourceAsStream);
+        NodeList records = getRecordNodeList(resourceAsStream);
         URI uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "jhammock/Layman-and-Allgeier-Lionfish");
             assertThat(uri.toString(), is("https://zenodo.org/records/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
         uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "globalbioticinteractions/template-dataset");
@@ -68,7 +79,7 @@ public class DatasetRegistryZenodoTest {
     @Test
     public void noMatchingGithub() throws IOException, XPathExpressionException, DatasetRegistryException {
         InputStream resourceAsStream = getClass().getResourceAsStream("zenodo-oai-request-result-3-items.xml");
-        NodeList records = DatasetRegistryZenodo.getRecordNodeList(resourceAsStream);
+        NodeList records = getRecordNodeList(resourceAsStream);
         URI uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "jhammock/Layman-and-Allgeier-Lionfish");
         assertThat(uri.toString(), is("https://zenodo.org/records/232498/files/jhammock/Layman-and-Allgeier-Lionfish-1.0.zip"));
         uri = DatasetRegistryZenodo.findLatestZenodoGitHubArchiveForNamespace(records, "globalbioticinteractions/template-dataset");
@@ -96,6 +107,51 @@ public class DatasetRegistryZenodoTest {
         URI uri = DatasetRegistryZenodo.generateResumptionURI(resumptionToken);
 
         assertThat(uri.toString(), is("https://zenodo.org/oai2d?verb=ListRecords&resumptionToken=.eJwVjdEKgjAYhd_lv66YpaKCF0kpBFFaanUjU9caThfbolB699a5PIfvOxMoQloI0MJ1bN_2fORanu3a_nIGqpGC84qZGTaX2Lpddk5aOl3WF-i6pNH6nyg-z6NtWSePMYt5fi0f2aloDzW6OZkVJfu-G_M0DGEGT0wJBMbbvbGkCoLJfGvjfiki55SLGvOaCc0aNmgicaOZGJQBe6JxizU-SnJnHwMIzKp_0TBNVvD9_gDwrz-E.YT-SJQ.FVlu6cSWwJjBp3EhxXgxz0kmVCA"));
+    }
+
+    @Test
+    public void newerVersion() throws DatasetRegistryException, XPathExpressionException, MalformedURLException {
+        List<InputStream> inputStreams = new ArrayList<>();
+        for (int pageNumber = 1; pageNumber < 7; pageNumber++) {
+            inputStreams.add(getClass().getResourceAsStream("request/page" + pageNumber + ".xml"));
+
+        }
+
+        Map<String, List<Pair<Long, URI>>> zenodoArchives = DatasetRegistryZenodo.findZenodoArchives(inputStreams);
+
+        assertThat(zenodoArchives, hasKey("mdrishti/pushPullIntxn"));
+
+        List<Pair<Long, URI>> pairs = zenodoArchives.get("mdrishti/pushPullIntxn");
+
+        List<Long> ids = pairs
+                .stream()
+                .map(Pair::getLeft)
+                .collect(Collectors.toList());
+
+        assertThat(ids, hasItem(13286377L));
+        assertThat(ids, hasItem(13123981L));
+        assertThat(ids, hasItem(13121135L));
+
+
+    }
+
+    @Test
+    public void findInPage() throws DatasetRegistryException, XPathExpressionException {
+        Map<String, List<Pair<Long, URI>>> zenodoArchives = findZenodoGitHubArchives(getRecordNodeList(getClass().getResourceAsStream("request/page4.xml")));
+
+        assertThat(zenodoArchives, hasKey("mdrishti/pushPullIntxn"));
+
+        List<Pair<Long, URI>> pairs = zenodoArchives.get("mdrishti/pushPullIntxn");
+
+        List<Long> ids = pairs
+                .stream()
+                .map(Pair::getLeft)
+                .collect(Collectors.toList());
+
+        assertThat(ids, hasItem(13286377L));
+
+
+
     }
 
 }
