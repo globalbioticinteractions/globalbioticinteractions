@@ -23,6 +23,7 @@ public enum InteractionTypeExternal {
     POLLINATES(CypherQueryBuilder.INTERACTION_POLLINATES, "pollinator", "plant", InteractType.POLLINATES),
     POLLINATED_BY(CypherQueryBuilder.INTERACTION_POLLINATED_BY, "plant", "pollinator", InteractType.POLLINATED_BY),
     PATHOGEN_OF(CypherQueryBuilder.INTERACTION_PATHOGEN_OF, "pathogen", "host", InteractType.PATHOGEN_OF),
+    ALLELOPATH_OF(InteractType.ALLELOPATH_OF.getLabel(), "pathogen", "host", InteractType.ALLELOPATH_OF),
     HAS_PATHOGEN(CypherQueryBuilder.INTERACTION_HAS_PATHOGEN, "host", "pathogen", InteractType.HAS_PATHOGEN),
     VECTOR_OF(CypherQueryBuilder.INTERACTION_VECTOR_OF, "vector", "pathogen", InteractType.VECTOR_OF),
     HAS_VECTOR(CypherQueryBuilder.INTERACTION_HAS_VECTOR, "pathogen", "vector", InteractType.HAS_VECTOR),
