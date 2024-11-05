@@ -16,7 +16,7 @@ public enum TaxonomyProvider {
     EOL("EOL:", "http://eol.org/pages/", "https://eol.org/pages/"),
     EOL_V2("EOL_V2:"),
     GEONAMES("GEONAMES:", "http://www.geonames.org/"),
-    WIKIPEDIA("W:", "http://wikipedia.org/wiki/"),
+    WIKIPEDIA("W:", "http://wikipedia.org/wiki/", "https://wikipedia.org/wiki", "https://en.wikipedia.org/wiki"),
     ENVO("ENVO:", "http://purl.obolibrary.org/obo/ENVO_"),
     GBIF("GBIF:", "https://www.gbif.org/species/", "http://www.gbif.org/species/"),
     ATLAS_OF_LIVING_AUSTRALIA("ALATaxon:"),

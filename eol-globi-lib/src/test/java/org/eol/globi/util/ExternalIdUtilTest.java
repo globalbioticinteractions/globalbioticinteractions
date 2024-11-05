@@ -67,6 +67,16 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void wikipedia() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("https://wikipedia.org/wiki/Harvard_Mark_II"), is(TaxonomyProvider.WIKIPEDIA));
+    }
+
+    @Test
+    public void wikipediaEnglish() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("https://en.wikipedia.org/wiki/Harvard_Mark_II"), is(TaxonomyProvider.WIKIPEDIA));
+    }
+
+    @Test
     public void itisTSN() {
         String externalId = "TSN:180547";
         assertThat(ExternalIdUtil.taxonomyProviderFor(externalId), is(TaxonomyProvider.ITIS));
