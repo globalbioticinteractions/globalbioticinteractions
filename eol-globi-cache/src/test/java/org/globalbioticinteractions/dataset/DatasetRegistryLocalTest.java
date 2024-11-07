@@ -7,7 +7,7 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
-import org.globalbioticinteractions.cache.ContentPathFactory;
+import org.globalbioticinteractions.cache.ContentPathDepth0;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
@@ -160,7 +159,7 @@ public class DatasetRegistryLocalTest {
 
         FileUtils.copyInputStreamToFile(
                 resourceAsStream,
-                new File(new ContentPathFactory(testCacheDirLocal).forContentId(sha256))
+                new File(new ContentPathDepth0(testCacheDirLocal).forContentId(sha256))
         );
     }
 

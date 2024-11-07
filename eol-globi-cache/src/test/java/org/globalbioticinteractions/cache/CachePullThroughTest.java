@@ -1,7 +1,6 @@
 package org.globalbioticinteractions.cache;
 
 import org.eol.globi.util.InputStreamFactoryNoop;
-import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
@@ -28,7 +27,8 @@ public class CachePullThroughTest {
                 = CachePullThrough.cache(
                 URI.create("https://github.com/globalbioticinteractions/template-dataset/archive/main.zip"),
                 cacheDir,
-                new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder())
+                new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
+                new ContentPathFactoryDepth0()
         );
         File cachedFile = new File(contentProvenance.getLocalURI());
         assertThat(cachedFile.exists(), CoreMatchers.is(true));

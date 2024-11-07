@@ -41,7 +41,7 @@ public final class CacheUtil {
     }
 
 
-    public static ContentProvenance cacheStream(InputStream inputStream, File cacheDir) throws IOException {
+    public static ContentProvenance cacheStream(InputStream inputStream, File cacheDir, ContentPathFactory contentPathFactory) throws IOException {
         File destinationFile = null;
 
         try (InputStream sourceStream = inputStream) {
@@ -49,7 +49,7 @@ public final class CacheUtil {
             try {
                 OutputStream os = FileUtils.openOutputStream(destinationFile);
                 String sha256 = calculateContentHash(sourceStream, os);
-                URI uri = new ContentPathFactory(cacheDir).forContentId(sha256);
+                URI uri = contentPathFactory.getContentPath(cacheDir).forContentId(sha256);
                 File destFile = new File(uri);
                 if (!destFile.exists()) {
                     FileUtils.moveFile(destinationFile, destFile);
@@ -73,11 +73,11 @@ public final class CacheUtil {
         return String.format("%064x", new java.math.BigInteger(1, md.digest()));
     }
 
-    public static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService) throws IOException {
+    public static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService, ContentPathFactory contentPathFactory) throws IOException {
         String msg = "caching [" + sourceURI + "]";
         LOG.info(msg + " started...");
         InputStream inputStream = resourceService.retrieve(sourceURI);
-        ContentProvenance contentProvenance = cacheStream(inputStream, cacheDir);
+        ContentProvenance contentProvenance = cacheStream(inputStream, cacheDir, contentPathFactory);
         LOG.info(msg + " cached at [" + contentProvenance.getLocalURI().toString() + "]...");
         LOG.info(msg + " complete.");
         return contentProvenance;

@@ -10,7 +10,8 @@ import java.net.URI;
 public class CachePullThrough implements Cache {
     private final String namespace;
     private final String cachePath;
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
+    private final ContentPathFactoryDepth0 contentPathFactory;
 
     public CachePullThrough(String namespace,
                             String cachePath,
@@ -18,11 +19,12 @@ public class CachePullThrough implements Cache {
         this.namespace = namespace;
         this.cachePath = cachePath;
         this.resourceService = resourceService;
+        contentPathFactory = new ContentPathFactoryDepth0();
 
     }
 
-    static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService) throws IOException {
-        return CacheUtil.cache(sourceURI, cacheDir, resourceService);
+    static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService, ContentPathFactory contentPathFactory) throws IOException {
+        return CacheUtil.cache(sourceURI, cacheDir, resourceService, contentPathFactory);
     }
 
     private ContentProvenance getContentProvenance(URI resourceName, ResourceService resourceService) throws IOException {
@@ -30,7 +32,7 @@ public class CachePullThrough implements Cache {
         ContentProvenance localResourceLocation
                 = cache(resourceName,
                 cacheDirForNamespace,
-                resourceService);
+                resourceService, contentPathFactory);
 
         ContentProvenance contentProvenanceWithNamespace
                 = new ContentProvenance(
