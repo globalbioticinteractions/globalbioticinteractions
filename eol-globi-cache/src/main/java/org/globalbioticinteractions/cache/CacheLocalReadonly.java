@@ -88,7 +88,7 @@ public class CacheLocalReadonly implements Cache {
             meta = new ContentProvenance(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);
         } else if ((StringUtils.equals(resourceURI.toString(), sourceURI.toString())
                 && !inCachedArchive(localArchiveSha256, sha256))) {
-            URI localResourceURI = new File(cacheDir, sha256).toURI();
+            URI localResourceURI = new ContentPathFactory(cacheDir).forContentId(sha256);
             meta = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
         }
         return meta;

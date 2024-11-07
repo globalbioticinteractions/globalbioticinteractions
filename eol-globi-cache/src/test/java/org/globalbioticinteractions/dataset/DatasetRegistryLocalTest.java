@@ -7,6 +7,7 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.cache.ContentPathFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -159,7 +160,7 @@ public class DatasetRegistryLocalTest {
 
         FileUtils.copyInputStreamToFile(
                 resourceAsStream,
-                new File(testCacheDirLocal, sha256)
+                new File(new ContentPathFactory(testCacheDirLocal).forContentId(sha256))
         );
     }
 

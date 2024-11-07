@@ -49,7 +49,8 @@ public final class CacheUtil {
             try {
                 OutputStream os = FileUtils.openOutputStream(destinationFile);
                 String sha256 = calculateContentHash(sourceStream, os);
-                File destFile = new File(cacheDir, sha256);
+                URI uri = new ContentPathFactory(cacheDir).forContentId(sha256);
+                File destFile = new File(uri);
                 if (!destFile.exists()) {
                     FileUtils.moveFile(destinationFile, destFile);
                 }
