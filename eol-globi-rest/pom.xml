@@ -18,7 +18,7 @@
         <spring.version>5.2.22.RELEASE</spring.version>
         <aspectj.version>1.6.12</aspectj.version>
         <jetty.groupId>org.eclipse.jetty</jetty.groupId>
-        <jetty.version>9.4.52.v20230823</jetty.version>
+        <jetty.version>9.4.54.v20240208</jetty.version>
         <javassist.version>3.9.0.GA</javassist.version>
     </properties>
 
