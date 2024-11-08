@@ -33,8 +33,7 @@ public class CachePullThrough implements Cache {
                         new File(cachePath),
                         resourceService,
                         contentPathFactory,
-                        namespace
-                );
+                        namespace);
 
         ContentProvenance contentProvenanceWithNamespace
                 = new ContentProvenance(

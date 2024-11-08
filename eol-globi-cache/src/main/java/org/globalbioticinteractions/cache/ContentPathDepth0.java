@@ -26,6 +26,6 @@ public class ContentPathDepth0 implements ContentPath {
 
         return StringUtils.isBlank(namespace)
                 ? new File(cacheDir, contentId).toURI()
-                : CacheUtil.findCacheDirForNamespace(cacheDir, namespace).toURI();
+                : new File(CacheUtil.findCacheDirForNamespace(cacheDir, namespace), contentId).toURI();
     }
 }

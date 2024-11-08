@@ -131,7 +131,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
     private URI findLastCachedDatasetURI(String namespace) throws DatasetRegistryException {
         AtomicReference<URI> sourceURI = new AtomicReference<>();
-        final ContentPathDepth0 contentPath1 = new ContentPathDepth0(CacheUtil.findCacheDirForNamespace(cacheDir, namespace));
+        final ContentPathDepth0 contentPath1 = new ContentPathDepth0(new File(cacheDir), namespace);
         File accessFile = ProvenanceLog.getProvenanceLogFile(new ProvenancePathImpl(contentPath1));
         if (accessFile.exists()) {
             LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();

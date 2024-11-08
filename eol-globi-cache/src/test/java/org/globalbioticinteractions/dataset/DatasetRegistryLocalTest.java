@@ -26,14 +26,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 public class DatasetRegistryLocalTest {
 
@@ -114,10 +112,11 @@ public class DatasetRegistryLocalTest {
     public void datasetLocalNoValidAccessFile() throws DatasetRegistryException, URISyntaxException, IOException {
         Path testCacheDir = Files.createTempDirectory(Paths.get("target/"), "test");
         File localDatasetDir = new File(getClass().getResource("/test-dataset-local/globi.json").toURI()).getParentFile();
-        File testCacheDirLocal = new File(testCacheDir.toFile(), "local");
+        String namespace = "local";
+        File testCacheDirLocal = new File(testCacheDir.toFile(), namespace);
         FileUtils.forceMkdir(testCacheDirLocal);
         File accessFile1 = createInvalidProvenanceLog(localDatasetDir, testCacheDirLocal);
-        addCachedResources(testCacheDirLocal);
+        addCachedResources(testCacheDir.toFile(), namespace);
 
         File cacheDir = new File(accessFile1.toURI()).getParentFile().getParentFile();
         DatasetRegistry registry = new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
@@ -134,11 +133,11 @@ public class DatasetRegistryLocalTest {
 
         Iterable<String> availableNamespaces = registry.findNamespaces();
         for (String availableNamespace : availableNamespaces) {
-            assertThat(availableNamespace, is(not("local")));
+            assertThat(availableNamespace, is(not(namespace)));
         }
 
         try {
-            registry.datasetFor("local");
+            registry.datasetFor(namespace);
         } catch (DatasetRegistryException ex) {
             assertThat(ex.getMessage(), is("failed to retrieve/cache dataset in namespace [local]"));
             throw ex;
@@ -147,21 +146,22 @@ public class DatasetRegistryLocalTest {
     }
 
     public File createLocalCacheDir(Path testCacheDir, File localDatasetDir) throws IOException {
-        File testCacheDirLocal = new File(testCacheDir.toFile(), "local");
+        String namespace = "local";
+        File testCacheDirLocal = new File(testCacheDir.toFile(), namespace);
         FileUtils.forceMkdir(testCacheDirLocal);
         File accessFile = createProvenanceLog(localDatasetDir, testCacheDirLocal);
-        addCachedResources(testCacheDirLocal);
+        addCachedResources(testCacheDir.toFile(), namespace);
         return accessFile;
     }
 
-    public void addCachedResources(File testCacheDirLocal) throws IOException {
+    public void addCachedResources(File testCacheDir, String namespace) throws IOException {
         String sha256 = "6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2";
         InputStream resourceAsStream = getClass().getResourceAsStream("/org/globalbioticinteractions/dataset/" + sha256);
         assertNotNull(resourceAsStream);
 
         FileUtils.copyInputStreamToFile(
                 resourceAsStream,
-                new File(new ContentPathDepth0(testCacheDirLocal).forContentId(sha256))
+                new File(new ContentPathDepth0(testCacheDir, namespace).forContentId(sha256))
         );
     }
 

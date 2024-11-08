@@ -19,7 +19,7 @@ public class ProvenanceLog {
 
     public static void appendProvenanceLog(File cacheDir, ContentProvenance contentProvenance) throws IOException {
         if (needsCaching(contentProvenance, cacheDir)) {
-            appendProvenanceLog(contentProvenance, new ContentPathDepth0(CacheUtil.findCacheDirForNamespace(cacheDir.getAbsolutePath(), contentProvenance.getNamespace())));
+            appendProvenanceLog(contentProvenance, new ContentPathDepth0(cacheDir, contentProvenance.getNamespace()));
         }
     }
 
