@@ -51,7 +51,9 @@ public class DatasetRegistryLocalTest {
                                 cacheDir.getAbsolutePath(),
                                 cacheDir.getAbsolutePath(),
                                 getService(),
-                                new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl()
+                                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                                new ContentPathFactoryDepth0(),
+                                new ProvenancePathFactoryImpl()
                         );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
