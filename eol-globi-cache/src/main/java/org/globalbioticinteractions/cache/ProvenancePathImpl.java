@@ -4,14 +4,14 @@ import java.net.URI;
 
 public class ProvenancePathImpl implements ProvenancePath {
 
-    private final ContentPath contentPath1;
+    private final ContentPath contentPath;
 
     public ProvenancePathImpl(ContentPath contentPath) {
-        this.contentPath1 = contentPath;
+        this.contentPath = contentPath;
     }
 
     @Override
     public URI get() {
-        return contentPath1.forContentId(ProvenanceLog.PROVENANCE_LOG_FILENAME);
+        return contentPath.forContentId(ProvenanceLog.PROVENANCE_LOG_FILENAME);
     }
 }
