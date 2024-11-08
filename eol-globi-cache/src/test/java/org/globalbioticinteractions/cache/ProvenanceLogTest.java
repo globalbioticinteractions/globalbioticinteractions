@@ -47,7 +47,7 @@ public class ProvenanceLogTest {
 
     @Test
     public void appendToProvenanceLog() throws IOException {
-        CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
         assertNull(cache.provenanceOf(URI.create("http://example.com")));
 
         ContentProvenance meta = new ContentProvenance("some/namespace",

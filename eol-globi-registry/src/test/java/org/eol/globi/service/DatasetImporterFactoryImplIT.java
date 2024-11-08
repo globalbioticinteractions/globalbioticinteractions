@@ -20,6 +20,7 @@ import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
 import org.globalbioticinteractions.dataset.DatasetFactory;
@@ -138,7 +139,7 @@ public class DatasetImporterFactoryImplIT {
         final DatasetRegistry datasetRegistry = new DatasetRegistryWithCache(
                 new DatasetRegistryGitHubArchive(getResourceService()), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets",
                 new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
-                new ResourceServiceLocal(new InputStreamFactoryNoop())));
+                new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0()));
         DatasetImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
         DatasetImporterForTSV importerTSV = (DatasetImporterForTSV) importer;
         assertThat(importerTSV.getBaseUrl(), startsWith("https://github.com/globalbioticinteractions/template-dataset/"));
@@ -155,7 +156,7 @@ public class DatasetImporterFactoryImplIT {
         final DatasetRegistry datasetRegistry = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(
                 new ResourceServiceHTTP(new InputStreamFactoryNoop(), folder.newFolder())), dataset -> CacheUtil.cacheFor(dataset.getNamespace(), "target/datasets",
                 new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()))
+                new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0())
         );
         Dataset dataset = new DatasetFactory(datasetRegistry).datasetFor("globalbioticinteractions/jsonld-template-dataset");
         DatasetImporter importer = new StudyImporterFactoryImpl(null).createImporter(dataset);
@@ -172,7 +173,7 @@ public class DatasetImporterFactoryImplIT {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         "target/datasets",
-                        new ResourceServiceLocalAndRemote(inputStreamFactory, cacheDir), new ResourceServiceLocal(inputStreamFactory)
+                        new ResourceServiceLocalAndRemote(inputStreamFactory, cacheDir), new ResourceServiceLocal(inputStreamFactory), new ContentPathFactoryDepth0()
                 ));
         DatasetImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
         DatasetImporterForTSV importerTSV = (DatasetImporterForTSV) importer;

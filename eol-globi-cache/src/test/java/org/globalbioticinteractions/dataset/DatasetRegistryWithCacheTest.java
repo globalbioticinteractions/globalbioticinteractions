@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +60,7 @@ public class DatasetRegistryWithCacheTest {
         Dataset dataset = Mockito.mock(Dataset.class);
         when(dataset.getNamespace()).thenReturn("some/namespace");
         when(dataset.getArchiveURI()).thenReturn(getClass().getResource("archive.zip").toURI());
-        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath, new ResourceServiceLocal(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        Cache cache = CacheUtil.cacheFor("some/namespace", cachePath, new ResourceServiceLocal(new InputStreamFactoryNoop()), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
         return new DatasetWithCache(dataset, cache);
     }
 }

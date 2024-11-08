@@ -23,9 +23,13 @@ public final class CacheUtil {
     public static final String MIME_TYPE_GLOBI = "application/globi";
     public static final Logger LOG = LoggerFactory.getLogger(CacheUtil.class);
 
-    public static Cache cacheFor(String namespace, String cacheDir, ResourceService resourceServiceRemote, ResourceService resourceServiceLocal) {
-        Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote);
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, resourceServiceLocal);
+    public static Cache cacheFor(String namespace,
+                                 String cacheDir,
+                                 ResourceService resourceServiceRemote,
+                                 ResourceService resourceServiceLocal,
+                                 ContentPathFactory contentPathFactory) {
+        Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote, contentPathFactory);
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, resourceServiceLocal, contentPathFactory);
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
 

@@ -11,16 +11,16 @@ public class CachePullThrough implements Cache {
     private final String namespace;
     private final String cachePath;
     private final ResourceService resourceService;
-    private final ContentPathFactoryDepth0 contentPathFactory;
+    private final ContentPathFactory contentPathFactory;
 
     public CachePullThrough(String namespace,
                             String cachePath,
-                            ResourceService resourceService) {
+                            ResourceService resourceService,
+                            ContentPathFactory contentPathFactory) {
         this.namespace = namespace;
         this.cachePath = cachePath;
         this.resourceService = resourceService;
-        contentPathFactory = new ContentPathFactoryDepth0();
-
+        this.contentPathFactory = contentPathFactory;
     }
 
     static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService, ContentPathFactory contentPathFactory) throws IOException {

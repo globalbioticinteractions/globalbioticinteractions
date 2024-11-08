@@ -3,6 +3,7 @@ package org.eol.globi.tool;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import picocli.CommandLine;
 
@@ -20,7 +21,8 @@ public class CmdCompile extends CmdNeo4J {
     public void run() {
         DatasetRegistry registry = DatasetRegistryUtil.getDatasetRegistry(
                 getDatasetDir(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop())
+                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                new ContentPathFactoryDepth0()
         );
 
         try {

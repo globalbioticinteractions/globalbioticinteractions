@@ -26,12 +26,6 @@ public class CacheLocalReadonly implements Cache {
 
     public CacheLocalReadonly(String namespace,
                               String cachePath,
-                              ResourceService resourceService) {
-        this(namespace, cachePath, resourceService, new ContentPathFactoryDepth0());
-    }
-
-    public CacheLocalReadonly(String namespace,
-                              String cachePath,
                               ResourceService resourceService,
                               ContentPathFactory contentPathFactory) {
         this.namespace = namespace;
@@ -71,7 +65,8 @@ public class CacheLocalReadonly implements Cache {
                             String sha256 = values[2];
                             String accessedAt = StringUtils.trim(values[3]);
                             if (StringUtils.isNotBlank(sha256)) {
-                                ContentProvenance provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, cacheDirForNamespace, namespace, contentPathFactory);
+                                ContentPath contentPath = contentPathFactory.getContentPath(cacheDirForNamespace);
+                                ContentProvenance provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, namespace, contentPath);
                                 if (provenance != null) {
                                     meta.set(provenance);
                                 }
@@ -91,14 +86,19 @@ public class CacheLocalReadonly implements Cache {
         return meta.get();
     }
 
-    public static ContentProvenance getProvenance(URI resourceURI, String localArchiveSha256, URI sourceURI, String sha256, String accessedAt, File cacheDir, String namespace, ContentPathFactory contentPathFactory) {
+    public static ContentProvenance getProvenance(URI resourceURI,
+                                                  String localArchiveSha256,
+                                                  URI sourceURI,
+                                                  String sha256,
+                                                  String accessedAt,
+                                                  String namespace,
+                                                  ContentPath contentPath) {
         ContentProvenance meta = null;
         if (inCachedArchive(localArchiveSha256, sha256)) {
             meta = new ContentProvenance(namespace, getRemoteJarURIIfNeeded(sourceURI, resourceURI), resourceURI, sha256, accessedAt);
         } else if ((StringUtils.equals(resourceURI.toString(), sourceURI.toString())
                 && !inCachedArchive(localArchiveSha256, sha256))) {
-            URI localResourceURI = contentPathFactory.getContentPath(cacheDir).forContentId(sha256);
-            meta = new ContentProvenance(namespace, sourceURI, localResourceURI, sha256, accessedAt);
+            meta = new ContentProvenance(namespace, sourceURI, contentPath.forContentId(sha256), sha256, accessedAt);
         }
         return meta;
     }

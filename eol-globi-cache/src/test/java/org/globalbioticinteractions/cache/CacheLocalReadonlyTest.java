@@ -51,7 +51,7 @@ public class CacheLocalReadonlyTest {
         URL resource = getClass().getResource(namespaceCacheDir + "access.tsv");
         URL archive = getClass().getResource(namespaceCacheDir + "631d3777cf83e1abea848b59a6589c470cf0c7d0fd99682c4c104481ad9a543f");
         String cacheDir = new File(resource.toURI()).getParentFile().getParentFile().getParent();
-        CacheLocalReadonly cacheLocalReadonly = new CacheLocalReadonly("globalbioticinteractions/template-dataset", cacheDir, new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        CacheLocalReadonly cacheLocalReadonly = new CacheLocalReadonly("globalbioticinteractions/template-dataset", cacheDir, new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
         ContentProvenance contentProvenance = cacheLocalReadonly.provenanceOf(URI.create("jar:" + archive.toString() + "!/globi.json"));
         assertThat(contentProvenance.getSourceURI().toString(), is("jar:https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip!/globi.json"));
         assertThat(contentProvenance.getAccessedAt(), is("2017-09-14T16:39:33Z"));
@@ -63,7 +63,7 @@ public class CacheLocalReadonlyTest {
         URL resource = getClass().getResource(namespaceCacheDir + "access.tsv");
         URL archiveURL = getClass().getResource(namespaceCacheDir + "631d3777cf83e1abea848b59a6589c470cf0c7d0fd99682c4c104481ad9a543f");
         String cacheDir = new File(resource.toURI()).getParentFile().getParentFile().getParent();
-        CacheLocalReadonly cacheLocalReadonly = new CacheLocalReadonly("globalbioticinteractions/template-dataset", cacheDir, new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        CacheLocalReadonly cacheLocalReadonly = new CacheLocalReadonly("globalbioticinteractions/template-dataset", cacheDir, new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
         ContentProvenance contentProvenance = cacheLocalReadonly.provenanceOf(URI.create("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
         assertThat(contentProvenance.getSourceURI().toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
         assertThat(contentProvenance.getAccessedAt(), is("2017-09-14T16:39:33Z"));

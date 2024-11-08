@@ -13,12 +13,11 @@ import org.eol.globi.taxon.NonResolvingTaxonIndexNeo4j2;
 import org.eol.globi.tool.NameResolver;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeIdCollector;
-import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.eol.globi.util.NodeTypeDirection;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
@@ -95,7 +94,7 @@ public abstract class GraphDBTestCaseAbstract {
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
                         "target/datasets",
                         new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                        new ResourceServiceLocal(new InputStreamFactoryNoop())));
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0()));
         return finder.datasetFor(namespace);
     }
 
