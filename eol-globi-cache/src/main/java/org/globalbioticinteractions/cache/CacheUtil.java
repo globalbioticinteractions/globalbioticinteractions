@@ -40,21 +40,36 @@ public final class CacheUtil {
         return directory;
     }
 
+    public static File findOrMakeCacheDirForNamespace(File cachePath, String namespace) throws IOException {
+        File directory = findCacheDirForNamespace(cachePath, namespace);
+        FileUtils.forceMkdir(directory);
+        return directory;
+    }
+
     public static File findCacheDirForNamespace(String cachePath, String namespace) {
-        File cacheDir = new File(cachePath);
-        return new File(cacheDir, namespace);
+        return findCacheDirForNamespace(new File(cachePath), namespace);
+    }
+
+    public static File findCacheDirForNamespace(File cachePath, String namespace) {
+        return new File(cachePath, namespace);
     }
 
 
-    public static ContentProvenance cacheStream(InputStream inputStream, File cacheDir, ContentPathFactory contentPathFactory) throws IOException {
+    public static ContentProvenance cacheStream(
+            InputStream inputStream,
+            File cacheDir,
+            ContentPathFactory contentPathFactory,
+            String namespace) throws IOException {
         File destinationFile = null;
 
+        File cacheDirForNamespace = CacheUtil.findOrMakeCacheDirForNamespace(cacheDir, namespace);
+
         try (InputStream sourceStream = inputStream) {
-            destinationFile = File.createTempFile("archive", "tmp", cacheDir);
+            destinationFile = File.createTempFile("archive", "tmp", cacheDirForNamespace);
             try {
                 OutputStream os = FileUtils.openOutputStream(destinationFile);
                 String sha256 = calculateContentHash(sourceStream, os);
-                URI uri = contentPathFactory.getContentPath(cacheDir).forContentId(sha256);
+                URI uri = contentPathFactory.getPath(cacheDir, namespace).forContentId(sha256);
                 File destFile = new File(uri);
                 if (!destFile.exists()) {
                     FileUtils.moveFile(destinationFile, destFile);
@@ -78,11 +93,15 @@ public final class CacheUtil {
         return String.format("%064x", new java.math.BigInteger(1, md.digest()));
     }
 
-    public static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService, ContentPathFactory contentPathFactory) throws IOException {
+    public static ContentProvenance cache(URI sourceURI,
+                                          File cacheDir,
+                                          ResourceService resourceService,
+                                          ContentPathFactory contentPathFactory,
+                                          String namespace) throws IOException {
         String msg = "caching [" + sourceURI + "]";
         LOG.info(msg + " started...");
         InputStream inputStream = resourceService.retrieve(sourceURI);
-        ContentProvenance contentProvenance = cacheStream(inputStream, cacheDir, contentPathFactory);
+        ContentProvenance contentProvenance = cacheStream(inputStream, cacheDir, contentPathFactory, namespace);
         LOG.info(msg + " cached at [" + contentProvenance.getLocalURI().toString() + "]...");
         LOG.info(msg + " complete.");
         return contentProvenance;

@@ -22,13 +22,15 @@ public class CachePullThroughTest {
 
     @Test
     public void cache() throws IOException {
-        File cacheDir = CacheUtil.findOrMakeCacheDirForNamespace("target/cache/datasets", "some/namespace");
+        String namespace = "some/namespace";
+        File cacheDir = CacheUtil.findOrMakeCacheDirForNamespace("target/cache/datasets", namespace);
         ContentProvenance contentProvenance
                 = CachePullThrough.cache(
                 URI.create("https://github.com/globalbioticinteractions/template-dataset/archive/main.zip"),
                 cacheDir,
                 new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
-                new ContentPathFactoryDepth0()
+                new ContentPathFactoryDepth0(),
+                namespace
         );
         File cachedFile = new File(contentProvenance.getLocalURI());
         assertThat(cachedFile.exists(), CoreMatchers.is(true));

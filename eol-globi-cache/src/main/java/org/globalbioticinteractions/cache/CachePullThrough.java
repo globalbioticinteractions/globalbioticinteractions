@@ -23,16 +23,18 @@ public class CachePullThrough implements Cache {
         this.contentPathFactory = contentPathFactory;
     }
 
-    static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService, ContentPathFactory contentPathFactory) throws IOException {
-        return CacheUtil.cache(sourceURI, cacheDir, resourceService, contentPathFactory);
+    static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService, ContentPathFactory contentPathFactory, String namespace1) throws IOException {
+        return CacheUtil.cache(sourceURI, cacheDir, resourceService, contentPathFactory, namespace1);
     }
 
     private ContentProvenance getContentProvenance(URI resourceName, ResourceService resourceService) throws IOException {
-        File cacheDirForNamespace = CacheUtil.findOrMakeCacheDirForNamespace(cachePath, namespace);
-        ContentProvenance localResourceLocation
-                = cache(resourceName,
-                cacheDirForNamespace,
-                resourceService, contentPathFactory);
+        ContentProvenance localResourceLocation =
+                cache(resourceName,
+                        new File(cachePath),
+                        resourceService,
+                        contentPathFactory,
+                        namespace
+                );
 
         ContentProvenance contentProvenanceWithNamespace
                 = new ContentProvenance(

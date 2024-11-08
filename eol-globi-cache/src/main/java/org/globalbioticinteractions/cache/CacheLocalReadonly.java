@@ -57,12 +57,13 @@ public class CacheLocalReadonly implements Cache {
                                                          final ContentPathFactory contentPathFactory,
                                                          final ProvenancePathFactory provenancePathFactory) {
         AtomicReference<ContentProvenance> meta = new AtomicReference<>(null);
-        File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
-        ContentPath contentPath = contentPathFactory.getContentPath(cacheDirForNamespace);
-        File accessFile = ProvenanceLog.getProvenanceLogFile(provenancePathFactory.getProvenancePath(cacheDirForNamespace));
+        ContentPath contentPath = contentPathFactory.getPath(new File(cachePath), namespace);
+        File accessFile = ProvenanceLog.getProvenanceLogFile(
+                provenancePathFactory.getPath(new File(cachePath), namespace)
+        );
         if (accessFile.exists()) {
             try {
-
+                File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
                 String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
                 LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
                 ProvenanceLog.parseProvenanceLogFile(accessFile, new ProvenanceLog.ProvenanceEntryListener() {

@@ -1,7 +1,5 @@
 package org.globalbioticinteractions.cache;
 
-import java.io.File;
+public interface ContentPathFactory extends PathFactory<ContentPath> {
 
-public interface ContentPathFactory {
-    ContentPath getContentPath(File baseDir);
 }
