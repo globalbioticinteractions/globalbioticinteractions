@@ -63,11 +63,12 @@ public class DatasetRegistryWithCacheTest {
         when(dataset.getArchiveURI()).thenReturn(getClass().getResource("archive.zip").toURI());
         Cache cache = CacheUtil.cacheFor("some/namespace",
                 cachePath,
+                cachePath,
                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl(),
-                cachePath);
+                new ProvenancePathFactoryImpl()
+        );
         return new DatasetWithCache(dataset, cache);
     }
 }

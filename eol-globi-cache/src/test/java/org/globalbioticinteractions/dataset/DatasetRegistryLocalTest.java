@@ -49,9 +49,10 @@ public class DatasetRegistryLocalTest {
                         return CacheUtil.cacheFor(
                                 dataset.getNamespace(),
                                 cacheDir.getAbsolutePath(),
+                                cacheDir.getAbsolutePath(),
                                 getService(),
-                                new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl(),
-                                cacheDir.getAbsolutePath());
+                                new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl()
+                        );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -90,11 +91,12 @@ public class DatasetRegistryLocalTest {
                         return CacheUtil.cacheFor(
                                 dataset.getNamespace(),
                                 cacheDir.getAbsolutePath(),
+                                cacheDir.getAbsolutePath(),
                                 getService(),
                                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                                 new ContentPathFactoryDepth0(),
-                                new ProvenancePathFactoryImpl(),
-                                cacheDir.getAbsolutePath());
+                                new ProvenancePathFactoryImpl()
+                        );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -110,10 +112,9 @@ public class DatasetRegistryLocalTest {
         CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(
                 "local",
                 cacheDir.getAbsolutePath(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                cacheDir.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl(),
-                cacheDir.getAbsolutePath()
+                new ProvenancePathFactoryImpl()
         );
         InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
@@ -138,11 +139,11 @@ public class DatasetRegistryLocalTest {
                         return CacheUtil.cacheFor(
                                 dataset.getNamespace(),
                                 cacheDir.getAbsolutePath(),
+                                cacheDir.getAbsolutePath(),
                                 getService(),
                                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                                 new ContentPathFactoryDepth0(),
-                                new ProvenancePathFactoryImpl(),
-                                cacheDir.getAbsolutePath()
+                                new ProvenancePathFactoryImpl()
                         );
                     } catch (IOException e) {
                         throw new RuntimeException(e);

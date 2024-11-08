@@ -28,16 +28,16 @@ public class CacheLocalReadonly implements Cache {
 
     public CacheLocalReadonly(String namespace,
                               String cachePath,
+                              String provPath,
                               ResourceService resourceService,
                               ContentPathFactory contentPathFactory,
-                              ProvenancePathFactory provenancePathFactory,
-                              String provPath) {
+                              ProvenancePathFactory provenancePathFactory) {
         this.namespace = namespace;
         this.cachePath = cachePath;
+        this.provPath = provPath;
         this.resourceServiceLocal = resourceService;
         this.contentPathFactory = contentPathFactory;
         this.provenancePathFactory = provenancePathFactory;
-        this.provPath = provPath;
     }
 
     static URI getRemoteJarURIIfNeeded(URI remoteArchiveURI, URI localResourceURI) {
@@ -53,18 +53,19 @@ public class CacheLocalReadonly implements Cache {
     public ContentProvenance provenanceOf(URI resourceURI) {
         return getContentProvenance(resourceURI,
                 this.cachePath,
+                this.provPath,
                 this.namespace,
                 this.contentPathFactory,
-                provenancePathFactory,
-                this.provPath);
+                provenancePathFactory
+        );
     }
 
     public static ContentProvenance getContentProvenance(URI resourceURI,
                                                          String cachePath,
+                                                         String provPath,
                                                          String namespace,
                                                          final ContentPathFactory contentPathFactory,
-                                                         final ProvenancePathFactory provenancePathFactory,
-                                                         String provPath) {
+                                                         final ProvenancePathFactory provenancePathFactory) {
         AtomicReference<ContentProvenance> meta = new AtomicReference<>(null);
         ContentPath contentPath = contentPathFactory.getPath(new File(cachePath), namespace);
         File accessFile = ProvenanceLog.getProvenanceLogFile(

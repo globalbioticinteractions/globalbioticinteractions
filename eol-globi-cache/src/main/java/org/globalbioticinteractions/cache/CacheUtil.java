@@ -25,13 +25,13 @@ public final class CacheUtil {
 
     public static Cache cacheFor(String namespace,
                                  String cacheDir,
+                                 String provPath,
                                  ResourceService resourceServiceRemote,
                                  ResourceService resourceServiceLocal,
                                  ContentPathFactory contentPathFactory,
-                                 ProvenancePathFactory provenancePathFactory,
-                                 String provPath) {
+                                 ProvenancePathFactory provenancePathFactory) {
         Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote, contentPathFactory);
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, resourceServiceLocal, contentPathFactory, provenancePathFactory, provPath);
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, provPath, resourceServiceLocal, contentPathFactory, provenancePathFactory);
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
 

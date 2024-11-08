@@ -21,10 +21,9 @@ public class DatasetRegistryUtil {
         CacheFactory cacheFactory = dataset ->
                 new CacheLocalReadonly(dataset.getNamespace(),
                         cacheDir,
-                        resourceServiceLocal,
+                        provPath, resourceServiceLocal,
                         contentPathFactory,
-                        provenancePathFactory,
-                        provPath
+                        provenancePathFactory
                 );
         return new DatasetRegistryLocal(cacheDir, cacheFactory, new ResourceServiceLocal(new InputStreamFactoryNoop()));
     }

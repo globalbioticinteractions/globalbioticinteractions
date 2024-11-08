@@ -52,11 +52,12 @@ public class DatasetRegistryWithCacheIT {
         DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> {
             return CacheUtil.cacheFor(dataset.getNamespace(),
                     cacheDir.getAbsolutePath(),
+                    cacheDir.getAbsolutePath(),
                     new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir),
                     new ResourceServiceLocal(new InputStreamFactoryNoop()),
                     new ContentPathFactoryDepth0(),
-                    new ProvenancePathFactoryImpl(),
-                    cacheDir.getAbsolutePath());
+                    new ProvenancePathFactoryImpl()
+            );
         });
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
@@ -75,11 +76,12 @@ public class DatasetRegistryWithCacheIT {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
+                        cacheDir.getAbsolutePath(),
                         new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir),
                         new ResourceServiceLocal(new InputStreamFactoryNoop()),
                         new ContentPathFactoryDepth0(),
-                        new ProvenancePathFactoryImpl(),
-                        cacheDir.getAbsolutePath())
+                        new ProvenancePathFactoryImpl()
+                )
         );
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
@@ -98,11 +100,11 @@ public class DatasetRegistryWithCacheIT {
                 dataset -> CacheUtil.cacheFor(
                         dataset.getNamespace(),
                         cacheDir.getAbsolutePath(),
+                        cacheDir.getAbsolutePath(),
                         new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir),
                         new ResourceServiceLocal(new InputStreamFactoryNoop()),
                         new ContentPathFactoryDepth0(),
-                        new ProvenancePathFactoryImpl(),
-                        cacheDir.getAbsolutePath()
+                        new ProvenancePathFactoryImpl()
                 )
         );
 

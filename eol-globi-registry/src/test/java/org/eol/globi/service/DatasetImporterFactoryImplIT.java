@@ -143,11 +143,12 @@ public class DatasetImporterFactoryImplIT {
             return CacheUtil.cacheFor(
                     dataset.getNamespace(),
                     cacheDir,
+                    cacheDir,
                     new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
                     new ResourceServiceLocal(new InputStreamFactoryNoop()),
                     new ContentPathFactoryDepth0(),
-                    new ProvenancePathFactoryImpl(),
-                    cacheDir);
+                    new ProvenancePathFactoryImpl()
+            );
         });
         DatasetImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");
         DatasetImporterForTSV importerTSV = (DatasetImporterForTSV) importer;
@@ -168,11 +169,12 @@ public class DatasetImporterFactoryImplIT {
             return CacheUtil.cacheFor(
                     dataset.getNamespace(),
                     cacheDir,
+                    cacheDir,
                     new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
                     new ResourceServiceLocal(new InputStreamFactoryNoop()),
                     new ContentPathFactoryDepth0(),
-                    new ProvenancePathFactoryImpl(),
-                    cacheDir);
+                    new ProvenancePathFactoryImpl()
+            );
         }
         );
         Dataset dataset = new DatasetFactory(datasetRegistry).datasetFor("globalbioticinteractions/jsonld-template-dataset");
@@ -192,11 +194,11 @@ public class DatasetImporterFactoryImplIT {
                     return CacheUtil.cacheFor(
                             dataset.getNamespace(),
                             cacheDir1,
+                            cacheDir1,
                             new ResourceServiceLocalAndRemote(inputStreamFactory, cacheDir),
                             new ResourceServiceLocal(inputStreamFactory),
                             new ContentPathFactoryDepth0(),
-                            new ProvenancePathFactoryImpl(),
-                            cacheDir1
+                            new ProvenancePathFactoryImpl()
                     );
                 });
         DatasetImporter importer = getTemplateImporter(datasetRegistry, "globalbioticinteractions/template-dataset");

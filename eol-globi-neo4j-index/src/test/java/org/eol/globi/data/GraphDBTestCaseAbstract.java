@@ -97,11 +97,11 @@ public abstract class GraphDBTestCaseAbstract {
                     return CacheUtil.cacheFor(
                             dataset.getNamespace(),
                             cacheDir,
+                            cacheDir,
                             new ResourceServiceLocal(new InputStreamFactoryNoop()),
                             new ResourceServiceLocal(new InputStreamFactoryNoop()),
                             new ContentPathFactoryDepth0(),
-                            new ProvenancePathFactoryImpl(),
-                            cacheDir
+                            new ProvenancePathFactoryImpl()
                     );
                 });
         return finder.datasetFor(namespace);

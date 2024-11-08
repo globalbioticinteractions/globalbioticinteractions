@@ -51,10 +51,10 @@ public class ProvenanceLogTest {
         CacheLocalReadonly cache = new CacheLocalReadonly(
                 "some/namespace",
                 tempDirectory.getAbsolutePath(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                tempDirectory.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl(),
-                tempDirectory.getAbsolutePath());
+                new ProvenancePathFactoryImpl()
+        );
 
         assertNull(cache.provenanceOf(URI.create("http://example.com")));
 
