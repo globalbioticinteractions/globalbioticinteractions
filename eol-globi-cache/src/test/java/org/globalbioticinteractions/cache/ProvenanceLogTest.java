@@ -22,6 +22,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class ProvenanceLogTest {
 
     private File tempDirectory;
@@ -47,7 +48,14 @@ public class ProvenanceLogTest {
 
     @Test
     public void appendToProvenanceLog() throws IOException {
-        CacheLocalReadonly cache = new CacheLocalReadonly("some/namespace", tempDirectory.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl());
+        CacheLocalReadonly cache = new CacheLocalReadonly(
+                "some/namespace",
+                tempDirectory.getAbsolutePath(),
+                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                new ContentPathFactoryDepth0(),
+                new ProvenancePathFactoryImpl(),
+                tempDirectory.getAbsolutePath());
+
         assertNull(cache.provenanceOf(URI.create("http://example.com")));
 
         ContentProvenance meta = new ContentProvenance("some/namespace",

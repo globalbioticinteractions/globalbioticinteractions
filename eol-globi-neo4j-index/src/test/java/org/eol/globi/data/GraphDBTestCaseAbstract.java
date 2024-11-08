@@ -92,10 +92,18 @@ public abstract class GraphDBTestCaseAbstract {
                         return new DatasetWithResourceMapping(namespace, URI.create("some:uri"), new ResourceServiceLocal(in -> in));
                     }
                 },
-                dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
-                        "target/datasets",
-                        new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl()));
+                dataset -> {
+                    String cacheDir = "target/datasets";
+                    return CacheUtil.cacheFor(
+                            dataset.getNamespace(),
+                            cacheDir,
+                            new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                            new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                            new ContentPathFactoryDepth0(),
+                            new ProvenancePathFactoryImpl(),
+                            cacheDir
+                    );
+                });
         return finder.datasetFor(namespace);
     }
 

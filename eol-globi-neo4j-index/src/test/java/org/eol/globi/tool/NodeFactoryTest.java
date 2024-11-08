@@ -128,7 +128,9 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
                         datasetDirTest,
                         new ResourceServiceLocal(new InputStreamFactoryNoop()),
                         new ContentPathFactoryDepth0(),
-                        new ProvenancePathFactoryImpl()),
+                        new ProvenancePathFactoryImpl(),
+                        datasetDirTest
+                ),
                 nodeFactoryFactory,
                 getGraphFactory(),
                 getCacheDir()

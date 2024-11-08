@@ -24,7 +24,8 @@ public class CmdCompile extends CmdNeo4J {
                 getDatasetDir(),
                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl()
+                new ProvenancePathFactoryImpl(),
+                getProvenanceDir()
         );
 
         try {

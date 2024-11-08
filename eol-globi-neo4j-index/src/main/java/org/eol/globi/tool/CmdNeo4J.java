@@ -29,9 +29,16 @@ public abstract class CmdNeo4J implements Cmd {
     @CommandLine.Option(
             names = {CmdOptionConstants.OPTION_DATASET_DIR},
             defaultValue = "./datasets",
-            description = "location of Elton tracked datasets"
+            description = "location of Elton tracked data content"
     )
     private String datasetDir;
+
+    @CommandLine.Option(
+            names = {CmdOptionConstants.OPTION_DATASET_DIR},
+            defaultValue = "./datasets",
+            description = "location of Elton tracked data provenance"
+    )
+    private String provenanceDir;
 
 
     public void setNeo4jVersion(String neo4jVersion) {
@@ -161,6 +168,10 @@ public abstract class CmdNeo4J implements Cmd {
 
     public String getDatasetDir() {
         return datasetDir;
+    }
+
+    public String getProvenanceDir() {
+        return provenanceDir;
     }
 
     public String getCacheDir() {
