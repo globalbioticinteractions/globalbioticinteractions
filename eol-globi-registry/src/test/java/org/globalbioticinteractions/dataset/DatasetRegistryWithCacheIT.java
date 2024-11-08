@@ -7,6 +7,7 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.hamcrest.core.Is;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class DatasetRegistryWithCacheIT {
     private void assertTemplateDataset(String expectedURIFragment, DatasetRegistry datasetRegistry, String expectedCitation) throws DatasetRegistryException, IOException {
         final File cacheDir = folder.newFolder();
         DatasetRegistry finder = new DatasetRegistryWithCache(datasetRegistry, dataset -> {
-            return CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath(), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
+            return CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath(), new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl());
         });
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/template-dataset");
@@ -67,7 +68,7 @@ public class DatasetRegistryWithCacheIT {
                 new DatasetRegistryGitHubArchive(getResourceService()),
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath(),
                         new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir),
-                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0())
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl())
         );
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/Catalogue-of-Afrotropical-Bees");
@@ -85,7 +86,7 @@ public class DatasetRegistryWithCacheIT {
         DatasetRegistry finder = new DatasetRegistryWithCache(new DatasetRegistryGitHubArchive(getResourceService()),
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(), cacheDir.getAbsolutePath(),
                         new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), cacheDir),
-                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0())
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl())
         );
 
         Dataset dataset = new DatasetFactory(finder).datasetFor("globalbioticinteractions/hafner");

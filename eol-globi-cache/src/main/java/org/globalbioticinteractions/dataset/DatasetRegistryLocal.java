@@ -1,12 +1,13 @@
 package org.globalbioticinteractions.dataset;
 
-import jdk.nashorn.internal.ir.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
 import org.globalbioticinteractions.cache.CacheFactory;
 import org.globalbioticinteractions.cache.CacheUtil;
+import org.globalbioticinteractions.cache.ContentPathDepth0;
 import org.globalbioticinteractions.cache.LineReaderFactory;
 import org.globalbioticinteractions.cache.ProvenanceLog;
+import org.globalbioticinteractions.cache.ProvenancePathImpl;
 import org.globalbioticinteractions.cache.ReverseLineReaderFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +131,8 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
     private URI findLastCachedDatasetURI(String namespace) throws DatasetRegistryException {
         AtomicReference<URI> sourceURI = new AtomicReference<>();
-        File accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cacheDir);
+        final ContentPathDepth0 contentPath1 = new ContentPathDepth0(CacheUtil.findCacheDirForNamespace(cacheDir, namespace));
+        File accessFile = ProvenanceLog.getProvenanceLogFile(new ProvenancePathImpl(contentPath1));
         if (accessFile.exists()) {
             LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
             final ProvenanceLog.ProvenanceEntryListener lineListener = new ProvenanceLog.ProvenanceEntryListener() {

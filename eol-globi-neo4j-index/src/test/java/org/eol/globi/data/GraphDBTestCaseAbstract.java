@@ -18,6 +18,7 @@ import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
@@ -94,7 +95,7 @@ public abstract class GraphDBTestCaseAbstract {
                 dataset -> CacheUtil.cacheFor(dataset.getNamespace(),
                         "target/datasets",
                         new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0()));
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl()));
         return finder.datasetFor(namespace);
     }
 

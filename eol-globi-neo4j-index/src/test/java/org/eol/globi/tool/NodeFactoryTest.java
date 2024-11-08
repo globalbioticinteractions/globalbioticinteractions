@@ -18,6 +18,7 @@ import org.eol.globi.taxon.NonResolvingTaxonIndexNoTxNeo4j2;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -123,7 +124,11 @@ public class NodeFactoryTest extends GraphDBNeo4jTestCase {
         String datasetDirTest = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
 
         final IndexerDataset indexerDataset = new IndexerDataset(
-                DatasetRegistryUtil.getDatasetRegistry(datasetDirTest, new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0()),
+                DatasetRegistryUtil.getDatasetRegistry(
+                        datasetDirTest,
+                        new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                        new ContentPathFactoryDepth0(),
+                        new ProvenancePathFactoryImpl()),
                 nodeFactoryFactory,
                 getGraphFactory(),
                 getCacheDir()

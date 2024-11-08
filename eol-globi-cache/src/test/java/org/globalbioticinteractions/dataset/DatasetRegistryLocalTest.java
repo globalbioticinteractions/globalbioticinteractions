@@ -9,6 +9,7 @@ import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentPathDepth0;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -50,7 +51,7 @@ public class DatasetRegistryLocalTest {
                         return CacheUtil.cacheFor(
                                 dataset.getNamespace(),
                                 cacheDir.getAbsolutePath(),
-                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
+                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -89,7 +90,7 @@ public class DatasetRegistryLocalTest {
                         return CacheUtil.cacheFor(
                                 dataset.getNamespace(),
                                 cacheDir.getAbsolutePath(),
-                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
+                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -102,7 +103,7 @@ public class DatasetRegistryLocalTest {
         assertThat(actual.getArchiveURI().toString(), is(localDatasetDir.toURI().toString()));
         assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
 
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly("local", cacheDir.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl());
         InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
         String actualHash = CacheUtil.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
@@ -125,7 +126,7 @@ public class DatasetRegistryLocalTest {
                         return CacheUtil.cacheFor(
                                 dataset.getNamespace(),
                                 cacheDir.getAbsolutePath(),
-                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0());
+                                getService(), new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

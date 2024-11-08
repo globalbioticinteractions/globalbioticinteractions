@@ -23,15 +23,18 @@ public class CacheLocalReadonly implements Cache {
     private final String cachePath;
     private ResourceService resourceServiceLocal;
     private final ContentPathFactory contentPathFactory;
+    private final ProvenancePathFactory provenancePathFactory;
 
     public CacheLocalReadonly(String namespace,
                               String cachePath,
                               ResourceService resourceService,
-                              ContentPathFactory contentPathFactory) {
+                              ContentPathFactory contentPathFactory,
+                              ProvenancePathFactory provenancePathFactory) {
         this.namespace = namespace;
         this.cachePath = cachePath;
         this.resourceServiceLocal = resourceService;
         this.contentPathFactory = contentPathFactory;
+        this.provenancePathFactory = provenancePathFactory;
     }
 
     static URI getRemoteJarURIIfNeeded(URI remoteArchiveURI, URI localResourceURI) {
@@ -45,17 +48,22 @@ public class CacheLocalReadonly implements Cache {
 
     @Override
     public ContentProvenance provenanceOf(URI resourceURI) {
-        return getContentProvenance(resourceURI, this.cachePath, this.namespace, this.contentPathFactory);
+        return getContentProvenance(resourceURI, this.cachePath, this.namespace, this.contentPathFactory, provenancePathFactory);
     }
 
-    public static ContentProvenance getContentProvenance(URI resourceURI, String cachePath, String namespace, final ContentPathFactory contentPathFactory) {
+    public static ContentProvenance getContentProvenance(URI resourceURI,
+                                                         String cachePath,
+                                                         String namespace,
+                                                         final ContentPathFactory contentPathFactory,
+                                                         final ProvenancePathFactory provenancePathFactory) {
         AtomicReference<ContentProvenance> meta = new AtomicReference<>(null);
-        File accessFile = ProvenanceLog.findProvenanceLogFile(namespace, cachePath);
-        try {
-            File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
+        File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
+        ContentPath contentPath = contentPathFactory.getContentPath(cacheDirForNamespace);
+        File accessFile = ProvenanceLog.getProvenanceLogFile(provenancePathFactory.getProvenancePath(cacheDirForNamespace));
+        if (accessFile.exists()) {
+            try {
 
-            String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
-            if (accessFile.exists()) {
+                String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
                 LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
                 ProvenanceLog.parseProvenanceLogFile(accessFile, new ProvenanceLog.ProvenanceEntryListener() {
                     @Override
@@ -65,7 +73,6 @@ public class CacheLocalReadonly implements Cache {
                             String sha256 = values[2];
                             String accessedAt = StringUtils.trim(values[3]);
                             if (StringUtils.isNotBlank(sha256)) {
-                                ContentPath contentPath = contentPathFactory.getContentPath(cacheDirForNamespace);
                                 ContentProvenance provenance = getProvenance(resourceURI, hashCandidate, sourceURI, sha256, accessedAt, namespace, contentPath);
                                 if (provenance != null) {
                                     meta.set(provenance);
@@ -79,9 +86,9 @@ public class CacheLocalReadonly implements Cache {
                         return meta.get() == null;
                     }
                 }, lineReaderFactory);
+            } catch (DatasetRegistryException e) {
+                LOG.error("unexpected exception on getting meta for [" + resourceURI + "]", e);
             }
-        } catch (DatasetRegistryException e) {
-            LOG.error("unexpected exception on getting meta for [" + resourceURI + "]", e);
         }
         return meta.get();
     }
@@ -154,5 +161,6 @@ public class CacheLocalReadonly implements Cache {
                 ? null
                 : resourceServiceLocal.retrieve(resourceLocalURI);
     }
+
 }
 

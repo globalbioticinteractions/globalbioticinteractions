@@ -19,7 +19,7 @@ public class ProvenanceLog {
 
     public static void appendProvenanceLog(File cacheDir, ContentProvenance contentProvenance) throws IOException {
         if (needsCaching(contentProvenance, cacheDir)) {
-            appendProvenanceLog(contentProvenance, cacheDir);
+            appendProvenanceLog(contentProvenance, new ContentPathDepth0(CacheUtil.findCacheDirForNamespace(cacheDir.getAbsolutePath(), contentProvenance.getNamespace())));
         }
     }
 
@@ -29,9 +29,9 @@ public class ProvenanceLog {
         return !CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI()) && !isCacheDir;
     }
 
-    private static void appendProvenanceLog(ContentProvenance contentProvenance, File cacheDir) throws IOException {
+    private static void appendProvenanceLog(ContentProvenance contentProvenance, ContentPath contentPath) throws IOException {
         List<String> accessLogEntry = compileLogEntries(contentProvenance);
-        File accessLog = findProvenanceLogFile(contentProvenance.getNamespace(), cacheDir.getAbsolutePath());
+        File accessLog = getProvenanceLogFile(new ProvenancePathImpl(contentPath));
         String prefix = accessLog.exists() ? "\n" : "";
         String accessLogLine = StringUtils.join(accessLogEntry, '\t');
         try {
@@ -55,13 +55,8 @@ public class ProvenanceLog {
         return logEntries;
     }
 
-    public static File findProvenanceLogFile(String namespace, String cacheDir) {
-        File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cacheDir, namespace);
-        return getProvenanceLogFile(cacheDirForNamespace);
-    }
-
-    private static File getProvenanceLogFile(File dir) {
-        return new File(dir, PROVENANCE_LOG_FILENAME);
+    public static File getProvenanceLogFile(ProvenancePath provenancePath) {
+        return new File(provenancePath.get());
     }
 
     public static void parseProvenanceLogFile(File file, ProvenanceEntryListener listener, LineReaderFactory lineReaderFactory) throws DatasetRegistryException {
