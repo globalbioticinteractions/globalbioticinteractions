@@ -34,7 +34,7 @@ public abstract class CmdNeo4J implements Cmd {
     private String datasetDir;
 
     @CommandLine.Option(
-            names = {CmdOptionConstants.OPTION_DATASET_DIR},
+            names = {"-provDir"},
             defaultValue = "./datasets",
             description = "location of Elton tracked data provenance"
     )
