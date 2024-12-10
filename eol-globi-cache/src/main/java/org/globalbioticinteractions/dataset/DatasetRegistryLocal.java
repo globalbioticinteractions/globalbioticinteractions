@@ -36,16 +36,16 @@ import static java.nio.file.FileVisitResult.SKIP_SIBLINGS;
 
 public class DatasetRegistryLocal implements DatasetRegistry {
     private final static Logger LOG = LoggerFactory.getLogger(DatasetRegistryLocal.class);
-    private final String cacheDir;
     private final CacheFactory cacheFactory;
+    private final String provDir;
     private ResourceService resourceService;
 
-    public DatasetRegistryLocal(String cacheDir,
+    public DatasetRegistryLocal(String provDir,
                                 CacheFactory cacheFactory,
                                 ResourceService resourceService) {
-        this.cacheDir = cacheDir;
         this.cacheFactory = cacheFactory;
         this.resourceService = resourceService;
+        this.provDir = provDir;
     }
 
     @Override
@@ -57,12 +57,11 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
     @Override
     public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
-        File directory = new File(cacheDir);
-        Collection<String> namespaces = Collections.emptyList();
+        File directory = new File(provDir);
         if (directory.exists() && directory.isDirectory()) {
-            namespaces = collectNamespaces(directory, namespaceConsumer);
+            collectNamespaces(directory, namespaceConsumer);
         } else {
-            LOG.warn("Directory [" + cacheDir + "] does not exist.");
+            LOG.warn("Directory [" + provDir + "] does not exist.");
         }
     }
 
@@ -131,7 +130,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
 
     private URI findLastCachedDatasetURI(String namespace) throws DatasetRegistryException {
         AtomicReference<URI> sourceURI = new AtomicReference<>();
-        final ContentPathDepth0 contentPath1 = new ContentPathDepth0(new File(cacheDir), namespace);
+        final ContentPathDepth0 contentPath1 = new ContentPathDepth0(new File(provDir), namespace);
         File accessFile = ProvenanceLog.getProvenanceLogFile(new ProvenancePathImpl(contentPath1));
         if (accessFile.exists()) {
             LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
