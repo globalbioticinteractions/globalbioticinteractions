@@ -9,28 +9,31 @@ import java.net.URI;
 
 public class CachePullThrough implements Cache {
     private final String namespace;
-    private final String cachePath;
     private final ResourceService resourceService;
     private final ContentPathFactory contentPathFactory;
+    private final String dataDir;
+    private final String provDir;
 
     public CachePullThrough(String namespace,
-                            String cachePath,
                             ResourceService resourceService,
-                            ContentPathFactory contentPathFactory) {
+                            ContentPathFactory contentPathFactory,
+                            String dataDir,
+                            String provDir) {
         this.namespace = namespace;
-        this.cachePath = cachePath;
+        this.dataDir = dataDir;
+        this.provDir = provDir;
         this.resourceService = resourceService;
         this.contentPathFactory = contentPathFactory;
     }
 
-    static ContentProvenance cache(URI sourceURI, File cacheDir, ResourceService resourceService, ContentPathFactory contentPathFactory, String namespace1) throws IOException {
-        return CacheUtil.cache(sourceURI, cacheDir, resourceService, contentPathFactory, namespace1);
+    static ContentProvenance cache(URI sourceURI, File dataDir, ResourceService resourceService, ContentPathFactory contentPathFactory, String namespace1) throws IOException {
+        return CacheUtil.cache(sourceURI, dataDir, resourceService, contentPathFactory, namespace1);
     }
 
     private ContentProvenance getContentProvenance(URI resourceName, ResourceService resourceService) throws IOException {
         ContentProvenance localResourceLocation =
                 cache(resourceName,
-                        new File(cachePath),
+                        new File(dataDir),
                         resourceService,
                         contentPathFactory,
                         namespace);
@@ -43,7 +46,7 @@ public class CachePullThrough implements Cache {
                 localResourceLocation.getSha256(),
                 localResourceLocation.getAccessedAt()
         );
-        ProvenanceLog.appendProvenanceLog(new File(cachePath), contentProvenanceWithNamespace);
+        ProvenanceLog.appendProvenanceLog(new File(provDir), contentProvenanceWithNamespace);
         return contentProvenanceWithNamespace;
     }
 

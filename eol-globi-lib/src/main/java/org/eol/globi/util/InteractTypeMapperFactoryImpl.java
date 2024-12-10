@@ -200,7 +200,8 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
     public static Map<String, InteractType> getAndParseTypeMap(ResourceService resourceService,
                                                                String providedInteractionTypeIdColumnName,
                                                                String providedInteractionTypeNameColumnName,
-                                                               String resolvedInteractionTypeIdColumnName, URI interactionTypeMapURI) throws TermLookupServiceException {
+                                                               String resolvedInteractionTypeIdColumnName,
+                                                               URI interactionTypeMapURI) throws TermLookupServiceException {
         Map<String, InteractType> typeMap = Collections.emptyMap();
         try (InputStream typeMapInputStream = resourceService.retrieve(interactionTypeMapURI)) {
             if (typeMapInputStream != null) {

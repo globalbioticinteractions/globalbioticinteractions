@@ -43,13 +43,15 @@ public class DatasetRegistryLocalTest {
         URL accessFile = getClass().getResource("/test-cache/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(accessFile);
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile();
+        String dataDir = cacheDir.getAbsolutePath();
+        String provDir = cacheDir.getAbsolutePath();
         return new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
                 dataset -> {
                     try {
                         return CacheUtil.cacheFor(
                                 dataset.getNamespace(),
-                                cacheDir.getAbsolutePath(),
-                                cacheDir.getAbsolutePath(),
+                                dataDir,
+                                provDir,
                                 getService(),
                                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                                 new ContentPathFactoryDepth0(),

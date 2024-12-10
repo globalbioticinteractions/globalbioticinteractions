@@ -24,24 +24,24 @@ public final class CacheUtil {
     public static final Logger LOG = LoggerFactory.getLogger(CacheUtil.class);
 
     public static Cache cacheFor(String namespace,
-                                 String cacheDir,
-                                 String provPath,
+                                 String dataDir,
+                                 String provDir,
                                  ResourceService resourceServiceRemote,
                                  ResourceService resourceServiceLocal,
                                  ContentPathFactory contentPathFactory,
                                  ProvenancePathFactory provenancePathFactory) {
-        Cache pullThroughCache = new CachePullThrough(namespace, cacheDir, resourceServiceRemote, contentPathFactory);
-        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, cacheDir, provPath, resourceServiceLocal, contentPathFactory, provenancePathFactory);
+        Cache pullThroughCache = new CachePullThrough(namespace, resourceServiceRemote, contentPathFactory, dataDir, provDir);
+        CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, dataDir, provDir, resourceServiceLocal, contentPathFactory, provenancePathFactory);
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
 
-    public static File findOrMakeCacheDirForNamespace(String cachePath, String namespace) throws IOException {
+    public static File findOrMakeProvOrDataDirForNamespace(String cachePath, String namespace) throws IOException {
         File directory = findCacheDirForNamespace(cachePath, namespace);
         FileUtils.forceMkdir(directory);
         return directory;
     }
 
-    public static File findOrMakeCacheDirForNamespace(File cachePath, String namespace) throws IOException {
+    public static File findOrMakeProvOrDataDirForNamespace(File cachePath, String namespace) throws IOException {
         File directory = findCacheDirForNamespace(cachePath, namespace);
         FileUtils.forceMkdir(directory);
         return directory;
@@ -63,7 +63,7 @@ public final class CacheUtil {
             String namespace) throws IOException {
         File destinationFile = null;
 
-        File cacheDirForNamespace = CacheUtil.findOrMakeCacheDirForNamespace(cacheDir, namespace);
+        File cacheDirForNamespace = CacheUtil.findOrMakeProvOrDataDirForNamespace(cacheDir, namespace);
 
         try (InputStream sourceStream = inputStream) {
             destinationFile = File.createTempFile("archive", "tmp", cacheDirForNamespace);
@@ -95,14 +95,14 @@ public final class CacheUtil {
     }
 
     public static ContentProvenance cache(URI sourceURI,
-                                          File cacheDir,
+                                          File dataDir,
                                           ResourceService resourceService,
                                           ContentPathFactory contentPathFactory,
                                           String namespace) throws IOException {
         String msg = "caching [" + sourceURI + "]";
         LOG.info(msg + " started...");
         InputStream inputStream = resourceService.retrieve(sourceURI);
-        ContentProvenance contentProvenance = cacheStream(inputStream, cacheDir, contentPathFactory, namespace);
+        ContentProvenance contentProvenance = cacheStream(inputStream, dataDir, contentPathFactory, namespace);
         LOG.info(msg + " cached at [" + contentProvenance.getLocalURI().toString() + "]...");
         LOG.info(msg + " complete.");
         return contentProvenance;

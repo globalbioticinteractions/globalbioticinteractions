@@ -25,9 +25,11 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
         DatasetImporter importer = new StudyImporterTestFactory(nodeFactory)
                 .instantiateImporter(DatasetImporterForRSS.class);
 
+        String dataDir = tempFile.getParentFile().getAbsolutePath();
+        String provDir = tempFile.getParentFile().getAbsolutePath();
         DatasetWithCache datasetWithCache = new DatasetWithCache(
                 new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())),
-                new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), getResourceService(), new ContentPathFactoryDepth0())
+                new CachePullThrough("testing", getResourceService(), new ContentPathFactoryDepth0(), dataDir, provDir)
         );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
@@ -48,9 +50,11 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
                 .instantiateImporter(DatasetImporterForRSS.class);
 
         final DatasetLocal dataset = new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        String dataDir = tempFile.getParentFile().getAbsolutePath();
+        String provDir = tempFile.getParentFile().getAbsolutePath();
         DatasetWithCache datasetWithCache = new DatasetWithCache(
                 dataset,
-                new CachePullThrough("testing", tempFile.getParentFile().getAbsolutePath(), getResourceService(), new ContentPathFactoryDepth0())
+                new CachePullThrough("testing", getResourceService(), new ContentPathFactoryDepth0(), dataDir, provDir)
         );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
