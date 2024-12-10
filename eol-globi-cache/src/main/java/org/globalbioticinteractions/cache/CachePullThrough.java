@@ -15,13 +15,6 @@ public class CachePullThrough implements Cache {
     private final String provDir;
 
     public CachePullThrough(String namespace,
-                            String cacheDir,
-                            ResourceService resourceService,
-                            ContentPathFactory contentPathFactory) {
-        this(namespace, resourceService, contentPathFactory, cacheDir, cacheDir);
-    }
-
-    public CachePullThrough(String namespace,
                             ResourceService resourceService,
                             ContentPathFactory contentPathFactory,
                             String dataDir,
