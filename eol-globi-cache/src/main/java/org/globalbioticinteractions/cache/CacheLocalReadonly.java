@@ -20,21 +20,21 @@ public class CacheLocalReadonly implements Cache {
     private final static Logger LOG = LoggerFactory.getLogger(CacheLocalReadonly.class);
 
     private final String namespace;
-    private final String cachePath;
-    private final String provPath;
+    private final String dataDir;
+    private final String provDir;
     private ResourceService resourceServiceLocal;
     private final ContentPathFactory contentPathFactory;
     private final ProvenancePathFactory provenancePathFactory;
 
     public CacheLocalReadonly(String namespace,
-                              String cachePath,
-                              String provPath,
+                              String dataDir,
+                              String provDir,
                               ResourceService resourceService,
                               ContentPathFactory contentPathFactory,
                               ProvenancePathFactory provenancePathFactory) {
         this.namespace = namespace;
-        this.cachePath = cachePath;
-        this.provPath = provPath;
+        this.dataDir = dataDir;
+        this.provDir = provDir;
         this.resourceServiceLocal = resourceService;
         this.contentPathFactory = contentPathFactory;
         this.provenancePathFactory = provenancePathFactory;
@@ -52,8 +52,8 @@ public class CacheLocalReadonly implements Cache {
     @Override
     public ContentProvenance provenanceOf(URI resourceURI) {
         return getContentProvenance(resourceURI,
-                this.cachePath,
-                this.provPath,
+                this.dataDir,
+                this.provDir,
                 this.namespace,
                 this.contentPathFactory,
                 provenancePathFactory
@@ -61,19 +61,19 @@ public class CacheLocalReadonly implements Cache {
     }
 
     public static ContentProvenance getContentProvenance(URI resourceURI,
-                                                         String cachePath,
-                                                         String provPath,
+                                                         String dataDir,
+                                                         String provDir,
                                                          String namespace,
                                                          final ContentPathFactory contentPathFactory,
                                                          final ProvenancePathFactory provenancePathFactory) {
         AtomicReference<ContentProvenance> meta = new AtomicReference<>(null);
-        ContentPath contentPath = contentPathFactory.getPath(new File(cachePath), namespace);
+        ContentPath contentPath = contentPathFactory.getPath(new File(dataDir), namespace);
         File accessFile = ProvenanceLog.getProvenanceLogFile(
-                provenancePathFactory.getPath(new File(provPath), namespace)
+                provenancePathFactory.getPath(new File(provDir), namespace)
         );
         if (accessFile.exists()) {
             try {
-                File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(cachePath, namespace);
+                File cacheDirForNamespace = CacheUtil.findCacheDirForNamespace(dataDir, namespace);
                 String hashCandidate = getHashCandidate(resourceURI, cacheDirForNamespace.toURI());
                 LineReaderFactory lineReaderFactory = new ReverseLineReaderFactoryImpl();
                 ProvenanceLog.parseProvenanceLogFile(accessFile, new ProvenanceLog.ProvenanceEntryListener() {
