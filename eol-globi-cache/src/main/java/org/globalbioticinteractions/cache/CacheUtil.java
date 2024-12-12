@@ -36,9 +36,7 @@ public final class CacheUtil {
     }
 
     public static File findOrMakeProvOrDataDirForNamespace(String cachePath, String namespace) throws IOException {
-        File directory = findCacheDirForNamespace(cachePath, namespace);
-        FileUtils.forceMkdir(directory);
-        return directory;
+        return findOrMakeProvOrDataDirForNamespace(new File(cachePath), namespace);
     }
 
     public static File findOrMakeProvOrDataDirForNamespace(File cachePath, String namespace) throws IOException {
