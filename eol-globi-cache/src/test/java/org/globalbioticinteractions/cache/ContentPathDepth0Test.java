@@ -12,9 +12,30 @@ public class ContentPathDepth0Test {
 
     @Test
     public void uriForSha256() {
-        URI bla = new ContentPathDepth0(new File("/foo/bar")).forContentId("1234");
+        URI path = new ContentPathDepth0(new File("/foo/bar")).forContentId("1234");
+        assertThat(path.toString(), Is.is("file:/foo/bar/1234"));
+    }
 
-        assertThat(bla.toString(), Is.is("file:/foo/bar/1234"));
+    @Test
+    public void uriForSha256WithNamespace() {
+        URI path = new ContentPathDepth0(new File("/foo/bar"), "some/namespace").forContentId("1234");
+        assertThat(path.toString(), Is.is("file:/foo/bar/some/namespace/1234"));
+    }
+
+    @Test
+    public void uriForSha256WithEmptyNamespace() {
+        URI path = new ContentPathDepth0(new File("/foo/bar"), "").forContentId("1234");
+        assertThat(path.toString(), Is.is("file:/foo/bar/1234"));
+    }
+
+    @Test
+    public void uriForSha256WithNullNamespace() {
+        URI path = new ContentPathDepth0(
+                new File("/foo/bar"),
+                null
+        ).forContentId("1234");
+
+        assertThat(path.toString(), Is.is("file:/foo/bar/1234"));
     }
 
 }
