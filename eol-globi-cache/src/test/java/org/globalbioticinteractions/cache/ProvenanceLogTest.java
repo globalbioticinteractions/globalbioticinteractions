@@ -1,6 +1,8 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.After;
@@ -9,12 +11,15 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -48,21 +53,27 @@ public class ProvenanceLogTest {
 
     @Test
     public void appendToProvenanceLog() throws IOException {
+        File dataDir = this.tempDirectory;
         CacheLocalReadonly cache = new CacheLocalReadonly(
                 "some/namespace",
-                tempDirectory.getAbsolutePath(),
-                tempDirectory.getAbsolutePath(), new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                dataDir.getAbsolutePath(),
+                this.tempDirectory.getAbsolutePath(),
+                new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ContentPathFactoryDepth0(),
                 new ProvenancePathFactoryImpl()
         );
 
         assertNull(cache.provenanceOf(URI.create("http://example.com")));
 
-        ContentProvenance meta = new ContentProvenance("some/namespace",
+        ContentProvenance meta = new ContentProvenance(
+                "some/namespace",
                 URI.create("http://example.com"),
-                URI.create("cached:file.zip"), "1234",
-                "1970-01-01T00:00:00Z");
-        ProvenanceLog.appendProvenanceLog(tempDirectory, meta);
+                URI.create("cached:file.zip"),
+                "1234",
+                "1970-01-01T00:00:00Z"
+        );
+
+        ProvenanceLog.appendProvenanceLog(this.tempDirectory, meta);
 
         ContentProvenance contentProvenance = cache.provenanceOf(URI.create("http://example.com"));
         assertThat(contentProvenance.getNamespace(), is("some/namespace"));
@@ -70,6 +81,17 @@ public class ProvenanceLogTest {
         assertThat(contentProvenance.getSha256(), is("1234"));
         assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
         assertThat(contentProvenance.getType(), is(nullValue()));
+
+        String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
+
+        FileUtils.forceMkdir(new File(cacheDir));
+
+        FileUtils.writeStringToFile(new File(cacheDir, "1234"), "foo", StandardCharsets.UTF_8);
+
+        try (InputStream retrieve = cache.retrieve(URI.create("http://example.com"))) {
+            assertNotNull(retrieve);
+            assertThat(IOUtils.toString(retrieve, StandardCharsets.UTF_8), is("foo"));
+        }
     }
 
     @Test
