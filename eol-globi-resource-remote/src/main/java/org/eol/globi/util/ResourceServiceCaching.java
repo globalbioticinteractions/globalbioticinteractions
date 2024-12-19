@@ -1,6 +1,8 @@
 package org.eol.globi.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.ProxyInputStream;
 import org.eol.globi.service.ResourceService;
 
 import java.io.File;
@@ -17,14 +19,27 @@ public abstract class ResourceServiceCaching implements ResourceService {
         this.cacheDir = cacheDir;
     }
 
-    protected static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory, File cacheDir) throws IOException {
-        File tempFile = File.createTempFile("globiRemote", "tmp", cacheDir);
-        tempFile.deleteOnExit();
-        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+    protected static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory, File tmpDir) throws IOException {
+        final File tmpFile = File.createTempFile("globiRemote", "tmp", tmpDir);
+        tmpFile.deleteOnExit();
+        return cacheAndOpenStream2(is, factory, tmpFile);
+    }
+
+    protected static InputStream cacheAndOpenStream2(InputStream is, InputStreamFactory factory, File tmpDir) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(tmpDir)) {
             IOUtils.copy(factory.create(is), fos);
             fos.flush();
         }
-        return new FileInputStream(tempFile);
+        return new ProxyInputStream(new FileInputStream(tmpDir)) {
+            @Override
+            public void close() throws IOException {
+                try {
+                    super.close();
+                } finally {
+                    FileUtils.forceDelete(tmpDir);
+                }
+            }
+        };
     }
 
     public File getCacheDir() {
