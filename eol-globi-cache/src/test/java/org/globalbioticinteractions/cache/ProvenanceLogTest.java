@@ -2,7 +2,6 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.After;
@@ -11,6 +10,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +27,9 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ProvenanceLogTest {
 
@@ -58,33 +57,7 @@ public class ProvenanceLogTest {
     @Test
     public void appendToProvenanceLog() throws IOException {
         File dataDir = this.tempDirectory;
-        CacheLocalReadonly cache = new CacheLocalReadonly(
-                "some/namespace",
-                dataDir.getAbsolutePath(),
-                this.tempDirectory.getAbsolutePath(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl()
-        );
-
-        assertNull(cache.provenanceOf(URI.create("http://example.com")));
-
-        ContentProvenance meta = new ContentProvenance(
-                "some/namespace",
-                URI.create("http://example.com"),
-                URI.create("cached:file.zip"),
-                "1234",
-                "1970-01-01T00:00:00Z"
-        );
-
-        ProvenanceLog.appendProvenanceLog(this.tempDirectory, meta);
-
-        ContentProvenance contentProvenance = cache.provenanceOf(URI.create("http://example.com"));
-        assertThat(contentProvenance.getNamespace(), is("some/namespace"));
-        assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
-        assertThat(contentProvenance.getSha256(), is("1234"));
-        assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
-        assertThat(contentProvenance.getType(), is(nullValue()));
+        CacheLocalReadonly cache = appendProvenance(dataDir);
 
         String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
 
@@ -101,33 +74,7 @@ public class ProvenanceLogTest {
     @Test
     public void appendZipToProvenanceLogRetrieveZipEntry() throws IOException {
         File dataDir = this.tempDirectory;
-        CacheLocalReadonly cache = new CacheLocalReadonly(
-                "some/namespace",
-                dataDir.getAbsolutePath(),
-                this.tempDirectory.getAbsolutePath(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl()
-        );
-
-        assertNull(cache.provenanceOf(URI.create("http://example.com")));
-
-        ContentProvenance meta = new ContentProvenance(
-                "some/namespace",
-                URI.create("http://example.com"),
-                URI.create("cached:file.zip"),
-                "1234",
-                "1970-01-01T00:00:00Z"
-        );
-
-        ProvenanceLog.appendProvenanceLog(this.tempDirectory, meta);
-
-        ContentProvenance contentProvenance = cache.provenanceOf(URI.create("http://example.com"));
-        assertThat(contentProvenance.getNamespace(), is("some/namespace"));
-        assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
-        assertThat(contentProvenance.getSha256(), is("1234"));
-        assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
-        assertThat(contentProvenance.getType(), is(nullValue()));
+        CacheLocalReadonly cache = appendProvenance(dataDir);
 
         String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
 
@@ -145,10 +92,119 @@ public class ProvenanceLogTest {
         assertAvailable(cache, "jar:" + file.toURI() + "!/foo.txt");
     }
 
+    @Test(expected = FileNotFoundException.class)
+    public void appendZipEntryToProvenanceLogRetrieveZipEntry() throws IOException {
+        File dataDir = this.tempDirectory;
+        String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
+        FileUtils.forceMkdir(new File(cacheDir));
+        File file = new File(cacheDir, "1234");
+
+        CacheLocalReadonly cache = populateCacheWithZipfile(dataDir, file);
+
+        cache.retrieve(URI.create("jar:http://example.com!/foo.txt"));
+    }
+
+    private CacheLocalReadonly populateCacheWithZipfile(File dataDir, File file) throws IOException {
+        CacheLocalReadonly cache1 = new CacheLocalReadonly(
+                "some/namespace",
+                dataDir.getAbsolutePath(),
+                this.tempDirectory.getAbsolutePath(),
+                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                new ContentPathFactoryDepth0(),
+                new ProvenancePathFactoryImpl()
+        );
+
+        assertNull(cache1.provenanceOf(URI.create("http://example.com")));
+
+        ContentProvenance archive = new ContentProvenance(
+                "some/namespace",
+                URI.create("http://example.com"),
+                URI.create("cached:file.zip"),
+                "1234",
+                "1970-01-01T00:00:00Z"
+        );
+
+        ProvenanceLog.appendProvenanceLog(this.tempDirectory, archive);
+
+        ContentProvenance entry = new ContentProvenance(
+                "some/namespace",
+                URI.create("jar:http://example.com!/foo.txt"),
+                URI.create("cached:foo.txt"),
+                "5678",
+                "1970-01-01T00:00:00Z"
+        );
+
+        ProvenanceLog.appendProvenanceLog(this.tempDirectory, entry);
+
+        ContentProvenance contentProvenance = cache1.provenanceOf(URI.create("jar:http://example.com!/foo.txt"));
+        assertThat(contentProvenance.getNamespace(), is("some/namespace"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("jar:http://example.com!/foo.txt"));
+        assertThat(contentProvenance.getSha256(), is("5678"));
+        assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
+        assertThat(contentProvenance.getType(), is(nullValue()));
+
+
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(file))) {
+            zipOutputStream.putNextEntry(new ZipEntry("foo.txt"));
+            IOUtils.copy(new ByteArrayInputStream("bar".getBytes(StandardCharsets.UTF_8)), zipOutputStream);
+            zipOutputStream.closeEntry();
+        }
+        return cache1;
+    }
+
+    @Test
+    public void appendZipEntryToProvenanceLogRetrieveZipEntryLocalPath() throws IOException {
+        File dataDir = this.tempDirectory;
+        String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
+        FileUtils.forceMkdir(new File(cacheDir));
+        File file = new File(cacheDir, "1234");
+
+        CacheLocalReadonly cache1 = populateCacheWithZipfile(dataDir, file);
+
+        assertAvailable(cache1, "jar:" + file.toURI().toString() + "!/foo.txt");
+    }
+
+    private CacheLocalReadonly appendProvenance(File dataDir) throws IOException {
+        CacheLocalReadonly cache = new CacheLocalReadonly(
+                "some/namespace",
+                dataDir.getAbsolutePath(),
+                this.tempDirectory.getAbsolutePath(),
+                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                new ContentPathFactoryDepth0(),
+                new ProvenancePathFactoryImpl()
+        );
+
+        assertNull(cache.provenanceOf(URI.create("http://example.com")));
+
+        ContentProvenance meta = new ContentProvenance(
+                "some/namespace",
+                URI.create("http://example.com"),
+                URI.create("cached:file.zip"),
+                "1234",
+                "1970-01-01T00:00:00Z"
+        );
+
+        ProvenanceLog.appendProvenanceLog(this.tempDirectory, meta);
+
+        ContentProvenance contentProvenance = cache.provenanceOf(URI.create("http://example.com"));
+        assertThat(contentProvenance.getNamespace(), is("some/namespace"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
+        assertThat(contentProvenance.getSha256(), is("1234"));
+        assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
+        assertThat(contentProvenance.getType(), is(nullValue()));
+        return cache;
+    }
+
     private void assertAvailable(CacheLocalReadonly cache, String filepath) throws IOException {
         try (InputStream retrieve = cache.retrieve(URI.create(filepath))) {
             assertNotNull(retrieve);
             assertThat(IOUtils.toString(retrieve, StandardCharsets.UTF_8), is("bar"));
+        }
+    }
+
+    private void assertNotAvailable(CacheLocalReadonly cache, String filepath) throws IOException {
+        try (InputStream retrieve = cache.retrieve(URI.create(filepath))) {
+            assertNull(retrieve);
         }
     }
 
