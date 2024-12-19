@@ -9,7 +9,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -18,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -91,6 +95,60 @@ public class ProvenanceLogTest {
         try (InputStream retrieve = cache.retrieve(URI.create("http://example.com"))) {
             assertNotNull(retrieve);
             assertThat(IOUtils.toString(retrieve, StandardCharsets.UTF_8), is("foo"));
+        }
+    }
+
+    @Test
+    public void appendZipToProvenanceLogRetrieveZipEntry() throws IOException {
+        File dataDir = this.tempDirectory;
+        CacheLocalReadonly cache = new CacheLocalReadonly(
+                "some/namespace",
+                dataDir.getAbsolutePath(),
+                this.tempDirectory.getAbsolutePath(),
+                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                new ContentPathFactoryDepth0(),
+                new ProvenancePathFactoryImpl()
+        );
+
+        assertNull(cache.provenanceOf(URI.create("http://example.com")));
+
+        ContentProvenance meta = new ContentProvenance(
+                "some/namespace",
+                URI.create("http://example.com"),
+                URI.create("cached:file.zip"),
+                "1234",
+                "1970-01-01T00:00:00Z"
+        );
+
+        ProvenanceLog.appendProvenanceLog(this.tempDirectory, meta);
+
+        ContentProvenance contentProvenance = cache.provenanceOf(URI.create("http://example.com"));
+        assertThat(contentProvenance.getNamespace(), is("some/namespace"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
+        assertThat(contentProvenance.getSha256(), is("1234"));
+        assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
+        assertThat(contentProvenance.getType(), is(nullValue()));
+
+        String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
+
+        FileUtils.forceMkdir(new File(cacheDir));
+
+
+        File file = new File(cacheDir, "1234");
+
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(file))) {
+            zipOutputStream.putNextEntry(new ZipEntry("foo.txt"));
+            IOUtils.copy(new ByteArrayInputStream("bar".getBytes(StandardCharsets.UTF_8)), zipOutputStream);
+            zipOutputStream.closeEntry();
+        }
+
+        assertAvailable(cache, "jar:" + file.toURI() + "!/foo.txt");
+    }
+
+    private void assertAvailable(CacheLocalReadonly cache, String filepath) throws IOException {
+        try (InputStream retrieve = cache.retrieve(URI.create(filepath))) {
+            assertNotNull(retrieve);
+            assertThat(IOUtils.toString(retrieve, StandardCharsets.UTF_8), is("bar"));
         }
     }
 
