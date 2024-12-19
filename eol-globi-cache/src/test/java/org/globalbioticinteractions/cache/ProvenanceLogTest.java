@@ -76,19 +76,100 @@ public class ProvenanceLogTest {
         File dataDir = this.tempDirectory;
         CacheLocalReadonly cache = appendProvenance(dataDir);
 
-        String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
+        File file = getTestZipFile(dataDir);
 
-        FileUtils.forceMkdir(new File(cacheDir));
+        assertAvailable(cache, "jar:" + file.toURI() + "!/foo.txt");
+    }
 
-        File file = new File(cacheDir, "1234");
+    @Test
+    public void doesNotNeedCaching() throws IOException {
+        File dataDir = this.tempDirectory;
+        File file = getTestZipFile(dataDir);
+        ContentProvenance entry = new ContentProvenance(
+                "some/namespace",
+                URI.create("jar:" + file.toURI().toString() + "!/foo.txt"),
+                URI.create("cached:foo.txt"),
+                "5678",
+                "1970-01-01T00:00:00Z"
+        );
 
+        assertFalse(ProvenanceLog.needsCaching(entry, dataDir));
+    }
+
+    @Test
+    public void doesNotNeedCachingEither() throws IOException {
+        File dataDir = this.tempDirectory;
+        File file = getTestZipFile(dataDir);
+        ContentProvenance entry = new ContentProvenance(
+                "some/namespace",
+                URI.create(file.toURI().toString()),
+                URI.create("cached:archive.zip"),
+                "5678",
+                "1970-01-01T00:00:00Z"
+        );
+
+        assertFalse(ProvenanceLog.needsCaching(entry, dataDir));
+    }
+
+    @Test
+    public void appendZipToProvenanceLogButNotLocalZipEntry() throws IOException {
+        File dataDir = this.tempDirectory;
+        File file = getTestZipFile(dataDir);
+
+
+        CacheLocalReadonly cache1 = getCacheLocalReadonly(dataDir);
+
+        assertNull(cache1.provenanceOf(URI.create("http://example.com")));
+
+        ContentProvenance archive = new ContentProvenance(
+                "some/namespace",
+                URI.create("http://example.com"),
+                URI.create("cached:file.zip"),
+                "1234",
+                "1970-01-01T00:00:00Z"
+        );
+
+        ProvenanceLog.appendProvenanceLog(this.tempDirectory, archive);
+
+        ContentProvenance entry = new ContentProvenance(
+                "some/namespace",
+                URI.create("jar:" + file.toURI().toString() + "!/foo.txt"),
+                URI.create("cached:foo.txt"),
+                "5678",
+                "1970-01-01T00:00:00Z"
+        );
+
+        // entry should not be added to provenance log because it is in the cache dir
+        ProvenanceLog.appendProvenanceLog(this.tempDirectory, entry);
+
+        ContentProvenance contentProvenance = cache1.provenanceOf(URI.create("http://example.com"));
+        assertThat(contentProvenance.getNamespace(), is("some/namespace"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
+        assertThat(contentProvenance.getSha256(), is("1234"));
+        assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
+        assertThat(contentProvenance.getType(), is(nullValue()));
+        CacheLocalReadonly cache = cache1;
+
+        assertAvailable(cache, "jar:" + file.toURI() + "!/foo.txt");
+    }
+
+    private CacheLocalReadonly getCacheLocalReadonly(File dataDir) {
+        return new CacheLocalReadonly(
+                "some/namespace",
+                dataDir.getAbsolutePath(),
+                this.tempDirectory.getAbsolutePath(),
+                new ResourceServiceLocal(new InputStreamFactoryNoop()),
+                new ContentPathFactoryDepth0(),
+                new ProvenancePathFactoryImpl()
+        );
+    }
+
+    private void createZipFile(File file) throws IOException {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(file))) {
             zipOutputStream.putNextEntry(new ZipEntry("foo.txt"));
             IOUtils.copy(new ByteArrayInputStream("bar".getBytes(StandardCharsets.UTF_8)), zipOutputStream);
             zipOutputStream.closeEntry();
         }
-
-        assertAvailable(cache, "jar:" + file.toURI() + "!/foo.txt");
     }
 
     @Test(expected = FileNotFoundException.class)
@@ -98,11 +179,15 @@ public class ProvenanceLogTest {
         FileUtils.forceMkdir(new File(cacheDir));
         File file = new File(cacheDir, "1234");
 
-        CacheLocalReadonly cache = populateCacheWithZipfileAndEntry(dataDir, file, "jar:http://example.com!/foo.txt");
+        CacheLocalReadonly cache = populateCacheWithZipfileAndEntry(
+                dataDir,
+                file,
+                "jar:http://example.com!/foo.txt"
+        );
 
         try {
             cache.retrieve(URI.create("jar:http://example.com!/foo.txt"));
-        } catch(FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             // tried to lookup file, but probably shouldn't
             assertThat(ex.getMessage(), endsWith(cacheDir + "/5678 (No such file or directory)"));
             throw ex;
@@ -112,14 +197,7 @@ public class ProvenanceLogTest {
     private CacheLocalReadonly populateCacheWithZipfileAndEntry(File dataDir,
                                                                 File file,
                                                                 String entryPath) throws IOException {
-        CacheLocalReadonly cache1 = new CacheLocalReadonly(
-                "some/namespace",
-                dataDir.getAbsolutePath(),
-                this.tempDirectory.getAbsolutePath(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl()
-        );
+        CacheLocalReadonly cache1 = getCacheLocalReadonly(dataDir);
 
         assertNull(cache1.provenanceOf(URI.create("http://example.com")));
 
@@ -151,20 +229,14 @@ public class ProvenanceLogTest {
         assertThat(contentProvenance.getType(), is(nullValue()));
 
 
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(file))) {
-            zipOutputStream.putNextEntry(new ZipEntry("foo.txt"));
-            IOUtils.copy(new ByteArrayInputStream("bar".getBytes(StandardCharsets.UTF_8)), zipOutputStream);
-            zipOutputStream.closeEntry();
-        }
+        createZipFile(file);
         return cache1;
     }
 
     @Test
     public void appendZipEntryToProvenanceLogRetrieveZipEntryLocalPath() throws IOException {
         File dataDir = this.tempDirectory;
-        String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
-        FileUtils.forceMkdir(new File(cacheDir));
-        File file = new File(cacheDir, "1234");
+        File file = getTestZipFile(dataDir);
 
         CacheLocalReadonly cache = populateCacheWithZipfileAndEntry(
                 dataDir,
@@ -175,22 +247,21 @@ public class ProvenanceLogTest {
         assertAvailable(cache, "jar:" + file.toURI().toString() + "!/foo.txt");
     }
 
-    @Test
-    public void appendLocalZipEntryToProvenanceLogRetrieveZipEntryLocalPath() throws IOException {
-        File dataDir = this.tempDirectory;
+    private File getTestZipFile(File dataDir) throws IOException {
         String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
         FileUtils.forceMkdir(new File(cacheDir));
         File file = new File(cacheDir, "1234");
+        createZipFile(file);
+        return file;
+    }
+
+    @Test
+    public void appendLocalZipEntryToProvenanceLogRetrieveZipEntryLocalPath() throws IOException {
+        File dataDir = this.tempDirectory;
+        File file = getTestZipFile(dataDir);
         String entryPath = "jar:" + file.toURI().toString() + "!/foo.txt";
 
-        CacheLocalReadonly cache1 = new CacheLocalReadonly(
-                "some/namespace",
-                dataDir.getAbsolutePath(),
-                this.tempDirectory.getAbsolutePath(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl()
-        );
+        CacheLocalReadonly cache1 = getCacheLocalReadonly(dataDir);
 
         assertNull(cache1.provenanceOf(URI.create("http://example.com")));
 
@@ -212,25 +283,13 @@ public class ProvenanceLogTest {
         assertThat(contentProvenance.getType(), is(nullValue()));
 
 
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(file))) {
-            zipOutputStream.putNextEntry(new ZipEntry("foo.txt"));
-            IOUtils.copy(new ByteArrayInputStream("bar".getBytes(StandardCharsets.UTF_8)), zipOutputStream);
-            zipOutputStream.closeEntry();
-        }
         CacheLocalReadonly cache = cache1;
 
         assertAvailable(cache, entryPath);
     }
 
     private CacheLocalReadonly appendProvenance(File dataDir) throws IOException {
-        CacheLocalReadonly cache = new CacheLocalReadonly(
-                "some/namespace",
-                dataDir.getAbsolutePath(),
-                this.tempDirectory.getAbsolutePath(),
-                new ResourceServiceLocal(new InputStreamFactoryNoop()),
-                new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl()
-        );
+        CacheLocalReadonly cache = getCacheLocalReadonly(dataDir);
 
         assertNull(cache.provenanceOf(URI.create("http://example.com")));
 
