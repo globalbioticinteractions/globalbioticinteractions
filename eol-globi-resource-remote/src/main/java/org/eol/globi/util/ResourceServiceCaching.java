@@ -25,18 +25,20 @@ public abstract class ResourceServiceCaching implements ResourceService {
         return cacheAndOpenStream2(is, factory, tmpFile);
     }
 
-    protected static InputStream cacheAndOpenStream2(InputStream is, InputStreamFactory factory, File tmpDir) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(tmpDir)) {
+    protected static InputStream cacheAndOpenStream2(InputStream is, InputStreamFactory factory, File tmpFile) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
             IOUtils.copy(factory.create(is), fos);
             fos.flush();
         }
-        return new ProxyInputStream(new FileInputStream(tmpDir)) {
+        return new ProxyInputStream(new FileInputStream(tmpFile)) {
             @Override
             public void close() throws IOException {
                 try {
                     super.close();
                 } finally {
-                    FileUtils.forceDelete(tmpDir);
+                    if (tmpFile.exists()) {
+                        FileUtils.forceDelete(tmpFile);
+                    }
                 }
             }
         };

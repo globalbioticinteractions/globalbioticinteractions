@@ -53,7 +53,8 @@ public class CachePullThroughTest {
                 new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
                 new ContentPathFactoryDepth0(),
                 dataDir.getAbsolutePath(),
-                provDir.getAbsolutePath());
+                provDir.getAbsolutePath()
+        );
 
         InputStream is
                 = cache.retrieve(URI.create("https://github.com/globalbioticinteractions/template-dataset/archive/main.zip"));
