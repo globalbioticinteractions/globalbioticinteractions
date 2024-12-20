@@ -3,7 +3,6 @@ package org.globalbioticinteractions.cache;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.CSVTSVUtil;
-import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 
 import java.io.File;
@@ -13,13 +12,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ProvenanceLog {
 
     public final static String PROVENANCE_LOG_FILENAME = "access.tsv";
-    private static final Pattern FILE_URL_PATTERN = Pattern.compile("([a-z]+:)*(file:)(?<filepath>[^!]+)(.*)");
 
     public static void appendProvenanceLog(File cacheDir, ContentProvenance contentProvenance) throws IOException {
         if (needsCaching(contentProvenance, cacheDir)) {
@@ -28,15 +25,9 @@ public class ProvenanceLog {
     }
 
     static boolean needsCaching(ContentProvenance contentProvenance, File cacheDir) {
-        boolean isInCacheDir = false;
         URI sourceURI = contentProvenance.getSourceURI();
 
-        Matcher matcher = FILE_URL_PATTERN.matcher(sourceURI.toString());
-        if (matcher.matches()) {
-            String filepath = matcher.group("filepath");
-            String filepathResource = new File(URI.create("file:" + filepath)).getAbsolutePath();
-            isInCacheDir = StringUtils.startsWith(filepathResource, cacheDir.getAbsolutePath());
-        }
+        boolean isInCacheDir = CacheUtil.isInCacheDir(cacheDir, sourceURI);
 
         return !isInCacheDir
                 && !CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI());

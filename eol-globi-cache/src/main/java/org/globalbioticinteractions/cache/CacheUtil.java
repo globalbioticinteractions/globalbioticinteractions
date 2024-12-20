@@ -17,11 +17,14 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class CacheUtil {
 
     public static final String MIME_TYPE_GLOBI = "application/globi";
     public static final Logger LOG = LoggerFactory.getLogger(CacheUtil.class);
+    public static final Pattern FILE_URL_PATTERN = Pattern.compile("([a-z]+:)*(file:)(?<filepath>[^!]+)(.*)");
 
     public static Cache cacheFor(String namespace,
                                  String dataDir,
@@ -113,4 +116,16 @@ public final class CacheUtil {
                 && new File(archiveURI).isDirectory();
     }
 
+    public static boolean isInCacheDir(File cacheDir, URI resource) {
+        boolean isInCacheDir = false;
+        if (cacheDir != null && resource != null) {
+            Matcher matcher = FILE_URL_PATTERN.matcher(resource.toString());
+            if (matcher.matches()) {
+                String filepath = matcher.group("filepath");
+                String filepathResource = new File(URI.create("file:" + filepath)).getAbsolutePath();
+                isInCacheDir = StringUtils.startsWith(filepathResource, cacheDir.getAbsolutePath());
+            }
+        }
+        return isInCacheDir;
+    }
 }
