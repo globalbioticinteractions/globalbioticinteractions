@@ -17,7 +17,6 @@
         <module>eol-globi-lib</module>
         <module>wikidata</module>
         <module>eol-globi-cache</module>
-        <module>eol-globi-registry</module>
         <module>eol-globi-data-sources</module>
         <module>eol-globi-taxon-resolver</module>
         <module>eol-globi-neo4j</module>
