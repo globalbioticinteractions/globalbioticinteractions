@@ -20,6 +20,9 @@ public abstract class ResourceServiceCaching implements ResourceService {
     }
 
     protected static InputStream cacheAndOpenStream(InputStream is, InputStreamFactory factory, File tmpDir) throws IOException {
+        if (!tmpDir.exists()) {
+            FileUtils.forceMkdir(tmpDir);
+        }
         final File tmpFile = File.createTempFile("globiRemote", "tmp", tmpDir);
         tmpFile.deleteOnExit();
         return cacheAndOpenStream2(is, factory, tmpFile);

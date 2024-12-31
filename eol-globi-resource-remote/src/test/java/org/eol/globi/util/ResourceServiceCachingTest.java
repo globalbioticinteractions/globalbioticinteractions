@@ -1,5 +1,6 @@
 package org.eol.globi.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.hamcrest.core.Is;
@@ -34,6 +35,25 @@ public class ResourceServiceCachingTest {
         }
 
         assertThat(tmpFile.exists(), Is.is(false));
+
+
+    }
+
+    @Test
+    public void createTmpFileNonExistingDir() throws IOException {
+        File tmpDir = folder.newFolder("nonexistingtmpdir");
+        FileUtils.forceDelete(tmpDir);
+
+        try (InputStream inputStream = ResourceServiceCaching.cacheAndOpenStream(
+                new ByteArrayInputStream("foo".getBytes(StandardCharsets.UTF_8)),
+                inStream -> inStream,
+                tmpDir
+        )) {
+            IOUtils.copy(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
+            assertThat(tmpDir.exists(), Is.is(true));
+        }
+
+        assertThat(tmpDir.exists(), Is.is(true));
 
 
     }
