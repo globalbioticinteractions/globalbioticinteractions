@@ -9,20 +9,20 @@ import java.net.URI;
 public class ResourceServiceFactoryRemote implements ResourceServiceFactory {
 
     private final InputStreamFactory factory;
-    private final File cacheDir;
+    private final File tmpDir;
 
-    public ResourceServiceFactoryRemote(InputStreamFactory factory, File cacheDir) {
+    public ResourceServiceFactoryRemote(InputStreamFactory factory, File tmpDir) {
         this.factory = factory;
-        this.cacheDir = cacheDir;
+        this.tmpDir = tmpDir;
     }
 
     @Override
     public ResourceService serviceForResource(URI resource) {
         ResourceService service = null;
         if (isHttpURI(resource)) {
-            service = new ResourceServiceHTTP(factory, cacheDir);
+            service = new ResourceServiceHTTP(factory, tmpDir);
         } else if (StringUtils.startsWith(resource.getScheme(), "ftp")) {
-            service = new ResourceServiceFTP(factory, cacheDir);
+            service = new ResourceServiceFTP(factory, tmpDir);
         }
         return service == null
                 ? null

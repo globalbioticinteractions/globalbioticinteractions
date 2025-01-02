@@ -10,17 +10,17 @@ import java.net.URI;
 public class ResourceServiceLocalAndRemote implements ResourceService {
 
     private final InputStreamFactory factory;
-    private final File cacheDir;
+    private final File tmpDir;
 
-    public ResourceServiceLocalAndRemote(InputStreamFactory factory, File cacheDir) {
+    public ResourceServiceLocalAndRemote(InputStreamFactory factory, File tmpDir) {
         this.factory = factory;
-        this.cacheDir = cacheDir;
+        this.tmpDir = tmpDir;
     }
 
     @Override
     public InputStream retrieve(URI resource) throws IOException {
         InputStream is;
-        ResourceService resourceService = new ResourceServiceFactoryRemote(factory, cacheDir)
+        ResourceService resourceService = new ResourceServiceFactoryRemote(factory, tmpDir)
                 .serviceForResource(resource);
 
         if (resourceService != null) {
