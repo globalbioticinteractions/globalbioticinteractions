@@ -12,7 +12,9 @@ import static org.globalbioticinteractions.dataset.DatasetConstant.DEPRECATED;
 public final class DatasetUtil {
 
     public static URI getNamedResourceURI(Dataset dataset, URI resourceName) throws IOException {
-        return mapResourceNameIfRequested(resourceName, dataset.getConfig());
+        URI mappedResource = mapResourceNameIfRequested(resourceName, dataset.getConfig(), "resources");
+        URI versionedResource = mapResourceNameIfRequested(mappedResource, dataset.getConfig(), "versions");
+        return versionedResource;
     }
 
     public static String getValueOrDefault(JsonNode config, String key, String defaultValue) {
@@ -26,11 +28,11 @@ public final class DatasetUtil {
         || StringUtils.equalsIgnoreCase("true", dataset.getOrDefault(DatasetConstant.SHOULD_RESOLVE_REFERENCES, "true"));
     }
 
-    public static URI mapResourceNameIfRequested(URI resourceName, JsonNode config) {
+    public static URI mapResourceNameIfRequested(URI resourceName, JsonNode config, String resourceType) {
         URI mappedResource = resourceName;
-        if (config != null && config.has("resources")) {
-            JsonNode resources = config.get("resources");
-            if (resources.isObject() && resources.has(resourceName.toString())) {
+        if (config != null && config.has(resourceType)) {
+            JsonNode resources = config.get(resourceType);
+            if (resources != null && resources.isObject() && resources.has(resourceName.toString())) {
                 JsonNode resourceName1 = resources.get(resourceName.toString());
                 if (resourceName1.isTextual()) {
                     String resourceNameCandidate = resourceName1.asText();

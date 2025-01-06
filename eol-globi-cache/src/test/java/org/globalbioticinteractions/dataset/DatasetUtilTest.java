@@ -59,6 +59,41 @@ public class DatasetUtilTest {
     }
 
     @Test
+    public void lookupResourceVersioned() throws IOException {
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        dataset.setConfig(new ObjectMapper().readTree("{\"versions\": { \"http://example.org/previous/path.txt\": \"hash://sha256/1234\" } }"));
+        assertThat(DatasetUtil.mapResourceForDataset(dataset, URI.create("http://example.org/previous/path.txt")).toString(), is("hash://sha256/1234"));
+    }
+
+    @Test
+    public void lookupMappedResourceVersioned() throws IOException {
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        dataset.setConfig(new ObjectMapper().readTree(
+                "{" +
+                        "\"resources\": { \"http://example.org/old/path.txt\": \"http://example.org/new/path.txt\" }, " +
+                        "\"versions\": { \"http://example.org/new/path.txt\": \"hash://sha256/1234\" } " +
+                        "}"));
+        assertThat(DatasetUtil.mapResourceForDataset(dataset, URI.create("http://example.org/old/path.txt")).toString(), is("hash://sha256/1234"));
+        assertThat(DatasetUtil.mapResourceForDataset(dataset, URI.create("http://example.org/new/path.txt")).toString(), is("hash://sha256/1234"));
+    }
+
+    @Test
+    public void lookupConfusinglyMappedResourceVersioned() throws IOException {
+        Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        dataset.setConfig(new ObjectMapper().readTree(
+                "{" +
+                        "\"resources\": " +
+                        "{ " +
+                        "\"http://example.org/old/path.txt\": \"http://example.org/new/path.txt\", " +
+                        "\"http://example.org/new/path.txt\": \"http://example.org/newest/path.txt\" " +
+                        "}, " +
+                        "\"versions\": { \"http://example.org/new/path.txt\": \"hash://sha256/1234\" } " +
+                        "}"));
+        assertThat(DatasetUtil.mapResourceForDataset(dataset, URI.create("http://example.org/old/path.txt")).toString(), is("hash://sha256/1234"));
+        assertThat(DatasetUtil.mapResourceForDataset(dataset, URI.create("http://example.org/new/path.txt")).toString(), is("http://example.org/newest/path.txt"));
+    }
+
+    @Test
     public void lookupMappedResourceAbsoluteToAbsolute() throws IOException {
         Dataset dataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
         dataset.setConfig(new ObjectMapper().readTree("{\"resources\": { \"http://example.org/previous/path.txt\": \"http://example.org/current/path.txt\" } }"));
