@@ -75,7 +75,7 @@ public class DatasetProxy implements Dataset {
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
-        return (config != null && config.has(key) && config.get(key).isTextual())
+        return (config != null && config.has(key) && config.get(key).isValueNode())
                 ? config.get(key).asText()
                 : datasetProxied.getOrDefault(key, defaultValue);
     }
