@@ -20,7 +20,7 @@ public final class DatasetUtil {
     public static String getValueOrDefault(JsonNode config, String key, String defaultValue) {
         return config == null
                 ? defaultValue
-                : (config.has(key) ? config.get(key).asText() : defaultValue);
+                : (config.has(key) && config.get(key).isTextual() ? config.get(key).asText() : defaultValue);
     }
 
     public static boolean shouldResolveReferences(Dataset dataset) {

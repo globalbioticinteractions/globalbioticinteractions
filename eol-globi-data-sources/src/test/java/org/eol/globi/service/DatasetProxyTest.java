@@ -2,6 +2,7 @@ package org.eol.globi.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -92,6 +94,24 @@ public class DatasetProxyTest {
         testDataset = getTestDataset(config, null);
 
         TestHashUtil.assertContentHash(testDataset.retrieve(URI.create("archive")), hashOfOriginal);
+
+    }
+
+    @Test
+    public void getMappedResourceWithConfig() throws IOException, URISyntaxException {
+        URL original = getClass().getResource("/org/globalbioticinteractions/content/original.txt");
+        URL proxied = getClass().getResource("/org/globalbioticinteractions/content/proxied.txt");
+        JsonNode configProxy = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"" + proxied.toURI() + "\" } }");
+        JsonNode config = new ObjectMapper().readTree("{ \"resources\": { \"archive\": \"" + original.toURI() + "\", \"anotherArchive\": \"" + original.toURI() + "\" } }");
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        dataset.setConfig(config);
+
+        DatasetProxy datasetProxy = new DatasetProxy(dataset);
+        datasetProxy.setConfig(configProxy);
+
+        assertThat(datasetProxy.getConfig().at("/resources/archive").asText(), endsWith("proxied.txt"));
+        assertThat(dataset.getConfig().at("/resources/anotherArchive").asText(), endsWith("original.txt"));
+        assertThat(datasetProxy.getConfig().at("/resources/anotherArchive").asText(), endsWith("original.txt"));
 
     }
 

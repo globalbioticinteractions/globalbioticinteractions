@@ -1,8 +1,9 @@
 package org.globalbioticinteractions.dataset;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.junit.Test;
 
 import java.net.URI;
@@ -22,6 +23,45 @@ public class DatasetFactoryTest {
 
         assertThat(dataset.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
 
+    }
+
+    @Test
+    public void createDatasetWithResourceMapping() throws DatasetRegistryException, URISyntaxException {
+        String meta = "jar:" + getClass().getResource("/org/globalbioticinteractions/dataset/archive-with-resource-mapping.zip").toURI().toString() + "!/template-dataset-e68f4487ebc3bc70668c0f738223b92da0598c00/";
+        final DatasetRegistry finder = new DatasetRegistry() {
+            @Override
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
+                return Collections.singletonList("some/repo");
+            }
+
+            @Override
+            public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                for (String namespace : findNamespaces()) {
+                    namespaceConsumer.accept(namespace);
+                }
+            }
+
+
+            @Override
+            public Dataset datasetFor(String namespace) throws DatasetRegistryException {
+                DatasetWithResourceMapping dataset = new DatasetWithResourceMapping(namespace, URI.create(meta), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+                ObjectNode objectNode = new ObjectMapper().createObjectNode();
+                objectNode.put("foo", "bar");
+                ObjectNode resources = new ObjectMapper().createObjectNode();
+                resources.put("foo", "bar");
+                objectNode.put("resources", resources);
+                dataset.setConfig(objectNode);
+                return dataset;
+            }
+        };
+        Dataset dataset = new DatasetFactory(finder).datasetFor("some/repo");
+
+        assertThat(dataset.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
+        assertThat(dataset.getOrDefault("foo", "bla"), is("bar"));
+        assertThat(dataset.getOrDefault("resources/foo", "bla"), is("bla"));
+        assertThat(dataset.getOrDefault("resources", "bla"), is("bla"));
+        assertThat(dataset.getConfig().at("/resources/foo").asText(), is("bar"));
+        assertThat(dataset.getConfig().at("/foo").asText(), is("bar"));
     }
 
     private Dataset datasetFor(String meta) throws DatasetRegistryException {

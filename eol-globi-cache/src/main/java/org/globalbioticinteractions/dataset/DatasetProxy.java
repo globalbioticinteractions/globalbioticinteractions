@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,6 @@ import org.globalbioticinteractions.doi.MalformedDOIException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
 
 public class DatasetProxy implements Dataset {
 
@@ -39,7 +40,27 @@ public class DatasetProxy implements Dataset {
 
     @Override
     public JsonNode getConfig() {
-        return (config == null) ? datasetProxied.getConfig() : config;
+        JsonNode mergedConfig = datasetProxied.getConfig();
+        if (mergedConfig != null && config != null) {
+            mergedConfig = mergeProxiedConfig(mergedConfig, config);
+        }
+
+        return mergedConfig == null ? config : mergedConfig;
+    }
+
+    private static JsonNode mergeProxiedConfig(JsonNode proxied, JsonNode config) {
+        JsonNode merged;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String content = proxied.toString();
+            // see https://github.com/FasterXML/jackson-databind/issues/3122
+            JsonNode orig = mapper.readValue(content, JsonNode.class);
+            merged = mapper.readerForUpdating(orig)
+                    .readValue(config.toString());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("unexpected json processing error", e);
+        }
+        return merged;
     }
 
     @Override
@@ -54,7 +75,7 @@ public class DatasetProxy implements Dataset {
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
-        return (config != null && config.has(key))
+        return (config != null && config.has(key) && config.get(key).isTextual())
                 ? config.get(key).asText()
                 : datasetProxied.getOrDefault(key, defaultValue);
     }
