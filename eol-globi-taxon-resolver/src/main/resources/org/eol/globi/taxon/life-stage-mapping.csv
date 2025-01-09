@@ -1,62 +1,143 @@
 original_id,original_name,corrected_id,corrected_name
-GOMEXSI:adult,adult,UBERON:0000113,post-juvenile adult stage
-GOMEXSI:adults,adults,UBERON:0000113,post-juvenile adult stage
-GOMEXSI:a,a,UBERON:0000113,post-juvenile adult stage
-GOMEXSI:juvenile,juvenile,UBERON:0000112,juvenile stage
-GOMEXSI:juvenile?,juvenile,UBERON:0000112,juvenile stage
-GOMEXSI:j,j,UBERON:0000112,juvenile stage
-GOMEXSI:nd,nd,GLOBI:UNKNOWN,UNKOWN
-GOMEXSI:na,na,GLOBI:UNKNOWN,UNKOWN
 GOMEXSI:zoea,zoea,UBERON:0000069,larval stage
-GOMEXSI:larvae,larvae,UBERON:0000069,larval stage
-GOMEXSI:larval,larval,UBERON:0000069,larval stage
-GOMEXSI:post larvae,post larvae,GLOBI:POSTLARVA,POSTLARVA
-GOMEXSI:post-larvae,post-larvae,GLOBI:POSTLARVA,GLOBI:POSTLARVA
-GOMEXSI:l/pl,l/pl,GLOBI:LARVA_OR_POSTLARVA,LARVA_OR_POSTLARVA
-GOMEXSI:larvae/post larvae,larvae/post larvae,GLOBI:LARVA_OR_POSTLARVA,LARVA_OR_POSTLARVA
-GOMEXSI:megalopa,megalopa,GLOBI:MEGALOPA,MEGALOPA
-GOMEXSI:cypris,cypris,GLOBI:CYPRIS,CYPRIS
-GOMEXSI:cyp,cyp,GLOBI:CYPRIS,CYPRIS
-GOMEXSI:egg,egg,UBERON:0007379,egg
-GOMEXSI:eggs,eggs,UBERON:0007379,egg
-GOMEXSI:nauplii,nauplii,UBERON:0014406,nauplius stage
-GOMEXSI:copepodite,copepodite,GLOBI:COPEPODITE,COPEPODITE
-GOMEXSI:copepodites,copepodites,GLOBI:COPEPODITE,COPEPODITE
-GOMEXSI:copepedites,copepedites,GLOBI:COPEPODITE,COPEPODITE
-GOMEXSI:glaucothoe,glaucothoe,GLOBI:GLAUCOTHOE,GLAUCOTHOE
-GOMEXSI:veligers,veligers,GLOBI:VELIGER,VELIGER
-GOMEXSI:newborn,newborn,GLOBI:NEWBORN,NEWBORN
-BIO_INFO:mycelium,mycelium,GLOBI:MYCELIUM,MYCELIUM
-BIO_INFO:larva,larva,UBERON:0000069,larval stage
-BIO_INFO:aecium,aecium,GLOBI:AECIUM,AECIUM
-BIO_INFO:pycnium,pycnium,GLOBI:PYCNIUM,PYCNIUM
-BIO_INFO:sporangium,sporangium,GLOBI:SPORANGIUM,SPORANGIUM
-BIO_INFO:uredium,uredium,GLOBI:UREDIUM,UREDIUM
-BIO_INFO:caterpillar,caterpillar,UBERON:0000069,larval stage
-BIO_INFO:adult,adult,UBERON:0000113,post-juvenile adult stage
-BIO_INFO:egg,egg,UBERON:0007379,egg
-BIO_INFO:nymph,nymph,UBERON:0014405,nymph stage
-BIO_INFO:telium,telium,GLOBI:TELIUM,TELIUM
-BIO_INFO:anamorph,anamorph,GLOBI:ANAMORPH,ANAMORPH
-BARNES:postlarva,postlarva,GLOBI:POSTLARVA,POSTLARVA
-BARNES:postlarva/juvenile,postlarva/juvenile,GLOBI:POSTLARVA_OR_JUVENILE,POSTLARVA_OR_JUVENILE
-BARNES:larva / juvenile,larva / juvenile,GLOBI:LARVA_OR_JUVENILE,LARVA_OR_JUVENILE
-BARNES:larva,larva,UBERON:0000069,larval stage
-BARNES:juvenile,juvenile,UBERON:0000112,juvenile stage
-BARNES:adult,adult,UBERON:0000113,post-juvenile adult stage
-BARNES:Adult,Adult,UBERON:0000113,post-juvenile adult stage
-BAREMORE:Juv,Juv,UBERON:0000112,juvenile stage
-BAREMORE:Mat,Mat,UBERON:0000113,post-juvenile adult stage
-BAREMORE:Mat?,Mat?,UBERON:0000113,post-juvenile adult stage
-BAREMORE:Trans,Trans,GLOBI:TRANS,TRANS
-BAREMORE:Trans/Juv,Trans/Juv,GLOBI:TRANS_OR_JUVENILE,TRANS_OR_JUVENILE
 BAREMORE:Yoy/Juv,Yoy/Juv,GLOBI:YOUNG_OF_THE_YEAR_OR_JUVENILE,YOUNG_OF_THE_YEAR_OR_JUVENILE
 BAREMORE:Yoy,Yoy,GLOBI:YOUNG_OF_THE_YEAR,YOUNG_OF_THE_YEAR
 BAREMORE:YOY,YOY,GLOBI:YOUNG_OF_THE_YEAR,YOUNG_OF_THE_YEAR
-BAREMORE:Neo,Neo,GLOBI:NEO,NEO
-,calyptopis,GLOBI:calyptopis,calyptopis
-,furcilia,GLOBI:calyptopis,calyptopis
-,medusae,GLOBI:medusae,medusae
-,nauplius,UBERON:0014406,nauplius stage
-,pupae,UBERON:0000070,pupal stage
+,young of year,http://purl.obolibrary.org/obo/PATO_0000309,young
+,young,http://purl.obolibrary.org/obo/PATO_0000309,young
+GLOBI:VELIGER,veligers,http://purl.obolibrary.org/obo/UBERON_0014863,veliger stage
+GLOBI:VELIGER,VELIGER,http://purl.obolibrary.org/obo/UBERON_0014863,veliger stage
+,Vegetative,http://purl.obolibrary.org/obo/PO_0000058,vegetative bud
+BIO_INFO:uredium,uredium,GLOBI:UREDIUM,UREDIUM
+BAREMORE:Trans/Juv,Trans/Juv,GLOBI:TRANS_OR_JUVENILE,TRANS_OR_JUVENILE
+BAREMORE:Trans,Trans,GLOBI:TRANS,TRANS
+BIO_INFO:telium,telium,GLOBI:TELIUM,TELIUM
+,Teleutospores,http://purl.obolibrary.org/obo/FAO_0000022,teliospore
+,statoblasts,http://purl.obolibrary.org/obo/PORO_0000553,statoblast
+BIO_INFO:sporangium,sporangium,GLOBI:SPORANGIUM,SPORANGIUM
+,seeds,http://purl.obolibrary.org/obo/PO_0009010,seed
+,Seedling,http://purl.obolibrary.org/obo/PO_0008037,seedling
 ,seed,http://purl.obolibrary.org/obo/PO_0009010,seed
+,reproductive,http://purl.obolibrary.org/obo/GO_0022414,reproductive process
+BIO_INFO:pycnium,pycnium,GLOBI:PYCNIUM,PYCNIUM
+,pupal case,http://purl.obolibrary.org/obo/UBERON_0018657,pupal case
+,Pupal Case,http://purl.obolibrary.org/obo/UBERON_0018657,pupal case
+,pupae,http://purl.obolibrary.org/obo/UBERON_0003143,pupa
+,pupa,http://purl.obolibrary.org/obo/UBERON_0003143,pupa
+,Pupa,http://purl.obolibrary.org/obo/UBERON_0003143,pupa
+BARNES:postlarva/juvenile,postlarva/juvenile,GLOBI:POSTLARVA_OR_JUVENILE,POSTLARVA_OR_JUVENILE
+BARNES:postlarva,postlarva,GLOBI:POSTLARVA,POSTLARVA
+GOMEXSI:post-larvae,post-larvae,GLOBI:POSTLARVA,POSTLARVA
+GOMEXSI:post larvae,post larvae,GLOBI:POSTLARVA,POSTLARVA
+,paralarva,http://purl.obolibrary.org/obo/CEPH_0000194,paralarval stage
+,oocyst,http://purl.obolibrary.org/obo/IDOMAL_0000298,oocyst
+,nymphs,http://purl.obolibrary.org/obo/UBERON_0014405,nymph stage
+BIO_INFO:nymph,nymph,UBERON:0014405,nymph stage
+,Nymph,http://purl.obolibrary.org/obo/UBERON_0014405,nymph stage
+GOMEXSI:newborn,newborn,GLOBI:NEWBORN,NEWBORN
+,Nestling,http://purl.obolibrary.org/obo/UBERON_0007221,neonate stage
+BAREMORE:Neo,Neo,GLOBI:NEO,NEO
+GOMEXSI:nd,nd,GLOBI:UNKNOWN,UNKOWN
+,nauplius,UBERON:0014406,nauplius stage
+GOMEXSI:nauplii,nauplii,UBERON:0014406,nauplius stage
+GOMEXSI:na,na,GLOBI:UNKNOWN,UNKOWN
+,n6,http://purl.obolibrary.org/obo/UBERON_8200007,copepodite stage 6
+,n5,http://purl.obolibrary.org/obo/UBERON_8200006,copepodite stage 5
+,n4,http://purl.obolibrary.org/obo/UBERON_8200005,copepodite stage 4
+,n3,http://purl.obolibrary.org/obo/UBERON_8200004,copepodite stage 3
+,n2,http://purl.obolibrary.org/obo/UBERON_8200003,copepodite stage 2
+,n1,http://purl.obolibrary.org/obo/UBERON_8200002,copepodite stage 1
+BIO_INFO:mycelium,mycelium,GLOBI:MYCELIUM,MYCELIUM
+,microfilariae,http://purl.obolibrary.org/obo/WBls_0000664,microfilaria
+,microfilaria,http://purl.obolibrary.org/obo/WBls_0000664,microfilaria
+,Microfilaria,http://purl.obolibrary.org/obo/WBls_0000664,microfilaria
+,metacestode,http://purl.obolibrary.org/obo/UBERON_0018379,metacestode
+,Metacercariae,http://purl.obolibrary.org/obo/UBERON_0018385,metacercaria
+,metacercaria,http://purl.obolibrary.org/obo/UBERON_0018385,metacercaria
+GOMEXSI:megalopa,megalopa,GLOBI:MEGALOPA,MEGALOPA
+,medusae,GLOBI:medusae,medusae
+,mature,http://purl.obolibrary.org/obo/PATO_0001701,mature
+BAREMORE:Mat?,Mat?,UBERON:0000113,post-juvenile adult stage
+BAREMORE:Mat,Mat,UBERON:0000113,post-juvenile adult stage
+,mainly adult,http://purl.obolibrary.org/obo/UBERON_0007023,adult organism
+,leaves,http://purl.obolibrary.org/obo/PO_0025034,leaf
+,last instar larva,http://purl.obolibrary.org/obo/UBERON_0004730,instar larval stage
+,larve,http://purl.obolibrary.org/obo/PATO_0001185,larval
+,Larval,http://purl.obolibrary.org/obo/PATO_0001185,larval
+UBERON:0000069,larval,http://purl.obolibrary.org/obo/PATO_0001185,larval
+GOMEXSI:larvae/post larvae,larvae/post larvae,GLOBI:LARVA_OR_POSTLARVA,LARVA_OR_POSTLARVA
+UBERON:0000069,larvae,http://purl.obolibrary.org/obo/PATO_0001185,larval
+,Larvae,http://purl.obolibrary.org/obo/PATO_0001185,larval
+BARNES:larva / juvenile,larva / juvenile,GLOBI:LARVA_OR_JUVENILE,LARVA_OR_JUVENILE
+UBERON:0000069,larva,http://purl.obolibrary.org/obo/UBERON_0002548,larva
+,larva,http://purl.obolibrary.org/obo/UBERON_0002548,larva
+,Larva,http://purl.obolibrary.org/obo/UBERON_0002548,larva
+GOMEXSI:l/pl,l/pl,GLOBI:LARVA_OR_POSTLARVA,LARVA_OR_POSTLARVA
+,juveniles,http://purl.obolibrary.org/obo/PATO_0001190,juvenile
+UBERON:0000112,juvenile,http://purl.obolibrary.org/obo/PATO_0001190,juvenile
+,Juvenile,http://purl.obolibrary.org/obo/PATO_0001190,juvenile
+,juv.,http://purl.obolibrary.org/obo/PATO_0001190,juvenile
+BAREMORE:Juv,Juv,UBERON:0000112,juvenile stage
+GOMEXSI:j,j,UBERON:0000112,juvenile stage
+,immature,http://purl.obolibrary.org/obo/PATO_0001501,immature
+,Immature,http://purl.obolibrary.org/obo/PATO_0001501,immature
+,hatchling,http://purl.obolibrary.org/obo/GO_0035188,hatching
+GOMEXSI:glaucothoe,glaucothoe,GLOBI:GLAUCOTHOE,GLAUCOTHOE
+,furcilia,GLOBI:calyptopis,calyptopis
+,fruits,http://purl.obolibrary.org/obo/PO_0009001,fruit
+,Fruiting,http://purl.obolibrary.org/obo/PO_0001002,fruit developmental stage
+,Flowering and fruiting,http://purl.obolibrary.org/obo/PO_0007616,flowering stage
+,Flowering and Fruiting,http://purl.obolibrary.org/obo/PO_0007616,flowering stage
+,Flowering,http://purl.obolibrary.org/obo/PO_0007616,flowering stage
+,Fertile,http://purl.obolibrary.org/obo/PATO_0000955,fertile
+,f6,http://purl.obolibrary.org/obo/UBERON_8200007,copepodite stage 6
+,f5,http://purl.obolibrary.org/obo/UBERON_8200006,copepodite stage 5
+,f4,http://purl.obolibrary.org/obo/UBERON_8200005,copepodite stage 4
+,f3,http://purl.obolibrary.org/obo/UBERON_8200004,copepodite stage 3
+,f1,http://purl.obolibrary.org/obo/UBERON_8200002,copepodite stage 1
+,embryo,http://purl.obolibrary.org/obo/UBERON_0000922,embryo
+GOMEXSI:eggs,eggs,UBERON:0007379,egg
+GOMEXSI:egg,egg,UBERON:0007379,egg
+BIO_INFO:egg,egg,UBERON:0007379,egg
+,early life stages,http://purl.obolibrary.org/obo/UBERON_0034920,infant stage
+,cysticercus,http://purl.obolibrary.org/obo/UBERON_0014856,cysticercus stage
+GOMEXSI:cypris,cypris,GLOBI:CYPRIS,CYPRIS
+GOMEXSI:cyp,cyp,GLOBI:CYPRIS,CYPRIS
+,copepodite 6,http://purl.obolibrary.org/obo/UBERON_8200007,copepodite stage 6
+,copepodite 5,http://purl.obolibrary.org/obo/UBERON_8200006,copepodite stage 5
+,copepodite 4,http://purl.obolibrary.org/obo/UBERON_8200005,copepodite stage 4
+,copepodite 3,http://purl.obolibrary.org/obo/UBERON_8200004,copepodite stage 3
+,copepodite 2,http://purl.obolibrary.org/obo/UBERON_8200003,copepodite stage 2
+,copepodite 1,http://purl.obolibrary.org/obo/UBERON_8200002,copepodite stage 1
+GLOBI:COPEPODITE,copepodite,http://purl.obolibrary.org/obo/UBERON_0014860,copepodite stage
+GLOBI:COPEPODITE,copepodites,http://purl.obolibrary.org/obo/UBERON_0014860,copepodite stage
+GLOBI:COPEPODITE,COPEPODITE,http://purl.obolibrary.org/obo/UBERON_0014860,copepodite stage
+,copepod,http://purl.obolibrary.org/obo/UBERON_0014860,copepodite stage
+GOMEXSI:copepedites,copepedites,GLOBI:COPEPODITE,COPEPODITE
+,Cercariae,http://purl.obolibrary.org/obo/UBERON_0018388,cercaria
+,cercaria,http://purl.obolibrary.org/obo/UBERON_0018388,cercaria
+BIO_INFO:caterpillar,caterpillar,UBERON:0000069,larval stage
+GLOBI:calyptopis,calyptopis,http://purl.obolibrary.org/obo/UBERON_0014857,zoea stage
+,Budding,http://purl.obolibrary.org/obo/PO_0025528,bud developmental stage
+BIO_INFO:anamorph,anamorph,GLOBI:ANAMORPH,ANAMORPH
+BIO_INFO:aecium,aecium,GLOBI:AECIUM,AECIUM
+GOMEXSI:adults,adults,UBERON:0000113,post-juvenile adult stage
+,adults,UBERON:0000113,adult organism
+,Adult(s),UBERON:0000113,adult organism
+,adult?,UBERON:0000113,adult organism
+,adult;;,UBERON:0000113,adult organism
+,adult male,UBERON:0000113,adult organism
+,adult female,UBERON:0000113,adult organism
+GOMEXSI:adult,adult,UBERON:0000113,post-juvenile adult stage
+BIO_INFO:adult,adult,UBERON:0000113,post-juvenile adult stage
+BARNES:adult,adult,UBERON:0000113,post-juvenile adult stage
+BARNES:Adult,Adult,UBERON:0000113,post-juvenile adult stage
+,adult,UBERON:0000113,adult organism
+,Adult,UBERON:0000113,adult organism
+,Adult,UBERON:0000113,adult organism
+,adolescaria,http://purl.obolibrary.org/obo/UBERON_0000069,larval stage
+GOMEXSI:a,a,UBERON:0000113,post-juvenile adult stage
+,A,UBERON:0000113,adult organism
+,1 Pupa,http://purl.obolibrary.org/obo/UBERON_0003143,pupa
+,1 adult,UBERON:0000113,adult organism
+,1 Adult,UBERON:0000113,adult organism
