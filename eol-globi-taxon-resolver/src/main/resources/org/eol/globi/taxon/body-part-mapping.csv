@@ -1,42 +1,176 @@
 original_id,original_name,corrected_id,corrected_name
-GOMEXSI:NA,NA,GLOBI:UNKNOWN,UNKNOWN
-GOMEXSI:parts,parts,GLOBI:UNKNOWN,UNKNOWN
-GOMEXSI:pieces,parts,GLOBI:UNKNOWN,UNKNOWN
-GOMEXSI:fragments,fragments,GLOBI:UNKNOWN,UNKNOWN
-GOMEXSI:scales,scales,UBERON:0002542,scale
-GOMEXSI:scale(s),scale(s),UBERON:0002542,scale
-GOMEXSI:bone,bone,UBERON:0002481,bone tissue
-GOMEXSI:tube,tube,GLOBI:TUBE,TUBE
-GOMEXSI:spine,spine,GLOBI:SPINE,SPINE
-GOMEXSI:pollen_grain,pollen grain,GLOBI:POLLEN_GRAIN,POLLEN_GRAIN
-GOMEXSI:opercula,opercula,GLOBI:OPERCULUM,OPERCULUM
-GOMEXSI:caudal_spines,caudal_spines,GLOBI:CAUDAL_SPINE,CAUDAL_SPINE
-GOMEXSI:shell,shell,UBERON:0006612,shell
-GOMEXSI:needles,needles,GLOBI:NEEDLE,NEEDLE
-GOMEXSI:seed_pod,seed pod,GLOBI:SEED_POD,SEED_POD
-GOMEXSI:kernels,kernels,GLOBI:KERNEL,KERNEL
-GOMEXSI:wood,wood,GLOBI:WOOD,WOOD
-GOMEXSI:feather,feather,UBERON:0000022,feather
-,Pharyngeal tooth,UBERON:2001647,pharyngeal tooth plate
-,air bladder,GLOBI:air_bladder,air bladder
-,beak,UBERON:0005094,beak
-,carapace,UBERON:0008275,carapace
-,claw,GLOBI:claw,claw
-,claws,GLOBI:claw,claw
-,ctenoid scale,UBERON:2002273,ctenoid scale
-,eyeball,UBERON:0010230,eyeball of camera-type eye
-,fin ray,UBERON:4400005,fin ray
-,house,GLOBI:house,house
-,legs,UBERON_0000978,leg
-,leg,UBERON_0000978,leg
-,operculum,GLOBI:operculum,operculum
-,otolith,UBERON:0002280,otolith
-,otoliths,UBERON:0002280,otolith
-,root,GLOBI:root,root
-,skull,UBERON:0003129,skull
-,telson,GLOBI:telson,telson
-,tissue,UBERON:0000479,tissue
-,torso,GLOBI:torso,torso
+GLOBI:WOOD,wood,ENVO:00002040,WOOD
+GLOBI:WOOD,WOOD,ENVO:00002040,wood
 ,wings,UBERON:0000023,wing
 ,wing,UBERON:0000023,wing
-,seed,http://purl.obolibrary.org/obo/PO_0009010,seed
+,visceral ligaments,UBERON:0011237,visceral fascia
+,ventriculus,UBERON:0002082,cardiac ventricle
+,vena cava,UBERON:0004087,vena cava
+,vegetation,ENVO:01000355,vegetation layer
+,urine,UBERON:0001088,urine
+,urinary bladder,UBERON:0001255,urinary bladder
+GOMEXSI:tube,tube,GLOBI:TUBE,TUBE
+,trunk,UBERON:0002100,trunk
+,trachea,UBERON:0003126,trachea
+,torso,GLOBI:torso,torso
+,tissue,UBERON:0000479,tissue
+,throat,UBERON:0000341,throat
+,telson,GLOBI:telson,telson
+,swim bladder,UBERON:0006860,swim bladder
+,subcutaneous tissue,UBERON:0002190,subcutaneous
+,subcutaneous,UBERON:0002190,subcutaneous
+,stomach wall (encysted),UBERON:0001167,wall of stomach
+,stomach wall (cysts),UBERON:0001167,wall of stomach
+,stomach #1,UBERON:0000945,stomach
+,stomach,UBERON:0000945,stomach
+,spleen,UBERON:0002106,spleen
+,spiral valve,UBERON:0010016,spiral valve of intestine
+,spiral intestine,UBERON:0010016,spiral valve of intestine
+GOMEXSI:spine,spine,GLOBI:SPINE,SPINE
+,small intestine,UBERON:0002108,small intestine
+,sm intestine,UBERON:0002108,small intestine
+,skull,UBERON:0003129,skull
+,skin,UBERON:0002097,skin of body
+,skeletal muscle,UBERON:0001134,skeletal muscle tissue
+,sinus(es),FMA:76587,set of paranasal sinuses
+,si,UBERON:0002108,small intestine
+GOMEXSI:shell,shell,UBERON:0006612,shell
+GOMEXSI:seed_pod,seed pod,GLOBI:SEED_POD,SEED_POD
+,seed,PO:0009010,seed
+GOMEXSI:scales,scales,UBERON:0002542,scale
+GOMEXSI:scale(s),scale(s),UBERON:0002542,scale
+,scale,UBERON:0002542,scale
+,saliva,UBERON:0001836,saliva
+,rumen,UBERON:0007365,rumen
+GLOBI:root,root,PO:0009005,root
+,right cranial sinus,UBERON:0001760,frontal sinus
+,reticulum,UBERON:0007361,ruminant reticulum
+,renal,UBERON:0002113,kidney
+,redia in gonads,UBERON:0000991,gonad
+,rectum,UBERON:0001052,rectum
+,proventriculus,UBERON:0007357,proventriculus
+,posterior intestine,UBERON:0000160,intestine
+GOMEXSI:pollen_grain,pollen grain,GLOBI:POLLEN_GRAIN,POLLEN_GRAIN
+,plant leaf,PO:0025034,leaf
+,Pharyngeal tooth,UBERON:2001647,pharyngeal tooth plate
+GOMEXSI:parts,parts,GLOBI:UNKNOWN,UNKNOWN
+GOMEXSI:pieces,parts,GLOBI:UNKNOWN,UNKNOWN
+,pancreas,UBERON:0001264,pancreas
+,ovary,UBERON:0000992,ovary
+,otoliths,UBERON:0002280,otolith
+,otolith,UBERON:0002280,otolith
+,operculum,GLOBI:operculum,operculum
+GOMEXSI:opercula,opercula,GLOBI:OPERCULUM,OPERCULUM
+,omentum,UBERON:0003688,omentum
+,omasum,UBERON:0007362,omasum
+GLOBI:NEEDLE,NEEDLE,PO:0009025,vascular leaf
+,nasal fossae,NCIT:C12424,nasal cavity
+,nasal cavities,UBERON:0001707,nasal cavity
+,nares,UBERON:0000003,naris
+GOMEXSI:NA,NA,GLOBI:UNKNOWN,UNKNOWN
+,musculature,UBERON:0001015,musculature
+,mouth,UBERON:0000165,mouth
+,mesentery,UBERON:0002095,mesentery
+,mesenteries,UBERON:0002095,mesentery
+,meninges,UBERON:0003547,brain meninx
+,mantle cavity,UBERON:0006580,mantle cavity
+,lungs,UBERON:0002048,lung
+,lung(s),UBERON:0002048,lung
+,lung,UBERON:0002048,lung
+,liver (embedded),UBERON:0002107,liver
+,liver,UBERON:0002107,liver
+,liver,UBERON:0002107,liver
+,lg intestine,UBERON:0000059,large intestine
+,lg intes.,UBERON:0000059,large intestine
+,legs,UBERON:0000978,leg
+,leg,UBERON:0000978,leg
+,left opercular cavity,UBERON:2002154,opercular cavity
+,large intestine,UBERON:0000059,large intestine
+,kidney veins,UBERON:0001140,renal vein
+,kidney,UBERON:0002113,kidney
+GOMEXSI:kernels,kernels,GLOBI:KERNEL,KERNEL
+,jejunum,UBERON:0002115,jejunum
+,intestine,UBERON:0000160,intestine
+,ileum,UBERON:0002116,ileum
+GLOBI:house,house,ENVO:01000417,house
+,hindgut,UBERON:0001046,hindgut
+,heart muscle,UBERON:0002426,chest muscle
+,heart - aortic bulb,UBERON:0010172,bulb of aorta
+,heart,UBERON:0000948,heart
+,gut,UBERON:0000160,intestine
+,gizzard,UBERON:0005052,gizzard
+,gills,UBERON:0002535,gill
+,gill(s),UBERON:0002535,gill
+,gill filament,UBERON:0009120,gill filament
+,gill,UBERON:0002535,gill
+,gi tract,UBERON:0001555,digestive tract
+,gastrointestinal tract,UBERON:0001555,digestive tract
+,gallbladder,UBERON:0002110,gallbladder
+,gall bladder,UBERON:0002110,gallbladder
+,gall,PO:0025626,plant gall
+,fruit,PO:0009001,fruit
+GOMEXSI:fragments,fragments,GLOBI:UNKNOWN,UNKNOWN
+,flower,PO:0009046,flower
+,fin ray,UBERON:4400005,fin ray
+,feces,UBERON:0001988,feces
+GOMEXSI:feather,feather,UBERON:0000022,feather
+,fascia of thigh,UBERON:0008982,fascia
+,eyes,UBERON:0000970,eye
+,eyelids,UBERON:0001711,eyelid
+,eyeball,UBERON:0010230,eyeball of camera-type eye
+,eye,UBERON:0000970,eye
+,external,PATO:0002483,external to
+,esophagus,UBERON:0001043,esophagus
+,encapsulated under body skin,UBERON:0002097,skin of body
+,ear,UBERON:0001690,ear
+,duodenum,UBERON:0002114,duodenum
+,dorsal skeletal muscle,BTO:0001103,skeletal muscle
+,dorsal mesenteries,UBERON:0002296,dorsal mesentery
+,dorsal colon,UBERON:0001155,colon
+,digestive gland,UBERON:0003408,gland of digestive tract
+,diaphragm muscles,UBERON:0036071,diaphragmaticus muscle
+,ctenoid scale,UBERON:2002273,ctenoid scale
+,connective tissue-stomach,UBERON:0003567,abdomen connective tissue
+,connective tissue-neck,UBERON:0003568,neck connective tissue
+,colon,UBERON:0001155,colon
+,coelomic cavity,UBERON:0002323,coelemic cavity lumen
+,coelom cyst,UBERON:0011997,coelom
+,coelom,UBERON:0011997,coelom
+,cloaca,UBERON:0000162,cloaca
+,claws,GLOBI:claw,claw
+,claw,GLOBI:claw,claw
+,cervical ligament,UBERON:0000351,nuchal ligament
+,cerebrospinal fluid,UBERON:0001359,cerebrospinal fluid
+,cecum,UBERON:0001153,caecum
+,cecae,UBERON:0001153,caecum
+,ceca,UBERON:0001153,caecum
+GOMEXSI:caudal_spines,caudal_spines,GLOBI:CAUDAL_SPINE,CAUDAL_SPINE
+,carapace,UBERON:0008275,carapace
+,caecum (or cecum),UBERON:0001153,caecum
+,caecum,UBERON:0001153,caecum
+,caeca,UBERON:0001153,caecum
+,bursa,UBERON:0003903,bursa of Fabricius
+,bud,PO:0000055,bud
+,bronchi,UBERON:0002185,bronchus
+,brain,UBERON:0000955,brain
+,Bones,UBERON:0002481,bone tissue
+GOMEXSI:bone,bone,UBERON:0002481,bone tissue
+,body surface,UBERON:0006984,anatomical surface
+,body cavity,UBERON:0002558,organ cavity
+,body,UBERON:0013702,body proper
+,blood,UBERON:0000178,blood
+,bladder,UBERON:0001255,urinary bladder
+,bile ducts,UBERON:0002394,bile duct
+,bile duct,UBERON:0002394,bile duct
+,beak,UBERON:0005094,beak
+,bark,PO:0004518,bark
+,antennal glands,UBERON:0009963,antennal gland
+,antenna,UBERON:0000972,antenna
+,allantoic fluid,UBERON:0004340,allantois
+,air bladder,GLOBI:air_bladder,air bladder
+,abomasum,UBERON:0007358,abomasum
+,abo1,UBERON:0007358,abomasum
+,abo,UBERON:0007358,abomasum
+,abdominal cavity,UBERON:0003684,abdominal cavity
+,2 guts,UBERON:0000160,intestine
+,UNKNOWN,GLOBI:UNKNOWN,UNKNOWN
