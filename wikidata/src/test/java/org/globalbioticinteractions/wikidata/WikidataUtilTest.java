@@ -24,6 +24,7 @@ import static org.eol.globi.domain.TaxonomyProvider.BATPLANT;
 import static org.eol.globi.domain.TaxonomyProvider.BIODIVERSITY_AUSTRALIA;
 import static org.eol.globi.domain.TaxonomyProvider.BOLD_BIN;
 import static org.eol.globi.domain.TaxonomyProvider.CHECKLIST_BANK;
+import static org.eol.globi.domain.TaxonomyProvider.DISCOVERLIFE;
 import static org.eol.globi.domain.TaxonomyProvider.ENVO;
 import static org.eol.globi.domain.TaxonomyProvider.FISHBASE_CACHE;
 import static org.eol.globi.domain.TaxonomyProvider.GEONAMES;
@@ -69,6 +70,7 @@ public class WikidataUtilTest {
                 MAMMAL_DIVERSITY_DATABASE,
                 HESPEROMYS,
                 CHECKLIST_BANK,
+                DISCOVERLIFE,
                 PBDB
 
         );

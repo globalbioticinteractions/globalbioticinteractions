@@ -64,6 +64,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.HESPEROMYS.getIdPrefix(), "http://hesperomys.com/n/");
         put(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE.getIdPrefix(), "https://www.mammaldiversity.org/taxon/");
         put(TaxonomyProvider.PBDB.getIdPrefix(), "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
+        put(TaxonomyProvider.DISCOVERLIFE.getIdPrefix(), "https://www.discoverlife.org/mp/20q?guide=Apoidea_species&search=");
     }};
 
     private static final Map<String, String> URL_TO_PREFIX_MAP = new HashMap<String, String>() {{

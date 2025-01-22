@@ -259,6 +259,21 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId(id), is("https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=83088"));
     }
 
+    @Test
+    public void discoverLifeExpand() {
+        String id = "DL:Epimelissodes+duplocinctus";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(id), is(TaxonomyProvider.DISCOVERLIFE));
+        assertThat(ExternalIdUtil.urlForExternalId(id), is("https://www.discoverlife.org/mp/20q?guide=Apoidea_species&search=Epimelissodes+duplocinctus"));
+    }
+
+    @Test
+    public void discoverLife() {
+        String url = "https://www.discoverlife.org/mp/20q?guide=Apoidea_species&search=Epimelissodes+duplocinctus";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.DISCOVERLIFE));
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.DISCOVERLIFE, url), is("Epimelissodes+duplocinctus"));
+    }
+
+
 
     @Test
     public void buildCitation() {
