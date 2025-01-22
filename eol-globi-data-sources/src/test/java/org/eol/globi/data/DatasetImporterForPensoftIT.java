@@ -7,12 +7,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.TermLookupServiceException;
+import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.InteractTypeMapperFactoryImpl;
 import org.eol.globi.util.ResourceServiceLocal;
-import org.eol.globi.util.ResourceServiceLocalAndRemote;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.globalbioticinteractions.util.OpenBiodivClientImpl;
 import org.globalbioticinteractions.util.SparqlClient;
@@ -114,7 +113,7 @@ public class DatasetImporterForPensoftIT {
         final JsonNode annotations = tableObj.get("annotations");
         for (JsonNode annotation : annotations) {
             final InteractTypeMapper interactTypeMapper =
-                    new InteractTypeMapperFactoryImpl().create();
+                    new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create();
             if (annotation.has("id")) {
                 final InteractType interactType = interactTypeMapper.getInteractType(annotation.get("id").asText());
             }

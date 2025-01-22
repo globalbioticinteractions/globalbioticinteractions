@@ -104,9 +104,9 @@ public class InteractUtilTest {
 
     @Test
     public void mapNotCaseSensitive() throws TermLookupServiceException {
-        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostOf"),
+        assertThat(new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create().getInteractType("hostOf"),
                 is(InteractType.HOST_OF));
-        assertThat(new InteractTypeMapperFactoryImpl().create().getInteractType("hostof"),
+        assertThat(new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create().getInteractType("hostof"),
                 is(InteractType.HOST_OF));
     }
 
@@ -115,14 +115,14 @@ public class InteractUtilTest {
         Set<Map.Entry<String, InteractType>> entries = INTERACTION_TYPE_NAME_MAP.entrySet();
         assertThat(entries.size(), greaterThan(0));
         for (Map.Entry<String, InteractType> entry : entries) {
-            InteractType interactTypeForName = new InteractTypeMapperFactoryImpl().create().getInteractType(entry.getKey());
+            InteractType interactTypeForName = new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create().getInteractType(entry.getKey());
             assertThat("failed to map [" + entry.getKey() + "]", interactTypeForName, is(entry.getValue()));
         }
     }
 
     @Test
     public void mapUnknownNonROTerms() throws TermLookupServiceException {
-        InteractType interactTypeForName = new InteractTypeMapperFactoryImpl().create().getInteractType("donaldduck");
+        InteractType interactTypeForName = new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create().getInteractType("donaldduck");
         assertThat(interactTypeForName, is(nullValue()));
     }
 
@@ -131,7 +131,7 @@ public class InteractUtilTest {
         Set<String> unlikelyInteractionTypeNames = UNLIKELY_INTERACTION_TYPE_NAMES;
         assertThat(unlikelyInteractionTypeNames.size(), greaterThan(0));
         for (String unlikelyInteractionType : unlikelyInteractionTypeNames) {
-            boolean condition = new InteractTypeMapperFactoryImpl().create()
+            boolean condition = new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create()
                     .shouldIgnoreInteractionType(unlikelyInteractionType);
             Assert.assertTrue("failed to ignore [" + unlikelyInteractionType + "]", condition);
         }
