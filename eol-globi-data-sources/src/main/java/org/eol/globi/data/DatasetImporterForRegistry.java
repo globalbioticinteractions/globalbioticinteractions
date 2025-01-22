@@ -2,17 +2,15 @@ package org.eol.globi.data;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.jena.atlas.iterator.Iter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.globalbioticinteractions.dataset.Dataset;
-import org.globalbioticinteractions.dataset.DatasetFactory;
+import org.globalbioticinteractions.dataset.DatasetFactoryImpl;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
 import org.globalbioticinteractions.dataset.DatasetRegistryException;
 import org.eol.globi.service.StudyImporterFactoryImpl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -54,7 +52,7 @@ public class DatasetImporterForRegistry extends NodeBasedImporter {
     private void importData(String namespace) throws StudyImporterException {
         try {
             LOG.info("[" + namespace + "] checking status...");
-            Dataset dataset = new DatasetFactory(getRegistry()).datasetFor(namespace);
+            Dataset dataset = new DatasetFactoryImpl(getRegistry()).datasetFor(namespace);
             if (datasetFilter.test(dataset)) {
                 StopWatch stopWatch = new StopWatch();
                 stopWatch.start();

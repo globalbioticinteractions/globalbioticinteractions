@@ -161,7 +161,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
         Dataset dataset;
 
         final URI sourceURI = findLastCachedDatasetURI(namespace);
-        dataset = sourceURI == null ? null : new DatasetFactory(new DatasetRegistry() {
+        dataset = sourceURI == null ? null : new DatasetFactoryImpl(new DatasetRegistry() {
             @Override
             public Iterable<String> findNamespaces() throws DatasetRegistryException {
                 return Collections.singletonList(namespace);

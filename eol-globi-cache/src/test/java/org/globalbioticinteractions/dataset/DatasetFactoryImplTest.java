@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DatasetFactoryTest {
+public class DatasetFactoryImplTest {
 
     @Test
     public void createDataset() throws DatasetRegistryException, URISyntaxException {
@@ -54,7 +54,7 @@ public class DatasetFactoryTest {
                 return dataset;
             }
         };
-        Dataset dataset = new DatasetFactory(finder).datasetFor("some/repo");
+        Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("some/repo");
 
         assertThat(dataset.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
         assertThat(dataset.getOrDefault("foo", "bla"), is("bar"));
@@ -84,7 +84,7 @@ public class DatasetFactoryTest {
                 return new DatasetWithResourceMapping(namespace, URI.create(meta), new ResourceServiceLocal(new InputStreamFactoryNoop()));
             }
         };
-        return new DatasetFactory(finder).datasetFor("some/repo");
+        return new DatasetFactoryImpl(finder).datasetFor("some/repo");
     }
 
     @Test
