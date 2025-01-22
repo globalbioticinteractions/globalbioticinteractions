@@ -39,7 +39,7 @@ public class DatasetImporterForAkinTest extends GraphDBNeo4jTestCase {
         UberonLookupService service = new UberonLookupService(new ResourceServiceLocal());
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something egg").get(0).getId(), is("UBERON:0007379"));
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something eggs").get(0).getId(), is("UBERON:0007379"));
-        assertThat(DatasetImporterForAkin.parseLifeStage(service, "something larvae").get(0).getId(), is("UBERON:0000069"));
+        assertThat(DatasetImporterForAkin.parseLifeStage(service, "something larvae").get(0).getId(), is("http://purl.obolibrary.org/obo/PATO_0001185"));
         assertThat(DatasetImporterForAkin.parseLifeStage(service, "something zoea").get(0).getId(), is("UBERON:0000069"));
     }
 
