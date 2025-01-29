@@ -33,7 +33,6 @@ import org.eol.globi.util.DateUtil;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.NodeUtil;
-import org.eol.globi.util.ResourceServiceHTTP;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetConstant;
