@@ -67,9 +67,11 @@ public class InteractTypeMapperFactoryImpl implements InteractTypeMapperFactory 
 
     @Override
     public InteractTypeMapper create() throws TermLookupServiceException {
+        ResourceService resourceServiceLocal = new ResourceServiceLocal(new InputStreamFactoryNoop());
+
         final InteractTypeMapper mapperCustom = mapperForResourceService(resourceService);
-        final InteractTypeMapper mapperDefault = mapperForResourceService(getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop())));
-        final InteractTypeMapper mapperRO = new InteractTypeMapperFactoryForRO().create();
+        final InteractTypeMapper mapperDefault = mapperForResourceService(getResourceServiceForDefaultInteractionTypeMapping(resourceServiceLocal));
+        final InteractTypeMapper mapperRO = new InteractTypeMapperFactoryForRO(resourceServiceLocal).create();
         return new InteractTypeMapperWithFallbackImpl(
                 mapperCustom,
                 mapperDefault,

@@ -7,7 +7,6 @@ import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,7 +20,7 @@ public class InteractTypeMapperFactoryForROTest {
     public void defaultMapping() throws TermLookupServiceException {
 
         InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryForRO().create();
+                = new InteractTypeMapperFactoryForRO(new ResourceServiceLocal()).create();
 
         assertNotNull(interactTypeMapper);
 
@@ -37,7 +36,7 @@ public class InteractTypeMapperFactoryForROTest {
     public void caseInsensitiveName() throws TermLookupServiceException {
 
         InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryForRO().create();
+                = new InteractTypeMapperFactoryForRO(new ResourceServiceLocal()).create();
 
         assertNotNull(interactTypeMapper);
 
@@ -50,7 +49,7 @@ public class InteractTypeMapperFactoryForROTest {
         @Test
     public void ensureAllInteractTypesAreSupported() throws TermLookupServiceException {
         InteractTypeMapper interactTypeMapper
-                = new InteractTypeMapperFactoryForRO().create();
+                = new InteractTypeMapperFactoryForRO(new ResourceServiceLocal()).create();
 
         Arrays.stream(InteractType.values())
                 .forEach(value -> {
