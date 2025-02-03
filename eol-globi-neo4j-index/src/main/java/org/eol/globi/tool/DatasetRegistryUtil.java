@@ -21,7 +21,8 @@ public class DatasetRegistryUtil {
         CacheFactory cacheFactory = dataset ->
                 new CacheLocalReadonly(dataset.getNamespace(),
                         cacheDir,
-                        provPath, resourceServiceLocal,
+                        provPath,
+                        resourceServiceLocal,
                         contentPathFactory,
                         provenancePathFactory
                 );

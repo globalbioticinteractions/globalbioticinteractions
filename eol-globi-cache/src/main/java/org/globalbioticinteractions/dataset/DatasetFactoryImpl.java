@@ -87,13 +87,13 @@ public class DatasetFactoryImpl implements DatasetFactory {
     private static class JSONConfigurer implements DatasetConfigurer {
 
         @Override
-        public JsonNode configure(ResourceService dataset, URI configURI) throws IOException {
-            return configureDataset(dataset, configURI);
+        public JsonNode configure(ResourceService resourceService, URI configURI) throws IOException {
+            return configureDataset(resourceService, configURI);
         }
     }
 
-    private static JsonNode configureDataset(ResourceService dataset, URI configURI) throws IOException {
-        try (InputStream inputStream = dataset.retrieve(configURI)) {
+    private static JsonNode configureDataset(ResourceService sourceService, URI configURI) throws IOException {
+        try (InputStream inputStream = sourceService.retrieve(configURI)) {
             if (inputStream == null) {
                 throw new IOException("failed to access resource [" + configURI.toString() + "]");
             }
