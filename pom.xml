@@ -13,6 +13,7 @@
         <module>eol-globi-jcoord</module>
         <module>eol-globi-resource</module>
         <module>eol-globi-resource-local</module>
+        <module>eol-globi-http</module>
         <module>eol-globi-resource-remote</module>
         <module>eol-globi-lib</module>
         <module>wikidata</module>

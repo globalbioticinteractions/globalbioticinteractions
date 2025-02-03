@@ -74,7 +74,8 @@ public class DatasetImportUtil {
                                                 List<Dataset> datasetsWithDependencies,
                                                 ImportLogger logger,
                                                 NodeFactory nodeFactory,
-                                                String archiveLocation, File workDir) throws StudyImporterException {
+                                                String archiveLocation,
+                                                File workDir) throws StudyImporterException {
 
         final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
 
