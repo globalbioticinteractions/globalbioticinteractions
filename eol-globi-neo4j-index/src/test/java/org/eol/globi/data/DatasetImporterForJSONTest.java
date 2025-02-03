@@ -90,7 +90,9 @@ public class DatasetImporterForJSONTest extends GraphDBNeo4jTestCase {
             @Override
             public InputStream retrieve(URI resource) throws IOException {
                 String input = treeMap.get(resource);
-                return input == null ? null : IOUtils.toInputStream(input, StandardCharsets.UTF_8);
+                return input == null
+                        ? super.getResourceService().retrieve(resource)
+                        : IOUtils.toInputStream(input, StandardCharsets.UTF_8);
             }
         };
     }
