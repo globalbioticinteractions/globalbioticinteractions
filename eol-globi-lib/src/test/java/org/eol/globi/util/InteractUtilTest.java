@@ -10,8 +10,11 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -103,11 +106,14 @@ public class InteractUtilTest {
     }
 
     @Test
-    public void mapNotCaseSensitive() throws TermLookupServiceException {
-        assertThat(new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create().getInteractType("hostOf"),
-                is(InteractType.HOST_OF));
-        assertThat(new InteractTypeMapperFactoryImpl(InteractTypeMapperFactoryImpl.getResourceServiceForDefaultInteractionTypeMapping(new ResourceServiceLocal(new InputStreamFactoryNoop()))).create().getInteractType("hostof"),
-                is(InteractType.HOST_OF));
+    public void mapNotCaseSensitive() throws TermLookupServiceException, IOException {
+        ResourceServiceLocal service = new ResourceServiceLocal(new InputStreamFactoryNoop());
+        InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryImpl(service)
+                .create();
+
+        assertThat(interactTypeMapper.getInteractType("hostOf"), is(InteractType.HOST_OF));
+        assertThat(interactTypeMapper.getInteractType("hostof"), is(InteractType.HOST_OF));
     }
 
     @Test
