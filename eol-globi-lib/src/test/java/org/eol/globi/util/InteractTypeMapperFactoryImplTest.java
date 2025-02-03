@@ -301,9 +301,14 @@ public class InteractTypeMapperFactoryImplTest {
                 .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
 
         String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id";
-
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+
+        String defaultMapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
+                "\nassociated with,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437\n";
+        when(resourceService.retrieve(URI.create("classpath:/org/globalbioticinteractions/interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(defaultMapping, StandardCharsets.UTF_8));
+
         InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
 
         InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
@@ -324,6 +329,42 @@ public class InteractTypeMapperFactoryImplTest {
 
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+
+        String defaultMapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
+                "\nassociated with,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437\n" +
+                "\npollinates,,pollinates,http://purl.obolibrary.org/obo/RO_0002455\n";
+        when(resourceService.retrieve(URI.create("classpath:/org/globalbioticinteractions/interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(defaultMapping, StandardCharsets.UTF_8));
+
+        InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
+
+        InteractTypeMapper mapper = interactTypeMapperFactory.create();
+        assertThat(mapper.getInteractType("associated with"), is(InteractType.POLLINATES));
+        assertThat(mapper.getInteractType("pollinates"), is(InteractType.POLLINATES));
+    }
+
+    @Test
+    public void createOverrideNonBlankMappingROMapping() throws TermLookupServiceException, IOException {
+        ResourceService resourceService = Mockito.mock(ResourceService.class);
+        when(resourceService.retrieve(URI.create("interaction_types_ignored.csv")))
+                .thenReturn(IOUtils.toInputStream("interaction_type_ignored\nshouldBeIgnored", StandardCharsets.UTF_8));
+
+        String mapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
+                "associated with,,pollinates,http://purl.obolibrary.org/obo/RO_0002455";
+
+        when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(mapping, StandardCharsets.UTF_8));
+
+        String defaultMapping = "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id" +
+                "\nassociated with,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437\n";
+        when(resourceService.retrieve(URI.create("classpath:/org/globalbioticinteractions/interaction_types_mapping.csv")))
+                .thenReturn(IOUtils.toInputStream(defaultMapping, StandardCharsets.UTF_8));
+
+        String defaultROMapping = "interaction_type_label,interaction_type_id" +
+                "\npollinates,http://purl.obolibrary.org/obo/RO_0002455\n";
+        when(resourceService.retrieve(URI.create("/org/globalbioticinteractions/interaction_types_ro.csv")))
+                .thenReturn(IOUtils.toInputStream(defaultROMapping, StandardCharsets.UTF_8));
+
         InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
 
         InteractTypeMapper mapper = interactTypeMapperFactory.create();
@@ -424,8 +465,8 @@ public class InteractTypeMapperFactoryImplTest {
         when(resourceService.retrieve(URI.create("interaction_types_mapping.csv")))
                 .thenReturn(IOUtils.toInputStream(
                         "provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id\n" +
-                        "stings,,participates in a biotic-biotic interaction with,http://purl.obolibrary.org/obo/RO_0002574\n" +
-                        "reproductively interferes with,,participates in a biotic-biotic interaction with,http://purl.obolibrary.org/obo/RO_0002574\n",
+                                "stings,,participates in a biotic-biotic interaction with,http://purl.obolibrary.org/obo/RO_0002574\n" +
+                                "reproductively interferes with,,participates in a biotic-biotic interaction with,http://purl.obolibrary.org/obo/RO_0002574\n",
                         StandardCharsets.UTF_8));
 
         InteractTypeMapperFactoryImpl interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
