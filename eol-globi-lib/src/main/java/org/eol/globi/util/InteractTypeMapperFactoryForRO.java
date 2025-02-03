@@ -8,8 +8,8 @@ import java.net.URI;
 
 public class InteractTypeMapperFactoryForRO implements InteractTypeMapperFactory {
 
-    public static final String IGNORED_LIST_DEFAULT = "/org/globalbioticinteractions/interaction_types_ro_unmapped.csv";
-    public static final String SUPPORTED_INTERACTION_TYPES = "/org/globalbioticinteractions/interaction_types_ro.csv";
+    public static final String IGNORED_LIST_DEFAULT = "classpath:/org/globalbioticinteractions/interaction_types_ro_unmapped.csv";
+    public static final String SUPPORTED_INTERACTION_TYPES = "classpath:/org/globalbioticinteractions/interaction_types_ro.csv";
     public static final String IGNORED_INTERACTION_TYPE_COLUMN_NAME = "interaction_type_ignored";
     private final ResourceService resourceService;
 

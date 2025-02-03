@@ -329,7 +329,7 @@ public class DatasetImporterForRSSLocalTest extends GraphDBNeo4jTestCase {
 
         requestedResources.forEach(System.out::println);
 
-        assertThat(requestedResources.size(), is(5));
+        assertThat(requestedResources.size(), is(9));
 
         List<StudyNode> allStudies = NodeUtil.findAllStudies(getGraphDb());
         assertThat(allStudies.size(), greaterThan(0));

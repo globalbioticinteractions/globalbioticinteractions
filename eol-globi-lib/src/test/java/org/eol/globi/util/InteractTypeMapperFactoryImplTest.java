@@ -362,7 +362,7 @@ public class InteractTypeMapperFactoryImplTest {
 
         String defaultROMapping = "interaction_type_label,interaction_type_id" +
                 "\npollinates,http://purl.obolibrary.org/obo/RO_0002455\n";
-        when(resourceService.retrieve(URI.create("/org/globalbioticinteractions/interaction_types_ro.csv")))
+        when(resourceService.retrieve(URI.create("classpath:/org/globalbioticinteractions/interaction_types_ro.csv")))
                 .thenReturn(IOUtils.toInputStream(defaultROMapping, StandardCharsets.UTF_8));
 
         InteractTypeMapperFactory interactTypeMapperFactory = new InteractTypeMapperFactoryImpl(resourceService);
