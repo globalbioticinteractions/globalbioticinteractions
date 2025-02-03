@@ -36,16 +36,16 @@ import static java.nio.file.FileVisitResult.SKIP_SIBLINGS;
 
 public class DatasetRegistryLocal implements DatasetRegistry {
     private final static Logger LOG = LoggerFactory.getLogger(DatasetRegistryLocal.class);
-    private final CacheFactory cacheFactory;
     private final String provDir;
+    private final CacheFactory cacheFactory;
     private ResourceService resourceService;
 
     public DatasetRegistryLocal(String provDir,
                                 CacheFactory cacheFactory,
                                 ResourceService resourceService) {
+        this.provDir = provDir;
         this.cacheFactory = cacheFactory;
         this.resourceService = resourceService;
-        this.provDir = provDir;
     }
 
     @Override
