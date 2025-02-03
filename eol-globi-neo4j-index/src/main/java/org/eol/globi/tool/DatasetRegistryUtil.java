@@ -13,7 +13,7 @@ import org.globalbioticinteractions.dataset.DatasetRegistryLocal;
 public class DatasetRegistryUtil {
 
     public static DatasetRegistry getDatasetRegistry(final String cacheDir,
-                                                     final ResourceService resourceServiceLocal,
+                                                     final ResourceService resourceService,
                                                      final ContentPathFactory contentPathFactory,
                                                      final ProvenancePathFactory provenancePathFactory,
                                                      String provPath) {
@@ -22,10 +22,10 @@ public class DatasetRegistryUtil {
                 new CacheLocalReadonly(dataset.getNamespace(),
                         cacheDir,
                         provPath,
-                        resourceServiceLocal,
+                        resourceService,
                         contentPathFactory,
                         provenancePathFactory
                 );
-        return new DatasetRegistryLocal(cacheDir, cacheFactory, new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        return new DatasetRegistryLocal(cacheDir, cacheFactory, resourceService);
     }
 }
