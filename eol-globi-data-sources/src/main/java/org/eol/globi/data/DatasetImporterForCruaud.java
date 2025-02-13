@@ -49,7 +49,7 @@ public class DatasetImporterForCruaud extends NodeBasedImporter {
                             Specimen parasite = getNodeFactory().createSpecimen(study, new TaxonImpl(parasiteName, null));
                             Specimen host = getNodeFactory().createSpecimen(study, new TaxonImpl(hostName, null));
                             String samplingLocation = StringUtils.trim(dataParser.getValueByLabel("Sampling location"));
-                            if (getGeoNamesService().hasTermForLocale(samplingLocation)) {
+                            if (enableGeonames() && getGeoNamesService().hasTermForLocale(samplingLocation)) {
                                 LatLng pointForLocality = getGeoNamesService().findLatLng(samplingLocation);
                                 if (pointForLocality == null) {
                                     LOG.warn("no location associated with locality [" + samplingLocation + "]");
@@ -71,6 +71,10 @@ public class DatasetImporterForCruaud extends NodeBasedImporter {
         } catch (IOException e) {
             throw new StudyImporterException("problem importing [" + RESOURCE_PATH + "]", e);
         }
+    }
+
+    private boolean enableGeonames() {
+        return false;
     }
 
     protected boolean areNamesAvailable(String parasiteName, String hostName) {
