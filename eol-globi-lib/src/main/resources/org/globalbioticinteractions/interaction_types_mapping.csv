@@ -67,7 +67,6 @@ damagedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 damages,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 isHabitatOf,,createsHabitatFor,http://purl.obolibrary.org/obo/RO_0008505
 feeding on,,eats,http://purl.obolibrary.org/obo/RO_0002470
-feed on,,eats,http://purl.obolibrary.org/obo/RO_0002470
 collected from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 host of,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
 from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
