@@ -61,14 +61,14 @@ public class InjectRelatedRecords implements InteractionListener {
                     if (injectable == null) {
                         logger.warn(LogUtil.contextFor(interaction), "no matching values for foreign key [" + propertyToBeInjected + ":" + keyToBeExpanded + "] found.");
                     } else {
-                        if (StringUtils.startsWith(propertyToBeInjected, "source")) {
+                        if (!indexedDependencies.containsKey(propertyToBeInjected) && StringUtils.startsWith(propertyToBeInjected, getSourceLabel())) {
                             for (String key : injectable.keySet()) {
                                 String value = injectable.get(key);
                                 if (StringUtils.isNotBlank(value)) {
                                     handledInteraction.put(prefixWithSource(key), value);
                                 }
                             }
-                        } else if (StringUtils.startsWith(propertyToBeInjected, "target")) {
+                        } else if (!indexedDependencies.containsKey(propertyToBeInjected) && StringUtils.startsWith(propertyToBeInjected, getTargetLabel())) {
                             for (String key : injectable.keySet()) {
                                 String value = injectable.get(key);
                                 if (StringUtils.isNotBlank(value)) {
@@ -86,11 +86,22 @@ public class InjectRelatedRecords implements InteractionListener {
         listener.on(handledInteraction);
     }
 
+
     private String prefixWithSource(String name) {
-        return "source" + StringUtils.capitalize(name);
+        return getSourceLabel() + StringUtils.capitalize(name);
     }
 
     private String prefixWithTarget(String name) {
-        return "target" + StringUtils.capitalize(name);
+        return getTargetLabel() + StringUtils.capitalize(name);
     }
+
+    private String getSourceLabel() {
+        return "source";
+    }
+
+    private String getTargetLabel() {
+        return "target";
+    }
+
+
 }

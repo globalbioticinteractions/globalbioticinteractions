@@ -87,6 +87,42 @@ public class DatasetImporterForMetaTableTest {
         assertThat(columnNames.get(0).getKeyType(), is("primary"));
     }
 
+
+    @Test
+    public void parseSchemaWithPrimaryAndForeignKeysTargetTaxonId() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key-target-id.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return null;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+        List<JsonNode> tables = DatasetImporterForMetaTable.collectTables(dataset);
+
+        assertThat(tables.size(), is(2));
+
+        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnNamesForMetaTable(tables.get(0));
+        assertThat(columnNames.size(), is(4));
+
+
+
+        assertThat(columnNames.get(3).getKeyReference(), is("targetTaxonId"));
+        assertThat(columnNames.get(3).getKeyType(), is("foreign"));
+
+        columnNames = DatasetImporterForMetaTable.columnNamesForMetaTable(tables.get(1));
+        assertThat(columnNames.size(), is(6));
+        assertThat(columnNames.get(1).getKeyReference(), is("targetTaxonId"));
+        assertThat(columnNames.get(1).getKeyType(), is("primary"));
+        assertThat(columnNames.get(2).getName(), is("sourceTaxonId"));
+        assertThat(columnNames.get(2).getDataTypeId(), is("string"));
+        assertThat(columnNames.get(5).getName(), is("sourceTaxonName"));
+        assertThat(columnNames.get(5).getDataTypeId(), is("string"));
+    }
+
     @Test
     public void importRecordsWithPrimaryAndForeignKeys() throws IOException, StudyImporterException {
         final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
@@ -132,6 +168,47 @@ public class DatasetImporterForMetaTableTest {
         assertThat(first.get("referenceCitation"), is("Son, Y.-M. (2000) Population ecology of Abbottina springeri (Cyprinidae) in the Musimchon stream, Korea. Korean Journal of Ichthyology, 12, 186–191."));
 
 
+    }
+    @Test
+    public void importRecordsWithPrimaryAndForeignKeysTargetTaxonId() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key-target-id.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                Map<URI, String> resourceMap = new HashMap<URI, String>() {{
+                    put(URI.create("datasets/eppo-practicalplants-pests.csv"), "test-meta-globi-primary-key-target-id-pests.csv");
+                    put(URI.create("datasets/eppo-practicalplants-hosts.csv"), "test-meta-globi-primary-key-target-id-hosts.csv");
+                }};
+
+                String testResource = resourceMap.get(resourceName);
+                assertNotNull("[" + resourceName + "] not found", testResource);
+                InputStream resourceAsStream = DatasetImporterForMetaTableTest.this.getClass().getResourceAsStream(testResource);
+                assertNotNull("failed to find test resource [" + testResource + "]", resourceAsStream);
+                return resourceAsStream;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.setWorkDir(folder.newFolder());
+        importer.importStudy();
+
+        assertThat(links.size(), is(2));
+
+        Map<String, String> first = links.get(0);
+
+        assertThat(first.get("sourceTaxonId"), is("https://gd.eppo.int/taxon/PHYSCC"));
+        assertThat(first.get("sourceTaxonName"), is("Phyllosticta colocasiicola (as Aroideae)"));
+        assertThat(first.get("interactionTypeName"), is("Host"));
+        assertThat(first.get("targetTaxonId"), is("https://gd.eppo.int/taxon/AAUVS"));
+        assertThat(first.get("targetTaxonName"), is("Arisarum simorrhinum"));
     }
 
     @Test

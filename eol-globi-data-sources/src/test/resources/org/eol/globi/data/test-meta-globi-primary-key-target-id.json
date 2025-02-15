@@ -1,0 +1,91 @@
+{
+  "@context" : [ "http://www.w3.org/ns/csvw", {
+    "@language" : "en"
+  } ],
+  "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+  "tables" : [ {
+    "@context" : [ "http://www.w3.org/ns/csvw", {
+      "@language" : "en"
+    } ],
+    "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+    "url" : "datasets/eppo-practicalplants-hosts.csv",
+    "dcterms:bibliographicCitation" : "Configuration to help GloBI index Companion Planting Ontology, a resource developed by the Knowledge in AI group of Vrije Universiteit Amsterdam.",
+    "delimiter" : ",",
+    "headerRowCount" : 1,
+    "null" : [ "" ],
+    "tableSchema" : {
+      "foreignKeys": [
+        {
+          "columnReference": "targetTaxonId",
+          "reference": {
+            "columnReference": "targetTaxonId"
+          }
+        }
+      ],
+      "columns" : [ {
+        "name" : "",
+        "titles" : "",
+        "datatype" : "string"
+      }, {
+        "name" : "codeid",
+        "titles" : "codeid",
+        "datatype" : "string"
+      }, {
+        "name" : "targetTaxonName",
+        "titles" : "fullname",
+        "datatype" : "string"
+      }, {
+        "name" : "targetTaxonId",
+        "titles" : "eppocode",
+        "datatype": {
+          "base" : "string",
+          "valueUrl" : "https://gd.eppo.int/taxon/{targetTaxonId}"
+        }
+      } ]
+    }
+  }, {
+    "@context" : [ "http://www.w3.org/ns/csvw", {
+      "@language" : "en"
+    } ],
+    "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+    "url" : "datasets/eppo-practicalplants-pests.csv",
+    "dcterms:bibliographicCitation" : "Configuration to help GloBI index Companion Planting Ontology, a resource developed by the Knowledge in AI group of Vrije Universiteit Amsterdam.",
+    "delimiter" : ",",
+    "headerRowCount" : 1,
+    "null" : [ "" ],
+    "tableSchema" : {
+      "primaryKey": "targetTaxonId",
+      "columns" : [ {
+        "name" : "",
+        "titles" : "",
+        "datatype" : "string"
+      }, {
+        "name" : "targetTaxonId",
+        "titles" : "eppocode",
+        "datatype": {
+          "base" : "string",
+          "valueUrl" : "https://gd.eppo.int/taxon/{targetTaxonId}"
+        }
+      }, {
+        "name" : "sourceTaxonId",
+        "titles" : "pests_eppocode",
+        "datatype": {
+          "base" : "string",
+          "valueUrl" : "https://gd.eppo.int/taxon/{sourceTaxonId}"
+        }
+      }, {
+        "name" : "idclass",
+        "titles" : "idclass",
+        "datatype" : "string"
+      }, {
+        "name" : "interactionTypeName",
+        "titles" : "labelclass",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonName",
+        "titles" : "fullname",
+        "datatype" : "string"
+      }  ]
+    }
+  } ]
+}
