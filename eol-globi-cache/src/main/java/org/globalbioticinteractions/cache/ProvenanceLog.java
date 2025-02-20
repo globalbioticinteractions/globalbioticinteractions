@@ -27,10 +27,11 @@ public class ProvenanceLog {
     static boolean needsCaching(ContentProvenance contentProvenance, File cacheDir) {
         URI sourceURI = contentProvenance.getSourceURI();
 
-        boolean isInCacheDir = CacheUtil.isInCacheDir(cacheDir, sourceURI);
+        boolean isSourceInCacheDir = CacheUtil.isInCacheDir(cacheDir, sourceURI);
+        boolean isLocalInCacheDir = CacheUtil.isInCacheDir(cacheDir, contentProvenance.getLocalURI());
 
-        return !isInCacheDir
-                && !CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI());
+        return !isLocalInCacheDir || (!isSourceInCacheDir
+                && !CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI()));
     }
 
     private static void appendProvenanceLog(ContentProvenance contentProvenance, ContentPath contentPath) throws IOException {
