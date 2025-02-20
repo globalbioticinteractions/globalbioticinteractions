@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -79,7 +80,7 @@ public class ProvenanceLogTest {
         File dataDir = this.tempDirectory;
         CacheLocalReadonly cache = appendProvenance(dataDir);
 
-        File file = getTestZipFile(dataDir, "1234");
+        File file = getTestZipFile(dataDir);
 
         assertAvailable(cache, "jar:" + file.toURI() + "!/foo.txt");
     }
@@ -87,11 +88,11 @@ public class ProvenanceLogTest {
     @Test
     public void doesNotNeedCaching() throws IOException {
         File dataDir = this.tempDirectory;
-        File file = getTestZipFile(dataDir, "1234");
+        File file = getTestZipFile(dataDir);
         ContentProvenance entry = new ContentProvenance(
                 "some/namespace",
                 URI.create("jar:" + file.toURI().toString() + "!/foo.txt"),
-                URI.create("jar:" + file.toURI().toString() + "!/foo.txt"),
+                URI.create("cached:foo.txt"),
                 "5678",
                 "1970-01-01T00:00:00Z"
         );
@@ -102,11 +103,11 @@ public class ProvenanceLogTest {
     @Test
     public void doesNotNeedCachingEither() throws IOException {
         File dataDir = this.tempDirectory;
-        File file = getTestZipFile(dataDir, "1234");
+        File file = getTestZipFile(dataDir);
         ContentProvenance entry = new ContentProvenance(
                 "some/namespace",
-                file.toURI(),
-                file.toURI(),
+                URI.create(file.toURI().toString()),
+                URI.create("cached:archive.zip"),
                 "5678",
                 "1970-01-01T00:00:00Z"
         );
@@ -117,7 +118,8 @@ public class ProvenanceLogTest {
     @Test
     public void appendZipToProvenanceLogButNotLocalZipEntry() throws IOException {
         File dataDir = this.tempDirectory;
-        File file = getTestZipFile(dataDir, "1234");
+        File file = getTestZipFile(dataDir);
+
 
         CacheLocalReadonly cache1 = getCacheLocalReadonly(dataDir);
 
@@ -126,7 +128,7 @@ public class ProvenanceLogTest {
         ContentProvenance archive = new ContentProvenance(
                 "some/namespace",
                 URI.create("http://example.com"),
-                URI.create(file.toURI().toString()),
+                URI.create("cached:file.zip"),
                 "1234",
                 "1970-01-01T00:00:00Z"
         );
@@ -136,7 +138,7 @@ public class ProvenanceLogTest {
         ContentProvenance entry = new ContentProvenance(
                 "some/namespace",
                 URI.create("jar:" + file.toURI().toString() + "!/foo.txt"),
-                URI.create("jar:" + file.toURI().toString() + "!/foo.txt"),
+                URI.create("cached:foo.txt"),
                 "5678",
                 "1970-01-01T00:00:00Z"
         );
@@ -238,7 +240,7 @@ public class ProvenanceLogTest {
     @Test
     public void appendZipEntryToProvenanceLogRetrieveZipEntryLocalPath() throws IOException {
         File dataDir = this.tempDirectory;
-        File file = getTestZipFile(dataDir, "1234");
+        File file = getTestZipFile(dataDir);
 
         CacheLocalReadonly cache = populateCacheWithZipfileAndEntry(
                 dataDir,
@@ -249,10 +251,10 @@ public class ProvenanceLogTest {
         assertAvailable(cache, "jar:" + file.toURI().toString() + "!/foo.txt");
     }
 
-    private File getTestZipFile(File dataDir, String fakeContentId) throws IOException {
+    private File getTestZipFile(File dataDir) throws IOException {
         String cacheDir = dataDir.getAbsolutePath() + "/some/namespace";
         FileUtils.forceMkdir(new File(cacheDir));
-        File file = new File(cacheDir, fakeContentId);
+        File file = new File(cacheDir, "1234");
         createZipFile(file);
         return file;
     }
@@ -260,7 +262,7 @@ public class ProvenanceLogTest {
     @Test
     public void appendLocalZipEntryToProvenanceLogRetrieveZipEntryLocalPath() throws IOException {
         File dataDir = this.tempDirectory;
-        File file = getTestZipFile(dataDir, "1234");
+        File file = getTestZipFile(dataDir);
         String entryPath = "jar:" + file.toURI().toString() + "!/foo.txt";
 
         CacheLocalReadonly cache1 = getCacheLocalReadonly(dataDir);
@@ -326,7 +328,7 @@ public class ProvenanceLogTest {
         ContentProvenance meta = new ContentProvenance(
                 "some/namespace",
                 URI.create("http://example.com"),
-                URI.create("jar:" + tempDirectory.toURI() + "/file.zip!/something"),
+                URI.create("jar:file://file.zip!/something"),
                 "1234",
                 "1970-01-01");
         assertFalse(ProvenanceLog.needsCaching(meta, tempDirectory));
@@ -356,12 +358,10 @@ public class ProvenanceLogTest {
 
     @Test
     public void localJarURIOutsideOfCacheDirNeedsCaching() throws IOException, URISyntaxException {
-        File outsideOfDataDir = folder.newFolder();
-        FileUtils.forceMkdir(outsideOfDataDir);
         ContentProvenance meta = new ContentProvenance(
                 "some/namespace",
                 tempDirectory.getParentFile().toURI(),
-                URI.create("jar:" + new File(outsideOfDataDir, "somefile.jar").toURI().toString() + "!/foo.txt"),
+                URI.create("jar:" + new File(folder.newFolder(), "somefile.jar").toURI().toString() + "!/foo.txt"),
                 "1234",
                 "1970-01-01");
         assertTrue(ProvenanceLog.needsCaching(meta, tempDirectory));

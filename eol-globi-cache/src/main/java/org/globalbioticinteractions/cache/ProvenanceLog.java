@@ -30,9 +30,8 @@ public class ProvenanceLog {
         boolean isSourceInCacheDir = CacheUtil.isInCacheDir(cacheDir, sourceURI);
         boolean isLocalInCacheDir = CacheUtil.isInCacheDir(cacheDir, contentProvenance.getLocalURI());
 
-        return (!isSourceInCacheDir
-                && !CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI())
-                || !isLocalInCacheDir);
+        return !isLocalInCacheDir || (!isSourceInCacheDir
+                && !CacheLocalReadonly.isJarResource(contentProvenance.getLocalURI()));
     }
 
     private static void appendProvenanceLog(ContentProvenance contentProvenance, ContentPath contentPath) throws IOException {
