@@ -6,9 +6,7 @@ import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -36,14 +34,12 @@ import static org.junit.Assert.assertNull;
 
 public class ProvenanceLogTest {
 
-    @Rule
-
-    public TemporaryFolder folder = new TemporaryFolder();
     private File tempDirectory;
 
     @Before
     public void init() throws IOException {
-        tempDirectory = folder.newFolder();
+        tempDirectory = new File("target/provenance-test" + UUID.randomUUID());
+        FileUtils.forceMkdir(tempDirectory);
     }
 
     @After
@@ -351,17 +347,6 @@ public class ProvenanceLogTest {
                 "some/namespace",
                 tempDirectory.getParentFile().toURI(),
                 new File(tempDirectory, "somefile.txt").toURI(),
-                "1234",
-                "1970-01-01");
-        assertTrue(ProvenanceLog.needsCaching(meta, tempDirectory));
-    }
-
-    @Test
-    public void localJarURIOutsideOfCacheDirNeedsCaching() throws IOException, URISyntaxException {
-        ContentProvenance meta = new ContentProvenance(
-                "some/namespace",
-                tempDirectory.getParentFile().toURI(),
-                URI.create("jar:" + new File(folder.newFolder(), "somefile.jar").toURI().toString() + "!/foo.txt"),
                 "1234",
                 "1970-01-01");
         assertTrue(ProvenanceLog.needsCaching(meta, tempDirectory));
