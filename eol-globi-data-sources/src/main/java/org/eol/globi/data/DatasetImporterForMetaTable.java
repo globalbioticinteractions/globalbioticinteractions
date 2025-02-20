@@ -92,7 +92,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         Map<String, JsonNode> primaryKeyTables = new HashMap<>();
         Map<JsonNode, List<String>> primaryKeyDependencies = new HashMap<>();
 
-        gatherDepedencies(dataset, primaryKeyTables, primaryKeyDependencies);
+        gatherDependencies(dataset, primaryKeyTables, primaryKeyDependencies);
 
         Map<String, Map<String, Map<String, String>>> indexedTables
                 = indexDependencies(dataset, logger, primaryKeyTables, primaryKeyDependencies, tmpDir);
@@ -134,7 +134,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         return indexedTables;
     }
 
-    private static void gatherDepedencies(Dataset dataset, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies) throws StudyImporterException, IOException {
+    private static void gatherDependencies(Dataset dataset, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies) throws StudyImporterException, IOException {
         for (JsonNode tableConfig : collectTables(dataset)) {
             Dataset datasetProxy = new DatasetProxy(dataset);
             datasetProxy.setConfig(tableConfig);
