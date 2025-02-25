@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.cache;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eol.globi.util.ResourceUtil;
@@ -30,7 +31,7 @@ public class CacheProxyForDataset extends CacheProxy {
         }
         InputStream inputStream = super.retrieve(resourceLocation);
         if (null == inputStream) {
-            throw new IOException("resource [" + resourceName + "] not found at [" + resourceLocation +"]");
+            throw new IOException("resource [" + resourceName + "] not found at [" + resourceLocation + "]");
         }
         return inputStream;
     }
@@ -45,8 +46,14 @@ public class CacheProxyForDataset extends CacheProxy {
             URI archiveURI = dataset.getArchiveURI();
             if (CacheUtil.isLocalDir(archiveURI)) {
                 uri = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
+            } else if (StringUtils.startsWith(archiveURI.toString(), "urn:lsid")) {
+                ContentProvenance contentProvenance = provenanceOf(resourceName);
+                if (contentProvenance == null) {
+                    throw new IOException("unknown resource [" + resourceName + "]");
+                }
+                uri = contentProvenance.getLocalURI();
             } else {
-                // assume remote archive
+                // resource is embedded in some archive (e.g., zip file)
                 InputStream is = super.retrieve(archiveURI);
                 if (is == null) {
                     throw new IOException("failed to retrieve [" + archiveURI + "]");
