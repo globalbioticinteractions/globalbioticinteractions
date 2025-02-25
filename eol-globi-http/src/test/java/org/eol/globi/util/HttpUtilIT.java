@@ -87,12 +87,4 @@ public class HttpUtilIT {
         httpClient.execute(get, new BasicResponseHandler());
     }
 
-    @Test
-    public void withCircularRedirect() throws IOException {
-        HttpClientBuilder builder = HttpUtil.createHttpClientBuilder(HttpUtil.TIMEOUT_SHORT);
-        CloseableHttpClient httpClient = builder.build();
-        HttpGet get = new HttpGet("https://www.snib.mx/iptconabio/archive.do?r=ecoab-host-plant");
-        httpClient.execute(get, new BasicResponseHandler());
-    }
-
 }

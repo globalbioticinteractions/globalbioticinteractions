@@ -37,7 +37,6 @@ public class HttpUtil {
             RequestConfig config = RequestConfig.custom()
                     .setSocketTimeout(TIMEOUT_SHORT)
                     .setConnectTimeout(TIMEOUT_SHORT)
-                    .setCircularRedirectsAllowed(true)
                     .build();
 
             failFastHttpClient = HttpClientBuilder
@@ -80,11 +79,9 @@ public class HttpUtil {
     }
 
     public static HttpClientBuilder createHttpClientBuilder(int soTimeoutMs) {
-        RequestConfig config = RequestConfig
-                .custom()
+        RequestConfig config = RequestConfig.custom()
                 .setSocketTimeout(soTimeoutMs)
                 .setConnectTimeout(soTimeoutMs)
-                .setCircularRedirectsAllowed(true)
                 // see https://stackoverflow.com/questions/54591140/apache-http-client-stop-removing-double-slashes-from-url
                 .setNormalizeUri(false)
                 .build();
