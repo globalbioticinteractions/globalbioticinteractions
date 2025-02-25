@@ -1,20 +1,23 @@
 package org.globalbioticinteractions.cache;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eol.globi.util.ResourceUtil;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetFinderUtil;
 import org.globalbioticinteractions.dataset.DatasetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CacheProxyForDataset extends CacheProxy {
     private static final Logger LOG = LoggerFactory.getLogger(CacheProxyForDataset.class);
+    public static final Pattern PATH_MATCH = Pattern.compile("[/]{0,1}(?<path>.*)");
 
     private Dataset dataset;
 
@@ -46,12 +49,17 @@ public class CacheProxyForDataset extends CacheProxy {
             URI archiveURI = dataset.getArchiveURI();
             if (CacheUtil.isLocalDir(archiveURI)) {
                 uri = ResourceUtil.getAbsoluteResourceURI(archiveURI, mappedResourceName);
-            } else if (StringUtils.startsWith(archiveURI.toString(), "urn:lsid")) {
-                ContentProvenance contentProvenance = provenanceOf(resourceName);
-                if (contentProvenance == null) {
-                    throw new IOException("unknown resource [" + resourceName + "]");
+            } else if (StringUtils.endsWith(archiveURI.toString(), "/") && StringUtils.startsWith(archiveURI.toString(), "file:/")) {
+                Matcher matcher = PATH_MATCH.matcher(resourceName.toString());
+                if (!matcher.matches()) {
+                    throw new IOException("unexpected mismatch for [" + resourceName + "]");
                 }
-                uri = contentProvenance.getLocalURI();
+                URI resourceInDirectoryURI = URI.create(archiveURI.toString() + matcher.group("path"));
+                ContentProvenance contentProvenance = provenanceOf(resourceInDirectoryURI);
+                if (contentProvenance == null) {
+                    throw new IOException("unknown resource [" + resourceInDirectoryURI + "]");
+                }
+                uri = contentProvenance.getSourceURI();
             } else {
                 // resource is embedded in some archive (e.g., zip file)
                 InputStream is = super.retrieve(archiveURI);
