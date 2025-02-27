@@ -6,16 +6,16 @@ public class ContentProvenance {
 
     private final URI sourceURI;
     private final URI cachedURI;
-    private final String sha256;
+    private final String contentId;
     private final String accessedAt;
     private final String namespace;
     private String type;
 
-    public ContentProvenance(String namespace, URI sourceURI, URI cachedURI, String sha256, String accessedAt) {
+    public ContentProvenance(String namespace, URI sourceURI, URI cachedURI, String contentId, String accessedAt) {
         this.namespace = namespace;
         this.sourceURI = sourceURI;
         this.cachedURI = cachedURI;
-        this.sha256 = sha256;
+        this.contentId = contentId;
         this.accessedAt = accessedAt;
     }
 
@@ -39,8 +39,8 @@ public class ContentProvenance {
      * @return SHA-256 content hash of accessed source content
      */
 
-    public String getSha256() {
-        return sha256;
+    public String getContentId() {
+        return contentId;
     }
 
     /**

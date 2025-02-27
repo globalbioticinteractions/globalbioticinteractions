@@ -8,6 +8,7 @@ import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.Cache;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.HashCalculatorSHA256;
 import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.junit.After;
 import org.junit.Before;
@@ -67,7 +68,7 @@ public class DatasetRegistryWithCacheTest {
                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                 new ContentPathFactoryDepth0(),
-                new ProvenancePathFactoryImpl()
+                new ProvenancePathFactoryImpl(), new HashCalculatorSHA256()
         );
         return new DatasetWithCache(dataset, cache);
     }

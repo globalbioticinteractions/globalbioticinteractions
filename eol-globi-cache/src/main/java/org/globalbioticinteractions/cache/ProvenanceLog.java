@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class ProvenanceLog {
 
@@ -52,7 +51,7 @@ public class ProvenanceLog {
         } else {
             logEntries = Arrays.asList(contentProvenance.getNamespace()
                     , contentProvenance.getSourceURI().toString()
-                    , contentProvenance.getSha256() == null ? "" : contentProvenance.getSha256()
+                    , contentProvenance.getContentId() == null ? "" : contentProvenance.getContentId()
                     , contentProvenance.getAccessedAt()
                     , contentProvenance.getType());
         }

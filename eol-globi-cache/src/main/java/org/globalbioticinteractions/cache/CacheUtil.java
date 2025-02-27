@@ -2,9 +2,11 @@ package org.globalbioticinteractions.cache;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.DateUtil;
+import org.globalbioticinteractions.dataset.HashCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +34,9 @@ public final class CacheUtil {
                                  ResourceService resourceServiceRemote,
                                  ResourceService resourceServiceLocal,
                                  ContentPathFactory contentPathFactory,
-                                 ProvenancePathFactory provenancePathFactory) {
-        Cache pullThroughCache = new CachePullThrough(namespace, resourceServiceRemote, contentPathFactory, dataDir, provDir);
+                                 ProvenancePathFactory provenancePathFactory,
+                                 HashCalculator hashCalculator) {
+        Cache pullThroughCache = new CachePullThrough(namespace, resourceServiceRemote, contentPathFactory, dataDir, provDir, hashCalculator);
         CacheLocalReadonly readOnlyCache = new CacheLocalReadonly(namespace, dataDir, provDir, resourceServiceLocal, contentPathFactory, provenancePathFactory);
         return new CacheProxy(Arrays.asList(readOnlyCache, pullThroughCache));
     }
@@ -61,7 +64,8 @@ public final class CacheUtil {
             InputStream inputStream,
             File cacheDir,
             ContentPathFactory contentPathFactory,
-            String namespace) throws IOException {
+            String namespace,
+            HashCalculator hashCalculator) throws IOException {
         File destinationFile = null;
 
         File cacheDirForNamespace = CacheUtil.findOrMakeProvOrDataDirForNamespace(cacheDir, namespace);
@@ -70,7 +74,7 @@ public final class CacheUtil {
             destinationFile = File.createTempFile("archive", "tmp", cacheDirForNamespace);
             try {
                 OutputStream os = FileUtils.openOutputStream(destinationFile);
-                String sha256 = calculateContentHash(sourceStream, os);
+                String sha256 = hashCalculator.calculateContentHash(sourceStream, NullOutputStream.NULL_OUTPUT_STREAM);
                 URI uri = contentPathFactory.getPath(cacheDir, namespace).forContentId(sha256);
                 File destFile = new File(uri);
                 if (!destFile.exists()) {
@@ -99,11 +103,12 @@ public final class CacheUtil {
                                           File dataDir,
                                           ResourceService resourceService,
                                           ContentPathFactory contentPathFactory,
-                                          String namespace) throws IOException {
+                                          String namespace,
+                                          HashCalculator hashCalculator) throws IOException {
         String msg = "caching [" + sourceURI + "]";
         LOG.info(msg + " started...");
         InputStream inputStream = resourceService.retrieve(sourceURI);
-        ContentProvenance contentProvenance = cacheStream(inputStream, dataDir, contentPathFactory, namespace);
+        ContentProvenance contentProvenance = cacheStream(inputStream, dataDir, contentPathFactory, namespace, hashCalculator);
         LOG.info(msg + " cached at [" + contentProvenance.getLocalURI().toString() + "]...");
         LOG.info(msg + " complete.");
         return contentProvenance;
@@ -128,4 +133,5 @@ public final class CacheUtil {
         }
         return isInCacheDir;
     }
+
 }

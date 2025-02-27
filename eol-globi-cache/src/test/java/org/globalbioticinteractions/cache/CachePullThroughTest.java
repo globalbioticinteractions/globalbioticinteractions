@@ -36,7 +36,7 @@ public class CachePullThroughTest {
                 dataDir,
                 new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
                 new ContentPathFactoryDepth0(),
-                namespace
+                namespace, new HashCalculatorSHA256()
         );
         File cachedFile = new File(contentProvenance.getLocalURI());
         assertThat(cachedFile.exists(), Is.is(true));
@@ -53,7 +53,8 @@ public class CachePullThroughTest {
                 new ResourceServiceLocalAndRemote(new InputStreamFactoryNoop(), folder.newFolder()),
                 new ContentPathFactoryDepth0(),
                 dataDir.getAbsolutePath(),
-                provDir.getAbsolutePath()
+                provDir.getAbsolutePath(),
+                new HashCalculatorSHA256()
         );
 
         InputStream is

@@ -7,6 +7,7 @@ import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.CachePullThrough;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.HashCalculatorSHA256;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetWithCache;
 import org.hamcrest.core.Is;
@@ -29,7 +30,7 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
         String provDir = tempFile.getParentFile().getAbsolutePath();
         DatasetWithCache datasetWithCache = new DatasetWithCache(
                 new DatasetLocal(new ResourceServiceLocal(new InputStreamFactoryNoop())),
-                new CachePullThrough("testing", getResourceService(), new ContentPathFactoryDepth0(), dataDir, provDir)
+                new CachePullThrough("testing", getResourceService(), new ContentPathFactoryDepth0(), dataDir, provDir, new HashCalculatorSHA256())
         );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();
@@ -54,7 +55,7 @@ public class DatasetImporterForRSSIT extends GraphDBNeo4jTestCase {
         String provDir = tempFile.getParentFile().getAbsolutePath();
         DatasetWithCache datasetWithCache = new DatasetWithCache(
                 dataset,
-                new CachePullThrough("testing", getResourceService(), new ContentPathFactoryDepth0(), dataDir, provDir)
+                new CachePullThrough("testing", getResourceService(), new ContentPathFactoryDepth0(), dataDir, provDir, new HashCalculatorSHA256())
         );
 
         ObjectNode rssUrl = new ObjectMapper().createObjectNode();

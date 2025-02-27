@@ -202,9 +202,9 @@ public class DatasetWithCacheTest {
     private Cache createCacheMockContentHash() {
         Cache cache = Mockito.mock(Cache.class);
         ContentProvenance firstContentProvenance = Mockito.mock(ContentProvenance.class);
-        when(firstContentProvenance.getSha256()).thenReturn("first");
+        when(firstContentProvenance.getContentId()).thenReturn("first");
         ContentProvenance secondContentProvenance = Mockito.mock(ContentProvenance.class);
-        when(secondContentProvenance.getSha256()).thenReturn("second");
+        when(secondContentProvenance.getContentId()).thenReturn("second");
         when(cache.provenanceOf(URI.create("some:bla")))
                 .thenReturn(firstContentProvenance)
                 .thenReturn(secondContentProvenance);

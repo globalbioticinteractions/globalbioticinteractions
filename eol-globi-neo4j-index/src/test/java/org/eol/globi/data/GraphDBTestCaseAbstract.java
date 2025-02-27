@@ -18,6 +18,7 @@ import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.HashCalculatorSHA256;
 import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.globalbioticinteractions.dataset.Dataset;
 import org.globalbioticinteractions.dataset.DatasetRegistry;
@@ -101,7 +102,7 @@ public abstract class GraphDBTestCaseAbstract {
                             new ResourceServiceLocal(new InputStreamFactoryNoop()),
                             new ResourceServiceLocal(new InputStreamFactoryNoop()),
                             new ContentPathFactoryDepth0(),
-                            new ProvenancePathFactoryImpl()
+                            new ProvenancePathFactoryImpl(), new HashCalculatorSHA256()
                     );
                 });
         return finder.datasetFor(namespace);

@@ -9,6 +9,7 @@ import org.globalbioticinteractions.cache.CacheLocalReadonly;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.cache.ContentPathDepth0;
 import org.globalbioticinteractions.cache.ContentPathFactoryDepth0;
+import org.globalbioticinteractions.cache.HashCalculatorSHA256;
 import org.globalbioticinteractions.cache.ProvenancePathFactoryImpl;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -55,7 +57,7 @@ public class DatasetRegistryLocalTest {
                                 getService(),
                                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                                 new ContentPathFactoryDepth0(),
-                                new ProvenancePathFactoryImpl()
+                                new ProvenancePathFactoryImpl(), new HashCalculatorSHA256()
                         );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -99,7 +101,7 @@ public class DatasetRegistryLocalTest {
                                 getService(),
                                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                                 new ContentPathFactoryDepth0(),
-                                new ProvenancePathFactoryImpl()
+                                new ProvenancePathFactoryImpl(), new HashCalculatorSHA256()
                         );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -122,7 +124,15 @@ public class DatasetRegistryLocalTest {
         );
         InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
-        String actualHash = CacheUtil.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
+        HashCalculator hashCalculator = new HashCalculator() {
+
+            @Override
+            public String calculateContentHash(InputStream is, OutputStream os) throws IOException, NoSuchAlgorithmException {
+                return CacheUtil.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
+            }
+        };
+
+        String actualHash = hashCalculator.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
         assertThat(actualHash, is("6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2"));
     }
 
@@ -147,7 +157,7 @@ public class DatasetRegistryLocalTest {
                                 getService(),
                                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                                 new ContentPathFactoryDepth0(),
-                                new ProvenancePathFactoryImpl()
+                                new ProvenancePathFactoryImpl(), new HashCalculatorSHA256()
                         );
                     } catch (IOException e) {
                         throw new RuntimeException(e);

@@ -145,7 +145,7 @@ public class ProvenanceLogTest {
         ContentProvenance contentProvenance = cache1.provenanceOf(URI.create("http://example.com"));
         assertThat(contentProvenance.getNamespace(), is("some/namespace"));
         assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
-        assertThat(contentProvenance.getSha256(), is("1234"));
+        assertThat(contentProvenance.getContentId(), is("1234"));
         assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
         assertThat(contentProvenance.getType(), is(nullValue()));
         CacheLocalReadonly cache = cache1;
@@ -224,7 +224,7 @@ public class ProvenanceLogTest {
         ContentProvenance contentProvenance = cache1.provenanceOf(URI.create(entryPath));
         assertThat(contentProvenance.getNamespace(), is("some/namespace"));
         assertThat(contentProvenance.getSourceURI().toString(), is(entryPath));
-        assertThat(contentProvenance.getSha256(), is("5678"));
+        assertThat(contentProvenance.getContentId(), is("5678"));
         assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
         assertThat(contentProvenance.getType(), is(nullValue()));
 
@@ -278,7 +278,7 @@ public class ProvenanceLogTest {
         ContentProvenance contentProvenance = cache1.provenanceOf(URI.create(entryPath));
         assertThat(contentProvenance.getNamespace(), is("some/namespace"));
         assertThat(contentProvenance.getSourceURI().toString(), is("jar:http://example.com!/foo.txt"));
-        assertThat(contentProvenance.getSha256(), is("1234"));
+        assertThat(contentProvenance.getContentId(), is("1234"));
         assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
         assertThat(contentProvenance.getType(), is(nullValue()));
 
@@ -306,7 +306,7 @@ public class ProvenanceLogTest {
         ContentProvenance contentProvenance = cache.provenanceOf(URI.create("http://example.com"));
         assertThat(contentProvenance.getNamespace(), is("some/namespace"));
         assertThat(contentProvenance.getSourceURI().toString(), is("http://example.com"));
-        assertThat(contentProvenance.getSha256(), is("1234"));
+        assertThat(contentProvenance.getContentId(), is("1234"));
         assertThat(contentProvenance.getAccessedAt(), is("1970-01-01T00:00:00Z"));
         assertThat(contentProvenance.getType(), is(nullValue()));
         return cache;

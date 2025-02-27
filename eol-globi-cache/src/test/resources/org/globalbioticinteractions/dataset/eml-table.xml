@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <eml:eml
-    packageId="hash:sha256://578be9117f150ab570d38cd03f9d35a9a03b59cd29eae93957c38de09d690268" system="https://linker.bio"
+    packageId="hash:contentId://578be9117f150ab570d38cd03f9d35a9a03b59cd29eae93957c38de09d690268" system="https://linker.bio"
     xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.1"
