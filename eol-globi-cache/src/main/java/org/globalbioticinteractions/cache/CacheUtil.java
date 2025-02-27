@@ -74,7 +74,7 @@ public final class CacheUtil {
             destinationFile = File.createTempFile("archive", "tmp", cacheDirForNamespace);
             try {
                 OutputStream os = FileUtils.openOutputStream(destinationFile);
-                String sha256 = hashCalculator.calculateContentHash(sourceStream, NullOutputStream.NULL_OUTPUT_STREAM);
+                String sha256 = hashCalculator.calculateContentHash(sourceStream, os);
                 URI uri = contentPathFactory.getPath(cacheDir, namespace).forContentId(sha256);
                 File destFile = new File(uri);
                 if (!destFile.exists()) {

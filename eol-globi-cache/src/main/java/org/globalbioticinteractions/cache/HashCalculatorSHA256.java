@@ -11,7 +11,7 @@ public class HashCalculatorSHA256 implements HashCalculator {
 
     @Override
     public String calculateContentHash(InputStream is, OutputStream os) throws IOException, NoSuchAlgorithmException {
-        return calculateContentHash(is, os);
+        return CacheUtil.calculateContentHash(is, os);
     }
 
 }

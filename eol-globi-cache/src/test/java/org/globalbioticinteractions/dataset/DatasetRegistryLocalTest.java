@@ -101,7 +101,8 @@ public class DatasetRegistryLocalTest {
                                 getService(),
                                 new ResourceServiceLocal(new InputStreamFactoryNoop()),
                                 new ContentPathFactoryDepth0(),
-                                new ProvenancePathFactoryImpl(), new HashCalculatorSHA256()
+                                new ProvenancePathFactoryImpl(),
+                                new HashCalculatorSHA256()
                         );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -124,15 +125,7 @@ public class DatasetRegistryLocalTest {
         );
         InputStream inputStream = readOnlyCache.retrieve(URI.create("https://example.org/data.zip"));
 
-        HashCalculator hashCalculator = new HashCalculator() {
-
-            @Override
-            public String calculateContentHash(InputStream is, OutputStream os) throws IOException, NoSuchAlgorithmException {
-                return CacheUtil.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
-            }
-        };
-
-        String actualHash = hashCalculator.calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
+        String actualHash = new HashCalculatorSHA256().calculateContentHash(inputStream, NullOutputStream.NULL_OUTPUT_STREAM);
         assertThat(actualHash, is("6bfc17b8717e6e8e478552f12404bc8887d691a155ffd9cd9bfc80cb6747c5d2"));
     }
 
