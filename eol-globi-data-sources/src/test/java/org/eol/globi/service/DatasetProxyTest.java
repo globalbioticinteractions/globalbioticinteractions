@@ -116,6 +116,21 @@ public class DatasetProxyTest {
     }
 
     @Test
+    public void getDoNotMergeTableSchema() throws IOException {
+        JsonNode configProxy = new ObjectMapper().readTree(getClass().getResourceAsStream("/org/eol/globi/data/example-no-eol.json"));
+        JsonNode config = new ObjectMapper().readTree(getClass().getResourceAsStream("/org/eol/globi/data/example-no-eol.json"));
+        DatasetImpl dataset = new DatasetWithResourceMapping("some/namespace", URI.create("http://example.com"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+        dataset.setConfig(config);
+
+        DatasetProxy datasetProxy = new DatasetProxy(dataset);
+        datasetProxy.setConfig(configProxy);
+
+        assertThat(datasetProxy.getConfig().at("/tableSchema/columns").size(), is(2));
+        assertThat(dataset.getConfig().at("/tableSchema/columns").size(), is(2));
+
+    }
+
+    @Test
     public void getMetaTableProxy() throws IOException, URISyntaxException {
         JsonNode tables = new ObjectMapper().readTree(getClass().getResourceAsStream("globi-meta.json"));
         JsonNode table = new ObjectMapper().readTree(getClass().getResourceAsStream("globi-metatable.json"));

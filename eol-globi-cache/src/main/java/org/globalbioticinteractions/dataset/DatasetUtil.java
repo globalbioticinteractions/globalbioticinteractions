@@ -11,9 +11,12 @@ import static org.globalbioticinteractions.dataset.DatasetConstant.DEPRECATED;
 
 public final class DatasetUtil {
 
+    public static final String RESOURCES = "resources";
+    public static final String VERSIONS = "versions";
+
     public static URI getNamedResourceURI(Dataset dataset, URI resourceName) throws IOException {
-        URI mappedResource = mapResourceNameIfRequested(resourceName, dataset.getConfig(), "resources");
-        URI versionedResource = mapResourceNameIfRequested(mappedResource, dataset.getConfig(), "versions");
+        URI mappedResource = mapResourceNameIfRequested(resourceName, dataset.getConfig(), RESOURCES);
+        URI versionedResource = mapResourceNameIfRequested(mappedResource, dataset.getConfig(), VERSIONS);
         return versionedResource;
     }
 
