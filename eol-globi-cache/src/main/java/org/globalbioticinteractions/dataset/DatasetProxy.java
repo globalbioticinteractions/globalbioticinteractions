@@ -2,7 +2,6 @@ package org.globalbioticinteractions.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +52,11 @@ public class DatasetProxy implements Dataset {
         JsonNode merged;
         ObjectMapper mapper = new ObjectMapper();
         try {
-            ObjectNode overrideResources = mapper.createObjectNode();
-            overrideResources.set(DatasetUtil.RESOURCES, config.at("/" + DatasetUtil.RESOURCES));
-            overrideResources.set(DatasetUtil.VERSIONS, config.at("/" + DatasetUtil.VERSIONS));
-
+            String content = proxied.toString();
             // see https://github.com/FasterXML/jackson-databind/issues/3122
-            merged = mapper.readerForUpdating(mapper.readValue(proxied.toString(), JsonNode.class))
-                    .readValue(overrideResources.toString());
-
+            JsonNode orig = mapper.readValue(content, JsonNode.class);
+            merged = mapper.readerForUpdating(orig)
+                    .readValue(config.toString());
         } catch (JsonProcessingException e) {
             throw new RuntimeException("unexpected json processing error", e);
         }
