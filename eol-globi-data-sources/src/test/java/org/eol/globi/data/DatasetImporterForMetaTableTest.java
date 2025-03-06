@@ -704,5 +704,45 @@ public class DatasetImporterForMetaTableTest {
         assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
     }
 
+    @Test
+    public void carriageReturn() throws IOException, StudyImporterException {
+        final InputStream inputStream = getClass().getResourceAsStream("example-carriage-return.json");
+        assertNotNull(inputStream);
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        DatasetLocal dataset = new DatasetLocal(
+                new ResourceServiceLocal(new InputStreamFactoryNoop(), this.getClass())
+        );
+
+        dataset.setConfig(config);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.importStudy();
+
+        assertThat(links.size(), is(4));
+
+        assertThat(links.get(0).get("empty1"), is("Homo sapiens"));
+        assertThat(links.get(0).get("empty3"), is("eats: Canis lupus | eats: Catus felis"));
+
+        assertThat(links.get(0).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(0).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
+
+        assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(1).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
+
+        assertThat(links.get(2).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(2).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(2).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
+
+        assertThat(links.get(3).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
+        assertThat(links.get(3).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(3).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
+    }
+
 
 }
