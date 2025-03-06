@@ -712,7 +712,13 @@ public class DatasetImporterForMetaTableTest {
 
         DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
         DatasetLocal dataset = new DatasetLocal(
-                new ResourceServiceLocal(new InputStreamFactoryNoop(), this.getClass())
+                new ResourceService() {
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        return IOUtils.toInputStream("Homo sapiens,eats: Canis lupus | eats: Catus felis\r" +
+                                "Homo sapiens,eats: Canis lupus | eats: Catus felis", StandardCharsets.UTF_8);
+                    }
+                }
         );
 
         dataset.setConfig(config);
