@@ -2,6 +2,7 @@ package org.globalbioticinteractions.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,15 +49,24 @@ public class DatasetProxy implements Dataset {
         return mergedConfig == null ? config : mergedConfig;
     }
 
-    private static JsonNode mergeProxiedConfig(JsonNode proxied, JsonNode config) {
-        JsonNode merged;
+    private static JsonNode mergeProxiedConfig(JsonNode config, JsonNode configOverride) {
+        ObjectNode merged;
         ObjectMapper mapper = new ObjectMapper();
         try {
-            String content = proxied.toString();
             // see https://github.com/FasterXML/jackson-databind/issues/3122
-            JsonNode orig = mapper.readValue(content, JsonNode.class);
-            merged = mapper.readerForUpdating(orig)
-                    .readValue(config.toString());
+            ObjectNode orig = mapper.readValue(config.toString(), ObjectNode.class);
+            JsonNode origSchema = orig.get("tableSchema");
+            orig.remove("tableSchema");
+
+            ObjectNode override = mapper.readValue(configOverride.toString(), ObjectNode.class);
+            JsonNode overrideSchema = override.get("tableSchema");
+            override.remove("tableSchema");
+
+            JsonNode mergedNoSchema = mapper.readerForUpdating(orig)
+                    .readValue(override.toString());
+            merged = mapper.readValue(mergedNoSchema.toString(), ObjectNode.class);
+            merged.set("tableSchema", overrideSchema == null ? origSchema : overrideSchema);
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException("unexpected json processing error", e);
         }
