@@ -72,13 +72,25 @@ public class DatasetProxy implements Dataset {
             JsonNode mergedNoSchema = mapper.readerForUpdating(orig)
                     .readValue(override.toString());
             merged = mapper.readValue(mergedNoSchema.toString(), ObjectNode.class);
-            merged.set("tableSchema", overrideSchema == null ? origSchema : overrideSchema);
-            merged.set("tables", overrideTables == null ? origTables : overrideTables);
+
+            override(merged, origSchema, overrideSchema, "tableSchema");
+            override(merged, origTables, overrideTables, "tables");
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException("unexpected json processing error", e);
         }
         return merged;
+    }
+
+    private static void override(ObjectNode merged,
+                                 JsonNode origTables,
+                                 JsonNode overrideTables,
+                                 String propertyName) {
+        if (overrideTables == null && origTables != null) {
+            merged.set(propertyName, origTables);
+        } else if (overrideTables != null) {
+            merged.set(propertyName, overrideTables);
+        }
     }
 
     @Override
