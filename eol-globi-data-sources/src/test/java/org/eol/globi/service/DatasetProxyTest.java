@@ -152,6 +152,27 @@ public class DatasetProxyTest {
 
     }
 
+    @Test
+    public void getMetaTablesNoTableSchemaMixing() throws IOException, URISyntaxException {
+        JsonNode config = new ObjectMapper().readTree(getClass().getResourceAsStream("globi-metatables.json"));
+
+        Dataset dataset = new DatasetImpl("foo/bar", null, URI.create("foo:bar"));
+        dataset.setConfig(config);
+
+        JsonNode columnDefinitions = dataset.getConfig().at("/tables/0/tableSchema/columns");
+        assertThat(columnDefinitions.size(), is(3));
+        assertThat(columnDefinitions.get(0).get("name").asText(), is("sourceBodyPartName"));
+
+        JsonNode configOverride = new ObjectMapper().readTree(getClass().getResourceAsStream("globi-metatables-override.json"));
+        DatasetProxy datasetProxy = new DatasetProxy(dataset);
+        datasetProxy.setConfig(configOverride);
+
+        JsonNode columnDefinitionsOverride = datasetProxy.getConfig().at("/tables/0/tableSchema/columns");
+        assertThat(columnDefinitionsOverride.size(), is(3));
+        assertThat(columnDefinitionsOverride.get(0).get("name").asText(), is("sourceBodyPartNameOverride"));
+
+    }
+
 
     public DatasetProxy getTestDataset() {
         return getTestDataset(null, null);

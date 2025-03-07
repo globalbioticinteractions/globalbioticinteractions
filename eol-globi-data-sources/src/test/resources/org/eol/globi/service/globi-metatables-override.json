@@ -1,0 +1,48 @@
+{
+  "tables": [
+    {
+      "@context": [
+        "http://www.w3.org/ns/csvw",
+        {
+          "@language": "en"
+        }
+      ],
+      "rdfs:comment": [
+        "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"
+      ],
+      "url": "https://docs.google.com/spreadsheets/d/1nX9EnLjKKVUHnv5Iwtcvwt8l-oc3qcytVxxPrPXk3Yc/export?format=tsv",
+      "shouldResolveReferences": "true",
+      "sourceTaxonName": "Homo sapiens",
+      "sourceTaxonId": "NCBI:9606",
+      "sourceBodyPartName": "hand",
+      "sourceBodyPartId": "http://purl.obolibrary.org/obo/UBERON_0002398",
+      "interactionTypeName": "interactsWith",
+      "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002437",
+      "dcterms:bibliographicCitation": "Laura van der Jeught & Quentin Groom. 2021. Observations of humans handling bats with gloves or bare hands.",
+      "delimiter": "\t",
+      "headerRowCount": 1,
+      "null": [
+        ""
+      ],
+      "tableSchema": {
+        "columns": [
+          {
+            "name": "sourceBodyPartNameOverride",
+            "titles": "gloveOrHand",
+            "datatype": "string"
+          },
+          {
+            "name": "targetOccurrenceIdOverride",
+            "titles": "observation",
+            "datatype": "string"
+          },
+          {
+            "name": "http://rs.tdwg.org/dwc/terms/eventDateOverride",
+            "titles": "year",
+            "datatype": "string"
+          }
+        ]
+      }
+    }
+  ]
+}
