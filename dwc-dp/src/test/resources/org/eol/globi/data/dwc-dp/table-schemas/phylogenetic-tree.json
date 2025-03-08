@@ -1,0 +1,55 @@
+{
+    "name": "phylogenetic-tree",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree.json",
+    "title": "PhylogeneticTree",
+    "description": "A branching diagram that shows the evolutionary relationships between dwc:Organisms.",
+    "fields": [
+        {
+            "name": "phylogeneticTreeID",
+            "description": "An identifier for a PhylogeneticTree.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "phylogeneticTreeProtocol",
+            "description": "The names of, references to, or descriptions of the methods or protocols used in making a PhylogeneticTree.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "http://rs.tdwg.org/dwc/terms/measurementMethod"
+        },
+        {
+            "name": "phylogeneticTreeProtocolID",
+            "description": "An identifier for the Protocol used to make an PhylogeneticTree.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "http://rs.tdwg.org/dwc/iri/measurementMethod"
+        },
+        {
+            "name": "phylogeneticTreeCitation",
+            "description": "A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with a PhylogeneticTree.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        }
+    ],
+    "primaryKey": "phylogeneticTreeID",
+    "foreignKeys": []
+}

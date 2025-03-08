@@ -1,0 +1,524 @@
+{
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1",
+    "name": "dwc-dp",
+    "version": "0.1",
+    "tableSchemas": [
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/agent",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/agent.json",
+            "name": "agent",
+            "title": "Agent",
+            "description": "A person, group, organization or other entity that can act."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/agent-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/agent-agent-role.json",
+            "name": "agent-agent-role",
+            "title": "AgentAgentRole",
+            "description": "A role filled by an Agent with respect to another Agent."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/agent-identifier",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/agent-identifier.json",
+            "name": "agent-identifier",
+            "title": "AgentIdentifier",
+            "description": "An identifier for an Agent."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/agent-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/agent-media.json",
+            "name": "agent-media",
+            "title": "AgentMedia",
+            "description": "A link establishing an Agent as content in a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/chronometric-age",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/chronometric-age.json",
+            "name": "chronometric-age",
+            "title": "ChronometricAge",
+            "description": "An approximation of temporal position (in the sense conveyed by https://www.w3.org/TR/owl-time/#time:TemporalPosition) that is supported by evidence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/chronometric-age-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/chronometric-age-agent-role.json",
+            "name": "chronometric-age-agent-role",
+            "title": "ChronometricAgeAgentRole",
+            "description": "A role filled by an Agent with respect to another chrono:ChronometricAge."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/chronometric-age-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/chronometric-age-assertion.json",
+            "name": "chronometric-age-assertion",
+            "title": "ChronometricAgeAssertion",
+            "description": "An Assertion made by an Agent about a chrono:ChronometricAge."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/chronometric-age-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/chronometric-age-citation.json",
+            "name": "chronometric-age-citation",
+            "title": "ChronometricAgeCitation",
+            "description": "A citation of a chrono:ChronometricAge in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/chronometric-age-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/chronometric-age-media.json",
+            "name": "chronometric-age-media",
+            "title": "ChronometricAgeMedia",
+            "description": "A link establishing a chrono:ChronometricAge as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/chronometric-age-protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/chronometric-age-protocol.json",
+            "name": "chronometric-age-protocol",
+            "title": "ChronometricAgeProtocol",
+            "description": "A link establishing a Protocol used in the determination of a chrono:ChronometricAge."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/collection",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/collection.json",
+            "name": "collection",
+            "title": "Collection",
+            "description": "A persistent formal repository in which dwc:MaterialEntities and/or Media are preserved."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/collection-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/collection-agent-role.json",
+            "name": "collection-agent-role",
+            "title": "CollectionAgentRole",
+            "description": "A role filled by an Agent with respect to a Collection."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/collection-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/collection-assertion.json",
+            "name": "collection-assertion",
+            "title": "CollectionAssertion",
+            "description": "An Assertion made by an Agent about a Collection."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/collection-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/collection-media.json",
+            "name": "collection-media",
+            "title": "CollectionMedia",
+            "description": "A link establishing a Collection as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event.json",
+            "name": "event",
+            "title": "Event",
+            "description": "Something that occurs at some location during some time."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event-agent-role.json",
+            "name": "event-agent-role",
+            "title": "EventAgentRole",
+            "description": "A role filled by an Agent with respect to a dwc:Event."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event-assertion.json",
+            "name": "event-assertion",
+            "title": "EventAssertion",
+            "description": "An Assertion made by an Agent about a dwc:Event."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event-citation.json",
+            "name": "event-citation",
+            "title": "EventCitation",
+            "description": "A citation of a dwc:Event in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event-identifier",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event-identifier.json",
+            "name": "event-identifier",
+            "title": "EventIdentifier",
+            "description": "An additional identifier for a dwc:Event."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event-media.json",
+            "name": "event-media",
+            "title": "EventMedia",
+            "description": "A link establishing a dwc:Event as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event-protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event-protocol.json",
+            "name": "event-protocol",
+            "title": "EventProtocol",
+            "description": "A link establishing a Protocol used in a dwc:Event."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/genetic-sequence",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/genetic-sequence.json",
+            "name": "genetic-sequence",
+            "title": "GeneticSequence",
+            "description": "A digital representation of a nucleotide sequence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/genetic-sequence-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/genetic-sequence-agent-role.json",
+            "name": "genetic-sequence-agent-role",
+            "title": "GeneticSequenceAgentRole",
+            "description": "A role filled by an Agent with respect to a GeneticSequence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/genetic-sequence-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/genetic-sequence-assertion.json",
+            "name": "genetic-sequence-assertion",
+            "title": "GeneticSequenceAssertion",
+            "description": "An Assertion made by an Agent about a GeneticSequence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/genetic-sequence-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/genetic-sequence-citation.json",
+            "name": "genetic-sequence-citation",
+            "title": "GeneticSequenceCitation",
+            "description": "A citation of a GeneticSequence in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/genetic-sequence-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/genetic-sequence-media.json",
+            "name": "genetic-sequence-media",
+            "title": "GeneticSequenceMedia",
+            "description": "A link establishing a GeneticSequence as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/genetic-sequence-protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/genetic-sequence-protocol.json",
+            "name": "genetic-sequence-protocol",
+            "title": "GeneticSequenceProtocol",
+            "description": "A link establishing a Protocol used in the determination of a GeneticSequence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/geological-context",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/geological-context.json",
+            "name": "geological-context",
+            "title": "GeologicalContext",
+            "description": "Geological information, such as stratigraphy, that qualifies a dwc:Event."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/geological-context-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/geological-context-media.json",
+            "name": "geological-context-media",
+            "title": "GeologicalContextMedia",
+            "description": "A link establishing a dwc:GeologicalContext as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/identification",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/identification.json",
+            "name": "identification",
+            "title": "Identification",
+            "description": "A taxonomic determination (i.e., the assignment of dwc:Taxa to dwc:Organisms)."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/identification-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/identification-agent-role.json",
+            "name": "identification-agent-role",
+            "title": "IdentificationAgentRole",
+            "description": "A role filled by an Agent with respect to a dwc:Identification."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/identification-taxon",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/identification-taxon.json",
+            "name": "identification-taxon",
+            "title": "IdentificationTaxon",
+            "description": "The components and positions of dwc:scientificNames in a dwc:Identification."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material.json",
+            "name": "material",
+            "title": "Material",
+            "description": "An entity that can be identified, exist for some period of time, and consist in whole or in part of physical matter while it exists."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material-agent-role.json",
+            "name": "material-agent-role",
+            "title": "MaterialAgentRole",
+            "description": "A role filled by an Agent with respect to a dwc:MaterialEntity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material-assertion.json",
+            "name": "material-assertion",
+            "title": "MaterialAssertion",
+            "description": "An Assertion made by an Agent about a dwc:MaterialEntity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material-citation.json",
+            "name": "material-citation",
+            "title": "MaterialCitation",
+            "description": "A citation of a dwc:MaterialEntity in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material-identifier",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material-identifier.json",
+            "name": "material-identifier",
+            "title": "MaterialIdentifier",
+            "description": "An additional identifier for a dwc:MaterialEntity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material-media.json",
+            "name": "material-media",
+            "title": "MaterialMedia",
+            "description": "A link establishing a dwc:MaterialEntity as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material-protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material-protocol.json",
+            "name": "material-protocol",
+            "title": "MaterialProtocol",
+            "description": "A link establishing a Protocol used in the treatment of a dwc:MaterialEntity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/media.json",
+            "name": "media",
+            "title": "Media",
+            "description": "Media (dcmi:Sounds, dcmi:StillImages, dcmi:MovingImages or dcmi:Text) with other entities as content."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/media-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/media-agent-role.json",
+            "name": "media-agent-role",
+            "title": "MediaAgentRole",
+            "description": "A role filled by an Agent with respect to a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/media-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/media-assertion.json",
+            "name": "media-assertion",
+            "title": "MediaAssertion",
+            "description": "An Assertion made by an Agent about a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/media-identifier",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/media-identifier.json",
+            "name": "media-identifier",
+            "title": "MediaIdentifier",
+            "description": "An additional identifier for a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/occurrence",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence.json",
+            "name": "occurrence",
+            "title": "Occurrence",
+            "description": "The state of a dwc:Organism at some location during some time."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/occurrence-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence-agent-role.json",
+            "name": "occurrence-agent-role",
+            "title": "OccurrenceAgentRole",
+            "description": "A role filled by an Agent with respect to a dwc:Occurrence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/occurrence-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence-assertion.json",
+            "name": "occurrence-assertion",
+            "title": "OccurrenceAssertion",
+            "description": "An Assertion made by an Agent about a dwc:Occurrence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/occurrence-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence-citation.json",
+            "name": "occurrence-citation",
+            "title": "OccurrenceCitation",
+            "description": "A citation of a dwc:Occurrence in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/occurrence-identifier",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence-identifier.json",
+            "name": "occurrence-identifier",
+            "title": "OccurrenceIdentifier",
+            "description": "An additional identifier for a dwc:Occurrence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/occurrence-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence-media.json",
+            "name": "occurrence-media",
+            "title": "OccurrenceMedia",
+            "description": "A link establishing a dwc:Occurrence as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/occurrence-protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence-protocol.json",
+            "name": "occurrence-protocol",
+            "title": "OccurrenceProtocol",
+            "description": "A link establishing a Protocol used in the determination of a dwc:Occurrence."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/organism-interaction",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction.json",
+            "name": "organism-interaction",
+            "title": "OrganismInteraction",
+            "description": "An interaction between two dwc:Organisms during a dwc:Event."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/organism-interaction-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction-agent-role.json",
+            "name": "organism-interaction-agent-role",
+            "title": "OrganismInteractionAgentRole",
+            "description": "A role filled by an Agent with respect to an OrganismInteraction."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/organism-interaction-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction-assertion.json",
+            "name": "organism-interaction-assertion",
+            "title": "OrganismInteractionAssertion",
+            "description": "An Assertion made by an Agent about an OrganismInteraction."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/organism-interaction-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction-citation.json",
+            "name": "organism-interaction-citation",
+            "title": "OrganismInteractionCitation",
+            "description": "A citation of an OrganismInteraction in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/organism-interaction-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction-media.json",
+            "name": "organism-interaction-media",
+            "title": "OrganismInteractionMedia",
+            "description": "A link establishing an OrganismInteraction as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree.json",
+            "name": "phylogenetic-tree",
+            "title": "PhylogeneticTree",
+            "description": "A branching diagram that shows the evolutionary relationships between dwc:Organisms."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-assertion.json",
+            "name": "phylogenetic-tree-assertion",
+            "title": "PhylogeneticTreeAssertion",
+            "description": "An Assertion made by an Agent about a PhylogeneticTree."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-citation.json",
+            "name": "phylogenetic-tree-citation",
+            "title": "PhylogeneticTreeCitation",
+            "description": "A citation of a PhylogeneticTree in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-identifier",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-identifier.json",
+            "name": "phylogenetic-tree-identifier",
+            "title": "PhylogeneticTreeIdentifier",
+            "description": "An additional identifier for a PhylogeneticTree."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-media",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-media.json",
+            "name": "phylogenetic-tree-media",
+            "title": "PhylogeneticTreeMedia",
+            "description": "A link establishing a PhylogeneticTree as content of a Media entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-protocol.json",
+            "name": "phylogenetic-tree-protocol",
+            "title": "PhylogeneticTreeProtocol",
+            "description": "A link establishing a Protocol used in the determination of a PhylogeneticTree."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-tip",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-tip.json",
+            "name": "phylogenetic-tree-tip",
+            "title": "PhylogeneticTreeTip",
+            "description": "A group of Taxa at the end of a branch of a PhylogeneticTree as determined from relationships between dwc:Organisms."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-tip-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-tip-assertion.json",
+            "name": "phylogenetic-tree-tip-assertion",
+            "title": "PhylogeneticTreeTipAssertion",
+            "description": "An Assertion made by an Agent about a PhylogeneticTreeTip."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/protocol.json",
+            "name": "protocol",
+            "title": "Protocol",
+            "description": "A method used during an action."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/protocol-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/protocol-citation.json",
+            "name": "protocol-citation",
+            "title": "ProtocolCitation",
+            "description": "A citation of a Protocol in a bibliographic reference."
+        },
+        {
+            "name": "relationship",
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/relationship",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/relationship.json",
+            "title": "Relationship",
+            "description": "A specification for a relationship of a subject entity to a related entity."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey.json",
+            "name": "survey",
+            "title": "Survey",
+            "description": "A biotic survey."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey-agent-role",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey-agent-role.json",
+            "name": "survey-agent-role",
+            "title": "SurveyAgentRole",
+            "description": "A role filled by an Agent with respect to a Survey."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey-assertion",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey-assertion.json",
+            "name": "survey-assertion",
+            "title": "SurveyAssertion",
+            "description": "An Assertion made by an Agent about a Survey."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey-citation",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey-citation.json",
+            "name": "survey-citation",
+            "title": "SurveyCitation",
+            "description": "A citation of a Survey in a bibliographic reference."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey-identifier",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey-identifier.json",
+            "name": "survey-identifier",
+            "title": "SurveyIdentifier",
+            "description": "An additional identifier for a dwc:Survey."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey-protocol",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey-protocol.json",
+            "name": "survey-protocol",
+            "title": "SurveyProtocol",
+            "description": "A link establishing a Protocol used in a Survey."
+        },
+        {
+            "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey-target",
+            "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey-target.json",
+            "name": "survey-target",
+            "title": "SurveyTarget",
+            "description": "A specification of a characteristic of dwc:Occurrence that was included or excluded in a Survey."
+        }
+    ],
+    "title": "Darwin Core Data Package",
+    "shortTitle": "dwc-dp",
+    "description": "A data package for sharing biodiversity data using Darwin Core.",
+    "issued": "2025-03-06",
+    "isLatest": true
+}

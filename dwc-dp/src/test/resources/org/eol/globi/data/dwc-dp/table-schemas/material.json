@@ -1,0 +1,514 @@
+{
+    "name": "material",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material.json",
+    "title": "Material",
+    "description": "An entity that can be identified, exist for some period of time, and consist in whole or in part of physical matter while it exists.",
+    "fields": [
+        {
+            "name": "materialEntityID",
+            "description": "An identifier for a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Values of dwc:materialEntityID are intended to uniquely and persistently identify a particular dwc:MaterialEntity within some context. Examples of context include a particular sample collection, an organization, or the worldwide scale. Recommended best practice is to use a persistent, globally unique identifier. The identifier is bound to a physical object (a dwc:MaterialEntity) as opposed to a particular digital record (representation) of that physical object.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/materialEntityID",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "eventID",
+            "description": "An identifier for a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "materialCategory",
+            "description": "The broad category that best matches the nature of a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a limited, tightly controlled vocabulary.",
+            "examples": "`preserved`; `living`; `fossilized`; `tissue`; `DNA extract`; `non-biological`; `human-made`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "materialEntityType",
+            "description": "The narrow category that best matches the nature of a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`whole organism`; `heart`; `liver tissue sample`; `fossil`; `germplasm`; `skull`; `cast`; `3D printed model`; `printed photograph`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "materialEntityTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "materialEntityTypeVocabulary",
+            "description": "The reference to the controlled vocabulary in which the definition of the value in materialEntityType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "institutionCode",
+            "description": "The name (or acronym) in use by an institution.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`MVZ`; `FMNH`; `CLO`; `UCMP`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/institutionCode"
+        },
+        {
+            "name": "institutionID",
+            "description": "An identifier for an institution.",
+            "type": "string",
+            "format": "default",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the Research Organization Registry (ROR) or the GBIF Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "`https://ror.org/015hz7p22`; `http://grscicoll.org/institution/museum-southwestern-biology`; `https://www.gbif.org/grscicoll/institution/e3d4dcc4-81e2-444c-8a5c-41d1044b5381`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/institutionID"
+        },
+        {
+            "name": "ownerInstitutionCode",
+            "description": "The name (or acronym) in use by the institution having ownership of a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`NPS`; `APN`; `InBio`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/ownerInstitutionCode"
+        },
+        {
+            "name": "ownerInstitutionID",
+            "description": "An identifier for an institution that owns a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the Research Organization Registry (ROR) or the GBIF Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "`https://ror.org/015hz7p22`; `http://grscicoll.org/institution/museum-southwestern-biology`; `https://www.gbif.org/grscicoll/institution/e3d4dcc4-81e2-444c-8a5c-41d1044b5381`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "collectionCode",
+            "description": "The name, acronym, coden, or initialism identifying a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Mammals`; `Hildebrandt`; `EBIRD`; `VP`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/collectionCode"
+        },
+        {
+            "name": "collectionID",
+            "description": "An identifier for a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the GBIF Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "`https://www.gbif.org/grscicoll/collection/fbd3ed74-5a21-4e01-b86a-33d36f032d9c`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/collectionID"
+        },
+        {
+            "name": "catalogNumber",
+            "description": "An identifier (preferably unique) for a dwc:MaterialEntity within a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`145732`; `145732a`; `2008.1334`; `R-4313`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/catalogNumber"
+        },
+        {
+            "name": "otherCatalogNumbers",
+            "description": "A list (concatenated and separated) of previous or alternate fully qualified catalog numbers or other human-used identifiers for the same dwc:MaterialEntity, whether in the current or any other data set or collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`FMNH:Mammal:1234`; `NPS YELLO6778 | MBG 33424`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/otherCatalogNumbers"
+        },
+        {
+            "name": "collectedBy",
+            "description": "A list (concatenated and separated) of names of people, groups, or organizations responsible for collecting a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`José E. Crespo`; `Oliver P. Pearson | Anita K. Pearson`, `FMNH`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/recordedBy"
+        },
+        {
+            "name": "collectedByID",
+            "description": "An identifier for the Agent responsible for collecting a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`https://orcid.org/0000-0002-1825-0097`, `https://ror.org/00mh9zx15`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/recordedByID"
+        },
+        {
+            "name": "objectCount",
+            "description": "The number of distinct objects comprising a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`0`; `1`; `25`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/individualCount"
+        },
+        {
+            "name": "recordNumber",
+            "description": "An identifier given to a dwc:MaterialEntity at the time it was recorded. Often serves as a link between field notes and a dwc:MaterialEntity, such as a specimen collector's number.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`OPP 7101`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/recordNumber"
+        },
+        {
+            "name": "preparations",
+            "description": "A list (concatenated and separated) of preparations and preservation methods for a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`fossil`; `cast`; `photograph`; `DNA extract`; `skin | skull | skeleton`; `whole animal (ETOH) | tissue (EDTA)`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/preparations"
+        },
+        {
+            "name": "disposition",
+            "description": "The current state of a dwc:MaterialEntity with respect to where it can be found.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`in collection`; `missing`; `voucher elsewhere`; `duplicates elsewhere`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/disposition"
+        },
+        {
+            "name": "verbatimLabel",
+            "description": "The content of this term should include no embellishments, prefixes, headers or other additions made to the text. Abbreviations must not be expanded and supposed misspellings must not be corrected. Lines or breakpoints between blocks of text that could be verified by seeing the original labels or images of them may be used. Examples of material entities include preserved specimens, fossil specimens, and material samples. Best practice is to use UTF-8 for all characters. Best practice is to add comment “verbatimLabel derived from human transcription” in dwc:occurrenceRemarks.",
+            "type": "string",
+            "format": "default",
+            "comments": "Examples can be found at https://dwc.tdwg.org/examples/verbatimLabel.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimLabel"
+        },
+        {
+            "name": "associatedSequences",
+            "description": "A list (concatenated and separated) of identifiers (publication, global unique identifier, URI) of genetic sequence information associated with a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`http://www.ncbi.nlm.nih.gov/nuccore/U34853.1`; `http://www.ncbi.nlm.nih.gov/nuccore/GU328060 | http://www.ncbi.nlm.nih.gov/nuccore/AF326093`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/associatedSequences"
+        },
+        {
+            "name": "materialCitation",
+            "description": "A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`Christopher J. Conroy, Jennifer L. Neuwald. 2008. Phylogeographic study of the California vole, Microtus californicus Journal of Mammalogy, 89(3):755-767.`; `Steven R. Hoofer and Ronald A. Van Den Bussche. 2001. Phylogenetic Relationships of Plecotine Bats and Allies Based on Mitochondrial Ribosomal Sequences. Journal of Mammalogy 82(1):131-137. | Walker, Faith M., Jeffrey T. Foster, Kevin P. Drees, Carol L. Chambers. 2014. Spotted bat (Euderma maculatum) microsatellite discovery using illumina sequencing. Conservation Genetics Resources.`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "informationWithheld",
+            "description": "Additional information that exists, but that has not been shared in the given record.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`location information not given for endangered species`; `collector identities withheld | ask about tissue samples`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/informationWithheld"
+        },
+        {
+            "name": "dataGeneralizations",
+            "description": "Actions taken to make the shared data less specific or complete than in its original form. Suggests that alternative data of higher quality may be available on request.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`coordinates generalized from original GPS coordinates to the nearest half degree grid cell`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/dataGeneralizations"
+        },
+        {
+            "name": "materialEntityRemarks",
+            "description": "Comments or notes about a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`found in association with charred remains`; `some original fragments missing`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/materialEntityRemarks"
+        },
+        {
+            "name": "evidenceForOccurrenceID",
+            "description": "An identifier for a dwc:Occurrence for which a dwc:MaterialEntity provides evidence.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "http://rs.tdwg.org/dwc/terms/occurrenceID"
+        },
+        {
+            "name": "derivedFromMaterialEntityID",
+            "description": "An identifier for a dwc:MaterialEntity from which this dwc:MaterialEntity was derived.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "derivationEventID",
+            "description": "An identifier for a dwc:Event during which a dwc:MaterialEntity was derived from another dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "http://rs.tdwg.org/dwc/terms/materialEntityID"
+        },
+        {
+            "name": "derivationType",
+            "description": "The category that best matches the nature of the derivation of a dwc:MaterialEntity from a dwc:MaterialEntity pointed to by derivedFromMaterialEntityID.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`sampledFrom`; `included`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "derivationTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of derivation.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "derivationTypeVocabulary",
+            "description": "The reference to the controlled vocabulary in which the definition of the value in derivationType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "partOfMaterialEntityID",
+            "description": "An identifier for a dwc:MaterialEntity of which this dwc:MaterialEntity is a part.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "verbatimIdentification",
+            "description": "A string representing the taxonomic identification as it appeared in the original record.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimIdentification"
+        },
+        {
+            "name": "taxonFormula",
+            "description": "A string representing the pattern to use to construct a dwc:Identification from dwc:Taxon names and identification qualifiers.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as https://arctos.database.museum/info/ctDocumentation.cfm?table=cttaxa_formula.",
+            "examples": "`A`; `A ?`; `A or B`; `A and B`; `A x B`; `A cf.`; `A aff.`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "identifiedBy",
+            "description": "A list (concatenated and separated) of names of people, groups, or organizations who made a taxonomic determination of a dwc:Organism.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`James L. Patton`; `Theodore Pappenfuss | Robert Macey`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/identifiedBy"
+        },
+        {
+            "name": "identifiedByID",
+            "description": "The identifier for the Agent who made a taxonomic determination of a dwc:Organism.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to provide a single identifier that disambiguates the details of the identifying agent. If a list is used, the order of the identifiers on the list should not be assumed to convey any semantics. Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`https://orcid.org/0000-0002-1825-0097`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/identifiedByID"
+        },
+        {
+            "name": "dateIdentified",
+            "description": "A list (concatenated and separated) of names of people, groups, or organizations who made a taxonomic determination of a dwc:Organism.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+            "examples": "`2023-05-04`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/dateIdentified"
+        },
+        {
+            "name": "identificationReferences",
+            "description": "A list (concatenated and separated) of references (publication, global unique identifier, URI) used in a dwc:Identification.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`Aves del Noroeste Patagonico. Christie et al. 2004.`; `Stebbins, R. Field Guide to Western Reptiles and Amphibians. 3rd Edition. 2003. | Irschick, D.J. and Shaffer, H.B. (1997). The polytypic species revisited: Morphological differentiation among tiger salamanders (Ambystoma tigrinum) (Amphibia: Caudata). Herpetologica, 53(1), 30-49.`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/identificationReferences"
+        },
+        {
+            "name": "identificationVerificationStatus",
+            "description": "A categorical indicator of the extent to which the taxonomic determination has been verified to be correct.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as that used in HISPID and ABCD.",
+            "examples": "`0` ('unverified' in HISPID/ABCD)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/identificationVerificationStatus"
+        },
+        {
+            "name": "identificationVerificationStatusIRI",
+            "description": "The IRI of the controlled vocabulary value for an identification verification.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "identificationVerificationStatusVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for dwc:identificationVerificationStatus is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "identificationRemarks",
+            "description": "Comments or notes about a dwc:Identification.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Distinguished between Anthus correndera and Anthus hellmayri based on the comparative lengths of the uñas.`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/identificationRemarks"
+        },
+        {
+            "name": "taxonID",
+            "description": "An identifier for a dwc:Taxon.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`8fa58e08-08de-4ac1-b69c-1235340b7001`; `32567`; `https://www.gbif.org/species/212`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/taxonID"
+        },
+        {
+            "name": "kingdom",
+            "description": "The full scientific name of the kingdom in which a dwc:scientificName is classified.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/kingdom"
+        },
+        {
+            "name": "scientificName",
+            "description": "The full scientific name, with authorship and date information if known. When forming part of a dwc:Identification, this should be the name in lowest level taxonomic rank that can be determined. This term should not contain identification qualifications, which should instead be supplied in dwc:verbatimIdentification.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/scientificName"
+        },
+        {
+            "name": "taxonRank",
+            "description": "The taxonomic rank of the most specific name in a dwc:scientificName.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/taxonRank"
+        },
+        {
+            "name": "taxonRemarks",
+            "description": "Comments or notes about a dwc:Taxon.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`this name is a misspelling in common use`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/taxonRemarks"
+        }
+    ],
+    "primaryKey": "materialEntityID",
+    "foreignKeys": [
+        {
+            "fields": "eventID",
+            "reference": {
+                "resource": "event",
+                "fields": "eventID"
+            }
+        },
+        {
+            "fields": "partOfMaterialEntityID",
+            "reference": {
+                "resource": "material",
+                "fields": "materialEntityID"
+            }
+        }
+    ]
+}

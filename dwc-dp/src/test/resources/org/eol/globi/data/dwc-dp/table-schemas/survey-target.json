@@ -1,0 +1,168 @@
+{
+    "name": "survey-target",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/survey-target",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/survey-target.json",
+    "title": "SurveyTarget",
+    "description": "A specification of a characteristic of dwc:Occurrence that was included or excluded in a Survey.",
+    "fields": [
+        {
+            "name": "surveyTargetID",
+            "description": "An identifier for a SurveyTarget.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "surveyID",
+            "description": "An identifier for a dwc:Event that is an biotic survey.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+
+        },
+        {
+            "name": "surveyTargetType",
+            "description": "The type of scope a SurveyTarget describes.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`taxon`; `habitat`; `establishmentMeans`; `growthForm`; `sex`; `lifeStage`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of survey target.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetTypeVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for surveyTargetType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetValue",
+            "description": "The value of a characteristic sought for the surveyTarget for a given surveyTargetType.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`Aves`; `oak savannah`; `native`; `tree`; `female`; `adult`; `height`; `weight`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetValueIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of survey target value.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetValueVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for surveyTargetValue is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetUnit",
+            "description": "The units associated with the surveyTargetValue.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`m`; `g`; `years`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetUnitIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of survey target unit.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "surveyTargetUnitVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for surveyTargetUnit is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "includeOrExclude",
+            "description": "A term to declare whether an instance of the SurveyTarget is an included scope or an excluded scope. Combinations of SurveyTarget records of inclusions and exclusions can define complex scopes such as all flying adult Aves except Passeriformes.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is use a controlled vocabulary consisting of 'include' and 'exclude' only.",
+            "examples": "`include`; `exclude`",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+
+        },
+        {
+            "name": "isSurveyTargetFullyReported",
+            "description": "A declaration of whether the counts for an instance of the SurveyTarget report everything that matches the declared SurveyTarget. If they do, this enables inference of absence of detection for everything in that SurveyTarget that is included but that does not appear in the count.",
+            "type": "boolean",
+            "format": "default",
+            "comments": "",
+            "examples": "`true`; `false`",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+
+        }
+    ],
+    "primaryKey": "surveyTargetID",
+    "foreignKeys": [
+        {
+            "fields": "surveyID",
+            "reference": {
+                "resource": "survey",
+                "fields": "surveyID"
+            }
+        }
+    ]
+}

@@ -1,0 +1,268 @@
+{
+    "name": "chronometric-age",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/chronometric-age",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/chronometric-age.json",
+    "title": "ChronometricAge",
+    "description": "An approximation of temporal position (in the sense conveyed by https://www.w3.org/TR/owl-time/#time:TemporalPosition) that is supported by evidence.",
+    "fields": [
+        {
+            "name": "chronometricAgeID",
+            "description": "An identifier for a chrono:ChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`https://www.canadianarchaeology.ca/samples/70673`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeID",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "eventID",
+            "description": "An identifier for a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "verbatimChronometricAge",
+            "description": "The verbatim age for a dwc:Event, whether reported by a dating assay, associated references, or legacy information.",
+            "type": "string",
+            "format": "default",
+            "comments": "For example, this could be the radiocarbon age as given in an AMS dating report. This could also be simply what is reported as the age of a specimen in legacy collections data.",
+            "examples": "`27 BC to 14 AD`; `stratigraphically pre-1104`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/verbatimChronometricAge"
+        },
+        {
+            "name": "chronometricAgeProtocol",
+            "description": "A description of or reference to the methods used to determine a chrono:ChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`radiocarbon AMS`; `K-Ar dates for the lower most marker tuff`; `historic documentation`; `ceramic seriation`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeProtocol"
+        },
+        {
+            "name": "chronometricAgeProtocolID",
+            "description": "An identifier for the Protocol used to determine a ChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "uncalibratedChronometricAge",
+            "description": "The output of a dating assay before it is calibrated into an age using a specific conversion protocol.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`1510 +/- 25 14C yr BP`; `16.26 Ma +/- 0.016`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/uncalibratedChronometricAge"
+        },
+        {
+            "name": "chronometricAgeConversionProtocol",
+            "description": "The method used for converting the chrono:uncalibratedChronometricAge into a chronometric age in years, as captured in the chrono:earliestChronometricAge, chrono:earliestChronometricAgeReferenceSystem, chrono:latestChronometricAge, and chrono:latestChronometricAgeReferenceSystem fields.",
+            "type": "string",
+            "format": "default",
+            "comments": "For example, calibration of conventional radiocarbon age or the currently accepted age range of a cultural or geological period.",
+            "examples": "`INTCAL13`; `sequential 6 phase Bayesian model and IntCal13 calibration`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeConversionProtocol"
+        },
+        {
+            "name": "chronometricAgeConversionProtocolID",
+            "description": "An identifier for the Protocol used to convert a chrono:uncalibratedChronometricAge into a chronometric age in years, as captured in the chrono:earliestChronometricAge, chrono:earliestChronometricAgeReferenceSystem, chrono:latestChronometricAge, and chrono:latestChronometricAgeReferenceSystem fields.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "earliestChronometricAge",
+            "description": "The maximum/earliest/oldest possible age of a specimen as determined by a dating method.",
+            "type": "string",
+            "format": "default",
+            "comments": "The expected unit for this field is years. This field, if populated, must have an associated chrono:earliestChronometricAgeReferenceSystem.",
+            "examples": "`100`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/earliestChronometricAge"
+        },
+        {
+            "name": "earliestChronometricAgeReferenceSystem",
+            "description": "The reference system associated with the chrono:earliestChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`kya`; `mya`; `BP`; `AD`; `BCE`; `ka`; `Ma`; `Ga`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/earliestChronometricAgeReferenceSystem"
+        },
+        {
+            "name": "latestChronometricAge",
+            "description": "The minimum/latest/youngest possible age of a specimen as determined by a dating method.",
+            "type": "string",
+            "format": "default",
+            "comments": "The expected unit for this field is years. This field, if populated, must have an associated latestChronometricAgeReferenceSystem.",
+            "examples": "`27`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/latestChronometricAge"
+        },
+        {
+            "name": "latestChronometricAgeReferenceSystem",
+            "description": "The reference system associated with the chrono:latestChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`kya`; `mya`; `BP`; `AD`; `BCE`; `ka`; `Ma`; `Ga`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/latestChronometricAgeReferenceSystem"
+        },
+        {
+            "name": "chronometricAgeUncertaintyInYears",
+            "description": "The temporal uncertainty of the chrono:earliestChronometricAge and chrono:latestChronometicAge in years.",
+            "type": "integer",
+            "format": "default",
+            "comments": "The expected unit for this field is years. The value in this field is number of years before and after the values given in the earliest and latest chronometric age fields within which the actual values are estimated to be.",
+            "examples": "`100`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeUncertaintyInYears"
+        },
+        {
+            "name": "chronometricAgeUncertaintyMethod",
+            "description": "The method used to generate the value of chrono:ChronometricAgeUncertaintyInYears.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`2-sigma calibrated range`; `Half of 95% confidence interval`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeUncertaintyMethod"
+        },
+        {
+            "name": "materialDated",
+            "description": "A description of the material on which the chrono:ChronometricAgeProtocol was actually performed, if known.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Double Tuff`; `Charcoal found in Stratum V`; `charred wood`; `tooth`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/materialDated"
+        },
+        {
+            "name": "materialDatedID",
+            "description": "An identifier for the MaterialEntity on which the chrono:ChronometricAgeProtocol was performed, if applicable.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`https://www.ebi.ac.uk/metagenomics/samples/SRS1930158`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/materialDatedID"
+        },
+        {
+            "name": "materialDatedRelationship",
+            "description": "The relationship of the chrono:materialDated to a dwc:MaterialEntity, from which the chrono:ChronometricAge of the related dwc:MaterialEntity and any related dwc:Occurrence is inferred.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`sameAs` (cases where the subject material was completely destructively subsampled to get the chrono:ChronometricAge); `subsampleOf` (cases where part of the original MaterialEntity was extracted as the material used to determine the chrono:ChronometricAge); `inContextWith` (cases where the chrono:ChronometricAge is inferred from materialDated, such as sediments or cultural objects, in related temporal context); `stratigraphicallyCorrelatedWith` (cases where the chrono:ChronometricAge is inferred from materialDated in a stratigraphically correlated context)",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/materialDatedRelationship"
+        },
+        {
+            "name": "chronometricAgeDeterminedBy",
+            "description": "A list (concatenated and separated) of names of people, groups, or organizations who determined the chrono:ChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ).",
+            "examples": "`Michelle LeFebvre | Neill Wallis`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeDeterminedBy"
+        },
+        {
+            "name": "chronometricAgeDeterminedByID",
+            "description": "The identifier for the Agent who determined the chrono:ChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to provide a single identifier that disambiguates the details of the acting agent. If a list is used, the order of the agents on the list should not be assumed to convey any semantics. Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`https://orcid.org/0000-0002-1825-0097`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "chronometricAgeDeterminedDate",
+            "description": "The date on which the chrono:ChronometricAge was determined.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+            "examples": "`1963-03-08T14:07-0600` (8 Mar 1963 at 2:07pm in the time zone six hours earlier than UTC); `2009-02-20T08:40Z` (20 February 2009 8:40am UTC); `2018-08-29T15:19` (3:19pm local time on 29 August 2018); `1809-02-12` (some time during 12 February 1809); `1906-06` (some time in June 1906); `1971` (some time in the year 1971).",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeDeterminedDate"
+        },
+        {
+            "name": "chronometricAgeReferences",
+            "description": "A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with the chrono:ChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space ( | ).",
+            "examples": "`Pluckhahn, Thomas J., Neill J. Wallis, and Victor D. Thompson. 2020 The History and Future of Migrationist Explanation in the Archaeology of the Eastern Woodlands: A Review and Case Study of the Woodland Period Gulf Coast. Journal of Archaeological Research. https://doi.org/10.1007/s10814-019-09140-x`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeReferences"
+        },
+        {
+            "name": "chronometricAgeRemarks",
+            "description": "Comments or notes about a chrono:ChronometricAge.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Beta Analytic number: 323913 | One of the Crassostrea virginica right valve specimens from North Midden Feature 17 was chosen for AMS dating, but it is unclear exactly which specimen it was.`",
+            "namespace": "chrono",
+            "iri": "http://rs.tdwg.org/chrono/terms/chronometricAgeRemarks"
+        }
+    ],
+    "primaryKey": "chronometricAgeID",
+    "foreignKeys": [
+        {
+            "fields": "eventID",
+            "reference": {
+                "resource": "event",
+                "fields": "eventID"
+            }
+        },
+        {
+            "fields": "materialDatedID",
+            "reference": {
+                "resource": "material",
+                "fields": "materialEntityID"
+            }
+        },
+        {
+            "fields": "chronometricAgeProtocolID",
+            "reference": {
+                "resource": "protocol",
+                "fields": "protocolID"
+            }
+        },
+        {
+            "fields": "chronometricAgeConversionProtocolID",
+            "reference": {
+                "resource": "protocol",
+                "fields": "protocolID"
+            }
+        }
+    ]
+}

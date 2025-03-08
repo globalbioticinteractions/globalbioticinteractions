@@ -1,0 +1,107 @@
+{
+    "name": "collection-agent-role",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/collection-agent-role",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/collection-agent-role.json",
+    "title": "CollectionAgentRole",
+    "description": "A role filled by an Agent with respect to a Collection.",
+    "fields": [
+        {
+            "name": "agentID",
+            "description": "An identifier for an Agent.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "collectionID",
+            "description": "An identifier for a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the GBIF Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "`https://www.gbif.org/grscicoll/collection/fbd3ed74-5a21-4e01-b86a-33d36f032d9c`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/collectionID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "agentRole",
+            "description": "The category that best matches the nature of a role of an Agent.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary for the roles appropriate to the class of resource an AgentRole is related to.",
+            "examples": "`collector`; `preparator`; `organizer`; `author`; `creator`; `owner`; `observer`; `director`; `husband`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "agentRoleIRI",
+            "description": "The IRI of the controlled vocabulary value for the role of an Agent.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "agentRoleVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for agentRole is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "agentRoleOrder",
+            "description": "The numerical position of an AgentRole in a set of AgentRoles that have the same combination of agentRoleTargetID and agentRoleTargetType.",
+            "type": "integer",
+            "format": "default",
+            "comments": "One could use agentRoleOrder to create an ordered list of collectors for a dwc:MaterialEntity, for example. The first would have agentRoleOrder=1, the second would have agentRoleOrder=2.",
+            "constraints": {
+                "required": false,
+                "minimum": 1
+            },
+            "examples": "`1`; `2`; `3`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "agentRoleDate",
+            "description": "The interval during which an AgentRole was in effect.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+            "examples": "`2024-07-29`",
+            "namespace": "gum",
+            "iri": ""
+        }
+    ],
+    "foreignKeys": [
+        {
+            "fields": "agentID",
+            "reference": {
+                "resource": "agent",
+                "fields": "agentID"
+            }
+        },
+        {
+            "fields": "collectionID",
+            "reference": {
+                "resource": "collection",
+                "fields": "collectionID"
+            }
+        }
+    ]
+}

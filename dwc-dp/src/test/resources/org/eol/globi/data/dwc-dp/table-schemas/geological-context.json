@@ -1,0 +1,213 @@
+{
+    "name": "geological-context",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/geological-context",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/geological-context.json",
+    "title": "GeologicalContext",
+    "description": "Geological information, such as stratigraphy, that qualifies a region or place.",
+    "fields": [
+        {
+            "name": "geologicalContextID",
+            "description": "An identifier for a dwc:GeologicalContext.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`https://opencontext.org/subjects/e54377f7-4452-4315-b676-40679b10c4d9`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/geologicalContextID",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "eventID",
+            "description": "An identifier for a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventID"
+        },
+        {
+            "name": "earliestEonOrLowestEonothem",
+            "description": "The full name of the earliest possible geochronologic eon or lowest chrono-stratigraphic eonothem or the informal name ('Precambrian') attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Phanerozoic`; `Proterozoic`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/earliestEonOrLowestEonothem"
+        },
+        {
+            "name": "latestEonOrHighestEonothem",
+            "description": "The full name of the latest possible geochronologic eon or highest chrono-stratigraphic eonothem or the informal name ('Precambrian') attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Phanerozoic`; `Proterozoic`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem"
+        },
+        {
+            "name": "earliestEraOrLowestErathem",
+            "description": "The full name of the earliest possible geochronologic era or lowest chronostratigraphic erathem attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Cenozoic`; `Mesozoic`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/earliestEraOrLowestErathem"
+        },
+        {
+            "name": "latestEraOrHighestErathem",
+            "description": "The full name of the latest possible geochronologic era or highest chronostratigraphic erathem attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Cenozoic`; `Mesozoic`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem"
+        },
+        {
+            "name": "earliestPeriodOrLowestSystem",
+            "description": "The full name of the earliest possible geochronologic period or lowest chronostratigraphic system attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Neogene`; `Tertiary`; `Quaternary`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/earliestPeriodOrLowestSystem"
+        },
+        {
+            "name": "latestPeriodOrHighestSystem",
+            "description": "The full name of the latest possible geochronologic period or highest chronostratigraphic system attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Neogene`; `Tertiary`; `Quaternary`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/latestPeriodOrHighestSystem"
+        },
+        {
+            "name": "earliestEpochOrLowestSeries",
+            "description": "The full name of the earliest possible geochronologic epoch or lowest chronostratigraphic series attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Holocene`; `Pleistocene`; `Ibexian Series`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/earliestEpochOrLowestSeries"
+        },
+        {
+            "name": "latestEpochOrHighestSeries",
+            "description": "The full name of the latest possible geochronologic epoch or highest chronostratigraphic series attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Holocene`; `Pleistocene`; `Ibexian Series`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/latestEpochOrHighestSeries"
+        },
+        {
+            "name": "earliestAgeOrLowestStage",
+            "description": "The full name of the earliest possible geochronologic age or lowest chronostratigraphic stage attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Atlantic`; `Boreal`; `Skullrockian`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/earliestAgeOrLowestStage"
+        },
+        {
+            "name": "latestAgeOrHighestStage",
+            "description": "The full name of the latest possible geochronologic age or highest chronostratigraphic stage attributable to the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Atlantic`; `Boreal`; `Skullrockian`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/latestAgeOrHighestStage"
+        },
+        {
+            "name": "lowestBiostratigraphicZone",
+            "description": "The full name of the lowest possible geological biostratigraphic zone of the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Maastrichtian`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/lowestBiostratigraphicZone"
+        },
+        {
+            "name": "highestBiostratigraphicZone",
+            "description": "The full name of the highest possible geological biostratigraphic zone of the stratigraphic horizon from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Blancan`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/highestBiostratigraphicZone"
+        },
+        {
+            "name": "lithostratigraphicTerms",
+            "description": "The combination of all litho-stratigraphic names for the rock from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Pleistocene-Weichselien`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/lithostratigraphicTerms"
+        },
+        {
+            "name": "group",
+            "description": "The full name of the lithostratigraphic group from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Bathurst`; `Lower Wealden`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/group"
+        },
+        {
+            "name": "formation",
+            "description": "The full name of the lithostratigraphic formation from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Notch Peak Formation`; `House Limestone`; `Fillmore Formation`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/formation"
+        },
+        {
+            "name": "member",
+            "description": "The full name of the lithostratigraphic member from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Lava Dam Member`; `Hellnmaria Member`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/member"
+        },
+        {
+            "name": "bed",
+            "description": "The full name of the lithostratigraphic bed from which a dwc:MaterialEntity was collected.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Harlem coal`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/bed"
+        }
+    ],
+    "primaryKey": "geologicalContextID",
+    "foreignKeys": [
+        {
+            "fields": "eventID",
+            "reference": {
+                "resource": "event",
+                "fields": "eventID"
+            }
+        }
+    ]
+}

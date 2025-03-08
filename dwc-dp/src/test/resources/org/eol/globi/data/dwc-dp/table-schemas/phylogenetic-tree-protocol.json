@@ -1,0 +1,53 @@
+{
+    "name": "phylogenetic-tree-protocol",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-protocol",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-protocol.json",
+    "title": "PhylogeneticTreeProtocol",
+    "description": "A link establishing a Protocol used in the determination of a PhylogeneticTree.",
+    "fields": [
+        {
+            "name": "protocolID",
+            "description": "An identifier for a Protocol.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "phylogeneticTreeID",
+            "description": "An identifier for a PhylogeneticTree.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        }
+    ],
+    "foreignKeys": [
+        {
+            "fields": "protocolID",
+            "reference": {
+                "resource": "protocol",
+                "fields": "protocolID"
+            }
+        },
+        {
+            "fields": "phylogeneticTreeID",
+            "reference": {
+                "resource": "phylogenetic-tree",
+                "fields": "phylogeneticTreeID"
+            }
+        }
+    ]
+}

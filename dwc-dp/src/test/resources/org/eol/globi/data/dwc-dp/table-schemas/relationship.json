@@ -1,0 +1,197 @@
+{
+    "name": "relationship",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/relationship",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/relationship.json",
+    "title": "Relationship",
+    "description": "A specification for a relationship of a subject entity to a related entity.",
+    "fields": [
+        {
+            "name": "relationshipID",
+            "description": "An identifier for a Relationship.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/resourceRelationshipID",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "subjectResourceID",
+            "description": "An identifier for the resource that is the subject of a Relationship.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/resourceID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "subjectResourceType",
+            "description": "The category that best matches the nature of a subject resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary consisting of the classes of resources that can be related to each other.",
+            "examples": "`Agent`; `AgentRole`; `Assertion`; `ChronometricAge`; `Citation`; `Collection`; `Event`; `GeneticSequence`; `GeologicalContext`; `Identification`; `Identifier``; `Inventory`; `Material`; `Material Gathering`; `Media`; `Occurrence`; `OrganismInteraction`; `PhylogeneticTree`; `Taxon`; `TaxonDistribution`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "subjectResourceTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of subject resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "subjectResourceTypeVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for subjectResourceType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relationshipType",
+            "description": "The relationship of the subject resource (identified by subjectresourceID) to the related resource (identified by relatedResourceID).",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/relationshipOfResource"
+        },
+        {
+            "name": "relationshipTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of Relationship.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relationshipTypeVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for relationshipType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relatedResourceID",
+            "description": "An identifier for the related resource (the object) of a Relationship.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/relatedResourceID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "relatedResourceType",
+            "description": "The category that best matches the nature of a related resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary consisting of the classes of resources that can be related to each other.",
+            "examples": "`Agent`; `AgentRole`; `Assertion`; `ChronometricAge`; `Citation`; `Collection`; `Event`; `GeneticSequence`; `GeologicalContext`; `Identification`; `Identifier``; `Inventory`; `Material`; `Media`; `Occurrence`; `OrganismInteraction`; `PhylogeneticTree`; `Taxon`; `TaxonDistribution`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relatedResourceTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of related resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relatedResourceTypeVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for relatedResourceType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relationshipOrder",
+            "description": "The numerical position of a Relationship in a set of Relationships that have the same combination of subjectResourceID, relatedResourceID, relationshipType, relationshipType, and relationshipTypeVocabulary.",
+            "type": "integer",
+            "format": "default",
+            "comments": "One could use relationshipOrder to create an ordered list of authors for a Citation, for example. The first would have relationshipOrder=1, the second would have relationshipOrder=2.",
+            "constraints": {
+                "required": false,
+                "minimum": 1
+            },
+            "examples": "`1`; `2`; `3`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relationshipAccordingTo",
+            "description": "The name of an Agent responsible for asserting a Relationship.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`José E. Crespo`; `Oliver P. Pearson | Anita K. Pearson`, `FMNH`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/relationshipAccordingTo"
+        },
+        {
+            "name": "relationshipAccordingToID",
+            "description": "An identifier for an Agent responsible for asserting a Relationship.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`https://orcid.org/0000-0002-1825-0097`, `https://ror.org/00mh9zx15`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relationshipEffectiveDate",
+            "description": "The date on which a Relationship was established.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+            "examples": "`14:07-0600` (2:07pm in the time zone six hours earlier than UTC); `08:40:21Z` (8:40:21am UTC); `13:00:00Z/15:30:00Z` (the interval between 1pm UTC and 3:30pm UTC)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/relationshipEstablishedDate"
+        },
+        {
+            "name": "relationshipRemarks",
+            "description": "Comments or notes about a Relationship.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/relationshipRemarks"
+        }
+    ],
+    "primaryKey": "relationshipID",
+    "foreignKeys": []
+}

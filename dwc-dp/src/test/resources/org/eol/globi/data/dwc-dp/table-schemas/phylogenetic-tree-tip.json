@@ -1,0 +1,105 @@
+{
+    "name": "phylogenetic-tree-tip",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/phylogenetic-tree-tip",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/phylogenetic-tree-tip.json",
+    "title": "PhylogeneticTreeTip",
+    "description": "A group of Taxa at the end of a branch of a PhylogeneticTree as determined from relationships between dwc:Organisms.",
+    "fields": [
+        {
+            "name": "phylogeneticTreeTipID",
+            "description": "An identifier for a PhylogeneticTreeTip.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "phylogeneticTreeID",
+            "description": "An identifier for a PhylogeneticTree.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "phylogeneticTreeTipLabel",
+            "description": "A label applied to a PhylogeneticTreeTip.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "taxonID",
+            "description": "An identifier for a dwc:Taxon.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`8fa58e08-08de-4ac1-b69c-1235340b7001`; `32567`; `https://www.gbif.org/species/212`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/taxonID"
+        },
+        {
+            "name": "scientificName",
+            "description": "The full scientific name, with authorship and date information if known.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/scientificName"
+        },
+        {
+            "name": "materialEntityID",
+            "description": "An identifier for a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Values of dwc:materialEntityID are intended to uniquely and persistently identify a particular dwc:MaterialEntity within some context. Examples of context include a particular sample collection, an organization, or the worldwide scale. Recommended best practice is to use a persistent, globally unique identifier. The identifier is bound to a physical object (a dwc:MaterialEntity) as opposed to a particular digital record (representation) of that physical object.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/materialEntityID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "geneticSequenceID",
+            "description": "An identifier for a GeneticSequence.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        }
+    ],
+    "primaryKey": "phylogeneticTreeTipID",
+    "foreignKeys": [
+        {
+            "fields": "phylogeneticTreeID",
+            "reference": {
+                "resource": "phylogenetic-tree",
+                "fields": "phylogeneticTreeID"
+            }
+        }
+    ]
+}

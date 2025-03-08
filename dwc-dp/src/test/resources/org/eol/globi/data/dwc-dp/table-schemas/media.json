@@ -1,0 +1,175 @@
+{
+    "name": "media",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/media",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/media.json",
+    "title": "Media",
+    "description": "Media (dcmi:Sounds, dcmi:StillImages, dcmi:MovingImages or dcmi:Text) with other entities as content.",
+    "fields": [
+        {
+            "name": "mediaID",
+            "description": "An identifier for a Media instance.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "mediaType",
+            "description": "The category that best matches the nature of an instance of Media.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Sound`; `Still Image`; `Moving Image`; `Text`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "mediaTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of Media.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "mediaTypeVocabulary",
+            "description": "The reference to the controlled vocabulary in which the definition of the value in mediaType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "accessURI",
+            "description": "A URI that uniquely identifies a service that provides a representation of the underlying resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "If this resource can be acquired by an http request, its http URL SHOULD be given. If not, but it has some URI in another URI scheme, that MAY be given here. Value might point to something offline, such as a published CD, etc. For example, the doi of a published CD would be a suitable value.",
+            "examples": "",
+            "namespace": "ac",
+            "iri": "http://rs.tdwg.org/ac/terms/accessURI"
+        },
+        {
+            "name": "WebStatement",
+            "description": "A Web URL for a statement of the ownership and usage rights for this resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "xmpRights",
+            "iri": "http://ns.adobe.com/xap/1.0/rights/WebStatement"
+        },
+        {
+            "name": "format",
+            "description": "The file format, physical medium, or dimensions of the resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "A controlled value string describing the technical format of the resource (file format or physical medium). The string SHOULD be a controlled value from the Audiovisual Core Controlled Vocabulary for Dublin Core format, although it MAY be any Media Type (MIME type) value from the IANA list of Media Types (https://www.iana.org/assignments/media-types/media-types.xhtml) or any commonly used file extension string. Human-readable information about the Controlled Vocabulary for format is at http://rs.tdwg.org/ac/doc/format/ . This term can be used to describe offline digital content. In cases where the provided Service Access Point URL includes a standard file extension from which the format can be inferred, it is permissible to not provide a value for this property. See also the entry for dcterms:format in the Audiovisual Core term list document and see the DCMI FAQ on DC and DCTERMS Namespaces, https://web.archive.org/web/20171126043657/https://github.com/dcmi/repository/blob/master/mediawiki_wiki/FAQ/DC_and_DCTERMS_Namespaces.md, for discussion of the rationale for terms in two namespaces. It is best practice to use dcterms:format instead of dc:format whenever practical. Normal practice is to use the same Label if both are provided. Labels have no effect on information discovery and are only suggestions.",
+            "examples": "",
+            "namespace": "dc",
+            "iri": "http://purl.org/dc/elements/1.1/format"
+        },
+        {
+            "name": "rights",
+            "description": "Information about rights held in and over the resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "A full-text, readable copyright statement, as required by the national legislation of the copyright holder. On collections, this applies to all contained objects, unless the object itself has a different statement. Do not place just the name of the copyright holder(s) here! That belongs in a list in the xmpRights:Owner field, which SHOULD be supplied if dc:rights is not 'Public Domain', which is appropriate only if the resource is known to be not under copyright. At least one of dcterms:rights and dc:rights MUST be supplied but, when feasible, supplying both might make the metadata more widely useful. They MUST specify the same rights. This expresses rights over the media resource, not over the metadata text. In case of ambiguity, dcterms:rights prevails. See also the entry for dcterms:rights in the Audiovisual Core Term List document and see the DCMI FAQ on DC and DCTERMS Namespaces, https://web.archive.org/web/20171126043657/https://github.com/dcmi/repository/blob/master/mediawiki_wiki/FAQ/DC_and_DCTERMS_Namespaces.md, for discussion of the rationale for terms in two namespaces. Normal practice is to use the same Label if both are provided. Labels have no effect on information discovery and are only suggestions.",
+            "examples": "`Copyright XY 2008, all rights reserved`; `© 2008 XY Museum`; `Public Domain`; `Copyright unknown`",
+            "namespace": "dc",
+            "iri": "http://purl.org/dc/elements/1.1/rights"
+        },
+        {
+            "name": "Owner",
+            "description": "A list of legal owners of the resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "A list of the names of the owners of the copyright. 'Unknown' is an acceptable value, but 'Public Domain' is not. In that case, omit or leave empty xmpRights:Owner, and put 'Public Domain' in the Copyright Statement (dc:rights). Note: Audiovisual Core guidelines on value format are less restrictive than is specified in the IPTC guidelines. Some providers use dc:publisher for this purpose, but it seems doubtful that the publisher is by necessity the copyright owner. 'Public Domain' is not an appropriate value because it denotes something that is not under copyright. Except for 'Public Domain' resources, it is strongly urged that this field be supplied.",
+            "examples": "",
+            "namespace": "xmpRights",
+            "iri": "http://ns.adobe.com/xap/1.0/rights/Owner"
+        },
+        {
+            "name": "source",
+            "description": "A related resource from which the described resource is derived.",
+            "type": "string",
+            "format": "default",
+            "comments": "A string providing an identifiable source from which the described resources was derived. If the resource was digitized from a non-digital resource, or was also previously published in a digital or printed publication, this describes the original. Do not put generally \"related\" publications in here. This field normally contains a free-form text description. If a URI is available it should be provided in dcterms:source. Can be repeatable if a montage of images. Information about further provenance beyond the ultimate source should be put in the derivedFrom attribute. See also the entry for dcterms:source in the Audiovisual Core term list document and see the DCMI FAQ on DC and DCTERMS Namespaces, https://web.archive.org/web/20171126043657/https://github.com/dcmi/repository/blob/master/mediawiki_wiki/FAQ/DC_and_DCTERMS_Namespaces.md, for discussion of the rationale for terms in two namespaces. Normal practice is to use the same Label if both are provided. Labels have no effect on information discovery and are only suggestions.",
+            "examples": "",
+            "namespace": "dc",
+            "iri": "http://purl.org/dc/elements/1.1/source"
+        },
+        {
+            "name": "creator",
+            "description": "An entity primarily responsible for making the resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "The person or organization responsible for creating the media resource. The value MAY be simple text including contact information. Note that the Creator need not be the Copyright Owner. See also the entry for dcterms:creator in the Audiovisual Core term list document and see the DCMI FAQ on DC and DCTERMS Namespaces, https://web.archive.org/web/20171126043657/https://github.com/dcmi/repository/blob/master/mediawiki_wiki/FAQ/DC_and_DCTERMS_Namespaces.md, for discussion of the rationale for terms in two namespaces. Normal practice is to use the same Label if both are provided. Labels have no effect on information discovery and are only suggestions.",
+            "examples": "",
+            "namespace": "dc",
+            "iri": "http://purl.org/dc/elements/1.1/creator"
+        },
+        {
+            "name": "creatorID",
+            "description": "An identifier for the entity primarily responsible for making the resource.",
+            "type": "string",
+            "format": "default",
+            "comments": "An identifier for the person or organization responsible for creating the media resource. Note that the Creator need not be the Copyright Owner. See the entry for dcterms:creator in the Audiovisual Core term list document and see the DCMI FAQ on DC and DCTERMS Namespaces, https://web.archive.org/web/20171126043657/https://github.com/dcmi/repository/blob/master/mediawiki_wiki/FAQ/DC_and_DCTERMS_Namespaces.md, for discussion of the rationale for terms in two namespaces.",
+            "examples": "",
+            "namespace": "dcterms",
+            "iri": "http://purl.org/dc/terms/creator"
+        },
+        {
+            "name": "CreateDate",
+            "description": "The date and time the resource was created. For a digital file, this need not match a file-system creation time. For a freshly created resource, it should be close to that time, modulo the time taken to write the file. Later file transfer, copying, and so on, can make the file-system time arbitrarily different.",
+            "type": "string",
+            "format": "default",
+            "comments": "The date of the creation of the original resource from which the digital media was derived or created. The date and time MUST comply with the World Wide Web Consortium (W3C) datetime practice, https://www.w3.org/TR/NOTE-datetime, which requires that date and time representation correspond to ISO 8601:1998, but with year fields always comprising 4 digits. This makes datetime records compliant with 8601:2004, https://www.iso.org/standard/40874.html. AC datetime values MAY also follow 8601:2004 for ranges by separating two IS0 8601 datetime fields by a solidus (\"forward slash\", '/'). When applied to a media resource with temporal extent such as audio or video, this property indicates the startTime of the recording. What constitutes \"original\" is determined by the metadata author. Example: Digitization of a photographic slide of a map would normally give the date at which the map was created; however a photographic work of art including the same map as its content may give the date of the original photographic exposure. Imprecise or unknown dates can be represented as ISO dates or ranges. Compare also Date and Time Digitized in the Resource Creation Vocabulary. See also the wikipedia IS0 8601 entry, https://en.wikipedia.org/wiki/ISO_8601, for further explanation and examples.",
+            "examples": "",
+            "namespace": "xmp",
+            "iri": "http://ns.adobe.com/xap/1.0/CreateDate"
+        },
+        {
+            "name": "modified",
+            "description": "Date on which the resource was changed.",
+            "type": "string",
+            "format": "default",
+            "comments": "Date that the media resource was altered. The date and time MUST comply with the World Wide Web Consortium (W3C) datetime practice, https://www.w3.org/TR/NOTE-datetime, which requires that date and time representation correspond to ISO 8601:1998, https://www.iso.org/standard/40874.html, but with year fields always comprising 4 digits. This makes datetime records compliant with 8601:2004. AC datetime values MAY also follow 8601:2004 for ranges by separating two IS0 8601 datetime fields by a solidus (\"forward slash\", '/'). dcterms:modified permits all modification dates to be recorded, or if only one is recorded, it is assumed to be the latest. See also the wikipedia IS0 8601 entry, https://en.wikipedia.org/wiki/ISO_8601, for further explanation and examples.",
+            "examples": "",
+            "namespace": "dcterms",
+            "iri": "http://purl.org/dc/terms/modified"
+        },
+        {
+            "name": "mediaLanguage",
+            "description": "A language of the content of Media.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best prectice is to use an ISO639-2 three-letter language code.",
+            "examples": "`eng` (for Modern English); `spa` (for Castilian Standard Spanish)",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "mediaDescription",
+            "description": "An account of the Media subject matter.",
+            "type": "string",
+            "format": "default",
+            "comments": "Description of content of the resource, containing the Who, What, When, Where and Why as free-form text.",
+            "examples": "`herbarium sheet scan`",
+            "namespace": "dcterms",
+            "iri": "http://purl.org/dc/terms/description"
+        }
+    ],
+    "primaryKey": "mediaID",
+    "foreignKeys": []
+}

@@ -1,0 +1,83 @@
+{
+    "name": "material-media",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/material-media",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material-media.json",
+    "title": "MaterialMedia",
+    "description": "A link establishing a dwc:MaterialEntity as content in a Media entity.",
+    "fields": [
+        {
+            "name": "mediaID",
+            "description": "An identifier for a Media instance.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "materialEntityID",
+            "description": "An identifier for a dwc:MaterialEntity.",
+            "type": "string",
+            "format": "default",
+            "comments": "Values of dwc:materialEntityID are intended to uniquely and persistently identify a particular dwc:MaterialEntity within some context. Examples of context include a particular sample collection, an organization, or the worldwide scale. Recommended best practice is to use a persistent, globally unique identifier. The identifier is bound to a physical object (a dwc:MaterialEntity) as opposed to a particular digital record (representation) of that physical object.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/materialEntityID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "mediaSubjectCategory",
+            "description": "A term to describe the content of the image by a value from a controlled vocabulary.",
+            "type": "string",
+            "format": "default",
+            "comments": "Controlled vocabulary of subjects to support broad classification of media items. Terms from various controlled vocabularies may be used. AC-recommended vocabularies are preferred and MAY be unqualified literals (not a full URI). For terms from other vocabularies either a precise URI SHOULD be used, or, as long as all unqualified terms in all vocabularies are unique, metadata SHOULD provide the source vocabularies using the Subject Category Vocabulary term. The value SHOULD be a string, whose text can also be in the form of a URL. These guidelines on value format are less restrictive than is specified by the IPTC guidelines.",
+            "examples": "`herbarium sheet scan`",
+            "namespace": "Iptc4xmpExt",
+            "iri": "http://iptc.org/std/Iptc4xmpExt/2008-02-29/CVterm"
+        },
+        {
+            "name": "mediaSubjectCategoryIRI",
+            "description": "The IRI of the controlled vocabulary value for the subject category of the Media instance.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "Iptc4xmpExt",
+            "iri": "http://iptc.org/std/Iptc4xmpExt/2008-02-29/CVterm"
+        },
+        {
+            "name": "mediaSubjectCategoryVocabulary",
+            "description": "Any vocabulary or formal classification from which terms in the Subject Category have been drawn.",
+            "type": "string",
+            "format": "default",
+            "comments": "The AC recommended vocabularies do not need to be cited here. There is no required linkage between individual Subject Category terms and the vocabulary; the mechanism is intended to support discovery of the normative URI for a term, but not guarantee it.",
+            "examples": "`herbarium sheet scan`",
+            "namespace": "ac",
+            "iri": "http://rs.tdwg.org/ac/terms/subjectCategoryVocabulary"
+        }
+    ],
+    "foreignKeys": [
+        {
+            "fields": "mediaID",
+            "reference": {
+                "resource": "media",
+                "fields": "mediaID"
+            }
+        },
+        {
+            "fields": "materialEntityID",
+            "reference": {
+                "resource": "material",
+                "fields": "materialEntityID"
+            }
+        }
+    ]
+}

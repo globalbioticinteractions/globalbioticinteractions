@@ -25,6 +25,7 @@
         <module>eol-globi-neo4j-index</module>
         <module>eol-globi-rest</module>
         <module>elton4n</module>
+        <module>dwc-dp</module>
     </modules>
 
     <profiles>

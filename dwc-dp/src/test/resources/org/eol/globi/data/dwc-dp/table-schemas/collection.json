@@ -1,0 +1,105 @@
+{
+    "name": "collection",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/collection",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/collection.json",
+    "title": "Collection",
+    "description": "A persistent formal repository in which dwc:MaterialEntities and/or Media are preserved.",
+    "fields": [
+        {
+            "name": "collectionID",
+            "description": "An identifier for a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the GBIF Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "`https://www.gbif.org/grscicoll/collection/fbd3ed74-5a21-4e01-b86a-33d36f032d9c`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/collectionID",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "collectionType",
+            "description": "The category that best matches the nature of a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "collectionTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "collectionTypeVocabulary",
+            "description": "The reference to the controlled vocabulary in which the definition of the value in collectionType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "collectionName",
+            "description": "The name of a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "collectionCode",
+            "description": "The name, acronym, coden, or initialism identifying a Collection.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Mammals`; `Hildebrandt`; `EBIRD`; `VP`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/collectionCode"
+        },
+        {
+            "name": "institutionID",
+            "description": "The identifier for an institution.",
+            "type": "string",
+            "format": "default",
+            "comments": "For physical specimens, the recommended best practice is to use a globally unique and resolvable identifier from a collections registry such as the Research Organization Registry (ROR) or the GBIF Registry of Scientific Collections (https://www.gbif.org/grscicoll).",
+            "examples": "`https://ror.org/015hz7p22`; `http://grscicoll.org/institution/museum-southwestern-biology`; `https://www.gbif.org/grscicoll/institution/e3d4dcc4-81e2-444c-8a5c-41d1044b5381`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/institutionID"
+        },
+        {
+            "name": "institutionName",
+            "description": "The name of an institution or organization.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "institutionCode",
+            "description": "The name (or acronym) in use by an institution.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`MVZ`; `FMNH`; `CLO`; `UCMP`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/institutionCode"
+        }
+    ],
+    "primaryKey": "collectionID",
+    "foreignKeys": []
+}

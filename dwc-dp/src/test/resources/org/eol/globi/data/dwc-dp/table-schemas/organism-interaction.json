@@ -1,0 +1,128 @@
+{
+    "name": "organism-interaction",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/organism-interaction",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction.json",
+    "title": "OrganismInteraction",
+    "description": "An interaction between two dwc:Organisms during a dwc:Event.",
+    "fields": [
+        {
+            "name": "organismInteractionID",
+            "description": "An identifier for an OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "organismInteractionDescription",
+            "description": "A verbatim description of an OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Mallophora ruficauda capturing an Apis mellifera worker in flight`",
+            "namespace": "dcterms",
+            "iri": "http://purl.org/dc/terms/description"
+        },
+        {
+            "name": "subjectOccurrenceID",
+            "description": "A unique identifier for a subject dwc:Occurrence in an OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "http://rs.tdwg.org/dwc/terms/resourceID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "subjectOrganismPart",
+            "description": "A part of a subject dwc:Organism involved in an OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "organismInteractionType",
+            "description": "The category that best matches the nature of an OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`visited flower of`; `pollinated by`; `parasitoid of`; `mated with`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "organismInteractionTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "`visited flower of`; `pollinated`; `parasitoid of`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "organismInteractionTypeVocabulary",
+            "description": "The reference to the controlled vocabulary where the definition of the value for organismInteractionType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "relatedOccurrenceID",
+            "description": "A unique identifier for an related dwc:Occurrence in an OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "http://rs.tdwg.org/dwc/terms/relatedResourceID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "relatedOrganismPart",
+            "description": "A part of a object dwc:Organism involved in an OrganismInteraction.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        }
+    ],
+    "primaryKey": "organismInteractionID",
+    "foreignKeys": [
+        {
+            "fields": "subjectOccurrenceID",
+            "reference": {
+                "resource": "occurrence",
+                "fields": "occurrenceID"
+            }
+        },
+        {
+            "fields": "relatedOccurrenceID",
+            "reference": {
+                "resource": "occurrence",
+                "fields": "occurrenceID"
+            }
+        }
+    ]
+}

@@ -1,0 +1,117 @@
+{
+    "name": "genetic-sequence",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/genetic-sequence",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/genetic-sequence.json",
+    "title": "GeneticSequence",
+    "description": "A digital representation of a nucleotide sequence.",
+    "fields": [
+        {
+            "name": "geneticSequenceID",
+            "description": "An identifier for a GeneticSequence.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": "",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "eventID",
+            "description": "An identifier for a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventID",
+            "constraints": {
+                "required": true,
+                "unique": false
+            }
+        },
+        {
+            "name": "derivedFromMaterialEntityID",
+            "description": "An identifier for a dwc:MaterialEntity from which this dwc:MaterialEntity was derived.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "geneticSequenceType",
+            "description": "The category that best matches the nature of a GeneticSequence.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`16S`; `cytochrome b`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "geneticSequenceTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of GeneticSequence.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "geneticSequenceTypeVocabulary",
+            "description": "The reference to the controlled vocabulary in which the definition of the value in geneticSequenceType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "geneticSequence",
+            "description": "A string representing nucleotide base pairs.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "geneticSequenceCitation",
+            "description": "A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with a GeneticSequence.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "geneticSequenceRemarks",
+            "description": "Comments or notes about a GeneticSequence.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        }
+    ],
+    "primaryKey": "geneticSequenceID",
+    "foreignKeys": [
+        {
+            "fields": "eventID",
+            "reference": {
+                "resource": "event",
+                "fields": "eventID"
+            }
+        }
+    ]
+}
