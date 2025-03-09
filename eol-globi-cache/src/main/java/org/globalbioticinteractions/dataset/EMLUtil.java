@@ -29,7 +29,7 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.MIME_TYPE_DWCA;
 
 public class EMLUtil {
 
-    public static JsonNode datasetWithEML(ResourceService origDataset, URI emlURI) throws IOException {
+    public static JsonNode datasetFor(ResourceService origDataset, URI emlURI) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);

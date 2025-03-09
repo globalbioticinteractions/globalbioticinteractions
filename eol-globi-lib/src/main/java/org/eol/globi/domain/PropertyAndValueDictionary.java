@@ -28,6 +28,7 @@ public class PropertyAndValueDictionary {
     public static final String NETWORK_ID = "networkId";
     public static final String NETWORK_NAME = "networkName";
     public static final String MIME_TYPE_DWCA = "application/dwca";
+    public static final String MIME_TYPE_DWC_DP = "application/dwc-dp";
     public static final String AUTHORSHIP = "authorship";
     protected final static String TYPE = "type";
     public static final String RANK = "rank";

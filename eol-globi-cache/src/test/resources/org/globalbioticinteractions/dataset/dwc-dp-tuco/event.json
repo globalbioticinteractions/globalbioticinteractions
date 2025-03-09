@@ -1,0 +1,839 @@
+{
+    "name": "event",
+    "identifier": "http://rs.gbif.org/data-packages/dwc-dp/event",
+    "url": "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event.json",
+    "title": "Event",
+    "description": "Something that occurs at some location during some time.",
+    "fields": [
+        {
+            "name": "eventID",
+            "description": "An identifier for a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventID",
+            "constraints": {
+                "required": true,
+                "unique": true
+            }
+        },
+        {
+            "name": "parentEventID",
+            "description": "An identifier for a broader dwc:Event that groups this and potentially other dwc:Events.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/parentEventID"
+        },
+        {
+            "name": "preferredEventName",
+            "description": "The name of a dwc:Event preferred in searches and results.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "eventType",
+            "description": "The category that best matches the nature of a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`MaterialGathering`; `Occurrence`; `Survey`; `SiteVisit`; `OrganismInteraction`; `CameraTrapDeployment`; `MediaCapture`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventType"
+        },
+        {
+            "name": "eventTypeIRI",
+            "description": "The IRI of the controlled vocabulary value for the type of dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an IRI for a term in a controlled vocabulary.",
+            "examples": "",
+            "namespace": "dwciri",
+            "iri": "http://rs.tdwg.org/dwc/iri/eventType"
+        },
+        {
+            "name": "eventTypeVocabulary",
+            "description": "The reference to the controlled vocabulary in which the definition of the value in dwc:eventType is given.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "datasetName",
+            "description": "A name for a dataset from which data originated.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/datasetName"
+        },
+        {
+            "name": "datasetID",
+            "description": "An identifier for a dataset from which data originated.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/datasetID"
+        },
+        {
+            "name": "fieldNumber",
+            "description": "An identifier given to a dwc:Event in the field.",
+            "type": "string",
+            "format": "default",
+            "comments": "Often serves as a link between field notes and a dwc:Event.",
+            "examples": "`RV Sol 87-03-08`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/fieldNumber"
+        },
+        {
+            "name": "eventConductedBy",
+            "description": "A list (concatenated and separated) of names of people, groups, or organizations responsible for conducting or recording a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`José E. Crespo`; `Oliver P. Pearson | Anita K. Pearson`, `FMNH`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/recordedBy"
+        },
+        {
+            "name": "eventConductedByID",
+            "description": "An identifier for the Agent responsible for conducting or recording a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`https://orcid.org/0000-0002-1825-0097`, `https://ror.org/00mh9zx15`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/recordedByID"
+        },
+        {
+            "name": "eventDate",
+            "description": "The date or time interval during which a dwc:Event occurred.",
+            "type": "string",
+            "format": "default",
+            "comments": "For gathering dwc:Events, this is the date-time when the gathering took place.",
+            "examples": "`1963-03-08T14:07-0600` (8 Mar 1963 at 2:07pm in the time zone six hours earlier than UTC); `2009-02-20T08:40Z` (20 February 2009 8:40am UTC); `2018-08-29T15:19` (3:19pm local time on 29 August 2018); `1809-02-12` (some time during 12 February 1809); `1906-06` (some time in June 1906); `1971` (some time in the year 1971); `2007-03-01T13:00:00Z/2008-05-11T15:30:00Z` (some time during the interval between 1 March 2007 1pm UTC and 11 May 2008 3:30pm UTC); `1900/1909` (some time during the interval between the beginning of the year 1900 and the end of the year 1909); `2007-11-13/15` (some time in the interval between 13 November 2007 and 15 November 2007)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventDate"
+        },
+        {
+            "name": "eventTime",
+            "description": "The time or interval during which a dwc:Event occurred.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a time of day that conforms to ISO 8601-1:2019.",
+            "examples": "`14:07-0600` (2:07pm in the time zone six hours earlier than UTC); `08:40:21Z` (8:40:21am UTC); `13:00:00Z/15:30:00Z` (the interval between 1pm UTC and 3:30pm UTC)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventTime"
+        },
+        {
+            "name": "startDayOfYear",
+            "description": "The earliest integer day of the year on which a dwc:Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366).",
+            "type": "integer",
+            "format": "default",
+            "comments": "",
+            "examples": "`1` (1 January); `32` (1 February); `366` (31 December); `365` (30 December in a leap year, 31 December in a non-leap year)",
+            "constraints": {
+                "required": false,
+                "minimum": 1,
+                "maximum": 366
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/startDayOfYear"
+        },
+        {
+            "name": "endDayOfYear",
+            "description": "The latest integer day of the year on which a dwc:Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366).",
+            "type": "integer",
+            "format": "default",
+            "comments": "",
+            "examples": "`1` (1 January); `32` (1 February); `366` (31 December); `365` (30 December in a leap year, 31 December in a non-leap year)",
+            "constraints": {
+                "required": false,
+                "minimum": 1,
+                "maximum": 366
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/endDayOfYear"
+        },
+        {
+            "name": "year",
+            "description": "The four-digit year in which a dwc:Event occurred, according to the Common Era Calendar.",
+            "type": "integer",
+            "format": "default",
+            "comments": "",
+            "examples": "`1160`; `2008`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/year"
+        },
+        {
+            "name": "month",
+            "description": "The integer month in which a dwc:Event occurred.",
+            "type": "integer",
+            "format": "default",
+            "comments": "",
+            "examples": "`1` (January); `10` (October)",
+            "constraints": {
+                "required": false,
+                "minimum": 1,
+                "maximum": 12
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/month"
+        },
+        {
+            "name": "day",
+            "description": "The integer day of the month on which a dwc:Event occurred.",
+            "type": "integer",
+            "format": "default",
+            "comments": "",
+            "examples": "`9`; `28`",
+            "constraints": {
+                "required": false,
+                "minimum": 1,
+                "maximum": 31
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/day"
+        },
+        {
+            "name": "verbatimEventDate",
+            "description": "The verbatim original representation of the date and time information for a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`spring 1910`; `Marzo 2002`; `1999-03-XX`; `17IV1934`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimEventDate"
+        },
+        {
+            "name": "verbatimLocality",
+            "description": "The original textual description of a dcterms:Location of a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`25 km NNE Bariloche por R. Nac. 237`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimLocality"
+        },
+        {
+            "name": "verbatimElevation",
+            "description": "The original description of the elevation (altitude, usually above sea level) of a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`100-200 m`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimElevation"
+        },
+        {
+            "name": "verbatimDepth",
+            "description": "The original description of the depth below a local surface.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`100-200 m`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimDepth"
+        },
+        {
+            "name": "verbatimCoordinates",
+            "description": "The verbatim original spatial coordinates of a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in verbatimSRS and the coordinate system should be stored in verbatimCoordinateSystem.",
+            "examples": "`41 05 54S 121 05 34W`; `17T 630000 4833400`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimCoordinates"
+        },
+        {
+            "name": "verbatimLatitude",
+            "description": "The verbatim original latitude of a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in verbatimSRS and the coordinate system should be stored in verbatimCoordinateSystem.",
+            "examples": "`41 05 54.03S`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimLatitude"
+        },
+        {
+            "name": "verbatimLongitude",
+            "description": "The verbatim original longitude of a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in verbatimSRS and the coordinate system should be stored in verbatimCoordinateSystem.",
+            "examples": "`121d 10' 34 W`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimLongitude"
+        },
+        {
+            "name": "verbatimCoordinateSystem",
+            "description": "The coordinate format for dwc:verbatimLatitude and dwc:verbatimLongitude or dwc:verbatimCoordinates.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`decimal degrees`; `degrees decimal minutes`; `degrees minutes seconds`; `UTM`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimCoordinateSystem"
+        },
+        {
+            "name": "verbatimSRS",
+            "description": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which coordinates given in dwc:verbatimLatitude and dwc:verbatimLongitude, or dwc:verbatimCoordinates are based.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use the EPSG code of the SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value `unknown`.",
+            "examples": "`unknown`; `EPSG:4326`; `WGS84`; `NAD27`; `Campo Inchauspe`; `European 1950`; `Clarke 1866`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verbatimSRS"
+        },
+        {
+            "name": "georeferenceVerificationStatus",
+            "description": "A categorical description of the extent to which the georeference has been verified to represent the best possible spatial description for the dcterms:Location of a dwc:Occurrence.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary. This term has an equivalent in the dwciri: namespace that allows only an IRI as a value, whereas this term allows for any string literal value.",
+            "examples": "`unable to georeference`; `requires georeference`; `requires verification`; `verified by data custodian`; `verified by contributor`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/georeferenceVerificationStatus"
+        },
+        {
+            "name": "habitat",
+            "description": "A category or description of the habitat in which a dwc:Event occurred.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`oak savanna`; `pre-cordilleran steppe`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/habitat"
+        },
+        {
+            "name": "sampleSizeValue",
+            "description": "A numeric value for a measurement of the size (time duration, length, area, or volume) of a sample in a sampling dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "A dwc:sampleSizeValue must have a corresponding dwc:sampleSizeUnit.",
+            "examples": "`5` (sampleSizeValue) with `metre` (sampleSizeUnit)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/sampleSizeValue"
+        },
+        {
+            "name": "sampleSizeUnit",
+            "description": "The unit of measurement of the size (time duration, length, area, or volume) of a sample in a sampling dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "A dwc:sampleSizeUnit must have a corresponding dwc:sampleSizeValue, e.g., `5` for dwc:sampleSizeValue with `metre` for dwc:sampleSizeUnit.",
+            "examples": "`minute`; `hour`; `day`; `metre`; `square metre`; `cubic metre``",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/sampleSizeUnit"
+        },
+        {
+            "name": "eventEffort",
+            "description": "The amount of effort expended during a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`40 trap-nights`; `10 observer-hours`; `10 km by foot`; `30 km by car`",
+            "namespace": "eco",
+            "iri": "http://rs.tdwg.org/eco/terms/eventEffort"
+        },
+        {
+            "name": "fieldNotes",
+            "description": "One of a) an indicator of the existence of, b) a reference to (publication, URI), or c) the text of notes taken in the field about a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Notes available in the Grinnell-Miller Library.`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/fieldNotes"
+        },
+        {
+            "name": "eventCitation",
+            "description": "A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`http://www.sciencemag.org/cgi/content/abstract/322/5899/261`; `Christopher J. Conroy, Jennifer L. Neuwald. 2008. Phylogeographic study of the California vole, Microtus californicus Journal of Mammalogy, 89(3):755-767.`; `Steven R. Hoofer and Ronald A. Van Den Bussche. 2001. Phylogenetic Relationships of Plecotine Bats and Allies Based on Mitochondrial Ribosomal Sequences. Journal of Mammalogy 82(1):131-137. | Walker, Faith M., Jeffrey T. Foster, Kevin P. Drees, Carol L. Chambers. 2014. Spotted bat (Euderma maculatum) microsatellite discovery using illumina sequencing. Conservation Genetics Resources.`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "eventRemarks",
+            "description": "Comments or notes about a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`After the recent rains the river is nearly at flood stage.`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/eventRemarks"
+        },
+        {
+            "name": "locationID",
+            "description": "An identifier a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`https://opencontext.org/subjects/768A875F-E205-4D0B-DE55-BAB7598D0FD1`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/locationID"
+        },
+        {
+            "name": "higherGeographyID",
+            "description": "An identifier for the geographic region within which the dcterms:Location occurred.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`http://vocab.getty.edu/tgn/1002002`  (Antártida e Islas del Atlántico Sur, Territorio Nacional de la Tierra del Fuego, Argentina).",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/higherGeographyID"
+        },
+        {
+            "name": "higherGeography",
+            "description": "A list (concatenated and separated) of geographic names less specific than the information captured in dwc:locality.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `), with terms in order from least specific to most specific.",
+            "examples": "`North Atlantic Ocean`; `South America | Argentina | Patagonia | Parque Nacional Nahuel Huapi | Neuquén | Los Lagos` with accompanying values `South America` (continent) `Argentina` (country), `Neuquén` (first order division), and `Los Lagos` (second order division)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/higherGeography"
+        },
+        {
+            "name": "continent",
+            "description": "The name of the continent in which the dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "`Africa`; `Antarctica`; `Asia`; `Europe`; `North America`; `Oceania`; `South America`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/continent"
+        },
+        {
+            "name": "waterBody",
+            "description": "The name of the water body in which a dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+            "examples": "`Indian Ocean`; `Baltic Sea`; `Hudson River`; `Lago Nahuel Huapi`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/waterBody"
+        },
+        {
+            "name": "islandGroup",
+            "description": "The name of the island group in which a dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+            "examples": "`Alexander Archipelago`; `Archipiélago Diego Ramírez`; `Seychelles`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/islandGroup"
+        },
+        {
+            "name": "island",
+            "description": "The name of the island on or near which a dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.",
+            "examples": "`Nosy Be`; `Bikini Atoll`; `Vancouver`; `Viti Levu`; `Zanzibar`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/island"
+        },
+        {
+            "name": "country",
+            "description": "The name of the country or major administrative unit in which the dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "`Denmark`; `Colombia`; `España`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/country"
+        },
+        {
+            "name": "countryCode",
+            "description": "The standard code for the country in which the dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use an ISO 3166-1-alpha-2 country code. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "`AR`; `SV`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/countryCode"
+        },
+        {
+            "name": "stateProvince",
+            "description": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.) in which a dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if a dcterms:Location spans multiple entities at this administrative level or if a dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "`Montana`; `Minas Gerais`; `Córdoba`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/stateProvince"
+        },
+        {
+            "name": "county",
+            "description": "The full, unabbreviated name of the next smaller administrative region than dwc:stateProvince (county, shire, department, etc.) in which the dcterms:Location occurs.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if the dcterms:Location spans multiple entities at this administrative level or if the dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term dwc:higherGeography or in the term dwc:locality, or both.",
+            "examples": "`Missoula`; `Los Lagos`; `Mataró`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/county"
+        },
+        {
+            "name": "municipality",
+            "description": "The full, unabbreviated name of the next smaller administrative region than county (city, municipality, etc.) in which a dcterms:Location occurs. Do not use this term for a nearby named place that does not contain the actual location.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. Recommended best practice is to leave this field blank if a dcterms:Location spans multiple entities at this administrative level or if a dcterms:Location might be in one or another of multiple possible entities at this level. Multiplicity and uncertainty of the geographic entity can be captured either in the term `higherGeography` or in the term `locality`, or both.",
+            "examples": "`Holzminden`; `Araçatuba`; `Ga-Segonyana`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/municipality"
+        },
+        {
+            "name": "locality",
+            "description": "The specific description of the place.",
+            "type": "string",
+            "format": "default",
+            "comments": "Less specific geographic information can be provided in other geographic terms (higherGeography, continent, country, stateProvince, county, municipality, waterBody, island, islandGroup). This term may contain information modified from the original to correct perceived errors or standardize the description.",
+            "examples": "`Bariloche, 25 km NNE via Ruta Nacional 40 (=Ruta 237)`; `Queets Rainforest, Olympic National Park`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/locality"
+        },
+        {
+            "name": "minimumElevationInMeters",
+            "description": "The lower limit of the range of elevation (altitude, usually above sea level), in meters.",
+            "type": "number",
+            "format": "default",
+            "comments": "",
+            "examples": "`-100`; `802`",
+            "constraints": {
+                "required": false,
+                "minimum": -430,
+                "maximum": 8850
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/minimumElevationInMeters"
+        },
+        {
+            "name": "maximumElevationInMeters",
+            "description": "The upper limit of the range of elevation (altitude, usually above sea level), in meters.",
+            "type": "number",
+            "format": "default",
+            "comments": "",
+            "examples": "`-205`; `1236`",
+            "constraints": {
+                "required": false,
+                "minimum": -430,
+                "maximum": 8850
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/maximumElevationInMeters"
+        },
+        {
+            "name": "verticalDatum",
+            "description": "The vertical datum used as the reference upon which the values in the elevation terms are based.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a controlled vocabulary.",
+            "examples": "`EGM84`; `EGM96`; `EGM2008`; `PGM2000A`; `PGM2004`; `PGM2006`; `PGM2007`; `epsg:7030`; `unknown`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/verticalDatum"
+        },
+        {
+            "name": "minimumDepthInMeters",
+            "description": "The lesser depth of a range of depth below the local surface, in meters.",
+            "type": "number",
+            "format": "default",
+            "comments": "",
+            "examples": "`0`; `100`",
+            "constraints": {
+                "required": false,
+                "minimum": 0,
+                "maximum": 11000
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/minimumDepthInMeters"
+        },
+        {
+            "name": "maximumDepthInMeters",
+            "description": "The greater depth of a range of depth below the local surface, in meters.",
+            "type": "number",
+            "format": "default",
+            "comments": "",
+            "examples": "`0`; `200`",
+            "constraints": {
+                "required": false,
+                "minimum": 0,
+                "maximum": 11000
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/maximumDepthInMeters"
+        },
+        {
+            "name": "minimumDistanceAboveSurfaceInMeters",
+            "description": "The lesser distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation.",
+            "type": "number",
+            "format": "default",
+            "comments": "",
+            "examples": "`-1.5` (below the surface); `4.2` (above the surface); For a 1.5 meter sediment core from the bottom of a lake (at depth 20m) at 300m elevation: verbatimElevation: `300m` minimumElevationInMeters: `300`, maximumElevationInMeters: `300`, verbatimDepth: `20m`, minimumDepthInMeters: `20`, maximumDepthInMeters: `20`, minimumDistanceAboveSurfaceInMeters: `0`, maximumDistanceAboveSurfaceInMeters: `-1.5`.",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/minimumDistanceAboveSurfaceInMeters"
+        },
+        {
+            "name": "maximumDistanceAboveSurfaceInMeters",
+            "description": "The greater distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation.",
+            "type": "number",
+            "format": "default",
+            "comments": "",
+            "examples": "`-1.5` (below the surface); `4.2` (above the surface); For a 1.5 meter sediment core from the bottom of a lake (at depth 20m) at 300m elevation: verbatimElevation: `300m` minimumElevationInMeters: `300`, maximumElevationInMeters: `300`, verbatimDepth: `20m`, minimumDepthInMeters: `20`, maximumDepthInMeters: `20`, minimumDistanceAboveSurfaceInMeters: `0`, maximumDistanceAboveSurfaceInMeters: `-1.5`.",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/maximumDistanceAboveSurfaceInMeters"
+        },
+        {
+            "name": "locationRemarks",
+            "description": "Comments or notes about a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`under water since 2005`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/locationRemarks"
+        },
+        {
+            "name": "decimalLatitude",
+            "description": "The geographic latitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location.",
+            "type": "number",
+            "format": "default",
+            "comments": "Positive values are north of the Equator, negative values are south of it. Legal values lie between -90 and 90, inclusive.",
+            "examples": "`-41.0983423`",
+            "constraints": {
+                "required": false,
+                "minimum": -90,
+                "maximum": 90
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/decimalLatitude"
+        },
+        {
+            "name": "decimalLongitude",
+            "description": "The geographic longitude (in decimal degrees, using the spatial reference system given in dwc:geodeticDatum) of the geographic center of a dcterms:Location.",
+            "type": "number",
+            "format": "default",
+            "comments": "Positive values are east of the Greenwich Meridian, negative values are west of it. Legal values lie between -180 and 180, inclusive.",
+            "examples": "`-121.1761111`",
+            "constraints": {
+                "required": false,
+                "minimum": -180,
+                "maximum": 180
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/decimalLongitude"
+        },
+        {
+            "name": "geodeticDatum",
+            "description": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geographic coordinates given in dwc:decimalLatitude and dwc:decimalLongitude as based.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use the EPSG code of the SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value `unknown`.",
+            "examples": "`EPSG:4326`; `WGS84`; `NAD27`; `Campo Inchauspe`; `European 1950`; `Clarke 1866`; `unknown`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/geodeticDatum"
+        },
+        {
+            "name": "coordinateUncertaintyInMeters",
+            "description": "The horizontal distance (in meters) from the given dwc:decimalLatitude and dwc:decimalLongitude describing the smallest circle containing the whole of the dcterms:Location.",
+            "type": "integer",
+            "format": "default",
+            "comments": "Leave the value empty if the uncertainty is unknown, cannot be estimated, or is not applicable (because there are no coordinates). Zero is not a valid value for this term.",
+            "examples": "`30` (reasonable lower limit on or after 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time); `100` (reasonable lower limit before 2000-05-01 of a GPS reading under good conditions if the actual precision was not recorded at the time); `71` (uncertainty for a UTM coordinate having 100 meter precision and a known spatial reference system)",
+            "constraints": {
+                "required": false,
+                "minimum": 1,
+                "maximum": 20037509
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters"
+        },
+        {
+            "name": "coordinatePrecision",
+            "description": "A decimal representation of the precision of the coordinates given in a dwc:decimalLatitude and dwc:decimalLongitude.",
+            "type": "number",
+            "format": "default",
+            "comments": "",
+            "examples": "`0.00001` (normal GPS limit for decimal degrees); `0.000278` (nearest second); `0.01667` (nearest minute); `1.0` (nearest degree)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/coordinatePrecision"
+        },
+        {
+            "name": "pointRadiusSpatialFit",
+            "description": "The ratio of the area of the point-radius (dwc:decimalLatitude, dwc:decimalLongitude, dwc:coordinateUncertaintyInMeters) to the area of the true (original, or most specific) spatial representation of a dcterms:Location.",
+            "type": "number",
+            "format": "default",
+            "comments": "Legal values are 0, greater than or equal to 1, or undefined. A value of 1 is an exact match or 100% overlap. A value of 0 should be used if the given point-radius does not completely contain the original representation. The pointRadiusSpatialFit is undefined (and should be left empty) if the original representation is any geometry without area (e.g., a point or polyline) and without uncertainty and the given georeference is not that same geometry (without uncertainty). If both the original and the given georeference are the same point, the pointRadiusSpatialFit is 1. Detailed explanations with graphical examples can be found in the Georeferencing Best Practices, Chapman and Wieczorek, 2020 (https://doi.org/10.15468/doc-gg7h-s853).",
+            "examples": "`0`; `1`; `1.5708`",
+            "constraints": {
+                "required": false,
+                "minimum": 0
+            },
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/pointRadiusSpatialFit"
+        },
+        {
+            "name": "footprintWKT",
+            "description": "A Well-Known Text (WKT) representation of the shape (footprint, geometry) that defines a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "A dcterms:Location may have both a point-radius representation (see dwc:decimalLatitude) and a footprint representation, and they may differ from each other.",
+            "examples": "`POLYGON ((10 20, 11 20, 11 21, 10 21, 10 20))` (the one-degree bounding box with opposite corners at longitude=10, latitude=20 and longitude=11, latitude=21)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/footprintWKT"
+        },
+        {
+            "name": "footprintSRS",
+            "description": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geometry given in dwc:footprintWKT is based.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use the EPSG code of the SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value `unknown`. It is also permitted to provide the SRS in Well-Known-Text, especially if no EPSG code provides the necessary values for the attributes of the SRS. Do not use this term to describe the SRS of a dwc:decimalLatitude and dwc:decimalLongitude, nor of any verbatim coordinates - use dwc:geodeticDatum and dwc:verbatimSRS instead.",
+            "examples": "`epsg:4326`; `GEOGCS['GCS_WGS_1984', DATUM['D_WGS_1984', SPHEROID['WGS_1984',6378137,298.257223563]], PRIMEM['Greenwich',0], UNIT['Degree',0.0174532925199433]]` (WKT for the standard WGS84 Spatial Reference System EPSG:4326)",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/footprintSRS"
+        },
+        {
+            "name": "footprintSpatialFit",
+            "description": "The ratio of the area of the footprint (footprintWKT) to the area of the true (original, or most specific) spatial representation of a dcterms:Location.",
+            "type": "number",
+            "format": "default",
+            "comments": "Legal values are 0, greater than or equal to 1, or undefined. A value of 1 is an exact match or 100% overlap. A value of 0 should be used if the given footprint does not completely contain the original representation. The dwc:footprintSpatialFit is undefined (and should be left empty) if the original representation is any geometry without area (e.g., a point or polyline) and without uncertainty and the given georeference is not that same geometry (without uncertainty). If both the original and the given georeference are the same point, a dwc:footprintSpatialFit is 1.",
+            "examples": "`0`; `1`; `1.5708`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/footprintSpatialFit"
+        },
+        {
+            "name": "georeferencedBy",
+            "description": "A list (concatenated and separated) of names of people, groups, or organizations who determined a georeference (spatial representation) for a dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`Brad Millen (ROM)`; `Kristina Yamamoto | Janet Fang`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/georeferencedBy"
+        },
+        {
+            "name": "georeferencedByID",
+            "description": "An identifier for the Agent who georeferenced a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a globally unique identifier.",
+            "examples": "`https://orcid.org/0000-0002-1825-0097`",
+            "namespace": "gum",
+            "iri": ""
+        },
+        {
+            "name": "georeferencedDate",
+            "description": "The date on which a dcterms:Location was georeferenced.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to use a date that conforms to ISO 8601-1:2019.",
+            "examples": "`2023-05-04`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/georeferencedDate"
+        },
+        {
+            "name": "georeferenceProtocol",
+            "description": "A description or reference to the methods used to determine the spatial footprint, coordinates, and uncertainties.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Georeferencing Quick Reference Guide (Zermoglio et al. 2020, https://doi.org/10.35035/e09p-h128)`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/georeferenceProtocol"
+        },
+        {
+            "name": "georeferenceProtocolID",
+            "description": "An identifier for a Protocol used to georeference a dwc:Event.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "",
+            "namespace": "dwciri",
+            "iri": "http://rs.tdwg.org/dwc/iri/georeferenceProtocol"
+        },
+        {
+            "name": "georeferenceSources",
+            "description": "A list (concatenated and separated) of maps, gazetteers, or other resources used to georeference a dcterms:Location, described specifically enough to allow anyone in the future to use the same resources.",
+            "type": "string",
+            "format": "default",
+            "comments": "Recommended best practice is to separate the values in a list with space vertical bar space (` | `).",
+            "examples": "`https://www.geonames.org/`; `USGS 1:24000 Florence Montana Quad 1967 | Terrametrics 2008 on Google Earth`; `GeoLocate`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/georeferenceSources"
+        },
+        {
+            "name": "georeferenceRemarks",
+            "description": "Comments or notes about a spatial description determination, explaining assumptions made in addition or opposition to the those formalized in the method referred to in dwc:georeferenceProtocol.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Assumed distance by road (Hwy. 101)`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/georeferenceRemarks"
+        },
+        {
+            "name": "informationWithheld",
+            "description": "Additional information that exists, but that has not been shared in the given record.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`location information not given for endangered species`; `collector identities withheld | ask about tissue samples`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/informationWithheld"
+        },
+        {
+            "name": "dataGeneralizations",
+            "description": "Actions taken to make the shared data less specific or complete than in its original form. Suggests that alternative data of higher quality may be available on request.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`coordinates generalized from original GPS coordinates to the nearest half degree grid cell`",
+            "namespace": "dwc",
+            "iri": "http://rs.tdwg.org/dwc/terms/dataGeneralizations"
+        },
+        {
+            "name": "preferredSpatialRepresentation",
+            "description": "An indication of which spatial representation best represents the dcterms:Location.",
+            "type": "string",
+            "format": "default",
+            "comments": "",
+            "examples": "`Point-radius`; `Footprint`",
+            "namespace": "gum",
+            "iri": ""
+        }
+    ],
+    "primaryKey": "eventID",
+    "foreignKeys": [
+        {
+            "fields": "parentEventID",
+            "reference": {
+                "resource": "event",
+                "fields": "eventID"
+            }
+        },
+        {
+            "fields": "georeferenceProtocolID",
+            "reference": {
+                "resource": "protocol",
+                "fields": "protocolID"
+            }
+        }
+    ]
+}

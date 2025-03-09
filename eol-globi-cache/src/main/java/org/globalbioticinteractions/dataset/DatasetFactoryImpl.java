@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,7 +15,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.TreeMap;
 
 interface DatasetConfigurer {
     JsonNode configure(ResourceService dataset, URI configURI) throws IOException;
@@ -50,10 +50,11 @@ public class DatasetFactoryImpl implements DatasetFactory {
     }
 
     private Pair<URI, JsonNode> configDataset(ResourceService resourceService) throws DatasetRegistryException {
-        Map<URI, DatasetConfigurer> datasetHandlers = new TreeMap<URI, DatasetConfigurer>() {{
+        Map<URI, DatasetConfigurer> datasetHandlers = new LinkedMap<URI, DatasetConfigurer>() {{
             put(URI.create("/globi.json"), new JSONConfigurer());
             put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
-            put(URI.create("/eml.xml"), (dataset1, uri) -> EMLUtil.datasetWithEML(resourceService, uri));
+            put(URI.create("/eml.xml"), (dataset1, uri) -> EMLUtil.datasetFor(resourceService, uri));
+            put(URI.create("/datapackage.json"), (dataset1, uri) -> DwCDataPackageUtil.datasetFor(resourceService, uri));
         }};
 
         Pair<URI, JsonNode> configPair = null;

@@ -1,0 +1,39 @@
+{
+  "profile" : "data-package",
+  "title" : "Example CONABIO Bee-Plant Interactions",
+  "description" : "This is a dataset only for use in testing the Darwin Core Data Package publishing model for Organism Interactions.",
+  "version" : "1",
+  "created" : "2025-02-28T03:59:56Z",
+  "resources" : [ {
+    "name" : "event",
+    "profile" : "tabular-data-resource",
+    "format" : "csv",
+    "encoding" : "UTF-8",
+    "schema" : "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/event.json",
+    "path" : "event.csv"
+  }, {
+    "name" : "material",
+    "profile" : "tabular-data-resource",
+    "format" : "csv",
+    "encoding" : "UTF-8",
+    "schema" : "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/material.json",
+    "path" : "material.csv"
+  }, {
+    "name" : "occurrence",
+    "profile" : "tabular-data-resource",
+    "format" : "csv",
+    "encoding" : "UTF-8",
+    "schema" : "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/occurrence.json",
+    "path" : "occurrence.csv"
+  }, {
+    "name" : "organism-interaction",
+    "profile" : "tabular-data-resource",
+    "format" : "csv",
+    "encoding" : "UTF-8",
+    "schema" : "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction.json",
+    "path" : "organism-interaction.csv"
+  } ],
+  "contributors" : [ ],
+  "licenses" : [ ],
+  "sources" : [ ]
+}

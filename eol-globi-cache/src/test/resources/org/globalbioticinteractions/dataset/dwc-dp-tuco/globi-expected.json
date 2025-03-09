@@ -1,0 +1,597 @@
+{
+  "citation" : "Example CONABIO Bee-Plant Interactions.",
+  "format" : "application/dwc-dp",
+  "@context" : [ "http://www.w3.org/ns/csvw", {
+    "@language" : "en"
+  } ],
+  "tables" : [ {
+    "url" : "event.csv",
+    "delimiter" : ",",
+    "primaryKey" : "eventID",
+    "foreignKeys" : [ {
+      "columnReference" : "parentEventID",
+      "reference" : {
+        "columnReference" : "eventID"
+      }
+    }, {
+      "columnReference" : "georeferenceProtocolID",
+      "reference" : {
+        "columnReference" : "protocolID"
+      }
+    } ],
+    "tableSchema" : {
+      "columns" : [ {
+        "name" : "eventID",
+        "datatype" : "string"
+      }, {
+        "name" : "parentEventID",
+        "datatype" : "string"
+      }, {
+        "name" : "preferredEventName",
+        "datatype" : "string"
+      }, {
+        "name" : "eventType",
+        "datatype" : "string"
+      }, {
+        "name" : "eventTypeIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "eventTypeVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "datasetName",
+        "datatype" : "string"
+      }, {
+        "name" : "datasetID",
+        "datatype" : "string"
+      }, {
+        "name" : "fieldNumber",
+        "datatype" : "string"
+      }, {
+        "name" : "eventConductedBy",
+        "datatype" : "string"
+      }, {
+        "name" : "eventConductedByID",
+        "datatype" : "string"
+      }, {
+        "name" : "eventDate",
+        "datatype" : "string"
+      }, {
+        "name" : "eventTime",
+        "datatype" : "string"
+      }, {
+        "name" : "startDayOfYear",
+        "datatype" : "integer"
+      }, {
+        "name" : "endDayOfYear",
+        "datatype" : "integer"
+      }, {
+        "name" : "year",
+        "datatype" : "integer"
+      }, {
+        "name" : "month",
+        "datatype" : "integer"
+      }, {
+        "name" : "day",
+        "datatype" : "integer"
+      }, {
+        "name" : "verbatimEventDate",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimLocality",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimElevation",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimDepth",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimCoordinates",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimLatitude",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimLongitude",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimCoordinateSystem",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimSRS",
+        "datatype" : "string"
+      }, {
+        "name" : "georeferenceVerificationStatus",
+        "datatype" : "string"
+      }, {
+        "name" : "habitat",
+        "datatype" : "string"
+      }, {
+        "name" : "sampleSizeValue",
+        "datatype" : "string"
+      }, {
+        "name" : "sampleSizeUnit",
+        "datatype" : "string"
+      }, {
+        "name" : "eventEffort",
+        "datatype" : "string"
+      }, {
+        "name" : "fieldNotes",
+        "datatype" : "string"
+      }, {
+        "name" : "eventCitation",
+        "datatype" : "string"
+      }, {
+        "name" : "eventRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "locationID",
+        "datatype" : "string"
+      }, {
+        "name" : "higherGeographyID",
+        "datatype" : "string"
+      }, {
+        "name" : "higherGeography",
+        "datatype" : "string"
+      }, {
+        "name" : "continent",
+        "datatype" : "string"
+      }, {
+        "name" : "waterBody",
+        "datatype" : "string"
+      }, {
+        "name" : "islandGroup",
+        "datatype" : "string"
+      }, {
+        "name" : "island",
+        "datatype" : "string"
+      }, {
+        "name" : "country",
+        "datatype" : "string"
+      }, {
+        "name" : "countryCode",
+        "datatype" : "string"
+      }, {
+        "name" : "stateProvince",
+        "datatype" : "string"
+      }, {
+        "name" : "county",
+        "datatype" : "string"
+      }, {
+        "name" : "municipality",
+        "datatype" : "string"
+      }, {
+        "name" : "locality",
+        "datatype" : "string"
+      }, {
+        "name" : "minimumElevationInMeters",
+        "datatype" : "number"
+      }, {
+        "name" : "maximumElevationInMeters",
+        "datatype" : "number"
+      }, {
+        "name" : "verticalDatum",
+        "datatype" : "string"
+      }, {
+        "name" : "minimumDepthInMeters",
+        "datatype" : "number"
+      }, {
+        "name" : "maximumDepthInMeters",
+        "datatype" : "number"
+      }, {
+        "name" : "minimumDistanceAboveSurfaceInMeters",
+        "datatype" : "number"
+      }, {
+        "name" : "maximumDistanceAboveSurfaceInMeters",
+        "datatype" : "number"
+      }, {
+        "name" : "locationRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "decimalLatitude",
+        "datatype" : "number"
+      }, {
+        "name" : "decimalLongitude",
+        "datatype" : "number"
+      }, {
+        "name" : "geodeticDatum",
+        "datatype" : "string"
+      }, {
+        "name" : "coordinateUncertaintyInMeters",
+        "datatype" : "integer"
+      }, {
+        "name" : "coordinatePrecision",
+        "datatype" : "number"
+      }, {
+        "name" : "pointRadiusSpatialFit",
+        "datatype" : "number"
+      }, {
+        "name" : "footprintWKT",
+        "datatype" : "string"
+      }, {
+        "name" : "footprintSRS",
+        "datatype" : "string"
+      }, {
+        "name" : "footprintSpatialFit",
+        "datatype" : "number"
+      }, {
+        "name" : "georeferencedBy",
+        "datatype" : "string"
+      }, {
+        "name" : "georeferencedByID",
+        "datatype" : "string"
+      }, {
+        "name" : "georeferencedDate",
+        "datatype" : "string"
+      }, {
+        "name" : "georeferenceProtocol",
+        "datatype" : "string"
+      }, {
+        "name" : "georeferenceProtocolID",
+        "datatype" : "string"
+      }, {
+        "name" : "georeferenceSources",
+        "datatype" : "string"
+      }, {
+        "name" : "georeferenceRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "informationWithheld",
+        "datatype" : "string"
+      }, {
+        "name" : "dataGeneralizations",
+        "datatype" : "string"
+      }, {
+        "name" : "preferredSpatialRepresentation",
+        "datatype" : "string"
+      } ]
+    }
+  }, {
+    "url" : "material.csv",
+    "delimiter" : ",",
+    "primaryKey" : "materialEntityID",
+    "foreignKeys" : [ {
+      "columnReference" : "eventID",
+      "reference" : {
+        "columnReference" : "eventID"
+      }
+    }, {
+      "columnReference" : "partOfMaterialEntityID",
+      "reference" : {
+        "columnReference" : "materialEntityID"
+      }
+    } ],
+    "tableSchema" : {
+      "columns" : [ {
+        "name" : "materialEntityID",
+        "datatype" : "string"
+      }, {
+        "name" : "eventID",
+        "datatype" : "string"
+      }, {
+        "name" : "materialCategory",
+        "datatype" : "string"
+      }, {
+        "name" : "materialEntityType",
+        "datatype" : "string"
+      }, {
+        "name" : "materialEntityTypeIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "materialEntityTypeVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "institutionCode",
+        "datatype" : "string"
+      }, {
+        "name" : "institutionID",
+        "datatype" : "string"
+      }, {
+        "name" : "ownerInstitutionCode",
+        "datatype" : "string"
+      }, {
+        "name" : "ownerInstitutionID",
+        "datatype" : "string"
+      }, {
+        "name" : "collectionCode",
+        "datatype" : "string"
+      }, {
+        "name" : "collectionID",
+        "datatype" : "string"
+      }, {
+        "name" : "catalogNumber",
+        "datatype" : "string"
+      }, {
+        "name" : "otherCatalogNumbers",
+        "datatype" : "string"
+      }, {
+        "name" : "collectedBy",
+        "datatype" : "string"
+      }, {
+        "name" : "collectedByID",
+        "datatype" : "string"
+      }, {
+        "name" : "objectCount",
+        "datatype" : "string"
+      }, {
+        "name" : "recordNumber",
+        "datatype" : "string"
+      }, {
+        "name" : "preparations",
+        "datatype" : "string"
+      }, {
+        "name" : "disposition",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimLabel",
+        "datatype" : "string"
+      }, {
+        "name" : "associatedSequences",
+        "datatype" : "string"
+      }, {
+        "name" : "materialCitation",
+        "datatype" : "string"
+      }, {
+        "name" : "informationWithheld",
+        "datatype" : "string"
+      }, {
+        "name" : "dataGeneralizations",
+        "datatype" : "string"
+      }, {
+        "name" : "materialEntityRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "evidenceForOccurrenceID",
+        "datatype" : "string"
+      }, {
+        "name" : "derivedFromMaterialEntityID",
+        "datatype" : "string"
+      }, {
+        "name" : "derivationEventID",
+        "datatype" : "string"
+      }, {
+        "name" : "derivationType",
+        "datatype" : "string"
+      }, {
+        "name" : "derivationTypeIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "derivationTypeVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "partOfMaterialEntityID",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimIdentification",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonFormula",
+        "datatype" : "string"
+      }, {
+        "name" : "identifiedBy",
+        "datatype" : "string"
+      }, {
+        "name" : "identifiedByID",
+        "datatype" : "string"
+      }, {
+        "name" : "dateIdentified",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationReferences",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationVerificationStatus",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationVerificationStatusIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationVerificationStatusVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonID",
+        "datatype" : "string"
+      }, {
+        "name" : "kingdom",
+        "datatype" : "string"
+      }, {
+        "name" : "scientificName",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonRank",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonRemarks",
+        "datatype" : "string"
+      } ]
+    }
+  }, {
+    "url" : "occurrence.csv",
+    "delimiter" : ",",
+    "primaryKey" : "occurrenceID",
+    "tableSchema" : {
+      "columns" : [ {
+        "name" : "occurrenceID",
+        "datatype" : "string"
+      }, {
+        "name" : "eventID",
+        "datatype" : "string"
+      }, {
+        "name" : "surveyTargetID",
+        "datatype" : "string"
+      }, {
+        "name" : "recordedBy",
+        "datatype" : "string"
+      }, {
+        "name" : "recordedByID",
+        "datatype" : "string"
+      }, {
+        "name" : "organismQuantity",
+        "datatype" : "string"
+      }, {
+        "name" : "organismQuantityType",
+        "datatype" : "string"
+      }, {
+        "name" : "organismQuantityTypeIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "organismQuantityTypeVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "sex",
+        "datatype" : "string"
+      }, {
+        "name" : "lifeStage",
+        "datatype" : "string"
+      }, {
+        "name" : "reproductiveCondition",
+        "datatype" : "string"
+      }, {
+        "name" : "caste",
+        "datatype" : "string"
+      }, {
+        "name" : "behavior",
+        "datatype" : "string"
+      }, {
+        "name" : "vitality",
+        "datatype" : "string"
+      }, {
+        "name" : "establishmentMeans",
+        "datatype" : "string"
+      }, {
+        "name" : "degreeOfEstablishment",
+        "datatype" : "string"
+      }, {
+        "name" : "pathway",
+        "datatype" : "string"
+      }, {
+        "name" : "occurrenceStatus",
+        "datatype" : "string"
+      }, {
+        "name" : "occurrenceCitation",
+        "datatype" : "string"
+      }, {
+        "name" : "informationWithheld",
+        "datatype" : "string"
+      }, {
+        "name" : "dataGeneralizations",
+        "datatype" : "string"
+      }, {
+        "name" : "occurrenceRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "organismID",
+        "datatype" : "string"
+      }, {
+        "name" : "organismScope",
+        "datatype" : "string"
+      }, {
+        "name" : "organismScopeIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "organismScopeVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "organismName",
+        "datatype" : "string"
+      }, {
+        "name" : "organismRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimIdentification",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonFormula",
+        "datatype" : "string"
+      }, {
+        "name" : "identifiedBy",
+        "datatype" : "string"
+      }, {
+        "name" : "identifiedByID",
+        "datatype" : "string"
+      }, {
+        "name" : "dateIdentified",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationReferences",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationVerificationStatus",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationVerificationStatusIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationVerificationStatusVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "identificationRemarks",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonID",
+        "datatype" : "string"
+      }, {
+        "name" : "kingdom",
+        "datatype" : "string"
+      }, {
+        "name" : "scientificName",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonRank",
+        "datatype" : "string"
+      }, {
+        "name" : "taxonRemarks",
+        "datatype" : "string"
+      } ]
+    }
+  }, {
+    "url" : "organism-interaction.csv",
+    "delimiter" : ",",
+    "primaryKey" : "organismInteractionID",
+    "foreignKeys" : [ {
+      "columnReference" : "subjectOccurrenceID",
+      "reference" : {
+        "columnReference" : "occurrenceID"
+      }
+    }, {
+      "columnReference" : "relatedOccurrenceID",
+      "reference" : {
+        "columnReference" : "occurrenceID"
+      }
+    } ],
+    "tableSchema" : {
+      "columns" : [ {
+        "name" : "organismInteractionID",
+        "datatype" : "string"
+      }, {
+        "name" : "organismInteractionDescription",
+        "datatype" : "string"
+      }, {
+        "name" : "subjectOccurrenceID",
+        "datatype" : "string"
+      }, {
+        "name" : "subjectOrganismPart",
+        "datatype" : "string"
+      }, {
+        "name" : "organismInteractionType",
+        "datatype" : "string"
+      }, {
+        "name" : "organismInteractionTypeIRI",
+        "datatype" : "string"
+      }, {
+        "name" : "organismInteractionTypeVocabulary",
+        "datatype" : "string"
+      }, {
+        "name" : "relatedOccurrenceID",
+        "datatype" : "string"
+      }, {
+        "name" : "relatedOrganismPart",
+        "datatype" : "string"
+      } ]
+    }
+  } ]
+}

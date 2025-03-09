@@ -2,15 +2,20 @@ package org.globalbioticinteractions.dataset;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.function.Consumer;
 
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -100,6 +105,49 @@ public class DatasetFactoryImplTest {
         String meta = "jar:" + getClass().getResource("/org/globalbioticinteractions/dataset/dwca-seltmann.zip").toURI().toString() + "!/taxonomy-darwin-core-1ac8b1c8b7728b13a6dba9fd5b64a3aeb036f5fb";
         Dataset dataset = datasetFor(meta);
         assertThat(dataset.getCitation(), is("University of California Santa Barbara Invertebrate Zoology Collection. 2021-07-16."));
+
+    }
+
+    @Test
+    public void createDatasetDataPackage() throws DatasetRegistryException, URISyntaxException {
+        String dataPackage = "jar:" + getClass().getResource("dwc-dp-tuco.zip").toURI() + "!/";
+        assertNotNull(dataPackage);
+        String meta = dataPackage;
+        final DatasetRegistry finder = new DatasetRegistry() {
+            @Override
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
+                return Collections.singletonList("some/repo");
+            }
+
+            @Override
+            public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                for (String namespace : findNamespaces()) {
+                    namespaceConsumer.accept(namespace);
+                }
+            }
+
+
+            @Override
+            public Dataset datasetFor(String namespace) throws DatasetRegistryException {
+                ResourceServiceLocal resourceService = new ResourceServiceLocal(new InputStreamFactoryNoop()) {
+
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        URI uri = URI.create(StringUtils.replace(resourceName.toString(),
+                                "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/",
+                                "/org/globalbioticinteractions/dataset/dwc-dp-tuco/"
+                        ));
+                        return super.retrieve(uri);
+                    }
+
+                    ;
+
+                };
+                return new DatasetWithResourceMapping(namespace, URI.create(meta), resourceService);
+            }
+        };
+        Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("some/repo");
+        assertThat(dataset.getCitation(), is("Example CONABIO Bee-Plant Interactions."));
 
     }
 
