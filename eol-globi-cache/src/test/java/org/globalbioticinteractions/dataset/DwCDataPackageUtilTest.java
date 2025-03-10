@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 public class DwCDataPackageUtilTest {
 
     @Test
-    public void dataPackage() throws IOException {
+    public void dataPackage() throws IOException, URISyntaxException {
         JsonNode jsonNode = DwCDataPackageUtil.datasetFor(new ResourceService() {
             @Override
             public InputStream retrieve(URI resourceName) throws IOException {
@@ -33,9 +35,16 @@ public class DwCDataPackageUtilTest {
 
         assertNotNull(jsonNode);
 
-        IOUtils.copy(
-                IOUtils.toInputStream(jsonNode.toPrettyString(), StandardCharsets.UTF_8),
-                new FileOutputStream(new File("/home/jorrit/proj/globi/eol-globi-data/eol-globi-cache/src/test/resources/org/globalbioticinteractions/dataset/dwc-dp-tuco/globi-expected.json")));
+        String target = "/org/globalbioticinteractions/dataset/dwc-dp-tuco/globi-expected.json";
+        URL resource = getClass().getResource(target);
+        assertNotNull(resource);
+
+        boolean overwrite = false;
+        if (overwrite) {
+            IOUtils.copy(
+                    IOUtils.toInputStream(jsonNode.toPrettyString(), StandardCharsets.UTF_8),
+                    new FileOutputStream(new File(resource.toURI())));
+        }
 
         String expectedConfig = IOUtils.toString(
                 getClass().getResourceAsStream("dwc-dp-tuco/globi-expected.json"),
