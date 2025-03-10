@@ -7,6 +7,8 @@ import org.eol.globi.service.ResourceService;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -31,9 +33,9 @@ public class DwCDataPackageUtilTest {
 
         assertNotNull(jsonNode);
 
-//        IOUtils.copy(
-//                IOUtils.toInputStream(jsonNode.toPrettyString(), StandardCharsets.UTF_8),
-//                new FileOutputStream(new File("/home/jorrit/proj/globi/eol-globi-data/eol-globi-cache/src/test/resources/org/globalbioticinteractions/dataset/dwc-dp-tuco/globi-expected.json")));
+        IOUtils.copy(
+                IOUtils.toInputStream(jsonNode.toPrettyString(), StandardCharsets.UTF_8),
+                new FileOutputStream(new File("/home/jorrit/proj/globi/eol-globi-data/eol-globi-cache/src/test/resources/org/globalbioticinteractions/dataset/dwc-dp-tuco/globi-expected.json")));
 
         String expectedConfig = IOUtils.toString(
                 getClass().getResourceAsStream("dwc-dp-tuco/globi-expected.json"),

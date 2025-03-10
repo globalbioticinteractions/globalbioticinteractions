@@ -6,6 +6,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
+import org.eol.globi.domain.PropertyAndValueDictionary;
+import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -307,6 +310,55 @@ public class DatasetImporterForMetaTableTest {
         assertThat(sample3.get("referenceUrl"), is("https://pubmed.ncbi.nlm.nih.gov/507100"));
     }
 
+    @Test
+    public void importRecordsDwCDataPackageDerived() throws IOException, StudyImporterException {
+        String resourcePath = "/org/globalbioticinteractions/dataset/dwc-dp-tuco/";
+        final InputStream inputStream = getClass().getResourceAsStream(resourcePath + "globi.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                String resourceClasspath = resourcePath + resourceName.toString();
+                InputStream resourceAsStream = getClass().getResourceAsStream(resourceClasspath);
+                assertNotNull("failed to find test resource [" + resourceClasspath + "]", resourceAsStream);
+                return resourceAsStream;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                if (interaction.containsKey(INTERACTION_TYPE_NAME)) {
+                    links.add(interaction);
+                }
+            }
+        });
+        importer.importStudy();
+
+        assertThat(links.size(), is(1));
+
+        Map<String, String> sample1 = links.get(0);
+
+        assertThat(sample1.get("sourceOccurrenceId"), is("26ea33de-8da0-4bb8-a50f-315c9e277abe"));
+        assertThat(sample1.get("sourceTaxonName"), is("Bombus weisi"));
+        assertThat(sample1.get("sourceTaxonRank"), is("species"));
+        assertThat(sample1.get("sourceTaxonKingdomName"), is("Animalia"));
+        assertThat(sample1.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002622"));
+        assertThat(sample1.get("interactionTypeName"), is("visits flowers of"));
+        assertThat(sample1.get("targetOccurrenceId"), is("b8439282-24b2-4d1d-ae26-2c3ecf3bd586"));
+        assertThat(sample1.get("targetTaxonKingdomName"), is("Plantae"));
+        assertThat(sample1.get("targetTaxonName"), is("Cirsium"));
+        assertThat(sample1.get("targetTaxonRank"), is("genus"));
+        assertThat(sample1.get("referenceUrl"), is(nullValue()));
+    }
+
 
 
     @Test
@@ -574,7 +626,7 @@ public class DatasetImporterForMetaTableTest {
     public HashMap<String, String> interactMap(final String donald) {
         return new HashMap<String, String>() {
             {
-                put(DatasetImporterForTSV.INTERACTION_TYPE_NAME, donald);
+                put(INTERACTION_TYPE_NAME, donald);
             }
         };
     }
@@ -696,11 +748,11 @@ public class DatasetImporterForMetaTableTest {
         assertThat(links.get(0).get("empty3"), is("eats: Canis lupus | eats: Catus felis"));
 
         assertThat(links.get(0).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
-        assertThat(links.get(0).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
 
         assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
-        assertThat(links.get(1).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(1).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
     }
 
@@ -734,19 +786,19 @@ public class DatasetImporterForMetaTableTest {
         assertThat(links.get(0).get("empty3"), is("eats: Canis lupus | eats: Catus felis"));
 
         assertThat(links.get(0).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
-        assertThat(links.get(0).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(links.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
 
         assertThat(links.get(1).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
-        assertThat(links.get(1).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(1).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(links.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
 
         assertThat(links.get(2).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
-        assertThat(links.get(2).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(2).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(links.get(2).get(TaxonUtil.TARGET_TAXON_NAME), is("Canis lupus"));
 
         assertThat(links.get(3).get(TaxonUtil.SOURCE_TAXON_NAME), is("Homo sapiens"));
-        assertThat(links.get(3).get(DatasetImporterForTSV.INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(links.get(3).get(INTERACTION_TYPE_NAME), is("eats"));
         assertThat(links.get(3).get(TaxonUtil.TARGET_TAXON_NAME), is("Catus felis"));
     }
 

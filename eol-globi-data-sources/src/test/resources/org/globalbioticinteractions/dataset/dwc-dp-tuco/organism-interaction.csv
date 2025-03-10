@@ -1,0 +1,2 @@
+organismInteractionID,organismInteractionDescription,subjectOccurrenceID,subjectOrganismPart,organismInteractionType,organismInteractionTypeIRI,organismInteractionTypeVocabulary,relatedOccurrenceID,relatedOrganismPart
+fed37024-7c0d-4957-b94e-41a1002c5145,visits flowers of,26ea33de-8da0-4bb8-a50f-315c9e277abe,,visits flowers of,http://purl.obolibrary.org/obo/RO_0002622,https://obofoundry.org/ontology/ro.html,b8439282-24b2-4d1d-ae26-2c3ecf3bd586,flowers

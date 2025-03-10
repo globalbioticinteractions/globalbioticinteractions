@@ -9,10 +9,23 @@ import org.eol.globi.service.ResourceService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.eol.globi.domain.PropertyAndValueDictionary.MIME_TYPE_DWC_DP;
 
 public class DwCDataPackageUtil {
+
+    public static final Map<String, String> TRANSLATION_TABLE = new TreeMap<String, String>() {{
+        put("subjectOccurrenceID", "sourceOccurrenceId");
+        put("relatedOccurrenceID", "targetOccurrenceId");
+        put("organismInteractionType", "interactionTypeName");
+        put("organismInteractionTypeIRI", "interactionTypeId");
+        put("scientificName", "taxonName");
+        put("kingdom", "taxonKingdomName");
+        put("taxonRank", "taxonRankName");
+        put("occurrenceID", "occurrenceId");
+    }};
 
     public static JsonNode datasetFor(ResourceService origDataset, URI datapackageConfig) throws IOException {
         try {
@@ -55,6 +68,7 @@ public class DwCDataPackageUtil {
         table.put("url", resourcePath);
         String v = resource.at("/format").asText();
         table.put("delimiter", ",");
+        table.put("headerRowCount", 1);
         if (!"csv".equals(v)) {
             throw new IllegalArgumentException("only csv support so far");
         }
@@ -62,18 +76,17 @@ public class DwCDataPackageUtil {
     }
 
     private static void populateTableSchema(ResourceService origDataset, JsonNode resource, ObjectNode table) throws IOException {
-        InputStream tableSchemaStream = origDataset.retrieve(URI.create(resource.get("schema").asText()));
+        String schemaIRI = resource.get("schema").asText();
+        InputStream tableSchemaStream = origDataset.retrieve(URI.create(schemaIRI));
         JsonNode tableSchemaConfig = new ObjectMapper().readTree(tableSchemaStream);
 
-        addPrimaryKeyIfAvailable(table, tableSchemaConfig);
-        addForeignKeysIfAvailable(table, tableSchemaConfig);
-        addColumns(table, tableSchemaConfig);
-    }
-
-    private static void addColumns(ObjectNode table, JsonNode tableSchemaConfig) {
         JsonNode fields = tableSchemaConfig.get("fields");
 
-        table.set("tableSchema", parseColumns(fields));
+        ObjectNode tableSchema = new ObjectMapper().createObjectNode();
+        addPrimaryKeyIfAvailable(tableSchema, tableSchemaConfig);
+        addForeignKeysIfAvailable(tableSchema, tableSchemaConfig);
+        tableSchema.set("columns", parseColumns(fields));
+        table.set("tableSchema", tableSchema);
     }
 
     private static void addForeignKeysIfAvailable(ObjectNode table, JsonNode tableSchemaConfig) {
@@ -86,7 +99,8 @@ public class DwCDataPackageUtil {
     private static void addPrimaryKeyIfAvailable(ObjectNode table, JsonNode tableSchemaConfig) {
         JsonNode primaryKey = tableSchemaConfig.at("/primaryKey");
         if (primaryKey.isTextual()) {
-            table.put("primaryKey", primaryKey.asText());
+            String primaryKeyValue = primaryKey.asText();
+            table.put("primaryKey", TRANSLATION_TABLE.getOrDefault(primaryKeyValue, primaryKeyValue));
         }
     }
 
@@ -98,13 +112,15 @@ public class DwCDataPackageUtil {
 
             JsonNode foreignKeyFields = foreignKey.at("/fields");
             if (foreignKeyFields.isTextual()) {
-                foreignKeyConfig.put("columnReference", foreignKeyFields.asText());
+                String columnName = foreignKeyFields.asText();
+                foreignKeyConfig.put("columnReference", TRANSLATION_TABLE.getOrDefault(columnName, columnName));
             }
             JsonNode reference = foreignKey.at("/reference");
             if (reference.isObject()) {
                 if (reference.has("fields")) {
                     ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
-                    objectNode1.put("columnReference", reference.get("fields").asText());
+                    String foreignTargetName = reference.get("fields").asText();
+                    objectNode1.put("columnReference", TRANSLATION_TABLE.getOrDefault(foreignTargetName, foreignTargetName));
                     foreignKeyConfig.set("reference", objectNode1);
                 }
             }
@@ -113,20 +129,19 @@ public class DwCDataPackageUtil {
         return fKeys;
     }
 
-    private static ObjectNode parseColumns(JsonNode fields) {
+    private static ArrayNode parseColumns(JsonNode fields) {
         ArrayNode columns = new ObjectMapper().createArrayNode();
 
         for (JsonNode field : fields) {
             String columnName = field.at("/name").asText();
             String columnDataType = field.at("/type").asText();
             ObjectNode columnConfig = new ObjectMapper().createObjectNode();
-            columnConfig.put("name", columnName);
+            columnConfig.put("name", TRANSLATION_TABLE.getOrDefault(columnName, columnName));
+            columnConfig.put("titles", columnName);
             columnConfig.put("datatype", columnDataType);
             columns.add(columnConfig);
         }
-        ObjectNode tableSchema = new ObjectMapper().createObjectNode();
-        tableSchema.set("columns", columns);
-        return tableSchema;
+        return columns;
     }
 
 }

@@ -43,7 +43,6 @@ public class InjectRelatedRecords implements InteractionListener {
         Map<String, String> handledInteraction = interaction;
         if (indexedDependencies != null && indexedDependencies.size() > 0) {
 
-
             Collection<String> propertiesToInjected
                     = CollectionUtils.intersection(injectionMap.keySet(), interaction.keySet());
 
