@@ -11,6 +11,7 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
+import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.ResourceServiceLocal;
@@ -242,7 +243,7 @@ public class DatasetImporterForMetaTableTest {
 
 
         Map<String, Map<String, Map<String, String>>> indexedDependencies
-                = DatasetImporterForMetaTable.indexDependencies(dataset, null, folder.newFolder());
+                = DatasetImporterForMetaTable.indexDependencies(dataset, new NullImportLogger(), folder.newFolder());
 
         assertThat(indexedDependencies.size(), is(2));
 
