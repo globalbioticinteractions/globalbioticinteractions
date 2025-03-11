@@ -1,6 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.ResourceService;
@@ -46,12 +47,11 @@ public class DwCDataPackageUtilTest {
                     new FileOutputStream(new File(resource.toURI())));
         }
 
-        String expectedConfig = IOUtils.toString(
-                getClass().getResourceAsStream("dwc-dp-tuco/globi-expected.json"),
-                StandardCharsets.UTF_8
+        JsonNode expectedConfig = new ObjectMapper().readTree(
+                getClass().getResourceAsStream("dwc-dp-tuco/globi-expected.json")
         );
         assertThat(jsonNode.toPrettyString(),
-                Is.is(expectedConfig));
+                Is.is(expectedConfig.toPrettyString()));
 
     }
 
