@@ -513,7 +513,7 @@
         "titles" : "identificationRemarks",
         "datatype" : "string"
       }, {
-        "name" : "taxonID",
+        "name" : "taxonId",
         "titles" : "taxonID",
         "datatype" : "string"
       }, {
@@ -577,11 +577,11 @@
         "titles" : "organismQuantityTypeVocabulary",
         "datatype" : "string"
       }, {
-        "name" : "sex",
+        "name" : "sexName",
         "titles" : "sex",
         "datatype" : "string"
       }, {
-        "name" : "lifeStage",
+        "name" : "lifeStageName",
         "titles" : "lifeStage",
         "datatype" : "string"
       }, {
@@ -697,7 +697,7 @@
         "titles" : "identificationRemarks",
         "datatype" : "string"
       }, {
-        "name" : "taxonID",
+        "name" : "taxonId",
         "titles" : "taxonID",
         "datatype" : "string"
       }, {
@@ -748,7 +748,7 @@
         "titles" : "subjectOccurrenceID",
         "datatype" : "string"
       }, {
-        "name" : "subjectOrganismPart",
+        "name" : "sourceBodyPartName",
         "titles" : "subjectOrganismPart",
         "datatype" : "string"
       }, {
@@ -768,7 +768,7 @@
         "titles" : "relatedOccurrenceID",
         "datatype" : "string"
       }, {
-        "name" : "relatedOrganismPart",
+        "name" : "targetBodyPartName",
         "titles" : "relatedOrganismPart",
         "datatype" : "string"
       } ]

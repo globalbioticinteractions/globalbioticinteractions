@@ -42,9 +42,12 @@ public class DwCDataPackageUtilTest {
 
         boolean overwrite = false;
         if (overwrite) {
+            File file = new File(resource.toURI());
+            String resourcePath = StringUtils.replace(file.getAbsolutePath(), "target/test-classes", "src/test/resources");
+            System.out.println("updating test resource at [" + resourcePath + "]");
             IOUtils.copy(
                     IOUtils.toInputStream(jsonNode.toPrettyString(), StandardCharsets.UTF_8),
-                    new FileOutputStream(new File(resource.toURI())));
+                    new FileOutputStream(new File(resourcePath)));
         }
 
         JsonNode expectedConfig = new ObjectMapper().readTree(
