@@ -16,21 +16,36 @@ import static org.eol.globi.domain.PropertyAndValueDictionary.MIME_TYPE_DWC_DP;
 
 public class DwCDataPackageUtil {
 
-    public static final Map<String, String> TRANSLATION_TABLE = new TreeMap<String, String>() {{
-        put("subjectOccurrenceID", "sourceOccurrenceId");
-        put("relatedOccurrenceID", "targetOccurrenceId");
-        put("organismInteractionType", "interactionTypeName");
-        put("organismInteractionTypeIRI", "interactionTypeId");
-        put("scientificName", "taxonName");
-        put("kingdom", "taxonKingdomName");
-        put("taxonRank", "taxonRankName");
-        put("occurrenceID", "occurrenceId");
-    }};
+    public static final Map<String, String> TRANSLATION_TABLE = new TreeMap<String, String>() {
+        {
+            addInteractionTableTranslations();
+            addOccurrenceTableTranslations();
+        }
+
+        private void addInteractionTableTranslations() {
+            put("subjectOccurrenceID", "sourceOccurrenceId");
+            put("subjectOrganismPart", "sourceBodyPartName");
+            put("relatedOccurrenceID", "targetOccurrenceId");
+            put("relatedOrganismPart", "targetBodyPartName");
+            put("organismInteractionType", "interactionTypeName");
+            put("organismInteractionTypeIRI", "interactionTypeId");
+        }
+
+        private void addOccurrenceTableTranslations() {
+            put("taxonID", "taxonId");
+            put("scientificName", "taxonName");
+            put("kingdom", "taxonKingdomName");
+            put("taxonRank", "taxonRankName");
+            put("occurrenceID", "occurrenceId");
+            put("sex", "sexName");
+            put("lifeStage", "lifeStageName");
+        }
+    };
 
     public static JsonNode datasetFor(ResourceService origDataset, URI datapackageConfig) throws IOException {
         try {
             InputStream config = origDataset.retrieve(datapackageConfig);
-            JsonNode configNode =  new ObjectMapper().readTree(config);
+            JsonNode configNode = new ObjectMapper().readTree(config);
 
             ObjectNode objectNode = new ObjectMapper().createObjectNode();
             objectNode.put("citation", configNode.at("/title").asText() + ".");

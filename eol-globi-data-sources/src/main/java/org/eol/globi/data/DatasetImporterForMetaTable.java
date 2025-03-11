@@ -3,9 +3,11 @@ package org.eol.globi.data;
 import com.Ostermiller.util.CSVParse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -34,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
@@ -101,10 +104,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     }
 
     private static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies, File tmpDir) throws StudyImporterException, IOException {
-        Map<String, Map<String, Map<String, String>>> indexedTables
-                = primaryKeyDependencies.size() == 0
-                ? Collections.emptyMap()
-                : MapDBUtil.createBigMap(tmpDir);
+        Map<String, Map<String, Map<String, String>>> indexedTables = new LinkedMap<>();
 
         for (Map.Entry<JsonNode, List<String>> jsonNode : primaryKeyDependencies.entrySet()) {
             List<String> primaryKeys = jsonNode.getValue();
@@ -115,7 +115,10 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                 }
 
                 if (!indexedTables.containsKey(primaryKey)) {
-                    Map<String, Map<String, String>> cachedTable = new TreeMap<>();
+                    StopWatch stopWatch = new StopWatch();
+                    stopWatch.start();
+                    logger.info(null, "indexing [" + primaryKey + "] started...");
+                    Map<String, Map<String, String>> cachedTable = MapDBUtil.createBigMap(tmpDir);
                     DatasetProxy datasetDependency = new DatasetProxy(dataset);
                     datasetDependency.setConfig(associatedPrimaryKeyTable);
                     importTable(new InteractionListener() {
@@ -127,6 +130,8 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                             }
                         }
                     }, new TableParserFactoryImpl(), datasetDependency, logger);
+                    stopWatch.stop();
+                    logger.info(null, "indexing [" + primaryKey + "] done in " + stopWatch.getTime(TimeUnit.SECONDS) + "s");
                     indexedTables.put(primaryKey, cachedTable);
                 }
             }
