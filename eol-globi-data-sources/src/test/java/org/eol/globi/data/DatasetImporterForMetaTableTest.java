@@ -360,8 +360,6 @@ public class DatasetImporterForMetaTableTest {
         assertThat(sample1.get("referenceUrl"), is(nullValue()));
     }
 
-
-
     @Test
     public void parseColumnValues() {
 

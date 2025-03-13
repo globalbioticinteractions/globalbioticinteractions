@@ -23,6 +23,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.awt.peer.ChoicePeer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,39 +104,38 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
         return Collections.unmodifiableMap(indexedTables);
     }
 
-    private static Map<String, Map<String, Map<String, String>>> indexDependencies(Dataset dataset, ImportLogger logger, Map<String, JsonNode> primaryKeyTables, Map<JsonNode, List<String>> primaryKeyDependencies, File tmpDir) throws StudyImporterException, IOException {
+    private static Map<String, Map<String, Map<String, String>>> indexDependencies(
+            Dataset dataset,
+            ImportLogger logger,
+            Map<String, JsonNode> primaryKeyTables,
+            Map<JsonNode, List<String>> primaryKeyDependencies,
+            File tmpDir
+    ) throws StudyImporterException, IOException {
+
         Map<String, Map<String, Map<String, String>>> indexedTables = new LinkedMap<>();
 
         for (Map.Entry<JsonNode, List<String>> jsonNode : primaryKeyDependencies.entrySet()) {
             List<String> primaryKeys = jsonNode.getValue();
             for (String primaryKey : primaryKeys) {
                 JsonNode associatedPrimaryKeyTable = primaryKeyTables.get(primaryKey);
-                if (associatedPrimaryKeyTable == null) {
-                    throw new StudyImporterException("failed to resolve table with primary key [" + primaryKey + "]");
-                }
-
-                if (!indexedTables.containsKey(primaryKey)) {
-                    StopWatch stopWatch = new StopWatch();
-                    stopWatch.start();
-                    logger.info(null, "indexing [" + primaryKey + "] started...");
-                    Map<String, Map<String, String>> cachedTable = MapDBUtil.createBigMap(tmpDir);
-                    DatasetProxy datasetDependency = new DatasetProxy(dataset);
-                    datasetDependency.setConfig(associatedPrimaryKeyTable);
-                    importTable(new InteractionListener() {
-                        @Override
-                        public void on(Map<String, String> interaction) throws StudyImporterException {
-                            String keyValue = interaction.get(primaryKey);
-                            if (StringUtils.isNotBlank(keyValue)) {
-                                cachedTable.putIfAbsent(keyValue, interaction);
+                    if (associatedPrimaryKeyTable != null && !indexedTables.containsKey(primaryKey)) {
+                        Map<String, Map<String, String>> cachedTable = MapDBUtil.createBigMap(tmpDir);
+                        DatasetProxy datasetDependency = new DatasetProxy(dataset);
+                        datasetDependency.setConfig(associatedPrimaryKeyTable);
+                        importTable(new InteractionListener() {
+                            @Override
+                            public void on(Map<String, String> interaction) throws StudyImporterException {
+                                String keyValue = interaction.get(primaryKey);
+                                if (StringUtils.isNotBlank(keyValue)) {
+                                    cachedTable.putIfAbsent(keyValue, interaction);
+                                }
                             }
-                        }
-                    }, new TableParserFactoryImpl(), datasetDependency, logger);
-                    stopWatch.stop();
-                    logger.info(null, "indexing [" + primaryKey + "] done in " + stopWatch.getTime(TimeUnit.SECONDS) + "s");
-                    indexedTables.put(primaryKey, cachedTable);
-                }
+                        }, new TableParserFactoryImpl(), datasetDependency, logger);
+                        indexedTables.put(primaryKey, cachedTable);
+                    }
             }
         }
+
         return indexedTables;
     }
 

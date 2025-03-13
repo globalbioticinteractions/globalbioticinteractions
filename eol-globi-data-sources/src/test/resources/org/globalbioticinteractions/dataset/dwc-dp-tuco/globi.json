@@ -773,45 +773,5 @@
         "datatype" : "string"
       } ]
     }
-  }, {
-    "url" : "protocol.csv",
-    "delimiter" : ",",
-    "headerRowCount" : 1,
-    "tableSchema" : {
-      "primaryKey" : "protocolID",
-      "columns" : [ {
-        "name" : "protocolID",
-        "titles" : "protocolID",
-        "datatype" : "string"
-      }, {
-        "name" : "protocolType",
-        "titles" : "protocolType",
-        "datatype" : "string"
-      }, {
-        "name" : "protocolTypeIRI",
-        "titles" : "protocolTypeIRI",
-        "datatype" : "string"
-      }, {
-        "name" : "protocolTypeVocabulary",
-        "titles" : "protocolTypeVocabulary",
-        "datatype" : "string"
-      }, {
-        "name" : "protocolName",
-        "titles" : "protocolName",
-        "datatype" : "string"
-      }, {
-        "name" : "protocolDescription",
-        "titles" : "protocolDescription",
-        "datatype" : "string"
-      }, {
-        "name" : "protocolCitation",
-        "titles" : "protocolCitation",
-        "datatype" : "string"
-      }, {
-        "name" : "protocolRemarks",
-        "titles" : "protocolRemarks",
-        "datatype" : "string"
-      } ]
-    }
   } ]
 }

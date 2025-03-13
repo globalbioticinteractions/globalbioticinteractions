@@ -32,13 +32,6 @@
     "encoding" : "UTF-8",
     "schema" : "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/organism-interaction.json",
     "path" : "organism-interaction.csv"
-  }, {
-    "name" : "protocol",
-    "profile" : "tabular-data-resource",
-    "format" : "csv",
-    "encoding" : "UTF-8",
-    "schema" : "http://rs.gbif.org/sandbox/experimental/data-packages/dwc-dp/0.1/table-schemas/protocol.json",
-    "path" : "protocol.csv"
   } ],
   "contributors" : [ ],
   "licenses" : [ ],
