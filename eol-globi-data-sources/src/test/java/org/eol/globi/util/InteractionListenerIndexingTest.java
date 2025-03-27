@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertNotNull;
 
@@ -238,5 +239,24 @@ public class InteractionListenerIndexingTest {
 
         assertThat(interactionsWithUnresolvedOccurrenceIds.size(), Is.is(0));
     }
+
+    @Test
+    public void arctosHttpGUIDParsing() {
+        String sourceId = InteractionListenerIndexing.getOccurrenceId(new TreeMap<String, String>() {{
+            put("sourceId", "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
+        }}, "sourceId");
+
+        assertThat(sourceId, is("http://arctos.database.museum/guid/MVZ:Bird:180448"));
+    }
+
+    @Test
+    public void arctosHttpsGUIDParsing() {
+        String sourceId = InteractionListenerIndexing.getOccurrenceId(new TreeMap<String, String>() {{
+            put("sourceId", "https://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
+        }}, "sourceId");
+
+        assertThat(sourceId, is("https://arctos.database.museum/guid/MVZ:Bird:180448"));
+    }
+
 
 }

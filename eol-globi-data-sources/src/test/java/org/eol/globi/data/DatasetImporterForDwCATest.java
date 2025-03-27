@@ -1027,7 +1027,7 @@ public class DatasetImporterForDwCATest {
 
         Map<String, String> properties = propertyList.get(0);
         assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
-        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("https://arctos.database.museum/guid/MSB:Mamm:291839"));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://arctos.database.museum/guid/MSB:Mamm:291839"));
         assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
         assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));

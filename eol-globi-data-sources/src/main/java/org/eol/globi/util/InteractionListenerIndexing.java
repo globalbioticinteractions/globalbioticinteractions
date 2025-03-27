@@ -121,7 +121,7 @@ public class InteractionListenerIndexing implements InteractionListener {
     public static String getOccurrenceId(Map<String, String> interaction, String sourceOccurrenceId) {
         String value = interaction.get(sourceOccurrenceId);
 
-        if (StringUtils.startsWith(value, "http://arctos.database.museum/guid/")) {
+        if (StringUtils.startsWith(value, "http://arctos.database.museum/guid/") || StringUtils.startsWith(value, "https://arctos.database.museum/guid/")) {
             String[] splitValue = StringUtils.split(value, "?");
             value = splitValue.length == 1 ? value : splitValue[0];
         }
