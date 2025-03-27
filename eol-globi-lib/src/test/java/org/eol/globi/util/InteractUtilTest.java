@@ -34,7 +34,6 @@ public class InteractUtilTest {
 
     private static final Set<String> UNLIKELY_INTERACTION_TYPE_NAMES
             = UnmodifiableSet.unmodifiableSet(new TreeSet<String>() {{
-        add("(collected with)");
         add("collector number");
         add("(littermate or nestmate of)");
         add("(mate of)");
