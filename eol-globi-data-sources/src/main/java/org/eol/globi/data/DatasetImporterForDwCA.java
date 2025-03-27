@@ -128,6 +128,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN =
             Pattern.compile("^([(][a-zA-Z ]+[)])[ ](.*)(http[s]{0,1}://mczbase.mcz.harvard.edu/guid/)([a-zA-Z0-9:-]+)");
     private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
+    private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_GUID_PATTERN_2025 = Pattern.compile("^(?<verb>[(][a-zA-Z ]+[)])[ ](Arctos record GUID)[ ](?<occurrenceId>https:[^ ]+)");
+    private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_INSTITUTIONAL_PATTERN_2025 = Pattern.compile("^(?<verb>[(][a-zA-Z ]+[)])[ ](institutional catalog number)[ ](?<occurrenceId>.*)");
 
     private static final Pattern NEON_ASSOCIATED_OCCURRENCES_PATTERN =
             Pattern.compile("^(?<verb>[a-zA-Z ]+)[:](.*)(http[s]{0,1}://.*)(index.php[?]guid=)(?<occurrenceId>[a-zA-Z0-9:-]+)");
@@ -583,7 +585,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return properties;
     }
 
-  static Map<String, String> parseArtsprosjektetGyrodactylusStyleRemarks(String occurrenceRemarks) {
+    static Map<String, String> parseArtsprosjektetGyrodactylusStyleRemarks(String occurrenceRemarks) {
         Map<String, String> properties = Collections.emptyMap();
 
         Matcher matcher = Pattern.compile("^(Collected from)[ ]([A-Z].*)", Pattern.CASE_INSENSITIVE).matcher(StringUtils.trim(occurrenceRemarks));
@@ -708,6 +710,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     private static void attemptToParseArctosAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
         Matcher matcher = ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN.matcher(relationshipTrimmed);
+        Matcher matcher2025 = ARCTOS_ASSOCIATED_OCCURRENCES_VERB_GUID_PATTERN_2025.matcher(relationshipTrimmed);
+        Matcher matcher2025_2 = ARCTOS_ASSOCIATED_OCCURRENCES_VERB_INSTITUTIONAL_PATTERN_2025.matcher(relationshipTrimmed);
         if (matcher.find()) {
             String verb = matcher.group(1);
             String occurrenceId = matcher.group(4);
@@ -720,6 +724,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 };
                 appendAssociatedOccurrencesProperties(propertyList, e);
             }
+        } else if (matcher2025.find()) {
+            TreeMap<String, String> properties = new TreeMap<>();
+            properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(matcher2025.group("occurrenceId")));
+            properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher2025.group("verb")));
+            appendAssociatedOccurrencesProperties(propertyList, properties);
+        } else if (matcher2025_2.find()) {
+            TreeMap<String, String> properties = new TreeMap<>();
+            properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(matcher2025_2.group("occurrenceId")));
+            properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher2025_2.group("verb")));
+            appendAssociatedOccurrencesProperties(propertyList, properties);
         } else if (ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed).find()) {
             int i1 = StringUtils.indexOf(relationshipTrimmed, ")");
             if (i1 > -1 && i1 < relationshipTrimmed.length()) {

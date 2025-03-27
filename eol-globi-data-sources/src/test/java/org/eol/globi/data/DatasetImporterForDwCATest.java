@@ -1004,6 +1004,111 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void associatedOccurrencesMCZArctos3() {
+        String associateOccurrences = "(parasite of) identifier http://arctos.database.museum/guid/MSB:Mamm:259304";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://arctos.database.museum/guid/MSB:Mamm:259304"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZArctos4() {
+        String associateOccurrences = "(parasite of) Arctos record GUID https://arctos.database.museum/guid/MSB:Mamm:291839";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("https://arctos.database.museum/guid/MSB:Mamm:291839"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZArctos5() {
+        String associateOccurrences = "(parasite of) identifier https://mczbase.mcz.harvard.edu/guid/MCZ:Orn:348196";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("MCZ:Orn:348196"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZArctos6() {
+        String associateOccurrences = "(parasite of) USNM: National Museum of Natural History 603447";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("National Museum of Natural History 603447"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZArctos7() {
+        String associateOccurrences = "(parasite of) institutional catalog number BYU:Monte L. Bean Life Sciences Museum 35741";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("BYU:Monte L. Bean Life Sciences Museum 35741"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZArctos8() {
+        String associateOccurrences = "(parasite of) identifier https://mczbase.mcz.harvard.edu/guid/MCZ:Orn:339330";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("MCZ:Orn:339330"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
+    public void associatedOccurrencesMCZArctos9() {
+        String associateOccurrences = "(parasite of) identifier http://n2t.net/ark:/65665/3777ecb64-7edc-4479-8486-a0b584092bd0";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://n2t.net/ark:/65665/3777ecb64-7edc-4479-8486-a0b584092bd0"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
     public void associatedSequences() {
         String associateOccurrences = "http://www.ncbi.nlm.nih.gov/nuccore/EU241637; http://www.ncbi.nlm.nih.gov/nuccore/EU241651; http://www.ncbi.nlm.nih.gov/nuccore/EU241689";
         List<Map<String, String>> propertyList = parseAssociatedSequences(associateOccurrences);
