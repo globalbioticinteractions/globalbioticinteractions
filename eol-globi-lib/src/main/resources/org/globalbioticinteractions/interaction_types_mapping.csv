@@ -94,3 +94,4 @@ roost with,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 share roost with,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 roost in,,hasRoost,http://purl.obolibrary.org/obo/RO_0008509
 share roosts,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
+(collected with),,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
