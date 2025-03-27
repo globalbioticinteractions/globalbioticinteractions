@@ -1,17 +1,16 @@
 package org.eol.globi.process;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eol.globi.data.OccurrenceIdEnricherAtlasOfLivingAustralia;
-import org.eol.globi.data.OccurrenceIdEnricherCaliforniaAcademyOfSciences;
-import org.eol.globi.data.OccurrenceIdIdEnricherGenBank;
-import org.eol.globi.data.OccurrenceIdIdEnricherINaturalist;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.LogUtil;
 import org.eol.globi.data.NodeFactory;
+import org.eol.globi.data.OccurrenceIdEnricherAtlasOfLivingAustralia;
+import org.eol.globi.data.OccurrenceIdEnricherCaliforniaAcademyOfSciences;
 import org.eol.globi.data.OccurrenceIdEnricherFieldMuseum;
+import org.eol.globi.data.OccurrenceIdIdEnricherGenBank;
+import org.eol.globi.data.OccurrenceIdIdEnricherINaturalist;
 import org.eol.globi.data.SpecimenCitationEnricher;
 import org.eol.globi.data.StudyImporterException;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.eol.globi.util.InteractUtil;
