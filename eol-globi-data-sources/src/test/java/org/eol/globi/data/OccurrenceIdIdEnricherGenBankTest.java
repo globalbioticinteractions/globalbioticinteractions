@@ -17,7 +17,9 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.LOCALITY_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_BODY_PART_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
+import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_ID;
@@ -196,6 +198,7 @@ public class OccurrenceIdIdEnricherGenBankTest {
         assertThat(properties.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002454"));
 
     }
+
     @Test
     public void parse2() {
         String resp = "LOCUS       KM201411                1627 bp    cRNA    linear   VRL 31-JAN-2016\n" +
@@ -305,6 +308,106 @@ public class OccurrenceIdIdEnricherGenBankTest {
         assertThat(properties.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002454"));
 
     }
+
+    @Test
+    public void arctosAssociation() {
+        String resp = "LOCUS       KJ778959                 719 bp    DNA     linear   INV 14-JAN-2015\n" +
+                "DEFINITION  Rauschoides alternata isolate L96 NADH dehydrogenase subunit 1\n" +
+                "            (nad1) gene, partial cds; mitochondrial.\n" +
+                "ACCESSION   KJ778959\n" +
+                "VERSION     KJ778959.1\n" +
+                "KEYWORDS    .\n" +
+                "SOURCE      mitochondrion Rauschoides alternata\n" +
+                "  ORGANISM  Rauschoides alternata\n" +
+                "            Eukaryota; Metazoa; Spiralia; Lophotrochozoa; Platyhelminthes;\n" +
+                "            Cestoda; Eucestoda; Cyclophyllidea; Anoplocephalidae; Rauschoides.\n" +
+                "REFERENCE   1  (bases 1 to 719)\n" +
+                "  AUTHORS   Haukisalmi,V., Hardman,L.M., Hoberg,E.P. and Henttonen,H.\n" +
+                "  TITLE     Phylogenetic relationships and taxonomic revision of\n" +
+                "            Paranoplocephala Luhe, 1910 sensu lato (Cestoda, Cyclophyllidea,\n" +
+                "            Anoplocephalidae)\n" +
+                "  JOURNAL   Zootaxa 3873 (4), 371-415 (2014)\n" +
+                "   PUBMED   25544228\n" +
+                "  REMARK    Publication Status: Online-Only\n" +
+                "REFERENCE   2  (bases 1 to 719)\n" +
+                "  AUTHORS   Haukisalmi,V., Hardman,L.M., Hoberg,E.P. and Henttonen,H.\n" +
+                "  TITLE     Direct Submission\n" +
+                "  JOURNAL   Submitted (29-APR-2014) Finnish Museum of Natural History,\n" +
+                "            University of Helsinki, P. Rautatiekatu 13, Helsinki 00014, Finland\n" +
+                "FEATURES             Location/Qualifiers\n" +
+                "     source          1..719\n" +
+                "                     /organism=\"Rauschoides alternata\"\n" +
+                "                     /organelle=\"mitochondrion\"\n" +
+                "                     /mol_type=\"genomic DNA\"\n" +
+                "                     /isolate=\"L96\"\n" +
+                "                     /host=\"Dicrostonyx groenlandicus\"\n" +
+                "                     /db_xref=\"taxon:1577186\"\n" +
+                "                     /geo_loc_name=\"USA: Alaska\"\n" +
+                "     gene            <1..>719\n" +
+                "                     /gene=\"nad1\"\n" +
+                "     CDS             <1..>719\n" +
+                "                     /gene=\"nad1\"\n" +
+                "                     /codon_start=3\n" +
+                "                     /transl_table=9\n" +
+                "                     /product=\"NADH dehydrogenase subunit 1\"\n" +
+                "                     /protein_id=\"AJD74168.1\"\n" +
+                "                     /translation=\"ADLMKLVFKIKYYFFQSRSYVALIGVHLLILLVASYCVVYGGYY\n" +
+                "                     SFSYNEFSLLWFLVITSFTSYSLLCVGWGSYSKYAFLGSIRSAFGSVSFEACFMCIII\n" +
+                "                     FCSLCYGSYSLCDYFYEGFYAFVIFPVLYVLFLICILCETNRTPFDYAESESEFVSGF\n" +
+                "                     NVEYSSVLFTCLFACEYVIIFIFSWLVSVVMFGGGLIGSWVLFFHLLFFMWARATLPR\n" +
+                "                     VRYDYFVNFFWCVGLIISVVS\"\n" +
+                "ORIGIN      \n" +
+                "        1 ttgcagatct tatgaagtta gtgtttaaga ttaagtacta tttttttcag aggcgtagct\n" +
+                "       61 atgtagcgtt gattggggtt catttactga ttttgttggt tgcatcctat tgcgtggttt\n" +
+                "      121 atgggggtta ctacagtttt aggtataaag agttttcttt actttgattt ttggttatta\n" +
+                "      181 ccagctttac tagatatagt ttattatgcg ttgggtgagg caggtatagc aagtatgctt\n" +
+                "      241 ttttgggaag tatacgttca gcttttggat ctgtaaggtt tgaagcatgt tttatgtgta\n" +
+                "      301 tcataatttt ttgttcttta tgttacggta gatacagttt atgtgattat ttctatgagg\n" +
+                "      361 ggttttatgc ttttgtcata tttcctgttt tatatgtttt gtttttgata tgcattttat\n" +
+                "      421 gtgagacaaa tcgtacacca ttcgattatg ctgagtctga aagggagttt gttagtgggt\n" +
+                "      481 ttaacgttga gtacagcagt gtactattta cttgcttgtt tgcttgtgag tatgttataa\n" +
+                "      541 tatttatttt ttcttgactt gtttctgtag ttatgtttgg tggaggcttg ataggttctt\n" +
+                "      601 gggttctgtt ttttcatcta ttatttttta tgtgagctcg agcaacgtta ccacgtgtgc\n" +
+                "      661 gttatgatta ttttgttaaa tttttttgat gtgttggttt aattatttct gttgtaagc\n" +
+                "//";
+
+        InputStream is = IOUtils.toInputStream(resp, StandardCharsets.UTF_8);
+
+        String taxonNameField = SOURCE_TAXON_NAME;
+        String taxonIdField = SOURCE_TAXON_ID;
+        String hostTaxonNameField = TARGET_TAXON_NAME;
+        String hostBodyPartField = TARGET_BODY_PART_NAME;
+        String localeField = LocationConstant.LOCALITY;
+
+        Map<String, String> properties = new TreeMap<String, String>() {{
+            put(SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MSB:Para:19041?seid=2088838");
+            put(SOURCE_TAXON_NAME, "Rauschoides alternata PROVIDED");
+            put(INTERACTION_TYPE_NAME, "(parasite of)");
+            put(TARGET_OCCURRENCE_ID, "https://arctos.database.museum/guid/UAM:Mamm:55969");
+        }};
+
+        try {
+            OccurrenceIdIdEnricherGenBank.enrichWithGenBankRecord(is,
+                    taxonNameField,
+                    taxonIdField,
+                    hostTaxonNameField,
+                    hostBodyPartField,
+                    localeField,
+                    InteractType.HAS_HOST,
+                    properties);
+
+        } catch (IOException e) {
+
+
+        }
+        assertThat(properties.get(SOURCE_TAXON_NAME), is("Rauschoides alternata PROVIDED"));
+        assertThat(properties.get(SOURCE_TAXON_ID), is("NCBI:1577186"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(properties.get(TARGET_TAXON_NAME), is("Dicrostonyx groenlandicus"));
+
+    }
+
 
 
 }

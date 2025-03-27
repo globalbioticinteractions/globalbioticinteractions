@@ -1116,7 +1116,7 @@ public class DatasetImporterForDwCATest {
         assertThat(propertyList.size(), is(3));
 
         Map<String, String> properties = propertyList.get(0);
-        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("http://www.ncbi.nlm.nih.gov/nuccore/EU241637"));
+        assertThat(properties.get(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID), is("http://www.ncbi.nlm.nih.gov/nuccore/EU241637"));
         assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedSequences"));
     }
 

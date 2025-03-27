@@ -694,11 +694,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         String[] relationships = StringUtils.split(s, ";");
         for (String relationship : relationships) {
             String relationshipTrimmed = StringUtils.trim(relationship);
-            Matcher matcher = Pattern.compile("^(?<targetOccurrenceId>http[s]{0,1}://www.ncbi.nlm.nih.gov/nuccore/[a-zA-Z0-9]+)").matcher(relationshipTrimmed);
+            Matcher matcher = Pattern.compile("^(?<ncbiId>http[s]{0,1}://www.ncbi.nlm.nih.gov/nuccore/[a-zA-Z0-9]+)").matcher(relationshipTrimmed);
             if (matcher.find()) {
                 TreeMap<String, String> e = new TreeMap<String, String>() {
                     {
-                        put(TARGET_OCCURRENCE_ID, matcher.group(TARGET_OCCURRENCE_ID));
+                        put(SOURCE_OCCURRENCE_ID, matcher.group("ncbiId"));
                     }
                 };
                 new ResourceTypeConsumer(e).accept(DwcTerm.associatedSequences);
