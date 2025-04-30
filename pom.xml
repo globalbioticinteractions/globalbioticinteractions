@@ -8,27 +8,41 @@
     <version>0.28.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Global Biotic Interactions</name>
-    <modules>
-        <module>eol-globi-parent</module>
-        <module>eol-globi-jcoord</module>
-        <module>eol-globi-resource</module>
-        <module>eol-globi-resource-local</module>
-        <module>eol-globi-http</module>
-        <module>eol-globi-resource-remote</module>
-        <module>eol-globi-lib</module>
-        <module>wikidata</module>
-        <module>eol-globi-cache</module>
-        <module>eol-globi-data-sources</module>
-        <module>eol-globi-taxon-resolver</module>
-        <module>eol-globi-neo4j</module>
-        <module>eol-globi-neo4j-index-export</module>
-        <module>eol-globi-neo4j-index</module>
-        <module>eol-globi-rest</module>
-        <module>elton4n</module>
-        <module>dwc-dp</module>
-    </modules>
 
     <profiles>
+        <profile>
+            <id>neo4j</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>eol-globi-neo4j</module>
+                <module>eol-globi-neo4j-index-export</module>
+                <module>eol-globi-neo4j-index</module>
+                <module>eol-globi-rest</module>
+                <module>elton4n</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>core</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>eol-globi-parent</module>
+                <module>eol-globi-jcoord</module>
+                <module>eol-globi-resource</module>
+                <module>eol-globi-resource-local</module>
+                <module>eol-globi-http</module>
+                <module>eol-globi-resource-remote</module>
+                <module>eol-globi-lib</module>
+                <module>wikidata</module>
+                <module>eol-globi-cache</module>
+                <module>eol-globi-data-sources</module>
+                <module>eol-globi-taxon-resolver</module>
+                <module>dwc-dp</module>
+            </modules>
+        </profile>
         <profile>
             <id>generate-datasets</id>
             <modules>
