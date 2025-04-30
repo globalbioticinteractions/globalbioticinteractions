@@ -1,7 +1,21 @@
 name: Java CI
 on: [push]
 jobs:
-  build:
+  build-core:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [8, 11, 21]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+      - name: Test with Maven
+        run: mvn test --activate-profiles core
+  build-all:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -14,16 +28,4 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
       - name: Test with Maven
-        run: mvn test
-  build21:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 21
-      - name: Test with Maven
-        run: mvn test --activate-profiles core
-
+        run: mvn test --activate-profiles core,neo4j
