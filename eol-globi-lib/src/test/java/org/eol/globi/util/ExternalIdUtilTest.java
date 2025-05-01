@@ -67,6 +67,35 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void mammalDiversityOlder() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("https://www.mammaldiversity.org/explore.html#genus=Artibeus&species=lituratus&id=1005012&subspecies=palmarum"),
+                is(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE)
+        );
+    }
+
+    @Test
+    public void mammalDiversityOlderStripPrefix() {
+        assertThat(
+                ExternalIdUtil.stripPrefix(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE, "https://www.mammaldiversity.org/explore.html#genus=Artibeus&species=lituratus&id=1005012&subspecies=palmarum"),
+                is("1005012")
+        );
+    }
+
+    @Test
+    public void mammalDiversity() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("https://www.mammaldiversity.org/taxon/1005012"), is(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE));
+    }
+
+    @Test
+    public void mammalDiversityStripPrefix() {
+        assertThat(
+                ExternalIdUtil.stripPrefix(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE, "https://www.mammaldiversity.org/taxon/1005012"),
+                is("1005012")
+        );
+    }
+
+    @Test
     public void wikipedia() {
         assertThat(ExternalIdUtil.taxonomyProviderFor("https://wikipedia.org/wiki/Harvard_Mark_II"), is(TaxonomyProvider.WIKIPEDIA));
     }
@@ -272,7 +301,6 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.DISCOVERLIFE));
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.DISCOVERLIFE, url), is("Epimelissodes+duplocinctus"));
     }
-
 
 
     @Test

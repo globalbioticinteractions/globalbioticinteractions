@@ -50,7 +50,7 @@ public enum TaxonomyProvider {
     CHECKLIST_BANK("CLB:", "https://www.checklistbank.org/dataset/"),
     WORLD_OF_FLORA_ONLINE("WFO:", "http://www.worldfloraonline.org/taxon/wfo-"),
     TERRESTRIAL_PARASITE_TRACKER("TPT:"),
-    MAMMAL_DIVERSITY_DATABASE("MDD:", "https://www.mammaldiversity.org/taxon/"),
+    MAMMAL_DIVERSITY_DATABASE("MDD:", "https://www.mammaldiversity.org/taxon/" ),
     HESPEROMYS("HES:", "http://hesperomys.com/n/"),
     DISCOVERLIFE("DL:", "https://www.discoverlife.org/mp/20q?guide=Apoidea_species&search="),
     PBDB("PBDB:", "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");

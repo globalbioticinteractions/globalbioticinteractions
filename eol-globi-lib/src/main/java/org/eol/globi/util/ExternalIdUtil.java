@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ExternalIdUtil {
+
+    public static final Pattern MDD_PATTERN = Pattern.compile("https://www.mammaldiversity.org/([^0-9]+)(?<id>[0-9]{6,})([^0-9]+)");
 
     private static final Map<String, String> PREFIX_MAP = new HashMap<String, String>() {{
         put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
@@ -147,11 +150,16 @@ public class ExternalIdUtil {
     public static TaxonomyProvider taxonomyProviderFor(String externalId) {
         TaxonomyProvider provider = null;
         if (StringUtils.isNotBlank(externalId)) {
-            for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
-                for (String idPrefix : prefix.getIdPrefixes()) {
-                    if (StringUtils.startsWith(externalId, idPrefix)) {
-                        provider = prefix;
-                        break;
+            Matcher matcher = MDD_PATTERN.matcher(externalId);
+            if (matcher.matches()) {
+                provider = TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE;
+            } else {
+                for (TaxonomyProvider prefix : TaxonomyProvider.values()) {
+                    for (String idPrefix : prefix.getIdPrefixes()) {
+                        if (StringUtils.startsWith(externalId, idPrefix)) {
+                            provider = prefix;
+                            break;
+                        }
                     }
                 }
             }
@@ -186,6 +194,13 @@ public class ExternalIdUtil {
 
     public static String stripPrefix(TaxonomyProvider provider, String externalId) {
         String strippedShortest = externalId;
+        if (TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE.equals(provider)) {
+            Matcher matcher = MDD_PATTERN.matcher(externalId);
+            if (matcher.matches()) {
+                strippedShortest = matcher.group("id");
+            }
+        }
+
         for (String idPrefix : provider.getIdPrefixes()) {
             String stripped = StringUtils.replace(externalId, idPrefix, "");
             if (StringUtils.length(stripped) < StringUtils.length(strippedShortest)) {
