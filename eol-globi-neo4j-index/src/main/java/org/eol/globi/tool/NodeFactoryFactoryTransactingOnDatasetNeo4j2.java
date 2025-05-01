@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NodeFactoryFactoryTransactingOnDatasetNeo4j2 implements NodeFactoryFactory {
     private GraphServiceFactory graphServiceFactory;
-    private final int TRANSACTION_BATCH_SIZE_DEFAULT = 10000;
+    private final int TRANSACTION_BATCH_SIZE_DEFAULT = 1000;
 
 
     public NodeFactoryFactoryTransactingOnDatasetNeo4j2(GraphServiceFactory graphServiceFactory) {
