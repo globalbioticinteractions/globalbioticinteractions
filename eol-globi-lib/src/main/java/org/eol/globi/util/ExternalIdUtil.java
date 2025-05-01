@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class ExternalIdUtil {
 
-    public static final Pattern MDD_PATTERN = Pattern.compile("https://www.mammaldiversity.org/([^0-9]+)(?<id>[0-9]{6,})([^0-9]+)");
+    public static final Pattern MDD_PATTERN = Pattern.compile("https://www.mammaldiversity.org/([^0-9]*)(?<id>[0-9]{6,})([^0-9]*)");
 
     private static final Map<String, String> PREFIX_MAP = new HashMap<String, String>() {{
         put(TaxonomyProvider.ID_PREFIX_EOL, "http://eol.org/pages/");
@@ -199,12 +199,12 @@ public class ExternalIdUtil {
             if (matcher.matches()) {
                 strippedShortest = matcher.group("id");
             }
-        }
-
-        for (String idPrefix : provider.getIdPrefixes()) {
-            String stripped = StringUtils.replace(externalId, idPrefix, "");
-            if (StringUtils.length(stripped) < StringUtils.length(strippedShortest)) {
-                strippedShortest = stripped;
+        } else {
+            for (String idPrefix : provider.getIdPrefixes()) {
+                String stripped = StringUtils.replace(externalId, idPrefix, "");
+                if (StringUtils.length(stripped) < StringUtils.length(strippedShortest)) {
+                    strippedShortest = stripped;
+                }
             }
         }
         return StringUtils.trim(strippedShortest);
