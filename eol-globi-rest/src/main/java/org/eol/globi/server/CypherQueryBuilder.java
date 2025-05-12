@@ -2,7 +2,6 @@ package org.eol.globi.server;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.RelType;
@@ -73,6 +72,7 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_HAS_VECTOR = InteractType.HAS_VECTOR.getLabel();
     public static final String INTERACTION_DISPERSAL_VECTOR_OF = InteractType.DISPERSAL_VECTOR_OF.getLabel();
     public static final String INTERACTION_HAS_DISPERSAL_VECTOR = InteractType.HAS_DISPERAL_VECTOR.getLabel();
+    public static final String ROOT_PARASITE_OF = InteractType.ROOTPARASITE_OF.getLabel();
 
     public static final String INTERACTION_HOST_OF = InteractType.HOST_OF.getLabel();
     public static final String INTERACTION_HAS_HOST = InteractType.HAS_HOST.getLabel();
@@ -114,6 +114,7 @@ public class CypherQueryBuilder {
             put(InteractType.HAS_HOST.toString(), InteractionTypeExternal.HAS_HOST);
             put(InteractType.HOST_OF.toString(), InteractionTypeExternal.HOST_OF);
             put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
+            put(InteractType.ROOTPARASITE_OF.toString(), InteractionTypeExternal.ROOT_PARASITE_OF);
             put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
             put(InteractType.PARASITOID_OF.toString(), InteractionTypeExternal.PARASITOID_OF);
             put(InteractType.HAS_PARASITOID.toString(), InteractionTypeExternal.HAS_PARASITOID);
