@@ -14,13 +14,16 @@ import static org.hamcrest.core.Is.is;
 
 public class WikiDataImageSearchTest {
 
+    public static final String LION_COMMON_NAMES = "Lion, African Lion @en";
+    public static final String SEA_OTTER_IMAGE = "https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20otter%20nursing.jpg?width=100";
+
     @Test
     public void lookupLion() throws IOException {
         TaxonImage taxonImage = new WikiDataImageSearch().lookupImageForExternalId("WD:Q140");
         Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q140"));
-        assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
+        assertThat(taxonImage.getCommonName(), is(LION_COMMON_NAMES));
     }
 
     @Test
@@ -29,7 +32,7 @@ public class WikiDataImageSearchTest {
         Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
-        assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
+        assertThat(taxonImage.getCommonName(), is(LION_COMMON_NAMES));
     }
 
 
@@ -40,7 +43,7 @@ public class WikiDataImageSearchTest {
         Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getThumbnailURL(), startsWith("https://commons.wikimedia.org"));
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q140"));
-        assertThat(taxonImage.getCommonName(), is("African Lion, Lion @en"));
+        assertThat(taxonImage.getCommonName(), is(LION_COMMON_NAMES));
     }
 
     @Test
@@ -57,7 +60,7 @@ public class WikiDataImageSearchTest {
         Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getCommonName(), is("Sea Otter @en"));
         assertThat(taxonImage.getInfoURL(), is("https://www.wikidata.org/wiki/Q41407"));
-        assertThat(taxonImage.getThumbnailURL(), is("https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20otter%20cropped.jpg?width=100"));
+        assertThat(taxonImage.getThumbnailURL(), is(SEA_OTTER_IMAGE));
     }
 
     @Test
@@ -71,7 +74,7 @@ public class WikiDataImageSearchTest {
         Assert.assertNotNull(taxonImage);
         assertThat(taxonImage.getCommonName(), is("Sea Otter @en"));
         assertThat(taxonImage.getInfoURL(), is("http://www.wikidata.org/entity/Q41407"));
-        assertThat(taxonImage.getThumbnailURL(), is("https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20otter%20cropped.jpg?width=100"));
+        assertThat(taxonImage.getThumbnailURL(), is(SEA_OTTER_IMAGE));
     }
 
     @Test
