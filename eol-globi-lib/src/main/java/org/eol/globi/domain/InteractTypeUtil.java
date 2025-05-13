@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -32,7 +33,7 @@ public class InteractTypeUtil  {
    }
 
     static Map<InteractType, InteractType> initInverseOfPath() {
-       Map<InteractType, InteractType> inverseMap = new HashMap<InteractType, InteractType>() {
+       Map<InteractType, InteractType> inverseMap = new LinkedHashMap<InteractType, InteractType>() {
            {
                put(InteractType.POLLINATES, InteractType.POLLINATED_BY);
                put(InteractType.PATHOGEN_OF, InteractType.HAS_PATHOGEN);
@@ -84,7 +85,7 @@ public class InteractTypeUtil  {
            }
        };
 
-       Map<InteractType, InteractType> swappedMap = new HashMap<>();
+       Map<InteractType, InteractType> swappedMap = new LinkedHashMap<>();
        for (Map.Entry<InteractType, InteractType> entry : inverseMap.entrySet()) {
            swappedMap.putIfAbsent(entry.getValue(), entry.getKey());
        }
