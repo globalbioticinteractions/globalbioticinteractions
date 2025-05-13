@@ -116,6 +116,7 @@ public class CypherQueryBuilder {
             put(InteractType.HOST_OF.toString(), InteractionTypeExternal.HOST_OF);
             put(InteractType.PARASITE_OF.toString(), InteractionTypeExternal.PARASITE_OF);
             put(InteractType.ROOTPARASITE_OF.toString(), InteractionTypeExternal.ROOT_PARASITE_OF);
+            put(InteractType.HEMIPARASITE_OF.toString(), InteractionTypeExternal.HEMI_PARASITE_OF);
             put(InteractType.HAS_PARASITE.toString(), InteractionTypeExternal.HAS_PARASITE);
             put(InteractType.PARASITOID_OF.toString(), InteractionTypeExternal.PARASITOID_OF);
             put(InteractType.HAS_PARASITOID.toString(), InteractionTypeExternal.HAS_PARASITOID);
