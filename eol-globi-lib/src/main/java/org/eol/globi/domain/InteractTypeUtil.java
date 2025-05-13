@@ -86,7 +86,7 @@ public class InteractTypeUtil  {
 
        Map<InteractType, InteractType> swappedMap = new HashMap<>();
        for (Map.Entry<InteractType, InteractType> entry : inverseMap.entrySet()) {
-           swappedMap.put(entry.getValue(), entry.getKey());
+           swappedMap.putIfAbsent(entry.getValue(), entry.getKey());
        }
        inverseMap.putAll(swappedMap);
        return MapUtils.unmodifiableMap(inverseMap);
