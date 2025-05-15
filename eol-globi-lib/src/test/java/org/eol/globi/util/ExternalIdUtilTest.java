@@ -75,6 +75,22 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void mammalDiversityOlderUrlsubspecies() {
+        assertThat(
+                ExternalIdUtil.urlForExternalId("https://www.mammaldiversity.org/explore.html#genus=Artibeus&species=lituratus&id=1005012&subspecies=palmarum"),
+                is("https://www.mammaldiversity.org/taxon/1005012")
+        );
+    }
+
+    @Test
+    public void mammalDiversityOlderUrl() {
+        assertThat(
+                ExternalIdUtil.urlForExternalId("https://www.mammaldiversity.org/explore.html#genus=Artibeus&species=lituratus&id=1005012"),
+                is("https://www.mammaldiversity.org/taxon/1005012")
+        );
+    }
+
+    @Test
     public void mammalDiversityOlderStripPrefix() {
         assertThat(
                 ExternalIdUtil.stripPrefix(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE, "https://www.mammaldiversity.org/explore.html#genus=Artibeus&species=lituratus&id=1005012&subspecies=palmarum"),

@@ -66,6 +66,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.WORLD_OF_FLORA_ONLINE.getIdPrefix(), "http://www.worldfloraonline.org/taxon/wfo-");
         put(TaxonomyProvider.HESPEROMYS.getIdPrefix(), "http://hesperomys.com/n/");
         put(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE.getIdPrefix(), "https://www.mammaldiversity.org/taxon/");
+        put("https://www.mammaldiversity.org/explore.html", "https://www.mammaldiversity.org/taxon/");
         put(TaxonomyProvider.PBDB.getIdPrefix(), "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
         put(TaxonomyProvider.DISCOVERLIFE.getIdPrefix(), "https://www.discoverlife.org/mp/20q?guide=Apoidea_species&search=");
     }};
@@ -102,8 +103,13 @@ public class ExternalIdUtil {
                         }
                     } else if (TaxonomyProvider.CHECKLIST_BANK.getIdPrefix().equals(idPrefix)) {
                         url = attemptToConstructChecklistBankUrl(externalId, url);
-                    } else {
-                        url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
+                    }  else {
+                        Matcher matcher = MDD_PATTERN.matcher(externalId);
+                        if (matcher.matches()) {
+                            url = getURLPrefixMap().get(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE.getIdPrefix()) + matcher.group("id");
+                        } else {
+                            url = idPrefixToUrlPrefix.getValue() + externalId.replaceAll(idPrefix, "");
+                        }
                     }
                     String suffix = getURLSuffixMap().get(idPrefix);
                     if (StringUtils.isNotBlank(suffix)) {
