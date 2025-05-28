@@ -27,6 +27,7 @@ import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.hamcrest.core.Is;
 import org.junit.Test;
+import org.mapdb.BTreeMap;
 import org.mapdb.DBMaker;
 
 import java.io.IOException;
@@ -216,19 +217,24 @@ public class DatasetImporterForRSSTest {
     @Test
     public void indexingInteractionListenerDBMaker() throws StudyImporterException {
 
-        final Map<Pair<String, String>, Map<String, String>> index = DBMaker.newTempTreeMap();
+        final BTreeMap<Pair<String, String>, Map<String, String>> index = DBMaker.newTempTreeMap();
+        try {
 
-        index.put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448"), Collections.emptyMap());
+            index.put(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448"), Collections.emptyMap());
 
-        InteractionListenerIndexing interactionListenerIndexing
-                = new InteractionListenerIndexing(index);
+            InteractionListenerIndexing interactionListenerIndexing
+                    = new InteractionListenerIndexing(index);
 
-        interactionListenerIndexing.on(new TreeMap<String, String>() {{
-            put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
-            put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
-        }});
+            interactionListenerIndexing.on(new TreeMap<String, String>() {{
+                put(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448?seid=587053");
+                put(DatasetImporterForTSV.TARGET_OCCURRENCE_ID, "http://arctos.database.museum/guid/1234");
+            }});
 
-        assertTrue(index.containsKey(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448")));
+
+            assertTrue(index.containsKey(Pair.of(DatasetImporterForTSV.SOURCE_OCCURRENCE_ID, "http://arctos.database.museum/guid/MVZ:Bird:180448")));
+        } finally {
+            index.close();
+        }
     }
 
     @Test

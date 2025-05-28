@@ -15,6 +15,7 @@ import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.GeoNamesService;
 import org.eol.globi.service.StudyImporterFactoryImpl;
 import org.globalbioticinteractions.dataset.Dataset;
+import org.mapdb.BTreeMap;
 import org.mapdb.DBMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,13 +78,17 @@ public class DatasetImportUtil {
                                                 String archiveLocation,
                                                 File workDir) throws StudyImporterException {
 
-        final Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
+        final BTreeMap<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds = DBMaker.newTempTreeMap();
+        try {
 
-        indexUnresolvedDependencies(datasetsWithDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds, workDir);
+            indexUnresolvedDependencies(datasetsWithDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds, workDir);
 
-        resolveDependencies(datasetDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds, workDir);
+            resolveDependencies(datasetDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds, workDir);
 
-        indexDatasetWithResolvedDependencies(datasetsWithDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds, workDir);
+            indexDatasetWithResolvedDependencies(datasetsWithDependencies, logger, nodeFactory, archiveLocation, interactionsWithUnresolvedOccurrenceIds, workDir);
+        } finally {
+            interactionsWithUnresolvedOccurrenceIds.close();
+        }
     }
 
     private static void indexDatasetWithResolvedDependencies(List<Dataset> datasetsWithDependencies, ImportLogger logger, NodeFactory nodeFactory, String archiveLocation, Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, File workDir) throws StudyImporterException {
