@@ -5,7 +5,7 @@
 
     <groupId>org.eol</groupId>
     <artifactId>eol-globi-data</artifactId>
-    <version>0.28.6-SNAPSHOT</version>
+    <version>0.28.6</version>
     <packaging>pom</packaging>
     <name>Global Biotic Interactions</name>
 
