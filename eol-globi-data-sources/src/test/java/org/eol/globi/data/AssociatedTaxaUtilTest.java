@@ -484,9 +484,9 @@ public class AssociatedTaxaUtilTest {
     @Test
     public void associatedTaxaCaughtAfterVisiting() {
         String associatedTaxa = "Caught after visiting Pogonia ophioglossoides; Calopgon tetrads on head and on two right rear legs";
-        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
-        assertThat(properties.size(), is(1));
+        assertThat(properties.size(), is(2));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Pogonia ophioglossoides"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Caught after visiting"));
@@ -506,9 +506,9 @@ public class AssociatedTaxaUtilTest {
     @Test
     public void associatedTaxaVisiting() {
         String associatedTaxa = "Visiting Pogonia ophioglossoides; no orchid pollen";
-        List<Map<String, String>> properties = attemptParsingAssociationString(associatedTaxa);
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
 
-        assertThat(properties.size(), is(1));
+        assertThat(properties.size(), is(2));
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Pogonia ophioglossoides"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Visiting"));
@@ -523,6 +523,18 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Exposed siliceous rocks"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is(""));
+    }
+
+    @Test
+    public void onFlower() {
+        // https://github.com/globalbioticinteractions/ucsb-izc/issues/7
+        String associatedTaxa = "on flower: Jaumea carnosa";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Jaumea carnosa"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on flower"));
     }
 
     @Test

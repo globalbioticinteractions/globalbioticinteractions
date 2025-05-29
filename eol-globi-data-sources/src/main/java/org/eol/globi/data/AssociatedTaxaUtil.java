@@ -23,7 +23,9 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
 public final class AssociatedTaxaUtil {
 
-    private final static Pattern ASSOCIATION_PATTERNS = Pattern.compile("(.*)("
+    private final static Pattern ASSOCIATION_PATTERNS = Pattern.compile(
+            "(.*)" +
+            "(?<interactionTypeName>"
             + String.join(CharsetConstant.SEPARATOR_CHAR,
             "^[rR]eared from",
             "^[Cc]oll. in",
@@ -40,7 +42,7 @@ public final class AssociatedTaxaUtil {
             "^[Vv]isiting",
             "^[Cc]aught after [Vv]isiting",
             "[Ff]eeding on")
-            + ")([ ])([^;]+)");
+            + ")([ ])(?<targetTaxonName>[^;:]+)$");
 
     public static List<Map<String, String>> expandIfNeeded(Map<String, String> properties) {
         try {
@@ -230,8 +232,8 @@ public final class AssociatedTaxaUtil {
         Matcher matcher = ASSOCIATION_PATTERNS.matcher(associatedTaxa);
         if (matcher.find()) {
             properties.add(new HashMap<String, String>() {{
-                put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group(4)));
-                put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(2)));
+                put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group("targetTaxonName")));
+                put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group("interactionTypeName")));
             }});
         }
         return properties;
