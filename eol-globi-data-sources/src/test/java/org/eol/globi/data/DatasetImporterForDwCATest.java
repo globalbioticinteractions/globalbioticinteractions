@@ -1034,6 +1034,21 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void associatedOccurrencesMCZArctosHttpNotHttps() {
+        String associateOccurrences = "(parasite of) Arctos record GUID http://arctos.database.museum/guid/MSB:Mamm:291839";
+        List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
+
+        assertThat(propertyList.size(), is(1));
+
+        Map<String, String> properties = propertyList.get(0);
+        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.TARGET_OCCURRENCE_ID), is("https://arctos.database.museum/guid/MSB:Mamm:291839"));
+        assertThat(properties.get(INTERACTION_TYPE_NAME), is("(parasite of)"));
+        assertThat(properties.get(INTERACTION_TYPE_ID), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences"));
+    }
+
+    @Test
     public void associatedOccurrencesMSBArctos4() {
         String associateOccurrences = "(parasite of) Arctos record GUID https://arctos.database.museum/guid/MSB:Mamm:66439";
         List<Map<String, String>> propertyList = parseAssociatedOccurrences(associateOccurrences);
