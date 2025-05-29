@@ -1849,6 +1849,18 @@ public class CypherQueryBuilderTest {
         assertThat(accordingTo, hasItem("globi:globalbioticinteractions/inaturalist"));
     }
 
+    @Test
+    public void accordingToArctosHttpHttps() {
+        // arctos puts out occurrenceId that start with [https], but still searches for [http] in their specimen pages
+        // related to https://github.com/globalbioticinteractions/msb-para/issues/12
+        // and https://github.com/orgs/ArctosDB/discussions/4679
+        // and https://github.com/globalbioticinteractions/globalbioticinteractions/issues/791#issuecomment-1120094653
+        List<String> accordingTo = CypherQueryBuilder.collectAccordingTo(new TreeMap() {{
+            put("accordingTo", "http://arctos.database.museum/guid/MSB:Para:36168");
+        }});
+        assertThat(accordingTo, hasItem("https://arctos.database.museum/guid/MSB:Para:36168"));
+    }
+
     @Test(expected = QueryExecutionException.class)
     public void queryValidation() {
         String malformed = "malformed";

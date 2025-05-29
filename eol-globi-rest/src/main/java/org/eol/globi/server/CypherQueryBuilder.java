@@ -328,7 +328,9 @@ public class CypherQueryBuilder {
             accordingTo = accordingTo.stream()
                     .map(s -> StringUtils.equalsIgnoreCase(s, "inaturalist")
                             ? "globi:globalbioticinteractions/inaturalist"
-                            : s).collect(Collectors.toList());
+                            : s)
+                    .map(s -> StringUtils.replace(s, "http://arctos.database.museum", "https://arctos.database.museum"))
+                    .collect(Collectors.toList());
         }
         return accordingTo;
     }
