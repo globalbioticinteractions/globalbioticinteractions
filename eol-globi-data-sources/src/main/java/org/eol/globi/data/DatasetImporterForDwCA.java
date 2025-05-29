@@ -128,7 +128,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_MCZ_DEPS_VERB_PATTERN =
             Pattern.compile("^([(][a-zA-Z ]+[)])[ ](.*)(http[s]{0,1}://mczbase.mcz.harvard.edu/guid/)([a-zA-Z0-9:-]+)");
     private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_PATTERN = Pattern.compile("^[(][a-zA-Z ]+[)][ ]");
-    private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_GUID_PATTERN_2025 = Pattern.compile("^(?<verb>[(][a-zA-Z ]+[)])[ ](Arctos record GUID)[ ]http[s]{0,1}:(?<occurrenceId>[^ ]+)");
+    private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_GUID_PATTERN_2025 = Pattern.compile("^(?<verb>[(][a-zA-Z ]+[)])[ ](Arctos record GUID)[ ](?<scheme>http[s]{0,1}:)(?<occurrenceId>[^ ]+)");
     private static final Pattern ARCTOS_ASSOCIATED_OCCURRENCES_VERB_INSTITUTIONAL_PATTERN_2025 = Pattern.compile("^(?<verb>[(][a-zA-Z ]+[)])[ ](institutional catalog number)[ ](?<occurrenceId>.*)");
 
     private static final Pattern NEON_ASSOCIATED_OCCURRENCES_PATTERN =
@@ -726,7 +726,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
         } else if (matcher2025.find()) {
             TreeMap<String, String> properties = new TreeMap<>();
-            properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim("http:" + matcher2025.group("occurrenceId")));
+            properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(matcher2025.group("scheme") + matcher2025.group("occurrenceId")));
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher2025.group("verb")));
             appendAssociatedOccurrencesProperties(propertyList, properties);
         } else if (matcher2025_2.find()) {
