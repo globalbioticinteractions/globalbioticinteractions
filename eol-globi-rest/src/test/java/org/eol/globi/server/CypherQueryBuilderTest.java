@@ -507,6 +507,7 @@ public class CypherQueryBuilderTest {
 
     @Test
     public void findInteractionsAccordingToWithSexAndObservations() {
+        // see https://github.com/globalbioticinteractions/msb-para/issues/12
         HashMap<String, String[]> params = new HashMap<String, String[]>() {
             {
                 put("accordingTo", new String[]{"http://arctos.database.museum/guid/MSB:Mamm:79902"});
