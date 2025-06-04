@@ -158,6 +158,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
 
     }};
+    private static final Pattern LOWERCASE_AND_SPACE = Pattern.compile("^[a-z ]+$");
+
     private static Pattern INATURALIST_TAXON =
             Pattern.compile("http[s]{0,1}://(www.){0,1}inaturalist.org/taxa/(?<taxonId>[0-9]+)");
     private static final Map<Pair<URI, String>, String> QUALIFIED_NAME_CACHE
@@ -416,6 +418,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         appendAssociatedOccurrencesIfAvailable(rec, interactionCandidates);
 
+        appendAMNHStyleAssociatedOccurrencesAndOrganismsIfAvailable(rec, interactionCandidates);
+
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/755#issuecomment-1029509362
         appendAssociatedSequencesIfAvailable(rec, interactionCandidates);
 
@@ -460,6 +464,20 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             interactionListener.on(interactionProperties);
         }
 
+    }
+
+    static void appendAMNHStyleAssociatedOccurrencesAndOrganismsIfAvailable(Record rec, List<Map<String, String>> interactionCandidates) {
+        String associatedOccurrences = rec.value(DwcTerm.associatedOccurrences);
+        String associatedOrganisms = rec.value(DwcTerm.associatedOrganisms);
+        if (StringUtils.isNotBlank(associatedOccurrences) && StringUtils.isNotBlank(associatedOrganisms)) {
+            if (LOWERCASE_AND_SPACE.matcher(associatedOccurrences).matches()) {
+                String[] parts = StringUtils.split(associatedOrganisms, ":");
+                interactionCandidates.add(new TreeMap<String, String>() {{
+                    put(TARGET_TAXON_NAME, StringUtils.trim(parts[0]));
+                    put(INTERACTION_TYPE_NAME, StringUtils.trim(associatedOccurrences));
+                }});
+            }
+        }
     }
 
     private void appendAssociatedOccurrencesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates) {
