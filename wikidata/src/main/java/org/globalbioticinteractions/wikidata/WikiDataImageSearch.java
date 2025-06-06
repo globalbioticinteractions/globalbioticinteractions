@@ -75,6 +75,7 @@ public class WikiDataImageSearch implements ImageSearch {
                                 .map(String::trim)
                                 .map(WordUtils::capitalizeFully)
                                 .distinct()
+                                .sorted()
                                 .collect(Collectors.toList());
 
                         taxonImage.setCommonName(join(names, ", ") + " @" + context.getPreferredLanguage());
