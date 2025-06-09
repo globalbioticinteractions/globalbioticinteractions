@@ -89,12 +89,16 @@ public class HttpUtil {
         return HttpClientBuilder
                 .create()
                 .setRetryHandler(new DefaultHttpRequestRetryHandler())
-                .setUserAgent("globalbioticinteractions/" + Version.getVersion() + " (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)")
+                .setUserAgent(getUserAgentString(Version.getVersion()))
                 .setServiceUnavailableRetryStrategy(new CustomServiceUnavailableStrategy())
                 .disableCookieManagement()
                // for loading proxy config from system properties see https://github.com/globalbioticinteractions/nomer/issues/121
                 .useSystemProperties()
                 .setDefaultRequestConfig(config);
+    }
+
+    static String getUserAgentString(String version) {
+        return "globalbioticinteractions/" + version + " (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)";
     }
 
     public static HttpGet httpGetJson(URI uri) {
