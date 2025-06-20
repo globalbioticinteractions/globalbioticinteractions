@@ -9,7 +9,7 @@ public class HttpUtilTest  {
 
     @Test
     public void testAgentString() {
-        String userAgentString = HttpUtil.getUserAgentString("1.2.3");  
+        String userAgentString = HttpUtil.getUserAgentString("1.2.3");
         assertThat(userAgentString, Is.is("globalbioticinteractions/1.2.3 (https://globalbioticinteractions.org; mailto:info@globalbioticinteractions.org)"));
     }
 

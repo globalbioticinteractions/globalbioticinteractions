@@ -291,17 +291,30 @@ public class ExternalIdUtilTest {
     }
 
     @Test
-    public void paleobioDatabase() {
+    public void paleoBioDatabase() {
         String url = "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=83088";
         assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.PBDB));
         assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.PBDB, url), is("83088"));
     }
 
     @Test
+    public void paleoBioDatabase2() {
+        String url = "https://paleobiodb.org/classic/basicTaxonInfo?taxon_no=txn:83088";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(url), is(TaxonomyProvider.PBDB));
+        assertThat(ExternalIdUtil.stripPrefix(TaxonomyProvider.PBDB, url), is("83088"));
+    }
+
+    @Test
+    public void urlForPaleoBioDatabaseTaxon() {
+        String url = ExternalIdUtil.urlForExternalId(TaxonomyProvider.PBDB.getIdPrefix() + "83088");
+        assertThat(url, is("https://paleobiodb.org/classic/basicTaxonInfo?taxon_no=txn:83088"));
+    }
+
+    @Test
     public void paleobioDatabaseExpand() {
-        String id = "PBDB:83088";
-        assertThat(ExternalIdUtil.taxonomyProviderFor(id), is(TaxonomyProvider.PBDB));
-        assertThat(ExternalIdUtil.urlForExternalId(id), is("https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=83088"));
+        String externalId = "PBDB:83088";
+        assertThat(ExternalIdUtil.taxonomyProviderFor(externalId), is(TaxonomyProvider.PBDB));
+        assertThat(ExternalIdUtil.urlForExternalId(externalId), is("https://paleobiodb.org/classic/basicTaxonInfo?taxon_no=txn:83088"));
     }
 
     @Test

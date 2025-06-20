@@ -67,7 +67,7 @@ public class ExternalIdUtil {
         put(TaxonomyProvider.HESPEROMYS.getIdPrefix(), "http://hesperomys.com/n/");
         put(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE.getIdPrefix(), "https://www.mammaldiversity.org/taxon/");
         put("https://www.mammaldiversity.org/explore.html", "https://www.mammaldiversity.org/taxon/");
-        put(TaxonomyProvider.PBDB.getIdPrefix(), "https://paleobiodb.org/classic/checkTaxonInfo?taxon_no=");
+        put(TaxonomyProvider.PBDB.getIdPrefix(), "https://paleobiodb.org/classic/basicTaxonInfo?taxon_no=txn:");
         put(TaxonomyProvider.DISCOVERLIFE.getIdPrefix(), "https://www.discoverlife.org/mp/20q?guide=Apoidea_species&search=");
     }};
 
