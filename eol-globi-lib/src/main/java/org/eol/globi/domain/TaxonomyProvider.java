@@ -10,7 +10,7 @@ public enum TaxonomyProvider {
             TaxonomyProviderConstants.ID_PREFIX_TSN,
             TaxonomyProviderConstants.ID_PREFIX_TSN_LOWERCASE
     ),
-    NBN("NBN:", "https://data.nbn.org.uk/Taxa/"),
+    NBN("NBN:", "https://data.nbn.org.uk/Taxa/", "https://species.nbnatlas.org/species/"),
     WORMS("WORMS:", "https://www.marinespecies.org/aphia.php?p=taxdetails&id=", "urn:lsid:marinespecies.org:taxname:"),
     NCBI("NCBI:", "NCBITaxon:", "NCBI:txid", "http://purl.obolibrary.org/obo/NCBITaxon_"),
     EOL("EOL:", "http://eol.org/pages/", "https://eol.org/pages/"),

@@ -62,6 +62,25 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void nationalBiodiversityNetwork() {
+        assertThat(ExternalIdUtil.urlForExternalId("NBN:NHMSYS0000080189"), is("https://data.nbn.org.uk/Taxa/NHMSYS0000080189"));
+    }
+
+    @Test
+    public void nationalBiodiversityNetworkTaxonomyProvider() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("NBN:NHMSYS0000080189"), is(TaxonomyProvider.NBN));
+    }
+
+    @Test
+    public void nationalBiodiversityNetworkTaxonomyProviderURLOlder() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("https://data.nbn.org.uk/Taxa/NHMSYS0000080189"), is(TaxonomyProvider.NBN));
+    }
+    @Test
+    public void nationalBiodiversityNetworkTaxonomyProviderURLNewer() {
+        assertThat(ExternalIdUtil.taxonomyProviderFor("https://species.nbnatlas.org/species/NHMSYS0021060385"), is(TaxonomyProvider.NBN));
+    }
+
+    @Test
     public void checklistBank() {
         assertThat(ExternalIdUtil.taxonomyProviderFor("CLB:9913:2234"), is(TaxonomyProvider.CHECKLIST_BANK));
     }
