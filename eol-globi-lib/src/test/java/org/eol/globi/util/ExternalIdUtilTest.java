@@ -118,6 +118,21 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void wikidataPrefix() {
+        assertThat(
+                ExternalIdUtil.stripPrefix(TaxonomyProvider.WIKIDATA, "Wikidata:Q7216874"),
+                is("Q7216874")
+        );
+    }
+    @Test
+    public void wikidataTaxonomyProviderFor() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("Wikidata:Q7216874"),
+                is(TaxonomyProvider.WIKIDATA)
+        );
+    }
+
+    @Test
     public void mammalDiversity() {
         assertThat(ExternalIdUtil.taxonomyProviderFor("https://www.mammaldiversity.org/taxon/1005012"), is(TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE));
     }

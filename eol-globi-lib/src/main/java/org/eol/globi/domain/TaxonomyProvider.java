@@ -32,7 +32,7 @@ public enum TaxonomyProvider {
     OPEN_TREE_OF_LIFE("OTT:"),
     NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:"),
     INATURALIST_TAXON("INAT_TAXON:", "https://inaturalist.org/taxa/", "https://www.inaturalist.org/taxa/"),
-    WIKIDATA("WD:", "http://www.wikidata.org/entity/"),
+    WIKIDATA("WD:", "http://www.wikidata.org/entity/", "Wikidata:"),
     FISHBASE_CACHE("FBC:"),
     FISHBASE_SPECCODE("FBC:FB:SpecCode:", "http://fishbase.org/summary/"),
     SEALIFEBASE_SPECCODE("FBC:SLB:SpecCode:", "http://sealifebase.org/Summary/SpeciesSummary.php?id="),
