@@ -27,6 +27,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -1413,6 +1414,38 @@ public class DatasetImporterForDwCATest {
         }, folder.newFolder());
 
         assertThat(numberOfFoundLinks.get(), is(1));
+    }
+
+    @Test
+    public void materialCitationWithBiobliographicCitation() throws IOException, URISyntaxException, StudyImporterException {
+        // as derived from https://github.com/teleaslamellatus/Aphanogmus-odiorniensis
+        URI sampleArchive = getClass().getResource("Aphanogmus-odiorniensis-sample.zip").toURI();
+
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        final Set<String> resourceTypes = new TreeSet<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        ResourceService resourceService = new ResourceServiceLocal(new InputStreamFactoryNoop()) ;
+
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", sampleArchive, resourceService));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                assertThat(interaction.get(REFERENCE_ID), is("0965d5eb-1e68-493f-941a-d3fade5af7ea"));
+                assertThat(interaction.get(REFERENCE_CITATION), is("Mikó\t I.\t Kononova\t S. V.\t Melika\t G. 2005. Proceedings of the 25 th Jubellee Assembly of East Palaearctic Regional Section of IOBC. In: Budapest: Budapest-Pushkino\t 149–156."));
+
+                assertThat(interaction.get(RESOURCE_TYPES), is(notNullValue()));
+                String[] types = splitByPipes(interaction.get(RESOURCE_TYPES));
+                resourceTypes.addAll(Arrays.asList(types));
+                recordCounter.incrementAndGet();
+            }
+        });
+        importStudy(studyImporterForDwCA);;
+        assertThat(recordCounter.get(), greaterThan(0));
+        String[] items = splitByPipes("http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/associatedTaxa");
+        assertThat(resourceTypes, containsInAnyOrder(items));
+        assertThat(recordCounter.get(), greaterThan(0));
+
+
     }
 
     @Test

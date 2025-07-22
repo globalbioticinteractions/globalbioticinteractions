@@ -23,6 +23,7 @@ import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.Term;
+import org.gbif.dwc.terms.TermFactory;
 import org.gbif.utils.file.ClosableIterator;
 import org.globalbioticinteractions.cache.CacheUtil;
 import org.globalbioticinteractions.dataset.CitationUtil;
@@ -665,22 +666,42 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     static void mapReferenceInfo(Record rec, Map<String, String> interactionProperties, ResourceTypeConsumer resourceTypeConsumer) {
-        String value = StringUtils.trim(rec.value(DcTerm.references));
-        if (StringUtils.isBlank(value)) {
-            value = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
+        String referenceCitation = StringUtils.trim(rec.value(DcTerm.references));
+        if (StringUtils.isBlank(referenceCitation)) {
+            referenceCitation = StringUtils.trim(rec.value(TermFactory.instance().findTerm("http://purl.org/dc/terms/bibliographicCitation")));
         }
-        if (StringUtils.isNotBlank(value)) {
+
+        String referenceId = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
+
+        if (StringUtils.isBlank(referenceId)) {
+            referenceId = referenceCitation;
+        }
+
+        String referenceUrl = toUrl(referenceId);
+        if (StringUtils.isBlank(referenceUrl)) {
+            referenceUrl = toUrl(referenceCitation);
+        }
+
+        if (StringUtils.isNotBlank(referenceCitation)) {
             resourceTypeConsumer.accept(rec.rowType());
-            interactionProperties.put(REFERENCE_CITATION, value);
-            interactionProperties.put(REFERENCE_ID, value);
-            try {
-                URI referenceURI = new URI(value);
-                URL url = referenceURI.toURL();
-                interactionProperties.put(REFERENCE_URL, url.toString());
-            } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-                // opportunistic extraction of url from references to take advantage of practice used in Symbiota)
+            interactionProperties.put(REFERENCE_CITATION, referenceCitation);
+            interactionProperties.put(REFERENCE_ID, referenceId);
+            if (StringUtils.isNotBlank(referenceUrl)) {
+                interactionProperties.put(REFERENCE_URL, referenceUrl);
             }
         }
+    }
+
+    private static String toUrl(String str) {
+        String urlString = null;
+        try {
+            URI referenceURI = new URI(str);
+            URL url = referenceURI.toURL();
+            urlString = url.toString();
+        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
+            // opportunistic extraction of url from references to take advantage of practice used in Symbiota)
+        }
+        return urlString;
     }
 
     private static void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, Term term) {
