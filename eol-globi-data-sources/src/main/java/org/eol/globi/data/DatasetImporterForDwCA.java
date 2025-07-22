@@ -671,15 +671,35 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             referenceCitation = StringUtils.trim(rec.value(TermFactory.instance().findTerm("http://purl.org/dc/terms/bibliographicCitation")));
         }
 
-        String referenceId = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
+        String referenceUrl = null;
+        String referenceId = null;
+        if (StringUtils.isNotBlank(referenceCitation)) {
+            referenceUrl = toUrl(referenceCitation);
+            referenceId = referenceUrl;
+        }
+
+        if (StringUtils.isBlank(referenceId)) {
+            referenceId = StringUtils.trim(rec.value(DwcTerm.occurrenceID));
+        }
 
         if (StringUtils.isBlank(referenceId)) {
             referenceId = referenceCitation;
         }
 
-        String referenceUrl = toUrl(referenceId);
+        if (StringUtils.isBlank(referenceCitation)) {
+            referenceCitation = referenceId;
+        }
+
+        if (StringUtils.isBlank(referenceUrl)) {
+            referenceUrl = toUrl(referenceId);
+        }
+
         if (StringUtils.isBlank(referenceUrl)) {
             referenceUrl = toUrl(referenceCitation);
+        }
+
+        if (StringUtils.isBlank(referenceId)) {
+            referenceId = referenceUrl;
         }
 
         if (StringUtils.isNotBlank(referenceCitation)) {
@@ -694,14 +714,17 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     private static String toUrl(String str) {
         String urlString = null;
-        try {
-            URI referenceURI = new URI(str);
-            URL url = referenceURI.toURL();
-            urlString = url.toString();
-        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-            // opportunistic extraction of url from references to take advantage of practice used in Symbiota)
+        if (StringUtils.isNotBlank(str)) {
+            try {
+                URI referenceURI = new URI(str);
+                URL url = referenceURI.toURL();
+                urlString = url.toString();
+            } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
+                // opportunistic extraction of url from references to take advantage of practice used in Symbiota)
+            }
         }
         return urlString;
+
     }
 
     private static void mapIfAvailable(Record rec, Map<String, String> interactionProperties, String key, Term term) {
