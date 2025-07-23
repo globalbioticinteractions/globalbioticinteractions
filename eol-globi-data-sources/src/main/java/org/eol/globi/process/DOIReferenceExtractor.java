@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 
 public class DOIReferenceExtractor extends InteractionProcessorAbstract {
 
-    private static final Pattern PATTERN_DOI = Pattern.compile(".*(doi:[ ]*)(10[.])(?<doiRegistrant>.*)/(?<doiSuffix>[^ ]+)");
-    private static final Pattern PATTERN_DOI_URI = Pattern.compile(".*(?<doiUrl>http[s]{0,1}://(dx[.]){0,1}(doi.org/)(10[.])(?<doiRegistrant>.*)/(?<doiSuffix>[^ ]+))");
+    private static final Pattern PATTERN_DOI = Pattern.compile(".*(doi:[ ]*)(10[.])(?<doiRegistrant>[^/]+)/(?<doiSuffix>[^ ]+).*");
+    private static final Pattern PATTERN_DOI_URI = Pattern.compile(".*(?<doiUrl>http[s]{0,1}://(dx[.]){0,1}(doi.org/)(10[.])(?<doiRegistrant>[^/]+)/(?<doiSuffix>[^ ]+)).*");
 
     public DOIReferenceExtractor(InteractionListener listener, ImportLogger logger) {
         super(listener, logger);

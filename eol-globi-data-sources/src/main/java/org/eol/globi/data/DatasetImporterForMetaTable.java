@@ -7,7 +7,6 @@ import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.domain.TaxonomyProvider;
@@ -23,7 +22,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import java.awt.peer.ChoicePeer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
