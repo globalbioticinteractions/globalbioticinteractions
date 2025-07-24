@@ -4,14 +4,18 @@ import org.eol.globi.data.DatasetImporterForTSV;
 import org.eol.globi.data.StudyImporterException;
 import org.junit.Test;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.fail;
 
 public class DOIReferenceExtractorTest {
 
@@ -53,6 +57,36 @@ public class DOIReferenceExtractorTest {
         assertThat(interactions.size(), is(1));
 
         assertThat(interactions.get(0).get(DatasetImporterForTSV.REFERENCE_DOI), is("10.26786/1920-7603(2022)695"));
+
+    }
+
+    @Test
+    public void extractDOIFromCitationWithDOIUrlURIParseWorkaround() throws StudyImporterException, URISyntaxException {
+        List<Map<String, String>> interactions = new ArrayList<>();
+
+        DOIReferenceExtractor doiReferenceExtractor = new DOIReferenceExtractor(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                interactions.add(interaction);
+            }
+        }, null);
+
+        String providedDoi = "10.1890/0012-9658(2003)084[0145:IOSFWO]2.0.CO;2";
+
+        doiReferenceExtractor.on(new TreeMap<String, String>() {{
+            put(DatasetImporterForTSV.REFERENCE_CITATION, "foo https://doi.org/" + providedDoi + " bar");
+        }});
+
+        try {
+            new URI("https://doi.org/" + providedDoi);
+            fail("expected some URI parse exception");
+        } catch (Throwable ex) {
+            assertThat(ex, instanceOf(URISyntaxException.class));
+        }
+
+        assertThat(interactions.size(), is(1));
+
+        assertThat(interactions.get(0).get(DatasetImporterForTSV.REFERENCE_DOI), is(providedDoi));
 
     }
 

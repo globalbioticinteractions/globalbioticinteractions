@@ -6,6 +6,8 @@ import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.StudyImporterException;
 import org.globalbioticinteractions.doi.DOI;
 import org.globalbioticinteractions.doi.MalformedDOIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DOIReferenceExtractor extends InteractionProcessorAbstract {
+    private static final Logger LOG = LoggerFactory.getLogger(DOIReferenceExtractor.class);
 
     private static final Pattern PATTERN_DOI = Pattern.compile(".*(doi:[ ]*)(10[.])(?<doiRegistrant>[^/]+)/(?<doiSuffix>[^ ]+).*");
     private static final Pattern PATTERN_DOI_URI = Pattern.compile(".*(?<doiUrl>http[s]{0,1}://(dx[.]){0,1}(doi.org/)(10[.])(?<doiRegistrant>[^/]+)/(?<doiSuffix>[^ ]+)).*");
@@ -71,13 +74,17 @@ public class DOIReferenceExtractor extends InteractionProcessorAbstract {
         DOI doi = null;
         Matcher urlMatcher = PATTERN_DOI_URI.matcher(textToMatch);
         if (urlMatcher.matches()) {
-            try {
-                String doiUrl1 = urlMatcher.group("doiUrl");
-                doiUrl1 = stripTrailingPeriod(doiUrl1);
-                URI doiUrl = new URI(doiUrl1);
-                doi = DOI.create(doiUrl);
-            } catch (URISyntaxException | MalformedDOIException e) {
-                throw new RuntimeException(e);
+            String doiUrl1 = urlMatcher.group("doiUrl");
+            doiUrl1 = stripTrailingPeriod(doiUrl1);
+            String[] parts = StringUtils.splitByWholeSeparator(doiUrl1, "//doi.org/10.");
+            if (parts.length > 1) {
+                try {
+                    URI escapedDoiURL = new URI("https", "doi.org", "/10." + parts[1], null);
+                    doi = DOI.create(escapedDoiURL);
+                } catch (URISyntaxException | MalformedDOIException e) {
+                    // silently skip malformed doi urls
+                    LOG.warn("unexpected issues handling DOI url [" + doiUrl1 + "]", e);
+                }
             }
         }
         return doi;
@@ -85,7 +92,7 @@ public class DOIReferenceExtractor extends InteractionProcessorAbstract {
 
     private static String stripTrailingPeriod(String doiUrl1) {
         doiUrl1 = StringUtils.endsWith(doiUrl1, ".")
-                ? StringUtils.substring(doiUrl1, 0, doiUrl1.length()-1)
+                ? StringUtils.substring(doiUrl1, 0, doiUrl1.length() - 1)
                 : doiUrl1;
         return doiUrl1;
     }
