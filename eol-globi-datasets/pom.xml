@@ -22,6 +22,7 @@
         <dataset.dir>change/me/in/pom.xml</dataset.dir>
         <data.dir>${project.build.directory}/data</data.dir>
         <neo4j.data.dir>${data.dir}/graph.db</neo4j.data.dir>
+        <elton4n.memory>8G</elton4n.memory>
         <wagon-maven-plugin.version>2.0.0</wagon-maven-plugin.version>
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <maven-dependency-plugin.version>${maven-assembly-plugin.version}</maven-dependency-plugin.version>
@@ -68,8 +69,9 @@
                     <executable>java</executable>
                     <arguments>
                         <!-- see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/995 -->
-                        <argument>-Xms6G</argument>
-                        <argument>-Xmx6G</argument>
+                        <!-- see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1088 -->
+                        <argument>-Xms${elton4n.memory}</argument>
+                        <argument>-Xmx${elton4n.memory}</argument>
                         <argument>-classpath</argument>
                         <classpath/>
                         <argument>org.globalbioticinteractions.elton.Elton4N</argument>
