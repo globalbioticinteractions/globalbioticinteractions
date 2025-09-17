@@ -170,6 +170,24 @@ public class InteractionControllerIT extends ITBase {
     }
 
     @Test
+    public void listReturnSpecificTargetTaxonName() throws IOException {
+        // https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1102
+        String uri = getURLPrefix() + "taxon/Callinectes%20sapidus/preyedUponBy?field=target_taxon_name";
+        String response = HttpUtil.getRemoteJson(uri);
+        assertThat(response, containsString(ResultField.TARGET_TAXON_NAME.getLabel()));
+        assertThat(response, not(containsString(ResultField.SOURCE_TAXON_NAME.getLabel())));
+    }
+
+    @Test
+    public void listReturnSpecificTargetTaxonNameIncludeObservations() throws IOException {
+        // https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1102
+        String uri = getURLPrefix() + "taxon/Callinectes%20sapidus/preyedUponBy?field=target_taxon_name&includeObservations=true";
+        String response = HttpUtil.getRemoteJson(uri);
+        assertThat(response, containsString(ResultField.TARGET_TAXON_NAME.getLabel()));
+        assertThat(response, not(containsString(ResultField.SOURCE_TAXON_NAME.getLabel())));
+    }
+
+    @Test
     public void interactionDOT() throws IOException {
         String uri = getURLPrefix() + "interaction?type=dot";
         String response = HttpUtil.getRemoteJson(uri);
@@ -215,5 +233,19 @@ public class InteractionControllerIT extends ITBase {
         String response = HttpUtil.getRemoteJson(uri);
         assertThat(response, is(not(nullValue())));
     }
+
+    @Test
+    public void listInteractionsInAreaDotFormat() throws IOException {
+        // https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1101
+        String uri = getURLPrefix() + "interaction?bbox=-82.203,17.077,-79.215,20.632&type=dot";
+        HttpResponse execute = HttpUtil.getHttpClient().execute(HttpUtil.httpGetJson(URI.create(uri)));
+
+        assertThat(execute.getStatusLine().getStatusCode(), is(200));
+        assertThat(execute.getHeaders("Content-Type")[0].getValue(), is("application/json;charset=utf-8"));
+        String response = IOUtils.toString(execute.getEntity().getContent(), StandardCharsets.UTF_8);
+        assertThat(response, is(not(nullValue())));
+    }
+
+
 
 }
