@@ -38,7 +38,10 @@ public class ResultFormatterDOT implements ResultFormatter {
         } catch (IOException e) {
             throw new ResultFormattingException("failed to parse", e);
         }
-        JsonNode columns = results.get("columns");
+        JsonNode columns = results.at("/columns");
+        if (columns.isMissingNode()) {
+            throw new ResultFormattingException("no column definitions found: failed to parse [" + content + "]");
+        }
         Map<String, Integer> nameIndex = new HashMap<String, Integer>();
         for (int i = 0; i < columns.size(); i++) {
             nameIndex.put(columns.get(i).asText(), i);
