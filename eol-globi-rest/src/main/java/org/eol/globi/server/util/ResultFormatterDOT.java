@@ -5,6 +5,8 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ResultFormatterDOT implements ResultFormatter {
+
+    private static Logger LOG = LoggerFactory.getLogger(ResultFormatterDOT.class);
+
     protected static String getSafeLabel(String string) {
         return RegExUtils.replaceAll(string, "\\W", "_");
     }
@@ -40,7 +45,7 @@ public class ResultFormatterDOT implements ResultFormatter {
         }
         JsonNode columns = results.at("/columns");
         if (columns.isMissingNode()) {
-            throw new ResultFormattingException("no column definitions found: failed to parse [" + content + "]");
+            LOG.warn("no column definitions found: failed to parse [" + content + "]");
         }
         Map<String, Integer> nameIndex = new HashMap<String, Integer>();
         for (int i = 0; i < columns.size(); i++) {
