@@ -1,11 +1,16 @@
 package org.eol.globi.server.util;
 
+import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.Is;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class ResultFormatterDOTTest {
 
     @Test
@@ -36,6 +41,14 @@ public class ResultFormatterDOTTest {
         String dots = new ResultFormatterDOT().format("{\n" +
                 "  \"columns\" : [ \"source_taxon_path\", \"interaction_type\", \"target_taxon_path\" ],\n" +
                 "  \"data\" : [ [ \"bla | Vireo olivaceus\", \"preysOn\", [ \"Diptera\", \"Auchenorrhyncha\", \"Coleoptera\", \"Lepidoptera\", \"Arachnida\" ] ], [ \"Colaptes auratus\", \"preysOn\", [ \"Hymenoptera\" ] ], [ \"Anseriformes\", \"preysOn\", [ \"Cyperaceae\", \"Tracheophyta\", \"marine invertebrates\" ] ], [ \"Geositta\", \"preysOn\", [ \"Insecta\", \"Coelopidae\", \"Diptera\", \"Talitridae\" ] ], [ \"Patagioenas squamosa\", \"preysOn\", [ \"fruit\" ] ], [ \"Ardea cinerea\", \"preysOn\", [ \"Anguilla anguilla\", \"Pollachius virens\", \"Ammodytes tobianus\", \"Zoarces viviparus\", \"Pholis gunnellus\", \"Myoxocephalus scorpius\", \"Pomatoschistus microps\", \"Crangon crangon\", \"Salmo trutta\" ] ], [ \"Setophaga petechia\", \"preysOn\", [ \"Araneae\", \"Insecta\", \"Orthoptera\", \"fruit and seeds\", \"Hemiptera\", \"Diptera\", \"Lepidoptera\", \"Formicidae\", \"Hymenoptera\", \"Coleoptera\", \"Auchenorrhyncha\" ] ] ] }");
+        assertThat(dots, is(notNullValue()));
+    }
+
+    @Test
+    public void formatterInteractionsQuery() throws IOException {
+        String dots = new ResultFormatterDOT()
+                .format(IOUtils.toString(getClass().getResourceAsStream("interactions-result.json"), StandardCharsets.UTF_8));
+        System.out.println(dots);
         assertThat(dots, is(notNullValue()));
     }
 
