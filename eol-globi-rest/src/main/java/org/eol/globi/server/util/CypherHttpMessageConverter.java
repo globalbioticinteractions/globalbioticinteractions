@@ -16,6 +16,7 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<CypherQuery> {
 
@@ -50,7 +51,7 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
         MediaType contentType = outputMessage.getHeaders().getContentType();
         ResultFormatter formatter = new ResultFormatterFactory().create(contentType);
         if (formatter == null) {
-            throw new IOException("found unsupported return format type request for [" + contentType.toString() + "]");
+            throw new IOException("found unsupported return format type request for [" + contentType + "]");
         }
 
         cypherQuery = optimizeQueryForType(cypherQuery, formatter);
@@ -64,7 +65,11 @@ public class CypherHttpMessageConverter extends AbstractHttpMessageConverter<Cyp
             }
         } else {
             String result = CypherUtil.executeRemote(cypherQuery);
-            StreamUtils.copy(formatter.format(result), contentType.getCharset(), outputMessage.getBody());
+            StreamUtils.copy(
+                    formatter.format(result),
+                    (contentType == null || contentType.getCharset() == null) ? StandardCharsets.UTF_8 : contentType.getCharset(),
+                    outputMessage.getBody()
+            );
         }
     }
 
