@@ -293,7 +293,12 @@ public class CypherReturnClauseBuilder {
                     }
                 };
                 List<ResultField> returnFields1 = Arrays.asList(SOURCE_TAXON_NAME, INTERACTION_TYPE, TARGET_TAXON_NAME);
-                appendReturnClauseDistinctz(query, returnFields1, selectors1);
+
+                appendReturnClauseDistinctz(
+                        query,
+                        actualReturnFields(requestedReturnFields, returnFields1, returnFields1),
+                        selectors1
+                );
                 break;
             case SINGLE_TAXON_ALL:
                 Map<ResultField, String> selectors = appendSpecimenFields(
@@ -304,7 +309,12 @@ public class CypherReturnClauseBuilder {
 
                             }
                         }));
-                appendReturnClause(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_SINGLE_TAXON_DEFAULT), selectors.keySet()), selectors);
+
+                appendReturnClause(
+                        query,
+                        actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_SINGLE_TAXON_DEFAULT), selectors.keySet()),
+                        selectors
+                );
                 break;
             case MULTI_TAXON_ALL:
                 selectors = appendSpecimenFields(
@@ -317,7 +327,11 @@ public class CypherReturnClauseBuilder {
                                 put(NUMBER_OF_SOURCES, "1");
                             }
                         }));
-                appendReturnClauseDistinctz(query, actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()), selectors);
+                appendReturnClauseDistinctz(
+                        query,
+                        actualReturnFields(requestedReturnFields, Arrays.asList(RETURN_FIELDS_MULTI_TAXON_DEFAULT), selectors.keySet()),
+                        selectors
+                );
                 break;
             case MULTI_TAXON_DISTINCT:
                 Map<ResultField, String> actualSelectors = defaultSelectors(ResultObject.SOURCE_TAXON_DISTINCT.getLabel(), ResultObject.TARGET_TAXON_DISTINCT.getLabel());
