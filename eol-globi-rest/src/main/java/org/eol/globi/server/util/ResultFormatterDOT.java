@@ -54,7 +54,10 @@ public class ResultFormatterDOT implements ResultFormatter {
 
         List<ResultField> sourceTaxonResultFields = Arrays.asList(ResultField.SOURCE_TAXON_NAME, ResultField.SOURCE_TAXON_PATH, ResultField.SOURCE_TAXON_EXTERNAL_ID, ResultField.SOURCE_TAXON_PATH_IDS);
         List<ResultField> targetTaxonResultFields = Arrays.asList(ResultField.TARGET_TAXON_NAME, ResultField.TARGET_TAXON_PATH, ResultField.TARGET_TAXON_EXTERNAL_ID, ResultField.TARGET_TAXON_PATH_IDS);
-        JsonNode rows = results.get("data");
+        JsonNode rows = results.at("/data");
+        if (rows.isMissingNode()) {
+            LOG.warn("no rows found: failed to parse [" + content + "]");
+        }
         for (JsonNode row : rows) {
             Integer sourceTaxonIndex = getTaxonLabel(nameIndex, sourceTaxonResultFields);
             Integer targetTaxonIndex = getTaxonLabel(nameIndex, targetTaxonResultFields);

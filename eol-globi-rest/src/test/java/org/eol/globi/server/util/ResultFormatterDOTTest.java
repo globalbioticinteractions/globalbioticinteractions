@@ -37,6 +37,14 @@ public class ResultFormatterDOTTest {
     }
 
     @Test
+    public void formatterNoRows() throws ResultFormattingException {
+        String dots = new ResultFormatterDOT().format("{\n" +
+                "  \"columns\" : [ \"source_taxon_name\", \"interaction_type\", \"target_taxon_name\" ],\n" +
+                "  \"dataz\" : [ [ \"Vireo olivaceus\", \"preysOn\", [ \"Diptera\", \"Auchenorrhyncha\", \"Coleoptera\", \"Lepidoptera\", \"Arachnida\" ] ], [ \"Colaptes auratus\", \"preysOn\", [ \"Hymenoptera\" ] ], [ \"Anseriformes\", \"preysOn\", [ \"Cyperaceae\", \"Tracheophyta\", \"marine invertebrates\" ] ], [ \"Geositta\", \"preysOn\", [ \"Insecta\", \"Coelopidae\", \"Diptera\", \"Talitridae\" ] ], [ \"Patagioenas squamosa\", \"preysOn\", [ \"fruit\" ] ], [ \"Ardea cinerea\", \"preysOn\", [ \"Anguilla anguilla\", \"Pollachius virens\", \"Ammodytes tobianus\", \"Zoarces viviparus\", \"Pholis gunnellus\", \"Myoxocephalus scorpius\", \"Pomatoschistus microps\", \"Crangon crangon\", \"Salmo trutta\" ] ], [ \"Setophaga petechia\", \"preysOn\", [ \"Araneae\", \"Insecta\", \"Orthoptera\", \"fruit and seeds\", \"Hemiptera\", \"Diptera\", \"Lepidoptera\", \"Formicidae\", \"Hymenoptera\", \"Coleoptera\", \"Auchenorrhyncha\" ] ] ] }");
+        assertThat(dots, is(notNullValue()));
+    }
+
+    @Test
     public void formatterNotSourceTaxon() throws ResultFormattingException {
         String dots = new ResultFormatterDOT().format("{\n" +
                 "  \"columns\" : [ \"source_taxon_namez\", \"interaction_type\", \"target_taxon_namez\" ],\n" +
