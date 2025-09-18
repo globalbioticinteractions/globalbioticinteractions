@@ -48,7 +48,6 @@ public class ResultFormatterDOTTest {
     public void formatterInteractionsQuery() throws IOException {
         String dots = new ResultFormatterDOT()
                 .format(IOUtils.toString(getClass().getResourceAsStream("interactions-result.json"), StandardCharsets.UTF_8));
-        System.out.println(dots);
         assertThat(dots, is(notNullValue()));
     }
 
