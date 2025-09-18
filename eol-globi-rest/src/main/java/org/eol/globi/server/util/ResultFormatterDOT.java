@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static org.eol.globi.server.util.ResultFormatterJSON.pruneResultsIfNeeded;
+
 public class ResultFormatterDOT implements ResultFormatter {
 
     private static Logger LOG = LoggerFactory.getLogger(ResultFormatterDOT.class);
@@ -39,7 +41,8 @@ public class ResultFormatterDOT implements ResultFormatter {
         StringBuilder builder = dotPrefix();
         JsonNode results;
         try {
-            results = RequestHelper.parse(content);
+            JsonNode rawResults = RequestHelper.parse(content);
+            results = pruneResultsIfNeeded(rawResults);
         } catch (IOException e) {
             throw new ResultFormattingException("failed to parse", e);
         }
