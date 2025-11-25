@@ -115,21 +115,21 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
             List<String> primaryKeys = jsonNode.getValue();
             for (String primaryKey : primaryKeys) {
                 JsonNode associatedPrimaryKeyTable = primaryKeyTables.get(primaryKey);
-                    if (associatedPrimaryKeyTable != null && !indexedTables.containsKey(primaryKey)) {
-                        Map<String, Map<String, String>> cachedTable = MapDBUtil.createBigMap(tmpDir);
-                        DatasetProxy datasetDependency = new DatasetProxy(dataset);
-                        datasetDependency.setConfig(associatedPrimaryKeyTable);
-                        importTable(new InteractionListener() {
-                            @Override
-                            public void on(Map<String, String> interaction) throws StudyImporterException {
-                                String keyValue = interaction.get(primaryKey);
-                                if (StringUtils.isNotBlank(keyValue)) {
-                                    cachedTable.putIfAbsent(keyValue, interaction);
-                                }
+                if (associatedPrimaryKeyTable != null && !indexedTables.containsKey(primaryKey)) {
+                    Map<String, Map<String, String>> cachedTable = MapDBUtil.createBigMap(tmpDir);
+                    DatasetProxy datasetDependency = new DatasetProxy(dataset);
+                    datasetDependency.setConfig(associatedPrimaryKeyTable);
+                    importTable(new InteractionListener() {
+                        @Override
+                        public void on(Map<String, String> interaction) throws StudyImporterException {
+                            String keyValue = interaction.get(primaryKey);
+                            if (StringUtils.isNotBlank(keyValue)) {
+                                cachedTable.putIfAbsent(keyValue, interaction);
                             }
-                        }, new TableParserFactoryImpl(), datasetDependency, logger);
-                        indexedTables.put(primaryKey, cachedTable);
-                    }
+                        }
+                    }, new TableParserFactoryImpl(), datasetDependency, logger);
+                    indexedTables.put(primaryKey, cachedTable);
+                }
             }
         }
 
@@ -503,11 +503,25 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
     private static String populateValueUrlOrNull(String value, Column column, String convertedValue) {
         if (StringUtils.isNotBlank(column.getValueUrl())) {
-            String replaced = column.getValueUrl().replaceFirst("\\{" + column.getName() + "}", "");
+            String replaced = applyValueUrlTemplate(column, "");
             TaxonomyProvider provider = ExternalIdUtil.taxonomyProviderFor(replaced);
-            convertedValue = (provider == null ? replaced : provider.getIdPrefix()) + value;
+            if (provider == null) {
+                if (StringUtils.equals(replaced, column.getValueUrl())) {
+                    convertedValue = replaced;
+                } else {
+                    convertedValue = applyValueUrlTemplate(column, value);
+                }
+            } else {
+                convertedValue = provider.getIdPrefix() + value;
+            }
         }
         return convertedValue;
+    }
+
+    private static String applyValueUrlTemplate(Column column, String replacementValue1) {
+        String replacementValue = replacementValue1;
+        String replaced = column.getValueUrl().replaceFirst("\\{" + column.getName() + "}", replacementValue);
+        return replaced;
     }
 
     public void setDataset(Dataset dataset) {

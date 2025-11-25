@@ -6,7 +6,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.domain.LogContext;
-import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.service.DatasetLocal;
 import org.eol.globi.service.ResourceService;
@@ -371,6 +370,72 @@ public class DatasetImporterForMetaTableTest {
 
         assertThat(msgs.size(), is(1));
         assertThat(msgs.get(0), is("failed to parse value [some malformed value] from column [original column name] into column [some column] with datatype: {\"base\":\"date\",\"format\":\"MM/dd/YYYY\",\"id\":\"some data type id\"}"));
+
+    }
+    @Test
+    public void parseColumnValueUrlNoReplacementValues() {
+        HashMap<String, String> mappedLine = new HashMap<>();
+        mappedLine.put("foo", "bar");
+        DatasetImporterForMetaTable.Column column
+                = new DatasetImporterForMetaTable.Column("foo", "some data type id");
+        column.setDataTypeBase("string");
+        column.setValueUrl("https://example.org/");
+        column.setOriginalName("original column name");
+
+        final List<String> msg = new ArrayList<>();
+
+        DatasetImporterForMetaTable.parseColumnValue(new ImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msg.add(message);
+            }
+
+            @Override
+            public void info(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+            }
+        }, mappedLine, "bar", column);
+
+        assertThat(mappedLine.get("foo"), is("https://example.org/"));
+
+        assertThat(msg.size(), is(0));
+
+    }
+    @Test
+    public void parseColumnValueUrlWithReplacementValues() {
+        HashMap<String, String> mappedLine = new HashMap<>();
+        mappedLine.put("foo", "bar");
+        DatasetImporterForMetaTable.Column column
+                = new DatasetImporterForMetaTable.Column("foo", "some data type id");
+        column.setDataTypeBase("string");
+        column.setValueUrl("https://example.org/{foo}");
+        column.setOriginalName("original column name");
+
+        final List<String> msg = new ArrayList<>();
+
+        DatasetImporterForMetaTable.parseColumnValue(new ImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msg.add(message);
+            }
+
+            @Override
+            public void info(LogContext ctx, String message) {
+
+            }
+
+            @Override
+            public void severe(LogContext ctx, String message) {
+            }
+        }, mappedLine, "bar", column);
+
+        assertThat(mappedLine.get("foo"), is("https://example.org/bar"));
+
+        assertThat(msg.size(), is(0));
 
     }
 
