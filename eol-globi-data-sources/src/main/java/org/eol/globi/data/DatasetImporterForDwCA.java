@@ -501,24 +501,26 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     public static void appendMPADIStyleEctoparasites(Record rec, List<Map<String, String>> interactionCandidates) {
         String preparations = rec.value(DwcTerm.preparations);
-        String otherCatalogNumbers = rec.value(DwcTerm.otherCatalogNumbers);
-        Pattern pattern = Pattern.compile(".* (?<vialNumber>.*):[ ]+Ectoparasite([| ]+)(?<hostName>[A-Za-z ]+)([| ]+)(?<hostCommonName>[A-Za-z ]+)(|.*)*");
-        Matcher matcher = pattern.matcher(preparations);
-        if (matcher.matches()) {
-            TreeMap<String, String> e = new TreeMap<String, String>() {{
-                put(INTERACTION_TYPE_NAME, InteractType.ECTOPARASITE_OF.getLabel());
-                put(INTERACTION_TYPE_ID, InteractType.ECTOPARASITE_OF.getIRI());
-                put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group("hostName")));
-                if (StringUtils.isNotBlank(otherCatalogNumbers)) {
-                    put(TARGET_CATALOG_NUMBER, otherCatalogNumbers);
-                }
-            }};
-            interactionCandidates.add(e);
-            ResourceTypeConsumer resourceTypeConsumer = new ResourceTypeConsumer(e);
-            resourceTypeConsumer
-                    .accept(DwcTerm.preparations);
-            resourceTypeConsumer
-                    .accept(DwcTerm.otherCatalogNumbers);
+        if (StringUtils.isNotBlank(preparations)) {
+            Pattern pattern = Pattern.compile(".* (?<vialNumber>.*):[ ]+Ectoparasite([| ]+)(?<hostName>[A-Za-z ]+)([| ]+)(?<hostCommonName>[A-Za-z ]+)(|.*)*");
+            Matcher matcher = pattern.matcher(preparations);
+            if (matcher.matches()) {
+                TreeMap<String, String> e = new TreeMap<String, String>() {{
+                    put(INTERACTION_TYPE_NAME, InteractType.ECTOPARASITE_OF.getLabel());
+                    put(INTERACTION_TYPE_ID, InteractType.ECTOPARASITE_OF.getIRI());
+                    put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group("hostName")));
+                    String otherCatalogNumbers = rec.value(DwcTerm.otherCatalogNumbers);
+                    if (StringUtils.isNotBlank(otherCatalogNumbers)) {
+                        put(TARGET_CATALOG_NUMBER, otherCatalogNumbers);
+                    }
+                }};
+                interactionCandidates.add(e);
+                ResourceTypeConsumer resourceTypeConsumer = new ResourceTypeConsumer(e);
+                resourceTypeConsumer
+                        .accept(DwcTerm.preparations);
+                resourceTypeConsumer
+                        .accept(DwcTerm.otherCatalogNumbers);
+            }
         }
     }
 
