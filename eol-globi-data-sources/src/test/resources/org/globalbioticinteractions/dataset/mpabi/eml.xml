@@ -1,0 +1,114 @@
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0"
+         xmlns:dc="http://purl.org/dc/terms/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://eml.ecoinformatics.org/eml-2.2.0 https://rs.gbif.org/schema/eml-gbif-profile/1.3/eml.xsd"
+         packageId="0657210b-8457-47f8-a677-431a9c2e4ece/v1.22" system="http://gbif.org" scope="system"
+         xml:lang="eng">
+    <dataset>
+        <alternateIdentifier>0657210b-8457-47f8-a677-431a9c2e4ece</alternateIdentifier>
+        <alternateIdentifier>https://lsa-ipt1-p.lsait.lsa.umich.edu/resource?r=ummz_biorepository</alternateIdentifier>
+        <title xml:lang="eng">University of Michigan Museum of Zoology, Pathogen Biorepository Initiative</title>
+        <creator>
+            <individualName>
+                <surName>UMMZ Biorepository</surName>
+            </individualName>
+            <organizationName>UM PATHOGEN BIOREPOSITORY</organizationName>
+            <address>
+                <deliveryPoint>3600 Varsity Drive</deliveryPoint>
+                <city>ANN ARBOR</city>
+                <administrativeArea>Michigan</administrativeArea>
+                <postalCode>48108</postalCode>
+                <country>US</country>
+            </address>
+            <phone>734.764.0476</phone>
+            <electronicMailAddress>pathbiorepository@umich.edu</electronicMailAddress>
+            <onlineUrl>https://lsa.umich.edu/content/michigan-lsa/mpabi/en.html</onlineUrl>
+        </creator>
+        <metadataProvider>
+            <individualName>
+                <givenName>Admins</givenName>
+                <surName>LSA IT</surName>
+            </individualName>
+            <organizationName>UM College of LSA</organizationName>
+            <address>
+                <country>US</country>
+            </address>
+            <electronicMailAddress>lsa-it-infra-ipt-admins@umich.edu</electronicMailAddress>
+        </metadataProvider>
+        <associatedParty>
+            <individualName>
+                <givenName>Garth</givenName>
+                <surName>Holman</surName>
+            </individualName>
+            <electronicMailAddress>gholman@umich.edu</electronicMailAddress>
+            <role>user</role>
+        </associatedParty>
+        <pubDate>
+            2025-11-03
+        </pubDate>
+        <language>eng</language>
+        <abstract>
+            <para>Through the efforts of University of Michigan faculty-curators and staff, the Museum of Zoology (UMMZ) develops and maintains excellent zoological collections explicitly for use in research and education benefiting science, society, and the university.
+
+The goal of the Michigan Pathogen Biorepository is to increase research capacity for emerging zoonoses by providing a repository for wildlife tissues and vouchers that link disease agents to their hosts and environments which ultimately connect to humans and our public health.</para>
+        </abstract>
+        <keywordSet>
+            <keyword>Occurrence</keyword>
+            <keywordThesaurus>GBIF Dataset Type Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_type_2015-07-10.xml</keywordThesaurus>
+        </keywordSet>
+        <keywordSet>
+            <keyword>Specimen</keyword>
+            <keywordThesaurus>GBIF Dataset Subtype Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_subtype.xml</keywordThesaurus>
+        </keywordSet>
+        <intellectualRights>
+            <para>This work is licensed under a <ulink url="http://creativecommons.org/licenses/by-nc/4.0/legalcode"><citetitle>Creative Commons Attribution Non Commercial (CC-BY-NC 4.0) License</citetitle></ulink>.</para>
+        </intellectualRights>
+        <licensed>
+            <licenseName>Creative Commons Attribution Non Commercial 4.0 International</licenseName>
+            <url>https://spdx.org/licenses/CC-BY-NC-4.0.html</url>
+            <identifier>CC-BY-NC-4.0</identifier>
+        </licensed>
+        <coverage>
+            <geographicCoverage>
+                <geographicDescription>Global</geographicDescription>
+                <boundingCoordinates>
+                    <westBoundingCoordinate>-180</westBoundingCoordinate>
+                    <eastBoundingCoordinate>180</eastBoundingCoordinate>
+                    <northBoundingCoordinate>90</northBoundingCoordinate>
+                    <southBoundingCoordinate>-90</southBoundingCoordinate>
+                </boundingCoordinates>
+            </geographicCoverage>
+        </coverage>
+        <maintenance>
+            <description>
+                <para></para>
+            </description>
+            <maintenanceUpdateFrequency>unkown</maintenanceUpdateFrequency>
+        </maintenance>
+        <contact>
+            <individualName>
+                <surName>UMMZ Biorepository</surName>
+            </individualName>
+            <organizationName>UM PATHOGEN BIOREPOSITORY</organizationName>
+            <address>
+                <deliveryPoint>3600 Varsity Drive</deliveryPoint>
+                <city>ANN ARBOR</city>
+                <administrativeArea>Michigan</administrativeArea>
+                <postalCode>48108</postalCode>
+                <country>US</country>
+            </address>
+            <phone>734.764.0476</phone>
+            <electronicMailAddress>pathbiorepository@umich.edu</electronicMailAddress>
+            <onlineUrl>https://lsa.umich.edu/content/michigan-lsa/mpabi/en.html</onlineUrl>
+        </contact>
+    </dataset>
+    <additionalMetadata>
+        <metadata>
+            <gbif>
+                <dateStamp>2025-01-29T14:20:12.751-05:00</dateStamp>
+                <hierarchyLevel>dataset</hierarchyLevel>
+                <dc:replaces>0657210b-8457-47f8-a677-431a9c2e4ece/v1.22.xml</dc:replaces>
+            </gbif>
+        </metadata>
+    </additionalMetadata>
+</eml:eml>

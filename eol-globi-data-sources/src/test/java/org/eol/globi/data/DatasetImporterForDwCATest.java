@@ -69,6 +69,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_SEX_NAME;
+import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_CLASS;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_FAMILY;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_ID;
 import static org.eol.globi.service.TaxonUtil.SOURCE_TAXON_NAME;
@@ -157,6 +158,33 @@ public class DatasetImporterForDwCATest {
         assertThat(interaction.get(TARGET_TAXON_NAME), is(nullValue()));
         assertThat(interaction.get(TARGET_OCCURRENCE_ID), is("NEON01ILC"));
         assertThat(interaction.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/associatedOccurrences | http://rs.tdwg.org/dwc/terms/Occurrence"));
+    }
+    @Test
+    public void importTaxonDescriptionsFromMPADIDir() throws StudyImporterException, URISyntaxException, IOException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/mpabi/meta.xml");
+        URI archiveRoot = new File(resource.toURI()).getParentFile().toURI();
+        List<Map<String, String>> links = new ArrayList<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, new ResourceServiceLocal(new InputStreamFactoryNoop())));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
+            }
+        });
+        importStudy(studyImporterForDwCA);;
+
+        assertThat(links.size(), is(1));
+        Map<String, String> interaction = links.get(0);
+        assertThat(interaction.get(DATASET_CITATION), containsString("org/globalbioticinteractions/dataset/mpabi/"));
+        assertThat(interaction.get(SOURCE_TAXON_NAME), is("Macronyssidae"));
+        assertThat(interaction.get(SOURCE_TAXON_CLASS), is("Arachnida"));
+        assertThat(interaction.get(SOURCE_TAXON_RANK), is("Family"));
+        assertThat(interaction.get(SOURCE_OCCURRENCE_ID), is("1ba8e5c9-6b3a-4d02-baf8-ca388a6fe793"));
+        assertThat(interaction.get(INTERACTION_TYPE_NAME), is("ectoparasiteOf"));
+        assertThat(interaction.get(TARGET_TAXON_NAME), is("Eptesicus furinalis"));
+        assertThat(interaction.get(TARGET_CATALOG_NUMBER), is("AMNH-M-284505"));
+        assertThat(interaction.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/preparations | http://rs.tdwg.org/dwc/terms/otherCatalogNumbers | http://rs.tdwg.org/dwc/terms/Occurrence"));
     }
 
 

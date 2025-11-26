@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
+import org.eol.globi.domain.RelTypes;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
@@ -424,6 +425,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/755#issuecomment-1029509362
         appendAssociatedSequencesIfAvailable(rec, interactionCandidates);
 
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1127
+        appendMPADIStyleEctoparasites(rec, interactionCandidates);
+
         String occurrenceRemarks = rec.value(DwcTerm.occurrenceRemarks);
         try {
             addCandidatesFromRemarks(interactionCandidates, occurrenceRemarks);
@@ -492,6 +496,29 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         String associatedSequences = rec.value(DwcTerm.associatedSequences);
         if (StringUtils.isNotBlank(associatedSequences)) {
             interactionCandidates.addAll(parseAssociatedSequences(associatedSequences));
+        }
+    }
+
+    public static void appendMPADIStyleEctoparasites(Record rec, List<Map<String, String>> interactionCandidates) {
+        String preparations = rec.value(DwcTerm.preparations);
+        String otherCatalogNumbers = rec.value(DwcTerm.otherCatalogNumbers);
+        Pattern pattern = Pattern.compile(".* (?<vialNumber>.*):[ ]+Ectoparasite([| ]+)(?<hostName>[A-Za-z ]+)([| ]+)(?<hostCommonName>[A-Za-z ]+)(|.*)*");
+        Matcher matcher = pattern.matcher(preparations);
+        if (matcher.matches()) {
+            TreeMap<String, String> e = new TreeMap<String, String>() {{
+                put(INTERACTION_TYPE_NAME, InteractType.ECTOPARASITE_OF.getLabel());
+                put(INTERACTION_TYPE_ID, InteractType.ECTOPARASITE_OF.getIRI());
+                put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group("hostName")));
+                if (StringUtils.isNotBlank(otherCatalogNumbers)) {
+                    put(TARGET_CATALOG_NUMBER, otherCatalogNumbers);
+                }
+            }};
+            interactionCandidates.add(e);
+            ResourceTypeConsumer resourceTypeConsumer = new ResourceTypeConsumer(e);
+            resourceTypeConsumer
+                    .accept(DwcTerm.preparations);
+            resourceTypeConsumer
+                    .accept(DwcTerm.otherCatalogNumbers);
         }
     }
 
@@ -653,6 +680,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_ID, DwcTerm.taxonID);
         }
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_NAME, DwcTerm.scientificName);
+        mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_RANK, DwcTerm.taxonRank);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_SPECIFIC_EPITHET, DwcTerm.specificEpithet);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_GENUS, DwcTerm.genus);
         mapIfAvailable(rec, interactionProperties, SOURCE_TAXON_SUBGENUS, DwcTerm.subgenus);
