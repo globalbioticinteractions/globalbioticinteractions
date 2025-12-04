@@ -35,6 +35,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
@@ -51,6 +53,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     public static final String EVENT_DATE = "http://rs.tdwg.org/dwc/terms/eventDate";
     public static final String KEY_TYPE_PRIMARY = "primary";
     public static final String KEY_TYPE_FOREIGN = "foreign";
+    public static final Pattern PATTERN_WHITESPACE = Pattern.compile("^[ ]+$");
 
     private Dataset dataset;
 
@@ -609,7 +612,12 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
                     JsonNode separatorNode = column.at("/separator");
                     if (!separatorNode.isMissingNode()) {
-                        col.setSeparator(StringUtils.trim(separatorNode.asText()));
+                        Matcher matcher = PATTERN_WHITESPACE.matcher(separatorNode.asText());
+                        if (matcher.matches()) {
+                            col.setSeparator(" ");
+                        } else {
+                            col.setSeparator(StringUtils.trim(separatorNode.asText()));
+                        }
                     }
 
                     if (StringUtils.equals(columnNameString, primaryKeyId)) {

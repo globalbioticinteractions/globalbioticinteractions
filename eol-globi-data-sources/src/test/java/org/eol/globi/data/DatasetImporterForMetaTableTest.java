@@ -53,6 +53,16 @@ public class DatasetImporterForMetaTableTest {
     }
 
     @Test
+    public void parseColumnNamesWhitespaceSeparator() throws IOException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("whitespace-separator-schema.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        List<DatasetImporterForMetaTable.Column> columnNames = DatasetImporterForMetaTable.columnNamesForSchema(config);
+        assertThat(columnNames.size(), is(1));
+        assertThat(columnNames.get(0).getSeparator(), is(" "));
+    }
+
+    @Test
     public void parseSchemaWithPrimaryAndForeignKeys() throws IOException, StudyImporterException {
         final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key.json");
         final JsonNode config = new ObjectMapper().readTree(inputStream);
