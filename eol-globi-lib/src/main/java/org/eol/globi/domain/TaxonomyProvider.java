@@ -28,7 +28,7 @@ public enum TaxonomyProvider {
             "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?gen_id=",
             "http://www.marine.csiro.au/mirrorsearch/ir_search.list_species?sp_id=",
             "urn:lsid:irmng.org:taxname:"),
-    INDEX_FUNGORUM("IF:"),
+    INDEX_FUNGORUM("IF:", "https://www.indexfungorum.org/names/NamesRecord.asp?RecordID="),
     OPEN_TREE_OF_LIFE("OTT:"),
     NATIONAL_OCEANOGRAPHIC_DATA_CENTER("NODC:"),
     INATURALIST_TAXON("INAT_TAXON:", "https://inaturalist.org/taxa/", "https://www.inaturalist.org/taxa/"),
