@@ -10,11 +10,8 @@ import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceException;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -25,10 +22,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class InteractUtilTest {
 
@@ -93,7 +90,7 @@ public class InteractUtilTest {
 
     @Test
     public void interactionCypherClause() {
-        String value = "PREYS_UPON|PARASITE_OF|HAS_HOST|HOST_OF|POLLINATES|ATE|SYMBIONT_OF|POLLINATED_BY|HAS_PARASITE|HAS_VECTOR|VECTOR_OF|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|FARMED_BY|FARMS|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|EPIPHITE_OF|HAS_EPIPHITE|COMMENSALIST_OF|MUTUALIST_OF|HEMIPARASITE_OF|ROOTPARASITE_OF";
+        String value = "PREYS_UPON|PARASITE_OF|HAS_HOST|HAS_RESERVOIR_HOST|HOST_OF|RESERVOIR_HOST_OF|POLLINATES|ATE|SYMBIONT_OF|POLLINATED_BY|HAS_PARASITE|HAS_VECTOR|VECTOR_OF|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|FARMED_BY|FARMS|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|EPIPHITE_OF|HAS_EPIPHITE|COMMENSALIST_OF|MUTUALIST_OF|HEMIPARASITE_OF|ROOTPARASITE_OF";
         assertThat(InteractUtil.interactionsCypherClause(InteractType.ATE, InteractType.SYMBIONT_OF)
                 , is(value));
     }

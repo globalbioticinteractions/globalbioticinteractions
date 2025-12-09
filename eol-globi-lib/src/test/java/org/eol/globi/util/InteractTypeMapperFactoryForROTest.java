@@ -45,6 +45,18 @@ public class InteractTypeMapperFactoryForROTest {
 
     }
 
+    @Test
+    public void reservoirHostOf() throws TermLookupServiceException {
+        InteractType expectedType = InteractType.typeOf(InteractType.RESERVOIR_HOST_OF.getIRI());
+        assertThat(expectedType.name(), is("RESERVOIR_HOST_OF"));
+    }
+
+    @Test
+    public void hasReservoirHost() throws TermLookupServiceException {
+        InteractType expectedType = InteractType.typeOf(InteractType.HAS_RESERVOIR_HOST.getIRI());
+        assertThat(expectedType.name(), is("HAS_RESERVOIR_HOST"));
+    }
+
 
         @Test
     public void ensureAllInteractTypesAreSupported() throws TermLookupServiceException {
