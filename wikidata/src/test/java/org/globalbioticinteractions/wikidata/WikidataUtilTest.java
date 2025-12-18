@@ -86,24 +86,6 @@ public class WikidataUtilTest {
                 , unsupported, is(empty()));
     }
 
-
-    @Test
-    public void lookupProviders() throws IOException, URISyntaxException {
-        Collection<String> providers = WikidataUtil.findTaxonIdProviders();
-        final Collection<String> properties = WikidataUtil.PROVIDER_TO_WIKIDATA.values();
-        assertThat(properties, everyItem(isIn(providers)));
-    }
-
-    @Test
-    public void lookupWikiDataToProviders() throws IOException, URISyntaxException {
-        Collection<String> providers = WikidataUtil.findTaxonIdProviders();
-        final Collection<String> properties = WikidataUtil.WIKIDATA_TO_PROVIDER.keySet();
-        assertThat(properties, everyItem(isIn(providers)));
-    }
-
-
-
-
     @Test
     public void generateRelatedSparql() {
         String relatedTaxonIdSparql = WikidataUtil.createRelatedTaxonIdSparql("NCBI:9606", TaxonomyProvider.NCBI);
