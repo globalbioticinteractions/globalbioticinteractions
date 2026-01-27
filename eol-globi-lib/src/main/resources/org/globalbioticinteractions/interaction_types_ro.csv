@@ -55,3 +55,7 @@ hemiparasiteOf,http://purl.obolibrary.org/obo/RO_0002237
 rootparasiteOf,http://purl.obolibrary.org/obo/RO_0002236
 allelopathOf,http://purl.obolibrary.org/obo/RO_0002555
 hasAllelopath,http://purl.obolibrary.org/obo/RO_0020301
+ectomycorrhizalHostOf,http://purl.obolibrary.org/obo/RO_0002804
+hasEctomycorrhizalHost,http://purl.obolibrary.org/obo/RO_0002805
+arbuscularMycorrhizalHostOf,http://purl.obolibrary.org/obo/RO_0002806
+hasArbuscularMycorrhizalHost,http://purl.obolibrary.org/obo/RO_0002807
