@@ -34,6 +34,7 @@ import static org.eol.globi.domain.TaxonomyProvider.MAMMAL_DIVERSITY_DATABASE;
 import static org.eol.globi.domain.TaxonomyProvider.NATIONAL_OCEANOGRAPHIC_DATA_CENTER;
 import static org.eol.globi.domain.TaxonomyProvider.OPEN_BIODIV;
 import static org.eol.globi.domain.TaxonomyProvider.PBDB;
+import static org.eol.globi.domain.TaxonomyProvider.MOURE;
 import static org.eol.globi.domain.TaxonomyProvider.PLAZI_TAXON_CONCEPT;
 import static org.eol.globi.domain.TaxonomyProvider.TERRESTRIAL_PARASITE_TRACKER;
 import static org.eol.globi.domain.TaxonomyProvider.WIKIDATA;
@@ -71,7 +72,8 @@ public class WikidataUtilTest {
                 HESPEROMYS,
                 CHECKLIST_BANK,
                 DISCOVERLIFE,
-                PBDB
+                PBDB,
+                MOURE
 
         );
         List<TaxonomyProvider> unsupported = new ArrayList<>();
