@@ -83,6 +83,8 @@ public class InteractTypeUtil {
                 put(InteractType.ALLELOPATH_OF, InteractType.HAS_ALLELOPATH);
                 put(InteractType.HEMIPARASITE_OF, InteractType.HAS_PARASITE);
                 put(InteractType.ROOTPARASITE_OF, InteractType.HAS_PARASITE);
+                put(InteractType.ECTOMYCORRYZAL_HOST_OF, InteractType.HAS_ECTOMYCORRYZAL_HOST);
+                put(InteractType.ARBUSCULAR_MYCORRYZAL_HOST_OF, InteractType.HAS_ARBUSCULAR_MYCORRYZAL_HOST);
             }
         };
 
@@ -148,6 +150,8 @@ public class InteractTypeUtil {
                 put(InteractType.ROOTPARASITE_OF, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH, InteractType.INTERACTS_WITH, InteractType.SYMBIONT_OF, InteractType.PARASITE_OF));
                 put(InteractType.ALLELOPATH_OF, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH, InteractType.INTERACTS_WITH));
                 put(InteractType.HAS_ALLELOPATH, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH, InteractType.INTERACTS_WITH));
+                put(InteractType.ECTOMYCORRYZAL_HOST_OF, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH, InteractType.INTERACTS_WITH, InteractType.SYMBIONT_OF, InteractType.HOST_OF));
+                put(InteractType.ARBUSCULAR_MYCORRYZAL_HOST_OF, Arrays.asList(InteractType.RELATED_TO, InteractType.CO_OCCURS_WITH, InteractType.INTERACTS_WITH, InteractType.SYMBIONT_OF, InteractType.HOST_OF));
             }
         };
 
