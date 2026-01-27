@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 
-public class WikiDataImageSearchTest {
+public class WikiDataImageSearchIT {
 
     public static final String LION_COMMON_NAMES = "African Lion, Lion @en";
     public static final String SEA_OTTER_IMAGE = "https://commons.wikimedia.org/wiki/Special:FilePath/Sea%20otter%20nursing.jpg?width=100";
