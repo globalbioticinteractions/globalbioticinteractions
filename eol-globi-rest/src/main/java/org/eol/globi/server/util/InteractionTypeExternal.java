@@ -38,6 +38,12 @@ public enum InteractionTypeExternal {
     EPIPHITE_OF(InteractType.EPIPHITE_OF.getLabel(), "plant/algae", "host plant", InteractType.EPIPHITE_OF),
     HAS_EPIPHITE(InteractType.HAS_EPIPHITE.getLabel(), "plant", "plant/algae", InteractType.HAS_EPIPHITE),
 
+    ECTOMYCORRHIZAL_HOST_OF(InteractType.ECTOMYCORRHIZAL_HOST_OF.getLabel(), "plant root", "fungus", InteractType.ECTOMYCORRHIZAL_HOST_OF),
+    HAS_ECTOMYCORRHIZAL_HOST(InteractType.HAS_ECTOMYCORRHIZAL_HOST.getLabel(), "fungus", "plant root", InteractType.HAS_ECTOMYCORRHIZAL_HOST),
+
+    ARBUSCULAR_MYCORRHIZAL_HOST_OF(InteractType.ARBUSCULAR_MYCORRHIZAL_HOST_OF.getLabel(), "plant root", "fungus", InteractType.ARBUSCULAR_MYCORRHIZAL_HOST_OF),
+    HAS_ARBUSCULAR_MYCORRHIZAL_HOST(InteractType.HAS_ARBUSCULAR_MYCORRHIZAL_HOST.getLabel(), "fungus", "plant root", InteractType.HAS_ARBUSCULAR_MYCORRHIZAL_HOST),
+
     PROVIDES_NUTRIENTS_FOR(InteractType.PROVIDES_NUTRIENTS_FOR.getLabel(), "host", "consumer", InteractType.PROVIDES_NUTRIENTS_FOR),
     ACQUIRES_NUTRIENTS_FROM(InteractType.ACQUIRES_NUTRIENTS_FROM.getLabel(), "consumer", "host", InteractType.ACQUIRES_NUTRIENTS_FROM),
 
