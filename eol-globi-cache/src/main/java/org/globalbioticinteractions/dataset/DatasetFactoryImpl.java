@@ -43,7 +43,7 @@ public class DatasetFactoryImpl implements DatasetFactory {
             datasetProxy.setConfig(jsonNode.getRight());
             datasetProxy.setConfigURI(jsonNode.getLeft());
         } catch (Throwable ex) {
-            String msg = "failed to configure dataset in namespace [" + namespace + "]";
+            String msg = "unrecognized dataset format: cannot process dataset in namespace [" + namespace + "]";
             throw new DatasetRegistryException(dataset == null ? msg : (msg + " with archiveURI [" + dataset.getArchiveURI() + "] and citation [" + dataset.getCitation() + "]"), ex);
         }
         return datasetProxy;
