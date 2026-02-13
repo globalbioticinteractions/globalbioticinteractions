@@ -353,6 +353,14 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void importRecordsFromArchiveWithDynamicProperties() throws StudyImporterException, URISyntaxException, IOException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-dynamic-properties.zip");
+        assertImportsSomethingOfType(resource.toURI(), new AtomicInteger(0)
+                , "http://rs.tdwg.org/dwc/terms/dynamicProperties" +
+                        " | http://rs.tdwg.org/dwc/terms/Occurrence");
+    }
+
+    @Test
     public void importRecordsFromArchiveWithResourceRelations() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-resource-relation.zip");
         AtomicInteger recordCounter = new AtomicInteger(0);
@@ -915,12 +923,34 @@ public class DatasetImporterForDwCATest {
     @Test
     public void dynamicProperties() {
         String s = "targetTaxonName: Homo sapiens; targetTaxonId: https://www.gbif.org/species/2436436; interactionTypeName: eats; interactionTypeId: http://purl.obolibrary.org/obo/RO_0002470; targetBodyPartName: blood; targetBodyPartId: http://purl.obolibrary.org/obo/NCIT_C12434\",\"eats: Homo sapiens";
-        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
 
-        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is("eats"));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
-        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Homo sapiens"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesNationalBiodiversityDataCentreIreland() {
+        String s = "Abundance=<10;Determiner name=As recorder & Data Centre validation process;Life stage=Adult;Sampling method=Casual sighting;County=Dublin;Identification literature used=National Biodiversity Data Centre, 2015;Survey name=National Biodiversity Data Centre: online record submission;Foraging on=Cultivated  Asteracea";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.get(0).get(SOURCE_LIFE_STAGE_NAME), is("Adult"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Foraging on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Cultivated  Asteracea"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesNationalBiodiversityDataCentreIrelandMultiple() {
+        String s = "Abundance=18;Determiner name=As recorder & Data Centre validation process;Life stage=Adult;Sampling method=Casual sighting;County=Cork;Identification literature used=Ball & Morris, 2013;Survey name=National Biodiversity Data Centre: online record submission;Foraging on=Ragwort, Ivy";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.get(0).get(SOURCE_LIFE_STAGE_NAME), is("Adult"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Foraging on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ragwort, Ivy"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
     }
 
     @Test
@@ -930,59 +960,59 @@ public class DatasetImporterForDwCATest {
         String dynamicProperties = jsonNode.get("http://rs.tdwg.org/dwc/terms/dynamicProperties").asText();
 
         assertThat(dynamicProperties, is("bursa=no bursa;fat deposition=light;molt condition=no wings/tail; no molt;reproductive data=TE: 2.62 X 1.83 mm;sex=male;skull ossification=0% ossified;stomach contents=arthropods;weight=7.51 g"));
-        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(dynamicProperties);
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(dynamicProperties);
 
-        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("arthropods"));
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is("eats"));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
-        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("arthropods"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("eats"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002470"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
     }
 
     @Test
     public void dynamicPropertiesManterLab() {
         // see https://github.com/globalbioticinteractions/unl-nsm/issues/4
         String s = "age class=adult;location in host=gallbladder;verbatim host ID=Ictalurus punctatus";
-        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
 
-        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Ictalurus punctatus"));
-        assertThat(properties.get(TARGET_BODY_PART_NAME), is("gallbladder"));
-        assertThat(properties.get(SOURCE_LIFE_STAGE_NAME), is("adult"));
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is("hasHost"));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002454"));
-        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ictalurus punctatus"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("gallbladder"));
+        assertThat(properties.get(0).get(SOURCE_LIFE_STAGE_NAME), is("adult"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("hasHost"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
     }
 
     @Test
     public void dynamicPropertiesManterLab2() {
         // see https://github.com/globalbioticinteractions/unl-nsm/issues/4
         String s = "location in host=intestine;verbatim host ID=Tadarida brasiliensis;verbatim host sex=male";
-        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
 
-        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Tadarida brasiliensis"));
-        assertThat(properties.get(TARGET_BODY_PART_NAME), is("intestine"));
-        assertThat(properties.get(TARGET_SEX_NAME), is("male"));
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is("hasHost"));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002454"));
-        assertThat(properties.get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Tadarida brasiliensis"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("intestine"));
+        assertThat(properties.get(0).get(TARGET_SEX_NAME), is("male"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("hasHost"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0002454"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
     }
 
     @Test
     public void dynamicPropertiesEmptyOnNoInteractions() {
         String s = "targetTaxonName: Homo sapiens; targetTaxonId: https://www.gbif.org/species/2436436; targetBodyPartName: blood; targetBodyPartId: http://purl.obolibrary.org/obo/NCIT_C12434\",\"eats: Homo sapiens";
-        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
         assertThat(properties.isEmpty(), is(true));
     }
 
     @Test
     public void dynamicProperties2() {
         String s = "sourceLifeStageName=pupae ; sourceLifeStageID= ; experimentalConditionName=in nature ; experimentalConditionID=http://purl.obolibrary.org/obo/ENVO_01001226 ; interactionTypeName=inside ; interactionTypeId=http://purl.obolibrary.org/obo/RO_0001025 ; targetTaxonName=Mus ; targetTaxonId=https://www.gbif.org/species/2311167";
-        Map<String, String> properties = parseDynamicPropertiesForInteractionsOnly(s);
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
 
-        assertThat(properties.get(TaxonUtil.TARGET_TAXON_NAME), is("Mus"));
-        assertThat(properties.get(INTERACTION_TYPE_NAME), is("inside"));
-        assertThat(properties.get(SOURCE_LIFE_STAGE_NAME), is("pupae"));
-        assertThat(properties.get(DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID), is(nullValue()));
-        assertThat(properties.get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0001025"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Mus"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("inside"));
+        assertThat(properties.get(0).get(SOURCE_LIFE_STAGE_NAME), is("pupae"));
+        assertThat(properties.get(0).get(DatasetImporterForTSV.SOURCE_LIFE_STAGE_ID), is(nullValue()));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_ID), is("http://purl.obolibrary.org/obo/RO_0001025"));
     }
 
 
