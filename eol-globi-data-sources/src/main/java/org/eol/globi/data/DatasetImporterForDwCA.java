@@ -160,6 +160,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }};
     private static final Pattern LOWERCASE_AND_SPACE = Pattern.compile("^[a-z ]+$");
+    public static final Pattern NAME_WITH_FLOWER_PATTERN = Pattern.compile("(?<namePart>.*)[ ]flower(s)*");
+    public static final Pattern SOMETHING_ON_PATTERN = Pattern.compile("([A-Za-z ,]+)[ ](?<interactionTypeName>on)[ ](?<possiblyCommonNames>[a-z]+[ ])*(?<targetTaxonName>[A-Za-z ]+)(.*)");
+    public static final Pattern FEEDING_ON_PATTERN = Pattern.compile("([A-Za-z ]+)(?<interactionTypeName>[fF]eeding on)[ ](?<possiblyCommonNames>[a-z]+[ ])*(?<targetTaxonName>[A-Z][a-z ]+)");
+    public static final Pattern ON_PATTERN = Pattern.compile("(?<interactionTypeName>[Oo]n)[ ](?<targetTaxonName>[A-Za-z ,]+)");
 
     private static Pattern INATURALIST_TAXON =
             Pattern.compile("http[s]{0,1}://(www.){0,1}inaturalist.org/taxa/(?<taxonId>[0-9]+)");
@@ -885,10 +889,108 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             candidateRecords.add(properties);
         }
 
-        mapNationalBiodiversityDataCentreIrelandDynamicProperties(properties, candidateRecords);
+        mapNationalBiodiversityDataCentreIrelandDynamicPropertiesForaging(properties, candidateRecords);
+        mapNationalBiodiveresityDataCentreIrelandDynamicPropertiesRecordComment(properties, candidateRecords);
 
         // only consider dynamic properties if interaction types are defined in it.
         return candidateRecords;
+    }
+
+    private static void mapNationalBiodiveresityDataCentreIrelandDynamicPropertiesRecordComment(
+            Map<String, String> properties,
+            List<Map<String, String>> candidateRecords
+    ) {
+        handleComments(properties, candidateRecords);
+        populateIfAvailable(properties, candidateRecords, "Survey name", REFERENCE_CITATION);
+        populateIfAvailable(properties, candidateRecords, "Sex", SOURCE_SEX_NAME);
+
+    }
+
+    private static void populateIfAvailable(Map<String, String> properties, List<Map<String, String>> candidateRecords, String propertyName, String referenceCitation) {
+        if (StringUtils.isNoneBlank(properties.get(propertyName))) {
+            for (Map<String, String> candidateRecord : candidateRecords) {
+                putIfAbsentAndNotBlank(candidateRecord, referenceCitation, properties.get(propertyName));
+            }
+        }
+    }
+
+    private static void handleComments(Map<String, String> properties, List<Map<String, String>> candidateRecords) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1140
+        String propertyName = "Record comment";
+        if (StringUtils.isNoneBlank(properties.get(propertyName))) {
+            String commentValue = properties.get(propertyName);
+            String[] commentParts = StringUtils.split(commentValue, ".");
+            for (String commentPart : commentParts) {
+                handleCommentPart(properties, commentPart, candidateRecords);
+            }
+        }
+    }
+
+    private static void handleCommentPart(Map<String, String> properties, String commentPart, List<Map<String, String>> candidateRecords) {
+        List<Map<String, String>> candidateRecordsToBeAdded = new ArrayList<>();
+        String[] commentSubparts = StringUtils.splitByWholeSeparator(commentPart, " and ");
+        for (String commentSubpart2 : commentSubparts) {
+            String commentSubpart = StringUtils.trim(commentSubpart2);
+            Matcher feedingOn = FEEDING_ON_PATTERN.matcher(commentSubpart);
+            if (feedingOn.matches()) {
+                parseCommentSubPart(properties, candidateRecordsToBeAdded, feedingOn);
+            } else {
+                Matcher somethingOn = SOMETHING_ON_PATTERN.matcher(commentSubpart);
+                if (somethingOn.matches()) {
+                    parseCommentSubPart(properties, candidateRecordsToBeAdded, somethingOn);
+                } else {
+                    Matcher on = ON_PATTERN.matcher(commentSubpart);
+                    if (on.matches()) {
+                        parseCommentSubPart(properties, candidateRecordsToBeAdded, on);
+                    } else {
+                        Map<String, String> unmatchedComment = new TreeMap<>(properties);
+                        unmatchedComment.putIfAbsent(TARGET_TAXON_NAME, commentSubpart);
+                        candidateRecordsToBeAdded.add(unmatchedComment);
+                    }
+                }
+            }
+        }
+        final List<Map<String, String>> collectNoInteractions = candidateRecordsToBeAdded.stream().filter(prop -> !prop.containsKey(INTERACTION_TYPE_NAME)).collect(Collectors.toList());
+        if (!collectNoInteractions.isEmpty()) {
+            Optional<String> firstInteractionType = candidateRecordsToBeAdded
+                    .stream()
+                    .filter(prop -> prop.containsKey(INTERACTION_TYPE_NAME))
+                    .map(prop -> prop.get(INTERACTION_TYPE_NAME))
+                    .findFirst();
+            firstInteractionType.ifPresent(interactionTypeName -> {
+                for (Map<String, String> collectNoInteraction : collectNoInteractions) {
+                    new ResourceTypeConsumer(collectNoInteraction).accept(DwcTerm.dynamicProperties);
+                    collectNoInteraction.putIfAbsent(INTERACTION_TYPE_NAME, interactionTypeName);
+                }
+            });
+        }
+
+        candidateRecords.addAll(
+                candidateRecordsToBeAdded
+                        .stream()
+                        .filter(rec -> rec.containsKey(INTERACTION_TYPE_NAME))
+                        .collect(Collectors.toList())
+        );
+
+
+    }
+
+    private static void parseCommentSubPart(Map<String, String> properties, List<Map<String, String>> candidateRecords, Matcher matcher) {
+        String targetTaxonNames = StringUtils.trim(matcher.group("targetTaxonName"));
+        String[] targetTaxonNameList = StringUtils.split(targetTaxonNames, ",");
+        for (String targetTaxonName : targetTaxonNameList) {
+            Map<String, String> parsedProperties = new TreeMap<>(properties);
+            new ResourceTypeConsumer(parsedProperties).accept(DwcTerm.dynamicProperties);
+            Matcher matcher1 = NAME_WITH_FLOWER_PATTERN.matcher(StringUtils.trim(targetTaxonName));
+            if (matcher1.matches()) {
+                putIfAbsentAndNotBlank(parsedProperties, TARGET_BODY_PART_NAME, "flower");
+                putIfAbsentAndNotBlank(parsedProperties, TARGET_TAXON_NAME, matcher1.group("namePart"));
+            } else {
+                putIfAbsentAndNotBlank(parsedProperties, TARGET_TAXON_NAME, StringUtils.trim(targetTaxonName));
+            }
+            putIfAbsentAndNotBlank(parsedProperties, INTERACTION_TYPE_NAME, StringUtils.lowerCase(StringUtils.trim(matcher.group("interactionTypeName"))));
+            candidateRecords.add(parsedProperties);
+        }
     }
 
     private static Map<String, String> parseDynamicProperties(String s) {
@@ -903,8 +1005,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return properties;
     }
 
-    private static void mapNationalBiodiversityDataCentreIrelandDynamicProperties(Map<String, String> properties,
-                                                                                  List<Map<String, String>> candidateRecords) {
+    private static void mapNationalBiodiversityDataCentreIrelandDynamicPropertiesForaging(Map<String, String> properties,
+                                                                                          List<Map<String, String>> candidateRecords) {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1140
         String foragingOn = "Foraging on";
         if (StringUtils.isNoneBlank(properties.get(foragingOn))) {

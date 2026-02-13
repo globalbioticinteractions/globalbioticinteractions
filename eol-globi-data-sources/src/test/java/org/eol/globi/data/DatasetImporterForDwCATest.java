@@ -64,6 +64,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.RESOURCE_TYPES;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_LIFE_STAGE_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_OCCURRENCE_ID;
 import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_RECORD_NUMBER;
+import static org.eol.globi.data.DatasetImporterForTSV.SOURCE_SEX_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_BODY_PART_NAME;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_CATALOG_NUMBER;
 import static org.eol.globi.data.DatasetImporterForTSV.TARGET_FIELD_NUMBER;
@@ -956,6 +957,97 @@ public class DatasetImporterForDwCATest {
         assertThat(properties.get(1).get(SOURCE_LIFE_STAGE_NAME), is("Adult"));
         assertThat(properties.get(1).get(INTERACTION_TYPE_NAME), is("Foraging on"));
         assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Ivy"));
+        assertThat(properties.get(1).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesNationalBiodiversityDataCentreIrelandMultiple2() {
+        String s = "Record comment=On Jasione, Trifolium pratense, Centaurea. All project data validated by M. Edwards 2004-05";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.size(), is(3));
+
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Jasione"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+
+        assertThat(properties.get(1).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Trifolium pratense"));
+        assertThat(properties.get(1).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+
+        assertThat(properties.get(2).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(2).get(TaxonUtil.TARGET_TAXON_NAME), is("Centaurea"));
+        assertThat(properties.get(2).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesBeesOfIreland() {
+        String s = "Record comment=Queen feeding on Berberis vulgaris;Abundance=1;County=Sligo;Sex=Queen;Survey name=Bee data - Don Cotton";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.size(), is(1));
+
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("feeding on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Berberis vulgaris"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesBeesOfIrelandDandelions() {
+        String s = "Record comment=South of Loughshinny, on dandelion Taraxacum at top of a boulder-clay cliff";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.size(), is(1));
+
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Taraxacum at top of a boulder"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesBeesOfIrelandThisAndthat() {
+        String s = "Record comment=On Pontentilla and Ranunculus bulbosus";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.size(), is(2));
+
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Pontentilla"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+
+        assertThat(properties.get(1).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Ranunculus bulbosus"));
+        assertThat(properties.get(1).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+    }
+
+    @Test
+    public void dynamicPropertiesBeesOfIrelandFlowers() {
+        String s = "Record comment=Linear woodland / scrub : Hedgerows.  Queen feeding on Berberis vulgaris flowers.;County=Sligo;Sex=Queen;Survey name=Bee data - Don Cotton";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.size(), is(1));
+
+        assertThat(properties.get(0).get(SOURCE_SEX_NAME), is("Queen"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("feeding on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Berberis vulgaris"));
+        assertThat(properties.get(0).get(TARGET_BODY_PART_NAME), is("flower"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+        assertThat(properties.get(0).get(REFERENCE_CITATION), is("Bee data - Don Cotton"));
+    }
+
+    @Test
+    public void dynamicPropertiesBeesOfIrelandMultiple() {
+        String s = "Record comment=Queen on Echium vulgare and worker on Trifolium repens;Abundance=2;County=Cork;Sex=Queen & worker;Sampling method=Visual/hand-net;Survey name=Tom Gittings - personal records (2003-current)";
+        List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
+
+        assertThat(properties.size(), is(2));
+
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Echium vulgare"));
+        assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+
+        assertThat(properties.get(1).get(INTERACTION_TYPE_NAME), is("on"));
+        assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Trifolium repens"));
         assertThat(properties.get(1).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
     }
 
