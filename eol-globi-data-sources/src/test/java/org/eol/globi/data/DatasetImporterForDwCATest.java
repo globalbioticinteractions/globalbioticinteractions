@@ -27,7 +27,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -355,9 +354,34 @@ public class DatasetImporterForDwCATest {
     @Test
     public void importRecordsFromArchiveWithDynamicProperties() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-dynamic-properties.zip");
-        assertImportsSomethingOfType(resource.toURI(), new AtomicInteger(0)
-                , "http://rs.tdwg.org/dwc/terms/dynamicProperties" +
+        URI archiveRoot = resource.toURI();
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        final Set<String> resourceTypes = new TreeSet<>();
+        final List<String> citations = new ArrayList<>();
+        DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
+        studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
+        studyImporterForDwCA.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                for (String expectedProperty : new String[]{REFERENCE_CITATION}) {
+                    citations.add(interaction.get(expectedProperty));
+                }
+
+                assertThat(interaction.get(RESOURCE_TYPES), is(notNullValue()));
+                String[] types = splitByPipes(interaction.get(RESOURCE_TYPES));
+                resourceTypes.addAll(Arrays.asList(types));
+                recordCounter.incrementAndGet();
+            }
+        });
+        importStudy(studyImporterForDwCA);;
+        assertThat(recordCounter.get(), greaterThan(0));
+        String[] items = splitByPipes("http://rs.tdwg.org/dwc/terms/dynamicProperties" +
                         " | http://rs.tdwg.org/dwc/terms/Occurrence");
+        assertThat(resourceTypes, containsInAnyOrder(items));
+        assertThat(recordCounter.get(), greaterThan(0));
+        assertThat(citations.get(0), is("National Biodiversity Data Centre: online record submission"));
+        assertThat(citations.get(1), is("National Biodiversity Data Centre: online record submission"));
+        assertThat(citations.size(), is(2));
     }
 
     @Test
@@ -608,7 +632,10 @@ public class DatasetImporterForDwCATest {
         ));
     }
 
-    private void assertImportsSomethingOfType(URI archiveRoot, AtomicInteger recordCounter, String defaultResourceType, String... expectedProperties) throws StudyImporterException, IOException {
+    private void assertImportsSomethingOfType(URI archiveRoot,
+                                              AtomicInteger recordCounter,
+                                              String defaultResourceType,
+                                              String... expectedProperties) throws StudyImporterException, IOException {
         final Set<String> resourceTypes = new TreeSet<>();
         DatasetImporterForDwCA studyImporterForDwCA = new DatasetImporterForDwCA(null, null);
         studyImporterForDwCA.setDataset(new DatasetWithResourceMapping("some/namespace", archiveRoot, getResourceService()));
@@ -1759,6 +1786,23 @@ public class DatasetImporterForDwCATest {
         TreeMap<String, String> properties = new TreeMap<>();
         mapReferenceInfo(dummyRecord, properties, new DatasetImporterForDwCA.ResourceTypeConsumer(properties));
         assertThat(properties.get(REFERENCE_CITATION), is("some reference"));
+        assertThat(properties.get(REFERENCE_ID), is("some reference"));
+        assertThat(properties.get(REFERENCE_URL), is(nullValue()));
+        assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("f:oo/bar"));
+
+    }
+
+    @Test
+    public void mapReferencesInfoIfNotAvailable() {
+        DummyRecord dummyRecord = new DummyRecord(new HashMap<Term, String>() {{
+            put(DcTerm.references,
+                    "some reference");
+        }});
+
+        TreeMap<String, String> properties = new TreeMap<>();
+        properties.put(REFERENCE_CITATION, "donald duck");
+        mapReferenceInfo(dummyRecord, properties, new DatasetImporterForDwCA.ResourceTypeConsumer(properties));
+        assertThat(properties.get(REFERENCE_CITATION), is("donald duck"));
         assertThat(properties.get(REFERENCE_ID), is("some reference"));
         assertThat(properties.get(REFERENCE_URL), is(nullValue()));
         assertThat(properties.get(DatasetImporterForTSV.RESOURCE_TYPES), is("f:oo/bar"));

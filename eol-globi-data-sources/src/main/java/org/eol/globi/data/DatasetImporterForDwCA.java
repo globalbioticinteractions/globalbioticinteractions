@@ -740,10 +740,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         if (StringUtils.isNotBlank(referenceCitation)) {
             resourceTypeConsumer.accept(rec.rowType());
-            interactionProperties.put(REFERENCE_CITATION, referenceCitation);
-            interactionProperties.put(REFERENCE_ID, referenceId);
+            interactionProperties.putIfAbsent(REFERENCE_CITATION, referenceCitation);
+            interactionProperties.putIfAbsent(REFERENCE_ID, referenceId);
             if (StringUtils.isNotBlank(referenceUrl)) {
-                interactionProperties.put(REFERENCE_URL, referenceUrl);
+                interactionProperties.putIfAbsent(REFERENCE_URL, referenceUrl);
             }
         }
     }
@@ -906,10 +906,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     }
 
-    private static void populateIfAvailable(Map<String, String> properties, List<Map<String, String>> candidateRecords, String propertyName, String referenceCitation) {
+    private static void populateIfAvailable(Map<String, String> properties, List<Map<String, String>> candidateRecords, String propertyName, String propertyValue) {
         if (StringUtils.isNoneBlank(properties.get(propertyName))) {
             for (Map<String, String> candidateRecord : candidateRecords) {
-                putIfAbsentAndNotBlank(candidateRecord, referenceCitation, properties.get(propertyName));
+                String value = properties.get(propertyName);
+                if (StringUtils.isNotBlank(value)) {
+                    candidateRecord.put(propertyValue, value);
+                }
             }
         }
     }
