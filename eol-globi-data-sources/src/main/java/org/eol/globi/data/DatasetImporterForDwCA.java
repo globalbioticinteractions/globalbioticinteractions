@@ -875,19 +875,20 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     static List<Map<String, String>> parseDynamicPropertiesForInteractionsOnly(String s) {
+        List<Map<String, String>> candidateRecords = new ArrayList<>();
         Map<String, String> properties = parseDynamicProperties(s);
 
         mapManterDynamicProperties(properties);
         mapMSBBirdDynamicProperties(properties);
-        mapNationalBiodiversityDataCentreIrelandDynamicProperties(properties);
-
         if (hasInteractionTypeOrName(properties)) {
             new ResourceTypeConsumer(properties).accept(DwcTerm.dynamicProperties);
+            candidateRecords.add(properties);
         }
+
+        mapNationalBiodiversityDataCentreIrelandDynamicProperties(properties, candidateRecords);
+
         // only consider dynamic properties if interaction types are defined in it.
-        return hasInteractionTypeOrName(properties)
-                ? Arrays.asList(properties)
-                : Collections.emptyList();
+        return candidateRecords;
     }
 
     private static Map<String, String> parseDynamicProperties(String s) {
@@ -902,15 +903,22 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         return properties;
     }
 
-    private static void mapNationalBiodiversityDataCentreIrelandDynamicProperties(Map<String, String> properties) {
+    private static void mapNationalBiodiversityDataCentreIrelandDynamicProperties(Map<String, String> properties,
+                                                                                  List<Map<String, String>> candidateRecords) {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1140
         String foragingOn = "Foraging on";
-        putIfAbsentAndNotBlank(properties, TARGET_TAXON_NAME, properties.get(foragingOn));
         if (StringUtils.isNoneBlank(properties.get(foragingOn))) {
-            putIfAbsentAndNotBlank(properties, INTERACTION_TYPE_NAME, foragingOn);
+            String foragedOnValue = properties.get(foragingOn);
+            String[] foragedOnOrganisms = StringUtils.split(foragedOnValue, ",&");
+            for (String foragedOnOrganism : foragedOnOrganisms) {
+                Map<String, String> parsedProperties = new TreeMap<>(properties);
+                new ResourceTypeConsumer(parsedProperties).accept(DwcTerm.dynamicProperties);
+                putIfAbsentAndNotBlank(parsedProperties, TARGET_TAXON_NAME, StringUtils.trim(foragedOnOrganism));
+                putIfAbsentAndNotBlank(parsedProperties, INTERACTION_TYPE_NAME, foragingOn);
+                putIfAbsentAndNotBlank(parsedProperties, SOURCE_LIFE_STAGE_NAME, parsedProperties.get("Life stage"));
+                candidateRecords.add(parsedProperties);
+            }
         }
-
-        putIfAbsentAndNotBlank(properties, SOURCE_LIFE_STAGE_NAME, properties.get("Life stage"));
     }
 
     private static void mapManterDynamicProperties(Map<String, String> properties) {

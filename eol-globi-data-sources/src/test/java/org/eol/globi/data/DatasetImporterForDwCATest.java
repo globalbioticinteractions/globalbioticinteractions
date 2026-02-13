@@ -91,7 +91,6 @@ import static org.junit.Assert.assertTrue;
 public class DatasetImporterForDwCATest {
 
     @Rule
-
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
@@ -947,10 +946,17 @@ public class DatasetImporterForDwCATest {
         String s = "Abundance=18;Determiner name=As recorder & Data Centre validation process;Life stage=Adult;Sampling method=Casual sighting;County=Cork;Identification literature used=Ball & Morris, 2013;Survey name=National Biodiversity Data Centre: online record submission;Foraging on=Ragwort, Ivy";
         List<Map<String, String>> properties = parseDynamicPropertiesForInteractionsOnly(s);
 
+        assertThat(properties.size(), is(2));
+
         assertThat(properties.get(0).get(SOURCE_LIFE_STAGE_NAME), is("Adult"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("Foraging on"));
-        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ragwort, Ivy"));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Ragwort"));
         assertThat(properties.get(0).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
+
+        assertThat(properties.get(1).get(SOURCE_LIFE_STAGE_NAME), is("Adult"));
+        assertThat(properties.get(1).get(INTERACTION_TYPE_NAME), is("Foraging on"));
+        assertThat(properties.get(1).get(TaxonUtil.TARGET_TAXON_NAME), is("Ivy"));
+        assertThat(properties.get(1).get(RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/dynamicProperties"));
     }
 
     @Test
