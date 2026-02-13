@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eol.globi.domain.InteractType;
-import org.eol.globi.domain.RelTypes;
 import org.eol.globi.process.InteractionListener;
 import org.eol.globi.process.InteractionListenerClosable;
 import org.eol.globi.service.TaxonUtil;
@@ -441,9 +440,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         String dynamicProperties = rec.value(DwcTerm.dynamicProperties);
         if (StringUtils.isNotBlank(dynamicProperties)) {
-            Map<String, String> parsedDynamicProperties = parseDynamicPropertiesForInteractionsOnly(dynamicProperties);
-            if (!parsedDynamicProperties.isEmpty()) {
-                interactionCandidates.add(parsedDynamicProperties);
+            List<Map<String, String>> parsedDynamicProperties = parseDynamicPropertiesForInteractionsOnly(dynamicProperties);
+            for (Map<String, String> parsedDynamicProperty : parsedDynamicProperties) {
+                if (!parsedDynamicProperty.isEmpty()) {
+                    interactionCandidates.add(parsedDynamicProperty);
+                }
+
             }
         }
 
@@ -872,7 +874,23 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    static Map<String, String> parseDynamicPropertiesForInteractionsOnly(String s) {
+    static List<Map<String, String>> parseDynamicPropertiesForInteractionsOnly(String s) {
+        Map<String, String> properties = parseDynamicProperties(s);
+
+        mapManterDynamicProperties(properties);
+        mapMSBBirdDynamicProperties(properties);
+        mapNationalBiodiversityDataCentreIrelandDynamicProperties(properties);
+
+        if (hasInteractionTypeOrName(properties)) {
+            new ResourceTypeConsumer(properties).accept(DwcTerm.dynamicProperties);
+        }
+        // only consider dynamic properties if interaction types are defined in it.
+        return hasInteractionTypeOrName(properties)
+                ? Arrays.asList(properties)
+                : Collections.emptyList();
+    }
+
+    private static Map<String, String> parseDynamicProperties(String s) {
         Map<String, String> properties = new HashMap<>();
         String[] parts = StringUtils.splitByWholeSeparator(s, ";");
         for (String part : parts) {
@@ -881,17 +899,18 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 properties.put(StringUtils.trim(propertyValue[0]), StringUtils.trim(propertyValue[1]));
             }
         }
+        return properties;
+    }
 
-        mapManterDynamicProperties(properties);
-        mapMSBBirdDynamicProperties(properties);
-
-        if (hasInteractionTypeOrName(properties)) {
-            new ResourceTypeConsumer(properties).accept(DwcTerm.dynamicProperties);
+    private static void mapNationalBiodiversityDataCentreIrelandDynamicProperties(Map<String, String> properties) {
+        // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/1140
+        String foragingOn = "Foraging on";
+        putIfAbsentAndNotBlank(properties, TARGET_TAXON_NAME, properties.get(foragingOn));
+        if (StringUtils.isNoneBlank(properties.get(foragingOn))) {
+            putIfAbsentAndNotBlank(properties, INTERACTION_TYPE_NAME, foragingOn);
         }
-        // only consider dynamic properties if interaction types are defined in it.
-        return hasInteractionTypeOrName(properties)
-                ? properties
-                : Collections.emptyMap();
+
+        putIfAbsentAndNotBlank(properties, SOURCE_LIFE_STAGE_NAME, properties.get("Life stage"));
     }
 
     private static void mapManterDynamicProperties(Map<String, String> properties) {
