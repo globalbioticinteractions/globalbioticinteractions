@@ -14,8 +14,9 @@
     "headerRowCount" : 1,
     "interactionTypeName": "hasFlowersVisitedBy",
     "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002623",
+    "_comment": "see https://epsg.io/2157",
     "http://rs.tdwg.org/dwc/terms/verbatimSRS": "epsg:2157",
-    "null" : [ "" ],
+    "null" : [ "", "NA" ],
     "tableSchema" : {
       "columns" : [ {
         "name" : "sourceTaxonName",
@@ -70,15 +71,15 @@
         "titles" : "WGS84/ETRS89_2",
         "datatype" : "string"
       }, {
-        "name" : "Day",
+        "name" : "http://rs.tdwg.org/dwc/terms/dayOfYear",
         "titles" : "Day",
         "datatype" : "string"
       }, {
-        "name" : "Month",
+        "name" : "http://rs.tdwg.org/dwc/terms/month",
         "titles" : "Month",
         "datatype" : "string"
       }, {
-        "name" : "http://rs.tdwg.org/dwc/terms/eventDate",
+        "name" : "http://rs.tdwg.org/dwc/terms/year",
         "titles" : "Year",
         "datatype" : "string"
       }, {
