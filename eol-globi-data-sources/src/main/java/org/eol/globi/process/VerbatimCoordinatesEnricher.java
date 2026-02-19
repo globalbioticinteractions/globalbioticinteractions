@@ -27,37 +27,45 @@ public class VerbatimCoordinatesEnricher extends InteractionProcessorAbstract {
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         Map<String, String> enriched = interaction;
-        String verbatimLongitude1 = "verbatimLongitude";
-        boolean b = hasNonNullProperty(interaction, verbatimLongitude1);
         if (!hasNonNullProperty(interaction, "decimalLatitude")
                 && !hasNonNullProperty(interaction, "decimalLongitude")
+                && hasNonNullProperty(interaction, "verbatimLongitude")
                 && hasNonNullProperty(interaction, "verbatimLatitude")
-                && hasNonNullProperty(interaction, "verbatimSRS")
         ) {
             try {
-                CoordinateReferenceSystem srs = getCRSOrThrow(interaction.get("verbatimSRS"));
-                CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
-
-                double verbatimLongitude = parseDoubleOrThrow(interaction, verbatimLongitude1);
-                double verbatimLatitude = parseDoubleOrThrow(interaction, "verbatimLatitude");
-
-                ProjCoordinate sourceCoordinates = new ProjCoordinate(
-                        verbatimLongitude,
-                        verbatimLatitude
-                );
-
-                CoordinateTransform transform = ctFactory.createTransform(srs, WGS_84);
-                ProjCoordinate targetCoordinates = new ProjCoordinate();
-                transform.transform(sourceCoordinates, targetCoordinates);
-                enriched = new TreeMap<>(interaction);
-                enriched.put("decimalLatitude", Double.toString(targetCoordinates.y));
-                enriched.put("decimalLongitude", Double.toString(targetCoordinates.x));
-                enriched.put("geodeticDatum", "epsg:4326");
+                if (!hasNonNullProperty(interaction, "verbatimSRS")) {
+                    LogUtil.logWarningIfPossible(interaction, "cannot interpret {verbatimLatitude,verbatimLongitude} " + "[{" + interaction.get("verbatimLatitude") + "," + interaction.get("verbatimLongitude") + "}] : no spatial reference system defined using [verbatimSRS].", logger);
+                } else {
+                    enriched = convertCoordinates(interaction);
+                }
             } catch (Proj4jException ex) {
                 throw new StudyImporterException("failed to enrich coordinates", ex);
             }
         }
         emit(enriched);
+    }
+
+    private static Map<String, String> convertCoordinates(Map<String, String> interaction) throws StudyImporterException {
+        Map<String, String> enriched;
+        CoordinateReferenceSystem srs = getCRSOrThrow(interaction.get("verbatimSRS"));
+        CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
+
+        double verbatimLongitude = parseDoubleOrThrow(interaction, "verbatimLongitude");
+        double verbatimLatitude = parseDoubleOrThrow(interaction, "verbatimLatitude");
+
+        ProjCoordinate sourceCoordinates = new ProjCoordinate(
+                verbatimLongitude,
+                verbatimLatitude
+        );
+
+        CoordinateTransform transform = ctFactory.createTransform(srs, WGS_84);
+        ProjCoordinate targetCoordinates = new ProjCoordinate();
+        transform.transform(sourceCoordinates, targetCoordinates);
+        enriched = new TreeMap<>(interaction);
+        enriched.put("decimalLatitude", Double.toString(targetCoordinates.y));
+        enriched.put("decimalLongitude", Double.toString(targetCoordinates.x));
+        enriched.put("geodeticDatum", "epsg:4326");
+        return enriched;
     }
 
     private static boolean hasNonNullProperty(Map<String, String> interaction, String propertyName) {

@@ -1,6 +1,7 @@
 package org.eol.globi.process;
 
 import org.eol.globi.data.StudyImporterException;
+import org.eol.globi.domain.LogContext;
 import org.eol.globi.tool.NullImportLogger;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -98,6 +99,34 @@ public class VerbatimCoordinatesEnricherTest {
             throw ex;
         }
 
+
+    }
+
+    @Test
+    public void fromUndefinedCoordinateSystem() throws StudyImporterException {
+
+        List<Map<String, String>> received = new ArrayList<>();
+        List<String> msgs = new ArrayList<>();
+
+        InteractionProcessor enricher = new VerbatimCoordinatesEnricher(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                received.add(interaction);
+            }
+        }, new NullImportLogger() {
+            @Override
+            public void warn(LogContext ctx, String message) {
+                msgs.add(message);
+            }
+
+        });
+
+        enricher.on(new TreeMap<String, String>() {{
+            put("verbatimLatitude", "564522");
+            put("verbatimLongitude", "551458");
+        }});
+
+        assertThat(msgs.get(0), is("cannot interpret {verbatimLatitude,verbatimLongitude} [{564522,551458}] : no spatial reference system defined using [verbatimSRS]."));
 
     }
 
