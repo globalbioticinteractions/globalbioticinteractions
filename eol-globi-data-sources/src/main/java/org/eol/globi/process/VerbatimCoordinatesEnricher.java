@@ -1,6 +1,7 @@
 package org.eol.globi.process;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.StudyImporterException;
 import org.locationtech.proj4j.CRSFactory;
@@ -26,17 +27,18 @@ public class VerbatimCoordinatesEnricher extends InteractionProcessorAbstract {
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         Map<String, String> enriched = interaction;
-        if (!interaction.containsKey("decimalLatitude")
-                && !interaction.containsKey("decimalLongitude")
-                && interaction.containsKey("verbatimLongitude")
-                && interaction.containsKey("verbatimLatitude")
-                && interaction.containsKey("verbatimSRS")
+        String verbatimLongitude1 = "verbatimLongitude";
+        boolean b = hasNonNullProperty(interaction, verbatimLongitude1);
+        if (!hasNonNullProperty(interaction, "decimalLatitude")
+                && !hasNonNullProperty(interaction, "decimalLongitude")
+                && hasNonNullProperty(interaction, "verbatimLatitude")
+                && hasNonNullProperty(interaction, "verbatimSRS")
         ) {
             try {
                 CoordinateReferenceSystem srs = getCRSOrThrow(interaction.get("verbatimSRS"));
                 CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
 
-                double verbatimLongitude = parseDoubleOrThrow(interaction, "verbatimLongitude");
+                double verbatimLongitude = parseDoubleOrThrow(interaction, verbatimLongitude1);
                 double verbatimLatitude = parseDoubleOrThrow(interaction, "verbatimLatitude");
 
                 ProjCoordinate sourceCoordinates = new ProjCoordinate(
@@ -56,6 +58,11 @@ public class VerbatimCoordinatesEnricher extends InteractionProcessorAbstract {
             }
         }
         emit(enriched);
+    }
+
+    private static boolean hasNonNullProperty(Map<String, String> interaction, String propertyName) {
+        return interaction.containsKey(propertyName)
+                && StringUtils.isNoneBlank(interaction.get(propertyName));
     }
 
     private static CoordinateReferenceSystem getCRSOrThrow(String spatialReferenceSystem) throws StudyImporterException {
