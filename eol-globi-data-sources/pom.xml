@@ -60,6 +60,16 @@
             <type>pom</type>
         </dependency>
         <dependency>
+            <groupId>org.locationtech.proj4j</groupId>
+            <artifactId>proj4j</artifactId>
+            <version>${proj4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.locationtech.proj4j</groupId>
+            <artifactId>proj4j-epsg</artifactId>
+            <version>${proj4j.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.swizzle</groupId>
             <artifactId>swizzle-stream</artifactId>
             <version>1.6.2</version>
