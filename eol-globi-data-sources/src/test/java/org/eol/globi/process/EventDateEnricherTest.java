@@ -38,6 +38,28 @@ public class EventDateEnricherTest {
 
     }
     @Test
+    public void enrichFromYearAndDayOfYear() throws StudyImporterException {
+        List<Map<String, String>> received = new ArrayList<>();
+
+        InteractionProcessor enricher = new EventDateEnricher(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                received.add(interaction);
+            }
+        }, new NullImportLogger());
+
+        enricher.on(new TreeMap<String, String>() {{
+            put("http://rs.tdwg.org/dwc/terms/year", "2012");
+            put("http://rs.tdwg.org/dwc/terms/dayOfYear", "42");
+        }});
+
+        assertThat(received.size(), Is.is(1));
+
+        Map<String, String> sample1 = received.get(0);
+        assertThat(sample1.get("http://rs.tdwg.org/dwc/terms/eventDate"), is("2012-042"));
+
+    }
+    @Test
     public void enrichFromMonth() throws StudyImporterException {
         List<Map<String, String>> received = new ArrayList<>();
 

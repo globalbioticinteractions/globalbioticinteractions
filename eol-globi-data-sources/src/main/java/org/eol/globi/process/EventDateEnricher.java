@@ -9,6 +9,7 @@ import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.Proj4jException;
 
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,16 +29,16 @@ public class EventDateEnricher extends InteractionProcessorAbstract {
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         Map<String, String> enriched = interaction;
-        if (!hasNonNullProperty(interaction, "eventDate")
-                && !hasNonNullProperty(interaction, "http://rs.tdwg.org/dwc/terms/eventDate")
-                && hasNonNullProperty(interaction, DatasetImporterForMetaTable.EVENT_DATE_YEAR)
+        if (!hasNonBlankProperty(interaction, "eventDate")
+                && !hasNonBlankProperty(interaction, "http://rs.tdwg.org/dwc/terms/eventDate")
+                && hasNonBlankProperty(interaction, DatasetImporterForMetaTable.EVENT_DATE_YEAR)
         ) {
             try {
-                Stream<String> yearMonthDay
-                        = Stream.of(interaction.get(DatasetImporterForMetaTable.EVENT_DATE_YEAR),
-                        interaction.getOrDefault(DatasetImporterForMetaTable.EVENT_DATE_MONTH, ""),
-                        interaction.getOrDefault(DatasetImporterForMetaTable.EVENT_DATE_DAY, "")
-                );
+                enriched = new TreeMap<>(interaction);
+                Stream<String> yearMonthDay = hasNonBlankProperty(interaction, DatasetImporterForMetaTable.EVENT_DATE_DAY_OF_YEAR)
+                        ? yearDayOfYear(interaction)
+                        : yearMondayDay(interaction)
+                ;
 
                 String eventDate = yearMonthDay.map(part -> StringUtils.defaultIfBlank(part, "")).collect(Collectors.joining("-"));
 
@@ -50,8 +51,19 @@ public class EventDateEnricher extends InteractionProcessorAbstract {
         emit(enriched);
     }
 
+    private static Stream<String> yearDayOfYear(Map<String, String> interaction) {
+        return Stream.of(interaction.get(DatasetImporterForMetaTable.EVENT_DATE_YEAR),
+                StringUtils.leftPad(interaction.get(DatasetImporterForMetaTable.EVENT_DATE_DAY_OF_YEAR), 3, "0"));
+    }
 
-    private static boolean hasNonNullProperty(Map<String, String> interaction, String propertyName) {
+    private static Stream<String> yearMondayDay(Map<String, String> interaction) {
+        return Stream.of(interaction.get(DatasetImporterForMetaTable.EVENT_DATE_YEAR),
+                interaction.getOrDefault(DatasetImporterForMetaTable.EVENT_DATE_MONTH, ""),
+                interaction.getOrDefault(DatasetImporterForMetaTable.EVENT_DATE_DAY, ""));
+    }
+
+
+    private static boolean hasNonBlankProperty(Map<String, String> interaction, String propertyName) {
         return interaction.containsKey(propertyName)
                 && StringUtils.isNoneBlank(interaction.get(propertyName));
     }
