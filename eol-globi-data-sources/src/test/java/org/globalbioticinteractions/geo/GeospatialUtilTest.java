@@ -77,7 +77,7 @@ public class GeospatialUtilTest {
         CoordinateReferenceSystem ITM = CRS_FACTORY.createFromName("epsg:2157");
         CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
         assertNotNull(ITM);
-        CoordinateTransform transform = ctFactory.createTransform(ITM, getWGS84());
+        CoordinateTransform transform = ctFactory.createTransform(ITM, CRS_FACTORY.createFromName("epsg:4326"));
         ProjCoordinate target = new ProjCoordinate();
         transform.transform(new ProjCoordinate(551459, 564522), target);
 

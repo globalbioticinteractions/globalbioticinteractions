@@ -1,0 +1,3 @@
+﻿Plant_Species,Pollinator_species,Visitation Frequency,Sampling_effort_minutes,Sampling_area_square_meters,Site_id,HabitatType,Country,Site,ITMx,ITMy,WGS84/ETRS89,WGS84/ETRS89_2,Day,Month,Year,Survey ID,FlowerAbPerPlantSp,MaxFlowerSize,FloralArea
+Fuschia_sp,Bombus_lucorum_agg,2,21,800,EileenPower_10A_9,GA+,Ireland,10A,551459,564522,"51°.49'.50.961""N","8°.42'.15.374""W",197,7,2009,3,1,2,2
+Fuschia_sp,Bombus_pascuorum,2,21,800,EileenPower_10A_9,GA+,Ireland,10A,551459,564522,"51°.49'.50.961""N","8°.42'.15.374""W",197,7,2009,3,1,2,2

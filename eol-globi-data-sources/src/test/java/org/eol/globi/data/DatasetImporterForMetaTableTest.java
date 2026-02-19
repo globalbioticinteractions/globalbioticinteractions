@@ -266,6 +266,50 @@ public class DatasetImporterForMetaTableTest {
     }
 
     @Test
+    public void importRecordsWithVerbatimLatitudeLongitude() throws IOException, StudyImporterException {
+        final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-verbatim-coordinates.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                Map<URI, String> resourceMap = new HashMap<URI, String>() {{
+                    put(URI.create("Russoetal_DataDryad_09072022.csv"), "test-meta-verbatim-coordinates.csv");
+                }};
+
+                String testResource = resourceMap.get(resourceName);
+                InputStream resourceAsStream = DatasetImporterForMetaTableTest.this.getClass().getResourceAsStream(testResource);
+                assertNotNull("failed to find test resource [" + testResource + "]", resourceAsStream);
+                return resourceAsStream;
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.importStudy();
+
+        assertThat(links.size(), is(2));
+
+        Map<String, String> sample1 = links.get(0);
+
+        assertThat(sample1.get("sourceTaxonName"), is("Fuschia_sp"));
+        assertThat(sample1.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002623"));
+        assertThat(sample1.get("interactionTypeName"), is("hasFlowersVisitedBy"));
+        assertThat(sample1.get("targetTaxonName"), is("Bombus_lucorum_agg"));
+        assertThat(sample1.get("verbatimLatitude"), is("564522"));
+        assertThat(sample1.get("verbatimLongitude"), is("551459"));
+        assertThat(sample1.get("verbatimSRS"), is("epsg:2157"));
+        assertThat(sample1.get("decimalLatitude"), is("51.83082239523039"));
+        assertThat(sample1.get("decimalLongitude"), is("-8.704270621630931"));
+        assertThat(sample1.get("geodeticDatum"), is("epsg:4326"));
+    }
+
+    @Test
     public void importRecordsWithListValues() throws IOException, StudyImporterException {
         final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-separator.json");
         final JsonNode config = new ObjectMapper().readTree(inputStream);

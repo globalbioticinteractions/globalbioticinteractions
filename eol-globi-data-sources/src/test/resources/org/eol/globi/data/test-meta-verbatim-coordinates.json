@@ -1,0 +1,103 @@
+{
+  "@context" : [ "http://www.w3.org/ns/csvw", {
+    "@language" : "en"
+  } ],
+  "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+  "tables" : [ {
+    "@context" : [ "http://www.w3.org/ns/csvw", {
+      "@language" : "en"
+    } ],
+    "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+    "url" : "Russoetal_DataDryad_09072022.csv",
+    "dcterms:bibliographicCitation" : "Russo, Laura; Fitzpatrick, Una; Larkin, Michelle et al. (2022). Database of plant-flower visitor interactions from Ireland [Dataset]. Dryad. https://doi.org/10.5061/dryad.kwh70rz47",
+    "delimiter" : ",",
+    "headerRowCount" : 1,
+    "interactionTypeName": "hasFlowersVisitedBy",
+    "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002623",
+    "verbatimSRS": "epsg:2157",
+    "null" : [ "" ],
+    "tableSchema" : {
+      "columns" : [ {
+        "name" : "sourceTaxonName",
+        "titles" : "Plant_Species",
+        "datatype" : "string"
+      }, {
+        "name" : "targetTaxonName",
+        "titles" : "Pollinator_species",
+        "datatype" : "string"
+      }, {
+        "name" : "Visitation Frequency",
+        "titles" : "Visitation Frequency",
+        "datatype" : "string"
+      }, {
+        "name" : "Sampling_effort_minutes",
+        "titles" : "Sampling_effort_minutes",
+        "datatype" : "string"
+      }, {
+        "name" : "Sampling_area_square_meters",
+        "titles" : "Sampling_area_square_meters",
+        "datatype" : "string"
+      }, {
+        "name" : "Site_id",
+        "titles" : "Site_id",
+        "datatype" : "string"
+      }, {
+        "name" : "habitatName",
+        "titles" : "HabitatType",
+        "datatype" : "string"
+      }, {
+        "name" : "localityName",
+        "titles" : "Country",
+        "datatype" : "string"
+      }, {
+        "name" : "Site",
+        "titles" : "Site",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimLongitude",
+        "titles" : "ITMx",
+        "datatype" : "string"
+      }, {
+        "name" : "verbatimLatitude",
+        "titles" : "ITMy",
+        "datatype" : "string"
+      }, {
+        "name" : "WGS84/ETRS89",
+        "titles" : "WGS84/ETRS89",
+        "datatype" : "string"
+      }, {
+        "name" : "WGS84/ETRS89",
+        "titles" : "WGS84/ETRS89_2",
+        "datatype" : "string"
+      }, {
+        "name" : "Day",
+        "titles" : "Day",
+        "datatype" : "string"
+      }, {
+        "name" : "Month",
+        "titles" : "Month",
+        "datatype" : "string"
+      }, {
+        "name" : "http://rs.tdwg.org/dwc/terms/eventDate",
+        "titles" : "Year",
+        "datatype" : "string"
+      }, {
+        "name" : "Survey ID",
+        "titles" : "Survey ID",
+        "datatype" : "string"
+      }, {
+        "name" : "FlowerAbPerPlantSp",
+        "titles" : "FlowerAbPerPlantSp",
+        "datatype" : "string"
+      }, {
+        "name" : "MaxFlowerSize",
+        "titles" : "MaxFlowerSize",
+        "datatype" : "string"
+      }, {
+        "name" : "FloralArea",
+        "titles" : "FloralArea",
+        "datatype" : "string"
+      } ]
+    }
+  } ]
+}
