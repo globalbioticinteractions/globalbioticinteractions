@@ -301,12 +301,12 @@ public class DatasetImporterForMetaTableTest {
         assertThat(sample1.get("interactionTypeId"), is("http://purl.obolibrary.org/obo/RO_0002623"));
         assertThat(sample1.get("interactionTypeName"), is("hasFlowersVisitedBy"));
         assertThat(sample1.get("targetTaxonName"), is("Bombus_lucorum_agg"));
-        assertThat(sample1.get("verbatimLatitude"), is("564522"));
-        assertThat(sample1.get("verbatimLongitude"), is("551459"));
-        assertThat(sample1.get("verbatimSRS"), is("epsg:2157"));
+        assertThat(sample1.get("http://rs.tdwg.org/dwc/terms/verbatimLatitude"), is("564522"));
+        assertThat(sample1.get("http://rs.tdwg.org/dwc/terms/verbatimLongitude"), is("551459"));
+        assertThat(sample1.get("http://rs.tdwg.org/dwc/terms/verbatimSRS"), is("epsg:2157"));
         assertThat(sample1.get("decimalLatitude"), is("51.83082239523039"));
         assertThat(sample1.get("decimalLongitude"), is("-8.704270621630931"));
-        assertThat(sample1.get("geodeticDatum"), is("epsg:4326"));
+        assertThat(sample1.get("http://rs.tdwg.org/dwc/terms/geodeticDatum"), is("epsg:4326"));
     }
 
     @Test

@@ -14,7 +14,7 @@
     "headerRowCount" : 1,
     "interactionTypeName": "hasFlowersVisitedBy",
     "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002623",
-    "verbatimSRS": "epsg:2157",
+    "http://rs.tdwg.org/dwc/terms/verbatimSRS": "epsg:2157",
     "null" : [ "" ],
     "tableSchema" : {
       "columns" : [ {
@@ -54,11 +54,11 @@
         "titles" : "Site",
         "datatype" : "string"
       }, {
-        "name" : "verbatimLongitude",
+        "name" : "http://rs.tdwg.org/dwc/terms/verbatimLongitude",
         "titles" : "ITMx",
         "datatype" : "string"
       }, {
-        "name" : "verbatimLatitude",
+        "name" : "http://rs.tdwg.org/dwc/terms/verbatimLatitude",
         "titles" : "ITMy",
         "datatype" : "string"
       }, {
