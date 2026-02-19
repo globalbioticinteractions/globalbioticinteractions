@@ -50,10 +50,19 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
 
     public static final String LONGITUDE = "http://rs.tdwg.org/dwc/terms/decimalLongitude";
     public static final String LATITUDE = "http://rs.tdwg.org/dwc/terms/decimalLatitude";
+
     public static final String EVENT_DATE = "http://rs.tdwg.org/dwc/terms/eventDate";
+    public static final String EVENT_DATE_YEAR = "http://rs.tdwg.org/dwc/terms/year";
+    public static final String EVENT_DATE_MONTH = "http://rs.tdwg.org/dwc/terms/month";
+    public static final String EVENT_DATE_DAY = "http://rs.tdwg.org/dwc/terms/day";
+
     public static final String KEY_TYPE_PRIMARY = "primary";
     public static final String KEY_TYPE_FOREIGN = "foreign";
     public static final Pattern PATTERN_WHITESPACE = Pattern.compile("^[ ]+$");
+    public static final String GEODETIC_DATUM = "http://rs.tdwg.org/dwc/terms/geodeticDatum";
+    public static final String VERBATIM_LONGITUDE = "http://rs.tdwg.org/dwc/terms/verbatimLongitude";
+    public static final String VERBATIM_LATITUDE = "http://rs.tdwg.org/dwc/terms/verbatimLatitude";
+    public static final String VERBATIM_SRS = "http://rs.tdwg.org/dwc/terms/verbatimSRS";
 
     private Dataset dataset;
 

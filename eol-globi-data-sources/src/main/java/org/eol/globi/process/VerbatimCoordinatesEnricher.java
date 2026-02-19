@@ -2,6 +2,7 @@ package org.eol.globi.process;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.ImportLogger;
 import org.eol.globi.data.StudyImporterException;
 import org.locationtech.proj4j.CRSFactory;
@@ -27,14 +28,14 @@ public class VerbatimCoordinatesEnricher extends InteractionProcessorAbstract {
     @Override
     public void on(Map<String, String> interaction) throws StudyImporterException {
         Map<String, String> enriched = interaction;
-        if (!hasNonNullProperty(interaction, "decimalLatitude")
-                && !hasNonNullProperty(interaction, "decimalLongitude")
-                && hasNonNullProperty(interaction, "verbatimLongitude")
-                && hasNonNullProperty(interaction, "verbatimLatitude")
+        if (!hasNonNullProperty(interaction, DatasetImporterForMetaTable.LATITUDE)
+                && !hasNonNullProperty(interaction, DatasetImporterForMetaTable.LONGITUDE)
+                && hasNonNullProperty(interaction, DatasetImporterForMetaTable.VERBATIM_LONGITUDE)
+                && hasNonNullProperty(interaction, DatasetImporterForMetaTable.VERBATIM_LATITUDE)
         ) {
             try {
-                if (!hasNonNullProperty(interaction, "verbatimSRS")) {
-                    LogUtil.logWarningIfPossible(interaction, "cannot interpret {verbatimLatitude,verbatimLongitude} " + "[{" + interaction.get("verbatimLatitude") + "," + interaction.get("verbatimLongitude") + "}] : no spatial reference system defined using [verbatimSRS].", logger);
+                if (!hasNonNullProperty(interaction, DatasetImporterForMetaTable.VERBATIM_SRS)) {
+                    LogUtil.logWarningIfPossible(interaction, "cannot interpret {verbatimLatitude,verbatimLongitude} " + "[{" + interaction.get(DatasetImporterForMetaTable.VERBATIM_LATITUDE) + "," + interaction.get(DatasetImporterForMetaTable.VERBATIM_LONGITUDE) + "}] : no spatial reference system defined using [verbatimSRS].", logger);
                 } else {
                     enriched = convertCoordinates(interaction);
                 }
@@ -47,11 +48,11 @@ public class VerbatimCoordinatesEnricher extends InteractionProcessorAbstract {
 
     private static Map<String, String> convertCoordinates(Map<String, String> interaction) throws StudyImporterException {
         Map<String, String> enriched;
-        CoordinateReferenceSystem srs = getCRSOrThrow(interaction.get("verbatimSRS"));
+        CoordinateReferenceSystem srs = getCRSOrThrow(interaction.get(DatasetImporterForMetaTable.VERBATIM_SRS));
         CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
 
-        double verbatimLongitude = parseDoubleOrThrow(interaction, "verbatimLongitude");
-        double verbatimLatitude = parseDoubleOrThrow(interaction, "verbatimLatitude");
+        double verbatimLongitude = parseDoubleOrThrow(interaction, DatasetImporterForMetaTable.VERBATIM_LONGITUDE);
+        double verbatimLatitude = parseDoubleOrThrow(interaction, DatasetImporterForMetaTable.VERBATIM_LATITUDE);
 
         ProjCoordinate sourceCoordinates = new ProjCoordinate(
                 verbatimLongitude,
@@ -62,9 +63,9 @@ public class VerbatimCoordinatesEnricher extends InteractionProcessorAbstract {
         ProjCoordinate targetCoordinates = new ProjCoordinate();
         transform.transform(sourceCoordinates, targetCoordinates);
         enriched = new TreeMap<>(interaction);
-        enriched.put("decimalLatitude", Double.toString(targetCoordinates.y));
-        enriched.put("decimalLongitude", Double.toString(targetCoordinates.x));
-        enriched.put("geodeticDatum", "epsg:4326");
+        enriched.put(DatasetImporterForMetaTable.LATITUDE, Double.toString(targetCoordinates.y));
+        enriched.put(DatasetImporterForMetaTable.LONGITUDE, Double.toString(targetCoordinates.x));
+        enriched.put(DatasetImporterForMetaTable.GEODETIC_DATUM, "epsg:4326");
         return enriched;
     }
 

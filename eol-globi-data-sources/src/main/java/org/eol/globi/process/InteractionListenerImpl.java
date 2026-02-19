@@ -60,6 +60,7 @@ public class InteractionListenerImpl implements InteractionListener {
                         new OccurrenceIdEnricherCaliforniaAcademyOfSciences(queue, logger),
                         new OccurrenceIdEnricherAtlasOfLivingAustralia(queue, logger),
                         new TaxonNameEnricher(queue, logger),
+                        new EventDateEnricher(queue, logger),
                         new VerbatimCoordinatesEnricher(queue, logger),
                         new InteractionExpander(queue, logger),
                         new SpecimenCitationEnricher(queue, logger),

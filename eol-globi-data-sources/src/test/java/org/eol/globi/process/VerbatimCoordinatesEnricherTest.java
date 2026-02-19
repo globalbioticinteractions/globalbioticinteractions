@@ -1,5 +1,6 @@
 package org.eol.globi.process;
 
+import org.eol.globi.data.DatasetImporterForMetaTable;
 import org.eol.globi.data.StudyImporterException;
 import org.eol.globi.domain.LogContext;
 import org.eol.globi.tool.NullImportLogger;
@@ -30,22 +31,22 @@ public class VerbatimCoordinatesEnricherTest {
         }, new NullImportLogger());
 
         enricher.on(new TreeMap<String, String>() {{
-            put("verbatimLatitude", "564522");
-            put("verbatimLongitude", "551458");
-            put("verbatimSRS", "epsg:2157");
+            put(DatasetImporterForMetaTable.VERBATIM_LATITUDE, "564522");
+            put(DatasetImporterForMetaTable.VERBATIM_LONGITUDE, "551458");
+            put(DatasetImporterForMetaTable.VERBATIM_SRS, "epsg:2157");
         }});
 
         assertThat(received.size(), Is.is(1));
 
         Map<String, String> sample1 = received.get(0);
-        assertThat(sample1.get("verbatimSRS"), is("epsg:2157"));
+        assertThat(sample1.get(DatasetImporterForMetaTable.VERBATIM_SRS), is("epsg:2157"));
 
-        assertThat(Double.parseDouble(sample1.get("decimalLatitude")),
+        assertThat(Double.parseDouble(sample1.get(DatasetImporterForMetaTable.LATITUDE)),
                 closeTo(51.83082239523039d, 0.05));
-        assertThat(Double.parseDouble(sample1.get("decimalLongitude")),
+        assertThat(Double.parseDouble(sample1.get(DatasetImporterForMetaTable.LONGITUDE)),
                 closeTo(-8.704270621630931d, 0.05));
 
-        assertThat(sample1.get("geodeticDatum"), is("epsg:4326"));
+        assertThat(sample1.get(DatasetImporterForMetaTable.GEODETIC_DATUM), is("epsg:4326"));
     }
 
     @Test
@@ -60,21 +61,21 @@ public class VerbatimCoordinatesEnricherTest {
         }, new NullImportLogger());
 
         enricher.on(new TreeMap<String, String>() {{
-            put("verbatimLatitude", "564522");
-            put("verbatimLongitude", "551458");
-            put("verbatimSRS", "epsg:2157");
-            put("decimalLatitude", "something");
-            put("decimalLongitude", "something");
+            put(DatasetImporterForMetaTable.VERBATIM_LATITUDE, "564522");
+            put(DatasetImporterForMetaTable.VERBATIM_LONGITUDE, "551458");
+            put(DatasetImporterForMetaTable.VERBATIM_SRS, "epsg:2157");
+            put("http://rs.tdwg.org/dwc/terms/decimalLatitude", "something");
+            put("http://rs.tdwg.org/dwc/terms/decimalLongitude", "something");
         }});
 
         assertThat(received.size(), Is.is(1));
 
         Map<String, String> sample1 = received.get(0);
-        assertThat(sample1.get("verbatimSRS"), is("epsg:2157"));
+        assertThat(sample1.get(DatasetImporterForMetaTable.VERBATIM_SRS), is("epsg:2157"));
 
-        assertThat(sample1.get("decimalLatitude"), is("something"));
+        assertThat(sample1.get(DatasetImporterForMetaTable.LATITUDE), is("something"));
 
-        assertThat(sample1.get("geodeticDatum"), nullValue());
+        assertThat(sample1.get(DatasetImporterForMetaTable.GEODETIC_DATUM), nullValue());
     }
 
     @Test(expected = StudyImporterException.class)
@@ -90,9 +91,9 @@ public class VerbatimCoordinatesEnricherTest {
 
         try {
             enricher.on(new TreeMap<String, String>() {{
-                put("verbatimLatitude", "564522");
-                put("verbatimLongitude", "551458");
-                put("verbatimSRS", "epsg:66666666");
+                put(DatasetImporterForMetaTable.VERBATIM_LATITUDE, "564522");
+                put(DatasetImporterForMetaTable.VERBATIM_LONGITUDE, "551458");
+                put(DatasetImporterForMetaTable.VERBATIM_SRS, "epsg:66666666");
             }});
         } catch (StudyImporterException ex) {
             assertThat(ex.getMessage(), is("unsupported spatial reference system [epsg:66666666] found in [verbatimSRS]"));
@@ -122,8 +123,8 @@ public class VerbatimCoordinatesEnricherTest {
         });
 
         enricher.on(new TreeMap<String, String>() {{
-            put("verbatimLatitude", "564522");
-            put("verbatimLongitude", "551458");
+            put(DatasetImporterForMetaTable.VERBATIM_LATITUDE, "564522");
+            put(DatasetImporterForMetaTable.VERBATIM_LONGITUDE, "551458");
         }});
 
         assertThat(msgs.get(0), is("cannot interpret {verbatimLatitude,verbatimLongitude} [{564522,551458}] : no spatial reference system defined using [verbatimSRS]."));
@@ -143,12 +144,12 @@ public class VerbatimCoordinatesEnricherTest {
 
         try {
             enricher.on(new TreeMap<String, String>() {{
-                put("verbatimLatitude", "XXX");
-                put("verbatimLongitude", "551458");
-                put("verbatimSRS", "epsg:4326");
+                put(DatasetImporterForMetaTable.VERBATIM_LATITUDE, "XXX");
+                put(DatasetImporterForMetaTable.VERBATIM_LONGITUDE, "551458");
+                put(DatasetImporterForMetaTable.VERBATIM_SRS, "epsg:4326");
             }});
         } catch (StudyImporterException ex) {
-            assertThat(ex.getMessage(), is("expected a number for [verbatimLatitude], but found [XXX]"));
+            assertThat(ex.getMessage(), is("expected a number for [http://rs.tdwg.org/dwc/terms/verbatimLatitude], but found [XXX]"));
             throw ex;
         }
 
@@ -167,15 +168,15 @@ public class VerbatimCoordinatesEnricherTest {
         }, new NullImportLogger());
 
         enricher.on(new TreeMap<String, String>() {{
-            put("verbatimLatitude", null);
-            put("verbatimLongitude", "551458");
-            put("verbatimSRS", "epsg:4326");
+            put(DatasetImporterForMetaTable.VERBATIM_LATITUDE, null);
+            put(DatasetImporterForMetaTable.VERBATIM_LONGITUDE, "551458");
+            put(DatasetImporterForMetaTable.VERBATIM_SRS, "epsg:4326");
         }});
 
         assertThat(received.size(), Is.is(1));
 
         Map<String, String> sample1 = received.get(0);
-        assertThat(sample1.get("decimalLongitude"), nullValue());
+        assertThat(sample1.get(DatasetImporterForMetaTable.LONGITUDE), nullValue());
 
     }
 
