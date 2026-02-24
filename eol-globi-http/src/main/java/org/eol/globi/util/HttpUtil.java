@@ -34,20 +34,27 @@ public class HttpUtil {
 
     public static HttpClient getFailFastHttpClient() {
         if (failFastHttpClient == null) {
-            RequestConfig config = RequestConfig.custom()
-                    .setSocketTimeout(TIMEOUT_SHORT)
-                    .setConnectTimeout(TIMEOUT_SHORT)
-                    .build();
-
-            failFastHttpClient = HttpClientBuilder
-                    .create()
-                    .disableCookieManagement()
-                    .setDefaultRequestConfig(config)
-                    // for loading proxy config see https://github.com/globalbioticinteractions/nomer/issues/121
-                    .useSystemProperties()
+            HttpClientBuilder httpClientBuilder = getFailFastHttpClientBuilder();
+            failFastHttpClient = httpClientBuilder
                     .build();
         }
         return failFastHttpClient;
+    }
+
+    static HttpClientBuilder getFailFastHttpClientBuilder() {
+        RequestConfig config = RequestConfig.custom()
+                .setSocketTimeout(TIMEOUT_SHORT)
+                .setConnectTimeout(TIMEOUT_SHORT)
+                .build();
+
+        // for loading proxy config see https://github.com/globalbioticinteractions/nomer/issues/121
+        return HttpClientBuilder
+                .create()
+                .disableCookieManagement()
+                .setDefaultRequestConfig(config)
+                .setUserAgent(getUserAgentString(Version.getVersion()))
+                // for loading proxy config see https://github.com/globalbioticinteractions/nomer/issues/121
+                .useSystemProperties();
     }
 
     // should only be called once
