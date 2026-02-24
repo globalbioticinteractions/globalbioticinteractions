@@ -44,7 +44,7 @@ public class InteractionControllerSpringTest extends SpringTestBase {
                 put("targetTaxon", new String[]{"COL:93Q4D"});
                 put("interactionType", new String[]{"interactsWith"});
                 put("includeObservations", new String[]{"true"});
-                put("exactNameMatch", new String[]{"true"});
+                put("exactNameMatchOnly", new String[]{"true"});
                 put("type", new String[]{"json.v2"});
                 put("field", new String[]{
                                 "study_title",
@@ -62,14 +62,13 @@ public class InteractionControllerSpringTest extends SpringTestBase {
 
         assertThat(interactions.getVersionedQuery(), Is.is(
                 "CYPHER 2.3 " +
-                        "START sourceTaxon = node:taxonPaths({source_taxon_name}) " +
+                        "START sourceTaxon = node:taxons({source_taxon_name}) " +
                         "MATCH sourceTaxon<-[:CLASSIFIED_AS]-sourceSpecimen-[interaction:PREYS_UPON|PARASITE_OF|HAS_HOST|HAS_RESERVOIR_HOST|INTERACTS_WITH|TROPHICALLY_INTERACTS_WITH|HOST_OF|RESERVOIR_HOST_OF|POLLINATES|PERCHING_ON|ATE|SYMBIONT_OF|PREYED_UPON_BY|POLLINATED_BY|EATEN_BY|HAS_PARASITE|PERCHED_ON_BY|HAS_PATHOGEN|PATHOGEN_OF|ACQUIRES_NUTRIENTS_FROM|PROVIDES_NUTRIENTS_FOR|HAS_VECTOR|VECTOR_OF|VISITED_BY|VISITS|FLOWERS_VISITED_BY|VISITS_FLOWERS_OF|INHABITED_BY|INHABITS|CREATES_HABITAT_FOR|HAS_HABITAT|LIVED_ON_BY|LIVES_ON|LIVED_INSIDE_OF_BY|LIVES_INSIDE_OF|LIVED_NEAR_BY|LIVES_NEAR|LIVED_UNDER_BY|LIVES_UNDER|LIVES_WITH|ENDOPARASITE_OF|HAS_ENDOPARASITE|HYPERPARASITE_OF|HAS_HYPERPARASITE|ECTOPARASITE_OF|HAS_ECTOPARASITE|KLEPTOPARASITE_OF|HAS_KLEPTOPARASITE|PARASITOID_OF|HAS_PARASITOID|ENDOPARASITOID_OF|HAS_ENDOPARASITOID|ECTOPARASITOID_OF|HAS_ECTOPARASITOID|GUEST_OF|HAS_GUEST_OF|FARMED_BY|FARMS|DAMAGED_BY|DAMAGES|DISPERSAL_VECTOR_OF|HAS_DISPERAL_VECTOR|KILLED_BY|KILLS|EPIPHITE_OF|HAS_EPIPHITE|LAYS_EGGS_ON|HAS_EGGS_LAYED_ON_BY|LAYS_EGGS_IN|HAS_EGGS_LAYED_IN_BY|HAS_ROOST|ROOST_OF|COMMENSALIST_OF|MUTUALIST_OF|ALLELOPATH_OF|HAS_ALLELOPATH|HEMIPARASITE_OF|ROOTPARASITE_OF|HAS_ECTOMYCORRHIZAL_HOST|ECTOMYCORRHIZAL_HOST_OF|HAS_ARBUSCULAR_MYCORRHIZAL_HOST|ARBUSCULAR_MYCORRHIZAL_HOST_OF]->targetSpecimen-[:CLASSIFIED_AS]->targetTaxon, " +
                         "sourceSpecimen<-[collected_rel:COLLECTED]-study-[:IN_DATASET]->dataset " +
                         "WHERE (" +
-                        "exists(targetTaxon.externalIds) " +
+                        "exists(targetTaxon.externalId) " +
                         "AND " +
-                        "ANY(x IN split(targetTaxon.externalIds, '|') WHERE trim(x) in ['COL:93Q4D'])" +
-                        ") " +
+                        "targetTaxon.externalId IN ['COL:93Q4D']) " +
                         "OPTIONAL MATCH sourceSpecimen-[:COLLECTED_AT]->loc " +
                         "RETURN study.title as study_title," +
                         "study.citation as study_citation," +
@@ -80,6 +79,8 @@ public class InteractionControllerSpringTest extends SpringTestBase {
                         "dataset.namespace as study_source_id " +
                         "SKIP 0 LIMIT 1024"));
         Map<String, String> params = interactions.getParams();
-        assertThat(params.toString(), Is.is("{source_taxon_name=path:\"http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875\", target_taxon_name=path:\"COL:93Q4D\"}"));
+        assertThat(params.toString(), Is.is(
+                "{source_taxon_name=externalId:\"http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875\"," +
+                        " target_taxon_name=externalId:\"COL:93Q4D\"}"));
     }
 }

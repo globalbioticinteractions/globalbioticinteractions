@@ -685,7 +685,8 @@ public class CypherQueryBuilder {
 
     private static boolean isExternalId(String taxonName) {
         return StringUtils.contains(taxonName, ":")
-                && ExternalIdUtil.isSupported(taxonName);
+                && (ExternalIdUtil.prefixForUrl(taxonName) != null
+                || ExternalIdUtil.isSupported(taxonName));
     }
 
     protected static List<String> collectParamValues(Map parameterMap, ParamName name) {

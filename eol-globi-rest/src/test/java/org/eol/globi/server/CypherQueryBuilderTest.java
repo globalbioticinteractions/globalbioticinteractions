@@ -1044,8 +1044,12 @@ public class CypherQueryBuilderTest {
         assertThat(CypherQueryBuilder.selectorPrefixForName("bla name", true), is("name:"));
     }
 
-    ;
-
+    @Test
+    public void prefixSelectorForBOLDExternalIdName() {
+        assertThat(
+                CypherQueryBuilder.selectorPrefixForName("http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=BOLD:AEI8875", true),
+                is("externalId:"));
+    }
 
     @Test
     public void findInteractionsAccordingToWithSourceTaxonIdOnlyAndExactMatchOnlyIncludeObservations2() {
