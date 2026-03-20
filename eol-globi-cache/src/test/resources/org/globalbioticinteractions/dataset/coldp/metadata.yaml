@@ -1,0 +1,84 @@
+alias: Afromoths
+contact:
+  address: Belgium
+  country: BE
+  email: willy.deprins@gmail.com
+  family: De Prins
+  given: Willy
+  orcid: 0000-0002-4430-1425
+  organisation: Royal Belgian Institute of Natural Sciences
+contributor:
+- email: a.heughebaert@biodiversity.be
+  family: Heughebaert
+  given: Andre
+  note: Data Wrangler
+  orcid: 0000-0002-7839-5300
+  organisation: Belgian Biodiversity Platform, Belspo
+creator:
+- De Prins Jurate: null
+  address: Belgium
+  country: BE
+  email: jurate.deprins@gmail.com
+  family: De Prins
+  given: Jurate
+  orcid: 0000-0001-7637-5755
+  organisation: Royal Belgian Institute of Natural Sciences
+- De Prins Willy: null
+  address: Belgium
+  country: BE
+  email: willy.deprins@gmail.com
+  family: De Prins
+  given: Willy
+  orcid: 0000-0002-4430-1425
+  organisation: Royal Belgian Institute of Natural Sciences
+description: "This dataset covers all relevant information on every Afrotropical moth\
+  \ species. The zoogeographic area covered can be defined as the Africa continent\
+  \ south of the Sahara (i.e. excl. Morocco, Algeria, Tunisia, Libya and Egypt), the\
+  \ islands in the Atlantic Ocean Amsterdam Island, Ascension, Cape Verde Archipelago,\
+  \ Inaccessible Island, St. Helena, S\xE3o Tom\xE9 and Principe, Tristan da Cunha,\
+  \ and the islands in the Indian Ocean Comores (Anjouan, Grande Comore, Mayotte,\
+  \ Moh\xE9li), Madagascar, Mascarene Islands (La R\xE9union, Mauritius, Rodrigues),\
+  \ Seychelles (F\xE9licit\xE9, Mah\xE9, Praslin, Silhouette, a.o.). Furthermore,\
+  \ also those moth species occurring in the transition zone to the Palaearctic fauna\
+  \ have been included, namely most of the Arabia Peninsula (Kuwait, Oman, Saudi Arabia,\
+  \ United Arab Emirates, Yemen with Socotra) but not Iraq, Jordan and further north.\
+  \ Also, some Saharan species have been included (e. g. Hoggar Mts. in Algeria, Tibesti\
+  \ Mts. in South Libya). Utmost care was taken that the data incorporated in the\
+  \ database are correct. We decline any responsibility in case of damage to soft-\
+  \ or hardware based on information used in this website. Persons retrieving information\
+  \ from this website for their own research or for applied aspects such as pest control\
+  \ programmes, should acknowledge the usage of data from this website in the following\
+  \ format  \"De Prins, J.& De Prins, W. 2011. Afromoths, online database of Afrotropical\
+  \ moth species (Lepidoptera). World Wide Web electronic publication (www.afromoths.net)\""
+doi: 10.15468/s1kwuw
+geographicScope: subsaharian Africa
+identifier:
+  col: 2017
+  gbif: 65c9103f-2fbf-414b-9b0b-e47ca96c5df2
+issued: '2026-03-01'
+key: 2017
+keyword:
+- Checklist
+- Africa
+- Moths
+license: CC-BY
+logo: https://www.afromoths.net/static/lite/amBanner.jpg
+publisher:
+  address: Brussels, Belgium
+  city: Brussels
+  country: BE
+  note: Host
+  organisation: Belgian Biodiversity Platform, Belspo
+  url: http://www.biodiversity.be
+source:
+- editor:
+  - De Prins Jurate
+  - De Prins Willy
+  id: afromoths.net
+  issued: 2006-10
+  title: Afromoths, online database of Afrotropical moth species (Lepidoptera)
+  type: WEBPAGE
+  url: https://www.afromoths.net/
+title: Afromoths, online database of Afrotropical moth species (Lepidoptera)
+url: https://www.afromoths.net/
+version: '2026-03-01'

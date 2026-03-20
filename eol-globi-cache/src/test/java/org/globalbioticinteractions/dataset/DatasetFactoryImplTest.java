@@ -150,5 +150,42 @@ public class DatasetFactoryImplTest {
         assertThat(dataset.getCitation(), is("Example CONABIO Bee-Plant Interactions."));
 
     }
+    @Test
+    public void createDatasetCatalogueOfLifeDataPackage() throws DatasetRegistryException, URISyntaxException {
+        String archiveURI = "jar:" + getClass().getResource("coldp-afrowasps.zip").toURI() + "!/";
+        assertNotNull(archiveURI);
+        final DatasetRegistry finder = new DatasetRegistry() {
+            @Override
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
+                return Collections.singletonList("some/repo");
+            }
+
+            @Override
+            public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                for (String namespace : findNamespaces()) {
+                    namespaceConsumer.accept(namespace);
+                }
+            }
+
+
+            @Override
+            public Dataset datasetFor(String namespace) throws DatasetRegistryException {
+                ResourceServiceLocal resourceService = new ResourceServiceLocal(new InputStreamFactoryNoop()) {
+
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        return super.retrieve(resourceName);
+                    }
+
+                    ;
+
+                };
+                return new DatasetWithResourceMapping(namespace, URI.create(archiveURI), resourceService);
+            }
+        };
+        Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("some/repo");
+        assertThat(dataset.getCitation(), is("De Prins, J., & De Prins, W. (2026). Afromoths, online database of Afrotropical moth species (Lepidoptera) (Version 2026-03-01). Belgian Biodiversity Platform, Belspo, Brussels, Belgium. https://www.afromoths.net/"));
+
+    }
 
 }

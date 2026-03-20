@@ -53,6 +53,7 @@ public class DatasetFactoryImpl implements DatasetFactory {
         Map<URI, DatasetConfigurer> datasetHandlers = new LinkedMap<URI, DatasetConfigurer>() {{
             put(URI.create("/eml.xml"), (dataset1, uri) -> EMLUtil.datasetFor(resourceService, uri));
             put(URI.create("/datapackage.json"), (dataset1, uri) -> DwCDataPackageUtil.datasetFor(resourceService, uri));
+            put(URI.create("/metadata.yaml"), (dataset1, uri) -> CatalogueOfLifeDataPackageUtil.datasetFor(resourceService, uri));
             put(URI.create("/globi.json"), new JSONConfigurer());
             put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
         }};
