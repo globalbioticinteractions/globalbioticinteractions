@@ -73,7 +73,7 @@ public class DatasetFactoryImpl implements DatasetFactory {
             }
         }
         if (configPair == null) {
-            String msg = "failed to valid find dataset configuration in [" + StringUtils.join(datasetHandlers.keySet() + "]");
+            String msg = "failed to find valid dataset configuration in [" + StringUtils.join(datasetHandlers.keySet() + "]");
             throw lastThrown == null
                     ? new DatasetRegistryException(msg)
                     : new DatasetRegistryException(msg, lastThrown);
