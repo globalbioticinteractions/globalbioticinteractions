@@ -396,6 +396,17 @@ public class DatasetImporterForDwCATest {
     }
 
     @Test
+    public void importRecordsFromArchiveWithEventBasedRelations() throws StudyImporterException, URISyntaxException, IOException {
+        URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca-with-event-based-resource-relation.zip");
+        AtomicInteger recordCounter = new AtomicInteger(0);
+        assertImportsSomethingOfType(resource.toURI()
+                , recordCounter
+                , "http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/ResourceRelationship"
+                , SOURCE_OCCURRENCE_ID, SOURCE_TAXON_NAME, INTERACTION_TYPE_NAME, TARGET_OCCURRENCE_ID, TaxonUtil.TARGET_TAXON_NAME);
+        assertThat(recordCounter.get(), is(2203));
+    }
+
+    @Test
     public void importRecordsFromUArchive() throws StudyImporterException, URISyntaxException, IOException {
         URL resource = getClass().getResource("/org/globalbioticinteractions/dataset/dwca.zip");
         assertImportsSomethingOfType(resource.toURI()

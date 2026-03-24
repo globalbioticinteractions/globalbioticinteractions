@@ -114,6 +114,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
     static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
     private static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
+    private static final String EXTENSION_OCCURRENCE = "http://rs.tdwg.org/dwc/terms/Occurrence";
 
     // ex. notation used to indicate host of a specimen.
     static final Pattern EX_NOTATION = Pattern.compile("^ex[ .]+(.*)", Pattern.CASE_INSENSITIVE);
@@ -1482,6 +1483,11 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             recordIterators.add(wrapRecordIterable(taxon));
         }
 
+        ArchiveFile occurrence = findResourceExtension(archive, EXTENSION_OCCURRENCE);
+        if (occurrence != null) {
+            recordIterators.add(wrapRecordIterable(occurrence));
+        }
+
         for (Iterable<Record> recordIterator : recordIterators) {
             for (Record record : recordIterator) {
                 for (DwcTerm termType : termTypes) {
@@ -1522,9 +1528,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void attemptLinkUsingTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap,
                                              Set<String> referencedSourceIds,
                                              Set<String> referencedTargetIds,
-                                             Record coreRecord,
+                                             Record rec,
                                              DwcTerm term) {
-        String id = coreRecord.value(term);
+        String id = rec.value(term);
         if (StringUtils.isNotBlank(id)) {
             Set<String> idCandidates = new TreeSet<>();
             idCandidates.add(id);
@@ -1535,10 +1541,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
             for (String idCandidate : idCandidates) {
                 if (isReferenced(referencedSourceIds, referencedTargetIds, idCandidate)) {
-                    linkTerm(termIdPropertyMap, coreRecord, term, idCandidate);
+                    linkTerm(termIdPropertyMap, rec, term, idCandidate);
                     break;
                 }
-
             }
         }
 
