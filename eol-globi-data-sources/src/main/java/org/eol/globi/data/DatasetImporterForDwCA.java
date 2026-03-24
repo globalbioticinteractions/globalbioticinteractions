@@ -1282,6 +1282,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     = MapDBUtil.createBigMap(cacheDir);
             final DB sourceIdDb = MapDBUtil.tmpDB(cacheDir);
             final DB targetIdDb = MapDBUtil.tmpDB(cacheDir);
+            final DB contextIdDb = MapDBUtil.tmpDB(cacheDir);
 
             try {
                 importResourceRelationshipExtension(
@@ -1290,7 +1291,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                         resourceExtension,
                         termTypeIdPropertyMap,
                         sourceIdDb,
-                        targetIdDb);
+                        targetIdDb,
+                        contextIdDb);
             } finally {
                 sourceIdDb.close();
                 targetIdDb.close();
@@ -1307,19 +1309,23 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             ArchiveFile resourceExtension,
             BTreeMap<String, Map<String, Map<String, String>>> termTypeIdPropertyMap,
             DB sourceIdDb,
-            DB targetIdDb) {
+            DB targetIdDb,
+            DB contextIdDb) {
         final Set<String> referencedSourceIds = MapDBUtil.createBigSet(sourceIdDb);
         final Set<String> referencedTargetIds = MapDBUtil.createBigSet(targetIdDb);
+        final Set<String> referencedContextIds = MapDBUtil.createBigSet(contextIdDb);
 
         collectRelatedResourceIds(
                 wrapRecordIterable(resourceExtension),
                 referencedSourceIds,
-                referencedTargetIds
+                referencedTargetIds,
+                referencedContextIds
         );
 
         final List<DwcTerm> termTypes = Arrays.asList(
                 DwcTerm.occurrenceID,
-                DwcTerm.taxonID
+                DwcTerm.taxonID,
+                DwcTerm.eventID
         );
 
         resolveLocalResourceIds(
@@ -1327,6 +1333,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 termTypeIdPropertyMap,
                 referencedSourceIds,
                 referencedTargetIds,
+                referencedContextIds,
                 termTypes
         );
 
@@ -1398,7 +1405,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                 propMap.get(targetId),
                                 labelPairFor(termType),
                                 resourceTypeConsumerString);
+                        
+                        populatePropertiesWithContext(
+                                record,
+                                propMap,
+                                props,
+                                resourceTypeConsumerString
+                        );
+
                     }
+
 
                 }
 
@@ -1409,6 +1425,18 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     //
                 }
             }
+        }
+    }
+
+    private static void populatePropertiesWithContext(Record record, Map<String, Map<String, String>> propMap, Map<String, String> props, ResourceTypeConsumerString resourceTypeConsumerString) {
+        Map<String, String> contextProperties = propMap.get(record.id());
+        if (contextProperties != null) {
+            putIfAbsentAndNotBlank(props, LOCALITY_NAME, contextProperties.get(getQualifiedName(DwcTerm.locality)));
+            putIfAbsentAndNotBlank(props, DECIMAL_LATITUDE, contextProperties.get(getQualifiedName(DwcTerm.decimalLatitude)));
+            putIfAbsentAndNotBlank(props, DECIMAL_LONGITUDE, contextProperties.get(getQualifiedName(DwcTerm.decimalLongitude)));
+            putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, contextProperties.get(getQualifiedName(DwcTerm.eventDate)));
+            putIfAbsentAndNotBlank(props, BASIS_OF_RECORD_NAME, contextProperties.get(getQualifiedName(DwcTerm.basisOfRecord)));
+            resourceTypeConsumerString.accept(contextProperties.get(RESOURCE_TYPES));
         }
     }
 
@@ -1474,6 +1502,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                 Map<String, Map<String, Map<String, String>>> termIdPropMap,
                                                 Set<String> referencedSourceIds,
                                                 Set<String> referencedTargetIds,
+                                                Set<String> referencedContextIds,
                                                 List<DwcTerm> termTypes) {
         List<Iterable<Record>> recordIterators = new ArrayList<>();
         recordIterators.add(wrapRecordIterable(archive.getCore()));
@@ -1494,6 +1523,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     attemptLinkUsingTerm(termIdPropMap,
                             referencedSourceIds,
                             referencedTargetIds,
+                            referencedContextIds,
                             record,
                             termType);
                 }
@@ -1501,7 +1531,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static void collectRelatedResourceIds(Iterable<Record> resourceExtension, Set<String> referencedSourceIds, Set<String> referencedTargetIds) {
+    private static void collectRelatedResourceIds(Iterable<Record> resourceExtension,
+                                                  Set<String> referencedSourceIds,
+                                                  Set<String> referencedTargetIds,
+                                                  Set<String> referencedContextIds) {
         for (Record record : resourceExtension) {
             String targetId = record.value(DwcTerm.relatedResourceID);
             String sourceId = record.value(DwcTerm.resourceID);
@@ -1510,6 +1543,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 if (StringUtils.isNotBlank(targetId)) {
                     referencedSourceIds.add(sourceId);
                     referencedTargetIds.add(targetId);
+                    referencedContextIds.add(record.id());
                 } else if (StringUtils.contains(relationshipRemarks, "scientificName:")) {
                     referencedSourceIds.add(sourceId);
                 }
@@ -1528,6 +1562,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void attemptLinkUsingTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap,
                                              Set<String> referencedSourceIds,
                                              Set<String> referencedTargetIds,
+                                             Set<String> referencedContextIds,
                                              Record rec,
                                              DwcTerm term) {
         String id = rec.value(term);
@@ -1540,7 +1575,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
 
             for (String idCandidate : idCandidates) {
-                if (isReferenced(referencedSourceIds, referencedTargetIds, idCandidate)) {
+                if (isReferenced(referencedSourceIds, referencedTargetIds, referencedContextIds, idCandidate)) {
                     linkTerm(termIdPropertyMap, rec, term, idCandidate);
                     break;
                 }
@@ -1565,9 +1600,17 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static boolean isReferenced(Set<String> referencedSourceIds, Set<String> referencedTargetIds, String id) {
+    private static boolean isReferenced(
+            Set<String> referencedSourceIds,
+            Set<String> referencedTargetIds,
+            Set<String> referencedContextIds,
+            String id
+    ) {
         return StringUtils.isNotBlank(id) &&
-                (referencedTargetIds.contains(id) || referencedSourceIds.contains(id));
+                (referencedTargetIds.contains(id)
+                        || referencedSourceIds.contains(id)
+                        || referencedContextIds.contains(id)
+                );
     }
 
     private static void populatePropertiesAssociatedWithId(Map<String, String> props,
