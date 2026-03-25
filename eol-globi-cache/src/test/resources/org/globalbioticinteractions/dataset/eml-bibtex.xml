@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://eml.ecoinformatics.org/eml-2.2.0 https://eml.ecoinformatics.org/eml-2.2.0/eml.xsd">
+  <dataset>
+    <title>Insect-flower interactions in the Mediterranean area: a Citizen Science dataset collated within the LIFE 4 Pollinators project</title>
+    <creator>
+      <individualName>
+        <givenName>Marta</givenName>
+        <surName>Barberis</surName>
+      </individualName>
+      <electronicMailAddress>marta.barberis2@unibo.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-1062-4760</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Fortunato</givenName>
+        <givenName>Fulvio</givenName>
+        <surName>Bitonto</surName>
+      </individualName>
+      <electronicMailAddress>fortunato.bitonto2@unibo.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0008-9185-6758</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Roberto</givenName>
+        <surName>Costantino</surName>
+      </individualName>
+      <electronicMailAddress>roberto.costantino@regione.piemonte.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0003-3428-1077</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Lorenzo</givenName>
+        <surName>Bianco</surName>
+      </individualName>
+      <electronicMailAddress>l.bianco@unito.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-1087-1155</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Daniele</givenName>
+        <surName>Birtele</surName>
+      </individualName>
+      <electronicMailAddress>d.birtele@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0000-8442-7762</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Marco</givenName>
+        <surName>Bonifacino</surName>
+      </individualName>
+      <electronicMailAddress>mbonifacino2317@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0001-6190-3965</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Giacomo</givenName>
+        <surName>Cangelmi</surName>
+      </individualName>
+      <electronicMailAddress>giacomo.cangelmi@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0004-8411-4175</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Miquel</givenName>
+        <surName>Capò</surName>
+      </individualName>
+      <electronicMailAddress>miquelcaposervera@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-4394-7080</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Athanasia</givenName>
+        <surName>Chroni</surName>
+      </individualName>
+      <electronicMailAddress>achroni@aegean.gr</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0002-8189-8504</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Marco</givenName>
+        <surName>d'Agostino</surName>
+      </individualName>
+      <electronicMailAddress>marco.dago94@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0001-9973-7480</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Matteo</givenName>
+        <surName>Dal Cin</surName>
+      </individualName>
+      <electronicMailAddress>matteo.dalcin.21@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0006-7216-1438</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Jelle</givenName>
+        <surName>Devalez</surName>
+      </individualName>
+      <electronicMailAddress>jelle.devalez@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0003-1110-0640</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Laura</givenName>
+        <surName>Bortolotti</surName>
+      </individualName>
+      <electronicMailAddress>laura.bortolotti@crea.gov.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0001-7372-1579</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Simone</givenName>
+        <surName>Flaminio</surName>
+      </individualName>
+      <electronicMailAddress>flaminiosimone88@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-5823-1202</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Antonio</givenName>
+        <surName>Giacò</surName>
+      </individualName>
+      <electronicMailAddress>antonio.giaco@phd.unipi.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0001-8263-6018</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Lucia</givenName>
+        <surName>Lenzi</surName>
+      </individualName>
+      <electronicMailAddress>lucia.lenzi4@unibo.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0001-8838-822X</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Serena</givenName>
+        <surName>Magagnoli</surName>
+      </individualName>
+      <electronicMailAddress>serena.magagnoli4@unibo.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-5276-4649</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Alessio</givenName>
+        <surName>Minici</surName>
+      </individualName>
+      <electronicMailAddress>minici.alessio@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0009-4784-3789</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Georgios</givenName>
+        <surName>Nakas</surName>
+      </individualName>
+      <electronicMailAddress>nakas.g@geo.aegean.gr</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0003-3023-5831</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Luis</givenName>
+        <surName>Navarro</surName>
+      </individualName>
+      <electronicMailAddress>lnavarro@uvigo.gal</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-8308-2237</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Gianfranco</givenName>
+        <surName>Samuele</surName>
+      </individualName>
+      <electronicMailAddress>gianfranco.samuele2@unibo.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0003-1742-0191</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>José Marìa</givenName>
+        <surName>Sanchéz</surName>
+      </individualName>
+      <electronicMailAddress>jmsbot@uvigo.gal</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-3280-3444</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Theodora</givenName>
+        <surName>Petanidou</surName>
+      </individualName>
+      <electronicMailAddress>tpet@aegean.gr</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0003-1883-0945</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Marino</givenName>
+        <surName>Quaranta</surName>
+      </individualName>
+      <electronicMailAddress>marino.quaranta@crea.gov.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0003-0082-4555</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Rosa</givenName>
+        <surName>Ranalli</surName>
+      </individualName>
+      <electronicMailAddress>r.ranalli1@campus.unimib.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0001-5460-676X</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Michele</givenName>
+        <surName>Rossini</surName>
+      </individualName>
+      <electronicMailAddress>micros.naturae@gmail.com</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-1938-6105</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Enrico</givenName>
+        <surName>Ruzzier</surName>
+      </individualName>
+      <electronicMailAddress>enrico.ruzzier@uniroma3.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0003-1020-1247</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Fabio</givenName>
+        <surName>Sgolastra</surName>
+      </individualName>
+      <electronicMailAddress>fabio.sgolastra2@unibo.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-2845-8297</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Anna</givenName>
+        <surName>Traveset</surName>
+      </individualName>
+      <electronicMailAddress>atraveset@csic.es</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0002-1816-1334</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Emanuele</givenName>
+        <givenName>Luigi</givenName>
+        <surName>Zenga</surName>
+      </individualName>
+      <electronicMailAddress>emanueleluigi.zenga@unito.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0009-0000-9821-4485</userId>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Marta</givenName>
+        <surName>Galloni</surName>
+      </individualName>
+      <electronicMailAddress>marta.galloni@unibo.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0001-5304-7820</userId>
+    </creator>
+    <abstract>                                          <para>Pollinators play a vital role in most terrestrial ecosystems, supporting wild plant communities and enhancing agricultural yields. However, despite their ecological and economic importance, they have been experiencing an alarming decline over the past decades. The Mediterranean region, known for harboring highly diverse communities of plants and pollinators, is particularly vulnerable due to intense anthropogenic pressures. Furthermore, the ecological roles of many floral visitors remain poorly understood, hindering conservation efforts. In response, in recent years, growing attention has been directed toward the contribution that citizens can give in support of pollinator research. An increasing number of projects have adopted a Citizen Science approach to enable large-scale data collection. The LIFE 4 Pollinators project (LIFE18/GIE/IT/000755) “Involving people to protect wild bees and other pollinators in the Mediterranean” aims to promote the conservation of pollinating insects and entomophilous plants across the Mediterranean region by fostering progressive changes in human practices that threaten wild pollinators. In addition to the implementation of several actions to raise awareness, the project launched a web platform to collect photographic records of insect-flower interaction from the public. The platform is expected to remain active for at least ten years, during which time we encourage continuing record submissions by interested bodies. We commit to periodic online updates of the current dataset, which we make freely available to anyone.</para>
+</abstract>
+    <keywordSet>
+      <keyword>Biodiversity conservation</keyword>
+      <keyword>Natura 2000</keyword>
+      <keyword>Plant diversity</keyword>
+      <keyword>Citizen Science</keyword>
+      <keyword>Pollinators</keyword>
+    </keywordSet>
+    <intellectualRights>                        <para>This information is released under the Creative Commons license - Attribution - CC BY (https://creativecommons.org/licenses/by/4.0/). The consumer of these data ("Data User" herein) is required to cite it appropriately in any publication that results from its use. The Data User should realize that these data may be actively used by others for ongoing research and that coordination may be necessary to prevent duplicate publication. The Data User is urged to contact the authors of these data if any questions about methodology or results occur. Where appropriate, the Data User is encouraged to consider collaboration or co-authorship with the authors. The Data User should realize that misinterpretation of data may occur if used out of context of the original study. While substantial efforts are made to ensure the accuracy of data and associated documentation, complete accuracy of data sets cannot be guaranteed. All data are made available "as is." The Data User should be aware, however, that data are updated periodically and it is the responsibility of the Data User to check for new versions of the data. The data authors and the repository where these data were obtained shall not be liable for damages resulting from any use or misinterpretation of the data. Thank you.</para>
+</intellectualRights>
+    <licensed>
+      <licenseName>Creative Commons Attribution 4.0 International</licenseName>
+      <url>https://spdx.org/licenses/CC-BY-4.0</url>
+      <identifier>CC-BY-4.0</identifier>
+    </licensed>
+    <contact>
+      <individualName>
+        <givenName>Roberto</givenName>
+        <surName>Costantino</surName>
+      </individualName>
+      <electronicMailAddress>roberto.costantino@regione.piemonte.it</electronicMailAddress>
+      <userId directory="https://orcid.org">0000-0003-3428-1077</userId>
+    </contact>
+    <methods>
+      <methodStep>
+        <description>                                                                      <para>As part of the LIFE 4 Pollinators project, a web platform was developed in 2021 to collect photographs of insects visiting flowers (https://www.life4pollinators.eu/en/submission). The platform has been designed to be freely accessible to the public to encourage engagement, meaning that no registration is needed to send photo records. Users are invited to upload photographs of insects interacting with flowers (hereafter referred to as “records”) and possibly provide additional ecological information.</para>
+          <para>The primary details to be entered include the date of observation, the geographical coordinates, the habitat type, the abundance of plant individuals within the population, and the kind and status of site protection. Users can identify the observed organisms, by selecting the pollinator taxonomic aggregation from a given list of alternative choices (bee, wasp, beetle, butterfly, moth, hoverfly, and bee fly) and/or by writing the name of the pollinator, and that of the plant (at the taxonomic level they choose). A team of expert taxonomists then identifies the observations uploaded to the platform to the finest possible taxonomic level, refining the first identification provided by the user (Bitonto et al. 2025). The identification process consists of two steps: first, a team member determines the insect and/or plant; then, a second expert confirms the accuracy or adjusts the identification if necessary. Once verified, the images along with their taxonomic information are displayed publicly on the website map (https://www.life4pollinators.eu/en/map).</para>
+          <para>The platform was promoted on multiple occasions, especially during the 27 bioblitz events organized throughout the project implementation (from 2021 through to 2024). On these occasions, citizen scientists were assisted by expert taxonomists, ensuring that most plant records identified to species level underwent in situ validation. As a result, it was made possible to identify many records at species level even when the photographs alone could not capture the necessary diagnostic traits for accurate identification. Similarly, insect taxonomists assisted in the correct identification of flower visitors relying on the morphological traits visible in the photographs or in the field, since no insect was sampled during the events. . In cases where closely related or cryptic species could not be confidently distinguished visually, the experts relied on their experience or, when possible, consulted entomological collections available for the surveyed areas. However, since a formal taxonomic identification was not possible, most of the insect records identified at species level should be intended as morphological groups (e.g. Bombus terrestris). This means that the observed individuals exhibited morphological characteristics of the indicated species but discriminating them from similar species was not possible on a visual basis.</para>
+</description>
+      </methodStep>
+    </methods>
+    <usageCitation>
+      <bibtex><![CDATA[
+         @article{Barberis_Bitonto_Costantino_Bianco_Birtele_Bonifacino_Cangelmi_Capò_Chroni_d’Agostino_et al._2025, title={Insect-flower interactions in the Mediterranean area: a Citizen Science dataset collated within the LIFE 4 Pollinators project}, volume={39}, url={https://www.pollinationecology.org/index.php/jpe/article/view/872}, DOI={10.26786/1920-7603(2025)872}, abstractNote={&amp;lt;p&amp;gt;Pollinators play a vital role in most terrestrial ecosystems, supporting wild plant communities and enhancing agricultural yields. However, despite their ecological and economic importance, they have been experiencing an alarming decline over the past decades. The Mediterranean region, known for harboring highly diverse communities of plants and pollinators, is particularly vulnerable due to intense anthropogenic pressures. Furthermore, the ecological roles of many floral visitors remain poorly understood, hindering conservation efforts. In response, in recent years, growing attention has been directed toward the contribution that citizens can give in support of pollinator research. An increasing number of projects have adopted a Citizen Science approach to enable large-scale data collection. The LIFE 4 Pollinators project (LIFE18/GIE/IT/000755) “Involving people to protect wild bees and other pollinators in the Mediterranean” aims to promote the conservation of pollinating insects and entomophilous plants across the Mediterranean region by fostering progressive changes in human practices that threaten wild pollinators. In addition to the implementation of several actions to raise awareness, the project launched a web platform to collect photographic records of flower–insect interaction from the public. The platform is expected to remain active for at least ten years, during which we encourage continuing record submissions by interested bodies. With this data paper we are making the current dataset freely accessible to anyone, committing to periodic online updates.&amp;lt;/p&amp;gt;}, journal={Journal of Pollination Ecology}, author={Barberis, Marta and Bitonto, Fortunato Fulvio and Costantino, Roberto and Bianco, Lorenzo and Birtele, Daniele and Bonifacino, Marco and Cangelmi, Giacomo and Capò, Miquel and Chroni, Athanasia and d’Agostino, Marco and et al.}, year={2025}, month={Nov.}, pages={306–315} }
+      ]]></bibtex>
+    </usageCitation>
+  </dataset>
+  <additionalMetadata>
+    <metadata>
+      <importedFromXML filename="eml.xml" dateImported="2025-08-04" taxonomicCoverageExempt="True"/>
+    </metadata>
+  </additionalMetadata>
+  <additionalMetadata>
+    <metadata>
+      <emlEditor app="ezEML" release="2025.07.17"/>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>

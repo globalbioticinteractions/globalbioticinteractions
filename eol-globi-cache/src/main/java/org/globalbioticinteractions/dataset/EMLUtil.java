@@ -43,15 +43,18 @@ public class EMLUtil {
             String name = StringUtils.isBlank(collectionName) ? datasetTitle : collectionName;
 
             String pubDate = StringUtils.trim(getFirstIfPresent(doc, xpath, "//pubDate"));
-            String citation = StringUtils.trim(getFirstIfPresent(doc, xpath, "//citation"));
+            String citation = StringUtils.trim(getFirstIfPresent(doc, xpath, "//usageCitation/bibtex"));
+            if (StringUtils.isBlank(citation)) {
+                citation = StringUtils.trim(getFirstIfPresent(doc, xpath, "//citation"));
+                citation = StringUtils.appendIfMissing(Stream.of(name, pubDate, citation)
+                        .filter(StringUtils::isNotBlank)
+                        .collect(Collectors.joining(". ")), ".");
+            }
             String gbifElementValue = StringUtils.trim(getFirstIfPresent(doc, xpath, "//gbif"));
 
             ObjectNode objectNode = new ObjectMapper().createObjectNode();
-            String datasetCitation = Stream.of(name, pubDate, citation)
-                    .filter(StringUtils::isNotBlank)
-                    .collect(Collectors.joining(". "));
 
-            objectNode.put("citation", datasetCitation + ".");
+            objectNode.put("citation", StringUtils.replaceChars(citation, "\r\n", " "));
             objectNode.put("format", MIME_TYPE_DWCA);
 
             Node table = getFirstNodeIfPresent(doc, xpath, "//dataTable");
@@ -77,7 +80,7 @@ public class EMLUtil {
                 Node attributeList = getFirstNodeIfPresent(table, xpath, "//attributeList");
                 if (attributeList != null) {
                     NodeList childNodes = attributeList.getChildNodes();
-                    for (int i=0; i<childNodes.getLength(); i++) {
+                    for (int i = 0; i < childNodes.getLength(); i++) {
                         Node attribute = childNodes.item(i);
                         if (StringUtils.equalsAny("attribute", attribute.getNodeName())) {
                             Node id = attribute.getAttributes().getNamedItem("id");

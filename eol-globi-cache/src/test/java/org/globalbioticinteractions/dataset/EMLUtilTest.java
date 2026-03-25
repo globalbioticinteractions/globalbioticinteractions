@@ -87,4 +87,18 @@ public class EMLUtilTest {
         assertThat(proxy.getFormat(), is(MIME_TYPE_DWCA));
     }
 
+    @Test
+    public void withBibtexUsageCitation() throws URISyntaxException, IOException {
+        Dataset origDataset = new DatasetWithResourceMapping("some/namespace", URI.create("some:uri"), new ResourceServiceLocal(new InputStreamFactoryNoop()));
+
+
+        URI emlURI = getClass().getResource("eml-bibtex.xml").toURI();
+        JsonNode config = EMLUtil.datasetFor(origDataset, emlURI);
+
+        DatasetProxy proxy = new DatasetProxy(origDataset);
+        proxy.setConfig(config);
+        assertThat(proxy.getCitation(), is("@article{Barberis_Bitonto_Costantino_Bianco_Birtele_Bonifacino_Cangelmi_Capò_Chroni_d’Agostino_et al._2025, title={Insect-flower interactions in the Mediterranean area: a Citizen Science dataset collated within the LIFE 4 Pollinators project}, volume={39}, url={https://www.pollinationecology.org/index.php/jpe/article/view/872}, DOI={10.26786/1920-7603(2025)872}, abstractNote={&amp;lt;p&amp;gt;Pollinators play a vital role in most terrestrial ecosystems, supporting wild plant communities and enhancing agricultural yields. However, despite their ecological and economic importance, they have been experiencing an alarming decline over the past decades. The Mediterranean region, known for harboring highly diverse communities of plants and pollinators, is particularly vulnerable due to intense anthropogenic pressures. Furthermore, the ecological roles of many floral visitors remain poorly understood, hindering conservation efforts. In response, in recent years, growing attention has been directed toward the contribution that citizens can give in support of pollinator research. An increasing number of projects have adopted a Citizen Science approach to enable large-scale data collection. The LIFE 4 Pollinators project (LIFE18/GIE/IT/000755) “Involving people to protect wild bees and other pollinators in the Mediterranean” aims to promote the conservation of pollinating insects and entomophilous plants across the Mediterranean region by fostering progressive changes in human practices that threaten wild pollinators. In addition to the implementation of several actions to raise awareness, the project launched a web platform to collect photographic records of flower–insect interaction from the public. The platform is expected to remain active for at least ten years, during which we encourage continuing record submissions by interested bodies. With this data paper we are making the current dataset freely accessible to anyone, committing to periodic online updates.&amp;lt;/p&amp;gt;}, journal={Journal of Pollination Ecology}, author={Barberis, Marta and Bitonto, Fortunato Fulvio and Costantino, Roberto and Bianco, Lorenzo and Birtele, Daniele and Bonifacino, Marco and Cangelmi, Giacomo and Capò, Miquel and Chroni, Athanasia and d’Agostino, Marco and et al.}, year={2025}, month={Nov.}, pages={306–315} }"));
+        assertThat(proxy.getFormat(), is(MIME_TYPE_DWCA));
+    }
+
 }
