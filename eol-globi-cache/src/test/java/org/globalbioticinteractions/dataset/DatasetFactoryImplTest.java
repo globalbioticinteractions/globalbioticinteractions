@@ -184,7 +184,7 @@ public class DatasetFactoryImplTest {
             }
         };
         Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("some/repo");
-        assertThat(dataset.getCitation(), is("De Prins, J., & De Prins, W. (2026). Afromoths, online database of Afrotropical moth species (Lepidoptera) (Version 2026-03-01). Belgian Biodiversity Platform, Belspo, Brussels, Belgium. https://www.afromoths.net/"));
+        assertThat(dataset.getCitation(), is("@misc{ChecklistBankDataset2017, publisher = {Belgian Biodiversity Platform, Belspo}, address = {Brussels, Belgium}, version = {2026-03-01}, url = {https://www.afromoths.net/}, title = {Afromoths, online database of Afrotropical moth species (Lepidoptera)}, author = {{De Prins}, {Jurate} and {De Prins}, {Willy}}, year = 2026, month = 3}"));
 
     }
 
