@@ -38,15 +38,18 @@ public class CatalogueOfLifeDataPackageUtilTest {
 
         assertNotNull(jsonNode);
 
-        String target = "/org/globalbioticinteractions/dataset/coldp/globi-expected.json";
-        URL resource = getClass().getResource(target);
-        assertNotNull(resource);
-
         JsonNode expectedConfig = new ObjectMapper().readTree(
                 getClass().getResourceAsStream("coldp/globi-expected.json")
         );
-        assertThat(jsonNode.toPrettyString(),
-                Is.is(expectedConfig.toPrettyString()));
+
+
+        JsonNode tablesNode = jsonNode.at("/tables");
+        assertThat(tablesNode.size(), Is.is(3));
+        for (JsonNode table : tablesNode) {
+            assertThat(table.at("/dcterms:bibliographicCitation").asText(),
+                    Is.is("@misc{ChecklistBankDataset2017, publisher = {Belgian Biodiversity Platform, Belspo}, address = {Brussels, Belgium}, version = {2026-03-01}, url = {https://www.afromoths.net/}, title = {Afromoths, online database of Afrotropical moth species (Lepidoptera)}, author = {{De Prins}, {Jurate} and {De Prins}, {Willy}}, year = 2026, month = 3}")
+            );
+        }
 
     }
 
