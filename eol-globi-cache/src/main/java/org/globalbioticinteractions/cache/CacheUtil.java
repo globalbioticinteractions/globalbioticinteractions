@@ -56,7 +56,7 @@ public final class CacheUtil {
     }
 
     public static File findCacheDirForNamespace(File cachePath, String namespace) {
-        return new File(cachePath, namespace);
+        return new File(cachePath, StringUtils.replace(namespace, ":", "/"));
     }
 
 

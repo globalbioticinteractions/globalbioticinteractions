@@ -74,7 +74,7 @@ public class DatasetRegistryLocal implements DatasetRegistry {
             Files.walkFileTree(
                     directory.toPath(),
                     EnumSet.of(FOLLOW_LINKS),
-                    3,
+                    6,
                     new SimpleFileVisitor<Path>() {
                         @Override
                         public FileVisitResult visitFile(Path file,

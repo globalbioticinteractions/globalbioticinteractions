@@ -70,4 +70,18 @@ public class CacheLocalReadonlyTest {
         assertThat(contentProvenance.getLocalURI(), is(archiveURL.toURI()));
     }
 
+    @Test
+    public void remoteResourceLSID() throws URISyntaxException {
+        String namespaceCacheDir = "/test-cache/urn/lsid/checklistbank.org/dataset/2017/";
+        URL resource = getClass().getResource(namespaceCacheDir + "access.tsv");
+        URL archiveURL = getClass().getResource(namespaceCacheDir + "631d3777cf83e1abea848b59a6589c470cf0c7d0fd99682c4c104481ad9a543f");
+        String cacheDir = new File(resource.toURI()).getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParent();
+        String namespace = "urn:lsid:checklistbank.org:dataset:2017";
+        CacheLocalReadonly cacheLocalReadonly = new CacheLocalReadonly(namespace, cacheDir, cacheDir, new ResourceServiceLocal(new InputStreamFactoryNoop()), new ContentPathFactoryDepth0(), new ProvenancePathFactoryImpl());
+        ContentProvenance contentProvenance = cacheLocalReadonly.provenanceOf(URI.create("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
+        assertThat(contentProvenance.getSourceURI().toString(), is("https://zenodo.org/record/207958/files/globalbioticinteractions/template-dataset-0.0.2.zip"));
+        assertThat(contentProvenance.getAccessedAt(), is("2017-09-14T16:39:33Z"));
+        assertThat(contentProvenance.getLocalURI(), is(archiveURL.toURI()));
+    }
+
 }

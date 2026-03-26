@@ -23,7 +23,6 @@ public class ContentPathDepth0 implements ContentPath {
 
     @Override
     public URI forContentId(String contentId) {
-
         return StringUtils.isBlank(namespace)
                 ? new File(cacheDir, contentId).toURI()
                 : new File(CacheUtil.findCacheDirForNamespace(cacheDir, namespace), contentId).toURI();

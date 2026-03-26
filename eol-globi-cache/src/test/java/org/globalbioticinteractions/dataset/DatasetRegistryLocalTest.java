@@ -1,5 +1,6 @@
 package org.globalbioticinteractions.dataset;
 
+import com.sun.xml.internal.ws.util.StreamUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.eol.globi.util.InputStreamFactoryNoop;
@@ -27,6 +28,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -45,6 +49,10 @@ public class DatasetRegistryLocalTest {
         URL accessFile = getClass().getResource("/test-cache/globalbioticinteractions/template-dataset/access.tsv");
         assertNotNull(accessFile);
         File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile();
+        return getDatasetRegistryLocal(cacheDir);
+    }
+
+    private DatasetRegistryLocal getDatasetRegistryLocal(File cacheDir) {
         String dataDir = cacheDir.getAbsolutePath();
         String provDir = cacheDir.getAbsolutePath();
         return new DatasetRegistryLocal(cacheDir.getAbsolutePath(),
@@ -82,6 +90,41 @@ public class DatasetRegistryLocalTest {
         assertThat(actual.getConfigURI(), is(URI.create("/globi.json")));
         assertThat(actual.getArchiveURI().toString(), is("https://github.com/globalbioticinteractions/template-dataset/archive/8abd2ba18457288f33527193299504015fae6def.zip"));
         assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
+    }
+
+    @Test
+    public void datasetChecklistBank() throws DatasetRegistryException, URISyntaxException {
+        File cacheDir = cacheDirForChecklistBankDataset();
+
+        Dataset actual = getDatasetRegistryLocal(cacheDir)
+                .datasetFor("urn:lsid:checklistbank.org:dataset:2017");
+
+        assertThat(actual, is(notNullValue()));
+        assertThat(actual.getConfigURI(), is(URI.create("/globi.json")));
+        assertThat(actual.getNamespace(), is("urn:lsid:checklistbank.org:dataset:2017"));
+        assertThat(actual.getArchiveURI().toString(), is("https://github.com/globalbioticinteractions/template-dataset/archive/8abd2ba18457288f33527193299504015fae6def.zip"));
+        assertThat(actual.getCitation(), is("Jorrit H. Poelen. 2014. Species associations manually extracted from literature."));
+    }
+
+    @Test
+    public void findDatasetsIncludingThatOneFromChecklistBank() throws DatasetRegistryException, URISyntaxException {
+        File cacheDir = cacheDirForChecklistBankDataset();
+
+        Iterable<String> namespaces = getDatasetRegistryLocal(cacheDir)
+                .findNamespaces();
+
+        List<String> namespaceList = StreamSupport.stream(namespaces.spliterator(), false).collect(Collectors.toList());
+
+        assertThat(namespaceList, hasItem("globalbioticinteractions/template-dataset"));
+        assertThat(namespaceList, hasItem("urn:lsid:checklistbank.org:dataset:2017"));
+
+    }
+
+    private File cacheDirForChecklistBankDataset() throws URISyntaxException {
+        URL accessFile = getClass().getResource("/test-cache/urn/lsid/checklistbank.org/dataset/2017/access.tsv");
+        assertNotNull(accessFile);
+        File cacheDir = new File(accessFile.toURI()).getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+        return cacheDir;
     }
 
     @Test
