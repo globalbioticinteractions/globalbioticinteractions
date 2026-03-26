@@ -1,6 +1,5 @@
 package org.globalbioticinteractions.dataset;
 
-import com.sun.xml.internal.ws.util.StreamUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.eol.globi.util.InputStreamFactoryNoop;
@@ -19,7 +18,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
