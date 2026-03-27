@@ -89,8 +89,8 @@ public class CatalogueOfLifeDataPackageUtil {
             for (String plural : Arrays.asList("", "s")) {
                 for (String subfolder : Arrays.asList("", "data/")) {
                     for (String ext : extensions) {
-                        String filename = name + plural + "." + ext;
-                        try (InputStream retrieve = origDataset.retrieve(URI.create("/" + subfolder + filename))) {
+                        String filename = subfolder + name + plural + "." + ext;
+                        try (InputStream retrieve = origDataset.retrieve(URI.create("/" + filename))) {
                             IOUtils.copy(retrieve, NullOutputStream.NULL_OUTPUT_STREAM);
                             detectedFilename = filename;
                             break;
