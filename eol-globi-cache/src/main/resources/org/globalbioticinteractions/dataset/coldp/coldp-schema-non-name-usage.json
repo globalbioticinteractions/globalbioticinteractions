@@ -211,7 +211,7 @@
         "foreignKeys": [{
           "columnReference": "sourceTaxonId",
           "reference": {
-            "resource": "nameusage.csv",
+            "resource": "taxon.csv",
             "columnReference": "sourceTaxonId"
           }
         }, {
