@@ -536,7 +536,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private String appendInteractionCandidatesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates, DwcTerm term, String interactionTypeNameDefault) {
+    private void appendInteractionCandidatesIfAvailable(Record rec, List<Map<String, String>> interactionCandidates, DwcTerm term, String interactionTypeNameDefault) {
         String associatedTaxa = rec.value(term);
         if (StringUtils.isNotBlank(associatedTaxa)) {
             List<Map<String, String>> associatedTaxonProperties = AssociatedTaxaUtil.parseAssociatedTaxa(associatedTaxa, interactionTypeNameDefault);
@@ -546,7 +546,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 interactionCandidates.add(associatedTaxonProperty);
             }
         }
-        return associatedTaxa;
     }
 
     static void addCandidatesFromRemarks(List<Map<String, String>> interactionCandidates, String occurrenceRemarks) throws IOException {
