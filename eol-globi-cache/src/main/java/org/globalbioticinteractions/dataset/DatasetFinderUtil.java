@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Enumeration;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -17,31 +18,46 @@ public class DatasetFinderUtil {
         try (ZipFile zipFile = new ZipFile(localDatasetURI)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-            String commonPrefix = "";
+            PrefixCalculator commonPrefixCalculator = new PrefixCalculator();
+
             while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                commonPrefix = StringUtils.getCommonPrefix(
-                        StringUtils.defaultIfBlank(commonPrefix, entry.getName()),
-                        entry.getName()
-                );
+                commonPrefixCalculator.accept(entries.nextElement());
             }
 
-            int lastSlash = StringUtils.lastIndexOf(commonPrefix, "/");
-            return URI.create("jar:" + localDatasetURI.toURI() + "!/" + (lastSlash > 0 ? commonPrefix.substring(0, lastSlash+1) : ""));
+            return URI.create("jar:" + localDatasetURI.toURI() + "!/" + commonPrefixCalculator.getCommonPrefix());
         }
     }
 
     public static String getLocalDatasetURIRoot(InputStream zipStream) {
         String archiveRoot = "";
+        PrefixCalculator prefixCalculator = new PrefixCalculator();
         try (ZipInputStream is = new ZipInputStream(zipStream)) {
-            ZipEntry entry = is.getNextEntry();
-            if (entry != null && entry.isDirectory()) {
-                archiveRoot = entry.getName();
+            ZipEntry entry = null;
+            while ((entry = is.getNextEntry()) != null) {
+                prefixCalculator.accept(entry);
             }
         } catch (IOException ex) {
             //
         }
-        return archiveRoot;
+        return prefixCalculator.getCommonPrefix();
     }
 
+    private static class PrefixCalculator implements Consumer<ZipEntry> {
+
+        private String commonPrefix = "";
+
+        @Override
+        public void accept(ZipEntry entry) {
+            commonPrefix = StringUtils.getCommonPrefix(
+                    StringUtils.defaultIfBlank(commonPrefix, entry.getName()),
+                    entry.getName()
+            );
+
+        }
+
+        public String getCommonPrefix() {
+            int lastSlash = StringUtils.lastIndexOf(commonPrefix, "/");
+            return (lastSlash > 0 ? commonPrefix.substring(0, lastSlash + 1) : "");
+        }
+    }
 }
