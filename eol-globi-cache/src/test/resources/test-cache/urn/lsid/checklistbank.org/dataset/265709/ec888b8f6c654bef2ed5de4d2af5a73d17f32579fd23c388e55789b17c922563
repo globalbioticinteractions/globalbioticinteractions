@@ -1,0 +1,86 @@
+---
+title: "A Revised World Catalogue of Ghost Moths (Lepidoptera: Hepialidae)"
+alias: Hepialidae
+description: |-
+  This dataset has been built from the catalogue published as:
+
+  John R. Grehan, Carlos G.C. Mielke, John R.G. Turner, and John E. Nielsen. 2023. A revised world catalogue of Ghost Moths (Lepidoptera: Hepialidae) with taxonomic and biological annotations. ZooNova 28: 1-337. https://doi.org/10.5281/zenodo.8292448
+
+  We present a taxonomic list and bibliography for 82 genera and 701 species of Hepialidae sensu stricto. The literature survey spans nearly 400 years, from 1634 to the present, and comprises 1,793 references. Genera and species are presented in alphabetical order. Each species record comprises the original taxonomic work, synonyms where applicable, general distribution, type locality and type depository where known, and literature pertaining to illustrations of the adult, morphology, biology, and host plant records (as documented in the literature, regardless of verification). Taxonomic changes are justified, and include several new combinations. There is a brief overview of ecology and conservation issues along with biographies of some past workers in the field, a broad geographic summary of generic distribution, colour illustrations of some selected species, and a summary of fungal and plant food sources. The following taxonomic changes are proposed: 1) Status restored: Aenetus cyanochlora Lower, 1894, stat. rest., Endoclita pallescens Tshistjakov, 1996, stat. rest., Endoclita pfitzneri (Gaede, 1933), stat. rest.; 2) New combinations: Gymelloxes costaricensis (Druce, 1887) (Phassus), comb. n., Philoenia cocama (Pfitzner, 1914) (Dalaca), comb. n., Philoenia niepelti (Pfitzner, 1914) (Dalaca), comb. n., Pseudodalaca smithi (Druce, 1889) (Phassus), comb. n., Vietteogorgopis petropolisiensis (Viette, 1952) (Cibyra), comb. n.; 3) New synonymies: Dalaca vibicata Pfitzner, 1914, syn. n. of Dalaca trilinearis Pfitzner, 1914, Dalaca manoa Pfitzner, 1914, syn. n. of Dalaca olivescens Pfitzner, 1914. 4) Status restored and new combination: Philoenia nannophyes (Pfitzner, 1914) (Dalaca), stat. rest., comb. n.
+
+  Following the publication of Grehan et al. 2023, the dataset has been updated by Donald Hobern with new taxonomic information from the following publications:
+
+  * Pham et al. 2024, Notes on _Endoclita_ C. & R. Felder (Lepidoptera: Hepialidae) feeding on _Eucalyptus_ in Vietnam, with new records and a new species, Zootaxa 5453 (1): 63-85. [https://doi.org/10.5281/zenodo.8292448](https://doi.org/10.5281/zenodo.8292448)
+  * Grehan et al. 2025, Four new species of Aenetus Herrich-Schäffer (Lepidoptera: Hepialidae) from eastern Indonesia, with comment on distributional correlation with Gondwana tectonics, Zootaxa 5613 (3): 537-554. [https://doi.org/10.11646/zootaxa.5613.3.6](https://doi.org/10.11646/zootaxa.5613.3.6)
+  * Grehan et al. 2025, Three new species of the ghost moth Magnificus Yan from China and India (Lepidoptera, Hepialidae), Zootaxa 5679 (4): 552-572. [https://doi.org/10.11646/zootaxa.5679.4.5](https://doi.org/10.11646/zootaxa.5679.4.5)
+  * Mielke et al. 2025, Review of the genus Cibyra Walker (Lepidoptera: Hepialoidea: Hepialidae) with descriptions of twenty-four new species from Brazil and Argentina, Zootaxa 5709 (1): 1-74. [https://doi.org/10.11646/zootaxa.5709.1.1](https://doi.org/10.11646/zootaxa.5709.1.1)
+
+issued: 2025-10-21
+version: 1.0.4
+creator:
+ -
+  orcid: 0000-0002-3119-1140
+  given: John R.
+  family: Grehan
+  rorid: 02pjdv450
+  department: McGuire Center for Lepidoptera and Biodiversity
+  city: Gainesville
+  state: Florida
+  country: US
+  email: calabar.john@gmail.com
+  address: "Gainesville, Florida, United States of America"
+  organisation: "Florida Museum of Natural History, University of Florida"
+ -
+  given: Carlos G.C.
+  family: Mielke
+  rorid: 02pjdv450
+  department: McGuire Center for Lepidoptera and Biodiversity
+  city: Gainesville
+  state: Florida
+  country: US
+  email: cmielke1@uol.com.br
+  address: "Gainesville, Florida, United States of America"
+  organisation: "Florida Museum of Natural History, University of Florida"
+ -
+  orcid: 0000-0001-6031-1335
+  given: John R.G.
+  family: Turner
+  rorid: 024mrxd33
+  department: School of Biology
+  city: Leeds
+  state: England
+  country: GB
+  email: j.r.g.turner@leeds.ac.uk
+  address: "Leeds, England, United Kingdom"
+  organisation: University of Leeds
+ -
+  orcid: 0000-0001-9813-6077
+  given: John E.
+  family: Nielsen
+  city: Downer
+  state: ACT
+  country: AU
+  email: zelotypia.stacyi@gmail.com
+  address: "Downer, ACT, Australia"
+editor:
+ -
+  orcid: 0000-0001-6492-4016
+  given: Donald
+  family: Hobern
+  rorid: 04m098c22
+  city: Canberra
+  state: ACT
+  country: AU
+  email: donald.hobern@sp2000.org
+  address: "Canberra, ACT, Australia"
+  organisation: Species 2000
+keyword: []
+geographicScope: Global
+taxonomicScope: Ghost Moths
+temporalScope: Recent
+confidence: 5
+completeness: 100
+license: cc by
+url: https://doi.org/10.5281/zenodo.8292448
+logo: https://api.checklistbank.org/dataset/265709/logo
+source: []

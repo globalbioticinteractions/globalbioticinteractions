@@ -187,5 +187,42 @@ public class DatasetFactoryImplTest {
         assertThat(dataset.getCitation(), is("@misc{ChecklistBankDataset2017, publisher = {Belgian Biodiversity Platform, Belspo}, address = {Brussels, Belgium}, version = {2026-03-01}, url = {https://www.afromoths.net/}, title = {Afromoths, online database of Afrotropical moth species (Lepidoptera)}, author = {{De Prins}, {Jurate} and {De Prins}, {Willy}}, year = 2026, month = 3}"));
 
     }
+    @Test
+    public void createDatasetCatalogueOfLifeDataPackageNonNameUsage() throws DatasetRegistryException, URISyntaxException {
+        String archiveURI = "jar:" + getClass().getResource("coldp-hepialidae.zip").toURI() + "!/Hepialidae_1.0/";
+        assertNotNull(archiveURI);
+        final DatasetRegistry finder = new DatasetRegistry() {
+            @Override
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
+                return Collections.singletonList("some/repo");
+            }
+
+            @Override
+            public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                for (String namespace : findNamespaces()) {
+                    namespaceConsumer.accept(namespace);
+                }
+            }
+
+
+            @Override
+            public Dataset datasetFor(String namespace) throws DatasetRegistryException {
+                ResourceServiceLocal resourceService = new ResourceServiceLocal(new InputStreamFactoryNoop()) {
+
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        return super.retrieve(resourceName);
+                    }
+
+                    ;
+
+                };
+                return new DatasetWithResourceMapping(namespace, URI.create(archiveURI), resourceService);
+            }
+        };
+        Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("urn:lsid:checklistbank.org:dataset:265709");
+        assertThat(dataset.getCitation(), is("@misc{ChecklistBankDatasetHepialidae, version = {1.0.4}, url = {https://doi.org/10.5281/zenodo.8292448}, title = {A Revised World Catalogue of Ghost Moths (Lepidoptera: Hepialidae)}, author = {{Grehan}, {John R.} and {Mielke}, {Carlos G.C.} and {Turner}, {John R.G.} and {Nielsen}, {John E.}}, year = 2025, month = 10}"));
+
+    }
 
 }

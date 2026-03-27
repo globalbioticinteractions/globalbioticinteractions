@@ -3,7 +3,6 @@ package org.globalbioticinteractions.dataset;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.UUID;
 
 public class CatalogueOfLifeDataPackageUtil {
 
@@ -32,12 +32,18 @@ public class CatalogueOfLifeDataPackageUtil {
             // https://catalogueoflife.github.io/coldp/
             List<String> extensions = Arrays.asList("csv", "tsv", "txt", "tab");
 
+            List<String> nameCandidates = Arrays.asList("name", "Name");
+            List<String> taxonCandidates = Arrays.asList("taxon", "Taxon");
             List<String> nameUsageCandidates = Arrays.asList("nameusage", "name-usage", "nameUsage", "NameUsage", "name_usage");
             List<String> speciesInteractionCandidates = Arrays.asList("speciesinteraction", "species-interaction", "speciesInteraction", "SpeciesInteraction", "species_interaction");
             List<String> referenceCandidates = Arrays.asList("reference", "Reference");
 
             TreeMap<String, String> namesDetected = new TreeMap<String, String>() {
                 {
+                    put("name.csv",
+                            detectTableCandidates(origDataset, nameCandidates, extensions, availableFilenames));
+                    put("taxon.csv",
+                            detectTableCandidates(origDataset, taxonCandidates, extensions, availableFilenames));
                     put("nameusage.csv",
                             detectTableCandidates(origDataset, nameUsageCandidates, extensions, availableFilenames));
                     put("speciesinteractions.csv",
@@ -49,7 +55,10 @@ public class CatalogueOfLifeDataPackageUtil {
 
             JsonNode configNode = new ObjectMapper(new YAMLFactory()).readTree(config);
 
-            JsonNode jsonNode = new ObjectMapper().readTree(getTemplate());
+            InputStream schemaStream = namesDetected.get("nameusage.csv") == null
+                    ? getSchemaNoneNameUsage()
+                    : getSchemaNameUsage();
+            JsonNode jsonNode = new ObjectMapper().readTree(schemaStream);
             JsonNode tables = jsonNode.at("/tables");
 
             for (JsonNode table : tables) {
@@ -72,14 +81,16 @@ public class CatalogueOfLifeDataPackageUtil {
         String detectedFilename = null;
         for (String name : nameUsageCandidates) {
             for (String plural : Arrays.asList("", "s")) {
-                for (String ext : extensions) {
-                    String filename = name + plural + "." + ext;
-                    try (InputStream retrieve = origDataset.retrieve(URI.create("/" + filename))) {
-                        IOUtils.copy(retrieve, NullOutputStream.NULL_OUTPUT_STREAM);
-                        detectedFilename = filename;
-                        break;
-                    } catch (IOException ex) {
-                        // ignore
+                for (String subfolder : Arrays.asList("", "data/")) {
+                    for (String ext : extensions) {
+                        String filename = name + plural + "." + ext;
+                        try (InputStream retrieve = origDataset.retrieve(URI.create("/" + subfolder + filename))) {
+                            IOUtils.copy(retrieve, NullOutputStream.NULL_OUTPUT_STREAM);
+                            detectedFilename = filename;
+                            break;
+                        } catch (IOException ex) {
+                            // ignore
+                        }
                     }
                 }
             }
@@ -91,12 +102,14 @@ public class CatalogueOfLifeDataPackageUtil {
         if (jsonNode instanceof ObjectNode) {
             StringBuilder bibtexEntry = new StringBuilder();
             bibtexEntry.append("@misc{");
-            bibtexEntry.append("ChecklistBankDataset" + configNode.at("/key").asText());
-            appendField(bibtexEntry, "publisher", configNode.at("/publisher/organisation").asText());
-            appendField(bibtexEntry, "address", configNode.at("/publisher/address").asText());
-            appendField(bibtexEntry, "version", configNode.at("/version").asText());
-            appendField(bibtexEntry, "url", configNode.at("/url").asText());
-            appendField(bibtexEntry, "title", configNode.at("/title").asText());
+            String key = StringUtils.defaultIfBlank(configNode.at("/key").asText(), configNode.at("/alias").asText());
+
+            bibtexEntry.append("ChecklistBankDataset" + key);
+            appendFieldIfAvailable(bibtexEntry, "publisher", configNode.at("/publisher/organisation").asText());
+            appendFieldIfAvailable(bibtexEntry, "address", configNode.at("/publisher/address").asText());
+            appendFieldIfAvailable(bibtexEntry, "version", configNode.at("/version").asText());
+            appendFieldIfAvailable(bibtexEntry, "url", configNode.at("/url").asText());
+            appendFieldIfAvailable(bibtexEntry, "title", configNode.at("/title").asText());
             DateTime issuedDate = DateUtil.parseDateUTC(configNode.at("/issued").asText());
             JsonNode creators = configNode.at("/creator");
             StringBuilder authorString = new StringBuilder();
@@ -105,15 +118,15 @@ public class CatalogueOfLifeDataPackageUtil {
                 appendPropertyValue(creator, "/given", authorString, ", ");
             }
 
-            appendField(bibtexEntry, "author", authorString.toString());
-            appendField(bibtexEntry, "year", issuedDate.getYear());
-            appendField(bibtexEntry, "month", issuedDate.getMonthOfYear());
+            appendFieldIfAvailable(bibtexEntry, "author", authorString.toString());
+            appendFieldIfAvailable(bibtexEntry, "year", issuedDate.getYear());
+            appendFieldIfAvailable(bibtexEntry, "month", issuedDate.getMonthOfYear());
             bibtexEntry.append("}");
             ((ObjectNode) jsonNode).put("dcterms:bibliographicCitation", bibtexEntry.toString());
         }
     }
 
-    private static void appendField(StringBuilder bibtexEntry, String fieldName, int fieldValue) {
+    private static void appendFieldIfAvailable(StringBuilder bibtexEntry, String fieldName, int fieldValue) {
         bibtexEntry.append(", " + fieldName + " = " + fieldValue);
     }
 
@@ -134,12 +147,18 @@ public class CatalogueOfLifeDataPackageUtil {
         }
     }
 
-    private static void appendField(StringBuilder bibtexEntry, String fieldName, String fieldValue) {
-        bibtexEntry.append(", " + fieldName + " = {" + fieldValue + "}");
+    private static void appendFieldIfAvailable(StringBuilder bibtexEntry, String fieldName, String fieldValue) {
+        if (StringUtils.isNoneBlank(fieldValue)) {
+            bibtexEntry.append(", " + fieldName + " = {" + fieldValue + "}");
+        }
     }
 
-    private static InputStream getTemplate() {
-        return CatalogueOfLifeDataPackageUtil.class.getResourceAsStream("coldp/globi-template.json");
+    private static InputStream getSchemaNameUsage() {
+        return CatalogueOfLifeDataPackageUtil.class.getResourceAsStream("coldp/coldp-schema-name-usage.json");
+    }
+
+    private static InputStream getSchemaNoneNameUsage() {
+        return CatalogueOfLifeDataPackageUtil.class.getResourceAsStream("coldp/coldp-schema-non-name-usage.json");
     }
 
 }
