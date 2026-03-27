@@ -147,6 +147,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         String patchFile = "/org/eol/globi/data/usnm/usnm-patches.tsv";
         try {
             InputStream is = getClass().getResourceAsStream(patchFile);
+            if (is == null) {
+                throw new IllegalArgumentException("expected patch file [" + patchFile + "] does not exist");
+            }
             String[] lines = StringUtils.split(IOUtils.toString(is, StandardCharsets.UTF_8), "\n");
             for (String line : lines) {
                 String[] values = StringUtils.split(line, "\t");
@@ -166,7 +169,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static final Pattern FEEDING_ON_PATTERN = Pattern.compile("([A-Za-z ]+)(?<interactionTypeName>[fF]eeding on)[ ](?<possiblyCommonNames>[a-z]+[ ])*(?<targetTaxonName>[A-Z][a-z ]+)");
     public static final Pattern ON_PATTERN = Pattern.compile("(?<interactionTypeName>[Oo]n)[ ](?<targetTaxonName>[A-Za-z ,]+)");
 
-    private static Pattern INATURALIST_TAXON =
+    private final static Pattern INATURALIST_TAXON =
             Pattern.compile("http[s]{0,1}://(www.){0,1}inaturalist.org/taxa/(?<taxonId>[0-9]+)");
     private static final Map<Pair<URI, String>, String> QUALIFIED_NAME_CACHE
             = Collections.synchronizedMap(new TreeMap<Pair<URI, String>, String>() {
@@ -346,7 +349,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                     importAssociatedTaxaExtension(archive, referencingListener, tmpDir);
 
-                    int i = importCore(archive, listenerWithContext, archiveURL);
+                    int i = importCore(archive, listenerWithContext);
                     getLogger().info(null, "[" + archiveURL + "]: scanned [" + i + "] record(s)");
                 }
             } finally {
@@ -389,8 +392,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private int importCore(Archive archive,
-                           InteractionListener interactionListener,
-                           String archiveURL) throws StudyImporterException {
+                           InteractionListener interactionListener) throws StudyImporterException {
         AtomicInteger recordCounter = new AtomicInteger(0);
         ClosableIterator<Record> iterator = archive.getCore().iterator(false, false);
         while (true) {
@@ -549,7 +551,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             addUSNMStyleHostOccurrenceRemarks(interactionCandidates, occurrenceRemarks);
             addRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(interactionCandidates, occurrenceRemarks);
             addArtsprosjektetGyrodactylusStyleRemarks(interactionCandidates, occurrenceRemarks);
-            String[] remarks = StringUtils.split(occurrenceRemarks, ";,.\":\'");
+            String[] remarks = StringUtils.split(occurrenceRemarks, ";,.\":'");
             for (String remark : remarks) {
                 addKilledByPetsRemarks(interactionCandidates, remark);
                 addKilledByHumansRemarks(interactionCandidates, remark);
@@ -1240,7 +1242,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                     ArchiveFile extension = findResourceExtension(archive, EXTENSION_REFERENCE);
                     if (extension != null) {
-                        Term rowType = extension.getRowType();
                         for (Record record : wrapRecordIterable(extension)) {
                             Map<String, String> props = new TreeMap<>();
                             termsToMap(record, props);
@@ -1845,7 +1846,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 put(Pair.of(term.namespace(), term.simpleName()), getQualifiedName(term));
             }
         });
-        private ArrayList<Object> types = new ArrayList<>();
 
         public ResourceTypeConsumer(Map<String, String> props) {
             this.props = props;
