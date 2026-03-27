@@ -1382,7 +1382,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
                 putIfAbsentAndNotBlank(props, INTERACTION_TYPE_NAME, relationship);
                 putIfAbsentAndNotBlank(props, INTERACTION_TYPE_ID, relationshipTypeIdValue);
-                putIfAbsentAndNotBlank(props, DatasetImporterForMetaTable.EVENT_DATE, record.value(DwcTerm.relationshipEstablishedDate));
 
                 for (DwcTerm termType : termTypes) {
                     String key = getQualifiedName(termType);

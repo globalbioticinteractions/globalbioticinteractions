@@ -1701,7 +1701,7 @@ public class DatasetImporterForDwCATest {
                     assertThat(interaction.get(TARGET_TAXON_NAME), is("Enhydra lutris kenyoni"));
                     assertThat(interaction.get(DatasetImporterForTSV.REFERENCE_CITATION), is("https://www.inaturalist.org/users/dpom"));
                     assertThat(interaction.get(DatasetImporterForTSV.RESOURCE_TYPES), is("http://rs.tdwg.org/dwc/terms/ResourceRelationship | http://rs.tdwg.org/dwc/terms/Occurrence | http://rs.tdwg.org/dwc/terms/Taxon"));
-
+                    assertThat(interaction.get(EVENT_DATE), is("2012-08-21T17:44:47-07:00"));
                 }
 
             }
