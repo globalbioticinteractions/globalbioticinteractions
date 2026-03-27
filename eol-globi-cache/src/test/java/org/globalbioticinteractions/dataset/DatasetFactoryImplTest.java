@@ -183,7 +183,7 @@ public class DatasetFactoryImplTest {
                 return new DatasetWithResourceMapping(namespace, URI.create(archiveURI), resourceService);
             }
         };
-        Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("some/repo");
+        Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("urn:lsid:checklistbank.org:dataset:2017");
         assertThat(dataset.getCitation(), is("@misc{ChecklistBankDataset2017, publisher = {Belgian Biodiversity Platform, Belspo}, address = {Brussels, Belgium}, version = {2026-03-01}, url = {https://www.afromoths.net/}, title = {Afromoths, online database of Afrotropical moth species (Lepidoptera)}, author = {{De Prins}, {Jurate} and {De Prins}, {Willy}}, year = 2026, month = 3}"));
 
     }
