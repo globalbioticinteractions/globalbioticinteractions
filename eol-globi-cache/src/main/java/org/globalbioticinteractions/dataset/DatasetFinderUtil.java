@@ -1,5 +1,7 @@
 package org.globalbioticinteractions.dataset;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,16 +17,17 @@ public class DatasetFinderUtil {
         try (ZipFile zipFile = new ZipFile(localDatasetURI)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-            String archiveRoot = null;
+            String commonPrefix = "";
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.isDirectory()) {
-                    archiveRoot = entry.getName();
-                    break;
-                }
+                commonPrefix = StringUtils.getCommonPrefix(
+                        StringUtils.defaultIfBlank(commonPrefix, entry.getName()),
+                        entry.getName()
+                );
             }
 
-            return URI.create("jar:" + localDatasetURI.toURI() + "!/" + archiveRoot);
+            int lastSlash = StringUtils.lastIndexOf(commonPrefix, "/");
+            return URI.create("jar:" + localDatasetURI.toURI() + "!/" + (lastSlash > 0 ? commonPrefix.substring(0, lastSlash+1) : ""));
         }
     }
 

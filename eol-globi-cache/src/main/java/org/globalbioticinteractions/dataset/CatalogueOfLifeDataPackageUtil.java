@@ -14,11 +14,12 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 
 public class CatalogueOfLifeDataPackageUtil {
 
@@ -58,17 +59,20 @@ public class CatalogueOfLifeDataPackageUtil {
             InputStream schemaStream = namesDetected.get("nameusage.csv") == null
                     ? getSchemaNoneNameUsage()
                     : getSchemaNameUsage();
-            JsonNode jsonNode = new ObjectMapper().readTree(schemaStream);
+
+            String schema = IOUtils.toString(schemaStream, StandardCharsets.UTF_8);
+            for (Map.Entry<String, String> resourceNameDetected : namesDetected.entrySet()) {
+                if (StringUtils.isNotBlank(resourceNameDetected.getValue())) {
+                    schema = StringUtils.replace(schema, "\"" + resourceNameDetected.getKey() + "\"", "\"" + resourceNameDetected.getValue() + "\"");
+                }
+            }
+            JsonNode jsonNode = new ObjectMapper().readTree(schema);
             JsonNode tables = jsonNode.at("/tables");
 
             for (JsonNode table : tables) {
                 setBibliographicCitation(table, configNode);
                 JsonNode url = table.at("/url");
-                String detectedFilename = namesDetected.get(url.asText());
-                if (StringUtils.isBlank(detectedFilename)) {
-                    throw new IOException("failed to resolve equivalent for table [" + url.asText() + "]");
-                }
-                ((ObjectNode) table).put("url", detectedFilename);
+                String detectedFilename = url.asText();
                 String delimiter = StringUtils.endsWith(detectedFilename, "csv") ? "," : "\t";
                 ((ObjectNode) table).put("delimiter", delimiter);
             }

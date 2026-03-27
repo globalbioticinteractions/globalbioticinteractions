@@ -225,4 +225,42 @@ public class DatasetFactoryImplTest {
 
     }
 
+    @Test
+    public void createDatasetCatalogueOfLifeDataPackage2207() throws DatasetRegistryException, URISyntaxException {
+        String archiveURI = "jar:" + getClass().getResource("coldp-2207.zip").toURI() + "!/";
+        assertNotNull(archiveURI);
+        final DatasetRegistry finder = new DatasetRegistry() {
+            @Override
+            public Iterable<String> findNamespaces() throws DatasetRegistryException {
+                return Collections.singletonList("some/repo");
+            }
+
+            @Override
+            public void findNamespaces(Consumer<String> namespaceConsumer) throws DatasetRegistryException {
+                for (String namespace : findNamespaces()) {
+                    namespaceConsumer.accept(namespace);
+                }
+            }
+
+
+            @Override
+            public Dataset datasetFor(String namespace) throws DatasetRegistryException {
+                ResourceServiceLocal resourceService = new ResourceServiceLocal(new InputStreamFactoryNoop()) {
+
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        return super.retrieve(resourceName);
+                    }
+
+                    ;
+
+                };
+                return new DatasetWithResourceMapping(namespace, URI.create(archiveURI), resourceService);
+            }
+        };
+        Dataset dataset = new DatasetFactoryImpl(finder).datasetFor("urn:lsid:checklistbank.org:dataset:2207");
+        assertThat(dataset.getCitation(), is("@misc{ChecklistBankDatasetAlucitoidea, version = {1.1.26.006}, url = {https://alucitoidea.hobern.net}, title = {Catalogue of the Alucitoidea of the World}, author = {{Hobern}, {Donald} and {Gielis}, {Cees}}, year = 2026, month = 1}"));
+
+    }
+
 }
