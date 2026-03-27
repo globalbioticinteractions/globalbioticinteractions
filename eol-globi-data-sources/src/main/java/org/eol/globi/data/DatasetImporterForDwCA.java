@@ -1296,6 +1296,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             } finally {
                 sourceIdDb.close();
                 targetIdDb.close();
+                contextIdDb.close();
                 if (termTypeIdPropertyMap != null) {
                     termTypeIdPropertyMap.close();
                 }
