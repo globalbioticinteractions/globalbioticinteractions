@@ -394,24 +394,27 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private int importCore(Archive archive,
                            InteractionListener interactionListener) throws StudyImporterException {
         AtomicInteger recordCounter = new AtomicInteger(0);
-        ClosableIterator<Record> iterator = archive.getCore().iterator(false, false);
-        while (true) {
-            try {
-                if (!iterator.hasNext()) {
-                    break;
+        try (ClosableIterator<Record> iterator = archive.getCore().iterator(false, false)) {
+            while (true) {
+                try {
+                    if (!iterator.hasNext()) {
+                        break;
+                    }
+                    Record rec = iterator.next();
+                    handleRecord(interactionListener, rec);
+                    recordCounter.incrementAndGet();
+                } catch (IllegalStateException ex) {
+                    URI dataCoordinates = ResourceUtil.getAbsoluteResourceURI(getDataset().getArchiveURI(), URI.create(archive.getCore().getLocation()));
+                    if (ex.getCause() != null && ex.getCause() instanceof ParseException) {
+                        ParseException e = (ParseException) ex.getCause();
+                        int lineNumber = e.getErrorOffset();
+                        dataCoordinates = URI.create("line:" + dataCoordinates + "!/" + lineNumber);
+                    }
+                    LogUtil.logError(getLogger(), "failed to handle dwc record at [" + dataCoordinates + "]", ex);
                 }
-                Record rec = iterator.next();
-                handleRecord(interactionListener, rec);
-                recordCounter.incrementAndGet();
-            } catch (IllegalStateException ex) {
-                URI dataCoordinates = ResourceUtil.getAbsoluteResourceURI(getDataset().getArchiveURI(), URI.create(archive.getCore().getLocation()));
-                if (ex.getCause() != null && ex.getCause() instanceof ParseException) {
-                    ParseException e = (ParseException) ex.getCause();
-                    int lineNumber = e.getErrorOffset();
-                    dataCoordinates = URI.create("line:" + dataCoordinates + "!/" + lineNumber);
-                }
-                LogUtil.logError(getLogger(), "failed to handle dwc record at [" + dataCoordinates + "]", ex);
             }
+        } catch (Exception ex) {
+            throw new StudyImporterException("failed to close core record iterator", ex);
         }
         return recordCounter.get();
 
@@ -1407,7 +1410,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                 propMap.get(targetId),
                                 labelPairFor(termType),
                                 resourceTypeConsumerString);
-                        
+
                         populatePropertiesWithContext(
                                 record,
                                 propMap,
