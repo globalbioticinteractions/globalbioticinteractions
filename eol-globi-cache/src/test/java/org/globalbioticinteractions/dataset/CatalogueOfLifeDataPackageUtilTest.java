@@ -28,20 +28,17 @@ public class CatalogueOfLifeDataPackageUtilTest {
                 new ResourceService() {
                     @Override
                     public InputStream retrieve(URI resourceName) throws IOException {
-                        InputStream is = getClass().getResourceAsStream(resourceName.toString());
-                        assertNotNull("cannot find [" + resourceName + "]", is);
+                        InputStream is = getClass().getResourceAsStream("coldp/" + resourceName.toString());
+                        if (is == null) {
+                            throw new IOException("cannot find [" + resourceName + "]");
+                        }
                         return is;
                     }
                 },
-                URI.create("coldp/metadata.yaml")
+                URI.create("metadata.yaml")
         );
 
         assertNotNull(jsonNode);
-
-        JsonNode expectedConfig = new ObjectMapper().readTree(
-                getClass().getResourceAsStream("coldp/globi-expected.json")
-        );
-
 
         JsonNode tablesNode = jsonNode.at("/tables");
         assertThat(tablesNode.size(), Is.is(3));
