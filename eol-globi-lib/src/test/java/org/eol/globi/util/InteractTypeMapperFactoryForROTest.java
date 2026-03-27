@@ -46,6 +46,32 @@ public class InteractTypeMapperFactoryForROTest {
     }
 
     @Test
+    public void camelCaseToSpaces() throws TermLookupServiceException {
+
+        InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryForRO(new ResourceServiceLocal()).create();
+
+        assertNotNull(interactTypeMapper);
+
+        InteractType interactsWithByName = interactTypeMapper.getInteractType("interacts with");
+        assertThat(interactsWithByName, is(InteractType.INTERACTS_WITH));
+
+    }
+
+    @Test
+    public void camelCaseToSpacesHasHost() throws TermLookupServiceException {
+
+        InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryForRO(new ResourceServiceLocal()).create();
+
+        assertNotNull(interactTypeMapper);
+
+        InteractType interactsWithByName = interactTypeMapper.getInteractType("has host");
+        assertThat(interactsWithByName, is(InteractType.HAS_HOST));
+
+    }
+
+    @Test
     public void reservoirHostOf() throws TermLookupServiceException {
         InteractType expectedType = InteractType.typeOf(InteractType.RESERVOIR_HOST_OF.getIRI());
         assertThat(expectedType.name(), is("RESERVOIR_HOST_OF"));
