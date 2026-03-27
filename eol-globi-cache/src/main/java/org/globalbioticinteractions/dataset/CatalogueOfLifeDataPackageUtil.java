@@ -69,6 +69,8 @@ public class CatalogueOfLifeDataPackageUtil {
                     throw new IOException("failed to resolve equivalent for table [" + url.asText() + "]");
                 }
                 ((ObjectNode) table).put("url", detectedFilename);
+                String delimiter = StringUtils.endsWith(detectedFilename, "csv") ? "," : "\t";
+                ((ObjectNode) table).put("delimiter", delimiter);
             }
 
             return jsonNode;
