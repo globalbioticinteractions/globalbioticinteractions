@@ -17,10 +17,10 @@
     "tableSchema" : {
       "primaryKey": "sourceTaxonId",
       "foreignKeys": [{
-        "columnReference": "nameId",
+        "columnReference": "sourceNameId",
         "reference": {
           "resource": "name.csv",
-          "columnReference": "nameId"
+          "columnReference": "sourceNameId"
         }
       }],
       "columns" : [ {
@@ -64,31 +64,31 @@
         "titles" : "lifezone",
         "datatype" : "string"
       }, {
-        "name" : "kingdom",
+        "name" : "sourceTaxonKingdomName",
         "titles" : "kingdom",
         "datatype" : "string"
       }, {
-        "name" : "phylum",
+        "name" : "sourceTaxonPhylumName",
         "titles" : "phylum",
         "datatype" : "string"
       }, {
-        "name" : "class",
+        "name" : "sourceTaxonClassName",
         "titles" : "class",
         "datatype" : "string"
       }, {
-        "name" : "order",
+        "name" : "sourceTaxonOrderName",
         "titles" : "order",
         "datatype" : "string"
       }, {
-        "name" : "superfamily",
+        "name" : "sourceTaxonSuperfamilyName",
         "titles" : "superfamily",
         "datatype" : "string"
       }, {
-        "name" : "family",
+        "name" : "sourceTaxonFamilyName",
         "titles" : "family",
         "datatype" : "string"
       }, {
-        "name" : "subfamily",
+        "name" : "sourceTaxonSubfamilyName",
         "titles" : "subfamily",
         "datatype" : "string"
       }, {
@@ -96,7 +96,7 @@
         "titles" : "tribe",
         "datatype" : "string"
       }, {
-        "name" : "genus",
+        "name" : "sourceTaxonGenusName",
         "titles" : "genus",
         "datatype" : "string"
       }, {
@@ -104,7 +104,7 @@
         "titles" : "uninomial",
         "datatype" : "string"
       }, {
-        "name" : "species",
+        "name" : "sourceTaxonSpeciesName",
         "titles" : "species",
         "datatype" : "string"
       }, {
@@ -125,9 +125,9 @@
     "headerRowCount" : 1,
     "null" : [ "" ],
     "tableSchema" : {
-      "primaryKey": "nameId",
+      "primaryKey": "sourceNameId",
       "columns" : [ {
-        "name" : "nameId",
+        "name" : "sourceNameId",
         "titles" : "ID",
         "datatype" : "string"
       }, {
@@ -135,15 +135,15 @@
         "titles" : "basionymID",
         "datatype" : "string"
       }, {
-        "name" : "scientificName",
+        "name" : "sourceTaxonName",
         "titles" : "scientificName",
         "datatype" : "string"
       }, {
-        "name" : "authorship",
+        "name" : "sourceTaxonAuthorship",
         "titles" : "authorship",
         "datatype" : "string"
       }, {
-        "name" : "rank",
+        "name" : "sourceTaxonRankName",
         "titles" : "rank",
         "datatype" : "string"
       }, {
@@ -151,19 +151,19 @@
         "titles" : "uninomial",
         "datatype" : "string"
       }, {
-        "name" : "genus",
+        "name" : "sourceTaxonGenusName",
         "titles" : "genus",
         "datatype" : "string"
       }, {
-        "name" : "infragenericEpithet",
+        "name" : "sourceTaxonInfragenericEpithetName",
         "titles" : "infragenericEpithet",
         "datatype" : "string"
       }, {
-        "name" : "specificEpithet",
+        "name" : "sourceTaxonSpecificEpithetName",
         "titles" : "specificEpithet",
         "datatype" : "string"
       }, {
-        "name" : "infraspecificEpithet",
+        "name" : "sourceTaxonInfraspecificEpithetName",
         "titles" : "infraspecificEpithet",
         "datatype" : "string"
       }, {
@@ -226,7 +226,7 @@
           "titles" : "taxonID",
           "datatype" : "string"
         }, {
-          "name" : "targetTaxonID",
+          "name" : "targetTaxonId",
           "titles" : "relatedTaxonID",
           "datatype" : "string"
         }, {
@@ -260,16 +260,12 @@
     "tableSchema" : {
       "primaryKey": "referenceId",
       "columns" : [ {
-        "name" : "author",
-        "titles" : "author",
-        "datatype" : "string"
-      }, {
         "name" : "referenceId",
         "titles" : "ID",
         "datatype" : "string"
       }, {
-        "name" : "referenceCitation",
-        "titles" : "citation",
+        "name" : "author",
+        "titles" : "author",
         "datatype" : "string"
       }, {
         "name" : "title",
@@ -277,23 +273,31 @@
         "datatype" : "string"
       }, {
         "name" : "year",
-        "titles" : "year",
+        "titles" : "issued",
         "datatype" : "string"
       }, {
-        "name" : "source",
-        "titles" : "source",
+        "name" : "journal",
+        "titles" : "countainerTitle",
         "datatype" : "string"
       }, {
-        "name" : "referenceDoi",
-        "titles" : "doi",
+        "name" : "volume",
+        "titles" : "volume",
+        "datatype" : "string"
+      }, {
+        "name" : "issue",
+        "titles" : "issue",
+        "datatype" : "string"
+      }, {
+        "name" : "page",
+        "titles" : "page",
         "datatype" : "string"
       }, {
         "name" : "referenceUrl",
         "titles" : "link",
         "datatype" : "string"
       }, {
-        "name" : "remarks",
-        "titles" : "remarks",
+        "name" : "citation",
+        "titles" : "citation",
         "datatype" : "string"
       } ]
     }
