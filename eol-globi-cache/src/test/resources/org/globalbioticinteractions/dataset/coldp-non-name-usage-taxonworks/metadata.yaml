@@ -1,0 +1,70 @@
+---
+key: 2317
+type: taxonomic
+origin: external
+doi: 10.48580/d4rx
+versionDoi: 10.48580/d4rx.v73
+title: 3i World Auchenorrhyncha Database
+alias: 3i Auchenorrhyncha
+description: The database was originally designed using 3i Interactive Keys and Taxonomic
+  Databases software and later migrated into TaxonWorks. The database has world checklist
+  of the hemipteran suborder Auchenorrhyncha, which covers about 48,000 valid species,
+  as well as their synonyms and subsequent combinations. It was designed and maintained
+  with support from several grants from National Science Foundation (USA). Besides
+  nomenclature, the database contains illustrations, descriptions, distribution records,
+  biological associations, literature references and tools for taxon identification.
+issued: '2026-03-19'
+version: Mar 2026
+feedbackUrl: https://github.com/sfg-taxonpages/hoppers/issues/
+contact:
+  given: Dmitry
+  family: Dmitriev
+  name: Dmitriev D.
+creator:
+- given: D.A.
+  family: Dmitriev
+  department: INHS
+  city: Champaign
+  state: IL
+  country: US
+  name: Dmitriev D.A.
+  address: Champaign, IL, United States of America
+  organisation: University of Illinois
+editor:
+- given: D.A.
+  family: Dmitriev
+  name: Dmitriev D.A.
+- given: S.
+  family: McKamey
+  name: McKamey S.
+- given: A.
+  family: Sanborn
+  name: Sanborn A.
+- given: D.M.
+  family: Takiya
+  name: Takiya D.M.
+- given: J.
+  family: Zahniser
+  name: Zahniser J.
+publisher:
+  family: TaxonWorks
+  name: TaxonWorks
+contributor:
+- department: Illinois Natural History Survey
+  city: Champaign
+  state: IL
+  country: US
+  name: Illinois Natural History Survey, University of Illinois
+  address: Champaign, IL, United States of America
+  organisation: University of Illinois
+geographicScope: Global
+taxonomicScope: Cicadas, spittle bugs, leafhoppers, treehoppers, and planthoppers
+confidence: 4
+completeness: 98
+license: cc0
+url: https://hoppers.speciesfile.org/
+logo: https://api.checklistbank.org/dataset/2317/logo
+platform:
+  name: TaxonWorks
+  alias: TW
+  version: 0.60.0

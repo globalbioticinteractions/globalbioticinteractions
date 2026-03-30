@@ -9,13 +9,20 @@
       "@language" : "en"
     } ],
     "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
-    "url" : "nameusage.csv",
+    "url" : "taxon.csv",
     "dcterms:bibliographicCitation" : "De Prins, J., & De Prins, W. (2026). Afromoths, online database of Afrotropical moth species (Lepidoptera) (Version 2026-03-01). Belgian Biodiversity Platform, Belspo, Brussels, Belgium. https://www.afromoths.net/",
     "delimiter" : ",",
     "headerRowCount" : 1,
     "null" : [ "" ],
     "tableSchema" : {
       "primaryKey": "sourceTaxonId",
+      "foreignKeys": [{
+        "columnReference": "sourceNameId",
+        "reference": {
+          "resource": "name.csv",
+          "columnReference": "sourceNameId"
+        }
+      }],
       "columns" : [ {
         "name" : "sourceTaxonId",
         "titles" : "ID",
@@ -25,19 +32,114 @@
         "titles" : "parentID",
         "datatype" : "string"
       }, {
-        "name" : "basionymID",
-        "titles" : "basionymID",
+        "name" : "nameID",
+        "titles" : "nameID",
         "datatype" : "string"
       }, {
-        "name" : "status",
-        "titles" : "status",
+        "name" : "scrutinizer",
+        "titles" : "scrutinizer",
+        "datatype" : "string"
+      }, {
+        "name" : "scrutinizerDate",
+        "titles" : "scrutinizerDate",
+        "datatype" : "string"
+      }, {
+        "name" : "provisional",
+        "titles" : "provisional",
+        "datatype" : "string"
+      }, {
+        "name" : "referenceID",
+        "titles" : "referenceID",
+        "datatype" : "string"
+      }, {
+        "name" : "extinct",
+        "titles" : "extinct",
+        "datatype" : "string"
+      }, {
+        "name" : "temporalRangeEnd",
+        "titles" : "temporalRangeEnd",
+        "datatype" : "string"
+      }, {
+        "name" : "lifezone",
+        "titles" : "lifezone",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonKingdomName",
+        "titles" : "kingdom",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonPhylumName",
+        "titles" : "phylum",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonClassName",
+        "titles" : "class",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonOrderName",
+        "titles" : "order",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonSuperfamilyName",
+        "titles" : "superfamily",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonFamilyName",
+        "titles" : "family",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonSubfamilyName",
+        "titles" : "subfamily",
+        "datatype" : "string"
+      }, {
+        "name" : "tribe",
+        "titles" : "tribe",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonGenusName",
+        "titles" : "genus",
+        "datatype" : "string"
+      }, {
+        "name" : "uninomial",
+        "titles" : "uninomial",
+        "datatype" : "string"
+      }, {
+        "name" : "sourceTaxonSpeciesName",
+        "titles" : "species",
+        "datatype" : "string"
+      }, {
+        "name" : "remarks",
+        "titles" : "remarks",
+        "datatype" : "string"
+      } ]
+
+    }
+  },{
+    "@context" : [ "http://www.w3.org/ns/csvw", {
+      "@language" : "en"
+    } ],
+    "rdfs:comment" : [ "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/" ],
+    "url" : "name.csv",
+    "dcterms:bibliographicCitation" : "De Prins, J., & De Prins, W. (2026). Afromoths, online database of Afrotropical moth species (Lepidoptera) (Version 2026-03-01). Belgian Biodiversity Platform, Belspo, Brussels, Belgium. https://www.afromoths.net/",
+    "delimiter" : ",",
+    "headerRowCount" : 1,
+    "null" : [ "" ],
+    "tableSchema" : {
+      "primaryKey": "sourceNameId",
+      "columns" : [ {
+        "name" : "sourceNameId",
+        "titles" : "ID",
+        "datatype" : "string"
+      }, {
+        "name" : "basionymID",
+        "titles" : "basionymID",
         "datatype" : "string"
       }, {
         "name" : "sourceTaxonName",
         "titles" : "scientificName",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonAuthorshipName",
+        "name" : "sourceTaxonAuthorship",
         "titles" : "authorship",
         "datatype" : "string"
       }, {
@@ -49,160 +151,48 @@
         "titles" : "uninomial",
         "datatype" : "string"
       }, {
-        "name" : "genericName",
-        "titles" : "genericName",
+        "name" : "sourceTaxonGenusName",
+        "titles" : "genus",
         "datatype" : "string"
       }, {
-        "name" : "infragenericEpithet",
+        "name" : "sourceTaxonInfragenericEpithetName",
         "titles" : "infragenericEpithet",
         "datatype" : "string"
       }, {
-        "name" : "specificEpithet",
+        "name" : "sourceTaxonSpecificEpithetName",
         "titles" : "specificEpithet",
         "datatype" : "string"
       }, {
-        "name" : "infraspecificEpithet",
+        "name" : "sourceTaxonInfraspecificEpithetName",
         "titles" : "infraspecificEpithet",
-        "datatype" : "string"
-      }, {
-        "name" : "cultivarEpithet",
-        "titles" : "cultivarEpithet",
-        "datatype" : "string"
-      }, {
-        "name" : "namePhrase",
-        "titles" : "namePhrase",
-        "datatype" : "string"
-      }, {
-        "name" : "nameReferenceID",
-        "titles" : "nameReferenceID",
-        "datatype" : "string"
-      }, {
-        "name" : "namePublishedInYear",
-        "titles" : "namePublishedInYear",
-        "datatype" : "string"
-      }, {
-        "name" : "namePublishedInPage",
-        "titles" : "namePublishedInPage",
-        "datatype" : "string"
-      }, {
-        "name" : "namePublishedInPageLink",
-        "titles" : "namePublishedInPageLink",
-        "datatype" : "string"
-      }, {
-        "name" : "code",
-        "titles" : "code",
-        "datatype" : "string"
-      }, {
-        "name" : "namestatus",
-        "titles" : "namestatus",
-        "datatype" : "string"
-      }, {
-        "name" : "accordingToID",
-        "titles" : "accordingToID",
         "datatype" : "string"
       }, {
         "name" : "referenceID",
         "titles" : "referenceID",
         "datatype" : "string"
       }, {
-        "name" : "scrutinizer",
-        "titles" : "scrutinizer",
+        "name" : "publishedInPage",
+        "titles" : "publishedInPage",
         "datatype" : "string"
       }, {
-        "name" : "scrutinizerID",
-        "titles" : "scrutinizerID",
+        "name" : "publishedInYear",
+        "titles" : "publishedInYear",
         "datatype" : "string"
       }, {
-        "name" : "scrutinizerDate",
-        "titles" : "scrutinizerDate",
+        "name" : "code",
+        "titles" : "code",
         "datatype" : "string"
       }, {
-        "name" : "extinct",
-        "titles" : "extinct",
-        "datatype" : "string"
-      }, {
-        "name" : "temporalRangeStart",
-        "titles" : "temporalRangeStart",
-        "datatype" : "string"
-      }, {
-        "name" : "temporalRangeEnd",
-        "titles" : "temporalRangeEnd",
-        "datatype" : "string"
-      }, {
-        "name" : "environment",
-        "titles" : "environment",
-        "datatype" : "string"
-      }, {
-        "name" : "species",
-        "titles" : "species",
-        "datatype" : "string"
-      }, {
-        "name" : "section",
-        "titles" : "section",
-        "datatype" : "string"
-      }, {
-        "name" : "subgenus",
-        "titles" : "subgenus",
-        "datatype" : "string"
-      }, {
-        "name" : "genus",
-        "titles" : "genus",
-        "datatype" : "string"
-      }, {
-        "name" : "subtribe",
-        "titles" : "subtribe",
-        "datatype" : "string"
-      }, {
-        "name" : "tribe",
-        "titles" : "tribe",
-        "datatype" : "string"
-      }, {
-        "name" : "subfamily",
-        "titles" : "subfamily",
-        "datatype" : "string"
-      }, {
-        "name" : "family",
-        "titles" : "family",
-        "datatype" : "string"
-      }, {
-        "name" : "superfamily",
-        "titles" : "superfamily",
-        "datatype" : "string"
-      }, {
-        "name" : "suborder",
-        "titles" : "suborder",
-        "datatype" : "string"
-      }, {
-        "name" : "order",
-        "titles" : "order",
-        "datatype" : "string"
-      }, {
-        "name" : "subclass",
-        "titles" : "subclass",
-        "datatype" : "string"
-      }, {
-        "name" : "class",
-        "titles" : "class",
-        "datatype" : "string"
-      }, {
-        "name" : "subphylum",
-        "titles" : "subphylum",
-        "datatype" : "string"
-      }, {
-        "name" : "phylum",
-        "titles" : "phylum",
-        "datatype" : "string"
-      }, {
-        "name" : "kingdom",
-        "titles" : "kingdom",
-        "datatype" : "string"
-      }, {
-        "name" : "referenceUrl",
-        "titles" : "link",
+        "name" : "status",
+        "titles" : "status",
         "datatype" : "string"
       }, {
         "name" : "remarks",
         "titles" : "remarks",
+        "datatype" : "string"
+      }, {
+        "name" : "link",
+        "titles" : "link",
         "datatype" : "string"
       } ]
     }
@@ -221,7 +211,7 @@
         "foreignKeys": [{
           "columnReference": "sourceTaxonId",
           "reference": {
-            "resource": "nameusage.csv",
+            "resource": "taxon.csv",
             "columnReference": "sourceTaxonId"
           }
         }, {
@@ -236,7 +226,7 @@
           "titles" : "taxonID",
           "datatype" : "string"
         }, {
-          "name" : "targetTaxonID",
+          "name" : "targetTaxonId",
           "titles" : "relatedTaxonID",
           "datatype" : "string"
         }, {
@@ -270,16 +260,12 @@
     "tableSchema" : {
       "primaryKey": "referenceId",
       "columns" : [ {
-        "name" : "author",
-        "titles" : "author",
-        "datatype" : "string"
-      }, {
         "name" : "referenceId",
         "titles" : "ID",
         "datatype" : "string"
       }, {
-        "name" : "referenceCitation",
-        "titles" : "citation",
+        "name" : "author",
+        "titles" : "author",
         "datatype" : "string"
       }, {
         "name" : "title",
@@ -287,23 +273,31 @@
         "datatype" : "string"
       }, {
         "name" : "year",
-        "titles" : "year",
+        "titles" : "issued",
         "datatype" : "string"
       }, {
-        "name" : "source",
-        "titles" : "source",
+        "name" : "journal",
+        "titles" : "countainerTitle",
         "datatype" : "string"
       }, {
-        "name" : "referenceDoi",
-        "titles" : "doi",
+        "name" : "volume",
+        "titles" : "volume",
+        "datatype" : "string"
+      }, {
+        "name" : "issue",
+        "titles" : "issue",
+        "datatype" : "string"
+      }, {
+        "name" : "page",
+        "titles" : "page",
         "datatype" : "string"
       }, {
         "name" : "referenceUrl",
         "titles" : "link",
         "datatype" : "string"
       }, {
-        "name" : "remarks",
-        "titles" : "remarks",
+        "name" : "citation",
+        "titles" : "citation",
         "datatype" : "string"
       } ]
     }

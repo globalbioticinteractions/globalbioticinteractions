@@ -50,4 +50,59 @@ public class CatalogueOfLifeDataPackageUtilTest {
 
     }
 
+    @Test
+    public void dataPackageTaxonWorks() throws IOException, URISyntaxException {
+        JsonNode jsonNode = CatalogueOfLifeDataPackageUtil.datasetFor(
+                new ResourceService() {
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        InputStream is = getClass().getResourceAsStream("coldp-non-name-usage-taxonworks/" + resourceName.toString());
+                        if (is == null) {
+                            throw new IOException("cannot find [" + resourceName + "]");
+                        }
+                        return is;
+                    }
+                },
+                URI.create("metadata.yaml")
+        );
+
+        assertNotNull(jsonNode);
+
+        JsonNode tablesNode = jsonNode.at("/tables");
+        assertThat(tablesNode.size(), Is.is(4));
+        for (JsonNode table : tablesNode) {
+            assertThat(table.at("/dcterms:bibliographicCitation").asText(),
+                    Is.is("@misc{ChecklistBankDataset2317, version = {Mar 2026}, url = {https://hoppers.speciesfile.org/}, title = {3i World Auchenorrhyncha Database}, author = {{Dmitriev}, {D.A.}}, year = 2026, month = 3}")
+            );
+        }
+    }
+
+    @Test
+    public void dataPackageHobern() throws IOException, URISyntaxException {
+        JsonNode jsonNode = CatalogueOfLifeDataPackageUtil.datasetFor(
+                new ResourceService() {
+                    @Override
+                    public InputStream retrieve(URI resourceName) throws IOException {
+                        InputStream is = getClass().getResourceAsStream("coldp-non-name-usage-hobern/" + resourceName.toString());
+                        if (is == null) {
+                            throw new IOException("cannot find [" + resourceName + "]");
+                        }
+                        return is;
+                    }
+                },
+                URI.create("metadata.yaml")
+        );
+
+        assertNotNull(jsonNode);
+
+        JsonNode tablesNode = jsonNode.at("/tables");
+        assertThat(tablesNode.size(), Is.is(4));
+        for (JsonNode table : tablesNode) {
+            assertThat(table.at("/dcterms:bibliographicCitation").asText(),
+                    Is.is("@misc{ChecklistBankDataset2362, version = {1.1.26.046}, title = {Catalogue of World Gelechiidae}, author = {{Hobern}, {Donald} and {Sattler}, {Klaus}}, year = 2026, month = 2}")
+            );
+        }
+
+    }
+
 }

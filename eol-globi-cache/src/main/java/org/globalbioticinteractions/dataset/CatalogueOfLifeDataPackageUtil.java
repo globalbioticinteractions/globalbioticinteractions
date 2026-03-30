@@ -56,8 +56,8 @@ public class CatalogueOfLifeDataPackageUtil {
 
             JsonNode configNode = new ObjectMapper(new YAMLFactory()).readTree(config);
 
-            InputStream schemaStream = namesDetected.get("nameusage.csv") == null
-                    ? getSchemaNoneNameUsage()
+            InputStream schemaStream = isNotNameUsageSchema(namesDetected)
+                    ? getSchemaNoneNameUsage(namesDetected)
                     : getSchemaNameUsage();
 
             String schema = IOUtils.toString(schemaStream, StandardCharsets.UTF_8);
@@ -81,6 +81,10 @@ public class CatalogueOfLifeDataPackageUtil {
         } catch (IOException e) {
             throw new IOException("failed to handle", e);
         }
+    }
+
+    private static boolean isNotNameUsageSchema(TreeMap<String, String> namesDetected) {
+        return namesDetected.get("nameusage.csv") == null;
     }
 
     private static String detectTableCandidates(ResourceService origDataset, List<String> nameUsageCandidates, List<String> extensions, List<String> availableFilenames) {
@@ -163,8 +167,20 @@ public class CatalogueOfLifeDataPackageUtil {
         return CatalogueOfLifeDataPackageUtil.class.getResourceAsStream("coldp/coldp-schema-name-usage.json");
     }
 
-    private static InputStream getSchemaNoneNameUsage() {
-        return CatalogueOfLifeDataPackageUtil.class.getResourceAsStream("coldp/coldp-schema-non-name-usage.json");
+    private static InputStream getSchemaNoneNameUsage(TreeMap<String, String> namesDetected) throws IOException {
+        String schemaResource = null;
+        if (namesDetected.containsKey("taxon.csv")) {
+            String actualFilename = namesDetected.get("taxon.csv");
+            if (StringUtils.endsWith(actualFilename, ".tsv")) {
+                schemaResource = "coldp/coldp-schema-non-name-usage-taxonworks.json";
+            } else {
+                schemaResource = "coldp/coldp-schema-non-name-usage-hobern.json";
+            }
+        }
+        if (StringUtils.isBlank(schemaResource)) {
+            throw new IOException("failed to locate taxon table");
+        }
+        return CatalogueOfLifeDataPackageUtil.class.getResourceAsStream(schemaResource);
     }
 
 }

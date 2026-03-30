@@ -1,0 +1,83 @@
+---
+key: 2362
+title: Catalogue of World Gelechiidae
+alias: Gelechiidae
+description: "The Catalogue of World Gelechiidae derives from a summary of the Gelechiidae\
+  \ list developed and maintained as a Word document by Klaus Sattler at the Natural\
+  \ History Museum, London. This list was converted in 2021 by Donald Hobern to form\
+  \ this Catalogue of Life Data Package dataset. Many species previously included\
+  \ as Gelechiidae within the COL Checklist from the NHM Global Lepidoptera Names\
+  \ Index (LepIndex) are not recognised within the family by Klaus Sattler. Most of\
+  \ these are now considered to belong to other families within the Gelechioidea,\
+  \ but 40 genera and 62 species cannot yet be assigned to any other family. These\
+  \ have been included as \"provisionally accepted\" taxa within this dataset but\
+  \ are likely to be moved elsewhere in the COL Checklist in future."
+issued: 2026-02-15
+version: 1.1.26.046
+contact:
+  orcid: 0000-0001-6492-4016
+  given: Donald
+  family: Hobern
+  rorid: 04m098c22
+  city: Aranda
+  state: ACT
+  country: AU
+  email: donald.hobern@sp2000.org
+  url: https://sp2000.org/
+  address: "Aranda, ACT, Australia"
+  organisation: Species 2000
+creator:
+ -
+  orcid: 0000-0001-6492-4016
+  given: Donald
+  family: Hobern
+  rorid: 04m098c22
+  city: Aranda
+  state: ACT
+  country: AU
+  email: donald.hobern@sp2000.org
+  url: https://sp2000.org/
+  address: "Aranda, ACT, Australia"
+  organisation: Species 2000
+ -
+  orcid: 0000-0002-0085-5960
+  given: Klaus
+  family: Sattler
+  rorid: 039zvsn29
+  city: London
+  country: GB
+  url: https://www.nhm.ac.uk/
+  address: "London, United Kingdom"
+  organisation: Natural History Museum
+editor:
+ -
+  orcid: 0000-0001-6492-4016
+  given: Donald
+  family: Hobern
+  rorid: 04m098c22
+  city: Aranda
+  state: ACT
+  country: AU
+  email: donald.hobern@sp2000.org
+  url: https://sp2000.org/
+  address: "Aranda, ACT, Australia"
+  organisation: Species 2000
+ -
+  orcid: 0000-0002-9636-8242
+  given: Sangmi
+  family: Lee
+  rorid: 03efmqc40
+  city: Tempe
+  state: Arizona
+  country: US
+  email: slee281@asu.edu
+  address: "Tempe, Arizona, United States of America"
+  organisation: Arizona State University
+keyword: []
+geographicScope: global
+taxonomicScope: Gelechiidae
+temporalScope: All taxa described to present
+confidence: 5
+completeness: 99
+license: cc0
+source: []
