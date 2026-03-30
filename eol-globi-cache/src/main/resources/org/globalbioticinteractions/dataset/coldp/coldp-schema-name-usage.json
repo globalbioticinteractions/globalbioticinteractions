@@ -236,7 +236,7 @@
           "titles" : "taxonID",
           "datatype" : "string"
         }, {
-          "name" : "targetTaxonID",
+          "name" : "targetTaxonId",
           "titles" : "relatedTaxonID",
           "datatype" : "string"
         }, {
