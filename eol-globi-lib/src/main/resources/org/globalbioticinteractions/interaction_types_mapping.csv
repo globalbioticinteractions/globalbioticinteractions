@@ -65,7 +65,7 @@ perchedOnBy,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 endoparasitoidOf,,endoparasiteOf,http://purl.obolibrary.org/obo/RO_0002634
 hasEndoparasitoid,,hasEndoparasite,http://purl.obolibrary.org/obo/RO_0002635
 hasEctoparasitoid,,hasEctoparasite,http://purl.obolibrary.org/obo/RO_0002633
-ectoparasite_of,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002633
+ectoparasite_of,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 ectoParasitoid,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 farmedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 farms,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
