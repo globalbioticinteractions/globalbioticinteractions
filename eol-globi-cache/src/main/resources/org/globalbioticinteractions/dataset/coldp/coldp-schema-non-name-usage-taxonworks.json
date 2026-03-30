@@ -36,16 +36,28 @@
         "titles" : "nameID",
         "datatype" : "string"
       }, {
-        "name" : "scrutinizer",
-        "titles" : "scrutinizer",
-        "datatype" : "string"
-      }, {
-        "name" : "scrutinizerDate",
-        "titles" : "scrutinizerDate",
+        "name" : "namePhrase",
+        "titles" : "namePhrase",
         "datatype" : "string"
       }, {
         "name" : "provisional",
         "titles" : "provisional",
+        "datatype" : "string"
+      }, {
+        "name" : "accordingToID",
+        "titles" : "accordingToID",
+        "datatype" : "string"
+      }, {
+        "name" : "scrutinizer",
+        "titles" : "scrutinizer",
+        "datatype" : "string"
+      }, {
+        "name" : "scrutinizerID",
+        "titles" : "scrutinizerID",
+        "datatype" : "string"
+      }, {
+        "name" : "scrutinizerDate",
+        "titles" : "scrutinizerDate",
         "datatype" : "string"
       }, {
         "name" : "referenceID",
@@ -56,60 +68,32 @@
         "titles" : "extinct",
         "datatype" : "string"
       }, {
+        "name" : "temporalRangeStart",
+        "titles" : "temporalRangeStart",
+        "datatype" : "string"
+      }, {
         "name" : "temporalRangeEnd",
         "titles" : "temporalRangeEnd",
         "datatype" : "string"
       }, {
-        "name" : "lifezone",
-        "titles" : "lifezone",
+        "name" : "environment",
+        "titles" : "environment",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonKingdomName",
-        "titles" : "kingdom",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonPhylumName",
-        "titles" : "phylum",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonClassName",
-        "titles" : "class",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonOrderName",
-        "titles" : "order",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonSuperfamilyName",
-        "titles" : "superfamily",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonFamilyName",
-        "titles" : "family",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonSubfamilyName",
-        "titles" : "subfamily",
-        "datatype" : "string"
-      }, {
-        "name" : "tribe",
-        "titles" : "tribe",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonGenusName",
-        "titles" : "genus",
-        "datatype" : "string"
-      }, {
-        "name" : "uninomial",
-        "titles" : "uninomial",
-        "datatype" : "string"
-      }, {
-        "name" : "sourceTaxonSpeciesName",
-        "titles" : "species",
+        "name" : "link",
+        "titles" : "link",
         "datatype" : "string"
       }, {
         "name" : "remarks",
         "titles" : "remarks",
+        "datatype" : "string"
+      }, {
+        "name" : "modified",
+        "titles" : "modified",
+        "datatype" : "string"
+      }, {
+        "name" : "modifiedBy",
+        "titles" : "modifiedBy",
         "datatype" : "string"
       } ]
 
@@ -187,12 +171,28 @@
         "titles" : "status",
         "datatype" : "string"
       }, {
-        "name" : "remarks",
-        "titles" : "remarks",
+        "name" : "etymology",
+        "titles" : "etymology",
+        "datatype" : "string"
+      }, {
+        "name" : "gender",
+        "titles" : "gender",
         "datatype" : "string"
       }, {
         "name" : "link",
         "titles" : "link",
+        "datatype" : "string"
+      }, {
+        "name" : "remarks",
+        "titles" : "remarks",
+        "datatype" : "string"
+      }, {
+        "name" : "modified",
+        "titles" : "modified",
+        "datatype" : "string"
+      }, {
+        "name" : "modifiedBy",
+        "titles" : "modifiedBy",
         "datatype" : "string"
       } ]
     }
@@ -242,6 +242,14 @@
           "titles" : "referenceID",
           "datatype" : "string"
         }, {
+          "name" : "modified",
+          "titles" : "modified",
+          "datatype" : "string"
+        }, {
+          "name" : "modifiedBy",
+          "titles" : "modifiedBy",
+          "datatype" : "string"
+        }, {
           "name" : "remarks",
           "titles" : "remarks",
           "datatype" : "string"
@@ -264,40 +272,20 @@
         "titles" : "ID",
         "datatype" : "string"
       }, {
-        "name" : "author",
-        "titles" : "author",
-        "datatype" : "string"
-      }, {
-        "name" : "title",
-        "titles" : "title",
-        "datatype" : "string"
-      }, {
-        "name" : "year",
-        "titles" : "issued",
-        "datatype" : "string"
-      }, {
-        "name" : "journal",
-        "titles" : "countainerTitle",
-        "datatype" : "string"
-      }, {
-        "name" : "volume",
-        "titles" : "volume",
-        "datatype" : "string"
-      }, {
-        "name" : "issue",
-        "titles" : "issue",
-        "datatype" : "string"
-      }, {
-        "name" : "page",
-        "titles" : "page",
-        "datatype" : "string"
-      }, {
-        "name" : "referenceUrl",
-        "titles" : "link",
-        "datatype" : "string"
-      }, {
         "name" : "citation",
         "titles" : "citation",
+        "datatype" : "string"
+      }, {
+        "name" : "doi",
+        "titles" : "doi",
+        "datatype" : "string"
+      }, {
+        "name" : "modified",
+        "titles" : "modified",
+        "datatype" : "string"
+      }, {
+        "name" : "modifiedBy",
+        "titles" : "modifiedBy",
         "datatype" : "string"
       } ]
     }

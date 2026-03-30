@@ -245,6 +245,26 @@
           "name" : "remarks",
           "titles" : "remarks",
           "datatype" : "string"
+        }, {
+          "name" : "relatedTaxonLink",
+          "titles" : "relatedTaxonLink",
+          "datatype" : "string"
+        }, {
+          "name" : "targetTaxonOrderName",
+          "titles" : "relatedTaxonOrder",
+          "datatype" : "string"
+        }, {
+          "name" : "targetTaxonFamilyName",
+          "titles" : "relatedTaxonFamily",
+          "datatype" : "string"
+        }, {
+          "name" : "relatedTaxonFullName",
+          "titles" : "relatedTaxonFullName",
+          "datatype" : "string"
+        }, {
+          "name" : "relatedTaxonHTMLName",
+          "titles" : "relatedTaxonHTMLName",
+          "datatype" : "string"
         } ]
       }
     }, {
