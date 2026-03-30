@@ -6,6 +6,7 @@ Plant associate,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 ,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 ex,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 ex.,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
+Plant host,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 reared ex,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 reared ex.,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 host to,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
@@ -65,6 +66,8 @@ perchedOnBy,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 endoparasitoidOf,,endoparasiteOf,http://purl.obolibrary.org/obo/RO_0002634
 hasEndoparasitoid,,hasEndoparasite,http://purl.obolibrary.org/obo/RO_0002635
 hasEctoparasitoid,,hasEctoparasite,http://purl.obolibrary.org/obo/RO_0002633
+Parasitoid host,,parasitoidOf,http://purl.obolibrary.org/obo/RO_0002208
+Parasitoid,,hasParasitoid,http://purl.obolibrary.org/obo/RO_0002209
 ectoparasite_of,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 ectoParasitoid,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 farmedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
