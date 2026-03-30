@@ -1,6 +1,8 @@
 provided_interaction_type_label,provided_interaction_type_id,mapped_to_interaction_type_label,mapped_to_interaction_type_id
 associated with,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+Associate,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 plant associations,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
+Plant associate,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 ,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 ex,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 ex.,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
@@ -8,6 +10,7 @@ reared ex,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 reared ex.,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 host to,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
 host,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
+Primary host,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 host plant,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 h,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 larval foodplant,,eats,http://purl.obolibrary.org/obo/RO_0002470
@@ -36,6 +39,7 @@ pollinator,,pollinates,http://purl.obolibrary.org/obo/RO_0002455
 seed disperser,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 seed predator,,eats,http://purl.obolibrary.org/obo/RO_0002470
 vector of,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+vector for,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 transmit,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 found on,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 found in,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
@@ -47,6 +51,7 @@ emerged ex,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 emerged from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 collected in,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 hyperparasitoid of,,hyperparasiteOf,http://purl.obolibrary.org/obo/RO_0002553
+has hyperparasitoid,,hyperparasitizedBy,http://purl.obolibrary.org/obo/RO_0002554
 kleptoparasitize,,kleptoparasiteOf,http://purl.obolibrary.org/obo/RO_0008503
 on,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 under,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
@@ -60,6 +65,7 @@ perchedOnBy,,adjacentTo,http://purl.obolibrary.org/obo/RO_0002220
 endoparasitoidOf,,endoparasiteOf,http://purl.obolibrary.org/obo/RO_0002634
 hasEndoparasitoid,,hasEndoparasite,http://purl.obolibrary.org/obo/RO_0002635
 hasEctoparasitoid,,hasEctoparasite,http://purl.obolibrary.org/obo/RO_0002633
+ectoparasite_of,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002633
 ectoParasitoid,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 farmedBy,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 farms,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
@@ -71,6 +77,7 @@ collected from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 host of,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
 from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 visiting,,visits,http://purl.obolibrary.org/obo/RO_0002618
+is visitor of,,visits,http://purl.obolibrary.org/obo/RO_0002618
 infect,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
 prey on,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 compete with,,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
@@ -79,6 +86,8 @@ graze,,eats,http://purl.obolibrary.org/obo/RO_0002470
 ingest,,eats,http://purl.obolibrary.org/obo/RO_0002470
 cause disease,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
 forage on,,eats,http://purl.obolibrary.org/obo/RO_0002470
+adult feeds on,,eats,http://purl.obolibrary.org/obo/RO_0002470
+feeds on,,eats,http://purl.obolibrary.org/obo/RO_0002470
 disperse,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 cause disease in,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
 parasitise,,parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
@@ -89,7 +98,10 @@ disperse seeds of,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 symbiosis,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
 spread,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 symbiont,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
+symbiotically interacts with,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
 parasitizes,,parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
+parasitized by,,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
+is parasitized by,,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
 roost with,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 share roost with,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 roost in,,hasRoost,http://purl.obolibrary.org/obo/RO_0008509
