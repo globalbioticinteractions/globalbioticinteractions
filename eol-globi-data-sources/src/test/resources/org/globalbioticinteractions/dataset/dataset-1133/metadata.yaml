@@ -1,0 +1,115 @@
+---
+key: 1133
+type: taxonomic
+origin: external
+gbifKey: 6fb9265c-2d98-40ad-989d-7b6bf4820519
+gbifPublisherKey: 47a779a6-a230-4edd-b787-19c3d2c80ab5
+doi: 10.48580/d3d4
+versionDoi: 10.48580/d3d4.v39
+title: Psocodea Species File
+alias: SF Psocodea
+description: |-
+  The Psocodea Species File is a taxonomic database that includes data
+  for Psocoptera (bark lice) and Phthiraptera (parasitic lice).
+issued: '2026-03-09'
+version: Mar 2026
+feedbackUrl: https://www.github.com/sfg-taxonpages/psocodea/issues
+contact:
+  orcid: 0000-0003-0961-4554
+  given: Heidi
+  family: Hopkins
+  rorid: 047426m28
+  city: Ithaca
+  state: NY
+  country: US
+  email: cockroachdoc@gmail.com
+  name: Hopkins H.
+  address: Ithaca, NY, United States of America
+  orcidAsUrl: https://orcid.org/0000-0003-0961-4554
+  organisation: University of Illinois
+creator:
+- orcid: 0000-0003-0961-4554
+  given: Heidi
+  family: Hopkins
+  rorid: 047426m28
+  city: Ithaca
+  state: NY
+  country: US
+  note: Author
+  name: Hopkins H.
+  address: Ithaca, NY, United States of America
+  orcidAsUrl: https://orcid.org/0000-0003-0961-4554
+  organisation: University of Illinois
+- given: Kevin P
+  family: Johnson
+  rorid: 047426m28
+  department: Illinois Natural History Survey
+  city: Champaign
+  state: IL
+  country: US
+  note: Author
+  name: Johnson K. P
+  address: Champaign, IL, United States of America
+  organisation: University of Illinois
+- orcid: 0000-0001-5297-7452
+  given: Vincent S
+  family: Smith
+  rorid: '039zvsn29'
+  city: London
+  country: GB
+  note: Author
+  name: Smith V. S
+  address: London, United Kingdom
+  orcidAsUrl: https://orcid.org/0000-0001-5297-7452
+  organisation: The Natural History Museum
+editor:
+- orcid: 0000-0003-0961-4554
+  given: Heidi
+  family: Hopkins
+  email: cockroachdoc@gmail.com
+  name: Hopkins H.
+  orcidAsUrl: https://orcid.org/0000-0003-0961-4554
+  organisation: Species File Group/TaxonWorks
+publisher:
+  rorid: 047426m28
+  department: Species File Group, Illinois Natural History Survey, Prairie Research
+    Institute
+  city: Champaign
+  state: IL
+  country: US
+  email: dlpaul@illinois.edu
+  url: https://speciesfilegroup.org
+  name: Species File Group, Illinois Natural History Survey, Prairie Research Institute,
+    University of Illinois
+  address: Champaign, IL, United States of America
+  organisation: University of Illinois
+contributor:
+- given: David C
+  family: Eades
+  rorid: 047426m28
+  department: Illinois Natural History Survey
+  city: Champaign
+  state: IL
+  country: US
+  note: Principal Database Developer
+  name: Eades D. C
+  address: Champaign, IL, United States of America
+  organisation: University of Illinois
+geographicScope: Global
+taxonomicScope: Bark lices & parasitic lices
+temporalScope: Carboniferous (Moscovian) to the Mid-Cretaceous (Cenomanian)
+taxonomicGroupScope:
+- eukaryotes
+- animals
+- arthropods
+- insects
+- otherinsects
+confidence: 4
+completeness: 90
+license: cc by
+url: https://psocodea.speciesfile.org
+logo: https://github.com/Sp2000/colplus-repo/raw/master/logos/SF_Psocodea.png
+platform:
+  name: TaxonWorks
+  alias: TW
+  version: 0.60.0

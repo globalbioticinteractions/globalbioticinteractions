@@ -14,6 +14,7 @@ import org.eol.globi.tool.NullImportLogger;
 import org.eol.globi.util.InputStreamFactoryNoop;
 import org.eol.globi.util.InteractTypeMapper;
 import org.eol.globi.util.ResourceServiceLocal;
+import org.globalbioticinteractions.dataset.CatalogueOfLifeDataPackageUtil;
 import org.globalbioticinteractions.dataset.DatasetImpl;
 import org.globalbioticinteractions.dataset.DatasetWithResourceMapping;
 import org.junit.Rule;
@@ -23,6 +24,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -122,7 +124,6 @@ public class DatasetImporterForMetaTableTest {
         assertThat(columnNames.size(), is(4));
 
 
-
         assertThat(columnNames.get(3).getKeyReference(), is("targetTaxonId"));
         assertThat(columnNames.get(3).getKeyType(), is("foreign"));
 
@@ -182,6 +183,7 @@ public class DatasetImporterForMetaTableTest {
 
 
     }
+
     @Test
     public void importRecordsWithPrimaryAndForeignKeysTargetTaxonId() throws IOException, StudyImporterException {
         final InputStream inputStream = DatasetImporterForMetaTable.class.getResourceAsStream("test-meta-globi-primary-key-target-id.json");
@@ -411,6 +413,56 @@ public class DatasetImporterForMetaTableTest {
     }
 
     @Test
+    public void importRecordsCatalogueOfLifeDataPackageDerived() throws IOException, StudyImporterException, URISyntaxException {
+        String resourcePath = "/org/globalbioticinteractions/dataset/dataset-1133";
+
+        ResourceService service = new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                String resource = resourceName.toString();
+                String resourceClasspath = resourcePath + StringUtils.prependIfMissing(resource, "/");
+                InputStream resourceAsStream = getClass().getResourceAsStream(resourceClasspath);
+                if (resourceAsStream == null) {
+                    throw new IOException("no [" + resourceClasspath + "] found");
+                }
+                return resourceAsStream;
+            }
+        };
+        DatasetImpl dataset = new DatasetImpl("urn:lsid:checklistbank.org:dataset:1133", service, URI.create("https://example.org"));
+        JsonNode config = CatalogueOfLifeDataPackageUtil
+                .datasetFor(
+                        service,
+                        URI.create("/metadata.yaml")
+                );
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                if (interaction.containsKey(INTERACTION_TYPE_NAME)) {
+                    links.add(interaction);
+                }
+            }
+        });
+        importer.importStudy();
+
+        assertThat(links.size(), is(1));
+
+        Map<String, String> sample1 = links.get(0);
+
+        assertThat(sample1.get("sourceTaxonId"), is("884632"));
+        //assertThat(sample1.get("sourceTaxonName"), is("884632"));
+        assertThat(sample1.get("interactionTypeName"), is("ectoparasite_of"));
+        assertThat(sample1.get("targetTaxonName"), is("Isoodon macrourus (Gould, 1842)"));
+        assertThat(sample1.get("citation"), is("Emerson, K.C. &amp; Price, R.D. (1981) <i>A host-parasite list of the Mallophaga on mammals.</i> 12(1), 1–72."));
+    }
+
+    @Test
     public void parseColumnValues() {
 
         HashMap<String, String> mappedLine = new HashMap<>();
@@ -423,6 +475,7 @@ public class DatasetImporterForMetaTableTest {
         assertThat(msgs.get(0), is("failed to parse value [some malformed value] from column [original column name] into column [some column] with datatype: {\"base\":\"date\",\"format\":\"MM/dd/YYYY\",\"id\":\"some data type id\"}"));
 
     }
+
     @Test
     public void parseColumnValueUrlNoReplacementValues() {
         HashMap<String, String> mappedLine = new HashMap<>();
@@ -456,6 +509,7 @@ public class DatasetImporterForMetaTableTest {
         assertThat(msg.size(), is(0));
 
     }
+
     @Test
     public void parseColumnValueUrlWithReplacementValues() {
         HashMap<String, String> mappedLine = new HashMap<>();
