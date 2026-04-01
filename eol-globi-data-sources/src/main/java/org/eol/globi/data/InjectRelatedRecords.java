@@ -47,42 +47,67 @@ public class InjectRelatedRecords implements InteractionListener {
                     = CollectionUtils.intersection(injectionMap.keySet(), interaction.keySet());
 
             if (!propertiesToInjected.isEmpty()) {
-                handledInteraction = new TreeMap<>(interaction);
-            }
-
-            for (String propertyToBeInjected : propertiesToInjected) {
-                String indexedPropertyToBeInjected = injectionMap.get(propertyToBeInjected);
-                String keyToBeExpanded = interaction.get(propertyToBeInjected);
-                if (StringUtils.isNotBlank(keyToBeExpanded)) {
-                    final Map<String, String> injectable = indexedDependencies
-                            .get(indexedPropertyToBeInjected)
-                            .get(keyToBeExpanded);
-                    if (injectable == null) {
-                        logger.warn(LogUtil.contextFor(interaction), "no matching values for foreign key [" + propertyToBeInjected + ":" + keyToBeExpanded + "] found.");
-                    } else {
-                        if (!indexedDependencies.containsKey(propertyToBeInjected) && StringUtils.startsWith(propertyToBeInjected, getSourceLabel())) {
-                            for (String key : injectable.keySet()) {
-                                String value = injectable.get(key);
-                                if (StringUtils.isNotBlank(value)) {
-                                    handledInteraction.put(prefixWithSource(key), value);
-                                }
-                            }
-                        } else if (!indexedDependencies.containsKey(propertyToBeInjected) && StringUtils.startsWith(propertyToBeInjected, getTargetLabel())) {
-                            for (String key : injectable.keySet()) {
-                                String value = injectable.get(key);
-                                if (StringUtils.isNotBlank(value)) {
-                                    handledInteraction.put(prefixWithTarget(key), value);
-                                }
-                            }
-                        } else {
-                            handledInteraction.putAll(injectable);
-                        }
-
-                    }
-                }
+                handledInteraction = injectPropertyValues(
+                        interaction,
+                        propertiesToInjected
+                );
             }
         }
         listener.on(handledInteraction);
+    }
+
+    private Map<String, String> injectPropertyValues(Map<String, String> interaction, Collection<String> propertiesToInjected) {
+
+        Map<String, String> handledInteraction = new TreeMap<>(interaction);
+        for (String propertyToBeInjected : propertiesToInjected) {
+            injectValuesByProperty(interaction, propertyToBeInjected, handledInteraction);
+        }
+
+        Collection<String> remainingPropertiesToBeInjected
+                = CollectionUtils.disjunction(
+                CollectionUtils.intersection(injectionMap.keySet(), handledInteraction.keySet()),
+                CollectionUtils.intersection(injectionMap.keySet(), interaction.keySet())
+        );
+
+        if (!remainingPropertiesToBeInjected.isEmpty()) {
+            handledInteraction = injectPropertyValues(
+                    handledInteraction,
+                    remainingPropertiesToBeInjected
+            );
+        }
+        return handledInteraction;
+    }
+
+    private void injectValuesByProperty(Map<String, String> interaction, String propertyToBeInjected, Map<String, String> handledInteraction) {
+        String indexedPropertyToBeInjected = injectionMap.get(propertyToBeInjected);
+        String keyToBeExpanded = interaction.get(propertyToBeInjected);
+        if (StringUtils.isNotBlank(keyToBeExpanded)) {
+            final Map<String, String> injectable = indexedDependencies
+                    .get(indexedPropertyToBeInjected)
+                    .get(keyToBeExpanded);
+            if (injectable == null) {
+                logger.warn(LogUtil.contextFor(interaction), "no matching values for foreign key [" + propertyToBeInjected + ":" + keyToBeExpanded + "] found.");
+            } else {
+                if (!indexedDependencies.containsKey(propertyToBeInjected) && StringUtils.startsWith(propertyToBeInjected, getSourceLabel())) {
+                    for (String key : injectable.keySet()) {
+                        String value = injectable.get(key);
+                        if (StringUtils.isNotBlank(value)) {
+                            handledInteraction.put(prefixWithSource(key), value);
+                        }
+                    }
+                } else if (!indexedDependencies.containsKey(propertyToBeInjected) && StringUtils.startsWith(propertyToBeInjected, getTargetLabel())) {
+                    for (String key : injectable.keySet()) {
+                        String value = injectable.get(key);
+                        if (StringUtils.isNotBlank(value)) {
+                            handledInteraction.put(prefixWithTarget(key), value);
+                        }
+                    }
+                } else {
+                    handledInteraction.putAll(injectable);
+                }
+
+            }
+        }
     }
 
 

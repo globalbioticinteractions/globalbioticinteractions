@@ -15,16 +15,16 @@
     "headerRowCount" : 1,
     "null" : [ "" ],
     "tableSchema" : {
-      "primaryKey": "sourceTaxonId",
+      "primaryKey": "taxonId",
       "foreignKeys": [{
-        "columnReference": "sourceNameId",
+        "columnReference": "nameId",
         "reference": {
           "resource": "name.csv",
-          "columnReference": "sourceNameId"
+          "columnReference": "nameId"
         }
       }],
       "columns" : [ {
-        "name" : "sourceTaxonId",
+        "name" : "taxonId",
         "titles" : "ID",
         "datatype" : "string"
       }, {
@@ -32,7 +32,7 @@
         "titles" : "parentID",
         "datatype" : "string"
       }, {
-        "name" : "nameID",
+        "name" : "nameId",
         "titles" : "nameID",
         "datatype" : "string"
       }, {
@@ -109,9 +109,9 @@
     "headerRowCount" : 1,
     "null" : [ "" ],
     "tableSchema" : {
-      "primaryKey": "sourceNameId",
+      "primaryKey": "nameId",
       "columns" : [ {
-        "name" : "sourceNameId",
+        "name" : "nameId",
         "titles" : "ID",
         "datatype" : "string"
       }, {
@@ -119,15 +119,15 @@
         "titles" : "basionymID",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonName",
+        "name" : "taxonName",
         "titles" : "scientificName",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonAuthorship",
+        "name" : "taxonAuthorship",
         "titles" : "authorship",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonRankName",
+        "name" : "taxonRankName",
         "titles" : "rank",
         "datatype" : "string"
       }, {
@@ -135,19 +135,19 @@
         "titles" : "uninomial",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonGenusName",
+        "name" : "taxonGenusName",
         "titles" : "genus",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonInfragenericEpithetName",
+        "name" : "taxonInfragenericEpithetName",
         "titles" : "infragenericEpithet",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonSpecificEpithetName",
+        "name" : "taxonSpecificEpithetName",
         "titles" : "specificEpithet",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonInfraspecificEpithetName",
+        "name" : "taxonInfraspecificEpithetName",
         "titles" : "infraspecificEpithet",
         "datatype" : "string"
       }, {
@@ -212,7 +212,13 @@
           "columnReference": "sourceTaxonId",
           "reference": {
             "resource": "taxon.csv",
-            "columnReference": "sourceTaxonId"
+            "columnReference": "taxonId"
+          }
+        }, {
+          "columnReference": "targetTaxonId",
+          "reference": {
+            "resource": "taxon.csv",
+            "columnReference": "taxonId"
           }
         }, {
           "columnReference": "referenceId",

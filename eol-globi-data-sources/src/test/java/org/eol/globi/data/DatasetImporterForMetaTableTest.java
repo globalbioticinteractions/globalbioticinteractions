@@ -456,7 +456,8 @@ public class DatasetImporterForMetaTableTest {
         Map<String, String> sample1 = links.get(0);
 
         assertThat(sample1.get("sourceTaxonId"), is("884632"));
-        //assertThat(sample1.get("sourceTaxonName"), is("884632"));
+        assertThat(sample1.get("sourceNameId"), is("992142"));
+        assertThat(sample1.get("sourceTaxonName"), is("Boopia bettongia"));
         assertThat(sample1.get("interactionTypeName"), is("ectoparasite_of"));
         assertThat(sample1.get("targetTaxonName"), is("Isoodon macrourus (Gould, 1842)"));
         assertThat(sample1.get("citation"), is("Emerson, K.C. &amp; Price, R.D. (1981) <i>A host-parasite list of the Mallophaga on mammals.</i> 12(1), 1–72."));

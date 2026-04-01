@@ -15,9 +15,9 @@
     "headerRowCount" : 1,
     "null" : [ "" ],
     "tableSchema" : {
-      "primaryKey": "sourceTaxonId",
+      "primaryKey": "taxonId",
       "columns" : [ {
-        "name" : "sourceTaxonId",
+        "name" : "taxonId",
         "titles" : "ID",
         "datatype" : "string"
       }, {
@@ -33,15 +33,15 @@
         "titles" : "status",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonName",
+        "name" : "taxonName",
         "titles" : "scientificName",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonAuthorshipName",
+        "name" : "taxonAuthorship",
         "titles" : "authorship",
         "datatype" : "string"
       }, {
-        "name" : "sourceTaxonRankName",
+        "name" : "taxonRankName",
         "titles" : "rank",
         "datatype" : "string"
       }, {
@@ -53,15 +53,15 @@
         "titles" : "genericName",
         "datatype" : "string"
       }, {
-        "name" : "infragenericEpithet",
+        "name" : "taxonInfragenericEpithetName",
         "titles" : "infragenericEpithet",
         "datatype" : "string"
       }, {
-        "name" : "specificEpithet",
+        "name" : "taxonSpecificEpithetName",
         "titles" : "specificEpithet",
         "datatype" : "string"
       }, {
-        "name" : "infraspecificEpithet",
+        "name" : "taxonInfraspecificEpithetName",
         "titles" : "infraspecificEpithet",
         "datatype" : "string"
       }, {
@@ -222,7 +222,13 @@
           "columnReference": "sourceTaxonId",
           "reference": {
             "resource": "nameusage.csv",
-            "columnReference": "sourceTaxonId"
+            "columnReference": "taxonId"
+          }
+        },{
+          "columnReference": "targetTaxonId",
+          "reference": {
+            "resource": "nameusage.csv",
+            "columnReference": "taxonId"
           }
         }, {
           "columnReference": "referenceId",
