@@ -29,13 +29,13 @@
     </properties>
 
     <dependencies>
-        <dependency>
+        <!--dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>${project.artifactId}</artifactId>
             <version>${globi.tsv.version}</version>
             <classifier>tsv</classifier>
             <type>zip</type>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.globalbioticinteractions</groupId>
             <artifactId>elton4n</artifactId>
