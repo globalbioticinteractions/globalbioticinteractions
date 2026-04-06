@@ -28,8 +28,8 @@
         <mockito.version>3.12.4</mockito.version>
         <bytebuddy.version>1.17.5</bytebuddy.version>
         <picocli.version>4.6.3</picocli.version>
-        <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
-        <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
+        <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
+        <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <skip.import>false</skip.import>
         <skip.export>false</skip.export>
         <globi.snapshot.repo.url>s3://globi/snapshot</globi.snapshot.repo.url>
