@@ -1681,7 +1681,18 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 props.put(getQualifiedName(term), value);
             }
         }
-        new ResourceTypeConsumer(props).accept(record.rowType());
+        Term term = record.rowType();
+        appendResourceType(props, term);
+    }
+
+    private static void appendResourceType(Map<String, String> props, Term term) {
+        if (term != null) {
+            String s = ResourceTypeConsumer.lookup.get(Pair.of(term.namespace(), term.simpleName()));
+            if (s == null) {
+                s = getQualifiedName(term);
+            }
+            ResourceTypeConsumer.appendResourceType(props, s);
+        }
     }
 
     private static TreeMap<String, String> mapAssociationProperties(Map<String, String> targetProperties) {
@@ -1854,13 +1865,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         @Override
         public void accept(Term term) {
-            if (term != null) {
-                String s = lookup.get(Pair.of(term.namespace(), term.simpleName()));
-                if (s == null) {
-                    s = getQualifiedName(term);
-                }
-                appendResourceType(props, s);
-            }
+            DatasetImporterForDwCA.appendResourceType(props, term);
         }
 
         static void appendResourceType(Map<String, String> props, String qualifiedName) {
