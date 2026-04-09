@@ -112,7 +112,7 @@ public class DatasetImportUtil {
     }
 
     private static void indexUnresolvedDependencies(List<Dataset> datasetsWithDependencies, ImportLogger logger, NodeFactory nodeFactory, String archiveLocation, Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, File workDir) {
-        final String msgPrefix0 = "indexing unresolved occurrence references of [" + archiveLocation + "]";
+        final String msgPrefix0 = "indexing unresolved references of [" + archiveLocation + "]";
         LOG.info(msgPrefix0 + "...");
         indexDatasets(
                 datasetsWithDependencies,
@@ -121,7 +121,7 @@ public class DatasetImportUtil {
                 new InteractionListenerCollectUnresolvedIds(interactionsWithUnresolvedOccurrenceIds),
                 workDir
         );
-        LOG.info(msgPrefix0 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] unresolved occurrences");
+        LOG.info(msgPrefix0 + " done: indexed [" + interactionsWithUnresolvedOccurrenceIds.size() + "] unresolved references");
     }
 
     private static void pruneKeysWithEmptyValues(Map<Pair<String, String>, Map<String, String>> interactionsWithUnresolvedOccurrenceIds, ImportLogger logger) {
