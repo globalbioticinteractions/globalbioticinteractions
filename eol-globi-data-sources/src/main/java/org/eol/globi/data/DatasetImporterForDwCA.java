@@ -251,7 +251,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 Pattern.CASE_INSENSITIVE
         );
 
-        Map<String, String> properties = new TreeMap<>();
+        Map<String, String> properties = createTmpMap();
 
         if (KILLED_BY_WINDOW.matcher(occurrenceRemarks).matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, "dog");
@@ -277,7 +277,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 Pattern.CASE_INSENSITIVE
         );
 
-        Map<String, String> properties = new TreeMap<>();
+        Map<String, String> properties = createTmpMap();
 
         if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, "high voltage");
@@ -295,7 +295,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 Pattern.CASE_INSENSITIVE
         );
 
-        Map<String, String> properties = new TreeMap<>();
+        Map<String, String> properties = createTmpMap();
 
         if (HIT_BY_VEHICLE_NOTATION.matcher(occurrenceRemarks).matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, "vehicle");
@@ -467,7 +467,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (interactionCandidates.isEmpty() && isDependency()) {
             // If no candidates are found,
             // add empty candidate to allow interaction listeners to do indexing/enriching
-            interactionCandidates.add(new TreeMap<>());
+            interactionCandidates.add(createTmpMap());
         }
 
         for (Map<String, String> interactionProperties : interactionCandidates) {
@@ -829,12 +829,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 appendAssociatedOccurrencesProperties(propertyList, e);
             }
         } else if (matcher2025.find()) {
-            TreeMap<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
             properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim("https:" + matcher2025.group("occurrenceId")));
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher2025.group("verb")));
             appendAssociatedOccurrencesProperties(propertyList, properties);
         } else if (matcher2025_2.find()) {
-            TreeMap<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
             properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(matcher2025_2.group("occurrenceId")));
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher2025_2.group("verb")));
             appendAssociatedOccurrencesProperties(propertyList, properties);
@@ -847,7 +847,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 if (i > -1) {
                     String occurrenceId = StringUtils.substring(targetCollectionAndOccurrenceId, i);
                     if (StringUtils.isNotBlank(occurrenceId)) {
-                        TreeMap<String, String> properties = new TreeMap<>();
+                        Map<String, String> properties = createTmpMap();
                         properties.put(TARGET_OCCURRENCE_ID, StringUtils.trim(occurrenceId));
                         properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(relation));
                         appendAssociatedOccurrencesProperties(propertyList, properties);
@@ -857,7 +857,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static void appendAssociatedOccurrencesProperties(List<Map<String, String>> propertyList, TreeMap<String, String> e) {
+    private static void appendAssociatedOccurrencesProperties(List<Map<String, String>> propertyList, Map<String, String> e) {
         new ResourceTypeConsumer(e).accept(DwcTerm.associatedOccurrences);
         propertyList.add(e);
     }
@@ -865,7 +865,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void attemptToParseMCZAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
         Matcher matcher = MCZ_ASSOCIATED_OCCURRENCES_VERB_PATTERN.matcher(relationshipTrimmed);
         if (matcher.find()) {
-            TreeMap<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
             String dwcTriple = StringUtils.replace(StringUtils.trim(matcher.group(3)), " ", ":");
             properties.put(TARGET_OCCURRENCE_ID, dwcTriple);
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group(1)));
@@ -876,7 +876,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     private static void attemptToParseNEONAssocatedOccurrences(List<Map<String, String>> propertyList, String relationshipTrimmed) {
         Matcher matcher = NEON_ASSOCIATED_OCCURRENCES_PATTERN.matcher(relationshipTrimmed);
         if (matcher.find()) {
-            TreeMap<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
             properties.put(TARGET_OCCURRENCE_ID, matcher.group("occurrenceId"));
             properties.put(INTERACTION_TYPE_NAME, StringUtils.trim(matcher.group("verb")));
             appendAssociatedOccurrencesProperties(propertyList, properties);
@@ -1102,7 +1102,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                             BTreeMap<String, Map<String, String>> associationsMap,
                                             String resourceTypesJoined) {
         for (Record record : extension) {
-            Map<String, String> props = new TreeMap<>();
+            Map<String, String> props = createTmpMap();
             termsToMap(record, props);
             associationsMap.put(record.id(), props);
         }
@@ -1113,10 +1113,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 try {
                     Map<String, String> targetProperties = associationsMap.get(id);
 
-                    TreeMap<String, String> interaction = mapAssociationProperties(targetProperties);
+                    Map<String, String> interaction = mapAssociationProperties(targetProperties);
                     interaction.put(RESOURCE_TYPES, resourceTypesJoined);
                     mapCoreProperties(coreRecord, interaction, new ResourceTypeConsumer(interaction));
-
 
                     interactionListener.on(interaction);
                 } catch (StudyImporterException e) {
@@ -1159,7 +1158,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                    Iterable<Record> core,
                                                    Map<String, Map<String, String>> associationsMap) {
         for (Record record : extension) {
-            Map<String, String> props = new TreeMap<>();
+            Map<String, String> props = createTmpMap();
             termsToMap(record, props);
             associationsMap.put(record.id(), props);
         }
@@ -1206,6 +1205,12 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
+    private static Map<String, String> createTmpMap() {
+        
+        System.out.println("ping");
+        return new TreeMap<>();
+    }
+
     private static boolean isUnsupportedDescriptionType(String descriptionType) {
         return !isSupportedDescriptionType(descriptionType);
     }
@@ -1245,7 +1250,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     ArchiveFile extension = findResourceExtension(archive, EXTENSION_REFERENCE);
                     if (extension != null) {
                         for (Record record : wrapRecordIterable(extension)) {
-                            Map<String, String> props = new TreeMap<>();
+                            Map<String, String> props = createTmpMap();
                             termsToMap(record, props);
                             props.put(REFERENCE_CITATION, CitationUtil.citationFor(props));
                             referenceMap.put(record.id(), props);
@@ -1354,7 +1359,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                                                                     Map<String, Map<String, Map<String, String>>> termTypeIdPropMap,
                                                                     List<DwcTerm> termTypes) {
         for (Record record : wrapRecordIterable(resourceExtension)) {
-            Map<String, String> props = new TreeMap<>();
+            Map<String, String> props = createTmpMap();
 
             new ResourceTypeConsumer(props).accept(resourceExtension.getRowType());
             String sourceId = record.value(DwcTerm.resourceID);
@@ -1589,7 +1594,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static void linkTerm(Map<String, Map<String, Map<String, String>>> termIdPropertyMap, Record coreRecord, DwcTerm term, String id) {
-        TreeMap<String, String> occProps = new TreeMap<>();
+        Map<String, String> occProps = createTmpMap();
         termsToMap(coreRecord, occProps);
 
         String qualifiedName = getQualifiedName(term);
@@ -1695,8 +1700,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         }
     }
 
-    private static TreeMap<String, String> mapAssociationProperties(Map<String, String> targetProperties) {
-        TreeMap<String, String> interaction = new TreeMap<>();
+    private static Map<String, String> mapAssociationProperties(Map<String, String> targetProperties) {
+        Map<String, String> interaction = createTmpMap();
 
         DatasetImporterForDwCA.mapIfAvailable(
                 interaction,
@@ -1753,7 +1758,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     Pattern.CASE_INSENSITIVE
             );
 
-            Map<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
 
             if (HIT_BY_CAR_NOTATION.matcher(occurrenceRemarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "car");
@@ -1772,7 +1777,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     Pattern.CASE_INSENSITIVE
             );
 
-            Map<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
 
             if (KILLED_BY_WINDOW.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "window");
@@ -1795,7 +1800,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     Pattern.CASE_INSENSITIVE
             );
 
-            Map<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
 
             if (KILLED_BY_CAT.matcher(remarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "cat");
@@ -1823,7 +1828,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                     Pattern.CASE_INSENSITIVE
             );
 
-            Map<String, String> properties = new TreeMap<>();
+            Map<String, String> properties = createTmpMap();
 
             if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "euthanasia");
@@ -1952,7 +1957,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     public static Map<String, String> parseJsonChunk(String candidateJsonChunk) throws IOException {
-        Map<String, String> properties = new TreeMap<>();
+        Map<String, String> properties = createTmpMap();
         JsonNode jsonNode = new ObjectMapper().readTree(candidateJsonChunk);
 
         Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
