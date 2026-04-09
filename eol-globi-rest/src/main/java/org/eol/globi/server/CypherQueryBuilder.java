@@ -81,6 +81,9 @@ public class CypherQueryBuilder {
     public static final String INTERACTION_VISITS_FLOWERS_OF = InteractType.VISITS_FLOWERS_OF.getLabel();
     public static final String INTERACTION_FLOWERS_VISITED_BY = InteractType.FLOWERS_VISITED_BY.getLabel();
 
+    public static final String INTERACTION_VISITS = InteractType.VISITS.getLabel();
+    public static final String INTERACTION_VISITED_BY = InteractType.VISITED_BY.getLabel();
+
     public static final String INTERACTION_SYMBIONT_OF = InteractType.SYMBIONT_OF.getLabel();
     public static final String INTERACTION_MUTUALIST_OF = InteractType.MUTUALIST_OF.getLabel();
     public static final String INTERACTION_COMMENSALIST_OF = InteractType.COMMENSALIST_OF.getLabel();
