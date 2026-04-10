@@ -1206,8 +1206,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static Map<String, String> createTmpMap() {
-        
-        System.out.println("ping");
         return new TreeMap<>();
     }
 
