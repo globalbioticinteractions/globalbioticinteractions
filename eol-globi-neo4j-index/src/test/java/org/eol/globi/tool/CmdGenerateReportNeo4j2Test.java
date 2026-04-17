@@ -35,8 +35,9 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
 
     @Test
     public void generateIndividualStudySourceReports() throws NodeFactoryException, IOException {
+        String namespace = "az/source";
         Dataset originatingDataset1 = nodeFactory.getOrCreateDataset(
-                new DatasetWithResourceMapping("az/source", URI.create("http://example.com"), getResourceService()));
+                new DatasetWithResourceMapping(namespace, URI.create("http://example.com"), getResourceService()));
         StudyImpl study1 = new StudyImpl("a title", null, "citation");
         study1.setOriginatingDataset(originatingDataset1);
         createStudy(study1);
@@ -57,14 +58,14 @@ public class CmdGenerateReportNeo4j2Test extends GraphDBNeo4jTestCase {
 
         getCmdGenerateReport().generateReportForSourceIndividuals();
 
-        String escapedQuery = QueryParser.escape("globi:az/source");
+        String escapedQuery = QueryParser.escape("globi:" + namespace);
         IndexHits<Node> reports = getGraphDb()
                 .index()
                 .forNodes("reports")
                 .query(StudyConstant.SOURCE_ID, escapedQuery);
 
         Node reportNode = reports.getSingle();
-        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:az/source"));
+        assertThat(reportNode.getProperty(StudyConstant.SOURCE_ID), is("globi:" + namespace));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_STUDIES), is(2));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_SOURCES), is(1));
         assertThat(reportNode.getProperty(PropertyAndValueDictionary.NUMBER_OF_DATASETS), is(1));
