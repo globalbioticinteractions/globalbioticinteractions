@@ -1,6 +1,7 @@
 package org.eol.globi.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.eol.globi.util.NodeIdCollectorNeo4j2;
 import org.eol.globi.util.RelationshipListener;
 import org.neo4j.graphdb.Transaction;
@@ -78,7 +79,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
 
             @Override
             public String datasetQueryFor(String namespace) {
-                return StringUtils.replace(namespace, "/", "\\/");
+                return QueryParser.escape(namespace);
             }
 
             @Override
@@ -92,7 +93,7 @@ public class CmdGenerateReportNeo4j2 extends CmdNeo4J {
         generateReportForStudySources(new NamespaceHandler() {
             @Override
             public String parse(String namespace) {
-                return StringUtils.split(namespace, "/")[0];
+                return QueryParser.escape(StringUtils.split(namespace, "/")[0]);
             }
 
             @Override
