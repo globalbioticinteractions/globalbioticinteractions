@@ -1,11 +1,15 @@
 package org.eol.globi.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 import org.eol.globi.domain.InteractType;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TermLookupService;
 import org.eol.globi.service.TermLookupServiceConfigurationException;
 import org.eol.globi.service.TermLookupServiceException;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -473,5 +477,25 @@ public class InteractTypeMapperFactoryImplTest {
         InteractTypeMapper interactTypeMapper = interactTypeMapperFactory.create();
         assertThat(interactTypeMapper.getInteractType("stings"), is(InteractType.INTERACTS_WITH));
     }
+
+    @Test
+    public void verifyChecklistBankMappings() throws IOException, TermLookupServiceException {
+        JsonNode jsonNode = new ObjectMapper().readTree(getClass().getResourceAsStream("checklistbankInteractionTypes.json"));
+
+        InteractTypeMapper interactTypeMapper
+                = new InteractTypeMapperFactoryImpl(new ResourceServiceLocal()).create();
+
+        for (JsonNode mapEntry : jsonNode) {
+            String oboIRI = mapEntry.get("obo").asText();
+            String interactionTypeName = mapEntry.get("name").asText();
+            InteractType type = interactTypeMapper.getInteractType(interactionTypeName);
+            TestCase.assertNotNull("missing mapping for [" + interactionTypeName + "]", type);
+            assertThat("mismatch for term: [" + interactionTypeName + "]", oboIRI, Is.is(type.getIRI()));
+
+            InteractType identityMapping = interactTypeMapper.getInteractType(oboIRI);
+            assertThat(oboIRI, Is.is(identityMapping.getIRI()));
+        }
+    }
+
 
 }

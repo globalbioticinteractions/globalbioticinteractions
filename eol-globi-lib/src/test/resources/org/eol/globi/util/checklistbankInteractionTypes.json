@@ -1,0 +1,428 @@
+[
+  {
+    "description": "Ecologically related to",
+    "inverse": "related to",
+    "name": "related to",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002321",
+    "symmetric": true
+  },
+  {
+    "description": "An interaction relationship describing organisms that often occur together at the same time and space or in the same environment.",
+    "inverse": "co occurs with",
+    "name": "co occurs with",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008506",
+    "superTypes": [
+      "related to"
+    ],
+    "symmetric": true
+  },
+  {
+    "description": "An interaction relationship in which at least one of the partners is an organism and the other is either an organism or an abiotic entity with which the organism interacts.",
+    "inverse": "interacts with",
+    "name": "interacts with",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002437",
+    "superTypes": [
+      "co occurs with"
+    ],
+    "symmetric": true
+  },
+  {
+    "description": "X adjacent to y if and only if x and y share a boundary.",
+    "inverse": "adjacent to",
+    "name": "adjacent to",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002220",
+    "superTypes": [
+      "co occurs with"
+    ],
+    "symmetric": true
+  },
+  {
+    "description": "A symbiotic relationship, a more or less intimate association, with another organism. The various forms of symbiosis include parasitism, in which the association is disadvantageous or destructive to one of the organisms; mutualism, in which the association is advantageous, or often necessary to one or both and not harmful to either; and commensalism, in which one member of the association benefits while the other is not affected. However, mutualism, parasitism, and commensalism are often not discrete categories of interactions and should rather be perceived as a continuum of interaction ranging from parasitism to mutualism. In fact, the direction of a symbiotic interaction can change during the lifetime of the symbionts due to developmental changes as well as changes in the biotic/abiotic environment in which the interaction occurs. ",
+    "inverse": "symbiont of",
+    "name": "symbiont of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002440",
+    "superTypes": [
+      "interacts with"
+    ],
+    "symmetric": true
+  },
+  {
+    "description": "Herbivores, fungivores, predators or other forms of organims eating or feeding on the related taxon.",
+    "inverse": "eaten by",
+    "name": "eats",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002470",
+    "superTypes": [
+      "interacts with"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of eats",
+    "inverse": "eats",
+    "name": "eaten by",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002471",
+    "superTypes": [
+      "interacts with"
+    ],
+    "symmetric": false
+  },
+  {
+    "inverse": "killed by",
+    "name": "kills",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002626",
+    "superTypes": [
+      "interacts with"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of kills",
+    "inverse": "kills",
+    "name": "killed by",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002627",
+    "superTypes": [
+      "interacts with"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "An interaction relationship involving a predation process, where the subject kills the object in order to eat it or to feed to siblings, offspring or group members",
+    "inverse": "preyed upon by",
+    "name": "preys upon",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002439",
+    "superTypes": [
+      "eats",
+      "kills"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of preys upon",
+    "inverse": "preys upon",
+    "name": "preyed upon by",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002458",
+    "superTypes": [
+      "eaten by",
+      "killed by"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "The term host is usually used for the larger (macro) of the two members of a symbiosis",
+    "inverse": "has host",
+    "name": "host of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002453",
+    "superTypes": [
+      "symbiont of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of host of",
+    "inverse": "host of",
+    "name": "has host",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002454",
+    "superTypes": [
+      "symbiont of"
+    ],
+    "symmetric": false
+  },
+  {
+    "inverse": "has parasite",
+    "name": "parasite of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002444",
+    "superTypes": [
+      "eats",
+      "has host"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of parasite of",
+    "inverse": "parasite of",
+    "name": "has parasite",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002445",
+    "superTypes": [
+      "eaten by",
+      "host of"
+    ],
+    "symmetric": false
+  },
+  {
+    "inverse": "has pathogen",
+    "name": "pathogen of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002556",
+    "superTypes": [
+      "parasite of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of pathogen of",
+    "inverse": "pathogen of",
+    "name": "has pathogen",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002557",
+    "superTypes": [
+      "has parasite"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "a is a vector for b if a carries and transmits an infectious pathogen b into another living organism",
+    "inverse": "has vector",
+    "name": "vector of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002459",
+    "superTypes": [
+      "host of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of vector of",
+    "inverse": "vector of",
+    "name": "has vector",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002460",
+    "superTypes": [
+      "has host"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "A sub-relation of parasite-of in which the parasite lives inside the host, beneath the integumental system",
+    "inverse": "has endoparasite",
+    "name": "endoparasite of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002634",
+    "superTypes": [
+      "parasite of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of endoparasite of",
+    "inverse": "endoparasite of",
+    "name": "has endoparasite",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002635",
+    "superTypes": [
+      "has parasite"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "A sub-relation of parasite-of in which the parasite lives on or in the integumental system of the host",
+    "inverse": "has ectoparasite",
+    "name": "ectoparasite of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002632",
+    "superTypes": [
+      "parasite of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of ectoparasite of",
+    "inverse": "ectoparasite of",
+    "name": "has ectoparasite",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002633",
+    "superTypes": [
+      "has parasite"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "X is a hyperparasite of y iff x is a parasite of a parasite of the target organism y",
+    "inverse": "has hyperparasite",
+    "name": "hyperparasite of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002553",
+    "superTypes": [
+      "parasite of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of hyperparasite of",
+    "inverse": "hyperparasite of",
+    "name": "has hyperparasite",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002554",
+    "superTypes": [
+      "has parasite"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "A sub-relation of parasite of in which a parasite steals resources from another organism, usually food or nest material",
+    "inverse": "has kleptoparasite",
+    "name": "kleptoparasite of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008503",
+    "superTypes": [
+      "parasite of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of kleptoparasite of",
+    "inverse": "kleptoparasite of",
+    "name": "has kleptoparasite",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008504",
+    "superTypes": [
+      "has parasite"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "A parasite that kills or sterilizes its host",
+    "inverse": "has parasitoid",
+    "name": "parasitoid of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002208",
+    "superTypes": [
+      "parasite of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of parasitoid of",
+    "inverse": "parasitoid of",
+    "name": "has parasitoid",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002209",
+    "superTypes": [
+      "has parasite"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "X is a hyperparasite of y if x is a parasite of a parasite of the target organism y",
+    "inverse": "has hyperparasitoid",
+    "name": "hyperparasitoid of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002553",
+    "superTypes": [
+      "parasitoid of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of hyperparasitoid of",
+    "inverse": "hyperparasitoid of",
+    "name": "has hyperparasitoid",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002554",
+    "superTypes": [
+      "has parasitoid"
+    ],
+    "symmetric": false
+  },
+  {
+    "inverse": "visited by",
+    "name": "visits",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002618",
+    "superTypes": [
+      "has host"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of visits",
+    "inverse": "visits",
+    "name": "visited by",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002619",
+    "superTypes": [
+      "host of"
+    ],
+    "symmetric": false
+  },
+  {
+    "inverse": "flowers visited by",
+    "name": "visits flowers of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002622",
+    "superTypes": [
+      "visits"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of visits flowers of",
+    "inverse": "visits flowers of",
+    "name": "flowers visited by",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002623",
+    "superTypes": [
+      "visited by"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "This relation is intended to be used for biotic pollination - e.g. a bee pollinating a flowering plant. ",
+    "inverse": "pollinated by",
+    "name": "pollinates",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002455",
+    "superTypes": [
+      "visits flowers of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of pollinates",
+    "inverse": "pollinates",
+    "name": "pollinated by",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002456",
+    "superTypes": [
+      "flowers visited by"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "An interaction relationship in which organism a lays eggs on the outside surface of organism b. Organism b is neither helped nor harmed in the process of egg laying or incubation.",
+    "inverse": "has eggs layed on by",
+    "name": "lays eggs on",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008507",
+    "superTypes": [
+      "has host"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of lays eggs on",
+    "inverse": "lays eggs on",
+    "name": "has eggs layed on by",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008508",
+    "superTypes": [
+      "host of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "An interaction relationship wherein a plant or algae is living on the outside surface of another plant.",
+    "inverse": "has epiphyte",
+    "name": "epiphyte of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008501",
+    "superTypes": [
+      "symbiont of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "Inverse of epiphyte of",
+    "inverse": "epiphyte of",
+    "name": "has epiphyte",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008502",
+    "superTypes": [
+      "symbiont of"
+    ],
+    "symmetric": false
+  },
+  {
+    "description": "An interaction relationship between two organisms living together in more or less intimate association in a relationship in which one benefits and the other is unaffected (GO).",
+    "inverse": "commensalist of",
+    "name": "commensalist of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002441",
+    "superTypes": [
+      "symbiont of"
+    ],
+    "symmetric": true
+  },
+  {
+    "description": "An interaction relationship between two organisms living together in more or less intimate association in a relationship in which both organisms benefit from each other (GO).",
+    "inverse": "mutualist of",
+    "name": "mutualist of",
+    "obo": "http://purl.obolibrary.org/obo/RO_0002442",
+    "superTypes": [
+      "symbiont of"
+    ],
+    "symmetric": true
+  }
+]

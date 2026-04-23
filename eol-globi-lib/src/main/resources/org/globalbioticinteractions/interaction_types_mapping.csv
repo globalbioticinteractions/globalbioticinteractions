@@ -83,6 +83,7 @@ visiting,,visits,http://purl.obolibrary.org/obo/RO_0002618
 is visitor of,,visits,http://purl.obolibrary.org/obo/RO_0002618
 infect,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
 prey on,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
+preys upon,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 compete with,,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
 predate,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 graze,,eats,http://purl.obolibrary.org/obo/RO_0002470
@@ -110,3 +111,4 @@ share roost with,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 roost in,,hasRoost,http://purl.obolibrary.org/obo/RO_0008509
 share roosts,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 (collected with),,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
+related to,,ecologicallyRelatedTo,http://purl.obolibrary.org/obo/RO_0002321
