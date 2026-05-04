@@ -33,6 +33,7 @@ public final class AssociatedTaxaUtil {
             "^[Cc]oll.",
             "^[Cc]ollected from",
             "^[Cc]ollected on",
+            "^on flower[s]* of",
             "^[fF]ound on",
             "^[oO]n",
             "^[gG]rasping",

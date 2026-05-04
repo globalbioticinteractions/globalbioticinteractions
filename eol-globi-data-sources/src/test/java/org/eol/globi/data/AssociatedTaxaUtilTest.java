@@ -48,6 +48,25 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.get(8).get(INTERACTION_TYPE_NAME), is(""));
         assertThat(properties.get(8).get(INTERACTION_TYPE_ID), is(nullValue()));
     }
+    @Test
+    public void associatedTaxaOnFlowersOf() {
+        String associatedTaxa = "on flowers of Donnellsmithia Hintonii";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Donnellsmithia Hintonii"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on flowers of"));
+    }
+
+    @Test
+    public void associatedTaxaOnFlowerOf() {
+        String associatedTaxa = "on flower of Donnellsmithia Hintonii";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Donnellsmithia Hintonii"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on flower of"));
+    }
 
     @Test
     public void associatedTaxa2() {
