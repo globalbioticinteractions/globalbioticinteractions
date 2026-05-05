@@ -24,7 +24,7 @@ public class ExternalIdUtilTest {
         assertThat(ExternalIdUtil.urlForExternalId("NCBI:7215"), is("https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7215"));
         assertThat(ExternalIdUtil.urlForExternalId("OTT:563163"), is("https://tree.opentreeoflife.org/opentree/ottol@563163"));
         assertThat(ExternalIdUtil.urlForExternalId("GBIF:2435035"), is("http://www.gbif.org/species/2435035"));
-        assertThat(ExternalIdUtil.urlForExternalId("NBN:NHMSYS0000080189"), is("https://data.nbn.org.uk/Taxa/NHMSYS0000080189"));
+        assertThat(ExternalIdUtil.urlForExternalId("NBN:NHMSYS0000080189"), is("https://species.nbnatlas.org/species/NHMSYS0000080189"));
         assertThat(ExternalIdUtil.urlForExternalId("IRMNG:10201332"), is("https://www.irmng.org/aphia.php?p=taxdetails&id=10201332"));
         assertThat(ExternalIdUtil.urlForExternalId("IRMNG:1012185"), is("https://www.irmng.org/aphia.php?p=taxdetails&id=1012185"));
         assertThat(ExternalIdUtil.urlForExternalId("IRMNG:104889"), is("https://www.irmng.org/aphia.php?p=taxdetails&id=104889"));
