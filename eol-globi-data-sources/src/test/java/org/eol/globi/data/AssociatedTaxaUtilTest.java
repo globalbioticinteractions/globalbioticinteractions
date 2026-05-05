@@ -67,6 +67,15 @@ public class AssociatedTaxaUtilTest {
         assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Donnellsmithia Hintonii"));
         assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("on flower of"));
     }
+    @Test
+    public void associatedFlowerOf() {
+        String associatedTaxa = "flower of Eriogonum latifolium ";
+        List<Map<String, String>> properties = parseAssociatedTaxa(associatedTaxa);
+
+        assertThat(properties.size(), is(1));
+        assertThat(properties.get(0).get(TaxonUtil.TARGET_TAXON_NAME), is("Eriogonum latifolium"));
+        assertThat(properties.get(0).get(INTERACTION_TYPE_NAME), is("flower of"));
+    }
 
     @Test
     public void associatedTaxa2() {

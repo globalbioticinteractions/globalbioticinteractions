@@ -33,6 +33,10 @@ consume,,eats,http://purl.obolibrary.org/obo/RO_0002470
 feed on,,eats,http://purl.obolibrary.org/obo/RO_0002470
 flower predator,,eats,http://purl.obolibrary.org/obo/RO_0002470
 flower visitor,,visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
+flower of,,visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
+flowers of,,visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
+on flower of,,visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
+on flowers of,,visitsFlowersOf,http://purl.obolibrary.org/obo/RO_0002622
 folivory,,eats,http://purl.obolibrary.org/obo/RO_0002470
 fruit thief,,eats,http://purl.obolibrary.org/obo/RO_0002470
 ingestion,,eats,http://purl.obolibrary.org/obo/RO_0002470
