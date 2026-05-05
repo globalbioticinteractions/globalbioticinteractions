@@ -63,7 +63,7 @@ public class ExternalIdUtilTest {
 
     @Test
     public void nationalBiodiversityNetwork() {
-        assertThat(ExternalIdUtil.urlForExternalId("NBN:NHMSYS0000080189"), is("https://data.nbn.org.uk/Taxa/NHMSYS0000080189"));
+        assertThat(ExternalIdUtil.urlForExternalId("NBN:NHMSYS0000080189"), is("https://species.nbnatlas.org/species/NHMSYS0000080189"));
     }
 
     @Test
