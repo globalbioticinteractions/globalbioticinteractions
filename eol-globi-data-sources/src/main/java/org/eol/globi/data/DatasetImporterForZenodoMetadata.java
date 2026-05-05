@@ -99,9 +99,11 @@ public class DatasetImporterForZenodoMetadata extends DatasetImporterWithListene
             final JsonNode creators = metadata.get("creators");
             List<String> creatorNames = new ArrayList<>();
             for (JsonNode creator : creators) {
-                final String[] creatorName = creator.get("name").asText().split(",");
-                ArrayUtils.reverse(creatorName);
-                creatorNames.add(StringUtils.trim(StringUtils.join(creatorName, " ")));
+                if (creator.has("name")) {
+                    final String[] creatorName = creator.get("name").asText().split(",");
+                    ArrayUtils.reverse(creatorName);
+                    creatorNames.add(StringUtils.trim(StringUtils.join(creatorName, " ")));
+                }
             }
             final String title = metadata.get("title").asText();
 

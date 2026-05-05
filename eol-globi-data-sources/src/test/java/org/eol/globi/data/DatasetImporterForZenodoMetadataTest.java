@@ -64,6 +64,32 @@ public class DatasetImporterForZenodoMetadataTest {
     }
 
     @Test
+    public void findAnnotationsStaticZenodoMissingCreatorName() throws IOException, StudyImporterException {
+        final InputStream searchResultStream = getClass().getResourceAsStream("zenodo/search-results-zenodo-empty-name.json");
+        List<Map<String, String>> links = new ArrayList<>();
+        final InteractionListener interactionListener = new InteractionListener() {
+            @Override
+            public void on(Map<String, String> interaction) throws StudyImporterException {
+                links.add(interaction);
+            }
+        };
+
+
+        DatasetImporterForZenodoMetadata.parseSearchResults(searchResultStream, interactionListener);
+
+        assertThat(links.size(), Is.is(97));
+
+        List<String> citations = new ArrayList<>();
+        for (Map<String, String> link : links) {
+            final String s = link.get(REFERENCE_CITATION);
+            assertNotNull(s);
+            citations.add(s);
+        }
+
+        assertThat(citations.get(0), Is.is("(2010). Recombination, Reservoirs, and the Modular Spike: Mechanisms of Coronavirus Cross-Species Transmission. Journal of Virology. https://doi.org/10.1128/JVI.01394-09"));
+    }
+
+    @Test
     public void paginate() throws IOException, StudyImporterException {
 
         AtomicInteger counter = new AtomicInteger(0);
