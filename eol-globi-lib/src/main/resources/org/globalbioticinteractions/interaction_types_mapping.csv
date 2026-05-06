@@ -10,13 +10,19 @@ Plant host,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 reared ex,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 reared ex.,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 host to,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
+host on,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
+serve as host for,,hostOf,http://purl.obolibrary.org/obo/RO_0002453
 host,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 Primary host,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 host plant,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
+use as host plant,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
+HostSpecies,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 h,,hasHost,http://purl.obolibrary.org/obo/RO_0002454
 larval foodplant,,eats,http://purl.obolibrary.org/obo/RO_0002470
+fed on,,eats,http://purl.obolibrary.org/obo/RO_0002470
 ectoparasite of,,ectoparasiteOf,http://purl.obolibrary.org/obo/RO_0002632
 parasite of,,parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
+parasitic on,,parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
 parasitize,,parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
 stomach contents of,,eatenBy,http://purl.obolibrary.org/obo/RO_0002471
 stomach contents,,eats,http://purl.obolibrary.org/obo/RO_0002470
@@ -86,11 +92,14 @@ from,,interactsWith,http://purl.obolibrary.org/obo/RO_0002437
 visiting,,visits,http://purl.obolibrary.org/obo/RO_0002618
 is visitor of,,visits,http://purl.obolibrary.org/obo/RO_0002618
 infect,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
+pest of,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
 prey on,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
+predate upon,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 preys upon,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 compete with,,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
 predate,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 graze,,eats,http://purl.obolibrary.org/obo/RO_0002470
+graze on,,eats,http://purl.obolibrary.org/obo/RO_0002470
 ingest,,eats,http://purl.obolibrary.org/obo/RO_0002470
 cause disease,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
 forage on,,eats,http://purl.obolibrary.org/obo/RO_0002470
@@ -104,11 +113,17 @@ scavenge,,eats,http://purl.obolibrary.org/obo/RO_0002470
 predate on,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 disperse seeds of,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 symbiosis,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
+symbiotic relationship with,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
+live in symbiosis with,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
+establish symbiosis with,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
+symbionts,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
 spread,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+act as vector for,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 symbiont,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
 symbiotically interacts with,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
 parasitizes,,parasiteOf,http://purl.obolibrary.org/obo/RO_0002444
 parasitized by,,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
+parisitized by,,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
 is parasitized by,,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
 roost with,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 share roost with,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
@@ -116,3 +131,16 @@ roost in,,hasRoost,http://purl.obolibrary.org/obo/RO_0008509
 share roosts,,coRoostsWith,http://purl.obolibrary.org/obo/RO_0002801
 (collected with),,coOccursWith,http://purl.obolibrary.org/obo/RO_0008506
 related to,,ecologicallyRelatedTo,http://purl.obolibrary.org/obo/RO_0002321
+serve as reservoir for,,reservoirHostOf,http://purl.obolibrary.org/obo/RO_0002802
+cause disease on,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
+spread disease to,,hasVector,http://purl.obolibrary.org/obo/RO_0002460
+ate,,eats,http://purl.obolibrary.org/obo/RO_0002470
+herbivory on,,eats,http://purl.obolibrary.org/obo/RO_0002470
+act as vectors for,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+parasitized by,,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
+serve as food source for,,eatenBy,http://purl.obolibrary.org/obo/RO_0002471
+kill and consume,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
+kill and eat,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
+pest on,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
+vector for,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
+have a symbiotic relationship with,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
