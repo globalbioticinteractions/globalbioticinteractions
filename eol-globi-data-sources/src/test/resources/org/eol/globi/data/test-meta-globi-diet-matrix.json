@@ -1,0 +1,44 @@
+{
+  "@context": [
+    "http://www.w3.org/ns/csvw",
+    {
+      "@language": "en"
+    }
+  ],
+  "rdfs:comment": [
+    "inspired by https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/"
+  ],
+  "tables": [
+    {
+      "dcterms:bibliographicCitation": "Adhurya, Sagar; Lee, Da-Yeong; Park, Young-Seuk (2024). KF-metaweb: A trophic metaweb of freshwater ecosystems of South Korea (Version 1.0) [Dataset]. Dryad. https://doi.org/10.5061/dryad.cz8w9gjbc",
+      "url": "test-meta-globi-diet-matrix.csv",
+      "headerRowCount": 1,
+      "delimiter": ",",
+      "interactionTypeName": "eats",
+      "interactionTypeId": "http://purl.obolibrary.org/obo/RO_0002470",
+      "null": [
+        "NULL",
+        ""
+      ],
+      "tableSchema": {
+        "columns": [
+          {
+            "name": "sourceTaxonName",
+            "titles": "consumer",
+            "datatype": "string"
+          },
+          {
+            "name": "Mammalia",
+            "titles": "Mammalia",
+            "datatype": "targetTaxonName"
+          },
+          {
+            "name": "Plantae",
+            "titles": "Plantae",
+            "datatype": "targetTaxonName"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -36,6 +36,7 @@ import static org.eol.globi.data.DatasetImporterForTSV.INTERACTION_TYPE_NAME;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class DatasetImporterForMetaTableTest {
@@ -224,6 +225,49 @@ public class DatasetImporterForMetaTableTest {
         assertThat(first.get("interactionTypeName"), is("Host"));
         assertThat(first.get("targetTaxonId"), is("https://gd.eppo.int/taxon/AAUVS"));
         assertThat(first.get("targetTaxonName"), is("Arisarum simorrhinum"));
+    }
+
+    @Test
+    public void dietMatrix() throws IOException, StudyImporterException {
+        final InputStream inputStream = getClass().getResourceAsStream("test-meta-globi-diet-matrix.json");
+        final JsonNode config = new ObjectMapper().readTree(inputStream);
+
+        DatasetImpl dataset = new DatasetImpl("foo/bar", new ResourceService() {
+            @Override
+            public InputStream retrieve(URI resourceName) throws IOException {
+                return getClass().getResourceAsStream("test-meta-globi-diet-matrix.csv");
+            }
+        }, URI.create("https://example.org"));
+        dataset.setConfig(config);
+
+
+        DatasetImporterForMetaTable importer = new DatasetImporterForMetaTable(null, null);
+        importer.setDataset(dataset);
+        List<Map<String, String>> links = new ArrayList<>();
+
+        importer.setInteractionListener(links::add);
+        importer.setWorkDir(folder.newFolder());
+        importer.importStudy();
+
+        assertThat(links.size(), is(4));
+
+        assertThat(links.get(0).get("sourceTaxonName"), is("Homo sapiens"));
+        assertThat(links.get(0).get("interactionTypeName"), is("eats"));
+        assertThat(links.get(0).get("targetTaxonName"), is("Mammalia"));
+
+        assertThat(links.get(1).get("sourceTaxonName"), is("Homo sapiens"));
+        assertThat(links.get(1).get("interactionTypeName"), is("eats"));
+        assertThat(links.get(1).get("targetTaxonName"), is("Plantae"));
+
+        assertThat(links.get(2).get("sourceTaxonName"), is("Quercus"));
+        assertThat(links.get(2).get("interactionTypeName"), is("eats"));
+        assertFalse(links.get(2).containsKey("targetTaxonName"));
+
+        assertThat(links.get(3).get("sourceTaxonName"), is("Apis mellifera"));
+        assertThat(links.get(3).get("interactionTypeName"), is("eats"));
+        assertThat(links.get(3).get("targetTaxonName"), is("Plantae"));
+
+
     }
 
     @Test

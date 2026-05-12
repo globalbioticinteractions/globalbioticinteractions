@@ -334,11 +334,27 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                     }
                 };
 
+                List<String> namedMatrixValues = new ArrayList<>();
+                String namedMatrixPropertyName = null;
                 for (int i = 0; i < columnNames.size() && i < line.length; i++) {
                     final String value = nullValueArray.contains(line[i]) ? null : line[i];
                     final Column column = columnNames.get(i);
-                    if (StringUtils.isBlank(column.getSeparator())) {
-                        parseColumnValue(importLogProxy, mappedLine, value, column);
+                    if (Arrays.asList("targetTaxonName","sourceTaxonName").contains(column.getDataTypeId())) {
+                        if (StringUtils.isBlank(namedMatrixPropertyName)) {
+                            namedMatrixPropertyName = column.getDataTypeId();
+                        }
+                        if (StringUtils.equals(namedMatrixPropertyName, column.getDataTypeId())) {
+                            String parsedValue = parseValue(valueOrDefault(value, column), column);
+                            if (StringUtils.isNotBlank(parsedValue)) {
+                                namedMatrixValues.add(column.name);
+                            }
+                        } else {
+                            importLogger.warn(null, "found candidate interaction matrix column [" + column.getDataTypeId() + "] column, but different matrix column type [" + namedMatrixPropertyName + "] already found: ignoring matrix column of different type.");
+                        }
+                    } else {
+                        if (StringUtils.isBlank(column.getSeparator())) {
+                            parseColumnValue(importLogProxy, mappedLine, value, column);
+                        }
                     }
                 }
 
@@ -346,7 +362,17 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
                     msgs.forEach(x -> importLogger.warn(LogUtil.contextFor(mappedLine), x));
                 }
 
+
                 List<Map<String, String>> lineWithListExpansion = new ArrayList<>();
+
+                if (StringUtils.isNotBlank(namedMatrixPropertyName) && !namedMatrixValues.isEmpty()) {
+                    for (String namedMatrixValue : namedMatrixValues) {
+                        TreeMap<String, String> expandedLine = new TreeMap<>(mappedLine);
+                        expandedLine.put(namedMatrixPropertyName, namedMatrixValue);
+                        lineWithListExpansion.add(expandedLine);
+                    }
+                }
+
                 for (int i = 0; i < columnNames.size() && i < line.length; i++) {
                     final String value = nullValueArray.contains(line[i]) ? null : line[i];
                     final Column column = columnNames.get(i);
