@@ -137,10 +137,8 @@ spread disease to,,hasVector,http://purl.obolibrary.org/obo/RO_0002460
 ate,,eats,http://purl.obolibrary.org/obo/RO_0002470
 herbivory on,,eats,http://purl.obolibrary.org/obo/RO_0002470
 act as vectors for,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
-parasitized by,,hasParasite,http://purl.obolibrary.org/obo/RO_0002445
 serve as food source for,,eatenBy,http://purl.obolibrary.org/obo/RO_0002471
 kill and consume,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 kill and eat,,preysOn,http://purl.obolibrary.org/obo/RO_0002439
 pest on,,pathogenOf,http://purl.obolibrary.org/obo/RO_0002556
-vector for,,vectorOf,http://purl.obolibrary.org/obo/RO_0002459
 have a symbiotic relationship with,,symbiontOf,http://purl.obolibrary.org/obo/RO_0002440
