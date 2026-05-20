@@ -12,10 +12,6 @@ public class CacheService {
 
     private final File cacheDir;
 
-    public CacheService() {
-        this(new File("target/term-cache"));
-    }
-
     public CacheService(File cacheDir) {
         this.cacheDir = cacheDir;
     }

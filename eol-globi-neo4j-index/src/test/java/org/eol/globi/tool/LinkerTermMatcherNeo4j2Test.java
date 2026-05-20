@@ -11,9 +11,12 @@ import org.eol.globi.taxon.TaxonCacheService;
 import org.eol.globi.util.NodeUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.Node;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -21,21 +24,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LinkerTermMatcherNeo4j2Test extends GraphDBNeo4jTestCase {
 
+    @Rule
+    public TemporaryFolder tmpDir = new TemporaryFolder();
+
     @Ignore
     @Test
-    public void holorchisCastexMissedLink() throws NodeFactoryException {
+    public void holorchisCastexMissedLink() throws NodeFactoryException, IOException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/448
         String classifiedId = "EOL_V2:11987314";
         assertTaxonMapping(classifiedId);
     }
 
     @Test
-    public void holorchisCastexNonMissedLink() throws NodeFactoryException {
+    public void holorchisCastexNonMissedLink() throws NodeFactoryException, IOException {
         // see https://github.com/globalbioticinteractions/globalbioticinteractions/issues/448
         assertTaxonMapping("EOL:11987314");
     }
 
-    private void assertTaxonMapping(String classifiedId) throws NodeFactoryException {
+    private void assertTaxonMapping(String classifiedId) throws NodeFactoryException, IOException {
         Taxon taxon2 = new TaxonImpl("Holorchis castex", classifiedId);
 
         Taxon createdTaxon = taxonIndex.getOrCreateTaxon(taxon2);
@@ -51,7 +57,12 @@ public class LinkerTermMatcherNeo4j2Test extends GraphDBNeo4jTestCase {
                 ((TaxonNode) createdTaxon).getUnderlyingNode(),
                 NodeUtil.asNeo4j(RelTypes.CLASSIFIED_AS));
 
-        TaxonCacheService taxonCacheService = new TaxonCacheService("/org/eol/globi/taxon/taxonCacheHolorchis.tsv", "/org/eol/globi/taxon/taxonMapHolorchis.tsv", new ResourceServiceLocal());
+        TaxonCacheService taxonCacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheHolorchis.tsv",
+                "/org/eol/globi/taxon/taxonMapHolorchis.tsv",
+                new ResourceServiceLocal(),
+                tmpDir.newFolder("test")
+        );
 
         new LinkerTermMatcherNeo4j2(taxonCacheService, new GraphServiceFactoryProxy(getGraphDb()))
                 .index();

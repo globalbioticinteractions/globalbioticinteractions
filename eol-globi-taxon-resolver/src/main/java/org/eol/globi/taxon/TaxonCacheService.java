@@ -18,7 +18,6 @@ import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.tool.TermRequestImpl;
-import org.eol.globi.util.ResourceServiceLocal;
 import org.globalbioticinteractions.taxon.TaxonSerializationUtil;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
@@ -62,7 +61,9 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
 
     public TaxonCacheService(final TermResource<Taxon> taxonCache,
                              final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap,
-                             final ResourceService resourceService) {
+                             final ResourceService resourceService,
+                             File cacheDir) {
+        super(cacheDir);
         this.taxonCache = taxonCache;
         this.taxonMap = taxonMap;
         this.resourceService = resourceService;
@@ -77,23 +78,6 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 resourceService,
                 cacheDir
         );
-    }
-
-    public TaxonCacheService(final String termResource,
-                             final String taxonMapResource,
-                             ResourceService resourceService) {
-        this(TermResources.defaultTaxonCacheResource(termResource),
-                TermResources.defaultTaxonMapResource(taxonMapResource),
-                resourceService);
-    }
-
-    public TaxonCacheService(final TermResource<Taxon> taxonCache,
-                             final TermResource<Triple<Taxon, NameType, Taxon>> taxonMap,
-                             final ResourceService resourceService, File cacheDir) {
-        super(cacheDir);
-        this.taxonCache = taxonCache;
-        this.taxonMap = taxonMap;
-        this.resourceService = resourceService;
     }
 
     @Override
