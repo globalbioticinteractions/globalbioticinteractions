@@ -9,7 +9,7 @@ public enum NameType {
     HAS_UNCHECKED_NAME, // possibly an accepted name, but not yet verified/checked
     HOMONYM_OF,
     HAS_PARSED_NAME, // type associated with the outcome of a (taxonomic) parsing process
-    TRANSLATES_TO, // type assicated with a general purpose name/id translation process (aka name "cleaning", name "scrubbing", or name "mapping")
+    TRANSLATES_TO, // type associated with a general purpose name/id translation process (aka name "cleaning", name "scrubbing", or name "mapping")
     OCCURS_IN, // name occurs in some text, publication, or dataset
     NONE
 }
