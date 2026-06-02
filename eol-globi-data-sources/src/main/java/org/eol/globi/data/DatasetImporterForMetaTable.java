@@ -56,6 +56,7 @@ public class DatasetImporterForMetaTable extends DatasetImporterWithListener {
     public static final String EVENT_DATE_MONTH = "http://rs.tdwg.org/dwc/terms/month";
     public static final String EVENT_DATE_DAY = "http://rs.tdwg.org/dwc/terms/day";
     public static final String EVENT_DATE_DAY_OF_YEAR = "http://rs.tdwg.org/dwc/terms/dayOfYear";
+    public static final String EVENT_DATE_START_DAY_OF_YEAR = "http://rs.tdwg.org/dwc/terms/startDayOfYear";
 
     public static final String KEY_TYPE_PRIMARY = "primary";
     public static final String KEY_TYPE_FOREIGN = "foreign";

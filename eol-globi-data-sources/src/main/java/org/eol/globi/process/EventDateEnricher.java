@@ -35,10 +35,10 @@ public class EventDateEnricher extends InteractionProcessorAbstract {
         ) {
             try {
                 enriched = new TreeMap<>(interaction);
-                Stream<String> yearMonthDay = hasNonBlankProperty(interaction, DatasetImporterForMetaTable.EVENT_DATE_DAY_OF_YEAR)
-                        ? yearDayOfYear(interaction)
-                        : yearMondayDay(interaction)
-                ;
+                Stream<String> yearMonthDay =
+                        StringUtils.isNoneBlank(getDayOfYear(interaction))
+                                ? yearDayOfYear(interaction)
+                                : yearMondayDay(interaction);
 
                 String eventDate = yearMonthDay.map(part -> StringUtils.defaultIfBlank(part, "")).collect(Collectors.joining("-"));
 
@@ -52,8 +52,17 @@ public class EventDateEnricher extends InteractionProcessorAbstract {
     }
 
     private static Stream<String> yearDayOfYear(Map<String, String> interaction) {
+        String dayOfYear = getDayOfYear(interaction);
+
         return Stream.of(interaction.get(DatasetImporterForMetaTable.EVENT_DATE_YEAR),
-                StringUtils.leftPad(interaction.get(DatasetImporterForMetaTable.EVENT_DATE_DAY_OF_YEAR), 3, "0"));
+                StringUtils.leftPad(dayOfYear, 3, "0"));
+    }
+
+    private static String getDayOfYear(Map<String, String> interaction) {
+        return StringUtils.defaultIfBlank(
+                interaction.get(DatasetImporterForMetaTable.EVENT_DATE_DAY_OF_YEAR),
+                interaction.get(DatasetImporterForMetaTable.EVENT_DATE_START_DAY_OF_YEAR)
+        );
     }
 
     private static Stream<String> yearMondayDay(Map<String, String> interaction) {
