@@ -160,7 +160,7 @@ public class DatasetImporterForWebOfLife extends NodeBasedImporter {
 
         String[] line;
         while ((line = interactions.getLine()) != null) {
-            String sourceTaxonName = line[0];
+            String sourceTaxonName = StringUtils.trim(line[0]);
             final Specimen sourceSpecimen = getNodeFactory().createSpecimen(study, new TaxonImpl(sourceTaxonName, null));
             sourceSpecimen.caughtIn(networkLocation);
             for (String targetTaxonName : targetTaxonNames) {
