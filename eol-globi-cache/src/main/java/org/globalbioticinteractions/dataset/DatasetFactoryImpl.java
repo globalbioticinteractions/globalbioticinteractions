@@ -52,7 +52,6 @@ public class DatasetFactoryImpl implements DatasetFactory {
             put(URI.create("/metadata.yaml"), (dataset1, uri) -> CatalogueOfLifeDataPackageUtil.datasetFor(resourceService, uri));
             put(URI.create("/globi.json"), new JSONConfigurer());
             put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
-            put(URI.create("/meta.xml"), new JSONConfigurer());
         }};
 
         Pair<URI, JsonNode> configPair = null;
