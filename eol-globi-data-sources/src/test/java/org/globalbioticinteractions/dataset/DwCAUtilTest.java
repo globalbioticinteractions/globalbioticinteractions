@@ -21,7 +21,7 @@ public class DwCAUtilTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void emitRecords() throws IOException, URISyntaxException {
+    public void emitRecordsForArchive() throws IOException, URISyntaxException {
         URI archiveURI = getClass().getResource("dwca.zip").toURI();
 
         Archive dwcArchive = DwCAUtil.archiveFor(archiveURI, getTmpDir());
