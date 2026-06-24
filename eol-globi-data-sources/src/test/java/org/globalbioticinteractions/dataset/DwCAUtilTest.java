@@ -20,11 +20,6 @@ public class DwCAUtilTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    @Before
-    public void createTmpFolder() {
-
-    }
-
     @Test
     public void emitRecords() throws IOException, URISyntaxException {
         URI archiveURI = getClass().getResource("dwca.zip").toURI();
