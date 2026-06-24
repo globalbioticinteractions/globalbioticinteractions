@@ -2,7 +2,10 @@ package org.globalbioticinteractions.dataset;
 
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.record.Record;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,22 +17,41 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 public class DwCAUtilTest {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+    @Before
+    public void createTmpFolder() {
+
+    }
+
     @Test
     public void emitRecords() throws IOException, URISyntaxException {
         URI archiveURI = getClass().getResource("dwca.zip").toURI();
-        String tmpDir = "target/tmp/myarchive";
 
-        Archive dwcArchive = DwCAUtil.archiveFor(archiveURI, tmpDir);
+        Archive dwcArchive = DwCAUtil.archiveFor(archiveURI, getTmpDir());
+        assertHasRecords(dwcArchive);
+    }
+
+    private String getTmpDir() throws IOException {
+        String tmpDir = folder.newFolder().getAbsolutePath();
+        return tmpDir;
+    }
+
+    @Test
+    public void emitRecordsForArchiveWithRootDirectory() throws IOException, URISyntaxException {
+        URI archiveURI = getClass().getResource("dwca-with-root-directory.zip").toURI();
+
+        Archive dwcArchive = DwCAUtil.archiveFor(archiveURI, getTmpDir());
         assertHasRecords(dwcArchive);
     }
 
     @Test(expected = IOException.class)
     public void throwIOExceptionNotRuntimeExceptionOnBadDwCA() throws IOException, URISyntaxException {
         URI archiveURI = getClass().getResource("dwcaInvalid.zip").toURI();
-        String tmpDir = "target/tmp/myarchive";
 
         try {
-            DwCAUtil.archiveFor(archiveURI, tmpDir);
+            DwCAUtil.archiveFor(archiveURI, getTmpDir());
         } catch(Throwable th) {
             assertThat(th.getMessage(), containsString("dwcaInvalid.zip"));
             assertThat(th.getMessage(), containsString("failed to read"));
