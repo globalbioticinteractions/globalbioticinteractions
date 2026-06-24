@@ -94,8 +94,8 @@ public class DatasetFactoryImpl implements DatasetFactory {
         }
     }
 
-    private static JsonNode configureDataset(ResourceService sourceService, URI configURI) throws IOException {
-        try (InputStream inputStream = sourceService.retrieve(configURI)) {
+    private static JsonNode configureDataset(ResourceService resourceService, URI configURI) throws IOException {
+        try (InputStream inputStream = resourceService.retrieve(configURI)) {
             if (inputStream == null) {
                 throw new IOException("failed to access resource [" + configURI.toString() + "]");
             }
