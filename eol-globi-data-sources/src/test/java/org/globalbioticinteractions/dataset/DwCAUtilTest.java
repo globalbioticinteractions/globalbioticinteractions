@@ -28,11 +28,6 @@ public class DwCAUtilTest {
         assertHasRecords(dwcArchive);
     }
 
-    private String getTmpDir() throws IOException {
-        String tmpDir = folder.newFolder().getAbsolutePath();
-        return tmpDir;
-    }
-
     @Test
     public void emitRecordsForArchiveWithRootDirectory() throws IOException, URISyntaxException {
         URI archiveURI = getClass().getResource("dwca-with-root-directory.zip").toURI();
@@ -70,6 +65,10 @@ public class DwCAUtilTest {
             break;
         }
         assertThat(hasRecords, is(true));
+    }
+
+    private String getTmpDir() throws IOException {
+        return folder.newFolder().getAbsolutePath();
     }
 
 }
