@@ -1,19 +1,15 @@
 package org.globalbioticinteractions.dataset;
 
 import org.apache.commons.collections4.map.LinkedMap;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eol.globi.service.ResourceService;
 import org.eol.globi.util.InputStreamFactory;
 import org.eol.globi.util.InputStreamFactoryNoop;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 interface DatasetConfigurer {
@@ -56,6 +52,7 @@ public class DatasetFactoryImpl implements DatasetFactory {
             put(URI.create("/metadata.yaml"), (dataset1, uri) -> CatalogueOfLifeDataPackageUtil.datasetFor(resourceService, uri));
             put(URI.create("/globi.json"), new JSONConfigurer());
             put(URI.create("/globi-dataset.jsonld"), new JSONConfigurer());
+            put(URI.create("/meta.xml"), new JSONConfigurer());
         }};
 
         Pair<URI, JsonNode> configPair = null;
@@ -84,35 +81,6 @@ public class DatasetFactoryImpl implements DatasetFactory {
 
     private InputStreamFactory getInputStreamFactory() {
         return inputStreamFactory;
-    }
-
-    private static class JSONConfigurer implements DatasetConfigurer {
-
-        @Override
-        public JsonNode configure(ResourceService resourceService, URI configURI) throws IOException {
-            return configureDataset(resourceService, configURI);
-        }
-    }
-
-    private static JsonNode configureDataset(ResourceService resourceService, URI configURI) throws IOException {
-        try (InputStream inputStream = resourceService.retrieve(configURI)) {
-            if (inputStream == null) {
-                throw new IOException("failed to access resource [" + configURI.toString() + "]");
-            }
-            String descriptor = getContent(configURI, inputStream);
-            if (StringUtils.isBlank(descriptor)) {
-                throw new IOException("no content found at [" + configURI.toString() + "]");
-            }
-            return new ObjectMapper().readTree(descriptor);
-        }
-    }
-
-    private static String getContent(URI uri, InputStream input) throws IOException {
-        try {
-            return IOUtils.toString(input, StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            throw new IOException("failed to find [" + uri + "]", ex);
-        }
     }
 
 
