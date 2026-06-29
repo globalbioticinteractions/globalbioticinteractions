@@ -111,6 +111,19 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SPECIFIC_EPITHET;
 import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_SUBFAMILY;
 
 public class DatasetImporterForDwCA extends DatasetImporterWithListener {
+    public static final Pattern PATTERN_MPADI_ECTOPARASITE = Pattern.compile(".* (?<vialNumber>.*):[ ]+Ectoparasite([| ]+)(?<hostName>[A-Za-z ]+)([| ]+)(?<hostCommonName>[A-Za-z ]+)(|.*)*");
+    public static final Pattern EUTHANIZED_PATTERN = Pattern.compile(
+            ".*(high voltage|hvt|high voltage trauma).*",
+            Pattern.CASE_INSENSITIVE
+    );
+    public static final Pattern HIT_BY_VEHICLE_NOTATION = Pattern.compile(
+            "(hit by vehicle|hbv|road kill|dead on road).*",
+            Pattern.CASE_INSENSITIVE
+    );
+    public static final Pattern KILLED_BY_WINDOW = Pattern.compile(
+            ".*(dog kill).*",
+            Pattern.CASE_INSENSITIVE
+    );
     static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
     static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
     private static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
@@ -228,6 +241,9 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             }
         }
     });
+    public static final Pattern PATTERN_OWL_PELLET = Pattern.compile("^(found in)(.*)(pellet).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern patternArtsprosjektetGyrodactylusStyleRemarks = Pattern.compile("^(Collected from)[ ]([A-Z].*)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PATTERN_NUCCORE = Pattern.compile("^(?<ncbiId>http[s]{0,1}://www.ncbi.nlm.nih.gov/nuccore/[a-zA-Z0-9]+)");
 
 
     public DatasetImporterForDwCA(ParserFactory parserFactory, NodeFactory nodeFactory) {
@@ -245,11 +261,6 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     public static Map<String, String> parseKilledByDog(String occurrenceRemarks) {
-        final Pattern KILLED_BY_WINDOW
-                = Pattern.compile(
-                ".*(dog kill).*",
-                Pattern.CASE_INSENSITIVE
-        );
 
         Map<String, String> properties = createTmpMap();
 
@@ -271,30 +282,16 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     public static Map<String, String> parseHighVoltageRemarks(String occurrenceRemarks) {
-        final Pattern EUTHANIZED_PATTERN
-                = Pattern.compile(
-                ".*(high voltage|hvt|high voltage trauma).*",
-                Pattern.CASE_INSENSITIVE
-        );
-
         Map<String, String> properties = createTmpMap();
 
         if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
             properties.put(TaxonUtil.TARGET_TAXON_NAME, "high voltage");
-
             addInteractionType(properties, InteractType.KILLED_BY);
-
         }
         return properties;
     }
 
     public static Map<String, String> parseHitByVehicleRemarks(String occurrenceRemarks) {
-        final Pattern HIT_BY_VEHICLE_NOTATION
-                = Pattern.compile(
-                "(hit by vehicle|hbv|road kill|dead on road).*",
-                Pattern.CASE_INSENSITIVE
-        );
-
         Map<String, String> properties = createTmpMap();
 
         if (HIT_BY_VEHICLE_NOTATION.matcher(occurrenceRemarks).matches()) {
@@ -514,8 +511,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     public static void appendMPADIStyleEctoparasites(Record rec, List<Map<String, String>> interactionCandidates) {
         String preparations = rec.value(DwcTerm.preparations);
         if (StringUtils.isNotBlank(preparations)) {
-            Pattern pattern = Pattern.compile(".* (?<vialNumber>.*):[ ]+Ectoparasite([| ]+)(?<hostName>[A-Za-z ]+)([| ]+)(?<hostCommonName>[A-Za-z ]+)(|.*)*");
-            Matcher matcher = pattern.matcher(preparations);
+            Matcher matcher = PATTERN_MPADI_ECTOPARASITE.matcher(preparations);
             if (matcher.matches()) {
                 TreeMap<String, String> e = new TreeMap<String, String>() {{
                     put(INTERACTION_TYPE_NAME, InteractType.ECTOPARASITE_OF.getLabel());
@@ -633,7 +629,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     static Map<String, String> parseRoyalSaskatchewanMuseumOwlPelletCollectionStyleRemarks(String occurrenceRemarks) {
         Map<String, String> properties = Collections.emptyMap();
 
-        Matcher matcher = Pattern.compile("^(found in)(.*)(pellet).*", Pattern.CASE_INSENSITIVE).matcher(StringUtils.trim(occurrenceRemarks));
+        Matcher matcher = PATTERN_OWL_PELLET.matcher(StringUtils.trim(occurrenceRemarks));
         if (matcher.matches()) {
             properties = new TreeMap<String, String>() {{
                 put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group(2)));
@@ -648,7 +644,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     static Map<String, String> parseArtsprosjektetGyrodactylusStyleRemarks(String occurrenceRemarks) {
         Map<String, String> properties = Collections.emptyMap();
 
-        Matcher matcher = Pattern.compile("^(Collected from)[ ]([A-Z].*)", Pattern.CASE_INSENSITIVE).matcher(StringUtils.trim(occurrenceRemarks));
+        Matcher matcher = patternArtsprosjektetGyrodactylusStyleRemarks.matcher(StringUtils.trim(occurrenceRemarks));
         if (matcher.matches()) {
             properties = new TreeMap<String, String>() {{
                 put(TARGET_TAXON_NAME, StringUtils.trim(matcher.group(2)));
@@ -798,7 +794,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         String[] relationships = StringUtils.split(s, ";");
         for (String relationship : relationships) {
             String relationshipTrimmed = StringUtils.trim(relationship);
-            Matcher matcher = Pattern.compile("^(?<ncbiId>http[s]{0,1}://www.ncbi.nlm.nih.gov/nuccore/[a-zA-Z0-9]+)").matcher(relationshipTrimmed);
+            Matcher matcher = PATTERN_NUCCORE.matcher(relationshipTrimmed);
             if (matcher.find()) {
                 TreeMap<String, String> e = new TreeMap<String, String>() {
                     {
@@ -1748,13 +1744,14 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static class CarRemarksParser implements RemarksParser {
+
+        public static final Pattern HIT_BY_CAR_NOTATION = Pattern.compile(
+                ".*(hit by car).*",
+                Pattern.CASE_INSENSITIVE
+        );
+
         @Override
         public Map<String, String> parse(String occurrenceRemarks) {
-            final Pattern HIT_BY_CAR_NOTATION
-                    = Pattern.compile(
-                    ".*(hit by car).*",
-                    Pattern.CASE_INSENSITIVE
-            );
 
             Map<String, String> properties = createTmpMap();
 
@@ -1767,13 +1764,14 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static class WindowRemarksParser implements RemarksParser {
+
+        public static final Pattern KILLED_BY_WINDOW = Pattern.compile(
+                ".*(window strike|window kill).*",
+                Pattern.CASE_INSENSITIVE
+        );
+
         @Override
         public Map<String, String> parse(String remarks) {
-            final Pattern KILLED_BY_WINDOW
-                    = Pattern.compile(
-                    ".*(window strike|window kill).*",
-                    Pattern.CASE_INSENSITIVE
-            );
 
             Map<String, String> properties = createTmpMap();
 
@@ -1790,13 +1788,13 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
     private static class CatRemarksParser implements RemarksParser {
 
+        public static final Pattern KILLED_BY_CAT = Pattern.compile(
+                ".*(cat kill).*",
+                Pattern.CASE_INSENSITIVE
+        );
+
         @Override
         public Map<String, String> parse(String remarks) {
-            final Pattern KILLED_BY_CAT
-                    = Pattern.compile(
-                    ".*(cat kill).*",
-                    Pattern.CASE_INSENSITIVE
-            );
 
             Map<String, String> properties = createTmpMap();
 
@@ -1812,6 +1810,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
     }
 
     private static class EuthanizedRemarksParser implements RemarksParser {
+        public static final Pattern EUTHANIZED_PATTERN1 = Pattern.compile(
+                ".*(euthanized).*",
+                Pattern.CASE_INSENSITIVE
+        );
         private final String occurrenceRemarks;
 
         public EuthanizedRemarksParser(String occurrenceRemarks) {
@@ -1820,15 +1822,10 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
 
         @Override
         public Map<String, String> parse(String remarks) {
-            final Pattern EUTHANIZED_PATTERN
-                    = Pattern.compile(
-                    ".*(euthanized).*",
-                    Pattern.CASE_INSENSITIVE
-            );
 
             Map<String, String> properties = createTmpMap();
 
-            if (EUTHANIZED_PATTERN.matcher(occurrenceRemarks).matches()) {
+            if (EUTHANIZED_PATTERN1.matcher(occurrenceRemarks).matches()) {
                 properties.put(TaxonUtil.TARGET_TAXON_NAME, "euthanasia");
 
                 addInteractionType(properties, InteractType.KILLED_BY);
