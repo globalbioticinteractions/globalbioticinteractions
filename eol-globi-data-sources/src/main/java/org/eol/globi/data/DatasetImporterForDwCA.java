@@ -124,6 +124,8 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
             ".*(dog kill).*",
             Pattern.CASE_INSENSITIVE
     );
+    public static final Pattern PATTERN_SCIENTIFIC_NAME = Pattern.compile("^scientificName[ ]*:[ ]*");
+    public static final Pattern PATTERN_HTTP = Pattern.compile("^http://");
     static final String EXTENSION_ASSOCIATED_TAXA = "http://purl.org/NET/aec/associatedTaxa";
     static final String EXTENSION_RESOURCE_RELATIONSHIP = "http://rs.tdwg.org/dwc/terms/ResourceRelationship";
     private static final String EXTENSION_TAXON = "http://rs.tdwg.org/dwc/terms/Taxon";
@@ -1497,7 +1499,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
                 .map(StringUtils::trim)
                 .filter(x -> StringUtils.startsWith(x, "scientificName:"))
                 .findFirst()
-                .map(x -> RegExUtils.replacePattern(x, "^scientificName[ ]*:[ ]*", ""));
+                .map(x -> StringUtils.isBlank(x) ? x : PATTERN_SCIENTIFIC_NAME.matcher(x).replaceAll(""));
     }
 
     private static void resolveLocalResourceIds(Archive archive,
@@ -1571,7 +1573,7 @@ public class DatasetImporterForDwCA extends DatasetImporterWithListener {
         if (StringUtils.isNotBlank(id)) {
             Set<String> idCandidates = new TreeSet<>();
             idCandidates.add(id);
-            idCandidates.add(RegExUtils.replacePattern(id, "^http://", "https://"));
+            idCandidates.add(StringUtils.isBlank(id) ? id : PATTERN_HTTP.matcher(id).replaceAll("https://"));
             if (DwcTerm.taxonID.equals(term)) {
                 idCandidates.add(StringUtils.prependIfMissing(id, "https://www.inaturalist.org/taxa/"));
             }
