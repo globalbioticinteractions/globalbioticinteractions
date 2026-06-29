@@ -23,12 +23,14 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
 public class CSVTSVUtil {
 
+    public static final Pattern PATTERN_TSV_SPECIAL_CHARACTERS = Pattern.compile("[\t\n\r]");
     private static InputStreamFactory factory = BOMUtil.factorySkipBOM;
 
     public static LabeledCSVParser createLabeledCSVParser(InputStream inputStream) throws IOException {
@@ -75,7 +77,9 @@ public class CSVTSVUtil {
     }
 
     public static String escapeTSV(String text) {
-        return RegExUtils.replaceAll(text, "[\t\n\r]", " ");
+        return StringUtils.isBlank(text)
+                ? text
+                : PATTERN_TSV_SPECIAL_CHARACTERS.matcher(text).replaceAll(" ");
     }
 
     public static String valueOrNull(LabeledCSVParser labeledCSVParser, String columnName) {
