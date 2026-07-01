@@ -14,6 +14,7 @@ import java.util.TreeMap;
 
 public class ReferenceUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ReferenceUtil.class);
+    public static final String REFERENCE_PREFIX = "reference";
 
     public static Map<String, String> buildRefMap(ParserFactory parserFactory, URI referencePath) throws StudyImporterException {
         return buildRefMap(parserFactory, referencePath, "short", "full", ',');
@@ -60,16 +61,20 @@ public class ReferenceUtil {
 
     public static String generateReferenceCitation(Map<String, String> properties) {
         StringBuilder citation = new StringBuilder();
-        append(citation, properties.get(DatasetImporterForMetaTable.AUTHOR), ", ");
-        append(citation, properties.get(DatasetImporterForMetaTable.YEAR), ". ");
-        append(citation, properties.get(DatasetImporterForMetaTable.TITLE), ". ");
-        append(citation, properties.get(DatasetImporterForMetaTable.JOURNAL), properties.containsKey(DatasetImporterForMetaTable.VOLUME) || properties.containsKey(DatasetImporterForMetaTable.NUMBER) || properties.containsKey(DatasetImporterForMetaTable.PAGES) ? ", " : ". ");
-        append(citation, properties.get(DatasetImporterForMetaTable.VOLUME), properties.containsKey(DatasetImporterForMetaTable.NUMBER) ? "(" : (properties.containsKey(DatasetImporterForMetaTable.PAGES) ? ", " : ". "));
-        append(citation, properties.get(DatasetImporterForMetaTable.NUMBER), properties.containsKey(DatasetImporterForMetaTable.VOLUME) ? ")" : "");
+        appendWithOptionalPrefixForKey(properties, DatasetImporterForMetaTable.AUTHOR, citation, ", ");
+        appendWithOptionalPrefixForKey(properties, DatasetImporterForMetaTable.YEAR, citation, ". ");
+        appendWithOptionalPrefixForKey(properties, DatasetImporterForMetaTable.TITLE, citation, ". ");
+        appendWithOptionalPrefixForKey(properties, DatasetImporterForMetaTable.JOURNAL, citation,  properties.containsKey(DatasetImporterForMetaTable.VOLUME) || properties.containsKey(DatasetImporterForMetaTable.NUMBER) || properties.containsKey(DatasetImporterForMetaTable.PAGES) ? ", " : ". ");
+        appendWithOptionalPrefixForKey(properties, DatasetImporterForMetaTable.VOLUME, citation,  properties.containsKey(DatasetImporterForMetaTable.NUMBER) ? "(" : (properties.containsKey(DatasetImporterForMetaTable.PAGES) ? ", " : ". "));
+        appendWithOptionalPrefixForKey(properties, DatasetImporterForMetaTable.NUMBER, citation,  properties.containsKey(DatasetImporterForMetaTable.VOLUME) ? ")" : "");
         if (properties.containsKey(DatasetImporterForMetaTable.NUMBER)) {
             citation.append(properties.containsKey(DatasetImporterForMetaTable.PAGES) ? ", " : ".");
         }
-        append(citation, properties.get(DatasetImporterForMetaTable.PAGES), ". ", "pp.");
+        String value = properties.get(DatasetImporterForMetaTable.PAGES);
+        if (StringUtils.isBlank(value)) {
+            value = properties.get(REFERENCE_PREFIX + DatasetImporterForMetaTable.PAGES);
+        }
+        append(citation, value, ". ", "pp.");
 
 
         String citationFromId = null;
@@ -94,6 +99,19 @@ public class ReferenceUtil {
         }
 
         return StringUtils.trim(citation.toString());
+    }
+
+    private static void appendWithOptionalPrefixForKey(Map<String, String> properties, String key, StringBuilder citation, String continuation) {
+        String value = getString(properties, key);
+        append(citation, value, continuation);
+    }
+
+    private static String getString(Map<String, String> properties, String key) {
+        String value = properties.get(key);
+        if (StringUtils.isBlank(value)) {
+            value = properties.get(REFERENCE_PREFIX + key);
+        }
+        return value;
     }
 
     public static void append(StringBuilder citation, String value, String suffix, String prefix) {

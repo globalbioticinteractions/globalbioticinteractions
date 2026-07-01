@@ -113,6 +113,27 @@ public class ReferenceUtilTest {
         assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla, 123(11), pp.33."));
 
     }
+    @Test
+    public void generateReferenceAndReferenceIdReferencePrefix() {
+        final HashMap<String, String> properties = new HashMap<String, String>() {
+            {
+                put("reference" + DatasetImporterForMetaTable.AUTHOR, "Johnny");
+                put("reference" + DatasetImporterForMetaTable.TITLE, "My first pony");
+                put("reference" + DatasetImporterForMetaTable.YEAR, "1981");
+                put("reference" + DatasetImporterForMetaTable.JOURNAL, "journal of bla");
+            }
+        };
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla."));
+        properties.put(DatasetImporterForMetaTable.VOLUME, "123");
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla, 123."));
+        properties.put(DatasetImporterForMetaTable.NUMBER, "11");
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla, 123(11)."));
+        properties.put(DatasetImporterForMetaTable.PAGES, "33");
+
+        assertThat(ReferenceUtil.generateReferenceCitation(properties), Is.is("Johnny, 1981. My first pony. journal of bla, 123(11), pp.33."));
+
+    }
 
     @Test
     public void generateReferenceCitation() {
