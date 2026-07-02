@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -1479,6 +1480,12 @@ public class DatasetImporterForDwCATest {
 
         assertThat(DatasetImporterForDwCA.findResourceExtension(archive, EXTENSION_ASSOCIATED_TAXA),
                 Is.is(notNullValue()));
+    }
+
+    @Test(expected = EOFException.class)
+    public void malformedTruncatedZipfile() throws IOException, URISyntaxException {
+        URI sampleArchive = getClass().getResource("fmnh_seedplants_truncated.zip").toURI();
+        DwCAUtil.archiveFor(sampleArchive, "target/tmp");
     }
 
     @Test
