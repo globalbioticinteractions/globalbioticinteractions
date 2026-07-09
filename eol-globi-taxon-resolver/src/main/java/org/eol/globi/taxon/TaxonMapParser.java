@@ -1,6 +1,7 @@
 package org.eol.globi.taxon;
 
 import com.Ostermiller.util.LabeledCSVParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
@@ -15,16 +16,28 @@ public class TaxonMapParser {
 
     public static Taxon parseResolvedTaxon(String line[]) {
         Taxon resolvedTaxon = new TaxonImpl();
-        resolvedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 2));
-        ;
-        resolvedTaxon.setName(CSVTSVUtil.valueOrNull(line, 3));
+        if (line.length == 4) {
+            resolvedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 2));
+            resolvedTaxon.setName(CSVTSVUtil.valueOrNull(line, 3));
+        } else if (line.length == 6) {
+            resolvedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 3));
+            resolvedTaxon.setName(CSVTSVUtil.valueOrNull(line, 4));
+            resolvedTaxon.setPath(CSVTSVUtil.valueOrNull(line, 5));
+
+        }
         return resolvedTaxon;
     }
 
     public static Taxon parseProvidedTaxon(String line[]) {
         Taxon providedTaxon = new TaxonImpl();
-        providedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 0));
-        providedTaxon.setName(CSVTSVUtil.valueOrNull(line, 1));
+        if (line.length == 4) {
+            providedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 0));
+            providedTaxon.setName(CSVTSVUtil.valueOrNull(line, 1));
+        } else if (line.length == 6) {
+            providedTaxon.setExternalId(CSVTSVUtil.valueOrNull(line, 0));
+            providedTaxon.setName(CSVTSVUtil.valueOrNull(line, 1));
+            providedTaxon.setPath(CSVTSVUtil.valueOrNull(line, 2));
+        }
         return providedTaxon;
     }
 

@@ -15,22 +15,23 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 public class TaxonMapParserTest {
 
     public static void parse(BufferedReader reader, TaxonMapListener listener) throws IOException {
-            LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(reader);
-            listener.start();
+        LabeledCSVParser labeledCSVParser = CSVTSVUtil.createLabeledCSVParser(reader);
+        listener.start();
         String[] line;
         while ((line = labeledCSVParser.getLine()) != null) {
-                Taxon providedTaxon = TaxonMapParser.parseProvidedTaxon(line);
-                Taxon resolvedTaxon = TaxonMapParser.parseResolvedTaxon(line);
-                listener.addMapping(providedTaxon, resolvedTaxon);
-            }
-            listener.finish();
+            Taxon providedTaxon = TaxonMapParser.parseProvidedTaxon(line);
+            Taxon resolvedTaxon = TaxonMapParser.parseResolvedTaxon(line);
+            listener.addMapping(providedTaxon, resolvedTaxon);
         }
+        listener.finish();
+    }
 
     @Test
-    public void readThreeLine() throws IOException {
+    public void readThreeLineOfNameIdPairs() throws IOException {
         BufferedReader someLines = new BufferedReader(new StringReader(
                 "providedTaxonId,providedTaxonName,resolvedTaxonId,resolvedTaxonName\n" +
                         "EOL:2888546,Toddalia asiatica,EOL:2888546,Toddalia asiatica\n" +
@@ -62,6 +63,44 @@ public class TaxonMapParserTest {
         assertThat(taxa.get(0), is("EOL:2888546Toddalia asiatica-->EOL:2888546Toddalia asiatica"));
         assertThat(taxa.get(1), is("EOL:2888546Toddalia asiatica-->OTT:232693Toddalia asiatica"));
         assertThat(taxa.get(2), is("EOL:1049789Turtur tympanistria-->EOL:1049789Turtur tympanistria"));
+
+    }
+
+    @Test
+    public void readThreeLineOfIdNamePathTriples() throws IOException {
+        BufferedReader someLines = new BufferedReader(new StringReader(
+                "providedTaxonId,providedTaxonName,providedTaxonPath,resolvedTaxonId,resolvedTaxonName,resolvedTaxonPath\n" +
+                        "EOL:2888546,Toddalia asiatica,Plantae,EOL:2888546,Toddalia asiatica,Plantae\n" +
+                        "EOL:2888546,Toddalia asiatica,Plantae,OTT:232693,Toddalia asiatica,Plantae\n" +
+                        "EOL:1049789,Turtur tympanistria,Plantae,EOL:1049789,Turtur tympanistria,Plantae"));
+
+        assertThat(someLines, is(notNullValue()));
+
+        final List<String> taxa = new ArrayList<String>();
+        parse(someLines, new TaxonMapListener() {
+            @Override
+            public void addMapping(Taxon srcTaxon, Taxon targetTaxon) {
+                taxa.add(srcTaxon.getExternalId() + srcTaxon.getName() + srcTaxon.getPath()
+                        + "-->"
+                        + targetTaxon.getExternalId() + targetTaxon.getName() + targetTaxon.getPath());
+            }
+
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void finish() {
+
+            }
+        });
+
+        assertThat(taxa.size(), is(3));
+
+        assertThat(taxa.get(0), is("EOL:2888546Toddalia asiaticaPlantae-->EOL:2888546Toddalia asiaticaPlantae"));
+        assertThat(taxa.get(1), is("EOL:2888546Toddalia asiaticaPlantae-->OTT:232693Toddalia asiaticaPlantae"));
+        assertThat(taxa.get(2), is("EOL:1049789Turtur tympanistriaPlantae-->EOL:1049789Turtur tympanistriaPlantae"));
 
     }
 
