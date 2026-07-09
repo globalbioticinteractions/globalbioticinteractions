@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.lucene.store.SimpleFSDirectory;
+import org.eol.globi.data.CharsetConstant;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
@@ -199,10 +200,10 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
                 .filter(taxonMap.getValidator())
                 .map(taxonMap.getParser())
                 .forEach(triple -> {
-                    addIfNeeded(taxonLookupService, triple.getLeft().getExternalId(), triple.getRight().getExternalId());
-                    addIfNeeded(taxonLookupService, triple.getLeft().getName(), triple.getRight().getExternalId());
-                    addIfNeeded(taxonLookupService, triple.getRight().getExternalId(), triple.getRight().getExternalId());
-                    addIfNeeded(taxonLookupService, triple.getRight().getName(), triple.getRight().getExternalId());
+                    Taxon left = triple.getLeft();
+                    Taxon right = triple.getRight();
+                    add(taxonLookupService, left, right);
+                    add(taxonLookupService, right, right);
                     count.incrementAndGet();
                 });
         watch.stop();
@@ -216,6 +217,16 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
             LOG.info("failed to move recently built index at [" + tmpLuceneDir.toFile().getAbsolutePath() + "] to [" + luceneDir.toFile().getAbsolutePath() + "]. Assuming that some other builder has already created the index.");
             FileUtils.deleteDirectory(tmpLuceneDir.toFile());
         }
+    }
+
+    private void add(TaxonLookupBuilder taxonLookupService, Taxon left, Taxon right) {
+        addIfNeeded(taxonLookupService, left.getExternalId(), right.getExternalId());
+        addIfNeeded(taxonLookupService, left.getName(), right.getExternalId());
+        addIdNamePath(taxonLookupService, left, right);
+    }
+
+    private void addIdNamePath(TaxonLookupBuilder taxonLookupService, Taxon left, Taxon right) {
+        addIfNeeded(taxonLookupService, getIdNamePathConcat(left), right.getExternalId());
     }
 
     private void initTaxonCache() throws IOException {
@@ -268,18 +279,37 @@ public class TaxonCacheService extends CacheService implements PropertyEnricher,
         for (Term term : terms) {
             String nodeIdAndName = term.getName();
             Long nodeId = term instanceof TermRequestImpl ? ((TermRequestImpl) term).getNodeId() : null;
-            if (!resolveName(termMatchListener, term, term.getId(), nodeId)) {
-                if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, term.getName(), nodeId)) {
+            String taxonIdNamePath = getTaxonIdNamePath(term);
+            if (StringUtils.isBlank(taxonIdNamePath) || !resolveName(termMatchListener, term, taxonIdNamePath, nodeId)) {
+                if (StringUtils.isNotBlank(taxonIdNamePath)) {
                     termMatchListener.foundTaxonForTerm(nodeId, term, NameType.NONE, new TaxonImpl(term.getId(), term.getName()));
+                } else if (!resolveName(termMatchListener, term, term.getId(), nodeId)) {
+                    if (StringUtils.isBlank(nodeIdAndName) || !resolveName(termMatchListener, term, term.getName(), nodeId)) {
+                        termMatchListener.foundTaxonForTerm(nodeId, term, NameType.NONE, new TaxonImpl(term.getId(), term.getName()));
+                    }
                 }
             }
         }
     }
 
-    private boolean resolveName(TermMatchListener termMatchListener, Term term, String name, Long nodeId) throws PropertyEnricherException {
+    private static String getTaxonIdNamePath(Term term) {
+        Taxon taxon = term instanceof Taxon ? (Taxon) term : null;
+        return taxon == null ? null : getIdNamePathConcat(taxon);
+    }
+
+    private static String getIdNamePathConcat(Taxon taxon) {
+        return StringUtils.joinWith(
+                "@",
+                StringUtils.defaultString(taxon.getExternalId()),
+                StringUtils.defaultString(taxon.getName()),
+                StringUtils.defaultString(taxon.getPath())
+        );
+    }
+
+    private boolean resolveName(TermMatchListener termMatchListener, Term term, String key, Long nodeId) throws PropertyEnricherException {
         boolean hasResolved = false;
-        if (StringUtils.isNotBlank(name)) {
-            Taxon[] ids = lookupTerm(name);
+        if (StringUtils.isNotBlank(key)) {
+            Taxon[] ids = lookupTerm(key);
             if (ids != null) {
                 List<String> idsDistinct = Arrays.stream(ids)
                         .filter(t -> StringUtils.isNotBlank(t.getExternalId()))

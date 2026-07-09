@@ -5,12 +5,14 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.eol.globi.domain.NameType;
 import org.eol.globi.domain.PropertyAndValueDictionary;
 import org.eol.globi.domain.Taxon;
+import org.eol.globi.domain.TaxonImpl;
 import org.eol.globi.domain.Term;
 import org.eol.globi.domain.TermImpl;
 import org.eol.globi.service.PropertyEnricherException;
 import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.ResourceServiceLocal;
 import org.eol.globi.util.TermUtil;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +37,8 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertNull;
@@ -633,6 +637,112 @@ public class TaxonCacheServiceTest {
         assertThat(listIds, contains("EOL:327955", "GBIF:2436436",
                 "INAT_TAXON:43584", "IRMNG:10857762",
                 "NCBI:741158", "OTT:933436", "WD:Q15978631"));
+
+
+    }
+
+    @Test
+    public void resolveHomonymWithoutContext() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheAnura.tsv",
+                "/org/eol/globi/taxon/taxonMapAnura.tsv",
+                new ResourceServiceLocal(),
+                mapdbDir);
+        cacheService.setMaxTaxonLinks(125);
+        Set<String> listIds = new TreeSet<>();
+        Set<String> listNames = new HashSet<>();
+        cacheService.match(Collections.singletonList(new TermImpl("", "Anura")), new TermMatchListener() {
+
+            @Override
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
+                listIds.add(resolvedTaxon.getExternalId());
+                listNames.add(resolvedTaxon.getName());
+            }
+        });
+
+        assertThat(listNames, hasItem("Anura"));
+        assertThat(listIds, contains("COL:LQCB6", "COL:PW"));
+
+
+    }
+
+    @Test
+    public void resolveHomonymWithContextAndId() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheAnura.tsv",
+                "/org/eol/globi/taxon/taxonMapAnura.tsv",
+                new ResourceServiceLocal(),
+                mapdbDir);
+        cacheService.setMaxTaxonLinks(125);
+        Set<String> listIds = new TreeSet<>();
+        Set<String> listNames = new HashSet<>();
+        Taxon anura = new TaxonImpl("Anura", "FOO:1");
+        anura.setPath("Aves");
+        cacheService.match(Collections.singletonList(anura), new TermMatchListener() {
+
+            @Override
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
+                listIds.add(resolvedTaxon.getExternalId());
+                listNames.add(resolvedTaxon.getName());
+            }
+        });
+
+        assertThat(listNames, hasItem("Anura"));
+        assertThat(listIds, contains("COL:LQCB6"));
+    }
+
+    @Test
+    public void resolveHomonymWithContextAndNoId() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheAnura.tsv",
+                "/org/eol/globi/taxon/taxonMapAnura.tsv",
+                new ResourceServiceLocal(),
+                mapdbDir);
+        cacheService.setMaxTaxonLinks(125);
+        Set<String> listIds = new TreeSet<>();
+        Set<String> listNames = new HashSet<>();
+        Taxon anura = new TaxonImpl("Anura", null);
+        anura.setPath("Aves");
+        cacheService.match(Collections.singletonList(anura), new TermMatchListener() {
+
+            @Override
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
+                if (!NameType.NONE.equals(nameType)) {
+                    listIds.add(resolvedTaxon.getExternalId());
+                    listNames.add(resolvedTaxon.getName());
+                }
+            }
+        });
+
+        assertThat(listNames, is(empty()));
+        assertThat(listIds, is(empty()));
+
+
+    }
+
+    @Test
+    public void resolveHomonymWithContextMatchAndId() throws PropertyEnricherException {
+        final TaxonCacheService cacheService = new TaxonCacheService(
+                "/org/eol/globi/taxon/taxonCacheAnura.tsv",
+                "/org/eol/globi/taxon/taxonMapAnura.tsv",
+                new ResourceServiceLocal(),
+                mapdbDir);
+        cacheService.setMaxTaxonLinks(125);
+        Set<String> listIds = new TreeSet<>();
+        Set<String> listNames = new HashSet<>();
+        Taxon anura = new TaxonImpl("Anura", "BAR:2");
+        anura.setPath("Amphibia");
+        cacheService.match(Collections.singletonList(anura), new TermMatchListener() {
+
+            @Override
+            public void foundTaxonForTerm(Long requestId, Term name, NameType nameType, Taxon resolvedTaxon) {
+                listIds.add(resolvedTaxon.getExternalId());
+                listNames.add(resolvedTaxon.getName());
+            }
+        });
+
+        assertThat(listNames, hasItem("Anura"));
+        assertThat(listIds, contains("COL:PW"));
 
 
     }

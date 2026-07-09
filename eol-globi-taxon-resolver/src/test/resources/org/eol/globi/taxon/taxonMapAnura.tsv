@@ -1,0 +1,4 @@
+providedTaxonId	providedTaxonName	providedTaxonPath	resolvedTaxonId	resolvedTaxonName	resolvedTaxonPath
+FOO:1	Anura	Aves	COL:LQCB6	Anura	Eukaryota | Animalia | Chordata | Vertebrata | Gnathostomata | Osteichthyes | Tetrapoda | Aves | Anura
+	Anura	Aves	COL:LQCB6	Anura	Eukaryota | Animalia | Chordata | Vertebrata | Gnathostomata | Osteichthyes | Tetrapoda | Aves | Anura
+BAR:2	Anura	Amphibia	COL:PW	Anura	Eukaryota | Animalia | Chordata | Vertebrata | Gnathostomata | Osteichthyes | Tetrapoda | Amphibia | Anura
