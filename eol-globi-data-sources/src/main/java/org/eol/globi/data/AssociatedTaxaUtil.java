@@ -3,6 +3,7 @@ package org.eol.globi.data;
 import org.apache.commons.lang3.StringUtils;
 import org.eol.globi.service.PropertyEnricher;
 import org.eol.globi.service.PropertyEnricherException;
+import org.eol.globi.service.TaxonUtil;
 import org.eol.globi.util.InteractUtil;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import static org.eol.globi.service.TaxonUtil.TARGET_TAXON_NAME;
 
 public final class AssociatedTaxaUtil {
 
+    public static final Pattern TREE_TRUNK_PATTERN_2 = Pattern.compile("(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n|[Oo]ver)\\s+(?<" + TARGET_TAXON_NAME + ">.*)\\s+(?<" + TARGET_BODY_PART_NAME + ">bark)$");
     private final static Pattern ASSOCIATION_PATTERNS = Pattern.compile(
             "(.*)" +
             "(?<interactionTypeName>"
@@ -45,6 +47,9 @@ public final class AssociatedTaxaUtil {
             "^[Cc]aught after [Vv]isiting",
             "[Ff]eeding on")
             + ")([ ])(?<targetTaxonName>[^;:]+)$");
+    public static final Pattern TREE_TRUNK_PATTERN_0 = Pattern.compile("(.*)(?<" + DatasetImporterForTSV.INTERACTION_TYPE_NAME + ">[Oo]n|[Oo]ver)\\s+(?<" + DatasetImporterForTSV.TARGET_BODY_PART_NAME + ">bark)\\s+(of)(?<" + TaxonUtil.TARGET_TAXON_NAME + ">.*)");
+    public static final Pattern TREE_TRUNK_PATTERN_1 = Pattern.compile("(.*)(?<" + DatasetImporterForTSV.INTERACTION_TYPE_NAME + ">[Oo]n)\\s+(?<" + DatasetImporterForTSV.TARGET_BODY_PART_NAME + ">trunk)\\s+(of)(?<" + TaxonUtil.TARGET_TAXON_NAME + ">.*)");
+    public static final Pattern TREE_TRUNK_PATTERN_3 = Pattern.compile("(?<" + TaxonUtil.TARGET_TAXON_NAME + ">.*)\\s+(?<" + DatasetImporterForTSV.TARGET_BODY_PART_NAME + ">bark)$");
 
     public static List<Map<String, String>> expandIfNeeded(Map<String, String> properties) {
         try {
@@ -139,8 +144,7 @@ public final class AssociatedTaxaUtil {
     }
 
     private static void appendMatchIfApplicable(List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
-        String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n)\\s+(?<" + TARGET_BODY_PART_NAME + ">trunk)\\s+(of)(?<" + TARGET_TAXON_NAME + ">.*)";
-        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        Matcher m = TREE_TRUNK_PATTERN_1.matcher(trimmedPart);
         if (m.matches()) {
             properties.add(new TreeMap<String, String>() {{
                 put(TARGET_BODY_PART_NAME, m.group(TARGET_BODY_PART_NAME));
@@ -153,8 +157,7 @@ public final class AssociatedTaxaUtil {
 
     private static void appendMatchIfApplicable2(
             List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
-        String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n|[Oo]ver)\\s+(?<" + TARGET_BODY_PART_NAME + ">bark)\\s+(of)(?<" + TARGET_TAXON_NAME + ">.*)";
-        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        Matcher m = TREE_TRUNK_PATTERN_0.matcher(trimmedPart);
         if (m.matches()) {
             properties.add(new TreeMap<String, String>() {{
                 put(TARGET_BODY_PART_NAME, StringUtils.lowerCase(m.group(TARGET_BODY_PART_NAME)));
@@ -167,8 +170,7 @@ public final class AssociatedTaxaUtil {
 
     private static void appendMatchIfApplicable3(
             List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
-        String treeTrunkPattern = "(.*)(?<" + INTERACTION_TYPE_NAME + ">[Oo]n|[Oo]ver)\\s+(?<" + TARGET_TAXON_NAME + ">.*)\\s+(?<" + TARGET_BODY_PART_NAME + ">bark)$";
-        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        Matcher m = TREE_TRUNK_PATTERN_2.matcher(trimmedPart);
         if (m.matches()) {
             properties.add(new TreeMap<String, String>() {{
                 put(TARGET_BODY_PART_NAME, StringUtils.lowerCase(m.group(TARGET_BODY_PART_NAME)));
@@ -183,8 +185,7 @@ public final class AssociatedTaxaUtil {
 
     private static void appendMatchIfApplicable4(
             List<Map<String, String>> properties, String trimmedPart, AtomicInteger matches) {
-        String treeTrunkPattern = "(?<" + TARGET_TAXON_NAME + ">.*)\\s+(?<" + TARGET_BODY_PART_NAME + ">bark)$";
-        Matcher m = Pattern.compile(treeTrunkPattern).matcher(trimmedPart);
+        Matcher m = TREE_TRUNK_PATTERN_3.matcher(trimmedPart);
         if (m.matches()) {
             properties.add(new TreeMap<String, String>() {{
                 put(TARGET_BODY_PART_NAME, StringUtils.lowerCase(m.group(TARGET_BODY_PART_NAME)));

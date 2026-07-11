@@ -207,6 +207,30 @@ public class ExternalIdUtilTest {
     }
 
     @Test
+    public void iNaturalistTaxon() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("https://www.inaturalist.org/taxa/208863"),
+                is(TaxonomyProvider.INATURALIST_TAXON)
+        );
+    }
+
+    @Test
+    public void iNaturalistTaxon2() {
+        assertThat(
+                ExternalIdUtil.taxonomyProviderFor("https://inaturalist.org/taxa/208863"),
+                is(TaxonomyProvider.INATURALIST_TAXON)
+        );
+    }
+
+    @Test
+    public void iNaturalistTaxon3() {
+        assertThat(
+                ExternalIdUtil.stripPrefix(TaxonomyProvider.INATURALIST_TAXON, "https://inaturalist.org/taxa/208863"),
+                is("208863")
+        );
+    }
+
+    @Test
     public void batBaseInteraction() {
         assertThat(
                 ExternalIdUtil.taxonomyProviderFor("https://batbase.org/interaction/123"),
